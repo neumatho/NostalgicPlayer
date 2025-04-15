@@ -84,7 +84,7 @@
 			this.addButton.Enabled = false;
 			this.addButton.Location = new System.Drawing.Point(8, 196);
 			this.addButton.Name = "addButton";
-			this.addButton.Palette = this.bigFontPalette;
+			this.addButton.LocalCustomPalette = this.bigFontPalette;
 			this.addButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.addButton, "IDS_FAVORITE_BUTTON_ADD");
 			this.addButton.Size = new System.Drawing.Size(90, 21);
@@ -106,7 +106,7 @@
 			this.removeButton.Enabled = false;
 			this.removeButton.Location = new System.Drawing.Point(102, 196);
 			this.removeButton.Name = "removeButton";
-			this.removeButton.Palette = this.bigFontPalette;
+			this.removeButton.LocalCustomPalette = this.bigFontPalette;
 			this.removeButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.removeButton, "IDS_FAVORITE_BUTTON_REMOVE");
 			this.removeButton.Size = new System.Drawing.Size(90, 21);
@@ -119,7 +119,7 @@
 			this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.resetButton.Location = new System.Drawing.Point(324, 196);
 			this.resetButton.Name = "resetButton";
-			this.resetButton.Palette = this.bigFontPalette;
+			this.resetButton.LocalCustomPalette = this.bigFontPalette;
 			this.resetButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.resetButton, "IDS_FAVORITE_BUTTON_RESET");
 			this.resetButton.Size = new System.Drawing.Size(90, 21);
@@ -151,7 +151,7 @@
 			this.showComboBox.IntegralHeight = false;
 			this.showComboBox.Location = new System.Drawing.Point(196, 198);
 			this.showComboBox.Name = "showComboBox";
-			this.showComboBox.Palette = this.fontPalette;
+			this.showComboBox.LocalCustomPalette = this.fontPalette;
 			this.showComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.showComboBox, null);
 			this.showComboBox.Size = new System.Drawing.Size(90, 18);
@@ -164,7 +164,7 @@
 			this.otherNumberTextBox.Enabled = false;
 			this.otherNumberTextBox.Location = new System.Drawing.Point(290, 197);
 			this.otherNumberTextBox.Name = "otherNumberTextBox";
-			this.otherNumberTextBox.Palette = this.fontPalette;
+			this.otherNumberTextBox.LocalCustomPalette = this.fontPalette;
 			this.otherNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.otherNumberTextBox, null);
 			this.otherNumberTextBox.Size = new System.Drawing.Size(30, 20);
@@ -185,7 +185,7 @@
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(438, 260);
 			this.Name = "FavoriteSongSystemForm";
-			this.Palette = this.fontPalette;
+			this.LocalCustomPalette = this.fontPalette;
 			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this, null);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FavoriteSongSystemWindowForm_FormClosed);

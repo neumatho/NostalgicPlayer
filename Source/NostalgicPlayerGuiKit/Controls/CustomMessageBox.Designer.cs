@@ -44,7 +44,7 @@
 			messageLabel.Location = new System.Drawing.Point(0, 0);
 			messageLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			messageLabel.Name = "messageLabel";
-			messageLabel.Palette = fontPalette;
+			messageLabel.LocalCustomPalette = fontPalette;
 			messageLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			messageLabel.Size = new System.Drawing.Size(40, 16);
 			messageLabel.TabIndex = 0;
@@ -55,7 +55,6 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// pictureBox
 			// 
