@@ -225,8 +225,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		/// Gets the padding between the border and content drawing
 		/// </summary>
 		/********************************************************************/
-//		public override Padding GetBorderContentPadding(KryptonForm owningForm, PaletteContentStyle style, PaletteState state)
-		public override Padding GetContentPadding(PaletteContentStyle style, PaletteState state)
+		public override Padding GetBorderContentPadding(KryptonForm owningForm, PaletteContentStyle style, PaletteState state)
 		{
 			switch (style)
 			{
@@ -238,8 +237,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 					return gridPadding;
 			}
 
-//			return base.GetBorderContentPadding(owningForm, style, state);
-			return base.GetContentPadding(style, state);
+			return base.GetBorderContentPadding(owningForm, style, state);
 		}
 
 
