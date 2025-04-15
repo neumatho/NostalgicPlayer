@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             this.navigatorSampleConvertersPage,
             this.navigatorVisualsPage,
             this.navigatorDecrunchersPage});
-			this.navigator.Palette = this.fontPalette;
+			this.navigator.LocalCustomPalette = this.fontPalette;
 			this.navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(592, 340);
