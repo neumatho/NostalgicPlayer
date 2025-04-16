@@ -382,7 +382,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				// Fix sub-songs
 				int maxNumberOfZero = 3;
 
-				for (int i = 0; i < 32; i++)
+				for (int i = 1; i < 32; i++)
 				{
 					if (maxNumberOfZero == 0)
 						songStart[i] = ushort.MaxValue;
@@ -2227,13 +2227,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 							if (l2 < playingInfo.Pdb.FirstPos)
 								l2 = playingInfo.Pdb.FirstPos;
 
-							if ((l2 < playingInfo.Pdb.CurrPos) && (playingInfo.Mdb.TrackLoop < 0))
+							if ((l2 <= playingInfo.Pdb.CurrPos) && (playingInfo.Mdb.TrackLoop < 0))
 								endReached = true;
 
 							playingInfo.Pdb.CurrPos = l2;
 
 							ShowSongPosition();
 							ShowTracks();
+
+							if (endReached)
+								return;
+
 							break;
 						}
 
