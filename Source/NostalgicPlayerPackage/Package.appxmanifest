@@ -1021,7 +1021,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-ptm">.ptm</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>ProTracker IFF</uap:DisplayName>
+            <uap:DisplayName>Poly Tracker / ProTracker IFF</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">

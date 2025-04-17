@@ -156,6 +156,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Perfect Song 2 | .pf2 | ProWizard | ModTracker |
 | Pha Packer | .pha | ProWizard | ModTracker |
 | Polka Packer | .ppk | ProWizard | ModTracker |
+| Poly Tracker | .ptm | | Xmp |
 | Power Music | .pm | ProWizard | ModTracker |
 | Promizer 0.1 | .pm0 / .pm01 | ProWizard | ModTracker |
 | Promizer 1.0c | .pm1 / .pm10 | ProWizard | ModTracker |
