@@ -710,7 +710,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 			if (instrumentNumber != -1)
 				return instrumentNumber;
 
-			string instrumentFileName = $"{instrName}.instr";
+			string instrumentFileName = $"{instrName.Replace('?', '!')}.instr";
 			string instrumentPath = string.Empty;
 
 			using (ModuleStream instrumentStream = fileInfo.Loader?.TryOpenExternalFileInInstruments(instrumentFileName, out instrumentPath))
