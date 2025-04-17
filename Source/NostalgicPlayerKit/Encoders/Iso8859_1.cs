@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 		/// </summary>
 		/********************************************************************/
 		private static readonly ushort[] lookupTable =
-		{
+		[
 			// 0x00 - 0x1f
 			0x0000, 0x003f, 0x003f, 0x003f, 0x003f, 0x003f, 0x003f, 0x003f,
 			0x003f, 0x003f, 0x000a, 0x003f, 0x003f, 0x000d, 0x003f, 0x003f,
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 			0x00e8, 0x00e9, 0x00ea, 0x00eb, 0x00ec, 0x00ed, 0x00ee, 0x00ef,
 			0x00f0, 0x00f1, 0x00f2, 0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7,
 			0x00f8, 0x00f9, 0x00fa, 0x00fb, 0x00fc, 0x00fd, 0x00fe, 0x00ff
-		};
+		];
 
 
 
@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 		/// </summary>
 		/********************************************************************/
 		private static readonly byte[] byte00Table =
-		{
+		[
 			// 0x0000 - 0x001f
 			0x00, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 			0x3f, 0x3f, 0x0a, 0x3f, 0x3f, 0x0d, 0x3f, 0x3f,
@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 			0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xef,
 			0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7,
 			0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
-		};
+		];
 
 
 
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 		/// </summary>
 		/********************************************************************/
 		private static readonly byte[][] highByteIndexTable =
-		{
+		[
 			byte00Table, null, null, null, null, null, null, null,
 			null, null, null, null, null, null, null, null,
 			null, null, null, null, null, null, null, null,
@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 			null, null, null, null, null, null, null, null,
 			null, null, null, null, null, null, null, null,
 			null, null, null, null, null, null, null, null
-		};
+		];
 		#endregion
 	}
 }

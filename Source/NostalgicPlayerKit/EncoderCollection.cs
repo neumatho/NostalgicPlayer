@@ -63,6 +63,18 @@ namespace Polycode.NostalgicPlayer.Kit
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the encoder to decode Acorn Archimedes characters
+		/// </summary>
+		/********************************************************************/
+		public static Encoding Archimedes
+		{
+			get;
+		} = new RiskOs();
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the encoder to decode Microsoft Windows code page 1252
 		/// characters
 		/// </summary>
