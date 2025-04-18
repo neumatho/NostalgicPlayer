@@ -1221,6 +1221,14 @@
             <uap:DisplayName>Ron Klaren</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="archfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-arch">.arch</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Archimedes Tracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
