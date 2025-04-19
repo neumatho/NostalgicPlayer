@@ -50,6 +50,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Archimedes Tracker | .arch | | Xmp |
 | Art Of Noise | .aon | | Art Of Noise |
 | Art Of Noise 8 voices | .aon8 | | Art Of Noise |
+| Astroidea XMF | .xmf | | Xmp |
 | Asylum Music Format | .amf | | Xmp |
 | Audio Sculpture | .adsc | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |

@@ -34,4 +34,5 @@
 *.ult filter=lfs diff=lfs merge=lfs -text
 *.wow filter=lfs diff=lfs merge=lfs -text
 *.xm filter=lfs diff=lfs merge=lfs -text
+*.xmf filter=lfs diff=lfs merge=lfs -text
 *.xpkf filter=lfs diff=lfs merge=lfs -text

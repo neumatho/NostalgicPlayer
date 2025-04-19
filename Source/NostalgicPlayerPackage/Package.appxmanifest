@@ -1229,6 +1229,14 @@
             <uap:DisplayName>Archimedes Tracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="xmffile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-xmf">.xmf</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Astroidea XMF</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
