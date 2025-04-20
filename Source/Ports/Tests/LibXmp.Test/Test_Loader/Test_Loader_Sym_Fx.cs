@@ -4,13 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Loader
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class Test_Api
+	public partial class Test_Loader
 	{
 		/********************************************************************/
 		/// <summary>
@@ -18,16 +19,20 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Api_Get_Format_List()
+		public void Test_Loader_Sym_Fx()
 		{
-			string[] list = Ports.LibXmp.LibXmp.Xmp_Get_Format_List();
-			Assert.IsNotNull(list, "Returned null");
+			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 
-			c_int i;
-			for (i = 0; list[i] != null; i++)
-				Assert.IsNotNull(list[i], "Empty format name");
+			c_int ret = LoadModule(dataDirectory, "Sym_Effects.dsym", opaque);
+			Assert.AreEqual(0, ret, "Module load");
 
-			Assert.AreEqual(29, i, "Wrong number of formats");
+			opaque.Xmp_Get_Module_Info(out Xmp_Module_Info info);
+
+			ret = Compare_Module(info.Mod, OpenStream(dataDirectory, "Format_Sym_Fx.data"));
+			Assert.AreEqual(0, ret, "Format not correctly loaded");
+
+			opaque.Xmp_Release_Module();
+			opaque.Xmp_Free_Context();
 		}
 	}
 }

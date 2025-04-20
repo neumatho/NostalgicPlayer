@@ -1237,6 +1237,14 @@
             <uap:DisplayName>Astroidea XMF</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dsymfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dsym">.dsym</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Digital Symphony</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

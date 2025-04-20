@@ -63,10 +63,10 @@ namespace Polycode.NostalgicPlayer.Kit
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the encoder to decode Acorn Archimedes characters
+		/// Return the encoder to decode Acorn characters
 		/// </summary>
 		/********************************************************************/
-		public static Encoding Archimedes
+		public static Encoding Acorn
 		{
 			get;
 		} = new RiskOs();

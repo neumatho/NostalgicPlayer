@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private Arch_Load(LibXmp libXmp)
 		{
 			lib = libXmp;
-			encoder = EncoderCollection.Archimedes;
+			encoder = EncoderCollection.Acorn;
 		}
 
 
