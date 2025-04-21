@@ -553,7 +553,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					xxs.Flg |= (rs.Loop & 0x03) != 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
 					xxs.Flg |= rs.Loop == 2 ? Xmp_Sample_Flag.Loop_BiDir : Xmp_Sample_Flag.None;
 
-					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Diff, xxs, null) < 0)
+					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Diff, xxs, null, smpNum) < 0)
 						return -1;
 				}
 			}

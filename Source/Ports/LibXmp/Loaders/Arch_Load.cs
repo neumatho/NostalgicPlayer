@@ -718,7 +718,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				mod.Xxs[i].Lpe = mod.Xxs[i].Len;
 			}
 
-			if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Vidc, mod.Xxs[i], null) < 0)
+			if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Vidc, mod.Xxs[i], null, i) < 0)
 				return -1;
 
 			data.Max_Ins++;

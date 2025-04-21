@@ -329,12 +329,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				a = f.Hio_Read8();
 
+				Hio s = f.GetSampleHio(i, xxs.Len);
+
 				switch (a)
 				{
 					// Signed 8-bit, logarithmic
 					case 0:
 					{
-						ret = Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Vidc, xxs, null);
+						ret = Sample.LibXmp_Load_Sample(m, s, Sample_Flag.Vidc, xxs, null);
 						break;
 					}
 
@@ -343,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					{
 						size = xxs.Len;
 
-						if (Lzw.LibXmp_Read_Lzw(buf, (size_t)size, (size_t)size, Lzw_Flag.Sym, f) < 0)
+						if (Lzw.LibXmp_Read_Lzw(buf, (size_t)size, (size_t)size, Lzw_Flag.Sym, s) < 0)
 							goto Err;
 
 						ret = Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad | Sample_Flag.Diff, xxs, buf);
@@ -353,7 +355,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					// Signed 8-bit, linear
 					case 2:
 					{
-						ret = Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, xxs, null);
+						ret = Sample.LibXmp_Load_Sample(m, s, Sample_Flag.None, xxs, null);
 						break;
 					}
 
@@ -361,7 +363,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					case 3:
 					{
 						xxs.Flg |= Xmp_Sample_Flag._16Bit;
-						ret = Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, xxs, null);
+						ret = Sample.LibXmp_Load_Sample(m, s, Sample_Flag.None, xxs, null);
 						break;
 					}
 
@@ -370,7 +372,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					{
 						size = xxs.Len;
 
-						if (Lzw.LibXmp_Read_Sigma_Delta(buf, (size_t)size, (size_t)size, f) < 0)
+						if (Lzw.LibXmp_Read_Sigma_Delta(buf, (size_t)size, (size_t)size, s) < 0)
 							goto Err;
 
 						ret = Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad | Sample_Flag.Uns, xxs, buf);
@@ -382,7 +384,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					{
 						size = xxs.Len;
 
-						if (Lzw.LibXmp_Read_Sigma_Delta(buf, (size_t)size, (size_t)size, f) < 0)
+						if (Lzw.LibXmp_Read_Sigma_Delta(buf, (size_t)size, (size_t)size, s) < 0)
 							goto Err;
 
 						// This uses a bit packing that isn't either mu-law or
@@ -398,8 +400,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					}
 
 					default:
+					{
+						s.Hio_Close();
 						goto Err;
+					}
 				}
+
+				s.Hio_Close();
 
 				if (ret < 0)
 					goto Err;
