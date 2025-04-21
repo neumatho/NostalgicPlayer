@@ -1253,6 +1253,14 @@
             <uap:DisplayName>Real Tracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="liqfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-liq">.liq</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Liquid Tracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

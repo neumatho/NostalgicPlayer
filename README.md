@@ -120,6 +120,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | JamCracker | .jam | | JamCracker |
 | Kefrens Sound Machine | .kms | ProWizard | ModTracker |
 | Laxity Tracker | .lax / .unic2 | ProWizard | ModTracker |
+| Liquid Tracker NO | .liq | | Xmp |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
 | MED 1.12 | .med | | MED |
 | MED 2.00 | .med | | MED |
