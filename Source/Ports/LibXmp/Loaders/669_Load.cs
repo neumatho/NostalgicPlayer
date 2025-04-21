@@ -26,70 +26,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region C669_File_Header
 		private class C669_File_Header
 		{
-			/// <summary>
-			/// 'if' = standard (Composer), 'JN'=extended (Unis)
-			/// </summary>
-			public uint8[] Marker = new uint8[2];
-
-			/// <summary>
-			/// Song message
-			/// </summary>
-			public uint8[] Message = new uint8[108];
-
-			/// <summary>
-			/// Number of samples (0-64)
-			/// </summary>
-			public uint8 Nos;
-
-			/// <summary>
-			/// Number of patterns (0-128)
-			/// </summary>
-			public uint8 Nop;
-
-			/// <summary>
-			/// Loop order number
-			/// </summary>
-			public uint8 Loop;
-
-			/// <summary>
-			/// Order list
-			/// </summary>
-			public uint8[] Order = new uint8[128];
-
-			/// <summary>
-			/// Tempo list for patterns
-			/// </summary>
-			public uint8[] Speed = new uint8[128];
-
-			/// <summary>
-			/// Break list for patterns
-			/// </summary>
-			public uint8[] PBrk = new uint8[128];
+			public readonly uint8[] Marker = new uint8[2];		// 'if' = standard (Composer), 'JN'=extended (Unis)
+			public readonly uint8[] Message = new uint8[108];	// Song message
+			public uint8 Nos;									// Number of samples (0-64)
+			public uint8 Nop;									// Number of patterns (0-128)
+			public uint8 Loop;									// Loop order number
+			public readonly uint8[] Order = new uint8[128];		// Order list
+			public readonly uint8[] Speed = new uint8[128];		// Tempo list for patterns
+			public readonly uint8[] PBrk = new uint8[128];		// Break list for patterns
 		}
 		#endregion
 
 		#region C669_Instrument_Header
 		private class C669_Instrument_Header
 		{
-			/// <summary>
-			/// ASCIIZ instrument name
-			/// </summary>
-			public uint8[] Name = new uint8[13];
-
-			/// <summary>
-			/// Instrument length
-			/// </summary>
-			public uint32 Length;
-
-			/// <summary>
-			/// Instrument loop start
-			/// </summary>
-			public uint32 Loop_Start;
-
-			/// <summary>
-			/// Instrument loop end
-			/// </summary>
-			public uint32 LoopEnd;
+			public readonly uint8[] Name = new uint8[13];		// ASCIIZ instrument name
+			public uint32 Length;								// Instrument length
+			public uint32 Loop_Start;							// Instrument loop start
+			public uint32 LoopEnd;								// Instrument loop end
 		}
 		#endregion
 

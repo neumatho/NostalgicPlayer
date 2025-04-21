@@ -112,334 +112,84 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region It_File_Header
 		private class It_File_Header
 		{
-			/// <summary>
-			/// 'IMPM'
-			/// </summary>
-			public uint32 Magic;
-
-			/// <summary>
-			/// ASCIIZ song name
-			/// </summary>
-			public uint8[] Name = new uint8[26];
-
-			/// <summary>
-			/// Pattern editor highlight
-			/// </summary>
-			public uint8 Hilite_Min;
-
-			/// <summary>
-			/// Pattern editor highlight
-			/// </summary>
-			public uint8 Hilite_Maj;
-
-			/// <summary>
-			/// Number of orders (must be even)
-			/// </summary>
-			public uint16 OrdNum;
-
-			/// <summary>
-			/// Number of instruments
-			/// </summary>
-			public uint16 InsNum;
-
-			/// <summary>
-			/// Number of samples
-			/// </summary>
-			public uint16 SmpNum;
-
-			/// <summary>
-			/// Number of patterns
-			/// </summary>
-			public uint16 PatNum;
-
-			/// <summary>
-			/// Tracker ID and version
-			/// </summary>
-			public uint16 Cwt;
-
-			/// <summary>
-			/// Format version
-			/// </summary>
-			public uint16 Cmwt;
-
-			/// <summary>
-			/// Flags
-			/// </summary>
-			public It_Flag Flags;
-
-			/// <summary>
-			/// More flags
-			/// </summary>
-			public It_Special Special;
-
-			/// <summary>
-			/// Global volume
-			/// </summary>
-			public uint8 Gv;
-
-			/// <summary>
-			/// Master volume
-			/// </summary>
-			public uint8 Mv;
-
-			/// <summary>
-			/// Initial speed
-			/// </summary>
-			public uint8 Is;
-
-			/// <summary>
-			/// Initial tempo
-			/// </summary>
-			public uint8 It;
-
-			/// <summary>
-			/// Panning separation
-			/// </summary>
-			public uint8 Sep;
-
-			/// <summary>
-			/// Pitch wheel depth
-			/// </summary>
-			public uint8 Pwd;
-
-			/// <summary>
-			/// Message length
-			/// </summary>
-			public uint16 MsgLen;
-
-			/// <summary>
-			/// Message offset
-			/// </summary>
-			public uint32 MsgOfs;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint32 Rsvd;
-
-			/// <summary>
-			/// Channel pan settings
-			/// </summary>
-			public uint8[] ChPan = new uint8[64];
-
-			/// <summary>
-			/// Channel volume settings
-			/// </summary>
-			public uint8[] ChVol = new uint8[64];
+			public uint32 Magic;								// 'IMPM'
+			public readonly uint8[] Name = new uint8[26];		// ASCIIZ song name
+			public uint8 Hilite_Min;							// Pattern editor highlight
+			public uint8 Hilite_Maj;							// Pattern editor highlight
+			public uint16 OrdNum;								// Number of orders (must be even)
+			public uint16 InsNum;								// Number of instruments
+			public uint16 SmpNum;								// Number of samples
+			public uint16 PatNum;								// Number of patterns
+			public uint16 Cwt;									// Tracker ID and version
+			public uint16 Cmwt;									// Format version
+			public It_Flag Flags;								// Flags
+			public It_Special Special;							// More flags
+			public uint8 Gv;									// Global volume
+			public uint8 Mv;									// Master volume
+			public uint8 Is;									// Initial speed
+			public uint8 It;									// Initial tempo
+			public uint8 Sep;									// Panning separation
+			public uint8 Pwd;									// Pitch wheel depth
+			public uint16 MsgLen;								// Message length
+			public uint32 MsgOfs;								// Message offset
+			public uint32 Rsvd;									// Reserved
+			public readonly uint8[] ChPan = new uint8[64];		// Channel pan settings
+			public readonly uint8[] ChVol = new uint8[64];		// Channel volume settings
 		}
 		#endregion
 
 		#region It_Instrument1_Header
 		private class It_Instrument1_Header
 		{
-			/// <summary>
-			/// 'IMPI'
-			/// </summary>
-			public uint32 Magic;
-
-			/// <summary>
-			/// DOS file name
-			/// </summary>
-			public uint8[] DosName = new uint8[12];
-
-			/// <summary>
-			/// Always zero
-			/// </summary>
-			public uint8 Zero;
-
-			/// <summary>
-			/// Instrument flags
-			/// </summary>
-			public It_Env_Flag Flags;
-
-			/// <summary>
-			/// Volume loop start
-			/// </summary>
-			public uint8 Vls;
-
-			/// <summary>
-			/// Volume loop end
-			/// </summary>
-			public uint8 Vle;
-
-			/// <summary>
-			/// Sustain loop start
-			/// </summary>
-			public uint8 Sls;
-
-			/// <summary>
-			/// Sustain loop end
-			/// </summary>
-			public uint8 Sle;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint16 Rsvd1;
-
-			/// <summary>
-			/// Fadeout (release)
-			/// </summary>
-			public uint16 FadeOut;
-
-			/// <summary>
-			/// New note action
-			/// </summary>
-			public uint8 Nna;
-
-			/// <summary>
-			/// Duplicate note check
-			/// </summary>
-			public uint8 Dnc;
-
-			/// <summary>
-			/// Tracker version
-			/// </summary>
-			public uint16 TrkVers;
-
-			/// <summary>
-			/// Number of samples
-			/// </summary>
-			public uint8 Nos;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8 Rsvd2;
-
-			/// <summary>
-			/// ASCIIZ instrument name
-			/// </summary>
-			public uint8[] Name = new uint8[26];
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8[] Rsvd3 = new uint8[6];
-
-			public uint8[] Keys = new uint8[240];
-			public uint8[] EPoint = new uint8[200];
-			public uint8[] ENode = new uint8[50];
+			public uint32 Magic;								// 'IMPI'
+			public readonly uint8[] DosName = new uint8[12];	// DOS file name
+			public uint8 Zero;									// Always zero
+			public It_Env_Flag Flags;							// Instrument flags
+			public uint8 Vls;									// Volume loop start
+			public uint8 Vle;									// Volume loop end
+			public uint8 Sls;									// Sustain loop start
+			public uint8 Sle;									// Sustain loop end
+			public uint16 Rsvd1;								// Reserved
+			public uint16 FadeOut;								// Fadeout (release)
+			public uint8 Nna;									// New note action
+			public uint8 Dnc;									// Duplicate note check
+			public uint16 TrkVers;								// Tracker version
+			public uint8 Nos;									// Number of samples
+			public uint8 Rsvd2;									// Reserved
+			public readonly uint8[] Name = new uint8[26];		// ASCIIZ instrument name
+			public readonly uint8[] Rsvd3 = new uint8[6];		// Reserved
+			public readonly uint8[] Keys = new uint8[240];
+			public readonly uint8[] EPoint = new uint8[200];
+			public readonly uint8[] ENode = new uint8[50];
 		}
 		#endregion
 
 		#region It_Instrument2_Header
 		private class It_Instrument2_Header
 		{
-			/// <summary>
-			/// 'IMPI'
-			/// </summary>
-			public uint32 Magic;
-
-			/// <summary>
-			/// DOS file name
-			/// </summary>
-			public uint8[] DosName = new uint8[12];
-
-			/// <summary>
-			/// Always zero
-			/// </summary>
-			public uint8 Zero;
-
-			/// <summary>
-			/// New note action
-			/// </summary>
-			public uint8 Nna;
-
-			/// <summary>
-			/// Duplicate check type
-			/// </summary>
-			public uint8 Dct;
-
-			/// <summary>
-			/// Duplicate check action
-			/// </summary>
-			public uint8 Dca;
-
-			/// <summary>
-			/// 
-			/// </summary>
+			public uint32 Magic;								// 'IMPI'
+			public readonly uint8[] DosName = new uint8[12];	// DOS file name
+			public uint8 Zero;									// Always zero
+			public uint8 Nna;									// New note action
+			public uint8 Dct;									// Duplicate check type
+			public uint8 Dca;									// Duplicate check action
 			public uint16 FadeOut;
-
-			/// <summary>
-			/// Pitch-pan separation
-			/// </summary>
-			public uint8 Pps;
-
-			/// <summary>
-			/// Pitch-pan center
-			/// </summary>
-			public uint8 Ppc;
-
-			/// <summary>
-			/// Global volume
-			/// </summary>
-			public uint8 Gbv;
-
-			/// <summary>
-			/// Default pan
-			/// </summary>
-			public uint8 Dfp;
-
-			/// <summary>
-			/// Random volume variation
-			/// </summary>
-			public uint8 Rv;
-
-			/// <summary>
-			/// Random pan variation
-			/// </summary>
-			public uint8 Rp;
-
-			/// <summary>
-			/// Not used: Tracked version
-			/// </summary>
-			public uint16 TrkVers;
-
-			/// <summary>
-			/// Not used: Number of samples
-			/// </summary>
-			public uint8 Nos;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8 Rsvd1;
-
-			/// <summary>
-			/// ASCIIZ instrument name
-			/// </summary>
-			public uint8[] Name = new uint8[26];
-
-			/// <summary>
-			/// Initial filter cutoff
-			/// </summary>
-			public uint8 Ifc;
-
-			/// <summary>
-			/// Initial filter resonance
-			/// </summary>
-			public uint8 Ifr;
-
-			/// <summary>
-			/// MIDI channel
-			/// </summary>
-			public uint8 Mch;
-
-			/// <summary>
-			/// MIDI program
-			/// </summary>
-			public uint8 Mpr;
-
-			/// <summary>
-			/// MIDI bank
-			/// </summary>
-			public uint16 Mbnk;
-
-			/// <summary>
-			/// 
-			/// </summary>
-			public uint8[] Keys = new uint8[240];
+			public uint8 Pps;									// Pitch-pan separation
+			public uint8 Ppc;									// Pitch-pan center
+			public uint8 Gbv;									// Global volume
+			public uint8 Dfp;									// Default pan
+			public uint8 Rv;									// Random volume variation
+			public uint8 Rp;									// Random pan variation
+			public uint16 TrkVers;								// Not used: Tracked version
+			public uint8 Nos;									// Not used: Number of samples
+			public uint8 Rsvd1;									// Reserved
+			public readonly uint8[] Name = new uint8[26];		// ASCIIZ instrument name
+			public uint8 Ifc;									// Initial filter cutoff
+			public uint8 Ifr;									// Initial filter resonance
+			public uint8 Mch;									// MIDI channel
+			public uint8 Mpr;									// MIDI program
+			public uint16 Mbnk;									// MIDI bank
+			public readonly uint8[] Keys = new uint8[240];
 		}
 		#endregion
 
@@ -454,37 +204,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region It_Envelope
 		private class It_Envelope
 		{
-			/// <summary>
-			/// Flags
-			/// </summary>
-			public It_Env_Flag Flg;
-
-			/// <summary>
-			/// Number of node points
-			/// </summary>
-			public uint8 Num;
-
-			/// <summary>
-			/// Loop beginning
-			/// </summary>
-			public uint8 Lpb;
-
-			/// <summary>
-			/// Loop end
-			/// </summary>
-			public uint8 Lpe;
-
-			/// <summary>
-			/// Sustain loop beginning
-			/// </summary>
-			public uint8 Slb;
-
-			/// <summary>
-			/// Sustain loop end
-			/// </summary>
-			public uint8 Sle;
-
-			public It_Envelope_Node[] Node = ArrayHelper.InitializeArray<It_Envelope_Node>(25);
+			public It_Env_Flag Flg;								// Flags
+			public uint8 Num;									// Number of node points
+			public uint8 Lpb;									// Loop beginning
+			public uint8 Lpe;									// Loop end
+			public uint8 Slb;									// Sustain loop beginning
+			public uint8 Sle;									// Sustain loop end
+			public readonly It_Envelope_Node[] Node = ArrayHelper.InitializeArray<It_Envelope_Node>(25);
 			public uint8 Unused;
 		}
 		#endregion
@@ -492,105 +218,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region It_Sample_Header
 		private class It_Sample_Header
 		{
-			/// <summary>
-			/// 'IMPS'
-			/// </summary>
-			public uint32 Magic;
-
-			/// <summary>
-			/// DOS file name
-			/// </summary>
-			public uint8[] DosName = new uint8[12];
-
-			/// <summary>
-			/// Always zero
-			/// </summary>
-			public uint8 Zero;
-
-			/// <summary>
-			/// Global volume for instrument
-			/// </summary>
-			public uint8 Gvl;
-
-			/// <summary>
-			/// Sample flags
-			/// </summary>
-			public It_Smp_Flag Flags;
-
-			/// <summary>
-			/// Volume
-			/// </summary>
-			public uint8 Vol;
-
-			/// <summary>
-			/// ASCIIZ instrument name
-			/// </summary>
-			public uint8[] Name = new uint8[26];
-
-			/// <summary>
-			/// Sample flags
-			/// </summary>
-			public It_Cvt_Flag Convert;
-
-			/// <summary>
-			/// Default pan
-			/// </summary>
-			public uint8 Dfp;
-
-			/// <summary>
-			/// Length
-			/// </summary>
-			public uint32 Length;
-
-			/// <summary>
-			/// Loop begin
-			/// </summary>
-			public uint32 LoopBeg;
-
-			/// <summary>
-			/// Loop end
-			/// </summary>
-			public uint32 LoopEnd;
-
-			/// <summary>
-			/// C 5 speed
-			/// </summary>
-			public uint32 C5Spd;
-
-			/// <summary>
-			/// SusLoop begin
-			/// </summary>
-			public uint32 SLoopBeg;
-
-			/// <summary>
-			/// SusLoop end
-			/// </summary>
-			public uint32 SLoopEnd;
-
-			/// <summary>
-			/// Sample pointer
-			/// </summary>
-			public uint32 Sample_Ptr;
-
-			/// <summary>
-			/// Vibrato speed
-			/// </summary>
-			public uint8 Vis;
-
-			/// <summary>
-			/// Vibrato depth
-			/// </summary>
-			public uint8 Vid;
-
-			/// <summary>
-			/// Vibrato rate
-			/// </summary>
-			public uint8 Vir;
-
-			/// <summary>
-			/// Vibrato waveform
-			/// </summary>
-			public uint8 Vit;
+			public uint32 Magic;								// 'IMPS'
+			public readonly uint8[] DosName = new uint8[12];	// DOS file name
+			public uint8 Zero;									// Always zero
+			public uint8 Gvl;									// Global volume for instrument
+			public It_Smp_Flag Flags;							// Sample flags
+			public uint8 Vol;									// Volume
+			public readonly uint8[] Name = new uint8[26];		// ASCIIZ instrument name
+			public It_Cvt_Flag Convert;							// Sample flags
+			public uint8 Dfp;									// Default pan
+			public uint32 Length;								// Length
+			public uint32 LoopBeg;								// Loop begin
+			public uint32 LoopEnd;								// Loop end
+			public uint32 C5Spd;								// C 5 speed
+			public uint32 SLoopBeg;								// SusLoop begin
+			public uint32 SLoopEnd;								// SusLoop end
+			public uint32 Sample_Ptr;							// Sample pointer
+			public uint8 Vis;									// Vibrato speed
+			public uint8 Vid;									// Vibrato depth
+			public uint8 Vir;									// Vibrato rate
+			public uint8 Vit;									// Vibrato waveform
 		}
 		#endregion
 
@@ -674,7 +321,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new It_Load(libXmp);
 		}

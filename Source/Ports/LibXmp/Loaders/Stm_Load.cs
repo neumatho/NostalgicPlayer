@@ -27,18 +27,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Stm_Instrument_Header
 		private class Stm_Instrument_Header
 		{
-			public uint8[] Name = new uint8[12];		// ASCIIZ instrument name
-			public uint8 Id;							// Id=0
-			public uint8 IDisk;							// Instrument disk
-			public uint16 Rsvd1;						// Reserved
-			public uint16 Length;						// Sample length
-			public uint16 LoopBeg;						// Loop begin
-			public uint16 LoopEnd;						// Loop end
-			public uint8 Volume;						// Playback volume
-			public uint8 Rsvd2;							// Reserved
-			public uint16 C2Spd;						// C4 speed
-			public uint32 Rsvd3;						// Reserved
-			public uint16 ParaLen;						// Length in paragraphs
+			public readonly uint8[] Name = new uint8[12];		// ASCIIZ instrument name
+			public uint8 Id;									// Id=0
+			public uint8 IDisk;									// Instrument disk
+			public uint16 Rsvd1;								// Reserved
+			public uint16 Length;								// Sample length
+			public uint16 LoopBeg;								// Loop begin
+			public uint16 LoopEnd;								// Loop end
+			public uint8 Volume;								// Playback volume
+			public uint8 Rsvd2;									// Reserved
+			public uint16 C2Spd;								// C4 speed
+			public uint32 Rsvd3;								// Reserved
+			public uint16 ParaLen;								// Length in paragraphs
 		}
 		#endregion
 
@@ -48,42 +48,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		private class Stm_File_SubHeader_V1
 		{
-			public uint16 InsNum;						// Number of instruments
-			public uint16 OrdNum;						// Number of orders
-			public uint16 PatNum;						// Number of patterns
-			public uint16 SRate;						// Sample rate?
-			public uint8 Tempo;							// Playback tempo
-			public uint8 Channels;						// Number of channels
-			public uint16 PSize;						// Pattern size
-			public uint16 Rsvd2;						// Reserved
-			public uint16 Skip;							// Bytes to skip
+			public uint16 InsNum;								// Number of instruments
+			public uint16 OrdNum;								// Number of orders
+			public uint16 PatNum;								// Number of patterns
+			public uint16 SRate;								// Sample rate?
+			public uint8 Tempo;									// Playback tempo
+			public uint8 Channels;								// Number of channels
+			public uint16 PSize;								// Pattern size
+			public uint16 Rsvd2;								// Reserved
+			public uint16 Skip;									// Bytes to skip
 		}
 		#endregion
 
 		#region Stm_File_SubHeader_V2
 		private class Stm_File_SubHeader_V2
 		{
-			public uint8 Tempo;							// Playback tempo
-			public uint8 Patterns;						// Number of patterns
-			public uint8 GVol;							// Global volume
-			public uint8[] Rsvd2 = new uint8[13];		// Reserved
+			public uint8 Tempo;									// Playback tempo
+			public uint8 Patterns;								// Number of patterns
+			public uint8 GVol;									// Global volume
+			public readonly uint8[] Rsvd2 = new uint8[13];		// Reserved
 		}
 		#endregion
 
 		#region Stm_File_Header
 		private class Stm_File_Header
 		{
-			public uint8[] Name = new uint8[20];		// ASCIIZ song name
-			public uint8[] Magic = new uint8[8];		// '!Scream!'
-			public uint8 Rsvd1;							// '\x1a'
-			public uint8 Type;							// 1=song, 2=module
-			public uint8 VerMaj;						// Major version number
-			public uint8 VerMin;						// Minor version number
+			public readonly uint8[] Name = new uint8[20];		// ASCIIZ song name
+			public readonly uint8[] Magic = new uint8[8];		// '!Scream!'
+			public uint8 Rsvd1;									// '\x1a'
+			public uint8 Type;									// 1=song, 2=module
+			public uint8 VerMaj;								// Major version number
+			public uint8 VerMin;								// Minor version number
 			public (
 				Stm_File_SubHeader_V1 V1,
 				Stm_File_SubHeader_V2 V2
 			) Sub;
-			public Stm_Instrument_Header[] Ins = ArrayHelper.InitializeArray<Stm_Instrument_Header>(32);
+			public readonly Stm_Instrument_Header[] Ins = ArrayHelper.InitializeArray<Stm_Instrument_Header>(32);
 		}
 		#endregion
 
@@ -152,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Stm_Load(libXmp);
 		}

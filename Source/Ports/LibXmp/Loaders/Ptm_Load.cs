@@ -27,44 +27,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Ptm_File_Header
 		private class Ptm_File_Header
 		{
-			public uint8[] Name = new uint8[28];		// Song name
-			public uint8 DosEof;						// 0x1a
-			public uint8 VerMin;                        // Minor version
-			public uint8 VerMaj;                        // Major version
-			public uint8 Rsvd1;                         // Reserved
-			public uint16 OrdNum;                       // Number of orders (must be even)
-			public uint16 InsNum;						// Number of instruments
-			public uint16 PatNum;                       // Number of patterns
-			public uint16 ChnNum;                       // Number of channels
-			public uint16 Flags;                        // Flags (set to 0)
-			public uint16 Rsvd2;                        // Reserved
-			public uint32 Magic;                        // 'PTMF'
-			public uint8[] Rsvd3 = new uint8[16];       // Reserved
-			public uint8[] ChSet = new uint8[32];       // Channel settings
-			public uint8[] Order = new uint8[256];		// Orders
-			public uint16[] PatSeg = new uint16[128];
+			public readonly uint8[] Name = new uint8[28];		// Song name
+			public uint8 DosEof;								// 0x1a
+			public uint8 VerMin;								// Minor version
+			public uint8 VerMaj;								// Major version
+			public uint8 Rsvd1;									// Reserved
+			public uint16 OrdNum;								// Number of orders (must be even)
+			public uint16 InsNum;								// Number of instruments
+			public uint16 PatNum;								// Number of patterns
+			public uint16 ChnNum;								// Number of channels
+			public uint16 Flags;								// Flags (set to 0)
+			public uint16 Rsvd2;								// Reserved
+			public uint32 Magic;								// 'PTMF'
+			public readonly uint8[] Rsvd3 = new uint8[16];		// Reserved
+			public readonly uint8[] ChSet = new uint8[32];		// Channel settings
+			public readonly uint8[] Order = new uint8[256];		// Orders
+			public readonly uint16[] PatSeg = new uint16[128];
 		}
 		#endregion
 
 		#region Ptm_Instrument_Header
 		private class Ptm_Instrument_Header
 		{
-			public uint8 Type;                          // Sample type
-			public uint8[] DosName = new uint8[12];     // DOS file name
-			public uint8 Vol;                           // Volume
-			public uint16 C4Spd;                        // C4 speed
-			public uint16 SmpSeg;                       // Sample segment (not used)
-			public uint32 SmpOfs;                       // Sample offset
-			public uint32 Length;                       // Length
-			public uint32 LoopBeg;                      // Loop begin
-			public uint32 LoopEnd;                      // Loop end
-			public uint32 GusBeg;                       // GUS begin address
-			public uint32 GusLps;                       // GUS loop start address
-			public uint32 GusLpe;                       // GUS loop end address
-			public uint8 GusFlg;                        // GUS loop flag
-			public uint8 Rsvd1;                         // Reserved
-			public uint8[] Name = new uint8[28];        // Instrument name
-			public uint32 Magic;                        // 'PTMS'
+			public uint8 Type;									// Sample type
+			public readonly uint8[] DosName = new uint8[12];	// DOS file name
+			public uint8 Vol;									// Volume
+			public uint16 C4Spd;								// C4 speed
+			public uint16 SmpSeg;								// Sample segment (not used)
+			public uint32 SmpOfs;								// Sample offset
+			public uint32 Length;								// Length
+			public uint32 LoopBeg;								// Loop begin
+			public uint32 LoopEnd;								// Loop end
+			public uint32 GusBeg;								// GUS begin address
+			public uint32 GusLps;								// GUS loop start address
+			public uint32 GusLpe;								// GUS loop end address
+			public uint8 GusFlg;								// GUS loop flag
+			public uint8 Rsvd1;									// Reserved
+			public readonly uint8[] Name = new uint8[28];		// Instrument name
+			public uint32 Magic;								// 'PTMS'
 		}
 		#endregion
 
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		];
 		#endregion
 
-		private static uint32 Magic_PTMF = Common.Magic4('P', 'T', 'M', 'F');
+		private static readonly uint32 Magic_PTMF = Common.Magic4('P', 'T', 'M', 'F');
 
 		private const uint8 Ptm_Ch_Mask = 0x1f;
 		private const uint8 Ptm_Ni_Follow = 0x20;
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Ptm_Load(libXmp);
 		}

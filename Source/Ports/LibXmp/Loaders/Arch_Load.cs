@@ -36,8 +36,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			public c_int Max_Pat;
 			public bool Has_MVox;
 			public bool Has_PNum;
-			public uint8[] Ster = new uint8[8];
-			public uint8[] Rows = new uint8[64];
+			public readonly uint8[] Ster = new uint8[8];
+			public readonly uint8[] Rows = new uint8[64];
 		}
 		#endregion
 

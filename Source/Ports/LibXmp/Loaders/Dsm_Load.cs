@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Dsm_Song
 		private class Dsm_Song
 		{
-			public uint8[] SongName = new uint8[28];
+			public readonly uint8[] SongName = new uint8[28];
 			public uint16 Version;
 			public uint16 Flags;
 			public uint32 Reserved2;
@@ -39,15 +39,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			public uint8 MasterVol;
 			public uint8 Speed;
 			public uint8 Bpm;
-			public uint8[] PanPos = new uint8[MaxChan];
-			public uint8[] Orders = new uint8[MaxOrders];
+			public readonly uint8[] PanPos = new uint8[MaxChan];
+			public readonly uint8[] Orders = new uint8[MaxOrders];
 		}
 		#endregion
 
 		#region Dsm_Inst
 		private class Dsm_Inst
 		{
-			public uint8[] FileName = new uint8[13];
+			public readonly uint8[] FileName = new uint8[13];
 			public uint16 Flags;
 			public uint8 Volume;
 			public uint32 Length;
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			public uint32 Reserved1;
 			public uint16 C2Spd;
 			public uint16 Period;
-			public uint8[] SampleName = new uint8[28];
+			public readonly uint8[] SampleName = new uint8[28];
 		}
 		#endregion
 
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Dsm_Load(libXmp);
 		}

@@ -27,24 +27,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Mod_Header
 		private class Mod_Header
 		{
-			public uint8[] Name = new uint8[20];
-			public Mod_Instrument[] Ins = ArrayHelper.InitializeArray<Mod_Instrument>(31);
+			public readonly uint8[] Name = new uint8[20];
+			public readonly Mod_Instrument[] Ins = ArrayHelper.InitializeArray<Mod_Instrument>(31);
 			public uint8 Len;
-			public uint8 Restart;						// Number of patterns in Soundtracker, restart in Noisetracker/Startrekker, 0x7f in Protracker
-			public uint8[] Order = new uint8[128];
-			public uint8[] Magic = new uint8[4];
+			public uint8 Restart;								// Number of patterns in Soundtracker, restart in Noisetracker/Startrekker, 0x7f in Protracker
+			public readonly uint8[] Order = new uint8[128];
+			public readonly uint8[] Magic = new uint8[4];
 		}
 		#endregion
 
 		#region Mod_Instrument
 		private class Mod_Instrument
 		{
-			public uint8[] Name = new uint8[22];		// Instrument name
-			public uint16 Size;							// Sample length in 16-bit words
-			public int8 FineTune;						// Finetune (signed nibble)
-			public int8 Volume;							// Linear playback volume
-			public uint16 Loop_Start;					// Loop start in 16-bit words
-			public uint16 Loop_Size;					// Loop length in 16-bit words
+			public readonly uint8[] Name = new uint8[22];		// Instrument name
+			public uint16 Size;									// Sample length in 16-bit words
+			public int8 FineTune;								// Finetune (signed nibble)
+			public int8 Volume;									// Linear playback volume
+			public uint16 Loop_Start;							// Loop start in 16-bit words
+			public uint16 Loop_Size;							// Loop length in 16-bit words
 		}
 		#endregion
 

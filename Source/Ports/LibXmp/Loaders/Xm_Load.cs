@@ -64,285 +64,82 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Xm_File_Header
 		private class Xm_File_Header
 		{
-			/// <summary>
-			/// ID text: "Extended module: "
-			/// </summary>
-			public uint8[] Id = new uint8[17];
-
-			/// <summary>
-			/// Module name, padded with zeros
-			/// </summary>
-			public uint8[] Name = new uint8[20];
-
-			/// <summary>
-			/// 0x1a
-			/// </summary>
-			public uint8 DosEof;
-
-			/// <summary>
-			/// Tracker name
-			/// </summary>
-			public uint8[] Tracker = new uint8[20];
-
-			/// <summary>
-			/// Version number, minor-major
-			/// </summary>
-			public uint16 Version;
-
-			/// <summary>
-			/// Header size
-			/// </summary>
-			public uint32 HeaderSz;
-
-			/// <summary>
-			/// Song length (in pattern order table)
-			/// </summary>
-			public uint16 SongLen;
-
-			/// <summary>
-			/// Restart position
-			/// </summary>
-			public uint16 Restart;
-
-			/// <summary>
-			/// Number of channels (2,4,6,8,10,...,32)
-			/// </summary>
-			public uint16 Channels;
-
-			/// <summary>
-			/// Number of patterns (max 256)
-			/// </summary>
-			public uint16 Patterns;
-
-			/// <summary>
-			/// Number of instruments (max 128)
-			/// </summary>
-			public uint16 Instruments;
-
-			/// <summary>
-			/// Bit 0: 0=Amiga freq table, 1=Linear
-			/// </summary>
-			public Xm_Flags Flags;
-
-			/// <summary>
-			/// Default tempo
-			/// </summary>
-			public uint16 Tempo;
-
-			/// <summary>
-			/// Default BPM
-			/// </summary>
-			public uint16 Bpm;
-
-			/// <summary>
-			/// Pattern order table
-			/// </summary>
-			public uint8[] Order = new uint8[256];
+			public readonly uint8[] Id = new uint8[17];			// ID text: "Extended module: "
+			public readonly uint8[] Name = new uint8[20];		// Module name, padded with zeros
+			public uint8 DosEof;								// 0x1a
+			public readonly uint8[] Tracker = new uint8[20];	// Tracker name
+			public uint16 Version;								// Version number, minor-major
+			public uint32 HeaderSz;								// Header size
+			public uint16 SongLen;								// Song length (in pattern order table)
+			public uint16 Restart;								// Restart position
+			public uint16 Channels;								// Number of channels (2,4,6,8,10,...,32)
+			public uint16 Patterns;								// Number of patterns (max 256)
+			public uint16 Instruments;							// Number of instruments (max 128)
+			public Xm_Flags Flags;								// Bit 0: 0=Amiga freq table, 1=Linear
+			public uint16 Tempo;								// Default tempo
+			public uint16 Bpm;									// Default BPM
+			public readonly uint8[] Order = new uint8[256];		// Pattern order table
 		}
 		#endregion
 
 		#region Xm_Pattern_Header
 		private class Xm_Pattern_Header
 		{
-			/// <summary>
-			/// Pattern header length
-			/// </summary>
-			public uint32 Length;
-
-			/// <summary>
-			/// Packing type (always 0)
-			/// </summary>
-			public uint8 Packing;
-
-			/// <summary>
-			/// Number of rows in pattern (1..256)
-			/// </summary>
-			public uint16 Rows;
-
-			/// <summary>
-			/// Packed patterndata size
-			/// </summary>
-			public uint16 DataSize;
+			public uint32 Length;								// Pattern header length
+			public uint8 Packing;								// Packing type (always 0)
+			public uint16 Rows;									// Number of rows in pattern (1..256)
+			public uint16 DataSize;								// Packed patterndata size
 		}
 		#endregion
 
 		#region Xm_Instrument_Header
 		private class Xm_Instrument_Header
 		{
-			/// <summary>
-			/// Instrument size
-			/// </summary>
-			public uint32 Size;
-
-			/// <summary>
-			/// Instrument name
-			/// </summary>
-			public uint8[] Name = new uint8[22];
-
-			/// <summary>
-			/// Instrument type (always 0)
-			/// </summary>
-			public uint8 Type;
-
-			/// <summary>
-			/// Number of samples in instrument
-			/// </summary>
-			public uint16 Samples;
-
-			/// <summary>
-			/// Sample header size
-			/// </summary>
-			public uint32 Sh_Size;
+			public uint32 Size;									// Instrument size
+			public readonly uint8[] Name = new uint8[22];		// Instrument name
+			public uint8 Type;									// Instrument type (always 0)
+			public uint16 Samples;								// Number of samples in instrument
+			public uint32 Sh_Size;								// Sample header size
 		}
 		#endregion
 
 		#region Xm_Instrument
 		private class Xm_Instrument
 		{
-			/// <summary>
-			/// Sample number for all notes
-			/// </summary>
-			public uint8[] Sample = new uint8[96];
-
-			/// <summary>
-			/// Points for volume envelope
-			/// </summary>
-			public uint16[] V_Env = new uint16[24];
-
-			/// <summary>
-			/// Points for panning envelope
-			/// </summary>
-			public uint16[] P_Env = new uint16[24];
-
-			/// <summary>
-			/// Number of volume points
-			/// </summary>
-			public uint8 V_Pts;
-
-			/// <summary>
-			/// Number of panning points
-			/// </summary>
-			public uint8 P_Pts;
-
-			/// <summary>
-			/// Volume sustain point
-			/// </summary>
-			public uint8 V_Sus;
-
-			/// <summary>
-			/// Volume loop start point
-			/// </summary>
-			public uint8 V_Start;
-
-			/// <summary>
-			/// Volume loop end point
-			/// </summary>
-			public uint8 V_End;
-
-			/// <summary>
-			/// Panning sustain point
-			/// </summary>
-			public uint8 P_Sus;
-
-			/// <summary>
-			/// Panning loop start point
-			/// </summary>
-			public uint8 P_Start;
-
-			/// <summary>
-			/// Panning loop end point
-			/// </summary>
-			public uint8 P_End;
-
-			/// <summary>
-			/// Bit 0: On; 1: Sustain; 2: Loop
-			/// </summary>
-			public Xm_Envelope_Flag V_Type;
-
-			/// <summary>
-			/// Bit 0: On; 1: Sustain; 2: Loop
-			/// </summary>
-			public Xm_Envelope_Flag P_Type;
-
-			/// <summary>
-			/// Vibrato waveform
-			/// </summary>
-			public uint8 Y_Wave;
-
-			/// <summary>
-			/// Vibrato sweep
-			/// </summary>
-			public uint8 Y_Sweep;
-
-			/// <summary>
-			/// Vibrato depth
-			/// </summary>
-			public uint8 Y_Depth;
-
-			/// <summary>
-			/// Vibrato rate
-			/// </summary>
-			public uint8 Y_Rate;
-
-			/// <summary>
-			/// Volume fadeout
-			/// </summary>
-			public uint16 V_Fade;
+			public readonly uint8[] Sample = new uint8[96];		// Sample number for all notes
+			public readonly uint16[] V_Env = new uint16[24];	// Points for volume envelope
+			public readonly uint16[] P_Env = new uint16[24];	// Points for panning envelope
+			public uint8 V_Pts;									// Number of volume points
+			public uint8 P_Pts;									// Number of panning points
+			public uint8 V_Sus;									// Volume sustain point
+			public uint8 V_Start;								// Volume loop start point
+			public uint8 V_End;									// Volume loop end point
+			public uint8 P_Sus;									// Panning sustain point
+			public uint8 P_Start;								// Panning loop start point
+			public uint8 P_End;									// Panning loop end point
+			public Xm_Envelope_Flag V_Type;						// Bit 0: On; 1: Sustain; 2: Loop
+			public Xm_Envelope_Flag P_Type;						// Bit 0: On; 1: Sustain; 2: Loop
+			public uint8 Y_Wave;								// Vibrato waveform
+			public uint8 Y_Sweep;								// Vibrato sweep
+			public uint8 Y_Depth;								// Vibrato depth
+			public uint8 Y_Rate;								// Vibrato rate
+			public uint16 V_Fade;								// Volume fadeout
 		}
 		#endregion
 
 		#region Xm_Sample_Header
 		private class Xm_Sample_Header
 		{
-			/// <summary>
-			/// Sample length
-			/// </summary>
-			public uint32 Length;
-
-			/// <summary>
-			/// Sample loop start
-			/// </summary>
-			public uint32 Loop_Start;
-
-			/// <summary>
-			/// Sample loop length
-			/// </summary>
-			public uint32 Loop_Length;
-
-			/// <summary>
-			/// Volume
-			/// </summary>
-			public uint8 Volume;
-
-			/// <summary>
-			/// Finetune (signed byte -128..+127)
-			/// </summary>
-			public int8 FineTune;
-
-			/// <summary>
-			/// Flags
-			/// </summary>
-			public Xm_Sample_Flag Type;
-
-			/// <summary>
-			/// Panning (0-255)
-			/// </summary>
-			public uint8 Pan;
-
-			/// <summary>
-			/// Relative note number (signed byte)
-			/// </summary>
-			public int8 RelNote;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8 Reserved;
-
-			/// <summary>
-			/// Sample name
-			/// </summary>
-			public uint8[] Name = new uint8[22];
+			public uint32 Length;								// Sample length
+			public uint32 Loop_Start;							// Sample loop start
+			public uint32 Loop_Length;							// Sample loop length
+			public uint8 Volume;								// Volume
+			public int8 FineTune;								// Finetune (signed byte -128..+127)
+			public Xm_Sample_Flag Type;							// Flags
+			public uint8 Pan;									// Panning (0-255)
+			public int8 RelNote;								// Relative note number (signed byte)
+			public uint8 Reserved;								// Reserved
+			public readonly uint8[] Name = new uint8[22];		// Sample name
 		}
 		#endregion
 

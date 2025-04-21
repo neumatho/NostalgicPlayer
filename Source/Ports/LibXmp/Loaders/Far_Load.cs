@@ -27,41 +27,41 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Far_Header
 		private class Far_Header
 		{
-			public uint32 Magic;						// File magic: 'FAR\xfe'
-			public uint8[] Name = new uint8[40];		// Song name
-			public uint8[] CrLf = new uint8[3];			// 0x0d 0x0a 0x1a
-			public uint16 HeaderSize;					// Remaining header size in bytes
-			public uint8 Version;						// Version MSN=major, LSN=minor
-			public uint8[] Ch_On = new uint8[16];		// Channel on/off switches
-			public uint8[] Rsvd1 = new uint8[9];		// Current editing values
-			public uint8 Tempo;							// Default tempo
-			public uint8[] Pan = new uint8[16];			// Channel pan definitions
-			public uint8[] Rsvd2 = new uint8[4];		// Grid, mode (for editor)
-			public uint16 TextLen;						// Length of embedded text
+			public uint32 Magic;								// File magic: 'FAR\xfe'
+			public readonly uint8[] Name = new uint8[40];		// Song name
+			public readonly uint8[] CrLf = new uint8[3];		// 0x0d 0x0a 0x1a
+			public uint16 HeaderSize;							// Remaining header size in bytes
+			public uint8 Version;								// Version MSN=major, LSN=minor
+			public readonly uint8[] Ch_On = new uint8[16];		// Channel on/off switches
+			public readonly uint8[] Rsvd1 = new uint8[9];		// Current editing values
+			public uint8 Tempo;									// Default tempo
+			public readonly uint8[] Pan = new uint8[16];		// Channel pan definitions
+			public readonly uint8[] Rsvd2 = new uint8[4];		// Grid, mode (for editor)
+			public uint16 TextLen;								// Length of embedded text
 		}
 		#endregion
 
 		#region Far_Header2
 		private class Far_Header2
 		{
-			public uint8[] Order = new uint8[256];		// Orders
-			public uint8 Patterns;						// Number of stored patterns (?)
-			public uint8 SongLen;						// Song length in patterns
-			public uint8 Restart;						// Restart pos
-			public uint16[] PatSize = new uint16[256];	// Size of each pattern in bytes
+			public readonly uint8[] Order = new uint8[256];		// Orders
+			public uint8 Patterns;								// Number of stored patterns (?)
+			public uint8 SongLen;								// Song length in patterns
+			public uint8 Restart;								// Restart pos
+			public readonly uint16[] PatSize = new uint16[256];	// Size of each pattern in bytes
 		}
 		#endregion
 
 		#region Far_Instrument
 		private class Far_Instrument
 		{
-			public uint8[] Name = new uint8[32];		// Instrument name
-			public uint32 Length;						// Length of sample (up to 64Kb)
-			public uint8 FineTune;						// Finetune (unsupported)
-			public uint8 Volume;						// Volume (unsupported?)
-			public uint32 Loop_Start;					// Loop start
-			public uint32 LoopEnd;						// Loop end
-			public uint8 SampleType;					// 1=16 bit sample
+			public readonly uint8[] Name = new uint8[32];		// Instrument name
+			public uint32 Length;								// Length of sample (up to 64Kb)
+			public uint8 FineTune;								// Finetune (unsupported)
+			public uint8 Volume;								// Volume (unsupported?)
+			public uint32 Loop_Start;							// Loop start
+			public uint32 LoopEnd;								// Loop end
+			public uint8 SampleType;							// 1=16 bit sample
 			public uint8 LoopMode;
 		}
 		#endregion

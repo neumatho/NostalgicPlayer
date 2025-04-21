@@ -54,260 +54,67 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region S3M_File_Header
 		private class S3M_File_Header
 		{
-			/// <summary>
-			/// Song name
-			/// </summary>
-			public uint8[] Name = new uint8[28];
-
-			/// <summary>
-			/// 0x1a
-			/// </summary>
-			public uint8 DosEof;
-
-			/// <summary>
-			/// File type
-			/// </summary>
-			public uint8 Type;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8[] Rsvd1 = new uint8[2];
-
-			/// <summary>
-			/// Number of orders (must be even)
-			/// </summary>
-			public uint16 OrdNum;
-
-			/// <summary>
-			/// Number of instruments
-			/// </summary>
-			public uint16 InsNum;
-
-			/// <summary>
-			/// Number of patterns
-			/// </summary>
-			public uint16 PatNum;
-
-			/// <summary>
-			/// Flags
-			/// </summary>
-			public S3M_Flag Flags;
-
-			/// <summary>
-			/// Tracker ID and version
-			/// </summary>
-			public uint16 Version;
-
-			/// <summary>
-			/// File format information
-			/// </summary>
-			public uint16 Ffi;
-
-			/// <summary>
-			/// 'SCRM'
-			/// </summary>
-			public uint32 Magic;
-
-			/// <summary>
-			/// Global volume
-			/// </summary>
-			public uint8 Gv;
-
-			/// <summary>
-			/// Initial speed
-			/// </summary>
-			public uint8 Is;
-
-			/// <summary>
-			/// Initial tempo
-			/// </summary>
-			public uint8 It;
-
-			/// <summary>
-			/// Master volume
-			/// </summary>
-			public uint8 Mv;
-
-			/// <summary>
-			/// Ultra click removal
-			/// </summary>
-			public uint8 Uc;
-
-			/// <summary>
-			/// Default pan positions if 0xfc
-			/// </summary>
-			public uint8 Dp;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8[] Rsvd2 = new uint8[8];
-
-			/// <summary>
-			/// Ptr to special custom data
-			/// </summary>
-			public uint16 Special;
-
-			/// <summary>
-			/// Channel settings
-			/// </summary>
-			public uint8[] ChSet = new uint8[32];
+			public readonly uint8[] Name = new uint8[28];		// Song name
+			public uint8 DosEof;								// 0x1a
+			public uint8 Type;									// File type
+			public readonly uint8[] Rsvd1 = new uint8[2];		// Reserved
+			public uint16 OrdNum;								// Number of orders (must be even)
+			public uint16 InsNum;								// Number of instruments
+			public uint16 PatNum;								// Number of patterns
+			public S3M_Flag Flags;								// Flags
+			public uint16 Version;								// Tracker ID and version
+			public uint16 Ffi;									// File format information
+			public uint32 Magic;								// 'SCRM'
+			public uint8 Gv;									// Global volume
+			public uint8 Is;									// Initial speed
+			public uint8 It;									// Initial tempo
+			public uint8 Mv;									// Master volume
+			public uint8 Uc;									// Ultra click removal
+			public uint8 Dp;									// Default pan positions if 0xfc
+			public readonly uint8[] Rsvd2 = new uint8[8];		// Reserved
+			public uint16 Special;								// Ptr to special custom data
+			public readonly uint8[] ChSet = new uint8[32];		// Channel settings
 		}
 		#endregion
 
 		#region S3M_Instrument_Header
 		private class S3M_Instrument_Header
 		{
-			/// <summary>
-			/// DOS file name
-			/// </summary>
-			public uint8[] DosName = new uint8[12];
-
-			/// <summary>
-			/// High byte of sample pointer
-			/// </summary>
-			public uint8 MemSeg_Hi;
-
-			/// <summary>
-			/// Pointer to sample data
-			/// </summary>
-			public uint16 MemSeg;
-
-			/// <summary>
-			/// Length
-			/// </summary>
-			public uint32 Length;
-
-			/// <summary>
-			/// Loop begin
-			/// </summary>
-			public uint32 LoopBeg;
-
-			/// <summary>
-			/// Loop end
-			/// </summary>
-			public uint32 LoopEnd;
-
-			/// <summary>
-			/// Volume
-			/// </summary>
-			public uint8 Vol;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8 Rsvd1;
-
-			/// <summary>
-			/// Packing type (not used)
-			/// </summary>
-			public uint8 Pack;
-
-			/// <summary>
-			/// Loop/stereo/16 bit samples flags
-			/// </summary>
-			public S3M_Samp_Flag Flags;
-
-			/// <summary>
-			/// C 4 speed
-			/// </summary>
-			public uint16 C2Spd;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint16 Rsvd2;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8[] Rsvd3 = new uint8[4];
-
-			/// <summary>
-			/// Internal - GUS pointer
-			/// </summary>
-			public uint16 Int_Gp;
-
-			/// <summary>
-			/// Internal - SB pointer
-			/// </summary>
-			public uint16 Int_512;
-
-			/// <summary>
-			/// Internal - SB index
-			/// </summary>
-			public uint32 Int_Last;
-
-			/// <summary>
-			/// Instrument name
-			/// </summary>
-			public uint8[] Name = new uint8[28];
-
-			/// <summary>
-			/// 'SCRS'
-			/// </summary>
-			public uint32 Magic;
+			public readonly uint8[] DosName = new uint8[12];	// DOS file name
+			public uint8 MemSeg_Hi;								// High byte of sample pointer
+			public uint16 MemSeg;								// Pointer to sample data
+			public uint32 Length;								// Length
+			public uint32 LoopBeg;								// Loop begin
+			public uint32 LoopEnd;								// Loop end
+			public uint8 Vol;									// Volume
+			public uint8 Rsvd1;									// Reserved
+			public uint8 Pack;									// Packing type (not used)
+			public S3M_Samp_Flag Flags;							// Loop/stereo/16 bit samples flags
+			public uint16 C2Spd;								// C 4 speed
+			public uint16 Rsvd2;								// Reserved
+			public readonly uint8[] Rsvd3 = new uint8[4];		// Reserved
+			public uint16 Int_Gp;								// Internal - GUS pointer
+			public uint16 Int_512;								// Internal - SB pointer
+			public uint32 Int_Last;								// Internal - SB index
+			public readonly uint8[] Name = new uint8[28];		// Instrument name
+			public uint32 Magic;								// 'SCRS'
 		}
 		#endregion
 
 		#region S3M_Adlib_Header
 		private class S3M_Adlib_Header
 		{
-			/// <summary>
-			/// DOS file name
-			/// </summary>
-			public uint8[] DosName = new uint8[12];
-
-			/// <summary>
-			/// 0x00 0x00 0x00
-			/// </summary>
-			public uint8[] Rsvd1 = new uint8[3];
-
-			/// <summary>
-			/// Adlib registers
-			/// </summary>
-			public uint8[] Reg = new uint8[12];
-
-			/// <summary>
-			/// 
-			/// </summary>
+			public readonly uint8[] DosName = new uint8[12];	// DOS file name
+			public readonly uint8[] Rsvd1 = new uint8[3];		// 0x00 0x00 0x00
+			public readonly uint8[] Reg = new uint8[12];		// Adlib registers
 			public uint8 Vol;
-
-			/// <summary>
-			/// 
-			/// </summary>
 			public uint8 Dsk;
-
-			/// <summary>
-			/// 
-			/// </summary>
-			public uint8[] Rsvd2 = new uint8[2];
-
-			/// <summary>
-			/// C 4 speed
-			/// </summary>
-			public uint16 C2Spd;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint16 Rsvd3;
-
-			/// <summary>
-			/// Reserved
-			/// </summary>
-			public uint8[] Rsvd4 = new uint8[12];
-
-			/// <summary>
-			/// Instrument name
-			/// </summary>
-			public uint8[] Name = new uint8[28];
-
-			/// <summary>
-			/// 'SCRI'
-			/// </summary>
-			public uint32 Magic;
+			public readonly uint8[] Rsvd2 = new uint8[2];
+			public uint16 C2Spd;								// C 4 speed
+			public uint16 Rsvd3;								// Reserved
+			public readonly uint8[] Rsvd4 = new uint8[12];		// Reserved
+			public readonly uint8[] Name = new uint8[28];		// Instrument name
+			public uint32 Magic;								// 'SCRI'
 		}
 		#endregion
 
@@ -405,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new S3M_Load(libXmp);
 		}
