@@ -213,6 +213,20 @@ namespace Polycode.NostalgicPlayer.CKit
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int MemCmp(string compareString, CPointer<byte> ptr, int length)
+		{
+			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);
+			return MemCmp(strBuf, ptr, length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int StrCmp(CPointer<byte> ptr, string compareString)
 		{
 			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);

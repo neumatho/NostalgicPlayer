@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		public void LibXmp_Lfo_Update(Containers.Lfo.Lfo lfo)
 		{
 			lfo.Phase += lfo.Rate;
-			lfo.Phase %= WaveForm_Size;
+			lfo.Phase &= WaveForm_Size - 1;	// Rate may be negative, don't
 		}
 
 

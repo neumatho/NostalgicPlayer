@@ -26,6 +26,7 @@
 *.pp filter=lfs diff=lfs merge=lfs -text
 *.ptm filter=lfs diff=lfs merge=lfs -text
 *.raw filter=lfs diff=lfs merge=lfs -text
+*.rtm filter=lfs diff=lfs merge=lfs -text
 *.s3m filter=lfs diff=lfs merge=lfs -text
 *.stc filter=lfs diff=lfs merge=lfs -text
 *.stm filter=lfs diff=lfs merge=lfs -text

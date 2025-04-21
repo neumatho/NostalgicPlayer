@@ -401,7 +401,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			uint8[] tempBuf = new uint8[size * num];
 
 			size_t read = Hio_Read(tempBuf, size, num);
-			MemoryMarshal.Cast<uint8, int8>(tempBuf.AsSpan(0, (int)read)).CopyTo(buf.AsSpan());
+			MemoryMarshal.Cast<uint8, int8>(tempBuf.AsSpan(0, (int)(read * size))).CopyTo(buf.AsSpan());
 
 			return read;
 		}

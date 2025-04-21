@@ -1245,6 +1245,14 @@
             <uap:DisplayName>Digital Symphony</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="rtmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-rtm">.rtm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Real Tracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

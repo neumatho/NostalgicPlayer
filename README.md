@@ -176,6 +176,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | PumaTracker | .puma | | PumaTracker |
 | Pygmy Packer | .pyg | ProWizard | ModTracker |
 | Quadra Composer | .emod | | Quadra Composer |
+| Real Tracker | .rtm | | Xmp |
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
