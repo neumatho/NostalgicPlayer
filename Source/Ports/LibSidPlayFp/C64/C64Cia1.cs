@@ -103,5 +103,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 			base.Reset();
 		}
 		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint_least16_t GetTimerA()
+		{
+			return last_ta;
+		}
 	}
 }

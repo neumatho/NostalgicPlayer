@@ -312,11 +312,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				dacBuilder.KinkedDac(model);
 
 				//double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : OFFSET_8580);
-				double offset = dacBuilder.GetOutput(0x7ff);
+				double offset = dacBuilder.GetOutput(0x7ff, is6581);
 
 				for (uint i = 0; i < (1 << (int)OSC_DAC_BITS); i++)
 				{
-					double dacValue = dacBuilder.GetOutput(i);
+					double dacValue = dacBuilder.GetOutput(i, is6581);
 					oscDac[i] = (float)(dacValue - offset);
 				}
 			}

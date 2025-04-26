@@ -134,6 +134,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint_least16_t GetCia1TimerA()
+		{
+			return c64.GetCia1TimerA();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint InstalledSids()
+		{
+			return c64.InstalledSids();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Get the current engine configuration
 		/// </summary>
 		/********************************************************************/
@@ -311,6 +335,70 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			SidEmu s = mixer.GetSid(sidNum);
 			if (s != null)
 				s.Filter(enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the buffer pointers for each of the installed SID chips
+		/// </summary>
+		/********************************************************************/
+		public void Buffers(short[][] buffers)
+		{
+			for (uint i = 0; i < Mixer.MAX_SIDS; i++)
+			{
+				SidEmu s = mixer.GetSid(i);
+				buffers[i] = s != null ? s.Buffer() : null;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Run the emulation for selected number of cycles.
+		/// The value will be limited to a reasonable amount if too large
+		/// </summary>
+		/********************************************************************/
+		public uint_least32_t Play(uint cycles)
+		{
+			// Limit to roughly 20 ms
+			const uint max_Cycles = 20000;
+
+			if (cycles > max_Cycles)
+				cycles = max_Cycles;
+
+			try
+			{
+				for (uint i = 0; i < cycles; i++)
+					c64.Clock();
+
+				int sampleCount = 0;
+
+				for (uint i = 0; i < Mixer.MAX_SIDS; i++)
+				{
+					SidEmu s = mixer.GetSid(i);
+					if (s != null)
+					{
+						// Clock the chip and get the buffer
+						// buffersize is expected to be the same
+						// for all chips
+						s.Clock();
+						sampleCount = s.BufferPos();
+
+						// Reset the buffer
+						s.BufferPos(0);
+					}
+				}
+
+				return (uint_least32_t)sampleCount;
+			}
+			catch (HaltInstructionException)
+			{
+				errorString = Resources.IDS_SID_ERR_ILLEGAL_INST;
+				return 0;
+			}
 		}
 
 

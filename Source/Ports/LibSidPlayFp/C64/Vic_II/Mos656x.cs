@@ -210,6 +210,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 		private uint8_t irqMask;
 
 		/// <summary>
+		/// Memory for chip registers
+		/// </summary>
+		private readonly uint8_t[] regs = new uint8_t[0x40];
+
+		/// <summary>
 		/// Light pen
 		/// </summary>
 		private readonly Lightpen lp = new Lightpen();
@@ -218,11 +223,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 		/// The 8 sprites data
 		/// </summary>
 		private readonly Sprites sprites;
-
-		/// <summary>
-		/// Memory for chip registers
-		/// </summary>
-		private readonly uint8_t[] regs = new uint8_t[0x40];
 
 		private readonly EventCallback badLineStateChangeEvent;
 

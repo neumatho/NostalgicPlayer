@@ -89,6 +89,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Get the buffer pointers for each of the installed SID chips
+		/// </summary>
+		/********************************************************************/
+		public void Buffers(short[][] buffers)
+		{
+			sidPlayer.Buffers(buffers);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Run the emulation for selected number of cycles.
+		/// The value will be limited to a reasonable amount if too large
+		/// </summary>
+		/********************************************************************/
+		public uint_least32_t Play(uint cycles)
+		{
+			return sidPlayer.Play(cycles);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Load a tune
 		/// Check Error for detailed message if something goes wrong
 		/// </summary>
@@ -206,6 +231,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 			SetKernal(kernal);
 			SetBasic(basic);
 			SetCharGen(character);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the CIA 1 Timer A programmed value
+		/// </summary>
+		/********************************************************************/
+		public uint_least16_t GetCia1TimerA()
+		{
+			return sidPlayer.GetCia1TimerA();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the number of installed SID chips
+		/// </summary>
+		/********************************************************************/
+		public uint InstalledSids()
+		{
+			return sidPlayer.InstalledSids();
 		}
 	}
 }

@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// Get the Vo output for a given combination of input bits
 		/// </summary>
 		/********************************************************************/
-		public double GetOutput(uint input)
+		public double GetOutput(uint input, bool saturate = false)
 		{
 			double dacValue = 0.0;
 
@@ -169,6 +169,22 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			{
 				bool transistor_on = (input & (1 << i)) != 0;
 				dacValue += transistor_on ? dac[i] : dac[i] * leakage;
+			}
+
+			// Rough attempt at modeling the MDAC saturation for the 6581.
+			// Things are actually more complex, the saturation is likely
+			// caused by the two NMOS source followers, one at the output
+			// of the waveform DAC and the second at the output of the MDAC.
+			// The buffers are also supposed to introduce a DC offset.
+			// As a first step we use a cubic model for saturation and
+			// apply it only at the waveform output, providing a decent
+			// result without any runtime overhead
+			if (saturate)
+			{
+				const double GAIN = 1.1;
+				const double SAT = 1.1;
+
+				dacValue = GAIN * dacValue + (1.0 - GAIN) * SAT * dacValue * dacValue * dacValue;
 			}
 
 			return dacValue;
