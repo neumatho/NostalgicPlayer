@@ -1261,6 +1261,14 @@
             <uap:DisplayName>Liquid Tracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mgtfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mgt">.mgt</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Megatracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

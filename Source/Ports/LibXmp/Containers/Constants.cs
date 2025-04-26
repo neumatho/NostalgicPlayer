@@ -28,6 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const c_int Max_Sample_Size = 0x10000000;
 		public const c_int Max_Samples = 1024;
 		public const c_int Max_Instruments = 255;
+		public const c_int Max_Patterns = 256;
 
 		// Mixer
 		public const c_double C4_Period = 428.0;

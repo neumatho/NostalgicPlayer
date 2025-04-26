@@ -277,7 +277,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				case Hio_Type.File:
 				{
-					ret = DataIo.Read24L(h.Handle.File, out err);
+					ret = DataIo.Read24B(h.Handle.File, out err);
 					break;
 				}
 
