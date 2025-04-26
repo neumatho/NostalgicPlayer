@@ -157,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/********************************************************************/
 		protected c_int Compare_Module(Xmp_Module mod, Stream f)
 		{
-			using (StreamReader sr = new StreamReader(f))
+			using (StreamReader sr = new StreamReader(f, Encoding.UTF8))
 			{
 				// Check title and format
 				string line = sr.ReadLine();
