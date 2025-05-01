@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -35,8 +36,12 @@ namespace Polycode.NostalgicPlayer.CKit
 		public static CPointer<uint8_t> ToPointer(this string str, Encoding encoder)
 		{
 			uint8_t[] bytes = encoder.GetBytes(str);
+			uint8_t[] bytesWithNull = new uint8_t[bytes.Length + 1];
 
-			return new CPointer<uint8_t>(bytes);
+			Array.Copy(bytes, bytesWithNull, bytes.Length);
+			bytesWithNull[bytes.Length] = 0;	// Null-terminate the string
+
+			return new CPointer<uint8_t>(bytesWithNull);
 		}
 	}
 }

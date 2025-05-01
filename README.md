@@ -77,6 +77,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Digital Sound Studio | .dss | | Digital Sound Studio |
 | Digital Symphony | .dsym | | Xmp |
 | Digital Tracker MOD | .mod | | Xmp |
+| Digitrakker | .mdl | | Xmp |
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |

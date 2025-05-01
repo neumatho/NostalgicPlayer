@@ -3,31 +3,32 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class Test_Api
+	public partial class Test_Fuzzer
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// This input caused out-of-bound reads in the MDL loader due to
+		/// using a run event code as the first event in a track
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Api_Get_Format_List()
+		public void Test_Fuzzer_Mdl_Invalid_Run()
 		{
-			string[] list = Ports.LibXmp.LibXmp.Xmp_Get_Format_List();
-			Assert.IsNotNull(list, "Returned null");
+			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 
-			c_int i;
-			for (i = 0; list[i] != null; i++)
-				Assert.IsNotNull(list[i], "Empty format name");
+			c_int ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_Mdl_Invalid_Run.mdl", opaque);
+			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load");
 
-			Assert.AreEqual(34, i, "Wrong number of formats");
+			opaque.Xmp_Free_Context();
 		}
 	}
 }

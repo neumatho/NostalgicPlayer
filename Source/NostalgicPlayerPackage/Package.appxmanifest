@@ -1269,6 +1269,14 @@
             <uap:DisplayName>Megatracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mdlfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mdl">.mdl</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Digitrakker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

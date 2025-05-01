@@ -19,5 +19,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// Event data
 		/// </summary>
 		public Xmp_Event[] Event;
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Clear()
+		{
+			Rows = 0;
+
+			foreach (Xmp_Event e in Event)
+				e.Clear();
+		}
 	}
 }
