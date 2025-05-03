@@ -82,6 +82,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
 | Epic Games UMX | .umx | Module Converter | \* |
+| Epic MegaGames MASI | .psm | | Xmp |
 | Eureka Packer | .eureka / .eu | ProWizard | ModTracker |
 | Face The Music | .ftm | | Face The Music |
 | Farandole Composer | .far | | Xmp |

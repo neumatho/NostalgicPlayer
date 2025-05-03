@@ -1277,6 +1277,14 @@
             <uap:DisplayName>Digitrakker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="psmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-psm">.psm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Epic MegaGames MASI</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

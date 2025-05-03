@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		internal static readonly string[] fileExtensions =
 		[
 			"gdm", "xm", "oxm", "s3m", "it", "669", "amf", "far", "imf", "stm", "stx", "ult", "mtm", "mod", "wow", "flx", "ptm", "arch", "xmf",
-			"dsym", "rtm", "liq", "mgt"
+			"dsym", "rtm", "liq", "mgt", "mdl", "psm"
 		];
 
 		#region IAgent implementation
