@@ -357,13 +357,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					ModuleItem item = loadedFiles[0];
 					loadedFiles.RemoveAt(0);
 
-					// Start playing the new module
-					result = StartPlaying(listItem, -1, -1);
-
-					// Free the previous module
+					// Stop and free the previous module
 					IPlayer player = item.Loader.Player;
 
 					player.StopPlaying(false);
+					player.CleanupPlayer();
 
 					// Unsubscribe to event notifications
 					if (player is IModulePlayer modulePlayer)
@@ -380,10 +378,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
 					player.ClockUpdated -= Player_ClockUpdated;
 
-					// Cleanup the player
-					player.CleanupPlayer(!result);
+					// Start playing the new module
+					result = StartPlaying(listItem, -1, -1);
 
-					// Unload the module
+					// Unload the previous module
 					item.Loader.Unload();
 				}
 			}

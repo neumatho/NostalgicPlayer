@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// <summary>
 		/// Will cleanup the player
 		/// </summary>
-		void CleanupPlayer(bool stopVisuals = true);
+		void CleanupPlayer();
 
 		/// <summary>
 		/// Will start playing the music
