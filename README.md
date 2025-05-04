@@ -95,6 +95,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Fred Editor | .frd / .fred | | Fred Editor |
 | Fred Editor (Final) | .frd / .fred | Module Converter | Fred Editor |
 | Fuchs Tracker | .ft | ProWizard | ModTracker |
+| Funktracker | .fnk | | Xmp |
 | Future Composer 1.0 - 1.3 | .fc / .fc13 / .smod | Module Converter | Future Composer |
 | Future Composer 1.4 | .fc / .fc14 | | Future Composer |
 | Fuzzac Packer | .fuzzac / .fuz | ProWizard | ModTracker |

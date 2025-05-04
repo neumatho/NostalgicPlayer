@@ -1285,6 +1285,14 @@
             <uap:DisplayName>Epic MegaGames MASI</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="fnkfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-fnk">.fnk</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Funktracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
