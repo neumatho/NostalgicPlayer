@@ -201,8 +201,7 @@ namespace Polycode.NostalgicPlayer.CKit
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int MemCmp(CPointer<byte> ptr, string compareString, int length)
 		{
-			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);
-			return MemCmp(ptr, strBuf, length);
+			return MemCmp(ptr, compareString.ToPointer(), length);
 		}
 
 
@@ -215,8 +214,7 @@ namespace Polycode.NostalgicPlayer.CKit
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int MemCmp(string compareString, CPointer<byte> ptr, int length)
 		{
-			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);
-			return MemCmp(strBuf, ptr, length);
+			return MemCmp(compareString.ToPointer(), ptr, length);
 		}
 
 
@@ -229,8 +227,8 @@ namespace Polycode.NostalgicPlayer.CKit
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int StrCmp(CPointer<byte> ptr, string compareString)
 		{
-			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);
-			return MemCmp(ptr, strBuf, strBuf.Length);
+			CPointer<byte> comparePtr = compareString.ToPointer();
+			return MemCmp(ptr, comparePtr, comparePtr.Length);
 		}
 
 
@@ -243,8 +241,7 @@ namespace Polycode.NostalgicPlayer.CKit
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int StrNCmp(CPointer<byte> ptr, string compareString, int length)
 		{
-			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);
-			return MemCmp(ptr, strBuf, length);
+			return MemCmp(ptr, compareString.ToPointer(), length);
 		}
 
 
