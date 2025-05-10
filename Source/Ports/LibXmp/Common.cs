@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -72,39 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Clamp(ref c_int x, c_int a, c_int b)
-		{
-			if (x < a)
-				x = a;
-			else if (x > b)
-				x = b;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Clamp(ref int16 x, int16 a, int16 b)
-		{
-			if (x < a)
-				x = a;
-			else if (x > b)
-				x = b;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Clamp(ref c_double x, c_double a, c_double b)
+		public static void Clamp<T>(ref T x, T a, T b) where T : INumber<T>
 		{
 			if (x < a)
 				x = a;

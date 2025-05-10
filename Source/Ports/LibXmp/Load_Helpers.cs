@@ -463,7 +463,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((env.Flg & Xmp_Envelope_Flag.On) != 0)
 			{
 				for (c_int i = 0; i < env.Npt; i++)
-					Common.Clamp(ref env.Data[i * 2 + 1], 0, (int16)m.VolBase);
+					Common.Clamp<int16>(ref env.Data[i * 2 + 1], 0, (int16)m.VolBase);
 			}
 		}
 		#endregion

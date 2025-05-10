@@ -76,6 +76,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Digital Sound Interface Kit RIFF | .dsm | | Xmp |
 | Digital Sound Studio | .dss | | Digital Sound Studio |
 | Digital Symphony | .dsym | | Xmp |
+| Digital Tracker | .dtm | | Xmp |
 | Digital Tracker MOD | .mod | | Xmp |
 | Digitrakker | .mdl | | Xmp |
 | D.O.C. SoundTracker II | .mod | | ModTracker |

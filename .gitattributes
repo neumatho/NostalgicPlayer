@@ -4,6 +4,7 @@
 *.crm filter=lfs diff=lfs merge=lfs -text
 *.dll filter=lfs diff=lfs merge=lfs -text
 *.dsym filter=lfs diff=lfs merge=lfs -text
+*.dtm filter=lfs diff=lfs merge=lfs -text
 *.far filter=lfs diff=lfs merge=lfs -text
 *.flac filter=lfs diff=lfs merge=lfs -text
 *.fnk filter=lfs diff=lfs merge=lfs -text
