@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// <summary>
 		/// Buffer size. 5000 is roughly 50 ms at 96 kHz
 		/// </summary>
-		public const uint OUTPUTBUFFERSIZE = 5000;
+		protected const uint OUTPUTBUFFERSIZE = 5000;
 
 		private readonly SidBuilder builder;
 

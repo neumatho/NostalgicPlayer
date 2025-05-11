@@ -214,6 +214,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No tune loaded.
+        /// </summary>
+        internal static string IDS_SID_ERR_NO_TUNE {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_NO_TUNE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compute!&apos;s Sidplayer MUS data is not supported yet.
         /// </summary>
         internal static string IDS_SID_ERR_PSID_MUS {

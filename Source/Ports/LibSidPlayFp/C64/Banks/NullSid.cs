@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override void Reset(uint8_t volume)
+		protected override void Reset(uint8_t volume)
 		{
 		}
 

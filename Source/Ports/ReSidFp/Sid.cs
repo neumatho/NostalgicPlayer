@@ -17,6 +17,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	/// </summary>
 	public class Sid
 	{
+		#if false
+		Note: this needs more in-depth analysis.
+		With the implementation of the 6581 DC drift the digis become too loud.
+		Also there is no evidence in the schematics for a DC offset in the 8580.
+
 		// The waveform D/A converter introduces a DC offset in the signal
 		// to the envelope multiplying D/A converter. The "zero" level of
 		// the waveform D/A converter can be found as follows:
@@ -81,6 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// On my 6581R4AR has 0x3A as the only value giving the same output level as 1.prg
 		private const uint OFFSET_6581 = 0x380;
 		private const uint OFFSET_8580 = 0x9c0;
+		#endif
 
 		private const uint ENV_DAC_BITS = 8;
 		private const uint OSC_DAC_BITS = 12;
@@ -702,7 +708,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 						voice[2].Envelope().Clock();
 
 						int sidOutput = filter.Clock(voice[0], voice[1], voice[2]);
-						int c64Output = externalFilter.Clock(sidOutput - (1 << 15));
+						int c64Output = externalFilter.Clock(sidOutput + Int16.MinValue);
 
 						if (resampler.Input(c64Output))
 							buf[s++] = resampler.GetOutput(scaleFactor);

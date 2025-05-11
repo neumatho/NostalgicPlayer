@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 	/// </summary>
 	internal class Sprites
 	{
-		private const int SPRITES = 8;
+		private const uint SPRITES = 8;
 
 		private const int enable = 0x15;
 		private const int y_expansion = 0x17;
@@ -22,8 +22,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 
 		private uint8_t exp_flop;
 		private uint8_t dma;
-		private uint8_t[] mc_base = new uint8_t[SPRITES];
-		private uint8_t[] mc = new uint8_t[SPRITES];
+		private readonly uint8_t[] mc_base = new uint8_t[SPRITES];
+		private readonly uint8_t[] mc = new uint8_t[SPRITES];
 
 		/********************************************************************/
 		/// <summary>

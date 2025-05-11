@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
@@ -26,7 +27,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		{
 			sid = new Sid();
 
-			buffer = new short[OUTPUTBUFFERSIZE];
 			Reset(0);
 		}
 
@@ -166,6 +166,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 				return;
 			}
 
+			// 20 ms buffer
+			c_int bufferSize = (c_int)Math.Ceiling((freq / 1000.0f) * 20.0f);
+			buffer = new short[bufferSize];
+
 			status = true;
 		}
 
@@ -215,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override void Reset(uint8_t volume)
+		protected override void Reset(uint8_t volume)
 		{
 			accessClk = 0;
 			sid.Reset();

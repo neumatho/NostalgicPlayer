@@ -5,13 +5,53 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	internal abstract class FilterModelConfig
 	{
+		/// <summary>
+		/// The highpass summer has 2 - 6 inputs (bandpass, lowpass, and 0 - 4 voices)
+		/// </summary>
+		public static class Summer_Offset
+		{
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static int Value(int i)
+			{
+				if (i == 0)
+					return 0;
+
+				return Value(i - 1) + ((2 + i - 1) << 16);
+			}
+		}
+
+		/// <summary>
+		/// The mixer has 0 - 7 inputs (0 - 4 voices and 0 - 3 filter outputs)
+		/// </summary>
+		public static class Mixer_Offset
+		{
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static int Value(int i)
+			{
+				if (i == 0)
+					return 0;
+
+				if (i == 1)
+					return 1;
+
+				return Value(i - 1) + ((i - 1) << 16);
+			}
+		}
+
 		/// <summary>
 		/// Hack to add quick dither when converting values from float to int
 		/// and avoid quantization noise.
@@ -77,10 +117,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private double currFactorCoeff;
 
 		// Lookup tables for gain and summer op-amps in output stage / filter
-		protected readonly ushort[][] mixer = new ushort[8][];			// This is initialized in the derived class constructor
-		protected readonly ushort[][] summer = new ushort[5][];			// This is initialized in the derived class constructor
-		protected readonly ushort[][] volume = new ushort[16][];		// This is initialized in the derived class constructor
-		protected readonly ushort[][] resonance = new ushort[16][];		// This is initialized in the derived class constructor
+		protected readonly ushort[] mixer;			// This is initialized in the derived class constructor
+		protected readonly ushort[] summer;			// This is initialized in the derived class constructor
+		protected readonly ushort[] volume;			// This is initialized in the derived class constructor
+		protected readonly ushort[] resonance;		// This is initialized in the derived class constructor
 
 		// Reverse op-amp transfer function
 		protected readonly ushort[] opamp_rev = new ushort[1 << 16];	// This is initialized in the derived class constructor
@@ -102,9 +142,13 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			vMax = Math.Max(vddt, opamp_voltage[0].y);
 			denorm = vMax - vMin;
 			norm = 1.0 / denorm;
-			n16 = norm * ((1 << 16) - 1);
+			n16 = norm * UInt16.MaxValue;
 			currFactorCoeff = denorm * (uCox / 2.0 * 1.0e-6 / c);
 			voice_voltage_range = vvr;
+			mixer = new ushort[Mixer_Offset.Value(8)];
+			summer = new ushort[Summer_Offset.Value(5)];
+			volume = new ushort[16 * (1 << 16)];
+			resonance = new ushort[16 * (1 << 16)];
 
 			SetUCox(uCox);
 
@@ -129,8 +173,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				Spline.Point @out = s.Evaluate(x);
 
 				// When interpolating outside range the first element may be negative
-				double tmp = @out.x > 0 ? @out.x : 0;
-				opamp_rev[x] = (ushort)(tmp + 0.5);
+				opamp_rev[x] = (ushort)(@out.x > 0.0f ? To_UShort(@out.x) : 0);
 			}
 		}
 
@@ -141,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[][] GetVolume()
+		public ushort[] GetVolume()
 		{
 			return volume;
 		}
@@ -153,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[][] GetResonance()
+		public ushort[] GetResonance()
 		{
 			return resonance;
 		}
@@ -165,7 +208,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[][] GetSummer()
+		public ushort[] GetSummer()
 		{
 			return summer;
 		}
@@ -177,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[][] GetMixer()
+		public ushort[] GetMixer()
 		{
 			return mixer;
 		}
@@ -228,10 +271,36 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected ushort To_UShort_Dither(double x, double d_Noise)
+		{
+			int tmp = (int)(x + d_Noise);
+			return (ushort)tmp;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected ushort To_UShort(double x)
+		{
+			return To_UShort_Dither(x, 0.5);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ushort GetNormalizedValue(double value)
 		{
-			double tmp = n16 * (value - vMin);
-			return (ushort)(tmp + rnd.GetNoise());
+			return To_UShort_Dither(n16 * (value - vMin), rnd.GetNoise());
 		}
 
 
@@ -244,8 +313,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ushort GetNormalizedCurrentFactor(int N, double wl)
 		{
-			double tmp = (1 << N) * currFactorCoeff * wl;
-			return (ushort)(tmp + 0.5);
+			return To_UShort((1 << N) * currFactorCoeff * wl);
 		}
 
 
@@ -258,8 +326,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ushort GetNVMin()
 		{
-			double tmp = n16 * vMin;
-			return (ushort)(tmp + 0.5);
+			return To_UShort(n16 * vMin);
 		}
 
 
@@ -293,6 +360,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		{
 			double r_N16 = 1.0 / n16;
 
+			int idx = 0;
 			for (int i = 0; i < 5; i++)
 			{
 				int iDiv = 2 + i;		// 2 - 6 input "resistors"
@@ -301,12 +369,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				double r_iDiv = 1.0 / iDiv;
 
 				opAmpModel.Reset();
-				summer[i] = new ushort[size];
 
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi * r_N16 * r_iDiv;	// vMin .. vMax
-					summer[i][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
+					summer[idx++] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
 				}
 			}
 		}
@@ -328,6 +395,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		{
 			double r_N16 = 1.0 / n16;
 
+			int idx = 0;
 			for (int i = 0; i < 8; i++)
 			{
 				int iDiv = i == 0 ? 1 : i;
@@ -336,12 +404,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				double r_iDiv = 1.0 / iDiv;
 
 				opAmpModel.Reset();
-				mixer[i] = new ushort[size];
 
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi * r_N16 * r_iDiv;	// vMin .. vMax
-					mixer[i][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
+					mixer[idx++] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
 				}
 			}
 		}
@@ -361,18 +428,18 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		{
 			double r_N16 = 1.0 / n16;
 
+			int idx = 0;
 			for (int n8 = 0; n8 < 16; n8++)
 			{
 				int size = 1 << 16;
 				double n = n8 / nDivisor;
 
 				opAmpModel.Reset();
-				volume[n8] = new ushort[size];
 
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi * r_N16;			// vMin .. vMax
-					volume[n8][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
+					volume[idx++] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
 				}
 			}
 		}
@@ -393,17 +460,17 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		{
 			double r_N16 = 1.0 / n16;
 
+			int idx = 0;
 			for (int n8 = 0; n8 < 16; n8++)
 			{
 				int size = 1 << 16;
 
 				opAmpModel.Reset();
-				resonance[n8] = new ushort[size];
 
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi * r_N16;			// vMin .. vMax
-					resonance[n8][vi] = GetNormalizedValue(opAmpModel.Solve(resonance_n[n8], vIn));
+					resonance[idx++] = GetNormalizedValue(opAmpModel.Solve(resonance_n[n8], vIn));
 				}
 			}
 		}

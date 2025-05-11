@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		public void Reset()
 		{
 			foreach (C64Sid e in sids)
-				e.Reset(0xf);
+				e.Reset();
 		}
 
 
@@ -62,6 +62,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		{
 			sids.Add(s);
 			mapper[MapperIndex(address)] = s;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint InstalledSids()
+		{
+			return (uint)sids.Count;
 		}
 
 		#region IBank implementation

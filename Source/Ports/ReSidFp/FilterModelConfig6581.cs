@@ -161,8 +161,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				{
 					// The table index is right-shifted 16 times in order to fit in
 					// 16 bits; the argument to sqrt is thus multiplied by (1 << 16)
-					double tmp = nVddt - Math.Sqrt(i << 16);
-					vcr_nVg[i] = (ushort)(tmp + 0.5);
+					vcr_nVg[i] = To_UShort(nVddt - Math.Sqrt(i << 16));
 				}
 			}
 
@@ -180,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				double @is = (2.0 * Ut * Ut) * wl_vcr;
 
 				// Normalize current factor for 1 cycle at 1Mhz
-				double n15 = norm * ((1 << 15) - 1);
+				double n15 = norm * Int16.MaxValue;
 				double n_is = n15 * 1.0e-6 / c * @is;
 
 				// kVgt_Vx = k*(Vg - Vt) - Vx
@@ -189,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 				for (int i = 0; i < (1 << 16); i++)
 				{
-					int kVgt_Vx = i - (1 << 15);
+					int kVgt_Vx = i + Int16.MinValue;
 					double log_term = Log1p(Math.Exp(kVgt_Vx * r_N16_2Ut));
 
 					// Scaled by m*2^15
@@ -307,9 +306,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ushort GetVcr_n_Ids_Term(int i)
 		{
-			double tmp = vcr_n_ids_term[i] * uCox;
-
-			return (ushort)(tmp + 0.5);
+			return To_UShort(vcr_n_ids_term[i] * uCox);
 		}
 
 

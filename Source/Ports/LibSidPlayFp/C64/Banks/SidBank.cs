@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/********************************************************************/
 		public void Reset()
 		{
-			sid.Reset(0x0f);
+			sid.Reset();
 		}
 
 

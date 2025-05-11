@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Get the buffer pointers for each of the installed SID chips
+		/// Get the buffer pointers for each of the installed SID chip
 		/// </summary>
 		/********************************************************************/
 		public void Buffers(short[][] buffers)
@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		/// The value will be limited to a reasonable amount if too large
 		/// </summary>
 		/********************************************************************/
-		public uint_least32_t Play(uint cycles)
+		public c_int Play(uint cycles)
 		{
 			return sidPlayer.Play(cycles);
 		}

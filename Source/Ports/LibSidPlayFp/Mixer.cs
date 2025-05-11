@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
@@ -213,6 +214,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// Remove all SIDs from the mixer
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ClearSids()
 		{
 			chips.Clear();
@@ -263,6 +265,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// Set sample rate
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void SetSampleRate(uint_least32_t rate)
 		{
 			sampleRate = rate;

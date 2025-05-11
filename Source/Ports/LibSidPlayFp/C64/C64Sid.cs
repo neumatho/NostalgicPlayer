@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		public void Reset()
 		{
 			Array.Clear(lastPoke, 0, 0x20);
-			Reset(0);
+			Reset(0xf);
 		}
 
 		#region IBank implementation
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public abstract void Reset(uint8_t volume);
+		protected abstract void Reset(uint8_t volume);
 		#endregion
 	}
 }

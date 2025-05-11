@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	/// <summary>
@@ -193,8 +195,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			int kVgt = (nVg - nVt) - nVMin;
 
 			// VCR voltages for EKV model table lookup
-			int kVgt_Vs = (kVgt - vx) + (1 << 15);
-			int kVgt_Vd = (kVgt - vi) + (1 << 15);
+			int kVgt_Vs = (kVgt - vx) - Int16.MinValue;
+			int kVgt_Vd = (kVgt - vi) - Int16.MinValue;
 
 			// VCR current, scaled by m*2^15*2^15 = m*2^30
 			uint @if = (uint)(fmc.GetVcr_n_Ids_Term(kVgt_Vs)) << 15;
@@ -205,7 +207,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			vc += n_I_snake + n_I_vcr;
 
 			// vx = g(vc)
-			int tmp = (vc >> 15) + (1 << 15);
+			int tmp = (vc >> 15) - Int16.MinValue;
 			vx = fmc.GetOpampRev(tmp);
 
 			// Return vo

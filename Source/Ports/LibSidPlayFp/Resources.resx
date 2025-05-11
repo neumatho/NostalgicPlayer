@@ -168,6 +168,9 @@
   <data name="IDS_SID_ERR_NO_SPACE" xml:space="preserve">
     <value>No space to install PSID driver in C64 ram</value>
   </data>
+  <data name="IDS_SID_ERR_NO_TUNE" xml:space="preserve">
+    <value>No tune loaded</value>
+  </data>
   <data name="IDS_SID_ERR_PSID_MUS" xml:space="preserve">
     <value>Compute!'s Sidplayer MUS data is not supported yet</value>
   </data>

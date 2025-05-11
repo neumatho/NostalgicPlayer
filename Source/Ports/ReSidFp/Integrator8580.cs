@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	/// <summary>
@@ -99,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			vc += n_I_dac;
 
 			// vx = g(vc)
-			int tmp = (vc >> 15) + (1 << 15);
+			int tmp = (vc >> 15) - Int16.MinValue;
 			vx = fmc.GetOpampRev(tmp);
 
 			// Return vo

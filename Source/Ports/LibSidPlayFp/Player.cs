@@ -361,8 +361,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// The value will be limited to a reasonable amount if too large
 		/// </summary>
 		/********************************************************************/
-		public uint_least32_t Play(uint cycles)
+		public c_int Play(uint cycles)
 		{
+			// Make sure a tune is loaded
+			if (tune == null)
+			{
+				errorString = Resources.IDS_SID_ERR_NO_TUNE;
+				return -1;
+			}
+
 			// Limit to roughly 20 ms
 			const uint max_Cycles = 20000;
 
@@ -392,12 +399,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 					}
 				}
 
-				return (uint_least32_t)sampleCount;
+				return sampleCount;
 			}
 			catch (HaltInstructionException)
 			{
 				errorString = Resources.IDS_SID_ERR_ILLEGAL_INST;
-				return 0;
+				return -1;
 			}
 		}
 

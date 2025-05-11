@@ -9,7 +9,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the ReSidFp library created by Dag Lem and Leandro Nini</Description>
-    <Version>2.13.1</Version>
+    <Version>2.14.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\NostalgicPlayerCKit\NostalgicPlayerCKit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
   </ItemGroup>
 

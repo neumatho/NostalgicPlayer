@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
@@ -12,10 +13,31 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	/// </summary>
 	internal abstract class Filter
 	{
-		private readonly ushort[][] mixer;
-		private readonly ushort[][] summer;
-		private readonly ushort[][] resonance;
-		private readonly ushort[][] volume;
+		private static readonly int[] summerIdx =
+		[
+			FilterModelConfig.Summer_Offset.Value(0),
+			FilterModelConfig.Summer_Offset.Value(1),
+			FilterModelConfig.Summer_Offset.Value(2),
+			FilterModelConfig.Summer_Offset.Value(3),
+			FilterModelConfig.Summer_Offset.Value(4)
+		];
+
+		private static readonly int[] mixerIdx =
+		[
+			FilterModelConfig.Mixer_Offset.Value(0),
+			FilterModelConfig.Mixer_Offset.Value(1),
+			FilterModelConfig.Mixer_Offset.Value(2),
+			FilterModelConfig.Mixer_Offset.Value(3),
+			FilterModelConfig.Mixer_Offset.Value(4),
+			FilterModelConfig.Mixer_Offset.Value(5),
+			FilterModelConfig.Mixer_Offset.Value(6),
+			FilterModelConfig.Mixer_Offset.Value(7)
+		];
+
+		private readonly CPointer<ushort> mixer;
+		private readonly CPointer<ushort> summer;
+		private readonly CPointer<ushort> resonance;
+		private readonly CPointer<ushort> volume;
 
 		/// <summary>
 		/// 
@@ -25,22 +47,22 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// Current filter/voice mixer setting
 		/// </summary>
-		private ushort[] currentMixer = null;
+		private CPointer<ushort> currentMixer = null;
 
 		/// <summary>
 		/// Filter input summer setting
 		/// </summary>
-		private ushort[] currentSummer = null;
+		private CPointer<ushort> currentSummer = null;
 
 		/// <summary>
 		/// Filter resonance value
 		/// </summary>
-		private ushort[] currentResonance = null;
+		private CPointer<ushort> currentResonance = null;
 
 		/// <summary>
 		/// Current volume amplifier setting
 		/// </summary>
-		private ushort[] currentVolume = null;
+		private CPointer<ushort> currentVolume = null;
 
 		/// <summary>
 		/// Filter highpass state
@@ -328,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		private void UpdateResonance(byte res)
 		{
-			currentResonance = resonance[res];
+			currentResonance = resonance + (res * (1 << 16));
 		}
 
 
@@ -340,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		private void UpdateMixing()
 		{
-			currentVolume = volume[vol];
+			currentVolume = volume + (vol * (1 << 16));
 
 			uint nSum = 0;
 			uint nMix = 0;
@@ -365,7 +387,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			else
 				nMix++;
 
-			currentSummer = summer[nSum];
+			currentSummer = summer + summerIdx[nSum];
 
 			if (lp)
 				nMix++;
@@ -376,7 +398,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			if (hp)
 				nMix++;
 
-			currentMixer = mixer[nMix];
+			currentMixer = mixer + mixerIdx[nMix];
 		}
 		#endregion
 	}

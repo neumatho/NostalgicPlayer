@@ -498,7 +498,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/********************************************************************/
 		public uint InstalledSids()
 		{
-			return (uint)(1 + extraSidBanks.Count);
+			uint sids = 1;
+
+			foreach (sidBankMap_value_type sidBank in extraSidBanks)
+				sids += sidBank.Value.InstalledSids();
+
+			return sids;
 		}
 
 
@@ -562,7 +567,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 
 			ResetIoBank();
 
-			extraSidBanks.Clear();
+			DeleteSids(extraSidBanks);
 		}
 
 		#region Private methods
@@ -580,6 +585,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 			// The VIC II produces the two-phase system clock
 			// by running the input clock through a divider
 			return crystalFreq / modelData[(int)model].divider;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void DeleteSids(sidBankMap_t extraSidBanks)
+		{
+			extraSidBanks.Clear();
 		}
 
 

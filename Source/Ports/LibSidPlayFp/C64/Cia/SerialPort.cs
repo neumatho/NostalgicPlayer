@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Runtime.CompilerServices;
+
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 {
 	/// <summary>
@@ -110,6 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void StartSdr()
 		{
 			eventScheduler.Schedule(startSdrEvent, 1);
@@ -220,6 +223,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void DoStartSdr()
 		{
 			if (!loaded)
