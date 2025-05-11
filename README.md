@@ -100,6 +100,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Future Composer 1.0 - 1.3 | .fc / .fc13 / .smod | Module Converter | Future Composer |
 | Future Composer 1.4 | .fc / .fc14 | | Future Composer |
 | Fuzzac Packer | .fuzzac / .fuz | ProWizard | ModTracker |
+| Galaxy Music System 5.0 | .j2b | | Xmp |
 | Game Music Creator | .gmc | | Game Music Creator |
 | General Digital Music | .gdm | | Xmp |
 | GnoiPacker | .gnoi | ProWizard | ModTracker |

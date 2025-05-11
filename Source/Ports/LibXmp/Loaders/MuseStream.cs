@@ -5,46 +5,33 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using System.IO.Compression;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Kit.Streams
+namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 {
 	/// <summary>
-	/// This stream wraps another stream to make it seekable
+	/// Helper stream class to load and decompress Muse files
 	/// </summary>
-	public class SeekableStream : Stream
+	internal class MuseStream : Stream
 	{
+		private readonly uint32 decompressedLength;
 		private readonly Stream wrapperStream;
-		private readonly bool leaveStreamOpen;
-		private readonly long streamLength;
-
-		private readonly MemoryStream bufferStream;
-		private int bufferIndex;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SeekableStream(Stream wrapperStream, bool leaveOpen) : this(wrapperStream, leaveOpen, -1)
+		public MuseStream(Hio f)
 		{
-		}
+			f.Hio_Seek(20, SeekOrigin.Begin);
+			decompressedLength = f.Hio_Read32L();
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public SeekableStream(Stream wrapperStream, bool leaveOpen, long wrapperStreamLength)
-		{
-			this.wrapperStream = wrapperStream;
-			leaveStreamOpen = leaveOpen;
-			streamLength = wrapperStreamLength;
-
-			bufferStream = new MemoryStream();
-			bufferIndex = 0;
+			HioStream hioStream = f.GetStream();
+			SliceStream sliceStream = new SliceStream(hioStream, false, 24, f.Hio_Size() - 24);
+			ZLibStream zlibStream = new ZLibStream(sliceStream, CompressionMode.Decompress, false);
+			wrapperStream = new SeekableStream(zlibStream, false, decompressedLength);
 		}
 
 
@@ -58,10 +45,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			base.Dispose(disposing);
 
-			if (!leaveStreamOpen)
-				wrapperStream.Dispose();
-
-			bufferStream.Dispose();
+			wrapperStream.Dispose();
 		}
 
 		#region Stream implementation
@@ -97,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Return the length of the data
 		/// </summary>
 		/********************************************************************/
-		public override long Length => streamLength == -1 ? wrapperStream.Length : streamLength;
+		public override long Length => decompressedLength;
 
 
 
@@ -108,9 +92,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Position
 		{
-			get => bufferIndex;
+			get => wrapperStream.Position;
 
-			set => Seek(value, SeekOrigin.Begin);
+			set => wrapperStream.Position = value;
 		}
 
 
@@ -122,33 +106,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			switch (origin)
-			{
-				case SeekOrigin.Begin:
-				{
-					bufferIndex = (int)offset;
-					break;
-				}
-
-				case SeekOrigin.Current:
-				{
-					bufferIndex += (int)offset;
-					break;
-				}
-
-				case SeekOrigin.End:
-				{
-					bufferIndex = (int)(Length + offset);
-					break;
-				}
-			}
-
-			if (bufferIndex < 0)
-				bufferIndex = 0;
-			else if (bufferIndex > Length)
-				bufferIndex = (int)Length;
-
-			return bufferIndex;
+			return wrapperStream.Seek(offset, origin);
 		}
 
 
@@ -172,26 +130,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			if ((bufferIndex + count) > bufferStream.Length)
-			{
-				// Time to read some more data into the buffer
-				int toRead = (int)(bufferIndex - bufferStream.Length + count);
-
-				bufferStream.Seek(0, SeekOrigin.End);
-				Helpers.CopyData(wrapperStream, bufferStream, toRead);
-
-				if (bufferIndex >= bufferStream.Length)
-					return 0;
-			}
-
-			int todo = Math.Min(count, (int)bufferStream.Length - bufferIndex);
-
-			bufferStream.Seek(bufferIndex, SeekOrigin.Begin);
-			bufferStream.Read(buffer, offset, todo);
-
-			bufferIndex += todo;
-
-			return todo;
+			return wrapperStream.Read(buffer, offset, count);
 		}
 
 

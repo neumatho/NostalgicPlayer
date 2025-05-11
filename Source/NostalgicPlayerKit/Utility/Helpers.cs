@@ -69,13 +69,15 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				length -= len;
 			}
 
-			if (length > 0)
+			while (length > 0)
 			{
 				int len = source.Read(buf, 0, length);
 				if (len == 0)
 					return;
 
 				destination.Write(buf, 0, len);
+
+				length -= len;
 			}
 		}
 

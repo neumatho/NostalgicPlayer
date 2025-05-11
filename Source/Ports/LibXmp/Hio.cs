@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -658,6 +657,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static Hio Hio_Open_File2(Stream f)
+		{
+			Hio h = Hio_Open_File(f);
+			if (h != null)
+				h.h.NoClose = false;
+			else
+				f.Close();
+
+			return h;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static Hio Hio_Open_Callbacks(object priv, Xmp_Callbacks callbacks)
 		{
 			CallbackIo f = CallbackIo.CbOpen(priv, callbacks);
@@ -745,6 +762,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return null;
 
 			return new Hio(newHandle);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public HioStream GetStream()
+		{
+			return new HioStream(this);
 		}
 
 		#region Private methods

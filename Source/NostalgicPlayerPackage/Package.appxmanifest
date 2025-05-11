@@ -1301,6 +1301,14 @@
             <uap:DisplayName>Digital Tracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="j2bfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-j2b">.j2b</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Galaxy Music System</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

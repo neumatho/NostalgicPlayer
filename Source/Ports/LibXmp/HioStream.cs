@@ -5,63 +5,25 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
-namespace Polycode.NostalgicPlayer.Kit.Streams
+namespace Polycode.NostalgicPlayer.Ports.LibXmp
 {
 	/// <summary>
-	/// This stream wraps another stream to make it seekable
+	/// Stream that wraps a Hio object
 	/// </summary>
-	public class SeekableStream : Stream
+	internal class HioStream : Stream
 	{
-		private readonly Stream wrapperStream;
-		private readonly bool leaveStreamOpen;
-		private readonly long streamLength;
-
-		private readonly MemoryStream bufferStream;
-		private int bufferIndex;
+		private readonly Hio hio;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SeekableStream(Stream wrapperStream, bool leaveOpen) : this(wrapperStream, leaveOpen, -1)
+		public HioStream(Hio f)
 		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public SeekableStream(Stream wrapperStream, bool leaveOpen, long wrapperStreamLength)
-		{
-			this.wrapperStream = wrapperStream;
-			leaveStreamOpen = leaveOpen;
-			streamLength = wrapperStreamLength;
-
-			bufferStream = new MemoryStream();
-			bufferIndex = 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Dispose our self
-		/// </summary>
-		/********************************************************************/
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
-
-			if (!leaveStreamOpen)
-				wrapperStream.Dispose();
-
-			bufferStream.Dispose();
+			hio = f;
 		}
 
 		#region Stream implementation
@@ -70,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports reading
 		/// </summary>
 		/********************************************************************/
-		public override bool CanRead => wrapperStream.CanRead;
+		public override bool CanRead => true;
 
 
 
@@ -97,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Return the length of the data
 		/// </summary>
 		/********************************************************************/
-		public override long Length => streamLength == -1 ? wrapperStream.Length : streamLength;
+		public override long Length => hio.Hio_Size();
 
 
 
@@ -108,9 +70,13 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Position
 		{
-			get => bufferIndex;
+			get => hio.Hio_Tell();
 
-			set => Seek(value, SeekOrigin.Begin);
+			set
+			{
+				if (hio.Hio_Seek((c_long)value, SeekOrigin.Begin) < 0)
+					throw new IOException("Seek failed");
+			}
 		}
 
 
@@ -122,33 +88,11 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			switch (origin)
-			{
-				case SeekOrigin.Begin:
-				{
-					bufferIndex = (int)offset;
-					break;
-				}
+			int result = hio.Hio_Seek((c_long)offset, origin);
+			if (result < 0)
+				throw new IOException("Seek failed");
 
-				case SeekOrigin.Current:
-				{
-					bufferIndex += (int)offset;
-					break;
-				}
-
-				case SeekOrigin.End:
-				{
-					bufferIndex = (int)(Length + offset);
-					break;
-				}
-			}
-
-			if (bufferIndex < 0)
-				bufferIndex = 0;
-			else if (bufferIndex > Length)
-				bufferIndex = (int)Length;
-
-			return bufferIndex;
+			return hio.Hio_Tell();
 		}
 
 
@@ -172,26 +116,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			if ((bufferIndex + count) > bufferStream.Length)
-			{
-				// Time to read some more data into the buffer
-				int toRead = (int)(bufferIndex - bufferStream.Length + count);
-
-				bufferStream.Seek(0, SeekOrigin.End);
-				Helpers.CopyData(wrapperStream, bufferStream, toRead);
-
-				if (bufferIndex >= bufferStream.Length)
-					return 0;
-			}
-
-			int todo = Math.Min(count, (int)bufferStream.Length - bufferIndex);
-
-			bufferStream.Seek(bufferIndex, SeekOrigin.Begin);
-			bufferStream.Read(buffer, offset, todo);
-
-			bufferIndex += todo;
-
-			return todo;
+			return (int)hio.Hio_Read(new CPointer<byte>(buffer, offset), 1, (size_t)count);
 		}
 
 
