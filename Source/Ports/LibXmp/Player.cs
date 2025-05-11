@@ -119,6 +119,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public c_double LibXmp_Get_Frame_Time()
+		{
+			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+
+			if (p.Bpm == 0)
+				return 0.0;
+
+			return p.Scan_Time_Factor * m.RRate / p.Bpm;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public void LibXmp_Reset_Flow()
 		{
 			Flow_Control f = ctx.P.Flow;
@@ -286,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (mod.Len <= 0)
 				return -(c_int)Xmp_Error.End;
 
-			if (Common.Has_Quirk(m, Quirk_Flag.Marker) && (mod.Xxo[p.Ord] == 0xff))
+			if (Common.Has_Quirk(m, Quirk_Flag.Marker) && (mod.Xxo[p.Ord] == Constants.Xmp_Mark_End))
 				return -(c_int)Xmp_Error.End;
 
 			lib.mixer.LibXmp_Mixer_Prepare_Frame();
@@ -380,8 +398,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			f.RowDelay_Set &= ~RowDelay_Flag.First_Frame;
 
-			p.Frame_Time = m.Time_Factor * m.RRate / p.Bpm;
-			p.Current_Time += p.Frame_Time;
+			p.Current_Time += LibXmp_Get_Frame_Time();
 
 			lib.mixer.LibXmp_Mixer_SoftMixer();
 
@@ -526,7 +543,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Speed = p.Speed;
 			info.Bpm = p.Bpm;
 			info.Total_Time = p.Scan[p.Sequence].Time;
-			info.Frame_Time = (c_int)(p.Frame_Time * 1000);
+			info.Frame_Time = (c_int)(LibXmp_Get_Frame_Time() * 1000.0);
 			info.Time = (c_int)p.Current_Time;
 			info.Buffer = s.Buffer;
 			info.BufferRear = s.BufferRear;
@@ -2442,7 +2459,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				p.Ord++;
 
 				// Restart module
-				bool mark = Common.Has_Quirk(m, Quirk_Flag.Marker) && (p.Ord < mod.Len) && (mod.Xxo[p.Ord] == 0xff);
+				bool mark = Common.Has_Quirk(m, Quirk_Flag.Marker) && (p.Ord < mod.Len) && (mod.Xxo[p.Ord] == Constants.Xmp_Mark_End);
 
 				if ((p.Ord >= mod.Len) || mark)
 				{
@@ -2524,6 +2541,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (f.PBreak)
 			{
 				f.PBreak = false;
+				f.Loop_Dest = -1;
 
 				if (f.Jump != -1)
 				{
@@ -2574,7 +2592,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Bpm = oInfo.Bpm;
 			p.GVol = oInfo.Gvl;
 			p.Current_Time = oInfo.Time;
-			p.Frame_Time = m.Time_Factor * m.RRate / p.Bpm;
 
 			p.St26_Speed = oInfo.St26_Speed;
 		}

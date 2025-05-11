@@ -34,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			ref c_int start = ref f.Loop[chn].Start;
 			ref c_int count = ref f.Loop[chn].Count;
+			bool looped = false;
 
 			// Digital Tracker: Only the first E60 or E6x is handled per row
 			if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_First_Effect) && (f.Loop_Param >= 0))
@@ -78,7 +79,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (count != 0)
 				{
 					if (--count != 0)
+					{
 						f.Loop_Dest = start;
+						looped = true;
+					}
 					else
 					{
 						// S3M and IT: loop termination advances the
@@ -111,8 +115,100 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 					f.Loop_Dest = start;
 					f.Loop_Active_Num++;
+					looped = true;
 				}
 			}
+
+			// Hacks for loop jumps altering prior position jumps/breaks
+			if (looped && f.PBreak)
+			{
+				// Many implementations use the same variable for both the
+				// jump/break destination row and the loop destination row
+				if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Shared_Break))
+					f.JumpLine = f.Loop_Dest;
+
+				// Various players e.g. ST3, IT will block prior breaks
+				if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Unset_Break) && (f.Jump < 0))
+					f.PBreak = false;
+
+				// Various players e.g. ST3, IT will block prior jumps
+				if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Unset_Jump) && (f.Jump >= 0))
+				{
+					f.PBreak = false;
+					f.Jump = -1;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Process a pattern jump effect with the parameter fxp. This
+		/// function will not actually perform the jump, but it will prepare
+		/// the flow variables to perform a jump (unless prevented)
+		/// </summary>
+		/********************************************************************/
+		public void LibXmp_Process_Pattern_Jump(Flow_Control f, c_int fxP)
+		{
+			Module_Data m = ctx.M;
+
+			// Some formats and trackers e.g. S3M, Modplug Tracker 1.16 will
+			// prevent jumps from being executed when a loop jump occurs
+			if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Delay_Jump) && (f.Loop_Dest >= 0))
+				return;
+
+			f.PBreak = true;
+			f.Jump = fxP;
+
+			// Effect B resets effect D in lower channels
+			f.JumpLine = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Process a pattern break effect with the parameter fxp. This
+		/// function will not actually perform the jump, but it will prepare
+		/// the flow variables to perform a jump (unless prevented)
+		/// </summary>
+		/********************************************************************/
+		public void LibXmp_Process_Pattern_Break(Flow_Control f, c_int fxP)
+		{
+			Module_Data m = ctx.M;
+
+			// Some formats and trackers e.g. S3M, IT 2.00+, Modplug Tracker 1.16
+			// will prevent breaks from being executed when a jump occurs
+			if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Delay_Break) && (f.Loop_Dest >= 0))
+				return;
+
+			f.PBreak = true;
+			f.JumpLine = fxP;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Process a line jump within current position 'ord' to row 'fxp'.
+		/// This function will not actually perform the jump, but it will
+		/// prepare the flow variables to perform a jump (unless prevented)
+		/// </summary>
+		/********************************************************************/
+		public void LibXmp_Process_Line_Jump(Flow_Control f, c_int ord, c_int fxP)
+		{
+			// In Digital Symphony, this can be combined with position jump
+			// (like pattern break) and overrides the pattern break line in
+			// lower channels
+			if (!f.PBreak)
+			{
+				f.PBreak = true;
+				f.Jump = ord;
+			}
+
+			f.JumpLine = fxP;
+			f.Jump_In_Pat = ord;
 		}
 	}
 }

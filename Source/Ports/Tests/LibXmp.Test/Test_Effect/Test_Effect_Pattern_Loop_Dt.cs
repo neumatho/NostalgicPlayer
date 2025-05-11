@@ -18,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Effect_Pattern_Loop_Dt19()
+		public void Test_Effect_Pattern_Loop_Dt()
 		{
-			Compare_Mixer_Data(dataDirectory, "Pattern_Loop_Dt19.dtm", "Pattern_Loop_Dt19.data");
+			Compare_Mixer_Data(dataDirectory, "Pattern_Loop_Dt.dtm", "Pattern_Loop_Dt_Dtm.data");
 		}
 	}
 }

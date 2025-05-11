@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 		[TestMethod]
 		public void Test_Effect_Pattern_Loop_Imf()
 		{
-			Compare_Mixer_Data(dataDirectory, "Pattern_Loop_Imf.Imf", "Pattern_Loop_Imf_Imf.data");
+			Compare_Mixer_Data(dataDirectory, "Pattern_Loop_Imf.imf", "Pattern_Loop_Imf_Imf.data");
 		}
 	}
 }

@@ -46,6 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			public c_int RealPat;
 			public c_int Last_Pat;
 			public c_int InsNum;
+			public c_int Chn;
 
 			public CPointer<uint8> PatBuf;
 			public size_t PatBuf_Alloc;
@@ -330,10 +331,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				// Position jump
 				case 0xb:
 				{
-					if (data.Version_Derived == DTM_V203)
+					if ((data.Version_Derived <= DTM_V203) && (data.Chn > 4))
 					{
-						// DT 2.03 and 2.04: break position is row 32 unless
-						// followed by Dxx. Effect works in <=2.02
+						// DT 2.04 and under: in 6 and 8 channel modules,
+						// the break position is somewhere in the middle of
+						// a pattern unless followed by a Dxx. This can also
+						// do things like jump to position "255"
+						// FIXME: try to more closely approximate this?
 						@event.F2T = Effects.Fx_Break;
 						@event.F2P = 0x32;
 					}
@@ -699,7 +703,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			data.Patt_Flag = true;
 
-			mod.Chn = f.Hio_Read16B();
+			data.Chn = mod.Chn = f.Hio_Read16B();
 			data.RealPat = f.Hio_Read16B();
 
 			if (f.Hio_Read(ver, 1, 4) < 4)
@@ -727,7 +731,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				m.Flow_Mode = FlowMode_Flag.Mode_DTM_19;
 			}
 			else
-				m.Flow_Mode = FlowMode_Flag.Mode_DTM_203;
+			{
+				// 6/8 channel mode's position jump bugs also affect its
+				// interactions with pattern loop. (Very weakly) attempt
+				// to support the bugs
+				m.Flow_Mode = (data.Version_Derived <= DTM_V204) && (mod.Chn > 4) ? FlowMode_Flag.Mode_DTM_2015_6CH : FlowMode_Flag.Mode_DTM_2015;
+			}
 
 			// Sanity check
 			if (mod.Chn > Constants.Xmp_Max_Channels)
@@ -780,7 +789,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				mod.Xxs[i].Len = len;
 				mod.Xxi[i].Nsm = (mod.Xxs[i].Len > 0) ? 1 : 0;
 
-				c_int fine = buf[8];	// Finetune
+				c_int fine = (int8)(buf[8] << 4);	// Finetune
 
 				mod.Xxi[i].Sub[0].Vol = buf[9];
 				mod.Xxi[i].Sub[0].Pan = 0x80;

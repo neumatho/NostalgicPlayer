@@ -793,7 +793,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.DigitalTracker:
 				{
 					tracker = "Digital Tracker";
-					m.Flow_Mode = FlowMode_Flag.Mode_DTM_203;
+					m.Flow_Mode = FlowMode_Flag.Mode_DTM_2015;
 					break;
 				}
 

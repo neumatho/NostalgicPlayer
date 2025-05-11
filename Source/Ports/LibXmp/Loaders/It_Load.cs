@@ -1198,8 +1198,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						if (ifh.Cwt < 0x104)
 							m.Flow_Mode = FlowMode_Flag.Mode_IT_100;
-						else if (ifh.Cwt < 0x210)
+						else if (ifh.Cwt < 0x200)
 							m.Flow_Mode = FlowMode_Flag.Mode_IT_104;
+						else if (ifh.Cwt < 0x210)
+							m.Flow_Mode = FlowMode_Flag.Mode_IT_200;
 					}
 					break;
 				}

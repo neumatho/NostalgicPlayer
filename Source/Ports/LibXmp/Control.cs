@@ -81,7 +81,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (ctx.State < Xmp_State.Playing)
 				return -(c_int)Xmp_Error.State;
 
-			if (p.Pos < m.Mod.Len)
+			if (p.Pos < 0)
+			{
+				// Restart a stopped or restarting module.
+				// This was previously done implicitly
+				Set_Position(-1, 1);
+			}
+			else if (p.Pos < m.Mod.Len)
 				Set_Position(p.Pos + 1, 1);
 
 			return p.Pos;
@@ -125,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (ctx.State < Xmp_State.Playing)
 				return -(c_int)Xmp_Error.State;
 
-			if (pos >= m.Mod.Len)
+			if ((pos < 0) || (pos >= m.Mod.Len))
 				return -(c_int)Xmp_Error.Invalid;
 
 			Set_Position(pos, 0);
@@ -156,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (ctx.State < Xmp_State.Playing)
 				return -(c_int)Xmp_Error.State;
 
-			if ((pattern >= mod.Pat) || (row >= mod.Xxp[pattern].Rows))
+			if ((pattern >= mod.Pat) || (row < 0) || (row >= mod.Xxp[pattern].Rows))
 				return -(c_int)Xmp_Error.Invalid;
 
 			// See set position
@@ -673,59 +679,54 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			else
 				seq = p.Sequence;
 
-			if (seq == 0xff)
+			if ((seq < 0) || (seq >= m.Num_Sequences))
 				return;
 
 			bool has_Marker = Common.Has_Quirk(m, Quirk_Flag.Marker);
 
-			if (seq >= 0)
+			p.Sequence = seq;
+
+			if (pos >= 0)
 			{
-				c_int start = m.Seq_Data[seq].Entry_Point;
-
-				p.Sequence = seq;
-
-				if (pos >= 0)
+				while (has_Marker && (pos > 0) && (pos < (mod.Len - 1)) && (mod.Xxo[pos] == Constants.Xmp_Mark_Skip))
 				{
-					while (has_Marker && (mod.Xxo[pos] == 0xfe))
-					{
-						if (dir < 0)
-						{
-							if (pos > start)
-								pos--;
-						}
-						else
-							pos++;
-					}
-
-					c_int pat = mod.Xxo[pos];
-
-					if (pat < mod.Pat)
-					{
-						if (has_Marker && (pat == 0xff))
-							return;
-
-						if (pos > p.Scan[seq].Ord)
-							f.End_Point = 0;
-						else
-						{
-							f.Num_Rows = mod.Xxp[pat].Rows;
-							f.End_Point = p.Scan[seq].Num;
-							f.JumpLine = 0;
-						}
-					}
-				}
-
-				if (pos < mod.Len)
-				{
-					if (pos == 0)
-						p.Pos = -1;
+					if (dir < 0)
+						pos--;
 					else
-						p.Pos = pos;
-
-					// Clear flow vars to prevent old pattern jumps and
-					// other junk from executing in the new position
-					lib.player.LibXmp_Reset_Flow();
+						pos++;
 				}
+
+				if (pos >= mod.Len)
+					return;
+
+				c_int pat = mod.Xxo[pos];
+
+				if (pat < mod.Pat)
+				{
+					if (has_Marker && (pat == Constants.Xmp_Mark_End))
+						return;
+
+					if (pos > p.Scan[seq].Ord)
+						f.End_Point = 0;
+					else
+					{
+						f.Num_Rows = mod.Xxp[pat].Rows;
+						f.End_Point = p.Scan[seq].Num;
+						f.JumpLine = 0;
+					}
+				}
+			}
+
+			if (pos < mod.Len)
+			{
+				if (pos == 0)
+					p.Pos = -1;
+				else
+					p.Pos = pos;
+
+				// Clear flow vars to prevent old pattern jumps and
+				// other junk from executing in the new position
+				lib.player.LibXmp_Reset_Flow();
 			}
 		}
 		#endregion

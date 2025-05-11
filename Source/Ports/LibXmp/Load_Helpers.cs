@@ -208,6 +208,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Filter = false;
 			p.Mode = Xmp_Mode.Auto;
 			p.Flags = p.Player_Flags;
+			p.Scan_Time_Factor = m.Time_Factor;
 
 			Module_Quirks();
 			LibXmp_Set_Player_Mode();

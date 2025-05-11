@@ -25,8 +25,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public Xmp_Flags Player_Flags;
 		public Xmp_Flags Flags;
 
-		public c_double Current_Time;
-		public c_double Frame_Time;
+		public c_double Scan_Time_Factor;		// m->time_factor for most recent scan
+		public c_double Current_Time;			// Current time based on scan time factor
 
 		public c_int Loop_Count;
 		public c_int Sequence;

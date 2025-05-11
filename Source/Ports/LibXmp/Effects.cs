@@ -664,11 +664,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Order jump
 				case Effects.Fx_Jump:
 				{
-					p.Flow.PBreak = true;
-					p.Flow.Jump = fxP;
-
-					// Effect B resets effect D in lower channels
-					p.Flow.JumpLine = 0;
+					LibXmp_Process_Pattern_Jump(f, fxP);
 					break;
 				}
 
@@ -687,8 +683,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Pattern break
 				case Effects.Fx_Break:
 				{
-					p.Flow.PBreak = true;
-					p.Flow.JumpLine = 10 * Common.Msn(fxP) + Common.Lsn(fxP);
+					LibXmp_Process_Pattern_Break(f, 10 * Common.Msn(fxP) + Common.Lsn(fxP));
 					break;
 				}
 
@@ -914,7 +909,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						fxP = (uint8)min_Bpm;
 
 					p.Bpm = fxP;
-					p.Frame_Time = m.Time_Factor * m.RRate / p.Bpm;
 					break;
 				}
 
@@ -942,8 +936,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						p.Bpm = fxP;
 					}
-
-					p.Frame_Time = m.Time_Factor * m.RRate / p.Bpm;
 					break;
 				}
 
@@ -1005,13 +997,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Pattern break with hex parameter
 				case Effects.Fx_It_Break:
 				{
-					// IT break is not applied if a lower channel looped (2.00+).
-					// (Labyrinth of Zeux ZX_11.it "Raceway")
-					if (f.Loop_Dest < 0)
-					{
-						p.Flow.PBreak = true;
-						p.Flow.JumpLine = fxP;
-					}
+					LibXmp_Process_Pattern_Break(f, fxP);
 					break;
 				}
 
@@ -1894,14 +1880,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// and overrides the pattern break line in lower channels
 				case Effects.Fx_Line_Jump:
 				{
-					if (!p.Flow.PBreak)
-					{
-						p.Flow.PBreak = true;
-						p.Flow.Jump = p.Ord;
-					}
-
-					p.Flow.JumpLine = fxP;
-					p.Flow.Jump_In_Pat = p.Ord;
+					LibXmp_Process_Line_Jump(f, p.Ord, fxP);
 					break;
 				}
 

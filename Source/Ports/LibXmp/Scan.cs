@@ -20,8 +20,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	{
 		private const c_int VBlank_Time_Threshold = 480000;		// 8 minutes
 
-		private const c_int S3M_End = 0xff;
-
 		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;
 
@@ -47,6 +45,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Player_Data p = ctx.P;
 
+			if ((ord < 0) || (ord > ctx.M.Mod.Len))
+				return Constants.No_Sequence;
+
 			return p.Sequence_Control[ord];
 		}
 
@@ -62,6 +63,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Player_Data p = ctx.P;
 			Module_Data m = ctx.M;
 			Xmp_Module mod = m.Mod;
+			c_int i;
 			byte[] temp_Ep = new byte[Constants.Xmp_Max_Mod_Length];
 
 			Scan_Data[] s = p.Scan;
@@ -90,10 +92,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				// Scan song starting at given entry point
 				// Check if any patterns left
-				c_int i;
 				for (i = 0; i < mod.Len; i++)
 				{
-					if (p.Sequence_Control[i] == 0xff)
+					if (p.Sequence_Control[i] == Constants.No_Sequence)
 						break;
 				}
 
@@ -120,11 +121,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			m.Num_Sequences = seq;
 
+			// Correct playback time calculation to match new base tempo factor
+			p.Current_Time = p.Current_Time * (m.Time_Factor / p.Scan_Time_Factor);
+			p.Scan_Time_Factor = m.Time_Factor;
+
 			// Now place entry points in the public accessible array
-			for (c_int i = 0; i < m.Num_Sequences; i++)
+			for (i = 0; i < m.Num_Sequences; i++)
 			{
 				m.Seq_Data[i].Entry_Point = temp_Ep[i];
 				m.Seq_Data[i].Duration = p.Scan[i].Time;
+			}
+
+			// Wipe the remaining entries so the player doesn't think they're
+			// valid e.g. when handling end of module markers
+			for (; i < Constants.Max_Sequences; i++)
+			{
+				m.Seq_Data[i].Entry_Point = 0;
+				m.Seq_Data[i].Duration = 0;
+			}
+
+			// Correct any zero length temporary sequences from the scan.
+			// There's no "correct" sequence for these, so copy whichever
+			// valid sequence precedes the affected position
+			for (i = 0; i < mod.Len; i++)
+			{
+				if (p.Sequence_Control[i] >= m.Num_Sequences)
+					p.Sequence_Control[i] = (byte)((i > 0) ? p.Sequence_Control[i - 1] : 0);
 			}
 
 			return 0;
@@ -244,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					}
 
 					pat = mod.Xxo[ord];
-					if (has_Marker && (pat == S3M_End))
+					if (has_Marker && (pat == Constants.Xmp_Mark_End))
 						break;
 				}
 
@@ -252,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				Ord_Data info = m.Xxo_Info[ord];
 
 				// Allow more complex order reuse only in main sequence
-				if ((ep != 0) && (p.Sequence_Control[ord] != 0xff))
+				if ((ep != 0) && (p.Sequence_Control[ord] != Constants.No_Sequence))
 				{
 					// Currently to detect the end of the sequence, the player needs the
 					// end to be a real position and row, so skip invalid and S3M_SKIP.
@@ -264,7 +286,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					// so check S3M_END here too
 					if (pat >= mod.Pat)
 					{
-						if (has_Marker && (pat == S3M_End))
+						if (has_Marker && (pat == Constants.Xmp_Mark_End))
 							ord = mod.Len;
 
 						continue;
@@ -277,7 +299,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// All invalid patterns skipped, only S3M_End aborts replay
 				if (pat >= mod.Pat)
 				{
-					if (has_Marker && (pat == S3M_End))
+					if (has_Marker && (pat == Constants.Xmp_Mark_End))
 					{
 						ord = mod.Len;
 						continue;
@@ -653,40 +675,60 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							frame_Count += (p1 & 0x0f) * speed;
 						}
 
-						// IT break is not applied if a lower channel looped (2.00+).
-						// (Labyrinth of Zeux ZX_11.it "Raceway")
-						if ((f1 == Effects.Fx_It_Break) && (f.Loop_Dest < 0))
+						if ((f1 == Effects.Fx_It_Break) || (f2 == Effects.Fx_It_Break))
 						{
-							break_Row = p1;
-							last_Row = 0;
+							parm = (f1 == Effects.Fx_It_Break) ? p1 : p2;
+							lib.player.LibXmp_Process_Pattern_Break(f, parm);
+
+							// TODO: Fully replace these variables with f
+							if (f.PBreak)
+							{
+								break_Row = f.JumpLine;
+								last_Row = 0;
+							}
 						}
 
 						if ((f1 == Effects.Fx_Jump) || (f2 == Effects.Fx_Jump))
 						{
-							ord2 = (f1 == Effects.Fx_Jump) ? p1 : p2;
-							break_Row = 0;
-							last_Row = 0;
+							lib.player.LibXmp_Process_Pattern_Jump(f, (f1 == Effects.Fx_Jump) ? p1 : p2);
 
-							// Prevent infinite loop, see OpenMPT PatLoop-Various.xm
-							inside_Loop = false;
+							// TODO: Fully replace these variables with f
+							if (f.PBreak)
+							{
+								ord2 = f.Jump;
+								break_Row = f.JumpLine;
+								last_Row = 0;
+
+								// Prevent infinite loop, see OpenMPT PatLoop-Various.xm
+								inside_Loop = false;
+							}
 						}
 
 						if ((f1 == Effects.Fx_Break) || (f2 == Effects.Fx_Break))
 						{
 							parm = (f1 == Effects.Fx_Break) ? p1 : p2;
-							break_Row = 10 * Common.Msn(parm) + Common.Lsn(parm);
-							last_Row = 0;
+							parm = 10 * Common.Msn(parm) + Common.Lsn(parm);
+							lib.player.LibXmp_Process_Pattern_Break(f, parm);
+
+							// TODO: Fully replace these variables with f
+							if (f.PBreak)
+							{
+								break_Row = f.JumpLine;
+								last_Row = 0;
+							}
 						}
 
 						// Archimedes line jump
 						if ((f1 == Effects.Fx_Line_Jump) || (f2 == Effects.Fx_Line_Jump))
 						{
-							// Don't set order if preceded by jump or break
+							lib.player.LibXmp_Process_Line_Jump(f, ord, (f1 == Effects.Fx_Line_Jump ? p1 : p2));
+
+							// Don't set order if preceded by jump or break.
+							// TODO: Fully replace these variables with f
 							if (last_Row > 0)
 								ord2 = ord;
 
-							parm = (f1 == Effects.Fx_Line_Jump) ? p1 : p2;
-							break_Row = parm;
+							break_Row = f.JumpLine;
 							last_Row = 0;
 							line_Jump = 1;
 						}
@@ -796,7 +838,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (c_int i = 0; i < Constants.Xmp_Max_Mod_Length; i++)
 				ctx.M.Xxo_Info[i].Time = -1;
 
-			Array.Fill(ctx.P.Sequence_Control, (uint8)0xff, 0, Constants.Xmp_Max_Mod_Length);
+			Array.Fill(ctx.P.Sequence_Control, (uint8)Constants.No_Sequence, 0, Constants.Xmp_Max_Mod_Length);
 		}
 
 

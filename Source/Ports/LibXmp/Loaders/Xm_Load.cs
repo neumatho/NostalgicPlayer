@@ -540,6 +540,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				for (c_int k = 0; k < mod.Chn; k++)
 				{
+					// Some XMs have cleanly truncated patterns. See:
+					// Balrog/f0rtify.xm; Decayer-9/purification.xm;
+					// Falcon (PL)/eaten vinyl.xm; Headcrasher/microcosm.xm;
+					// Jazztiz/ta-da-da-da.xm; Jisemdu/smile.xm;
+					// Markus Plomgren/cool jazzy jeff!!!.xm;
+					// Orange/optical.xm; Skyraver/spirit of life.xm;
+					// Sonic (UK)'s atomic_subculture.xm, luvdup.xm,
+					// phuture.xm; Teemu/speed.xm; Warhawk/anaconda.xm
+					if ((pat - patBuf) == xph.DataSize)
+						goto Early_Pattern_End;
+
 					Xmp_Event @event = Ports.LibXmp.Common.Event(m, num, k, j);
 
 					if (--size < 0)
@@ -806,6 +817,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
+			Early_Pattern_End:
 			return 0;
 
 			Err:

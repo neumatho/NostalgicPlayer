@@ -368,6 +368,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						switch (@event.FxT)
 						{
+							// Break (hex parameter)
+							case 0x0d:
+							{
+								@event.FxP = Effects.Fx_It_Break;
+								break;
+							}
+
 							// Extended effect
 							case 0x0e:
 							{
@@ -461,7 +468,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				mod.Xxc[i].Pan = pfh.ChSet[i] << 4;
 
 			m.Quirk |= Quirk_Flag.St3;
-			m.Flow_Mode = FlowMode_Flag.Loop_Global;	// Has none of ST3's loop quirks
+
+			// Has none of ST3's loop quirks; loop jumps unset prior break.
+			// TODO: There is an obscure bug where loop jumps take precedence over
+			// position jumps *ONLY WHEN THE PLAYER IS AT SPEED 1*.
+			// TODO: Jumps are always to row 0
+			m.Flow_Mode = FlowMode_Flag.Loop_Global | FlowMode_Flag.Loop_Unset_Break;
 			m.Read_Event_Type = Read_Event.St3;
 
 			return 0;

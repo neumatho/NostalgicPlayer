@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
@@ -35,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Create_Simple_Module(opaque, 1, 1);
 			opaque.loadHelpers.LibXmp_Free_Scan();
 			Set_Order(opaque, 0, 0);
-			Set_Order(opaque, 1, 0xff);		// End marker
+			Set_Order(opaque, 1, Constants.Xmp_Mark_End);	// End marker
 			Set_Quirk(opaque, Quirk_Flag.Marker, Read_Event.It);
 
 			opaque.loadHelpers.LibXmp_Prepare_Scan();
@@ -49,7 +50,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(1, p.Row, "Didn't set row 1");
 
+			ret = opaque.Xmp_Set_Row(-1);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
+			ret = opaque.Xmp_Set_Row(c_int.MinValue);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
 			ret = opaque.Xmp_Set_Row(64);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
+			ret = opaque.Xmp_Set_Row(c_int.MaxValue);
 			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
 
 			// Go to end marker

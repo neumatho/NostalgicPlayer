@@ -24,11 +24,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const c_double Default_Time_Factor = 10.0;
 		public const c_double Far_Time_Factor = 4.01373;// See Far_Extras
 
+		public const c_int No_Sequence = Max_Sequences;
 		public const c_int Max_Sequences = 255;
 		public const c_int Max_Sample_Size = 0x10000000;
 		public const c_int Max_Samples = 1024;
 		public const c_int Max_Instruments = 255;
 		public const c_int Max_Patterns = 256;
+
+		public const c_int Xmp_Mark_Skip = 0xfe;		// S3M/IT (QUIRK_MARKER) skip position
+		public const c_int Xmp_Mark_End = 0xff;		// S3M/IT (QUIRK_MARKER) end position
 
 		// Mixer
 		public const c_double C4_Period = 428.0;

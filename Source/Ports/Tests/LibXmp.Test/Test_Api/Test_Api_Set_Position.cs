@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
@@ -37,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Set_Order(opaque, 0, 0);
 			Set_Order(opaque, 1, 1);
 			Set_Order(opaque, 2, 0);
-			Set_Order(opaque, 3, 0xff);		// End marker
+			Set_Order(opaque, 3, Constants.Xmp_Mark_End);	// End marker
 			Set_Quirk(opaque, Quirk_Flag.Marker, Read_Event.It);
 
 			opaque.loadHelpers.LibXmp_Prepare_Scan();
@@ -56,7 +57,40 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(0, p.Ord, "Didn't wrap to position 0");
 
+			// xmp_set_position restarts a stopped module
+			opaque.Xmp_Stop_Module();
+			ret = opaque.Xmp_Play_Frame();
+			Assert.AreEqual(-(c_int)Xmp_Error.End, ret, "Didn't stop module");
+			ret = opaque.Xmp_Set_Position(0);
+			Assert.AreEqual(-1, ret, "Didn't set position to -1");
+			opaque.Xmp_Play_Frame();
+			Assert.AreEqual(0, p.Ord, "Not in position 0");
+			opaque.Xmp_Stop_Module();
+			ret = opaque.Xmp_Play_Frame();
+			Assert.AreEqual(-(c_int)Xmp_Error.End, ret, "Didn't stop module");
+			ret = opaque.Xmp_Set_Position(2);
+			Assert.AreEqual(2, ret, "Didn't set position to 2");
+			opaque.Xmp_Play_Frame();
+			Assert.AreEqual(2, p.Ord, "Not in position 2");
+
+			// xmp_set_position works with a restarting module
+			opaque.Xmp_Restart_Module();
+			ret = opaque.Xmp_Set_Position(1);
+			Assert.AreEqual(1, ret, "Didn't set position to 1");
+			opaque.Xmp_Play_Frame();
+			Assert.AreEqual(1, p.Ord, "Not in position 1");
+
 			ret = opaque.Xmp_Set_Position(4);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
+			ret = opaque.Xmp_Set_Position(256);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
+			ret = opaque.Xmp_Set_Position(c_int.MaxValue);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
+			ret = opaque.Xmp_Set_Position(-1);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
+			ret = opaque.Xmp_Set_Position(-256);
+			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
+			ret = opaque.Xmp_Set_Position(c_int.MinValue);
 			Assert.AreEqual(-(c_int)Xmp_Error.Invalid, ret, "Return value error");
 
 			opaque.Xmp_Release_Module();

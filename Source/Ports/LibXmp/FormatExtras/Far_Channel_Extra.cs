@@ -352,7 +352,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 			{
 				p.Speed = speed;
 				p.Bpm = bpm;
-				p.Frame_Time = m.Time_Factor * m.RRate / p.Bpm;
 			}
 		}
 
