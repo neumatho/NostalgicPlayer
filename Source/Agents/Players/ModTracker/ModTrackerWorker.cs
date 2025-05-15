@@ -1087,12 +1087,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								// as ProTracker, which it isn't
 								//
 								// Note 2: Reintroduced this check again, but changed the
-								// speed check is over 125 instead of 31. This will fix
+								// speed check is over 120 instead of 31. This will fix
 								// Santa's Workchip, but some modules which was detected
 								// as NoiseTracker will now become ProTracker
 								case Effect.SetSpeed:
 								{
-									if ((d > 125) && (d < 255))
+									if ((d >= 120) && (d < 255))
 									{
 										retVal = ModuleType.ProTracker;
 										goto stopLoop;
