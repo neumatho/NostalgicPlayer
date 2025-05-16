@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Id = Guid.Parse("525AFC28-8D6D-42D2-8F00-295164664868"),
 			Name = "Galaxy Music System 5.0",
-			Description = "This format is a conversion and packer format used in the game Jack Jazzrabit 2.\n\nEarlier versions of the game did not have a specific music format, but used Scream Tracker 3 or Impulse Tracker formats directly. Later on, this format was invented and used.\n\nThis loader can load the newest version of the format.",
+			Description = "This format is a conversion and packer format used in the game Jazz Jackrabbit 2.\n\nEarlier versions of the game did not have a specific music format, but used Scream Tracker 3 or Impulse Tracker formats directly. Later on, this format was invented and used.\n\nThis loader can load the newest version of the format.",
 			Create = Create
 		};
 
@@ -224,8 +224,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				handle = Iff.LibXmp_Iff_New();
 				if (handle == null)
 					return -1;
-
-				m.C4Rate = Constants.C4_Ntsc_Rate;
 
 				// IFF chunk IDs
 				ret = handle.LibXmp_Iff_Register("PATT".ToPointer(), Get_Patt);
