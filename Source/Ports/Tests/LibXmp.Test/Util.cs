@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -329,8 +330,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 					}
 
 					line = sr.ReadLine();
-					x = GetNextNumber(line, out s);
-					Assert.AreEqual(x, xxs.Len, "Sample length");
+					uint ux = GetNextNumber<uint>(line, out s);
+					Assert.AreEqual(ux, (uint)xxs.Len, "Sample length");
 					x = GetNextNumber(s, out s);
 					Assert.AreEqual(x, xxs.Lps, "Sample loop start");
 					x = GetNextNumber(s, out s);
@@ -532,6 +533,18 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/********************************************************************/
 		private static int GetNextNumber(string str, out string newStr)
 		{
+			return GetNextNumber<int>(str, out newStr);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static T GetNextNumber<T>(string str, out string newStr) where T : INumber<T>
+		{
 			str = str.TrimStart();
 
 			StringBuilder sb = new StringBuilder();
@@ -547,7 +560,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 
 			newStr = str.Substring(i);
 
-			return int.Parse(sb.ToString());
+			return T.Parse(sb.ToString(), null);
 		}
 
 
