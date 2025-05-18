@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Has to be in lowercase
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new[] { "lha", "lzh", "lzs" };
+		public override string[] FileExtensions => [ "lha", "lzh", "lzs" ];
 
 
 

@@ -129,6 +129,12 @@ Based on Lha 1.14i by Tsugio Okamoto.
 
 This format was created by Y. Tagawa (LHarc) on UNIX and has then been improved over time by serveral people. It was used a lot on the Amiga.</value>
   </data>
+  <data name="IDS_ARD_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Based on ArcFS code from LibXmp by Alice Rowan.
+
+This archive format is used on the Acorn system.</value>
+  </data>
   <data name="IDS_ARD_ERR_BAD_TABLE" xml:space="preserve">
     <value>Bad table</value>
   </data>
@@ -137,6 +143,9 @@ This format was created by Y. Tagawa (LHarc) on UNIX and has then been improved 
   </data>
   <data name="IDS_ARD_ERR_CRC" xml:space="preserve">
     <value>Checksum mismatch: {0}</value>
+  </data>
+  <data name="IDS_ARD_ERR_DECRUNCH_FAILED" xml:space="preserve">
+    <value>Failed to decrunch: {0}</value>
   </data>
   <data name="IDS_ARD_ERR_ENTRY_NOT_FOUND" xml:space="preserve">
     <value>Could not find archive entry ({0})</value>
@@ -161,5 +170,8 @@ This format was created by Y. Tagawa (LHarc) on UNIX and has then been improved 
   </data>
   <data name="IDS_ARD_NAME_AGENT2" xml:space="preserve">
     <value>Lharc/Lha</value>
+  </data>
+  <data name="IDS_ARD_NAME_AGENT3" xml:space="preserve">
+    <value>ArcFS</value>
   </data>
 </root>

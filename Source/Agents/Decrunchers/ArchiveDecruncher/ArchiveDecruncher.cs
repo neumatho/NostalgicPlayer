@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 	{
 		private static readonly Guid agent1Id = Guid.Parse("D791B0C0-C1D0-4CFD-9B58-67166BFBBC58");
 		private static readonly Guid agent2Id = Guid.Parse("BC285D44-8412-47D9-89AC-D63ADB8EA006");
+		private static readonly Guid agent3Id = Guid.Parse("53048FD0-E669-4B9B-AD17-0D19BF0A8ACD");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -41,7 +42,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 		public override AgentSupportInfo[] AgentInformation =>
 		[
 			new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT1, Resources.IDS_ARD_DESCRIPTION_AGENT1, agent1Id),
-			new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT2, Resources.IDS_ARD_DESCRIPTION_AGENT2, agent2Id)
+			new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT2, Resources.IDS_ARD_DESCRIPTION_AGENT2, agent2Id),
+			new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT3, Resources.IDS_ARD_DESCRIPTION_AGENT3, agent3Id)
 		];
 
 
@@ -58,6 +60,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 
 			if (typeId == agent2Id)
 				return new LhaFormat(Resources.IDS_ARD_NAME_AGENT2);
+
+			if (typeId == agent3Id)
+				return new ArcFsFormat(Resources.IDS_ARD_NAME_AGENT3);
 
 			return null;
 		}

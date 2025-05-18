@@ -1,5 +1,6 @@
 *.669 filter=lfs diff=lfs merge=lfs -text
 *.amf filter=lfs diff=lfs merge=lfs -text
+*.arc filter=lfs diff=lfs merge=lfs -text
 *.arch filter=lfs diff=lfs merge=lfs -text
 *.crm filter=lfs diff=lfs merge=lfs -text
 *.dll filter=lfs diff=lfs merge=lfs -text

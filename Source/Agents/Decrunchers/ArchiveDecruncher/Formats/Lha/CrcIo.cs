@@ -9,57 +9,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 {
 	internal partial class LhaCore
 	{
-		public ushort crc = 0;
+		public Crc16 crc = new Crc16();
 		private ushort bitBuf;
 
 		private byte subBitBuf;
 		private byte bitCount;
-
-		private ushort[] crcTable;
-
-		/********************************************************************/
-		/// <summary>
-		/// Create CRC table
-		/// </summary>
-		/********************************************************************/
-		public void MakeCrcTable()
-		{
-			crcTable = new ushort[byte.MaxValue + 1];
-
-			for (uint i = 0; i <= byte.MaxValue; i++)
-			{
-				uint r = i;
-
-				for (uint j = 0; j < Constants.CharBit; j++)
-				{
-					if ((r & 1) != 0)
-						r = (r >> 1) ^ Constants.CrcPoly;
-					else
-						r >>= 1;
-				}
-
-				crcTable[i] = (ushort)r;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate CRC checksum
-		/// </summary>
-		/********************************************************************/
-		public ushort CalcCrc(byte[] p, int offset, uint n)
-		{
-			int i = offset;
-
-			while (n-- > 0)
-				crc = (ushort)(crcTable[(crc ^ p[i++]) & 0xff] ^ (crc >> Constants.CharBit));
-
-			return crc;
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>

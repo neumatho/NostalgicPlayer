@@ -1,0 +1,27 @@
+name: Run unit test for ArchiveDecruncher
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**/ArchiveDecruncher/**'
+      - '**/ArchiveDecruncher.Test/**'
+
+jobs:
+  Test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: 'true'
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+      - name: Install dependencies
+        run: nuget restore Source\NostalgicPlayer.sln
+      - name: Build
+        run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Debug" -property:Platform="Any CPU"
+      - name: Test
+        run: dotnet test Source\Agents\Decrunchers\ArchiveDecruncher.Test\ArchiveDecruncher.Test.csproj --no-build --verbosity normal

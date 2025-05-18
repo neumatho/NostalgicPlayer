@@ -85,6 +85,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created by Thomas Neumann.
+        ///Based on ArcFS code from LibXmp by Alice Rowan.
+        ///
+        ///This archive format is used on the Acorn system..
+        /// </summary>
+        internal static string IDS_ARD_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_ARD_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bad table.
         /// </summary>
         internal static string IDS_ARD_ERR_BAD_TABLE {
@@ -108,6 +120,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
         internal static string IDS_ARD_ERR_CRC {
             get {
                 return ResourceManager.GetString("IDS_ARD_ERR_CRC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to decrunch: {0}.
+        /// </summary>
+        internal static string IDS_ARD_ERR_DECRUNCH_FAILED {
+            get {
+                return ResourceManager.GetString("IDS_ARD_ERR_DECRUNCH_FAILED", resourceCulture);
             }
         }
         
@@ -180,6 +201,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
         internal static string IDS_ARD_NAME_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_ARD_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ArcFS.
+        /// </summary>
+        internal static string IDS_ARD_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_ARD_NAME_AGENT3", resourceCulture);
             }
         }
     }

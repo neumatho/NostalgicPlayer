@@ -17,28 +17,28 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 	/// </summary>
 	internal class LzxStream : ArchiveStream
 	{
-		private static readonly byte[] tableOne = new byte[32]
-		{
+		private static readonly byte[] tableOne =
+		[
 			0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
 			7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14
-		};
+		];
 
-		private static readonly uint[] tableTwo = new uint[32]
-		{
+		private static readonly uint[] tableTwo =
+		[
 			0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024,
 			1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576, 32768, 49152
-		};
+		];
 
-		private static readonly uint[] tableThree = new uint[16]
-		{
+		private static readonly uint[] tableThree =
+		[
 			0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191, 16383, 32767
-		};
+		];
 
-		private static readonly byte[] tableFour = new byte[34]
-		{
+		private static readonly byte[] tableFour =
+		[
 			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
-		};
+		];
 
 		private readonly string agentName;
 		private readonly LzxArchive.FileEntry entry;

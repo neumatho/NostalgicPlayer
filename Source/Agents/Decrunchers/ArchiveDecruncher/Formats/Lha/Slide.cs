@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 				}
 
 BufferFilled:
-				CalcCrc(dText, 0, loc);
+				crc.CalcCrc(dText, 0, loc);
 
 				bytesLeft = (int)loc;
 				bufIndex = 0;

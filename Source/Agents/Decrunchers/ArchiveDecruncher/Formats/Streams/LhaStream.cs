@@ -40,7 +40,6 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 			wrapperStream.Seek(entry.Position, SeekOrigin.Begin);
 
 			lha = new LhaCore(agentName, archiveStream);
-			lha.MakeCrcTable();
 
 			// Initialize status variables
 			stored = false;
@@ -138,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 				if (stored)
 				{
 					copied = wrapperStream.Read(buffer, offset, Math.Min(countLeft, decrunchedBytesLeft));
-					lha.CalcCrc(buffer, offset, (uint)copied);
+					lha.crc.CalcCrc(buffer, offset, (uint)copied);
 				}
 				else
 					copied = lha.Decode(countLeft, buffer, offset);
@@ -156,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 			{
 				if (entry.Crc.HasValue)
 				{
-					if (lha.crc != entry.Crc.Value)
+					if (lha.crc.Crc != entry.Crc.Value)
 						throw new DecruncherException(agentName, string.Format(Resources.IDS_ARD_ERR_CRC, "Entry_Data"));
 				}
 

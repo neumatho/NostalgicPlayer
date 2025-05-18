@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
+using System.Text;
 using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archives;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -12,9 +13,9 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 {
 	/// <summary>
-	/// Can decrunch Lzx archives
+	/// Can decrunch ArcFs archives
 	/// </summary>
-	internal class LzxFormat : ArchiveDecruncherAgentBase
+	internal class ArcFsFormat : ArchiveDecruncherAgentBase
 	{
 		private readonly string agentName;
 
@@ -23,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public LzxFormat(string agentName)
+		public ArcFsFormat(string agentName)
 		{
 			this.agentName = agentName;
 		}
@@ -36,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Has to be in lowercase
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => [ "lzx" ];
+		public override string[] FileExtensions => [ "arc", "arcfs", "coconizer", "coco" ];
 
 
 
@@ -48,17 +49,17 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		public override AgentResult Identify(Stream archiveStream)
 		{
 			// Check the file size
-			if (archiveStream.Length < 10)
+			if (archiveStream.Length < 96)
 				return AgentResult.Unknown;
 
-			// Check the mark
+			// Check the header
 			archiveStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[4];
+			byte[] buf = new byte[8];
 
-			archiveStream.ReadExactly(buf, 0, 4);
+			archiveStream.ReadExactly(buf, 0, 8);
 
-			if ((buf[0] != 0x4c) || (buf[1] != 0x5a) || (buf[2] != 0x58) || (buf[3]) != 0x00)	// LZX\0
+			if (Encoding.Latin1.GetString(buf) != "Archive\0")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;
@@ -73,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/********************************************************************/
 		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
 		{
-			return new LzxArchive(agentName, archiveStream);
+			return new ArcFsArchive(agentName, archiveStream);
 		}
 		#endregion
 	}

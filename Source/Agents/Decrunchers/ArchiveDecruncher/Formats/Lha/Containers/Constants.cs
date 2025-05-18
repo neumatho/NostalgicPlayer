@@ -106,8 +106,6 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 
 		public const int CharBit = 8;
 
-		public const ushort CrcPoly = 0xa001;
-
 		public const int NChar = 256 + 60 - Threshold + 1;
 		public const int TreeSizeC = NChar * 2;
 		public const int TreeSizeP = 128 * 2;
