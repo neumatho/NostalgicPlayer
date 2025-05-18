@@ -1309,6 +1309,14 @@
             <uap:DisplayName>Galaxy Music System</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="cocofile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-coco">.coco</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Coconizer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

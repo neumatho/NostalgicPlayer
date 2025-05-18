@@ -61,6 +61,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Channel Player 2 | .ch2 / .chn / .chan | ProWizard | ModTracker |
 | Channel Player 3 | .ch3 / .chn / .chan | ProWizard | ModTracker |
 | ChipTracker | .chp / .chip / .krs / .kris | ProWizard | ModTracker |
+| Coconizer | .coco | | Xmp |
 | Composer 669 | .669 | | Xmp |
 | David Whittaker | .dw | | David Whittaker |
 | Delta Music 1.0 | .dm1 | | Delta Music 1.0 |
