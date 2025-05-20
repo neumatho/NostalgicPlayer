@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Id = Guid.Parse("563FB8BB-5AD0-46B6-94A9-B4361E4E7DC1"),
 			Name = "Coconizer",
-			Description = "Tracker created by Playfield for the Acorn computer.",
+			Description = "Tracker created by Playfield for the Acorn computer.\n\nNot all effects are implemented correctly, so some modules will sound strange.",
 			Create = Create
 		};
 
