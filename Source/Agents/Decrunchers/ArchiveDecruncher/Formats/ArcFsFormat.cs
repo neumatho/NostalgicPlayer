@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Has to be in lowercase
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => [ "arc", "arcfs", "coconizer", "coco" ];
+		public override string[] FileExtensions => [ "arc", "arcfs", string.Empty ];
 
 
 

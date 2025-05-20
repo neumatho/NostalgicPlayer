@@ -336,7 +336,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 				code = e.Prev;
 				e = arc.Tree[code];
 			}
-			while (code > 256);
+			while (code >= 256);
 
 			return (int)length;
 		}
@@ -524,7 +524,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 				}
 			}
 
-			arc.Rle_In = i;
+			arc.Rle_In += i;
 
 			return 0;
 		}
