@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 			// 
 			this.label.Location = new System.Drawing.Point(8, 8);
 			this.label.Name = "label";
-			this.label.Palette = this.bigFontPalette;
+			this.label.LocalCustomPalette = this.bigFontPalette;
 			this.label.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.label, "IDS_NEWVERSION_MESSAGE");
 			this.label.Size = new System.Drawing.Size(451, 31);
@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 			this.kryptonButton1.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.kryptonButton1.Location = new System.Drawing.Point(369, 255);
 			this.kryptonButton1.Name = "kryptonButton1";
-			this.kryptonButton1.Palette = this.bigFontPalette;
+			this.kryptonButton1.LocalCustomPalette = this.bigFontPalette;
 			this.kryptonButton1.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.kryptonButton1, "IDS_BUT_OK");
 			this.kryptonButton1.Size = new System.Drawing.Size(90, 25);
@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "NewVersionWindowForm";
-			this.Palette = this.bigFontPalette;
+			this.LocalCustomPalette = this.bigFontPalette;
 			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this, null);
 			this.ShowInTaskbar = false;
