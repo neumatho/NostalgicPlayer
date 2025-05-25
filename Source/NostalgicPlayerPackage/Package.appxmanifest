@@ -10,7 +10,7 @@
   <Identity
     Name="30962Polycode.NostalgicPlayer"
     Publisher="CN=B6E84ED3-AAD4-4A82-944E-44326616FC3A"
-    Version="2.6.0.0" />
+    Version="3.0.0.0" />
 
   <Properties>
     <DisplayName>NostalgicPlayer</DisplayName>
