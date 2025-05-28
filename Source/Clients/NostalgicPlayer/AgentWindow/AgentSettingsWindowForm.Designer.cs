@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.Location = new System.Drawing.Point(8, 78);
 			this.okButton.Name = "okButton";
-			this.okButton.Palette = this.bigFontPalette;
+			this.okButton.LocalCustomPalette = this.bigFontPalette;
 			this.okButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.okButton, "IDS_SETTINGS_OK");
 			this.okButton.Size = new System.Drawing.Size(90, 25);
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.Location = new System.Drawing.Point(106, 78);
 			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.Palette = this.bigFontPalette;
+			this.cancelButton.LocalCustomPalette = this.bigFontPalette;
 			this.cancelButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.cancelButton, "IDS_SETTINGS_CANCEL");
 			this.cancelButton.Size = new System.Drawing.Size(90, 25);
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.applyButton.Location = new System.Drawing.Point(204, 78);
 			this.applyButton.Name = "applyButton";
-			this.applyButton.Palette = this.bigFontPalette;
+			this.applyButton.LocalCustomPalette = this.bigFontPalette;
 			this.applyButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.applyButton, "IDS_SETTINGS_APPLY");
 			this.applyButton.Size = new System.Drawing.Size(90, 25);
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(318, 150);
 			this.Name = "AgentSettingsWindowForm";
-			this.Palette = this.bigFontPalette;
+			this.LocalCustomPalette = this.bigFontPalette;
 			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this, null);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AgentSettingsWindowForm_FormClosed);
