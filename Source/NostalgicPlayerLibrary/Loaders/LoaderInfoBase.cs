@@ -4,131 +4,146 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
-namespace Polycode.NostalgicPlayer.Kit.Bases
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 {
 	/// <summary>
-	/// Base class that can be used for sample player agents
+	/// Base class for loader information
 	/// </summary>
-	public abstract class SamplePlayerAgentBase : PlayerAgentBase, ISamplePlayerAgent
+	public abstract class LoaderInfoBase
 	{
-		/// <summary>
-		/// Holds the stream with the sample to play
-		/// </summary>
-		protected ModuleStream modStream;
-
-		#region ISamplePlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return some flags telling what the player supports
+		/// Return the source (file name or url) of the module loaded
 		/// </summary>
 		/********************************************************************/
-		public virtual SamplePlayerSupportFlag SupportFlags => SamplePlayerSupportFlag.None;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will load the header information from the file
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public virtual bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
+		public abstract string Source
 		{
-			errorMessage = string.Empty;
-
-			modStream = moduleStream;
-
-			return true;
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Cleanup the player
+		/// Return the player instance
 		/// </summary>
 		/********************************************************************/
-		public virtual void CleanupPlayer()
+		public IPlayer Player
 		{
-			modStream = null;
+			get; protected set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Initializes the player to start the sample from start
+		/// Return information about the player agent
 		/// </summary>
 		/********************************************************************/
-		public virtual bool InitSound(out string errorMessage)
+		public AgentInfo PlayerAgentInfo
 		{
-			errorMessage = string.Empty;
-
-			return true;
+			get; protected set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Cleanup the current song
+		/// Return the agent instance
 		/// </summary>
 		/********************************************************************/
-		public virtual void CleanupSound()
+		internal abstract IAgentWorker WorkerAgent
 		{
+			get;
 		}
-		#endregion
-
-		#region ISampleAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load and decode a data block and store it in the buffer
-		/// given
-		/// </summary>
-		/********************************************************************/
-		public abstract int LoadDataBlock(int[][] outputBuffer, int countInFrames);
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return which speakers the player uses.
-		/// 
-		/// Note that the outputBuffer in LoadDataBlock match the defined
-		/// order in SpeakerFlag enum
+		/// Return the format loaded
 		/// </summary>
 		/********************************************************************/
-		public virtual SpeakerFlag SpeakerFlags => ChannelCount == 1 ? SpeakerFlag.FrontCenter : SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
+		internal abstract string Format
+		{
+			get;
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the sample uses
+		/// Return the format description
 		/// </summary>
 		/********************************************************************/
-		public abstract int ChannelCount { get; }
+		internal abstract string FormatDescription
+		{
+			get;
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the frequency the sample is stored with
+		/// Return the name of the player
 		/// </summary>
 		/********************************************************************/
-		public abstract int Frequency { get; }
-		#endregion
+		internal abstract string PlayerName
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the description of the player
+		/// </summary>
+		/********************************************************************/
+		internal abstract string PlayerDescription
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the module loaded
+		/// </summary>
+		/********************************************************************/
+		internal abstract long ModuleSize
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the module crunched. Is zero if not crunched.
+		/// If -1, it means the crunched length is unknown
+		/// </summary>
+		/********************************************************************/
+		internal abstract long CrunchedSize
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a list of all the algorithms used to decrunch the module.
+		/// If null, no decruncher has been used
+		/// </summary>
+		/********************************************************************/
+		internal abstract string[] DecruncherAlgorithms
+		{
+			get;
+		}
 	}
 }

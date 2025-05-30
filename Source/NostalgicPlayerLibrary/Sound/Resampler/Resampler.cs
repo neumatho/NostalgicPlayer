@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 
 		private const int MasterVolume = 256;
 
-		private ISamplePlayerAgent currentPlayer;
+		private ISampleAgent currentPlayer;
 
 		private DownMixer downMixer;
 		private Visualizer currentVisualizer;
@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 					return false;
 
 				// Get the player instance
-				currentPlayer = (ISamplePlayerAgent)playerConfiguration.Loader.PlayerAgent;
+				currentPlayer = (ISampleAgent)playerConfiguration.LoaderInfo.WorkerAgent;
 
 				inputFrequency = currentPlayer.Frequency;
 				inputChannelCount = currentPlayer.ChannelCount;

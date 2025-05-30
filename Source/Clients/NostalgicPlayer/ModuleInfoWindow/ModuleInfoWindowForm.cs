@@ -487,8 +487,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_AUTHOR, val);
 
-				int row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, staticInfo.ModuleFormat);
-				moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewTextBoxCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, ToolTipText = string.Join("\r\n", staticInfo.ModuleFormatDescription.SplitIntoLines(moduleInfoInfoDataGridView.Handle, 400, moduleInfoInfoDataGridView.Font)) };
+				int row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, staticInfo.Format);
+				moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewTextBoxCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, ToolTipText = string.Join("\r\n", staticInfo.FormatDescription.SplitIntoLines(moduleInfoInfoDataGridView.Handle, 400, moduleInfoInfoDataGridView.Font)) };
 
 				row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, staticInfo.PlayerName);
 				moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewTextBoxCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, ToolTipText = string.Join("\r\n", staticInfo.PlayerDescription.SplitIntoLines(moduleInfoInfoDataGridView.Handle, 400, moduleInfoInfoDataGridView.Font)) };

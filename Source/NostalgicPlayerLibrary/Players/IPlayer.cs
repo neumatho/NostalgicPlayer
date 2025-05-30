@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Return a string containing a warning string. If there is no
 		/// warning, an empty string is returned
 		/// </summary>
-		string GetWarning(Loader loader);
+		string GetWarning(LoaderInfoBase loaderInfo);
 
 		/// <summary>
 		/// Will initialize the player
@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// <summary>
 		/// Will start playing the music
 		/// </summary>
-		bool StartPlaying(Loader loader, out string errorMessage, MixerConfiguration newMixerConfiguration = null);
+		bool StartPlaying(LoaderInfoBase loaderInfo, out string errorMessage, MixerConfiguration newMixerConfiguration = null);
 
 		/// <summary>
 		/// Will stop the playing

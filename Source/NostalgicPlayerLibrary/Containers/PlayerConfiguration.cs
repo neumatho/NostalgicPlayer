@@ -19,10 +19,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PlayerConfiguration(IOutputAgent outputAgent, Loader loader, SurroundMode surroundMode, MixerConfiguration mixerConfiguration)
+		public PlayerConfiguration(IOutputAgent outputAgent, LoaderInfoBase loaderInfo, SurroundMode surroundMode, MixerConfiguration mixerConfiguration)
 		{
 			OutputAgent = outputAgent;
-			Loader = loader;
+			LoaderInfo = loaderInfo;
 			SurroundMode = surroundMode;
 			MixerConfiguration = mixerConfiguration;
 		}
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Holds the loader object that has loaded the module
 		/// </summary>
 		/********************************************************************/
-		public Loader Loader
+		public LoaderInfoBase LoaderInfo
 		{
 			get;
 		}

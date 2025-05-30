@@ -161,4 +161,14 @@ Decruncher {1} returned the following error:
     <value>Failed to initialize player with selected song.
 {0}.</value>
   </data>
+  <data name="IDS_ERR_GET_STREAM_HEADERS" xml:space="preserve">
+    <value>Failed to retrieve the headers from the stream {0}. Failed with HTTP error {1}</value>
+  </data>
+  <data name="IDS_ERR_STREAM" xml:space="preserve">
+    <value>An error occurred on stream ({0}) with error 0x{1}.
+{2}.</value>
+  </data>
+  <data name="IDS_ERR_UNKNOWN_STREAM" xml:space="preserve">
+    <value>Unknown streaming format ({0}) from stream {1}</value>
+  </data>
 </root>

@@ -3,31 +3,24 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// Agents of this type can play samples
+	/// Agents of this type can play from a stream
 	/// </summary>
-	public interface ISamplePlayerAgent : IPlayerAgent, ISampleAgent
+	public interface IStreamerAgent : ISampleAgent, IModuleInformation, IAgentWorker
 	{
 		/// <summary>
-		/// Return some flags telling what the player supports
+		/// Return an array of mime types that this agent can handle
 		/// </summary>
-		SamplePlayerSupportFlag SupportFlags { get; }
-
-		/// <summary>
-		/// Will load the header information from the file
-		/// </summary>
-		AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage);
+		string[] PlayableMimeTypes { get; }
 
 		/// <summary>
 		/// Initializes the player
 		/// </summary>
-		bool InitPlayer(ModuleStream moduleStream, out string errorMessage);
+		bool InitPlayer(StreamingStream streamingStream, out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the player

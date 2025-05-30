@@ -16,14 +16,13 @@ using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler;
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
 	/// <summary>
-	/// Main class to play samples
+	/// Main class to play streams
 	/// </summary>
-	internal class SamplePlayer : ISamplePlayer
+	internal class StreamingPlayer : IStreamingPlayer
 	{
 		private readonly Manager agentManager;
 
-		private ISamplePlayerAgent currentPlayer;
-		private DurationInfo durationInfo;
+		private IStreamerAgent currentPlayer;
 
 		private IOutputAgent outputAgent;
 		private ResamplerStream soundStream;
@@ -33,7 +32,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SamplePlayer(Manager manager)
+		public StreamingPlayer(Manager manager)
 		{
 			agentManager = manager;
 
@@ -72,12 +71,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			{
 				outputAgent = playerConfiguration.OutputAgent;
 
-				Loader loader = playerConfiguration.LoaderInfo as Loader;
+				StreamLoader loader = playerConfiguration.LoaderInfo as StreamLoader;
 				if (loader == null)
 					throw new ArgumentException("Invalid loader object");
 
 				// Remember the player
-				currentPlayer = (ISamplePlayerAgent)loader.WorkerAgent;
+				currentPlayer = (IStreamerAgent)loader.WorkerAgent;
 
 				lock (currentPlayer)
 				{
@@ -86,9 +85,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 					if (initOk)
 					{
-						// Calculate the duration of the sample
-						CalculateDuration();
-
 						// Initialize module information
 						StaticModuleInformation = new ModuleInfoStatic(loader, currentPlayer);
 
@@ -151,7 +147,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					currentPlayer.CleanupSound();
 					currentPlayer.CleanupPlayer();
 
-					durationInfo = null;
 					currentPlayer = null;
 
 					// Clear player information
@@ -177,7 +172,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start playing the music
 		/// </summary>
 		/********************************************************************/
-		public bool StartPlaying(LoaderInfoBase loaderInfo, out string errorMessage, MixerConfiguration newMixerConfiguration)
+		public bool StartPlaying(LoaderInfoBase loaderInfo, out string errorMessage, MixerConfiguration newMixerConfiguration = null)
 		{
 			try
 			{
@@ -190,7 +185,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						return false;
 
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(0, null, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 
 				soundStream.Start();
@@ -344,36 +339,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
 		#endregion
 
-		#region ISamplePlayer implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will set a new song position
-		/// </summary>
-		/********************************************************************/
-		public void SetSongPosition(int position)
-		{
-			if (currentPlayer != null)
-			{
-				lock (currentPlayer)
-				{
-					if (currentPlayer is IDurationPlayer durationPlayer)
-						durationPlayer.SetSongPosition(durationInfo?.PositionInfo[position]);
-
-					ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
-					if ((moduleInfoChanges != null) && (ModuleInfoChanged != null))
-					{
-						foreach (ModuleInfoChanged moduleInfoChanged in moduleInfoChanges)
-							ModuleInfoChanged(this, new ModuleInfoChangedEventArgs(moduleInfoChanged.Line, moduleInfoChanged.Value));
-					}
-				}
-
-				soundStream.SongPosition = position;
-				PlayingModuleInformation.SongPosition = position;
-			}
-		}
-
-
-
+		#region IStreamingPlayer implementation
 		/********************************************************************/
 		/// <summary>
 		/// Event called when the position is changed
@@ -452,28 +418,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Just call the next event handler
 				if (ModuleInfoChanged != null)
 					ModuleInfoChanged(sender, e);
-			}
-		}
-		#endregion
-
-		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Calculates the duration of all sub-songs
-		/// </summary>
-		/********************************************************************/
-		private void CalculateDuration()
-		{
-			if (currentPlayer is IDurationPlayer durationPlayer)
-			{
-				DurationInfo[] allSongsInfo = durationPlayer.CalculateDuration();
-				if ((allSongsInfo != null) && (allSongsInfo.Length > 0))
-				{
-					durationInfo = allSongsInfo[0];
-
-					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, null);
-				}
 			}
 		}
 		#endregion

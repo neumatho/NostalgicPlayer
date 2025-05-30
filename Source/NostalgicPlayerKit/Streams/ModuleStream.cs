@@ -13,7 +13,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 namespace Polycode.NostalgicPlayer.Kit.Streams
 {
 	/// <summary>
-	/// This class wraps another stream and adds some helper methods to read the data
+	/// This class is used when loading modules
 	/// </summary>
 	public class ModuleStream : ReaderStream
 	{

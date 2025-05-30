@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				playing = false;
 
 				// Get the player instance
-				currentPlayer = (IModulePlayerAgent)playerConfiguration.Loader.PlayerAgent;
+				currentPlayer = (IModulePlayerAgent)playerConfiguration.LoaderInfo.WorkerAgent;
 				bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
 				bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
 

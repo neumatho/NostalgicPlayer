@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 	/// <summary>
 	/// Loader class that helps load a module
 	/// </summary>
-	public class Loader
+	public class Loader : LoaderBase
 	{
 		private class ConvertInfo
 		{
@@ -33,6 +33,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		}
 
 		private readonly Manager agentManager;
+
+		private string source;
+		private IPlayerAgent playerAgent;
+
+		private string format;
+		private string formatDescription;
+		private string playerName;
+		private string playerDescription;
+		private long moduleSize;
+		private long crunchedSize;
+		private string[] decruncherAlgorithms;
 
 		private ILoader currentLoader;
 		private ConvertInfo convertInfo;
@@ -48,7 +59,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			this.agentManager = agentManager;
 
 			PlayerAgentInfo = null;
-			PlayerAgent = null;
+			playerAgent = null;
 			ConverterAgentInfo = null;
 			Stream = null;
 		}
@@ -89,20 +100,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			return result;
 		}
 
-
-
+		#region LoaderBase overrides
 		/********************************************************************/
 		/// <summary>
-		/// Will try to find a player that understand the file and then load
-		/// the file into memory.
+		/// Will try to find a player that understand the source and then
+		/// load it into memory or prepare it.
 		///
 		/// For archive support, see the ArchiveFileDecruncher constructor
 		/// description on how the path should look like
 		/// </summary>
 		/********************************************************************/
-		public bool Load(string fileName, out string errorMessage)
+		public override bool Load(string source, out string errorMessage)
 		{
-			using (ILoader loader = FindLoader(fileName))
+			using (ILoader loader = FindLoader(source))
 			{
 				return Load(loader, out errorMessage);
 			}
@@ -112,35 +122,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 		/********************************************************************/
 		/// <summary>
-		/// Will try to find a player that understand the data in the loader
-		/// given and then load it into memory.
-		///
-		/// The loading is implemented in a way, so if the module needs to be
-		/// converted, the sample data is not copied over to the new stream,
-		/// but is marked instead. When the player then loads the module, it
-		/// will read the module structure from the converted stream and
-		/// sample data from the original stream
-		/// </summary>
-		/********************************************************************/
-		public bool Load(ILoader loader, out string errorMessage)
-		{
-			bool result = FindPlayer(loader, out errorMessage);
-			if (result)
-				result = LoadModule(loader, out errorMessage);
-
-			CleanupLoadState();
-
-			return result;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will unload the loaded file and free it from memory
 		/// </summary>
 		/********************************************************************/
-		public void Unload()
+		public override void Unload()
 		{
 			CleanupLoadState();
 
@@ -148,42 +133,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			Stream = null;
 
 			PlayerAgentInfo = null;
-			PlayerAgent = null;
+			playerAgent = null;
 
 			ConverterAgentInfo = null;
 
 			Player = null;
 
-			ModuleSize = 0;
-			ModuleFormat = string.Empty;
-			ModuleFormatDescription = string.Empty;
-			PlayerName = string.Empty;
-			PlayerDescription = string.Empty;
+			moduleSize = 0;
+			format = string.Empty;
+			formatDescription = string.Empty;
+			playerName = string.Empty;
+			playerDescription = string.Empty;
 		}
+		#endregion
 
-
-
+		#region LoaderInfoBase overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the player instance
+		/// Return the source (file name or url) of the module loaded
 		/// </summary>
 		/********************************************************************/
-		public IPlayer Player
-		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about the player agent
-		/// </summary>
-		/********************************************************************/
-		public AgentInfo PlayerAgentInfo
-		{
-			get; private set;
-		}
+		public override string Source => source;
 
 
 
@@ -192,58 +162,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// Return the agent player instance
 		/// </summary>
 		/********************************************************************/
-		internal IPlayerAgent PlayerAgent
-		{
-			get; private set;
-		}
+		internal override IAgentWorker WorkerAgent => playerAgent;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return information about the converter agent
+		/// Return the format loaded
 		/// </summary>
 		/********************************************************************/
-		public AgentInfo ConverterAgentInfo
-		{
-			get; private set;
-		}
+		internal override string Format => format;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the file name of the module loaded
+		/// Return the format description
 		/// </summary>
 		/********************************************************************/
-		public string FileName
-		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the module format of the module loaded
-		/// </summary>
-		/********************************************************************/
-		internal string ModuleFormat
-		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the module format description
-		/// </summary>
-		/********************************************************************/
-		internal string ModuleFormatDescription
-		{
-			get; private set;
-		}
+		internal override string FormatDescription => formatDescription;
 
 
 
@@ -252,10 +189,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// Return the name of the player
 		/// </summary>
 		/********************************************************************/
-		internal string PlayerName
-		{
-			get; private set;
-		}
+		internal override string PlayerName => playerName;
 
 
 
@@ -264,10 +198,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// Return the description of the player
 		/// </summary>
 		/********************************************************************/
-		internal string PlayerDescription
-		{
-			get; private set;
-		}
+		internal override string PlayerDescription => playerDescription;
 
 
 
@@ -276,10 +207,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// Return the size of the module loaded
 		/// </summary>
 		/********************************************************************/
-		internal long ModuleSize
-		{
-			get; private set;
-		}
+		internal override long ModuleSize => moduleSize;
 
 
 
@@ -289,10 +217,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// If -1, it means the crunched length is unknown
 		/// </summary>
 		/********************************************************************/
-		internal long CrunchedSize
-		{
-			get; private set;
-		}
+		internal override long CrunchedSize => crunchedSize;
 
 
 
@@ -302,7 +227,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// If null, no decruncher has been used
 		/// </summary>
 		/********************************************************************/
-		internal string[] DecruncherAlgorithms
+		internal override string[] DecruncherAlgorithms => decruncherAlgorithms;
+		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// Return information about the converter agent
+		/// </summary>
+		/********************************************************************/
+		internal AgentInfo ConverterAgentInfo
 		{
 			get; private set;
 		}
@@ -320,6 +253,31 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find a player that understand the data in the loader
+		/// given and then load it into memory.
+		///
+		/// The loading is implemented in a way, so if the module needs to be
+		/// converted, the sample data is not copied over to the new stream,
+		/// but is marked instead. When the player then loads the module, it
+		/// will read the module structure from the converted stream and
+		/// sample data from the original stream
+		/// </summary>
+		/********************************************************************/
+		private bool Load(ILoader loader, out string errorMessage)
+		{
+			bool result = FindPlayer(loader, out errorMessage);
+			if (result)
+				result = LoadModule(loader, out errorMessage);
+
+			CleanupLoadState();
+
+			return result;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will open a ModuleStream based on the arguments given
@@ -524,7 +482,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				{
 					// We found a player
 					PlayerAgentInfo = agentInfo;
-					PlayerAgent = player;
+					playerAgent = player;
 
 					return true;
 				}
@@ -603,7 +561,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				{
 					// We found the right player
 					PlayerAgentInfo = agentInfo;
-					PlayerAgent = player;
+					playerAgent = player;
 
 					return true;
 				}
@@ -749,12 +707,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 					AgentResult agentResult = AgentResult.Unknown;
 					string playerError = string.Empty;
 
-					if (PlayerAgent is IModulePlayerAgent modulePlayerAgent)
+					if (playerAgent is IModulePlayerAgent modulePlayerAgent)
 					{
 						// Load the module if the player is a module player
 						agentResult = modulePlayerAgent.Load(fileInfo, out playerError);
 					}
-					else if (PlayerAgent is ISamplePlayerAgent samplePlayerAgent)
+					else if (playerAgent is ISamplePlayerAgent samplePlayerAgent)
 					{
 						// Load header information if sample player
 						agentResult = samplePlayerAgent.LoadHeaderInfo(fileInfo.ModuleStream, out playerError);
@@ -768,23 +726,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 						errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentName : PlayerAgentInfo.TypeName, playerError);
 
 						PlayerAgentInfo = null;
-						PlayerAgent = null;
+						playerAgent = null;
 
 						result = false;
 					}
 					else
 					{
 						// Get module information
-						FileName = fileInfo.FileName;
+						source = fileInfo.FileName;
 
-						PlayerName = PlayerAgentInfo.AgentName;
-						PlayerDescription = PlayerAgentInfo.AgentDescription;
+						playerName = PlayerAgentInfo.AgentName;
+						playerDescription = PlayerAgentInfo.AgentDescription;
 
-						ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentName : PlayerAgentInfo.TypeName;
-						if (!string.IsNullOrEmpty(PlayerAgent.ExtraFormatInfo))
-							ModuleFormat += $" ({PlayerAgent.ExtraFormatInfo})";
+						format = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentName : PlayerAgentInfo.TypeName;
+						if (!string.IsNullOrEmpty(playerAgent.ExtraFormatInfo))
+							format += $" ({playerAgent.ExtraFormatInfo})";
 
-						ModuleFormatDescription = convertInfo != null ? convertInfo.Agent.TypeDescription : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentDescription : PlayerAgentInfo.TypeDescription;
+						formatDescription = convertInfo != null ? convertInfo.Agent.TypeDescription : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentDescription : PlayerAgentInfo.TypeDescription;
 
 						ConverterAgentInfo = convertInfo?.Agent;
 					}
@@ -802,7 +760,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			convertInfo?.SampleDataStream?.Dispose();
 
 			// Close the files again if needed
-			if (!result || PlayerAgent is IModulePlayerAgent)
+			if (!result || playerAgent is IModulePlayerAgent)
 				loadStream?.Dispose();
 			else
 			{
@@ -812,11 +770,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 			if (result)
 			{
-				Player = PlayerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : PlayerAgent is ISamplePlayerAgent ? new SamplePlayer(agentManager) : null;
+				Player = playerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : playerAgent is ISamplePlayerAgent ? new SamplePlayer(agentManager) : null;
 
-				ModuleSize = loader.ModuleSize;
-				CrunchedSize = loader.CrunchedSize;
-				DecruncherAlgorithms = loader.DecruncherAlgorithms;
+				moduleSize = loader.ModuleSize;
+				crunchedSize = loader.CrunchedSize;
+				decruncherAlgorithms = loader.DecruncherAlgorithms;
 			}
 
 			CleanupLoadState();

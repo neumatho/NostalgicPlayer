@@ -95,6 +95,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the headers from the stream {0}. Failed with HTTP error {1}.
+        /// </summary>
+        internal static string IDS_ERR_GET_STREAM_HEADERS {
+            get {
+                return ResourceManager.GetString("IDS_ERR_GET_STREAM_HEADERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to load the file ({0}).
         ///
         ///Player {1} returned the following error:
@@ -147,11 +156,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred on stream ({0}) with error 0x{1}.
+        ///{2}..
+        /// </summary>
+        internal static string IDS_ERR_STREAM {
+            get {
+                return ResourceManager.GetString("IDS_ERR_STREAM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown module format in file ({0})..
         /// </summary>
         internal static string IDS_ERR_UNKNOWN_MODULE {
             get {
                 return ResourceManager.GetString("IDS_ERR_UNKNOWN_MODULE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown streaming format ({0}) from stream {1}.
+        /// </summary>
+        internal static string IDS_ERR_UNKNOWN_STREAM {
+            get {
+                return ResourceManager.GetString("IDS_ERR_UNKNOWN_STREAM", resourceCulture);
             }
         }
         

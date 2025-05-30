@@ -14,7 +14,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IAgent
 	{
 		/// <summary>
-		/// 1.6.0
+		/// This is used to ensure that the agent is compatible with the
+		/// current version of NostalgicPlayer
 		/// </summary>
 		public const int NostalgicPlayer_Current_Version = (3 << 16) + (0 << 8) + 0;
 

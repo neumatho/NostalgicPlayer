@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		private readonly Dictionary<int, ModuleInfoChanged> changedModuleInfo = new Dictionary<int, ModuleInfoChanged>();
 
+		#region IPlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -125,9 +126,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual PictureInfo[] Pictures => null;
+		#endregion
 
-
-
+		#region IModuleInformation implementation
 		/********************************************************************/
 		/// <summary>
 		/// Returns the description and value on the line given. If the line
@@ -156,9 +157,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 			return changedInfo;
 		}
+		#endregion
 
-
-
+		#region IEndDetection implementation
 		/********************************************************************/
 		/// <summary>
 		/// This flag is set to true, when end is reached
@@ -168,6 +169,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			get; set;
 		}
+		#endregion
 
 		#region Helper methods
 		/********************************************************************/

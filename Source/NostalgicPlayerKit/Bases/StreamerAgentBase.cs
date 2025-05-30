@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
+using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -11,31 +13,24 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Kit.Bases
 {
 	/// <summary>
-	/// Base class that can be used for sample player agents
+	/// Base class that can be used for streamer agents
 	/// </summary>
-	public abstract class SamplePlayerAgentBase : PlayerAgentBase, ISamplePlayerAgent
+	public abstract class StreamerAgentBase : IStreamerAgent
 	{
 		/// <summary>
-		/// Holds the stream with the sample to play
+		/// Holds the stream to stream from
 		/// </summary>
-		protected ModuleStream modStream;
+		protected StreamingStream stream;
 
-		#region ISamplePlayerAgent implementation
+		private readonly Dictionary<int, ModuleInfoChanged> changedModuleInfo = new Dictionary<int, ModuleInfoChanged>();
+
+		#region IStreamerAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return some flags telling what the player supports
+		/// Return an array of mime types that this agent can handle
 		/// </summary>
 		/********************************************************************/
-		public virtual SamplePlayerSupportFlag SupportFlags => SamplePlayerSupportFlag.None;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will load the header information from the file
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage);
+		public abstract string[] PlayableMimeTypes { get; }
 
 
 
@@ -44,11 +39,11 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public virtual bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
+		public virtual bool InitPlayer(StreamingStream streamingStream, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
-			modStream = moduleStream;
+			stream = streamingStream;
 
 			return true;
 		}
@@ -62,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void CleanupPlayer()
 		{
-			modStream = null;
+			stream = null;
 		}
 
 
@@ -129,6 +124,75 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public abstract int Frequency { get; }
+		#endregion
+
+		#region IModuleInformation implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public virtual bool GetInformationString(int line, out string description, out string value)
+		{
+			description = null;
+			value = null;
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all module information changed since last call
+		/// </summary>
+		/********************************************************************/
+		public virtual ModuleInfoChanged[] GetChangedInformation()
+		{
+			ModuleInfoChanged[] changedInfo = changedModuleInfo.Values.ToArray();
+			changedModuleInfo.Clear();
+
+			return changedInfo;
+		}
+		#endregion
+
+		#region IEndDetection implementation
+		/********************************************************************/
+		/// <summary>
+		/// This flag is set to true, when end is reached
+		/// </summary>
+		/********************************************************************/
+		public virtual bool HasEndReached
+		{
+			get; set;
+		}
+		#endregion
+
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Call this when your player has reached the end of the module
+		/// </summary>
+		/********************************************************************/
+		protected void OnEndReached()
+		{
+			// Set flag
+			HasEndReached = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this every time your player change some information shown
+		/// in the module information window
+		/// </summary>
+		/********************************************************************/
+		protected void OnModuleInfoChanged(int line, string newValue)
+		{
+			changedModuleInfo[line] = new ModuleInfoChanged(line, newValue);
+		}
 		#endregion
 	}
 }

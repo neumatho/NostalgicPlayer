@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Return the module information for the given player
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<string> GetModuleInformation(IPlayerAgent playerAgent)
+		public static IEnumerable<string> GetModuleInformation(IModuleInformation playerAgent)
 		{
 			for (int i = 0; playerAgent.GetInformationString(i, out string description, out string value); i++)
 			{

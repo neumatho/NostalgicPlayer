@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		{
 			ModuleName = string.Empty;
 			Author = string.Empty;
-			ModuleFormat = string.Empty;
+			Format = string.Empty;
 			PlayerName = string.Empty;
 			Channels = 0;
 			VirtualChannels = 0;
@@ -45,22 +45,33 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(Loader loader, IPlayerAgent playerAgent)
+		private ModuleInfoStatic(LoaderInfoBase loaderInfo)
 		{
-			PlayerAgentInfo = loader.PlayerAgentInfo;
+			PlayerAgentInfo = loaderInfo.PlayerAgentInfo;
+			Format = loaderInfo.Format;
+			FormatDescription = loaderInfo.FormatDescription;
+			PlayerName = loaderInfo.PlayerName;
+			PlayerDescription = loaderInfo.PlayerDescription;
+			DecruncherAlgorithms = loaderInfo.DecruncherAlgorithms;
+			CrunchedSize = loaderInfo.CrunchedSize;
+			ModuleSize = loaderInfo.ModuleSize;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		private ModuleInfoStatic(LoaderInfoBase loaderInfo, IPlayerAgent playerAgent) : this(loaderInfo)
+		{
 			ModuleName = playerAgent.ModuleName?.Trim();
 			Comment = playerAgent.Comment;
 			CommentFont = playerAgent.CommentFont;
 			Lyrics = playerAgent.Lyrics;
 			LyricsFont = playerAgent.LyricsFont;
 			Pictures = playerAgent.Pictures;
-			ModuleFormat = loader.ModuleFormat;
-			ModuleFormatDescription = loader.ModuleFormatDescription;
-			PlayerName = loader.PlayerName;
-			PlayerDescription = loader.PlayerDescription;
-			DecruncherAlgorithms = loader.DecruncherAlgorithms;
-			CrunchedSize = loader.CrunchedSize;
-			ModuleSize = loader.ModuleSize;
 		}
 
 
@@ -106,6 +117,31 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			Frequency = samplePlayerAgent.Frequency;
 
 			Author = FindAuthor(samplePlayerAgent);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		internal ModuleInfoStatic(StreamLoader loader, IStreamerAgent streamerAgent) : this(loader)
+		{
+			ModuleName = string.Empty;
+			Comment = null;
+			CommentFont = null;
+			Lyrics = null;
+			LyricsFont = null;
+			Pictures = null;
+
+			Channels = streamerAgent.ChannelCount;
+			VirtualChannels = streamerAgent.ChannelCount;
+			MaxSongNumber = 1;
+			CanChangePosition = false;
+			Frequency = streamerAgent.Frequency;
+
+			Author = string.Empty;
 		}
 
 		#region Common properties
@@ -207,11 +243,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the format of the module
+		/// Return the format loaded
 		/// </summary>
 		/********************************************************************/
 
-		public string ModuleFormat
+		public string Format
 		{
 			get;
 		}
@@ -224,7 +260,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 
-		public string ModuleFormatDescription
+		public string FormatDescription
 		{
 			get;
 		}

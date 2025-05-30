@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// <summary>
 	/// Agents of this type can play some kind of file
 	/// </summary>
-	public interface IPlayerAgent : IAgentWorker
+	public interface IPlayerAgent : IModuleInformation, IEndDetection, IAgentWorker
 	{
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -74,21 +74,5 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Return all pictures available
 		/// </summary>
 		PictureInfo[] Pictures { get; }
-
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		bool GetInformationString(int line, out string description, out string value);
-
-		/// <summary>
-		/// Return all module information changed since last call
-		/// </summary>
-		ModuleInfoChanged[] GetChangedInformation();
-
-		/// <summary>
-		/// This flag is set to true, when end is reached
-		/// </summary>
-		bool HasEndReached { get; set; }
 	}
 }

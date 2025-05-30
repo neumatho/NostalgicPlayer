@@ -36,6 +36,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			Players,
 
 			/// <summary>
+			/// Streamer agents can play from a network stream with a specific
+			/// audio format
+			/// </summary>
+			Streamers,
+
+			/// <summary>
 			/// Converters that can read and/or write samples
 			/// </summary>
 			SampleConverters,
@@ -163,7 +169,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 					return loadInfo.AgentInfo;
 			}
 
-			return new AgentInfo[0];
+			return [];
 		}
 
 
@@ -454,6 +460,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 
 			if (worker is IPlayerAgent)
 				return AgentType.Players;
+
+			if (worker is IStreamerAgent)
+				return AgentType.Streamers;
 
 			if ((worker is ISampleLoaderAgent) || (worker is ISampleSaverAgent))
 				return AgentType.SampleConverters;

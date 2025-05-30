@@ -39,8 +39,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			PlayingFrequency = 50.0f;
 		}
 
-
-
+		#region IModulePlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
 		/// Return some flags telling what the player supports
@@ -279,6 +278,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public event SubSongChangedEventHandler SubSongChanged;
+		#endregion
 
 		#region Helper methods
 		/********************************************************************/

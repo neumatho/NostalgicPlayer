@@ -54,11 +54,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// warning, an empty string is returned
 		/// </summary>
 		/********************************************************************/
-		public string GetWarning(Loader loader)
+		public string GetWarning(LoaderInfoBase loaderInfo)
 		{
 			lock (playerLock)
 			{
-				IModulePlayerAgent player = (IModulePlayerAgent)loader.PlayerAgent;
+				IModulePlayerAgent player = (IModulePlayerAgent)loaderInfo.WorkerAgent;
 
 				lock (player)
 				{
@@ -85,10 +85,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				{
 					outputAgent = playerConfiguration.OutputAgent;
 
-					Loader loader = playerConfiguration.Loader;
+					Loader loader = playerConfiguration.LoaderInfo as Loader;
+					if (loader == null)
+						throw new ArgumentException("Invalid loader object");
 
 					// Remember the player
-					currentPlayer = (IModulePlayerAgent)loader.PlayerAgent;
+					currentPlayer = (IModulePlayerAgent)loader.WorkerAgent;
 
 					lock (currentPlayer)
 					{
@@ -198,7 +200,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start playing the music
 		/// </summary>
 		/********************************************************************/
-		public bool StartPlaying(Loader loader, out string errorMessage, MixerConfiguration newMixerConfiguration)
+		public bool StartPlaying(LoaderInfoBase loaderInfo, out string errorMessage, MixerConfiguration newMixerConfiguration)
 		{
 			lock (playerLock)
 			{
@@ -209,7 +211,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 					soundStream.Start();
 
-					if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
+					if (outputAgent.SwitchStream(soundStream, loaderInfo.Source, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
 						return false;
 
 					StaticModuleInformation.PlayBackSpeakers = soundStream.VisualizerSpeakers;
