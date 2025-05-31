@@ -171,4 +171,7 @@ Decruncher {1} returned the following error:
   <data name="IDS_ERR_UNKNOWN_STREAM" xml:space="preserve">
     <value>Unknown streaming format ({0}) from stream {1}</value>
   </data>
+  <data name="IDS_ERR_TOO_MANY_REDIRECTS" xml:space="preserve">
+    <value>Too many redirects occurred on stream {0}</value>
+  </data>
 </root>

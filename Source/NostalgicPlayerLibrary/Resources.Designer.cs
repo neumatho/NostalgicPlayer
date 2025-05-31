@@ -166,6 +166,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Too many redirects occurred on stream {0}.
+        /// </summary>
+        internal static string IDS_ERR_TOO_MANY_REDIRECTS {
+            get {
+                return ResourceManager.GetString("IDS_ERR_TOO_MANY_REDIRECTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown module format in file ({0})..
         /// </summary>
         internal static string IDS_ERR_UNKNOWN_MODULE {

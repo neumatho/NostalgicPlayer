@@ -22,6 +22,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 	/// </summary>
 	public class StreamLoader : LoaderBase
 	{
+		private int MaxNumberOfRedirects = 10;
+
 		private readonly Manager agentManager;
 
 		private Uri uri;
@@ -63,12 +65,39 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 			uri = new Uri(source);
 
-			httpClient = new HttpClient();
-
-			responseMessage = Task.Run(() => httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead)).Result;
-			if (responseMessage.StatusCode != HttpStatusCode.OK)
+			httpClient = new HttpClient(new HttpClientHandler
 			{
-				errorMessage = string.Format(Resources.IDS_ERR_GET_STREAM_HEADERS, uri.AbsoluteUri, (int)responseMessage.StatusCode);
+				AllowAutoRedirect = false
+			});
+
+			for (int i = 0; i < MaxNumberOfRedirects; i++)
+			{
+				responseMessage = Task.Run(() => httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead)).Result;
+
+				if (responseMessage.StatusCode == HttpStatusCode.OK)
+					break;
+
+				// If we get a redirect, we will follow it but only once
+				if ((responseMessage.StatusCode is HttpStatusCode.MovedPermanently or HttpStatusCode.Found or HttpStatusCode.SeeOther or HttpStatusCode.TemporaryRedirect or HttpStatusCode.PermanentRedirect)
+				    && responseMessage.Headers.Location != null)
+				{
+					uri = responseMessage.Headers.Location.IsAbsoluteUri ? responseMessage.Headers.Location : new Uri(uri, responseMessage.Headers.Location);
+
+					responseMessage.Dispose();
+					responseMessage = null;
+				}
+				else
+				{
+					errorMessage = string.Format(Resources.IDS_ERR_GET_STREAM_HEADERS, uri.AbsoluteUri, (int)responseMessage.StatusCode);
+					Unload();
+
+					return false;
+				}
+			}
+
+			if (responseMessage == null)
+			{
+				errorMessage = string.Format(Resources.IDS_ERR_TOO_MANY_REDIRECTS, uri.AbsoluteUri);
 				Unload();
 
 				return false;
