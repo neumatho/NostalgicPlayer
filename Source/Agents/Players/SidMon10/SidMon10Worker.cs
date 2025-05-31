@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 		private const int InfoTrackLine = 5;
 		private const int InfoSpeedLine = 6;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -101,6 +101,239 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 			moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 			return TestModule(buffer);
+		}
+		#endregion
+
+		#region Loading
+		/********************************************************************/
+		/// <summary>
+		/// Will load the file into memory
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			try
+			{
+				ModuleStream moduleStream = fileInfo.ModuleStream;
+
+				FindCounts(moduleStream, out int numberOfTracks, out int numberOfInstruments, out int numberOfWaveformList, out int numberOfWaveforms);
+
+				if (!LoadSongData(moduleStream, out uint numberOfPositions))
+				{
+					errorMessage = Resources.IDS_SD1_ERR_LOADING_SONGDATA;
+					return AgentResult.Error;
+				}
+
+				if (!LoadInstruments(moduleStream, numberOfInstruments))
+				{
+					errorMessage = Resources.IDS_SD1_ERR_LOADING_INSTRUMENTS;
+					return AgentResult.Error;
+				}
+
+				if (!LoadTracks(moduleStream, numberOfTracks))
+				{
+					errorMessage = Resources.IDS_SD1_ERR_LOADING_TRACKS;
+					return AgentResult.Error;
+				}
+
+				if (!LoadSequences(moduleStream, numberOfPositions))
+				{
+					errorMessage = Resources.IDS_SD1_ERR_LOADING_SEQUENCES;
+					return AgentResult.Error;
+				}
+
+				if (!LoadWaveforms(moduleStream, numberOfWaveformList, numberOfWaveforms))
+				{
+					errorMessage = Resources.IDS_SD1_ERR_LOADING_WAVEFORMS;
+					return AgentResult.Error;
+				}
+
+				if (!LoadSamples(moduleStream))
+				{
+					errorMessage = Resources.IDS_SD1_ERR_LOADING_SAMPLES;
+					return AgentResult.Error;
+				}
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+
+			// Ok, we're done
+			return AgentResult.Ok;
+		}
+		#endregion
+
+		#region Initialization and cleanup
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			Cleanup();
+
+			base.CleanupPlayer();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the current song
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(int songNumber, out string errorMessage)
+		{
+			if (!base.InitSound(songNumber, out errorMessage))
+				return false;
+
+			InitializeSound();
+
+			return true;
+		}
+		#endregion
+
+		#region Playing
+		/********************************************************************/
+		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			for (int i = 0; i < 4; i++)
+				PlayNote(sequences[i], playingInfo.VoiceInfo[i], VirtualChannels[i]);
+
+			playingInfo.SpeedCounter++;
+			if (playingInfo.SpeedCounter > playingInfo.Speed)
+				playingInfo.SpeedCounter = 0;
+
+			playingInfo.NewTrack = false;
+			playingInfo.LoopSong = false;
+
+			if (playingInfo.SpeedCounter == 0)
+			{
+				playingInfo.CurrentRow++;
+				if (playingInfo.CurrentRow == playingInfo.NumberOfRows)
+				{
+					playingInfo.CurrentRow = 0;
+					playingInfo.NewTrack = true;
+
+					playingInfo.CurrentPosition++;
+					if (playingInfo.CurrentPosition > sequences[0].Length)
+					{
+						playingInfo.CurrentPosition = 1;
+						playingInfo.LoopSong = true;
+
+						endReached = true;
+					}
+					else
+						MarkPositionAsVisited((int)playingInfo.CurrentPosition - 1);
+
+					ShowSongPositions();
+				}
+			}
+
+			DoWaveformMixing(mix1Information, playingInfo.Mix1PlayingInfo);
+			DoWaveformMixing(mix2Information, playingInfo.Mix2PlayingInfo);
+			DoFilterEffect();
+
+			if (endReached)
+			{
+				OnEndReachedOnAllChannels((int)playingInfo.CurrentPosition - 1);
+				endReached = false;
+			}
+		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override IEnumerable<SampleInfo> Samples
+		{
+			get
+			{
+				for (int i = 0, j = 0; i < instruments.Length; i++)
+				{
+					if (instrumentToSampleInfoMapping[i] < j)
+						continue;
+
+					j++;
+					Instrument instr = instruments[i];
+
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int k = 0; k < 5 * 12; k++)
+						frequencies[2 * 12 - 2 + k] = PeriodToFrequency(periods[8 + instr.FineTune * fineTuneMultiply + k]);
+
+					SampleInfo sampleInfo;
+
+					if (instr.WaveformNumber < 16)
+					{
+						sampleInfo = new SampleInfo
+						{
+							Name = string.Empty,
+							Type = SampleInfo.SampleType.Synthesis,
+							Flags = SampleInfo.SampleFlag.None,
+							Volume = 256,
+							Panning = -1,
+							Sample = null,
+							Length = 0,
+							LoopStart = 0,
+							LoopLength = 0,
+							NoteFrequencies = frequencies
+						};
+					}
+					else
+					{
+						uint sampleNum = instr.WaveformNumber - 16;
+						if (sampleNum >= samples.Length) 
+							continue;
+
+						Sample sample = samples[sampleNum];
+						if (sample.SampleData == null)
+							continue;
+
+						sampleInfo = new SampleInfo
+						{
+							Name = sample.Name,
+							Flags = SampleInfo.SampleFlag.None,
+							Type = SampleInfo.SampleType.Sample,
+							Volume = 256,
+							Panning = -1,
+							Sample = sample.SampleData,
+							Length = (uint)sample.SampleData.Length,
+							NoteFrequencies = frequencies
+						};
+
+						if (sample.LoopStart < 0)
+						{
+							// No loop
+							sampleInfo.LoopStart = 0;
+							sampleInfo.LoopLength = 0;
+						}
+						else
+						{
+							// Sample loops
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+							sampleInfo.LoopStart = (uint)sample.LoopStart;
+							sampleInfo.LoopLength = (uint)sample.SampleData.Length - sampleInfo.LoopStart;
+						}
+					}
+
+					yield return sampleInfo;
+				}
+			}
 		}
 
 
@@ -185,240 +418,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			try
-			{
-				ModuleStream moduleStream = fileInfo.ModuleStream;
-
-				FindCounts(moduleStream, out int numberOfTracks, out int numberOfInstruments, out int numberOfWaveformList, out int numberOfWaveforms);
-
-				if (!LoadSongData(moduleStream, out uint numberOfPositions))
-				{
-					errorMessage = Resources.IDS_SD1_ERR_LOADING_SONGDATA;
-					return AgentResult.Error;
-				}
-
-				if (!LoadInstruments(moduleStream, numberOfInstruments))
-				{
-					errorMessage = Resources.IDS_SD1_ERR_LOADING_INSTRUMENTS;
-					return AgentResult.Error;
-				}
-
-				if (!LoadTracks(moduleStream, numberOfTracks))
-				{
-					errorMessage = Resources.IDS_SD1_ERR_LOADING_TRACKS;
-					return AgentResult.Error;
-				}
-
-				if (!LoadSequences(moduleStream, numberOfPositions))
-				{
-					errorMessage = Resources.IDS_SD1_ERR_LOADING_SEQUENCES;
-					return AgentResult.Error;
-				}
-
-				if (!LoadWaveforms(moduleStream, numberOfWaveformList, numberOfWaveforms))
-				{
-					errorMessage = Resources.IDS_SD1_ERR_LOADING_WAVEFORMS;
-					return AgentResult.Error;
-				}
-
-				if (!LoadSamples(moduleStream))
-				{
-					errorMessage = Resources.IDS_SD1_ERR_LOADING_SAMPLES;
-					return AgentResult.Error;
-				}
-			}
-			catch (Exception)
-			{
-				Cleanup();
-				throw;
-			}
-
-			// Ok, we're done
-			return AgentResult.Ok;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the player
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupPlayer()
-		{
-			Cleanup();
-
-			base.CleanupPlayer();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the current song
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(int songNumber, out string errorMessage)
-		{
-			if (!base.InitSound(songNumber, out errorMessage))
-				return false;
-
-			InitializeSound();
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// This is the main player method
-		/// </summary>
-		/********************************************************************/
-		public override void Play()
-		{
-			for (int i = 0; i < 4; i++)
-				PlayNote(sequences[i], playingInfo.VoiceInfo[i], VirtualChannels[i]);
-
-			playingInfo.SpeedCounter++;
-			if (playingInfo.SpeedCounter > playingInfo.Speed)
-				playingInfo.SpeedCounter = 0;
-
-			playingInfo.NewTrack = false;
-			playingInfo.LoopSong = false;
-
-			if (playingInfo.SpeedCounter == 0)
-			{
-				playingInfo.CurrentRow++;
-				if (playingInfo.CurrentRow == playingInfo.NumberOfRows)
-				{
-					playingInfo.CurrentRow = 0;
-					playingInfo.NewTrack = true;
-
-					playingInfo.CurrentPosition++;
-					if (playingInfo.CurrentPosition > sequences[0].Length)
-					{
-						playingInfo.CurrentPosition = 1;
-						playingInfo.LoopSong = true;
-
-						endReached = true;
-					}
-					else
-						MarkPositionAsVisited((int)playingInfo.CurrentPosition - 1);
-
-					ShowSongPositions();
-				}
-			}
-
-			DoWaveformMixing(mix1Information, playingInfo.Mix1PlayingInfo);
-			DoWaveformMixing(mix2Information, playingInfo.Mix2PlayingInfo);
-			DoFilterEffect();
-
-			if (endReached)
-			{
-				OnEndReachedOnAllChannels((int)playingInfo.CurrentPosition - 1);
-				endReached = false;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns all the samples available in the module. If none, null
-		/// is returned
-		/// </summary>
-		/********************************************************************/
-		public override IEnumerable<SampleInfo> Samples
-		{
-			get
-			{
-				for (int i = 0, j = 0; i < instruments.Length; i++)
-				{
-					if (instrumentToSampleInfoMapping[i] < j)
-						continue;
-
-					j++;
-					Instrument instr = instruments[i];
-
-					// Build frequency table
-					uint[] frequencies = new uint[10 * 12];
-
-					for (int k = 0; k < 5 * 12; k++)
-						frequencies[2 * 12 - 2 + k] = PeriodToFrequency(periods[8 + instr.FineTune * fineTuneMultiply + k]);
-
-					SampleInfo sampleInfo;
-
-					if (instr.WaveformNumber < 16)
-					{
-						sampleInfo = new SampleInfo
-						{
-							Name = string.Empty,
-							Type = SampleInfo.SampleType.Synthesis,
-							Flags = SampleInfo.SampleFlag.None,
-							Volume = 256,
-							Panning = -1,
-							Sample = null,
-							Length = 0,
-							LoopStart = 0,
-							LoopLength = 0,
-							NoteFrequencies = frequencies
-						};
-					}
-					else
-					{
-						uint sampleNum = instr.WaveformNumber - 16;
-						if (sampleNum >= samples.Length) 
-							continue;
-
-						Sample sample = samples[sampleNum];
-						if (sample.SampleData == null)
-							continue;
-
-						sampleInfo = new SampleInfo
-						{
-							Name = sample.Name,
-							Flags = SampleInfo.SampleFlag.None,
-							Type = SampleInfo.SampleType.Sample,
-							Volume = 256,
-							Panning = -1,
-							Sample = sample.SampleData,
-							Length = (uint)sample.SampleData.Length,
-							NoteFrequencies = frequencies
-						};
-
-						if (sample.LoopStart < 0)
-						{
-							// No loop
-							sampleInfo.LoopStart = 0;
-							sampleInfo.LoopLength = 0;
-						}
-						else
-						{
-							// Sample loops
-							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
-							sampleInfo.LoopStart = (uint)sample.LoopStart;
-							sampleInfo.LoopLength = (uint)sample.SampleData.Length - sampleInfo.LoopStart;
-						}
-					}
-
-					yield return sampleInfo;
-				}
-			}
-		}
-		#endregion
-
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

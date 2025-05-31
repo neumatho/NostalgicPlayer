@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 		private const int InfoTrackLine = 6;
 		private const int InfoSpeedLine = 7;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -110,107 +110,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => moduleName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE0;
-					value = positions.Length.ToString();
-					break;
-				}
-
-				// Used track rows
-				case 1:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE1;
-					value = trackLines.Length.ToString();
-					break;
-				}
-
-				// Used instruments
-				case 2:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE2;
-					value = (instruments.Length - 1).ToString();
-					break;
-				}
-
-				// Used samples
-				case 3:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE3;
-					value = samples.Length.ToString();
-					break;
-				}
-
-				// Used wave tables
-				case 4:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE4;
-					value = waveforms.Length.ToString();
-					break;
-				}
-
-				// Playing position
-				case 5:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE5;
-					value = FormatPosition();
-					break;
-				}
-
-				// Playing tracks from line
-				case 6:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE6;
-					value = FormatTracks();
-					break;
-				}
-
-				// Current speed
-				case 7:
-				{
-					description = Resources.IDS_SYN_INFODESCLINE7;
-					value = FormatSpeed();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -472,9 +374,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -520,9 +422,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -543,6 +445,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 				endReached = false;
 			}
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => moduleName;
 
 
 
@@ -620,9 +531,98 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE0;
+					value = positions.Length.ToString();
+					break;
+				}
+
+				// Used track rows
+				case 1:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE1;
+					value = trackLines.Length.ToString();
+					break;
+				}
+
+				// Used instruments
+				case 2:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE2;
+					value = (instruments.Length - 1).ToString();
+					break;
+				}
+
+				// Used samples
+				case 3:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE3;
+					value = samples.Length.ToString();
+					break;
+				}
+
+				// Used wave tables
+				case 4:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE4;
+					value = waveforms.Length.ToString();
+					break;
+				}
+
+				// Playing position
+				case 5:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE5;
+					value = FormatPosition();
+					break;
+				}
+
+				// Playing tracks from line
+				case 6:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE6;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 7:
+				{
+					description = Resources.IDS_SYN_INFODESCLINE7;
+					value = FormatSpeed();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

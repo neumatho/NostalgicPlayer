@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				currentModuleType = ModuleType.Unknown;
 		}
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -127,93 +127,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 			return currentModuleType == ModuleType.Hippel7V ? TestModuleFor7Voices(buffer, moduleStream) : TestModule(buffer, moduleStream);
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_HIP_INFODESCLINE0;
-					value = numberOfPositions.ToString();
-					break;
-				}
-
-				// Used tracks
-				case 1:
-				{
-					description = Resources.IDS_HIP_INFODESCLINE1;
-					value = tracks.Length.ToString();
-					break;
-				}
-
-				// Used samples
-				case 2:
-				{
-					description = Resources.IDS_HIP_INFODESCLINE2;
-					value = samples.Length.ToString();
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_HIP_INFODESCLINE3;
-					value = FormatPosition();
-					break;
-				}
-
-				// Playing tracks
-				case 4:
-				{
-					description = Resources.IDS_HIP_INFODESCLINE4;
-					value = FormatTracks();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_HIP_INFODESCLINE5;
-					value = FormatSpeed();
-					break;
-				}
-
-				// Current tempo (Hz)
-				case 6:
-				{
-					if (currentModuleType != ModuleType.Hippel7V)
-						goto default;
-
-					description = Resources.IDS_HIP_INFODESCLINE6;
-					value = FormatTempo();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -304,9 +220,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			// Everything is loaded alright
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -335,9 +251,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -377,9 +293,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				endReached = false;
 			}
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Return the number of channels the module use
@@ -433,9 +349,93 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_HIP_INFODESCLINE0;
+					value = numberOfPositions.ToString();
+					break;
+				}
+
+				// Used tracks
+				case 1:
+				{
+					description = Resources.IDS_HIP_INFODESCLINE1;
+					value = tracks.Length.ToString();
+					break;
+				}
+
+				// Used samples
+				case 2:
+				{
+					description = Resources.IDS_HIP_INFODESCLINE2;
+					value = samples.Length.ToString();
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_HIP_INFODESCLINE3;
+					value = FormatPosition();
+					break;
+				}
+
+				// Playing tracks
+				case 4:
+				{
+					description = Resources.IDS_HIP_INFODESCLINE4;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_HIP_INFODESCLINE5;
+					value = FormatSpeed();
+					break;
+				}
+
+				// Current tempo (Hz)
+				case 6:
+				{
+					if (currentModuleType != ModuleType.Hippel7V)
+						goto default;
+
+					description = Resources.IDS_HIP_INFODESCLINE6;
+					value = FormatTempo();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

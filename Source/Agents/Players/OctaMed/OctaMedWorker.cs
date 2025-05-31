@@ -35,13 +35,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		private const int InfoSpeedLine = 5;
 		private const int InfoTempoLine = 6;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => OctaMed.fileExtensions;
+		public override string[] FileExtensions => OctaMedIdentifier.FileExtensions;
 
 
 
@@ -54,108 +54,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		{
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => sg.CurrSS().GetSongName();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the comment separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Comment => string.IsNullOrWhiteSpace(sg.GetAnnoText()) ? new string[0] : new[] { sg.GetAnnoText() };
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_MED_INFODESCLINE0;
-					value = GetSongLength().ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_MED_INFODESCLINE1;
-					value = sg.CurrSS().NumBlocks().ToString();
-					break;
-				}
-
-				// Used samples
-				case 2:
-				{
-					description = Resources.IDS_MED_INFODESCLINE2;
-					value = numSamples.ToString();
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_MED_INFODESCLINE3;
-					value = FormatPosition();
-					break;
-				}
-
-				// Playing pattern
-				case 4:
-				{
-					description = Resources.IDS_MED_INFODESCLINE4;
-					value = plr.plrPos.Block().ToString();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_MED_INFODESCLINE5;
-					value = sg.CurrSS().GetTempoTpl().ToString();
-					break;
-				}
-
-				// Current tempo (Hz)
-				case 6:
-				{
-					description = Resources.IDS_MED_INFODESCLINE6;
-					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -1217,9 +1118,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			// Everything is loaded alright
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -1277,9 +1178,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -1289,15 +1190,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		{
 			plr.PlrCallBack();
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => sg.CurrSS().GetSongName();
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the module use
+		/// Return the comment separated in lines
 		/// </summary>
 		/********************************************************************/
-		public override int ModuleChannelCount => numChannels;
+		public override string[] Comment => string.IsNullOrWhiteSpace(sg.GetAnnoText()) ? [] : [ sg.GetAnnoText() ];
 
 
 
@@ -1307,6 +1217,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// </summary>
 		/********************************************************************/
 		public override SubSongInfo SubSongs => new SubSongInfo((int)sg.NumSubSongs(), 0);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of channels the module use
+		/// </summary>
+		/********************************************************************/
+		public override int ModuleChannelCount => numChannels;
 
 
 
@@ -1438,6 +1357,87 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_MED_INFODESCLINE0;
+					value = GetSongLength().ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_MED_INFODESCLINE1;
+					value = sg.CurrSS().NumBlocks().ToString();
+					break;
+				}
+
+				// Used samples
+				case 2:
+				{
+					description = Resources.IDS_MED_INFODESCLINE2;
+					value = numSamples.ToString();
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_MED_INFODESCLINE3;
+					value = FormatPosition();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_MED_INFODESCLINE4;
+					value = plr.plrPos.Block().ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_MED_INFODESCLINE5;
+					value = sg.CurrSS().GetTempoTpl().ToString();
+					break;
+				}
+
+				// Current tempo (Hz)
+				case 6:
+				{
+					description = Resources.IDS_MED_INFODESCLINE6;
+					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return an effect master instance if the player adds extra mixer
 		/// effects to the output
 		/// </summary>
@@ -1445,7 +1445,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		public override IEffectMaster EffectMaster => plr.EffectMaster;
 		#endregion
 
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
@@ -1504,70 +1504,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			UpdateModuleInformation();
 
 			return true;
-		}
-		#endregion
-
-		#region Identify methods
-		/********************************************************************/
-		/// <summary>
-		/// Tests the module to see which type of module it is
-		/// </summary>
-		/********************************************************************/
-		public static ModuleType TestModule(PlayerFileInfo fileInfo)
-		{
-			ModuleStream moduleStream = fileInfo.ModuleStream;
-
-			// First check the length
-			if (moduleStream.Length < 840)
-				return ModuleType.Unknown;
-
-			// Now check the mark
-			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
-
-			// Check the mark
-			if ((mark & 0xffffff00) != 0x4d4d4400)	// MMD\0
-				return ModuleType.Unknown;
-
-			// Mark out the mark and leave the version
-			byte markVersion = (byte)(mark & 0x000000ff);
-
-			if (((markVersion < '0') || (markVersion > '3')) && (markVersion != 'C'))
-				return ModuleType.Unknown;
-
-			if (markVersion == '0')
-			{
-				// Well, it's either a MED or OctaMED module, find out which one
-				//
-				// Skip module length
-				moduleStream.Seek(4, SeekOrigin.Current);
-
-				// Seek to the song structure + skip until the flags argument
-				uint temp = moduleStream.Read_B_UINT32();
-				if (temp == 0)
-					return ModuleType.Unknown;
-
-				moduleStream.Seek(temp + 767, SeekOrigin.Begin);
-
-				if (((MmdFlag)moduleStream.Read_UINT8() & MmdFlag.EightChannel) != 0)
-					return ModuleType.OctaMed;
-
-				return ModuleType.Med210_MMD0;
-			}
-
-			if (markVersion == '1')
-				return ModuleType.OctaMed_Professional4;
-
-			if (markVersion == '2')
-				return ModuleType.OctaMed_Professional6;
-
-			if (markVersion == '3')
-				return ModuleType.OctaMed_SoundStudio;
-
-			if (markVersion == 'C')
-				return ModuleType.MedPacker;
-
-			return ModuleType.Unknown;
 		}
 		#endregion
 

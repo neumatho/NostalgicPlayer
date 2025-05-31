@@ -59,13 +59,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			currentFormat = LibXmp.Xmp_Get_Format_Info_List().SkipLast(1).First(x => x.Id == formatId);
 		}
 
-		#region IPlayerAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling what the player supports
+		/// </summary>
+		/********************************************************************/
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect | ModulePlayerSupportFlag.Visualize | ModulePlayerSupportFlag.EnableChannels;
+
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => Xmp.fileExtensions;
+		public override string[] FileExtensions => XmpIdentifier.FileExtensions;
 
 
 
@@ -88,146 +95,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// </summary>
 		/********************************************************************/
 		public override string ExtraFormatInfo => moduleInfo.Mod.Type.Equals(currentFormat.Name, StringComparison.InvariantCultureIgnoreCase) ? null : moduleInfo.Mod.Type;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => moduleInfo.Mod.Name;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the author
-		/// </summary>
-		/********************************************************************/
-		public override string Author => moduleInfo.Mod.Author;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the comment separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Comment => string.IsNullOrWhiteSpace(moduleInfo.Comment) ? Array.Empty<string>() : moduleInfo.Comment.Split('\n');
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_XMP_INFODESCLINE0;
-					value = moduleInfo.Mod.Len.ToString();
-					break;
-				}
-
-				// Used patterns or Used Tracks
-				case 1:
-				{
-					if ((moduleInfo.Flags & Xmp_Module_Flags.Uses_Tracks) != 0)
-					{
-						description = Resources.IDS_XMP_INFODESCLINE1b;
-						value = moduleInfo.Mod.Trk.ToString();
-					}
-					else
-					{
-						description = Resources.IDS_XMP_INFODESCLINE1a;
-						value = moduleInfo.Mod.Pat.ToString();
-					}
-					break;
-				}
-
-				// Used instruments
-				case 2:
-				{
-					description = Resources.IDS_XMP_INFODESCLINE2;
-					value = moduleInfo.Mod.Ins.ToString();
-					break;
-				}
-
-				// Used samples
-				case 3:
-				{
-					description = Resources.IDS_XMP_INFODESCLINE3;
-					value = moduleInfo.Mod.Smp.ToString();
-					break;
-				}
-
-				// Playing position
-				case 4:
-				{
-					description = Resources.IDS_XMP_INFODESCLINE4;
-					value = playingPosition.ToString();
-					break;
-				}
-
-				// Playing pattern or Playing tracks
-				case 5:
-				{
-					if ((moduleInfo.Flags & Xmp_Module_Flags.Uses_Tracks) != 0)
-						description = Resources.IDS_XMP_INFODESCLINE5b;
-					else
-						description = Resources.IDS_XMP_INFODESCLINE5a;
-
-					value = FormatPatternOrTracks();
-					break;
-				}
-
-				// Current speed
-				case 6:
-				{
-					description = Resources.IDS_XMP_INFODESCLINE6;
-					value = currentSpeed.ToString();
-					break;
-				}
-
-				// Current tempo (BPM)
-				case 7:
-				{
-					description = Resources.IDS_XMP_INFODESCLINE7;
-					value = currentTempo.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return some flags telling what the player supports
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect | ModulePlayerSupportFlag.Visualize | ModulePlayerSupportFlag.EnableChannels;
-
-
-
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -274,9 +144,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			return string.Empty;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -370,9 +240,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			lastMixerInfo = mixerInfo;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -424,6 +294,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			if (endReached)
 				OnEndReached(afterInfo.Pos);
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => moduleInfo.Mod.Name;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the author
+		/// </summary>
+		/********************************************************************/
+		public override string Author => moduleInfo.Mod.Author;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		/********************************************************************/
+		public override string[] Comment => string.IsNullOrWhiteSpace(moduleInfo.Comment) ? Array.Empty<string>() : moduleInfo.Comment.Split('\n');
 
 
 
@@ -611,6 +508,107 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_XMP_INFODESCLINE0;
+					value = moduleInfo.Mod.Len.ToString();
+					break;
+				}
+
+				// Used patterns or Used Tracks
+				case 1:
+				{
+					if ((moduleInfo.Flags & Xmp_Module_Flags.Uses_Tracks) != 0)
+					{
+						description = Resources.IDS_XMP_INFODESCLINE1b;
+						value = moduleInfo.Mod.Trk.ToString();
+					}
+					else
+					{
+						description = Resources.IDS_XMP_INFODESCLINE1a;
+						value = moduleInfo.Mod.Pat.ToString();
+					}
+					break;
+				}
+
+				// Used instruments
+				case 2:
+				{
+					description = Resources.IDS_XMP_INFODESCLINE2;
+					value = moduleInfo.Mod.Ins.ToString();
+					break;
+				}
+
+				// Used samples
+				case 3:
+				{
+					description = Resources.IDS_XMP_INFODESCLINE3;
+					value = moduleInfo.Mod.Smp.ToString();
+					break;
+				}
+
+				// Playing position
+				case 4:
+				{
+					description = Resources.IDS_XMP_INFODESCLINE4;
+					value = playingPosition.ToString();
+					break;
+				}
+
+				// Playing pattern or Playing tracks
+				case 5:
+				{
+					if ((moduleInfo.Flags & Xmp_Module_Flags.Uses_Tracks) != 0)
+						description = Resources.IDS_XMP_INFODESCLINE5b;
+					else
+						description = Resources.IDS_XMP_INFODESCLINE5a;
+
+					value = FormatPatternOrTracks();
+					break;
+				}
+
+				// Current speed
+				case 6:
+				{
+					description = Resources.IDS_XMP_INFODESCLINE6;
+					value = currentSpeed.ToString();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 7:
+				{
+					description = Resources.IDS_XMP_INFODESCLINE7;
+					value = currentTempo.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Holds the channels used by visuals. Only needed for players using
 		/// buffer mode if possible
 		/// </summary>
@@ -618,7 +616,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		public override ChannelChanged[] VisualChannels => libXmp.Xmp_Get_Visualizer_Channels();
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

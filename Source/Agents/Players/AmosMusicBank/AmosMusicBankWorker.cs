@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		private const int InfoTrackLine = 4;
 		private const int InfoSpeedLine = 5;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -78,15 +78,208 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 
 			return AgentResult.Ok;
 		}
+		#endregion
+
+		#region Loading
+		/********************************************************************/
+		/// <summary>
+		/// Will load the file into memory
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			try
+			{
+				ModuleStream moduleStream = fileInfo.ModuleStream;
+
+				// Read the different offsets
+				moduleStream.Seek(20, SeekOrigin.Begin);
+
+				uint sampleInfoOffset = moduleStream.Read_B_UINT32() + 20;
+				uint songDataOffset = moduleStream.Read_B_UINT32() + 20;
+				uint trackOffset = moduleStream.Read_B_UINT32() + 20;
+
+				if (!LoadSamples(moduleStream, sampleInfoOffset))
+				{
+					errorMessage = Resources.IDS_ABK_ERR_LOADING_SAMPLES;
+					return AgentResult.Error;
+				}
+
+				if (!LoadTracks(moduleStream, trackOffset, out ushort[][] patternTracks))
+				{
+					errorMessage = Resources.IDS_ABK_ERR_LOADING_TRACKS;
+					return AgentResult.Error;
+				}
+
+				if (!LoadSubSongsAndSequences(moduleStream, songDataOffset, patternTracks))
+				{
+					errorMessage = Resources.IDS_ABK_ERR_LOADING_SEQUENCES;
+					return AgentResult.Error;
+				}
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+
+			// Ok, we're done
+			return AgentResult.Ok;
+		}
+		#endregion
+
+		#region Initialization and cleanup
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer(out string errorMessage)
+		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
+			tempoBase = 100;
+
+			return true;
+		}
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			Cleanup();
+
+			base.CleanupPlayer();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the current song
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(int songNumber, out string errorMessage)
+		{
+			if (!base.InitSound(songNumber, out errorMessage))
+				return false;
+
+			InitializeSound(songNumber);
+
+			return true;
+		}
+		#endregion
+
+		#region Playing
+		/********************************************************************/
+		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			// Here is a smart counter, which gives progessive results
+			// from zero to 100 (PAL), 120 (NTSC)...
+			playingInfo.MuCpt += playingInfo.MuTempo;
+
+			if (playingInfo.MuCpt >= tempoBase)
+			{
+				playingInfo.MuCpt -= tempoBase;
+
+				// Lets go for one step of music
+				for (int i = 0; i < 4; i++)
+				{
+					VoiceInfo voiceInfo = playingInfo.VoiceInfo[i];
+
+					if (voiceInfo.VoiCpt != 0)
+					{
+						voiceInfo.VoiCpt--;
+
+						if (voiceInfo.VoiCpt == 0)
+							MuStep(voiceInfo, VirtualChannels[i]);
+					}
+				}
+			}
+			else
+				DoEffects();
+		}
+		#endregion
+
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Return the name of the module
 		/// </summary>
 		/********************************************************************/
 		public override string ModuleName => songInfo[0].Name;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return information about sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override SubSongInfo SubSongs => new SubSongInfo(songInfo.Length, 0);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override IEnumerable<SampleInfo> Samples
+		{
+			get
+			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int i = 0; i < 3 * 12; i++)
+					frequencies[4 * 12 + i] = PeriodToFrequency(Tables.Periods[i]);
+
+				foreach (Sample sample in samples)
+				{
+					SampleInfo sampleInfo = new SampleInfo
+					{
+						Name = sample.Name,
+						Flags = SampleInfo.SampleFlag.None,
+						Type = SampleInfo.SampleType.Sample,
+						Volume = (ushort)(sample.Volume * 4),
+						Panning = -1,
+						Sample = sample.SampleData,
+						Length = (uint)sample.SampleData.Length,
+						NoteFrequencies = frequencies
+					};
+
+					if (sample.LoopLength == 0)
+					{
+						// No loop
+						sampleInfo.LoopStart = 0;
+						sampleInfo.LoopLength = 0;
+					}
+					else
+					{
+						// Sample loops
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+						sampleInfo.LoopStart = sample.LoopStart;
+						sampleInfo.LoopLength = sample.LoopLength;
+					}
+
+					yield return sampleInfo;
+				}
+			}
+		}
 
 
 
@@ -162,200 +355,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			try
-			{
-				ModuleStream moduleStream = fileInfo.ModuleStream;
-
-				// Read the different offsets
-				moduleStream.Seek(20, SeekOrigin.Begin);
-
-				uint sampleInfoOffset = moduleStream.Read_B_UINT32() + 20;
-				uint songDataOffset = moduleStream.Read_B_UINT32() + 20;
-				uint trackOffset = moduleStream.Read_B_UINT32() + 20;
-
-				if (!LoadSamples(moduleStream, sampleInfoOffset))
-				{
-					errorMessage = Resources.IDS_ABK_ERR_LOADING_SAMPLES;
-					return AgentResult.Error;
-				}
-
-				if (!LoadTracks(moduleStream, trackOffset, out ushort[][] patternTracks))
-				{
-					errorMessage = Resources.IDS_ABK_ERR_LOADING_TRACKS;
-					return AgentResult.Error;
-				}
-
-				if (!LoadSubSongsAndSequences(moduleStream, songDataOffset, patternTracks))
-				{
-					errorMessage = Resources.IDS_ABK_ERR_LOADING_SEQUENCES;
-					return AgentResult.Error;
-				}
-			}
-			catch (Exception)
-			{
-				Cleanup();
-				throw;
-			}
-
-			// Ok, we're done
-			return AgentResult.Ok;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public override bool InitPlayer(out string errorMessage)
-		{
-			if (!base.InitPlayer(out errorMessage))
-				return false;
-
-			tempoBase = 100;
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the player
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupPlayer()
-		{
-			Cleanup();
-
-			base.CleanupPlayer();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the current song
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(int songNumber, out string errorMessage)
-		{
-			if (!base.InitSound(songNumber, out errorMessage))
-				return false;
-
-			InitializeSound(songNumber);
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// This is the main player method
-		/// </summary>
-		/********************************************************************/
-		public override void Play()
-		{
-			// Here is a smart counter, which gives progessive results
-			// from zero to 100 (PAL), 120 (NTSC)...
-			playingInfo.MuCpt += playingInfo.MuTempo;
-
-			if (playingInfo.MuCpt >= tempoBase)
-			{
-				playingInfo.MuCpt -= tempoBase;
-
-				// Lets go for one step of music
-				for (int i = 0; i < 4; i++)
-				{
-					VoiceInfo voiceInfo = playingInfo.VoiceInfo[i];
-
-					if (voiceInfo.VoiCpt != 0)
-					{
-						voiceInfo.VoiCpt--;
-
-						if (voiceInfo.VoiCpt == 0)
-							MuStep(voiceInfo, VirtualChannels[i]);
-					}
-				}
-			}
-			else
-				DoEffects();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(songInfo.Length, 0);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns all the samples available in the module. If none, null
-		/// is returned
-		/// </summary>
-		/********************************************************************/
-		public override IEnumerable<SampleInfo> Samples
-		{
-			get
-			{
-				// Build frequency table
-				uint[] frequencies = new uint[10 * 12];
-
-				for (int i = 0; i < 3 * 12; i++)
-					frequencies[4 * 12 + i] = PeriodToFrequency(Tables.Periods[i]);
-
-				foreach (Sample sample in samples)
-				{
-					SampleInfo sampleInfo = new SampleInfo
-					{
-						Name = sample.Name,
-						Flags = SampleInfo.SampleFlag.None,
-						Type = SampleInfo.SampleType.Sample,
-						Volume = (ushort)(sample.Volume * 4),
-						Panning = -1,
-						Sample = sample.SampleData,
-						Length = (uint)sample.SampleData.Length,
-						NoteFrequencies = frequencies
-					};
-
-					if (sample.LoopLength == 0)
-					{
-						// No loop
-						sampleInfo.LoopStart = 0;
-						sampleInfo.LoopLength = 0;
-					}
-					else
-					{
-						// Sample loops
-						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
-						sampleInfo.LoopStart = sample.LoopStart;
-						sampleInfo.LoopLength = sample.LoopLength;
-					}
-
-					yield return sampleInfo;
-				}
-			}
-		}
-		#endregion
-
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

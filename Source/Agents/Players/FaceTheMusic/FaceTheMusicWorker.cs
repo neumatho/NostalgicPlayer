@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 		private const int InfoSpeedLine = 3;
 		private const int InfoTempoLine = 4;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -89,92 +89,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => songTitle;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the author
-		/// </summary>
-		/********************************************************************/
-		public override string Author => artist;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_FTM_INFODESCLINE0;
-					value = numberOfMeasures.ToString();
-					break;
-				}
-
-				// Used samples
-				case 1:
-				{
-					description = Resources.IDS_FTM_INFODESCLINE1;
-					value = numberOfSamples.ToString();
-					break;
-				}
-
-				// Playing position
-				case 2:
-				{
-					description = Resources.IDS_FTM_INFODESCLINE2;
-					value = FormatSongPosition();
-					break;
-				}
-
-				// Current speed
-				case 3:
-				{
-					description = Resources.IDS_FTM_INFODESCLINE3;
-					value = playingInfo.Speed.ToString();
-					break;
-				}
-
-				// Current tempo (Hz)
-				case 4:
-				{
-					description = Resources.IDS_FTM_INFODESCLINE4;
-					value = FormatTempo();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -227,9 +144,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 			// Everything is loaded alright
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -284,9 +201,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -316,6 +233,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 				MarkPositionAsVisited(position);
 			}
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => songTitle;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the author
+		/// </summary>
+		/********************************************************************/
+		public override string Author => artist;
 
 
 
@@ -386,9 +321,74 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_FTM_INFODESCLINE0;
+					value = numberOfMeasures.ToString();
+					break;
+				}
+
+				// Used samples
+				case 1:
+				{
+					description = Resources.IDS_FTM_INFODESCLINE1;
+					value = numberOfSamples.ToString();
+					break;
+				}
+
+				// Playing position
+				case 2:
+				{
+					description = Resources.IDS_FTM_INFODESCLINE2;
+					value = FormatSongPosition();
+					break;
+				}
+
+				// Current speed
+				case 3:
+				{
+					description = Resources.IDS_FTM_INFODESCLINE3;
+					value = playingInfo.Speed.ToString();
+					break;
+				}
+
+				// Current tempo (Hz)
+				case 4:
+				{
+					description = Resources.IDS_FTM_INFODESCLINE4;
+					value = FormatTempo();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

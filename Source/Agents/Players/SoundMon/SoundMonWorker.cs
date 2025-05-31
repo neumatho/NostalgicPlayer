@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				currentModuleType = ModuleType.Unknown;
 		}
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -84,99 +84,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => moduleName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_BP_INFODESCLINE0;
-					value = stepNum.ToString();
-					break;
-				}
-
-				// Used tracks
-				case 1:
-				{
-					description = Resources.IDS_BP_INFODESCLINE1;
-					value = trackNum.ToString();
-					break;
-				}
-
-				// Supported / used samples
-				case 2:
-				{
-					description = Resources.IDS_BP_INFODESCLINE2;
-					value = "15";
-					break;
-				}
-
-				// Used wave tables
-				case 3:
-				{
-					description = Resources.IDS_BP_INFODESCLINE3;
-					value = waveNum.ToString();
-					break;
-				}
-
-				// Playing position
-				case 4:
-				{
-					description = Resources.IDS_BP_INFODESCLINE4;
-					value = playingInfo.BpStep.ToString();
-					break;
-				}
-
-				// Playing tracks
-				case 5:
-				{
-					description = Resources.IDS_BP_INFODESCLINE5;
-					value = FormatTracks();
-					break;
-				}
-
-				// Current speed
-				case 6:
-				{
-					description = Resources.IDS_BP_INFODESCLINE6;
-					value = playingInfo.BpDelay.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -427,9 +337,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -458,9 +368,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -479,6 +389,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				MarkPositionAsVisited(playingInfo.BpStep);
 			}
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => moduleName;
 
 
 
@@ -545,9 +464,90 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_BP_INFODESCLINE0;
+					value = stepNum.ToString();
+					break;
+				}
+
+				// Used tracks
+				case 1:
+				{
+					description = Resources.IDS_BP_INFODESCLINE1;
+					value = trackNum.ToString();
+					break;
+				}
+
+				// Supported / used samples
+				case 2:
+				{
+					description = Resources.IDS_BP_INFODESCLINE2;
+					value = "15";
+					break;
+				}
+
+				// Used wave tables
+				case 3:
+				{
+					description = Resources.IDS_BP_INFODESCLINE3;
+					value = waveNum.ToString();
+					break;
+				}
+
+				// Playing position
+				case 4:
+				{
+					description = Resources.IDS_BP_INFODESCLINE4;
+					value = playingInfo.BpStep.ToString();
+					break;
+				}
+
+				// Playing tracks
+				case 5:
+				{
+					description = Resources.IDS_BP_INFODESCLINE5;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 6:
+				{
+					description = Resources.IDS_BP_INFODESCLINE6;
+					value = playingInfo.BpDelay.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

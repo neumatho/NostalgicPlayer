@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 				currentModuleType = ModuleType.Unknown;
 		}
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -66,107 +66,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => module.Name;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions:
-				case 0:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE0;
-					value = player.GetSongLength().ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE1;
-					value = module.NumberOfPatterns.ToString();
-					break;
-				}
-
-				// Used instruments
-				case 2:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE2;
-					value = module.NumberOfInstruments.ToString();
-					break;
-				}
-
-				// Used samples
-				case 3:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE3;
-					value = module.NumberOfSamples.ToString();
-					break;
-				}
-
-				// Playing position
-				case 4:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE4;
-					value = player.GetPosition().ToString();
-					break;
-				}
-
-				// Playing pattern
-				case 5:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE5;
-					value = player.GetPattern().ToString();
-					break;
-				}
-
-				// Current speed
-				case 6:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE6;
-					value = player.GetSpeed().ToString();
-					break;
-				}
-
-				// Current tempo (BPM)
-				case 7:
-				{
-					description = Resources.IDS_DBM_INFODESCLINE7;
-					value = player.GetTempo().ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -193,9 +95,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 			// Everything is loaded alright
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -241,9 +143,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -253,15 +155,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		{
 			player.Mix();
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the module use
+		/// Return the name of the module
 		/// </summary>
 		/********************************************************************/
-		public override int ModuleChannelCount => module.NumberOfTracks;
+		public override string ModuleName => module.Name;
 
 
 
@@ -271,6 +173,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/// </summary>
 		/********************************************************************/
 		public override SubSongInfo SubSongs => new SubSongInfo(module.NumberOfSongs, 0);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of channels the module use
+		/// </summary>
+		/********************************************************************/
+		public override int ModuleChannelCount => module.NumberOfTracks;
 
 
 
@@ -360,6 +271,95 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions:
+				case 0:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE0;
+					value = player.GetSongLength().ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE1;
+					value = module.NumberOfPatterns.ToString();
+					break;
+				}
+
+				// Used instruments
+				case 2:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE2;
+					value = module.NumberOfInstruments.ToString();
+					break;
+				}
+
+				// Used samples
+				case 3:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE3;
+					value = module.NumberOfSamples.ToString();
+					break;
+				}
+
+				// Playing position
+				case 4:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE4;
+					value = player.GetPosition().ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 5:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE5;
+					value = player.GetPattern().ToString();
+					break;
+				}
+
+				// Current speed
+				case 6:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE6;
+					value = player.GetSpeed().ToString();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 7:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE7;
+					value = player.GetTempo().ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return an effect master instance if the player adds extra mixer
 		/// effects to the output
 		/// </summary>
@@ -367,7 +367,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		public override IEffectMaster EffectMaster => player.GetEffectMaster();
 		#endregion
 
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

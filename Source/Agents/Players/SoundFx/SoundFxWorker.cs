@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		private const int InfoPositionLine = 3;
 		private const int InfoPatternLine = 4;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -84,82 +84,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_SFX_INFODESCLINE0;
-					value = songLength.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_SFX_INFODESCLINE1;
-					value = maxPattern.ToString();
-					break;
-				}
-
-				// Supported / used samples
-				case 2:
-				{
-					description = Resources.IDS_SFX_INFODESCLINE2;
-					value = "31";
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_SFX_INFODESCLINE3;
-					value = playingInfo.TrackPos.ToString();
-					break;
-				}
-
-				// Playing pattern
-				case 4:
-				{
-					description = Resources.IDS_SFX_INFODESCLINE4;
-					value = orders[playingInfo.TrackPos].ToString();
-					break;
-				}
-
-				// Current tempo (Hz)
-				case 5:
-				{
-					description = Resources.IDS_SFX_INFODESCLINE5;
-					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -302,9 +229,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -333,9 +260,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -368,9 +295,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				MarkPositionAsVisited((int)playingInfo.TrackPos);
 			}
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Returns all the samples available in the module. If none, null
@@ -419,9 +346,82 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE0;
+					value = songLength.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE1;
+					value = maxPattern.ToString();
+					break;
+				}
+
+				// Supported / used samples
+				case 2:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE2;
+					value = "31";
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE3;
+					value = playingInfo.TrackPos.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE4;
+					value = orders[playingInfo.TrackPos].ToString();
+					break;
+				}
+
+				// Current tempo (Hz)
+				case 5:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE5;
+					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

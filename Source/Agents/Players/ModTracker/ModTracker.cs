@@ -58,8 +58,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModuleType.ProTrackerIff, agent16Id }
 		};
 
-		internal static readonly string[] fileExtensions = [ "mod", "adsc", "st26", "ice", "ptm" ];
-
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -124,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// can be returned in IdentifyFormat()
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => fileExtensions;
+		public string[] FileExtensions => ModTrackerIdentifier.FileExtensions;
 
 
 
@@ -136,7 +134,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public IdentifyFormatInfo IdentifyFormat(PlayerFileInfo fileInfo)
 		{
-			ModuleType moduleType = ModTrackerWorker.TestModule(fileInfo);
+			ModuleType moduleType = ModTrackerIdentifier.TestModule(fileInfo);
 			if (moduleType == ModuleType.Unknown)
 				return null;
 

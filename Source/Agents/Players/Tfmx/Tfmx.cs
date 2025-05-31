@@ -32,8 +32,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{ ModuleType.Tfmx7V, agent3Id }
 		};
 
-		internal static readonly string[] fileExtensions = [ "tfx", "mdat", "tfm" ];
-
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -85,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// can be returned in IdentifyFormat()
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => fileExtensions;
+		public string[] FileExtensions => TfmxIdentifier.FileExtensions;
 
 
 
@@ -97,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public IdentifyFormatInfo IdentifyFormat(PlayerFileInfo fileInfo)
 		{
-			ModuleType moduleType = TfmxWorker.TestModule(fileInfo);
+			ModuleType moduleType = TfmxIdentifier.TestModule(fileInfo);
 			if (moduleType == ModuleType.Unknown)
 				return null;
 

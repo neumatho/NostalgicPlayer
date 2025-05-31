@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 		private const int InfoClockSpeedLine = 8;
 
-		#region IAgentSettingsRegistrar implementation
+		#region Settings registration
 		/********************************************************************/
 		/// <summary>
 		/// Return the agent ID for the agent showing the settings
@@ -71,7 +71,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		}
 		#endregion
 
-		#region IPlayerAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling what the player supports
+		/// </summary>
+		/********************************************************************/
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;
+
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -103,210 +110,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => sidTune.GetInfo().InfoString(0);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the author
-		/// </summary>
-		/********************************************************************/
-		public override string Author => sidTune.GetInfo().InfoString(1);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the comment separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Comment => comments.ToArray();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return a specific font to be used for the comments
-		/// </summary>
-		/********************************************************************/
-		[SupportedOSPlatform("windows")]
-		public override Font CommentFont
-		{
-			get
-			{
-				if (!sidTune.GetInfo().IsMusFormat())
-					return null;
-
-				if (commentFont == null)
-				{
-					// Load the font from the resources
-					byte[] fontData = Resources.C64_Pro_Mono_STYLE;
-					IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
-					Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
-
-					uint dummy = 0;
-					fonts = new PrivateFontCollection();
-					fonts.AddMemoryFont(fontPtr, fontData.Length);
-					AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
-
-					Marshal.FreeCoTaskMem(fontPtr);
-
-					commentFont = new Font(fonts.Families[0], 6);
-				}
-
-				return commentFont;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the lyrics separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Lyrics => lyrics.ToArray();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return a specific font to be used for the lyrics
-		/// </summary>
-		/********************************************************************/
-		[SupportedOSPlatform("windows")]
-		public override Font LyricsFont => CommentFont;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			SidTuneInfo tuneInfo = sidTune.GetInfo();
-			SidInfo engineInfo = engine.Info();
-
-			// Find out which line to take
-			switch (line)
-			{
-				// Released
-				case 0:
-				{
-					description = Resources.IDS_SID_INFODESCLINE0;
-					value = tuneInfo.InfoString(2);
-					break;
-				}
-
-				// File format
-				case 1:
-				{
-					description = Resources.IDS_SID_INFODESCLINE1;
-					value = tuneInfo.FormatString();
-					break;
-				}
-
-				// Load range
-				case 2:
-				{
-					description = Resources.IDS_SID_INFODESCLINE2;
-					value = string.Format("${0:X4} - ${1:X4}", tuneInfo.LoadAddr(), tuneInfo.LoadAddr() + tuneInfo.C64DataLen() - 1);
-					break;
-				}
-
-				// Init address
-				case 3:
-				{
-					description = Resources.IDS_SID_INFODESCLINE3;
-					value = "0x" + tuneInfo.InitAddr().ToString("X4");
-					break;
-				}
-
-				// Play address
-				case 4:
-				{
-					description = Resources.IDS_SID_INFODESCLINE4;
-					value = "0x" + tuneInfo.PlayAddr().ToString("X4");
-					break;
-				}
-
-				// Reloc region
-				case 5:
-				{
-					description = Resources.IDS_SID_INFODESCLINE5;
-
-					if (tuneInfo.RelocStartPage() == 0)
-						value = Resources.IDS_SID_NOT_PRESENT;
-					else
-						value = string.Format("${0:X2}00 - ${1:X2}FF", tuneInfo.RelocStartPage(), tuneInfo.RelocStartPage() + tuneInfo.RelocPages() - 1);
-
-					break;
-				}
-
-				// Driver region
-				case 6:
-				{
-					description = Resources.IDS_SID_INFODESCLINE6;
-
-					if (engineInfo.DriverAddr() == 0)
-						value = Resources.IDS_SID_NOT_PRESENT;
-					else
-						value = string.Format("${0:X4} - ${1:X4}", engineInfo.DriverAddr(), engineInfo.DriverAddr() + engineInfo.DriverLength() - 1);
-
-					break;
-				}
-
-				// SID model
-				case 7:
-				{
-					description = Resources.IDS_SID_INFODESCLINE7;
-					value = engineInfo.SidModel() == SidConfig.sid_model_t.MOS8580 ? "8580" : "6581";
-					break;
-				}
-
-				// Clock speed
-				case 8:
-				{
-					description = Resources.IDS_SID_INFODESCLINE8;
-					value = engineInfo.SpeedString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return some flags telling what the player supports
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;
-
-
-
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -412,9 +218,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -636,9 +442,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			engine.Config(engineConfig, true);
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -664,15 +470,88 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			channel = VirtualChannels[1];
 			channel.PlayBuffer(rightOutputBuffer, 0, BufferSize, PlayBufferFlag._16Bit);
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => sidTune.GetInfo().InfoString(0);
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the module use
+		/// Return the name of the author
 		/// </summary>
 		/********************************************************************/
-		public override int ModuleChannelCount => sidTune.GetInfo().SidChips() * 3;
+		public override string Author => sidTune.GetInfo().InfoString(1);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		/********************************************************************/
+		public override string[] Comment => comments.ToArray();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the comments
+		/// </summary>
+		/********************************************************************/
+		[SupportedOSPlatform("windows")]
+		public override Font CommentFont
+		{
+			get
+			{
+				if (!sidTune.GetInfo().IsMusFormat())
+					return null;
+
+				if (commentFont == null)
+				{
+					// Load the font from the resources
+					byte[] fontData = Resources.C64_Pro_Mono_STYLE;
+					IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
+					Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+
+					uint dummy = 0;
+					fonts = new PrivateFontCollection();
+					fonts.AddMemoryFont(fontPtr, fontData.Length);
+					AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
+
+					Marshal.FreeCoTaskMem(fontPtr);
+
+					commentFont = new Font(fonts.Families[0], 6);
+				}
+
+				return commentFont;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the lyrics separated in lines
+		/// </summary>
+		/********************************************************************/
+		public override string[] Lyrics => lyrics.ToArray();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the lyrics
+		/// </summary>
+		/********************************************************************/
+		[SupportedOSPlatform("windows")]
+		public override Font LyricsFont => CommentFont;
 
 
 
@@ -690,9 +569,128 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				return new SubSongInfo((int)info.Songs(), (int)info.StartSong() - 1);
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of channels the module use
+		/// </summary>
+		/********************************************************************/
+		public override int ModuleChannelCount => sidTune.GetInfo().SidChips() * 3;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			SidTuneInfo tuneInfo = sidTune.GetInfo();
+			SidInfo engineInfo = engine.Info();
+
+			// Find out which line to take
+			switch (line)
+			{
+				// Released
+				case 0:
+				{
+					description = Resources.IDS_SID_INFODESCLINE0;
+					value = tuneInfo.InfoString(2);
+					break;
+				}
+
+				// File format
+				case 1:
+				{
+					description = Resources.IDS_SID_INFODESCLINE1;
+					value = tuneInfo.FormatString();
+					break;
+				}
+
+				// Load range
+				case 2:
+				{
+					description = Resources.IDS_SID_INFODESCLINE2;
+					value = string.Format("${0:X4} - ${1:X4}", tuneInfo.LoadAddr(), tuneInfo.LoadAddr() + tuneInfo.C64DataLen() - 1);
+					break;
+				}
+
+				// Init address
+				case 3:
+				{
+					description = Resources.IDS_SID_INFODESCLINE3;
+					value = "0x" + tuneInfo.InitAddr().ToString("X4");
+					break;
+				}
+
+				// Play address
+				case 4:
+				{
+					description = Resources.IDS_SID_INFODESCLINE4;
+					value = "0x" + tuneInfo.PlayAddr().ToString("X4");
+					break;
+				}
+
+				// Reloc region
+				case 5:
+				{
+					description = Resources.IDS_SID_INFODESCLINE5;
+
+					if (tuneInfo.RelocStartPage() == 0)
+						value = Resources.IDS_SID_NOT_PRESENT;
+					else
+						value = string.Format("${0:X2}00 - ${1:X2}FF", tuneInfo.RelocStartPage(), tuneInfo.RelocStartPage() + tuneInfo.RelocPages() - 1);
+
+					break;
+				}
+
+				// Driver region
+				case 6:
+				{
+					description = Resources.IDS_SID_INFODESCLINE6;
+
+					if (engineInfo.DriverAddr() == 0)
+						value = Resources.IDS_SID_NOT_PRESENT;
+					else
+						value = string.Format("${0:X4} - ${1:X4}", engineInfo.DriverAddr(), engineInfo.DriverAddr() + engineInfo.DriverLength() - 1);
+
+					break;
+				}
+
+				// SID model
+				case 7:
+				{
+					description = Resources.IDS_SID_INFODESCLINE7;
+					value = engineInfo.SidModel() == SidConfig.sid_model_t.MOS8580 ? "8580" : "6581";
+					break;
+				}
+
+				// Clock speed
+				case 8:
+				{
+					description = Resources.IDS_SID_INFODESCLINE8;
+					value = engineInfo.SpeedString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region IDurationPlayer implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Calculate the duration for all sub-songs

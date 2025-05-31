@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 				currentModuleType = ModuleType.Unknown;
 		}
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -95,117 +95,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => songName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the author
-		/// </summary>
-		/********************************************************************/
-		public override string Author => author;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the comment separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Comment => comments;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions:
-				case 0:
-				{
-					description = Resources.IDS_AON_INFODESCLINE0;
-					value = numberOfPositions.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_AON_INFODESCLINE1;
-					value = patterns.Length.ToString();
-					break;
-				}
-
-				// Used samples
-				case 2:
-				{
-					description = Resources.IDS_AON_INFODESCLINE2;
-					value = instruments.Length.ToString();
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_AON_INFODESCLINE3;
-					value = FormatPosition();
-					break;
-				}
-
-				// Playing pattern
-				case 4:
-				{
-					description = Resources.IDS_AON_INFODESCLINE4;
-					value = FormatPattern();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_AON_INFODESCLINE5;
-					value = FormatSpeed();
-					break;
-				}
-
-				// Current tempo (BPM)
-				case 6:
-				{
-					description = Resources.IDS_AON_INFODESCLINE6;
-					value = FormatTempo();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -358,9 +250,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 			// Everything is loaded alright
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -389,9 +281,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -435,6 +327,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 				MarkPositionAsVisited(playingInfo.Position);
 			}
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => songName;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the author
+		/// </summary>
+		/********************************************************************/
+		public override string Author => author;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		/********************************************************************/
+		public override string[] Comment => comments;
 
 
 
@@ -503,9 +422,90 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions:
+				case 0:
+				{
+					description = Resources.IDS_AON_INFODESCLINE0;
+					value = numberOfPositions.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_AON_INFODESCLINE1;
+					value = patterns.Length.ToString();
+					break;
+				}
+
+				// Used samples
+				case 2:
+				{
+					description = Resources.IDS_AON_INFODESCLINE2;
+					value = instruments.Length.ToString();
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_AON_INFODESCLINE3;
+					value = FormatPosition();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_AON_INFODESCLINE4;
+					value = FormatPattern();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_AON_INFODESCLINE5;
+					value = FormatSpeed();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 6:
+				{
+					description = Resources.IDS_AON_INFODESCLINE6;
+					value = FormatTempo();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

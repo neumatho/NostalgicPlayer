@@ -28,16 +28,16 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 
 		private const int InfoBitRateLine = 1;
 
-		#region IStreamerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Return an array of mime types that this agent can handle
 		/// </summary>
 		/********************************************************************/
 		public override string[] PlayableMimeTypes => [ "audio/mpeg", "audio/mpeg3" ];
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 		}
 		#endregion
 
-		#region ISampleAgent implementation
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// Will load and decode a data block and store it in the buffer
@@ -181,9 +181,9 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 
 			return filledInFrames;
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Return the number of channels the sample uses
@@ -199,9 +199,9 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 		/// </summary>
 		/********************************************************************/
 		public override int Frequency => frameInfo.Rate;
-		#endregion
 
-		#region IModuleInformation implementation
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the description and value on the line given. If the line

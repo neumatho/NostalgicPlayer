@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 			loaderAgent = (ISampleLoaderAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
 		}
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -55,9 +55,115 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		{
 			return loaderAgent.Identify(fileInfo.ModuleStream);
 		}
+		#endregion
+
+		#region Loading
+		/********************************************************************/
+		/// <summary>
+		/// Will load the header information from the file
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage)
+		{
+			// Start to initialize the converter
+			if (!loaderAgent.InitLoader(out errorMessage))
+				return AgentResult.Error;
+
+			// Load the header
+			if (!loaderAgent.LoadHeader(moduleStream, out formatInfo, out errorMessage))
+				return AgentResult.Error;
+
+			return AgentResult.Ok;
+		}
+		#endregion
+
+		#region Initialization and cleanup
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
+		{
+			if (!base.InitPlayer(moduleStream, out errorMessage))
+				return false;
+
+			// Get number of samples of the file
+			totalLength = loaderAgent.GetTotalSampleLength(formatInfo);
+
+			return true;
+		}
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			decodeBuffer = null;
+
+			loaderAgent.CleanupLoader();
+
+			base.CleanupPlayer();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player to start the sample from start
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(out string errorMessage)
+		{
+			if (!base.InitSound(out errorMessage))
+				return false;
+
+			// Reset the sample position
+			loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
+
+			return true;
+		}
+		#endregion
+
+		#region Playing
+		/********************************************************************/
+		/// <summary>
+		/// Will load and decode a data block and store it in the buffer
+		/// given
+		/// </summary>
+		/********************************************************************/
+		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
+		{
+			// Allocate/reallocate decode buffer if needed
+			if ((decodeBuffer == null) || ((countInFrames * formatInfo.Channels) > decodeBuffer.Length))
+				decodeBuffer = new int[countInFrames * formatInfo.Channels];
+
+			// Load the next block of data
+			int filledInSamples = loaderAgent.LoadData(modStream, decodeBuffer, countInFrames * formatInfo.Channels, formatInfo);
+			int filledInFrames = filledInSamples / formatInfo.Channels;
+
+			if (filledInSamples > 0)
+				SoundHelper.SplitBuffer(formatInfo.Channels, decodeBuffer, outputBuffer, filledInFrames);
+			else
+			{
+				OnEndReached();
+
+				// Loop the sample
+				if ((formatInfo.Flags & LoadSampleFormatInfo.SampleFlag.Loop) != 0)
+					loaderAgent.SetSamplePosition(modStream, formatInfo.LoopStart, formatInfo);
+				else
+					loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
+			}
+
+			return filledInFrames;
+		}
+		#endregion
+
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Return the name of the module
@@ -82,6 +188,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// </summary>
 		/********************************************************************/
 		public override PictureInfo[] Pictures => formatInfo.Pictures;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return which speakers the player uses.
+		/// 
+		/// Note that the outputBuffer in LoadDataBlock match the defined
+		/// order in SpeakerFlag enum
+		/// </summary>
+		/********************************************************************/
+		public override SpeakerFlag SpeakerFlags => formatInfo.Speakers;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of channels the sample uses
+		/// </summary>
+		/********************************************************************/
+		public override int ChannelCount => formatInfo.Channels;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the frequency the sample is stored with
+		/// </summary>
+		/********************************************************************/
+		public override int Frequency => formatInfo.Frequency;
 
 
 
@@ -136,143 +272,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		}
 		#endregion
 
-		#region ISamplePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the header information from the file
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage)
-		{
-			// Start to initialize the converter
-			if (!loaderAgent.InitLoader(out errorMessage))
-				return AgentResult.Error;
-
-			// Load the header
-			if (!loaderAgent.LoadHeader(moduleStream, out formatInfo, out errorMessage))
-				return AgentResult.Error;
-
-			return AgentResult.Ok;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
-		{
-			if (!base.InitPlayer(moduleStream, out errorMessage))
-				return false;
-
-			// Get number of samples of the file
-			totalLength = loaderAgent.GetTotalSampleLength(formatInfo);
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the player
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupPlayer()
-		{
-			decodeBuffer = null;
-
-			loaderAgent.CleanupLoader();
-
-			base.CleanupPlayer();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player to start the sample from start
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(out string errorMessage)
-		{
-			if (!base.InitSound(out errorMessage))
-				return false;
-
-			// Reset the sample position
-			loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will load and decode a data block and store it in the buffer
-		/// given
-		/// </summary>
-		/********************************************************************/
-		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
-		{
-			// Allocate/reallocate decode buffer if needed
-			if ((decodeBuffer == null) || ((countInFrames * formatInfo.Channels) > decodeBuffer.Length))
-				decodeBuffer = new int[countInFrames * formatInfo.Channels];
-
-			// Load the next block of data
-			int filledInSamples = loaderAgent.LoadData(modStream, decodeBuffer, countInFrames * formatInfo.Channels, formatInfo);
-			int filledInFrames = filledInSamples / formatInfo.Channels;
-
-			if (filledInSamples > 0)
-				SoundHelper.SplitBuffer(formatInfo.Channels, decodeBuffer, outputBuffer, filledInFrames);
-			else
-			{
-				OnEndReached();
-
-				// Loop the sample
-				if ((formatInfo.Flags & LoadSampleFormatInfo.SampleFlag.Loop) != 0)
-					loaderAgent.SetSamplePosition(modStream, formatInfo.LoopStart, formatInfo);
-				else
-					loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
-			}
-
-			return filledInFrames;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return which speakers the player uses.
-		/// 
-		/// Note that the outputBuffer in LoadDataBlock match the defined
-		/// order in SpeakerFlag enum
-		/// </summary>
-		/********************************************************************/
-		public override SpeakerFlag SpeakerFlags => formatInfo.Speakers;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the number of channels the sample uses
-		/// </summary>
-		/********************************************************************/
-		public override int ChannelCount => formatInfo.Channels;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the frequency the sample is stored with
-		/// </summary>
-		/********************************************************************/
-		public override int Frequency => formatInfo.Frequency;
-		#endregion
-
-		#region SamplePlayerWithDurationAgentBase
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Return the total time of the sample

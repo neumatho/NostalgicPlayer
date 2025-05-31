@@ -171,6 +171,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return information about sub-songs
+		/// </summary>
+		/********************************************************************/
+		public virtual SubSongInfo SubSongs => subSongInfo;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		/********************************************************************/
@@ -184,15 +193,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual int ModuleChannelCount => 4;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public virtual SubSongInfo SubSongs => subSongInfo;
 
 
 

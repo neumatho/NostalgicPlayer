@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		private const int InfoPatternLine = 4;
 		private const int InfoSpeedLine = 5;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -157,82 +157,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_GMC_INFODESCLINE0;
-					value = numberOfPositions.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_GMC_INFODESCLINE1;
-					value = patterns.Length.ToString();
-					break;
-				}
-
-				// Supported / used samples
-				case 2:
-				{
-					description = Resources.IDS_GMC_INFODESCLINE2;
-					value = "15";
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_GMC_INFODESCLINE3;
-					value = playingInfo.CurrentPosition.ToString();
-					break;
-				}
-
-				// Playing pattern
-				case 4:
-				{
-					description = Resources.IDS_GMC_INFODESCLINE4;
-					value = playingInfo.CurrentPattern.ToString();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_GMC_INFODESCLINE6;
-					value = playingInfo.SongStep.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -379,9 +306,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -410,9 +337,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -437,9 +364,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 				endReached = false;
 			}
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Returns all the samples available in the module. If none, null
@@ -488,9 +415,82 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE0;
+					value = numberOfPositions.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE1;
+					value = patterns.Length.ToString();
+					break;
+				}
+
+				// Supported / used samples
+				case 2:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE2;
+					value = "15";
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE3;
+					value = playingInfo.CurrentPosition.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE4;
+					value = playingInfo.CurrentPattern.ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE6;
+					value = playingInfo.SongStep.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

@@ -22,12 +22,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 	/// </summary>
 	public class Xmp : AgentBase, IPlayerAgentMultipleFormatIdentify
 	{
-		internal static readonly string[] fileExtensions =
-		[
-			"gdm", "xm", "oxm", "s3m", "it", "669", "amf", "far", "imf", "stm", "stx", "ult", "mtm", "mod", "wow", "flx", "ptm", "arch", "xmf",
-			"dsym", "rtm", "liq", "mgt", "mdl", "psm", "fnk", "dtm", "j2b", "coco"
-		];
-
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -82,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// can be returned in IdentifyFormat()
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => fileExtensions;
+		public string[] FileExtensions => XmpIdentifier.FileExtensions;
 
 
 
@@ -94,13 +88,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		public IdentifyFormatInfo IdentifyFormat(PlayerFileInfo fileInfo)
 		{
-			LibXmp libXmp = LibXmp.Xmp_Create_Context();
-
-			int retVal = libXmp.Xmp_Test_Module_From_File(fileInfo.ModuleStream, out Xmp_Test_Info testInfo);
-
-			libXmp.Xmp_Free_Context();
-
-			if (retVal == 0)
+			Xmp_Test_Info testInfo = XmpIdentifier.TestModule(fileInfo);
+			if (testInfo != null)
 				return new IdentifyFormatInfo(new XmpWorker(testInfo.Id), testInfo.Id);
 
 			return null;

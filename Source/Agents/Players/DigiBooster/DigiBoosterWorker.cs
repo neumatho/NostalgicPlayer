@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		private const int InfoSpeedLine = 5;
 		private const int InfoTempoLine = 6;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -81,99 +81,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => songName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_DIGI_INFODESCLINE0;
-					value = songLength.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_DIGI_INFODESCLINE1;
-					value = numberOfPatterns.ToString();
-					break;
-				}
-
-				// Supported / used samples
-				case 2:
-				{
-					description = Resources.IDS_DIGI_INFODESCLINE2;
-					value = "31";
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_DIGI_INFODESCLINE3;
-					value = playingInfo.SongPosition.ToString();
-					break;
-				}
-
-				// Playing pattern
-				case 4:
-				{
-					description = Resources.IDS_DIGI_INFODESCLINE4;
-					value = orders[playingInfo.SongPosition].ToString();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_DIGI_INFODESCLINE5;
-					value = playingInfo.Tempo.ToString();
-					break;
-				}
-
-				// Current tempo (BPM)
-				case 6:
-				{
-					description = Resources.IDS_DIGI_INFODESCLINE6;
-					value = playingInfo.CiaTempo.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -284,9 +194,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			// Everything is loaded alright
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -315,9 +225,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -408,6 +318,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 				MarkPositionAsVisited(playingInfo.SongPosition);
 			}
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => songName;
 
 
 
@@ -468,9 +387,90 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE0;
+					value = songLength.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE1;
+					value = numberOfPatterns.ToString();
+					break;
+				}
+
+				// Supported / used samples
+				case 2:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE2;
+					value = "31";
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE3;
+					value = playingInfo.SongPosition.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE4;
+					value = orders[playingInfo.SongPosition].ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE5;
+					value = playingInfo.Tempo.ToString();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 6:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE6;
+					value = playingInfo.CiaTempo.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

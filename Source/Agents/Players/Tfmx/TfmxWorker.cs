@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 	/// </summary>
 	internal class TfmxWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
+		#region SampleRange class
 		private class SampleRange : IComparable<SampleRange>
 		{
 			public int Start;
@@ -37,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				return Start.CompareTo(other.Start);
 			}
 		}
+		#endregion
 
 		private const int BufSize = 1024;
 
@@ -105,13 +107,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			isLittleEndian = BitConverter.IsLittleEndian;
 		}
 
-		#region IPlayerAgent implementation
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling what the player supports
+		/// </summary>
+		/********************************************************************/
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode;
+
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => Tfmx.fileExtensions;
+		public override string[] FileExtensions => TfmxIdentifier.FileExtensions;
 
 
 
@@ -124,126 +135,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		{
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => moduleName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the author
-		/// </summary>
-		/********************************************************************/
-		public override string Author => author;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the comment separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Comment => comment;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE0;
-					value = FormatPositionLength();
-					break;
-				}
-
-				// Used tracks
-				case 1:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE1;
-					value = numPattern.ToString();
-					break;
-				}
-
-				// Used macros
-				case 2:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE2;
-					value = numMacro.ToString();
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE3;
-					value = FormatPosition();
-					break;
-				}
-
-				// Playing tracks
-				case 4:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE4;
-					value = FormatTracks();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE5;
-					value = (playingInfo.Pdb.PreScale + 1).ToString();
-					break;
-				}
-
-				// Current tempo (BPM)
-				case 6:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE6;
-					value = (0x1b51f8 / playingInfo.Mdb.CiaSave).ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return some flags telling what the player supports
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode;
-
-
-
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -479,9 +373,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -571,9 +465,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -661,6 +555,50 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				endReached = false;
 			}
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => moduleName;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the author
+		/// </summary>
+		/********************************************************************/
+		public override string Author => author;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		/********************************************************************/
+		public override string[] Comment => comment;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return information about sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override SubSongInfo SubSongs
+		{
+			get
+			{
+				int songCount = songStart.Count(x => x != ushort.MaxValue);
+
+				return new SubSongInfo(songCount, startSong);
+			}
+		}
 
 
 
@@ -684,31 +622,95 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs
-		{
-			get
-			{
-				int songCount = songStart.Count(x => x != ushort.MaxValue);
-
-				return new SubSongInfo(songCount, startSong);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns all the samples available in the module. If none, null
 		/// is returned
 		/// </summary>
 		/********************************************************************/
 		public override IEnumerable<SampleInfo> Samples => sampleInfo;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE0;
+					value = FormatPositionLength();
+					break;
+				}
+
+				// Used tracks
+				case 1:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE1;
+					value = numPattern.ToString();
+					break;
+				}
+
+				// Used macros
+				case 2:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE2;
+					value = numMacro.ToString();
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE3;
+					value = FormatPosition();
+					break;
+				}
+
+				// Playing tracks
+				case 4:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE4;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE5;
+					value = (playingInfo.Pdb.PreScale + 1).ToString();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 6:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE6;
+					value = (0x1b51f8 / playingInfo.Mdb.CiaSave).ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
@@ -755,342 +757,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		}
 		#endregion
 
-		#region Identify methods
-		/********************************************************************/
-		/// <summary>
-		/// Tests the module to see which type of module it is
-		/// </summary>
-		/********************************************************************/
-		public static ModuleType TestModule(PlayerFileInfo fileInfo)
-		{
-			ModuleStream moduleStream = fileInfo.ModuleStream;
-
-			// Check the module size
-			if (moduleStream.Length < 512)
-				return ModuleType.Unknown;
-
-			int startOffset = 0;
-
-			// First check for one-file format
-			TfhdHeader tfhdHeader = IsTfhdFile(moduleStream);
-			if (tfhdHeader != null)
-			{
-				// Check to see if the module is forced or not checked
-				if (((tfhdHeader.Type & 128) != 0) || ((tfhdHeader.Type & 127) == 0))
-				{
-					// Well, we can't count on the type now, so we skip
-					// the header and make our own check
-					startOffset = (int)tfhdHeader.HeaderSize;
-				}
-				else
-				{
-					switch (tfhdHeader.Type & 127)
-					{
-						case 1:
-							return ModuleType.Tfmx15;
-
-						case 2:
-							return ModuleType.TfmxPro;
-
-						case 3:
-							return ModuleType.Tfmx7V;
-					}
-
-					return ModuleType.Unknown;
-				}
-			}
-			else
-			{
-				TfmxModHeader modHeader = IsTfmxModFile(moduleStream, false);
-				if (modHeader != null)
-					startOffset = 20;
-			}
-
-			// Check for two-file format. Read the mark
-			moduleStream.Seek(startOffset, SeekOrigin.Begin);
-
-			uint mark1 = moduleStream.Read_B_UINT32();
-			uint mark2 = moduleStream.Read_B_UINT32();
-			byte mark3 = moduleStream.Read_UINT8();
-
-			// And check it
-			//
-			// If the file starts with TFMX and does not have SONG, it's the old format
-			if ((mark1 == 0x54464d58) && ((mark2 & 0xff000000) == 0x20000000) && ((mark2 & 0x00ffffff) != 0x00534f4e) && (mark3 != 0x47))
-				return ModuleType.Tfmx15;
-
-			// TFMX-SONG / TFMX_SONG / tfmxsong
-			if (((mark1 == 0x54464d58) && ((mark2 == 0x2d534f4e) || (mark2 == 0x5f534f4e)) && (mark3 == 0x47)) || ((mark1 == 0x74666d78) && (mark2 == 0x736f6e67)))
-			{
-				// Okay, it is either a professional or 7 voices, so check for the difference
-				ushort[] songStarts = new ushort[31];
-
-				// Get the start positions
-				moduleStream.Seek(startOffset + 0x100, SeekOrigin.Begin);
-				moduleStream.ReadArray_B_UINT16s(songStarts, 0, 31);
-
-				// Get the track step offset
-				moduleStream.Seek(startOffset + 0x1d0, SeekOrigin.Begin);
-				uint offset = moduleStream.Read_B_UINT32();
-				if (offset == 0)
-					offset = 0x800;
-
-				// Take all the sub-songs
-				short times = 0;
-				bool gotTimeShare = false;
-
-				for (int i = 0; i < 31; i++)
-				{
-					bool getNext = true;
-
-					// Get the current sub-song start position
-					ushort position = songStarts[i];
-					if (position == 0x1ff)
-						break;
-
-					// Read the track step information
-					while (getNext)
-					{
-						// Find the position in the file where the current track step
-						// information to read is stored
-						moduleStream.Seek(startOffset + offset + position * 16, SeekOrigin.Begin);
-
-						// If the track step information isn't a command, stop
-						// the checking
-						if (moduleStream.Read_B_UINT16() != 0xeffe)
-							getNext = false;
-						else
-						{
-							// Get the command
-							switch (moduleStream.Read_B_UINT16())
-							{
-								// Loop a section
-								case 1:
-								{
-									if (times == 0)
-									{
-										times = -1;
-										position++;
-									}
-									else
-									{
-										if (times < 0)
-										{
-											position = moduleStream.Read_B_UINT16();
-											times = (short)(moduleStream.Read_B_UINT16() - 1);
-										}
-										else
-										{
-											times--;
-											position = moduleStream.Read_B_UINT16();
-										}
-									}
-									break;
-								}
-
-								// Set tempo + start master volume slide
-								case 2:
-								case 4:
-								{
-									position++;
-									break;
-								}
-
-								// Time share
-								case 3:
-								{
-									gotTimeShare = true;
-									position++;
-									break;
-								}
-
-								// Unknown command
-								default:
-								{
-									getNext = false;
-									gotTimeShare = false;
-									break;
-								}
-							}
-						}
-					}
-
-					if (gotTimeShare)
-						break;
-				}
-
-				if (IsStModule(moduleStream, startOffset))
-					return ModuleType.Unknown;
-
-				return gotTimeShare ? ModuleType.Tfmx7V : ModuleType.TfmxPro;
-			}
-
-			return ModuleType.Unknown;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will check the current file to see if it's in TFHD format.
-		/// If that is true, it will load the structure
-		/// </summary>
-		/********************************************************************/
-		private static TfhdHeader IsTfhdFile(ModuleStream moduleStream)
-		{
-			// Seek to the start of the file
-			moduleStream.Seek(0, SeekOrigin.Begin);
-
-			// Check the mark
-			uint mark = moduleStream.Read_B_UINT32();
-
-			if (mark == 0x54464844)		// TFHD
-			{
-				// Ok, it seems it's a TFHD file, so read the whole structure
-				TfhdHeader header = new TfhdHeader();
-
-				header.HeaderSize = moduleStream.Read_B_UINT32();
-				header.Type = moduleStream.Read_UINT8();
-				header.Version = moduleStream.Read_UINT8();
-				header.MdatSize = moduleStream.Read_B_UINT32();
-				header.SmplSize = moduleStream.Read_B_UINT32();
-
-				return header;
-			}
-
-			return null;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will check the current file to see if it's a ST module
-		/// </summary>
-		/********************************************************************/
-		private static bool IsStModule(ModuleStream moduleStream, int startOffset)
-		{
-			moduleStream.Seek(startOffset + 0x1d4, SeekOrigin.Begin);
-
-			int startIndex;
-			int endIndex = moduleStream.Read_B_INT32();
-
-			if (endIndex == 0)
-			{
-				moduleStream.Seek(startOffset + 0x600, SeekOrigin.Begin);
-				startIndex = moduleStream.Read_B_INT32();
-
-				moduleStream.Seek(startOffset + 0x7fc, SeekOrigin.Begin);
-				endIndex = moduleStream.Read_B_INT32();
-			}
-			else
-			{
-				startIndex = moduleStream.Read_B_INT32();
-
-				moduleStream.Seek(startOffset + startIndex, SeekOrigin.Begin);
-				startIndex = moduleStream.Read_B_INT32();
-			}
-
-			byte[] buffer = new byte[endIndex - startIndex];
-
-			moduleStream.Seek(startOffset + startIndex, SeekOrigin.Begin);
-			moduleStream.ReadInto(buffer, 0, buffer.Length);
-
-			for (int i = 0; i < buffer.Length; i += 4)
-			{
-				if ((buffer[i] > 63) && (buffer[i] < 128))
-					return true;
-			}
-
-			return false;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will check the current file to see if it's in TFMX-MOD format.
-		/// If that is true, it will load the structure
-		/// </summary>
-		/********************************************************************/
-		private static TfmxModHeader IsTfmxModFile(ModuleStream moduleStream, bool loadInfo)
-		{
-			// Seek to the start of the file
-			moduleStream.Seek(0, SeekOrigin.Begin);
-
-			// Check the mark
-			uint mark1 = moduleStream.Read_B_UINT32();
-			uint mark2 = moduleStream.Read_B_UINT32();
-
-			if ((mark1 == 0x54464d58) && (mark2 == 0x2d4d4f44))		// TFMX-MOD
-			{
-				TfmxModHeader header = new TfmxModHeader();
-
-				header.OffsetToSample = moduleStream.Read_L_UINT32();
-				header.OffsetToInfo = moduleStream.Read_L_UINT32();
-				header.Reserved = moduleStream.Read_L_UINT32();
-
-				if (loadInfo)
-				{
-					Encoding encoder = EncoderCollection.Win1252;
-
-					moduleStream.Seek(header.OffsetToInfo, SeekOrigin.Begin);
-
-					while (moduleStream.Position < moduleStream.Length)
-					{
-						byte type = moduleStream.Read_UINT8();
-						if (type == 0)
-						{
-							moduleStream.Seek(4, SeekOrigin.Current);
-							header.StartSong = moduleStream.Read_UINT8();
-							break;
-						}
-
-						ushort length = moduleStream.Read_L_UINT16();
-
-						switch (type)
-						{
-							case 1:
-							{
-								header.Author = moduleStream.ReadString(encoder, length);
-								break;
-							}
-
-							case 2:
-							{
-								header.Game = moduleStream.ReadString(encoder, length);
-								break;
-							}
-
-							case 5:
-							{
-								header.Flag = moduleStream.Read_UINT8();
-								break;
-							}
-
-							case 6:
-							{
-								header.Title = moduleStream.ReadString(encoder, length);
-								break;
-							}
-
-							default:
-							{
-								moduleStream.Seek(length, SeekOrigin.Current);
-								break;
-							}
-						}
-					}
-				}
-
-				return header;
-			}
-
-			return null;
-		}
-
-
-
+		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Will figure out what file type the module is and return enough
@@ -1106,7 +773,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				Author = string.Empty
 			};
 
-			TfhdHeader tfhdHeader = IsTfhdFile(moduleStream);
+			TfhdHeader tfhdHeader = TfmxIdentifier.IsTfhdFile(moduleStream);
 			if (tfhdHeader != null)
 			{
 				loadInfo.ModuleStartOffset = (int)tfhdHeader.HeaderSize;
@@ -1116,7 +783,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			}
 			else
 			{
-				TfmxModHeader modHeader = IsTfmxModFile(moduleStream, true);
+				TfmxModHeader modHeader = TfmxIdentifier.IsTfmxModFile(moduleStream, true);
 				if (modHeader != null)
 				{
 					loadInfo.ModuleStartOffset = 20;
@@ -1139,9 +806,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			return loadInfo;
 		}
-		#endregion
 
-		#region Private methods
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Convert the int at the given position to host endian format and

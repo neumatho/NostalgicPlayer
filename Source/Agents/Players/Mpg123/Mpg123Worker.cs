@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				currentModuleType = ModuleType.Unknown;
 		}
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -103,9 +103,191 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 			return AgentResult.Unknown;
 		}
+		#endregion
+
+		#region Loading
+		/********************************************************************/
+		/// <summary>
+		/// Will load the header information from the file
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			return AgentResult.Ok;
+		}
+		#endregion
+
+		#region Initialization and cleanup
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
+		{
+			if (!base.InitPlayer(moduleStream, out errorMessage))
+				return false;
+
+			// Get a Mpg123 handle, which is used on all other calls
+			mpg123Handle = LibMpg123.Mpg123_New(null, out Mpg123_Errors error);
+			if (error != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(error);
+				return false;
+			}
+
+			// Make sure, that the output is always in 32-bit for every sample rate
+			Mpg123_Errors result = mpg123Handle.Mpg123_Format_None();
+			if (result != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
+			}
+
+			mpg123Handle.Mpg123_Rates(out int[] supportedRates, out ulong number);
+			if (number > 0)
+			{
+				// Set the output format to 32-bit on every rate
+				foreach (int rate in supportedRates)
+				{
+					result = mpg123Handle.Mpg123_Format(rate, Mpg123_ChannelCount.Mono | Mpg123_ChannelCount.Stereo, Mpg123_Enc_Enum.Enc_Signed_32);
+					if (result != Mpg123_Errors.Ok)
+					{
+						errorMessage = GetErrorString(result);
+						return false;
+					}
+				}
+			}
+
+			// We want to include pictures in the scan
+			result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Add_Flags, (int)Mpg123_Param_Flags.Picture, 0);
+			if (result != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
+			}
+
+			// Increase the resync limit
+			result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Resync_Limit, 16 * 1024, 0);
+			if (result != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
+			}
+
+			// Open the stream and scan it to find all tags, etc.
+			result = OpenFile(moduleStream);
+			if (result != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
+			}
+
+			// Scan the whole file to find meta data etc.
+			result = mpg123Handle.Mpg123_Scan();
+			if (result != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
+			}
+
+			// Extract all the information to show
+			if (!ExtractMetaInformation(out errorMessage))
+				return false;
+
+			return true;
+		}
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			decodeBuffer = null;
+			frameInfo = null;
+
+			if (mpg123Handle != null)
+			{
+				mpg123Handle.Mpg123_Close();
+
+				mpg123Handle.Mpg123_Delete();
+				mpg123Handle = null;
+			}
+
+			base.CleanupPlayer();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player to start the sample from start
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(out string errorMessage)
+		{
+			if (!base.InitSound(out errorMessage))
+				return false;
+
+			// Initialize some variables
+			oldBitRate = 0;
+
+			return true;
+		}
+		#endregion
+
+		#region Playing
+		/********************************************************************/
+		/// <summary>
+		/// Will load and decode a data block and store it in the buffer
+		/// given
+		/// </summary>
+		/********************************************************************/
+		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
+		{
+			// Allocate/reallocate decode buffer if needed
+			int channels = ChannelCount;
+
+			if ((decodeBuffer == null) || ((countInFrames * channels) > decodeBuffer.Length))
+				decodeBuffer = new int[countInFrames * channels];
+
+			// Load the next block of data
+			int filledInSamples = LoadData(decodeBuffer, countInFrames * channels);
+			int filledInFrames = filledInSamples / channels;
+
+			if (filledInSamples > 0)
+				SoundHelper.SplitBuffer(channels, decodeBuffer, outputBuffer, filledInFrames);
+			else
+			{
+				OnEndReached();
+
+				// Loop the sample
+				CleanupSound();
+				InitSound(out _);
+			}
+
+			// Has the bit rate changed (mostly on VBR streams)
+			if (mpg123Handle.Mpg123_Info(out Mpg123_FrameInfo newFrameInfo) == Mpg123_Errors.Ok)
+			{
+				if (newFrameInfo.BitRate != oldBitRate)
+				{
+					oldBitRate = newFrameInfo.BitRate;
+
+					OnModuleInfoChanged(InfoBitRateLine, newFrameInfo.BitRate.ToString());
+				}
+			}
+
+			return filledInFrames;
+		}
+		#endregion
+
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Return the name of the module
@@ -130,6 +312,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/// </summary>
 		/********************************************************************/
 		public override PictureInfo[] Pictures => pictures;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of channels the sample uses
+		/// </summary>
+		/********************************************************************/
+		public override int ChannelCount => frameInfo.Mode == Mpg123_Mode.Mono ? 1 : 2;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the frequency the sample is stored with
+		/// </summary>
+		/********************************************************************/
+		public override int Frequency => frameInfo.Rate;
 
 
 
@@ -333,207 +533,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		}
 		#endregion
 
-		#region ISamplePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the header information from the file
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			return AgentResult.Ok;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
-		{
-			if (!base.InitPlayer(moduleStream, out errorMessage))
-				return false;
-
-			// Get a Mpg123 handle, which is used on all other calls
-			mpg123Handle = LibMpg123.Mpg123_New(null, out Mpg123_Errors error);
-			if (error != Mpg123_Errors.Ok)
-			{
-				errorMessage = GetErrorString(error);
-				return false;
-			}
-
-			// Make sure, that the output is always in 32-bit for every sample rate
-			Mpg123_Errors result = mpg123Handle.Mpg123_Format_None();
-			if (result != Mpg123_Errors.Ok)
-			{
-				errorMessage = GetErrorString(result);
-				return false;
-			}
-
-			mpg123Handle.Mpg123_Rates(out int[] supportedRates, out ulong number);
-			if (number > 0)
-			{
-				// Set the output format to 32-bit on every rate
-				foreach (int rate in supportedRates)
-				{
-					result = mpg123Handle.Mpg123_Format(rate, Mpg123_ChannelCount.Mono | Mpg123_ChannelCount.Stereo, Mpg123_Enc_Enum.Enc_Signed_32);
-					if (result != Mpg123_Errors.Ok)
-					{
-						errorMessage = GetErrorString(result);
-						return false;
-					}
-				}
-			}
-
-			// We want to include pictures in the scan
-			result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Add_Flags, (int)Mpg123_Param_Flags.Picture, 0);
-			if (result != Mpg123_Errors.Ok)
-			{
-				errorMessage = GetErrorString(result);
-				return false;
-			}
-
-			// Increase the resync limit
-			result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Resync_Limit, 16 * 1024, 0);
-			if (result != Mpg123_Errors.Ok)
-			{
-				errorMessage = GetErrorString(result);
-				return false;
-			}
-
-			// Open the stream and scan it to find all tags, etc.
-			result = OpenFile(moduleStream);
-			if (result != Mpg123_Errors.Ok)
-			{
-				errorMessage = GetErrorString(result);
-				return false;
-			}
-
-			// Scan the whole file to find meta data etc.
-			result = mpg123Handle.Mpg123_Scan();
-			if (result != Mpg123_Errors.Ok)
-			{
-				errorMessage = GetErrorString(result);
-				return false;
-			}
-
-			// Extract all the information to show
-			if (!ExtractMetaInformation(out errorMessage))
-				return false;
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the player
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupPlayer()
-		{
-			decodeBuffer = null;
-			frameInfo = null;
-
-			if (mpg123Handle != null)
-			{
-				mpg123Handle.Mpg123_Close();
-
-				mpg123Handle.Mpg123_Delete();
-				mpg123Handle = null;
-			}
-
-			base.CleanupPlayer();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player to start the sample from start
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(out string errorMessage)
-		{
-			if (!base.InitSound(out errorMessage))
-				return false;
-
-			// Initialize some variables
-			oldBitRate = 0;
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will load and decode a data block and store it in the buffer
-		/// given
-		/// </summary>
-		/********************************************************************/
-		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
-		{
-			// Allocate/reallocate decode buffer if needed
-			int channels = ChannelCount;
-
-			if ((decodeBuffer == null) || ((countInFrames * channels) > decodeBuffer.Length))
-				decodeBuffer = new int[countInFrames * channels];
-
-			// Load the next block of data
-			int filledInSamples = LoadData(decodeBuffer, countInFrames * channels);
-			int filledInFrames = filledInSamples / channels;
-
-			if (filledInSamples > 0)
-				SoundHelper.SplitBuffer(channels, decodeBuffer, outputBuffer, filledInFrames);
-			else
-			{
-				OnEndReached();
-
-				// Loop the sample
-				CleanupSound();
-				InitSound(out _);
-			}
-
-			// Has the bit rate changed (mostly on VBR streams)
-			if (mpg123Handle.Mpg123_Info(out Mpg123_FrameInfo newFrameInfo) == Mpg123_Errors.Ok)
-			{
-				if (newFrameInfo.BitRate != oldBitRate)
-				{
-					oldBitRate = newFrameInfo.BitRate;
-
-					OnModuleInfoChanged(InfoBitRateLine, newFrameInfo.BitRate.ToString());
-				}
-			}
-
-			return filledInFrames;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the number of channels the sample uses
-		/// </summary>
-		/********************************************************************/
-		public override int ChannelCount => frameInfo.Mode == Mpg123_Mode.Mono ? 1 : 2;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the frequency the sample is stored with
-		/// </summary>
-		/********************************************************************/
-		public override int Frequency => frameInfo.Rate;
-		#endregion
-
-		#region SamplePlayerWithDurationAgentBase
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Return the total time of the sample

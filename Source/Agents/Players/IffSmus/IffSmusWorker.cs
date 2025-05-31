@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 		private const int InfoTempoLine = 1;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -71,68 +71,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => songName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the author
-		/// </summary>
-		/********************************************************************/
-		public override string Author => author;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Used instruments
-				case 0:
-				{
-					description = Resources.IDS_SMUS_INFODESCLINE0;
-					value = globalInfo.Instruments.Count.ToString();
-					break;
-				}
-
-				// Current tempo (Hz)
-				case 1:
-				{
-					description = Resources.IDS_SMUS_INFODESCLINE1;
-					value = FormatTempo();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -272,9 +213,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -303,9 +244,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -317,6 +258,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 			GetNextNote();
 			SetupAndPlayInstruments();
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => songName;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the author
+		/// </summary>
+		/********************************************************************/
+		public override string Author => author;
 
 
 
@@ -349,9 +308,50 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Used instruments
+				case 0:
+				{
+					description = Resources.IDS_SMUS_INFODESCLINE0;
+					value = globalInfo.Instruments.Count.ToString();
+					break;
+				}
+
+				// Current tempo (Hz)
+				case 1:
+				{
+					description = Resources.IDS_SMUS_INFODESCLINE1;
+					value = FormatTempo();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

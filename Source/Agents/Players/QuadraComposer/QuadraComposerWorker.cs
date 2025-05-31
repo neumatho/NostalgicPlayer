@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		private const int InfoSpeedLine = 5;
 		private const int InfoTempoLine = 6;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -91,9 +91,159 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 
 			return AgentResult.Ok;
 		}
+		#endregion
+
+		#region Loading
+		/********************************************************************/
+		/// <summary>
+		/// Will load the file into memory
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			try
+			{
+				ModuleStream moduleStream = fileInfo.ModuleStream;
+
+				// Load the different chunks
+				moduleStream.Seek(12, SeekOrigin.Begin);
+
+				for (;;)
+				{
+					// Read the chunk name and length
+					uint chunkName = moduleStream.Read_B_UINT32();
+					uint chunkSize = moduleStream.Read_B_UINT32();
+
+					// Do we have any chunks left?
+					if (moduleStream.EndOfStream)
+						break;			// No, stop the loading
+
+					if ((chunkSize > (moduleStream.Length - moduleStream.Position)))
+					{
+						errorMessage = Resources.IDS_EMOD_ERR_LOADING_HEADER;
+						return AgentResult.Error;
+					}
+
+					switch (chunkName)
+					{
+						// Extended module info (EMIC)
+						case 0x454d4943:
+						{
+							ParseEmic(moduleStream, out errorMessage);
+							break;
+						}
+
+						// Pattern data (PATT)
+						case 0x50415454:
+						{
+							ParsePatt(moduleStream, out errorMessage);
+							break;
+						}
+
+						// Sample data (8SMP)
+						case 0x38534d50:
+						{
+							Parse8Smp(moduleStream, out errorMessage);
+							break;
+						}
+
+						// Unknown chunks
+						default:
+						{
+							moduleStream.Seek(chunkSize, SeekOrigin.Current);
+							break;
+						}
+					}
+
+					if (!string.IsNullOrEmpty(errorMessage))
+					{
+						Cleanup();
+						return AgentResult.Error;
+					}
+				}
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+
+			// Ok, we're done
+			return AgentResult.Ok;
+		}
+		#endregion
+
+		#region Initialization and cleanup
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			Cleanup();
+
+			base.CleanupPlayer();
+		}
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the current song
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(int songNumber, out string errorMessage)
+		{
+			if (!base.InitSound(songNumber, out errorMessage))
+				return false;
+
+			InitializeSound(0);
+
+			return true;
+		}
+		#endregion
+
+		#region Playing
+		/********************************************************************/
+		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			ChangeTempoIfNeeded();
+
+			playingInfo.SpeedCount++;
+			if (playingInfo.SpeedCount < playingInfo.Speed)
+				RunTickEffects();
+			else
+			{
+				if (playingInfo.PatternWait != 0)
+				{
+					playingInfo.PatternWait--;
+					playingInfo.SpeedCount = 0;
+
+					RunTickEffects();
+				}
+				else
+					GetNotes();
+			}
+
+			if (endReached)
+			{
+				// Tell NostalgicPlayer that the module has ended
+				OnEndReached(playingInfo.CurrentPosition);
+				endReached = false;
+
+				MarkPositionAsVisited(playingInfo.CurrentPosition);
+			}
+		}
+		#endregion
+
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Return the name of the module
@@ -109,6 +259,60 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/// </summary>
 		/********************************************************************/
 		public override string Author => composer;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override IEnumerable<SampleInfo> Samples
+		{
+			get
+			{
+				foreach (Sample sample in samples)
+				{
+					if (sample != null)
+					{
+						// Build frequency table
+						uint[] frequencies = new uint[10 * 12];
+
+						for (int j = 0; j < 3 * 12; j++)
+							frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods[sample.FineTune, j]);
+
+						SampleInfo sampleInfo = new SampleInfo
+						{
+							Name = sample.Name,
+							Flags = SampleInfo.SampleFlag.None,
+							Type = SampleInfo.SampleType.Sample,
+							Volume = (ushort)(sample.Volume * 4),
+							Panning = -1,
+							Sample = sample.Data,
+							Length = sample.Length,
+							NoteFrequencies = frequencies
+						};
+
+						if ((sample.ControlByte & SampleControlFlag.Loop) != 0)
+						{
+							// Sample loops
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+							sampleInfo.LoopStart = sample.LoopStart;
+							sampleInfo.LoopLength = sample.LoopLength;
+						}
+						else
+						{
+							// No loop
+							sampleInfo.LoopStart = 0;
+							sampleInfo.LoopLength = 0;
+						}
+
+						yield return sampleInfo;
+					}
+				}
+			}
+		}
 
 
 
@@ -192,211 +396,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			try
-			{
-				ModuleStream moduleStream = fileInfo.ModuleStream;
-
-				// Load the different chunks
-				moduleStream.Seek(12, SeekOrigin.Begin);
-
-				for (;;)
-				{
-					// Read the chunk name and length
-					uint chunkName = moduleStream.Read_B_UINT32();
-					uint chunkSize = moduleStream.Read_B_UINT32();
-
-					// Do we have any chunks left?
-					if (moduleStream.EndOfStream)
-						break;			// No, stop the loading
-
-					if ((chunkSize > (moduleStream.Length - moduleStream.Position)))
-					{
-						errorMessage = Resources.IDS_EMOD_ERR_LOADING_HEADER;
-						return AgentResult.Error;
-					}
-
-					switch (chunkName)
-					{
-						// Extended module info (EMIC)
-						case 0x454d4943:
-						{
-							ParseEmic(moduleStream, out errorMessage);
-							break;
-						}
-
-						// Pattern data (PATT)
-						case 0x50415454:
-						{
-							ParsePatt(moduleStream, out errorMessage);
-							break;
-						}
-
-						// Sample data (8SMP)
-						case 0x38534d50:
-						{
-							Parse8Smp(moduleStream, out errorMessage);
-							break;
-						}
-
-						// Unknown chunks
-						default:
-						{
-							moduleStream.Seek(chunkSize, SeekOrigin.Current);
-							break;
-						}
-					}
-
-					if (!string.IsNullOrEmpty(errorMessage))
-					{
-						Cleanup();
-						return AgentResult.Error;
-					}
-				}
-			}
-			catch (Exception)
-			{
-				Cleanup();
-				throw;
-			}
-
-			// Ok, we're done
-			return AgentResult.Ok;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the player
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupPlayer()
-		{
-			Cleanup();
-
-			base.CleanupPlayer();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the current song
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(int songNumber, out string errorMessage)
-		{
-			if (!base.InitSound(songNumber, out errorMessage))
-				return false;
-
-			InitializeSound(0);
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// This is the main player method
-		/// </summary>
-		/********************************************************************/
-		public override void Play()
-		{
-			ChangeTempoIfNeeded();
-
-			playingInfo.SpeedCount++;
-			if (playingInfo.SpeedCount < playingInfo.Speed)
-				RunTickEffects();
-			else
-			{
-				if (playingInfo.PatternWait != 0)
-				{
-					playingInfo.PatternWait--;
-					playingInfo.SpeedCount = 0;
-
-					RunTickEffects();
-				}
-				else
-					GetNotes();
-			}
-
-			if (endReached)
-			{
-				// Tell NostalgicPlayer that the module has ended
-				OnEndReached(playingInfo.CurrentPosition);
-				endReached = false;
-
-				MarkPositionAsVisited(playingInfo.CurrentPosition);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns all the samples available in the module. If none, null
-		/// is returned
-		/// </summary>
-		/********************************************************************/
-		public override IEnumerable<SampleInfo> Samples
-		{
-			get
-			{
-				foreach (Sample sample in samples)
-				{
-					if (sample != null)
-					{
-						// Build frequency table
-						uint[] frequencies = new uint[10 * 12];
-
-						for (int j = 0; j < 3 * 12; j++)
-							frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods[sample.FineTune, j]);
-
-						SampleInfo sampleInfo = new SampleInfo
-						{
-							Name = sample.Name,
-							Flags = SampleInfo.SampleFlag.None,
-							Type = SampleInfo.SampleType.Sample,
-							Volume = (ushort)(sample.Volume * 4),
-							Panning = -1,
-							Sample = sample.Data,
-							Length = sample.Length,
-							NoteFrequencies = frequencies
-						};
-
-						if ((sample.ControlByte & SampleControlFlag.Loop) != 0)
-						{
-							// Sample loops
-							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
-							sampleInfo.LoopStart = sample.LoopStart;
-							sampleInfo.LoopLength = sample.LoopLength;
-						}
-						else
-						{
-							// No loop
-							sampleInfo.LoopStart = 0;
-							sampleInfo.LoopLength = 0;
-						}
-
-						yield return sampleInfo;
-					}
-				}
-			}
-		}
-		#endregion
-
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

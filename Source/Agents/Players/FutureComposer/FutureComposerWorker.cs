@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		private const int InfoTrackLine = 5;
 		private const int InfoSpeedLine = 6;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -86,90 +86,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_FC_INFODESCLINE0;
-					value = seqNum.ToString();
-					break;
-				}
-
-				// Used tracks
-				case 1:
-				{
-					description = Resources.IDS_FC_INFODESCLINE1;
-					value = patNum.ToString();
-					break;
-				}
-
-				// Used samples
-				case 2:
-				{
-					description = Resources.IDS_FC_INFODESCLINE2;
-					value = sampNum.ToString();
-					break;
-				}
-
-				// Used wave tables
-				case 3:
-				{
-					description = Resources.IDS_FC_INFODESCLINE3;
-					value = wavNum.ToString();
-					break;
-				}
-
-				// Playing position
-				case 4:
-				{
-					description = Resources.IDS_FC_INFODESCLINE4;
-					value = voiceData[0].SongPos.ToString();
-					break;
-				}
-
-				// Playing tracks
-				case 5:
-				{
-					description = Resources.IDS_FC_INFODESCLINE5;
-					value = FormatTracks();
-					break;
-				}
-
-				// Current speed
-				case 6:
-				{
-					description = Resources.IDS_FC_INFODESCLINE6;
-					value = playingInfo.RepSpd.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -529,9 +448,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -560,9 +479,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -598,9 +517,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				MarkPositionAsVisited(voiceData[0].SongPos);
 			}
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Returns all the samples available in the module. If none, null
@@ -644,9 +563,90 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_FC_INFODESCLINE0;
+					value = seqNum.ToString();
+					break;
+				}
+
+				// Used tracks
+				case 1:
+				{
+					description = Resources.IDS_FC_INFODESCLINE1;
+					value = patNum.ToString();
+					break;
+				}
+
+				// Used samples
+				case 2:
+				{
+					description = Resources.IDS_FC_INFODESCLINE2;
+					value = sampNum.ToString();
+					break;
+				}
+
+				// Used wave tables
+				case 3:
+				{
+					description = Resources.IDS_FC_INFODESCLINE3;
+					value = wavNum.ToString();
+					break;
+				}
+
+				// Playing position
+				case 4:
+				{
+					description = Resources.IDS_FC_INFODESCLINE4;
+					value = voiceData[0].SongPos.ToString();
+					break;
+				}
+
+				// Playing tracks
+				case 5:
+				{
+					description = Resources.IDS_FC_INFODESCLINE5;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 6:
+				{
+					description = Resources.IDS_FC_INFODESCLINE6;
+					value = playingInfo.RepSpd.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				currentModuleType = ModuleType.Unknown;
 		}
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -100,6 +100,182 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
+		}
+		#endregion
+
+		#region Loading
+		/********************************************************************/
+		/// <summary>
+		/// Will load the file into memory
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			try
+			{
+				switch (currentModuleType)
+				{
+					case ModuleType.Med112:
+						return LoadMed2Format(fileInfo, out errorMessage);
+
+					case ModuleType.Med200:
+						return LoadMed3Format(fileInfo, out errorMessage);
+				}
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+
+			return AgentResult.Error;
+		}
+		#endregion
+
+		#region Initialization and cleanup
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer(out string errorMessage)
+		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
+			periods = currentModuleType == ModuleType.Med112 ? Tables.Periods112 : Tables.Periods200;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			Cleanup();
+
+			base.CleanupPlayer();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the current song
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(int songNumber, out string errorMessage)
+		{
+			if (!base.InitSound(songNumber, out errorMessage))
+				return false;
+
+			InitializeSound(0);
+
+			return true;
+		}
+		#endregion
+
+		#region Playing
+		/********************************************************************/
+		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			playingInfo.Counter++;
+			if (playingInfo.Counter == 6)
+			{
+				playingInfo.Counter = 0;
+				ParseNextRow();
+			}
+
+			HandleEffects();
+
+			// Have we reached the end of the module
+			if (endReached)
+			{
+				OnEndReached(playingInfo.PlayPositionNumber);
+				endReached = false;
+
+				MarkPositionAsVisited(playingInfo.PlayPositionNumber);
+			}
+		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override IEnumerable<SampleInfo> Samples
+		{
+			get
+			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				if (currentModuleType == ModuleType.Med112)
+				{
+					for (byte j = 0; j < 4 * 12; j++)
+						frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods112[j]);
+				}
+				else
+				{
+					for (byte j = 0; j < 3 * 12; j++)
+						frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods200[j]);
+				}
+
+				for (uint i = 1; i < 32; i++)		// Skip first sample, since it will always be empty
+				{
+					Sample sample = samples[i];
+
+					SampleInfo sampleInfo = new SampleInfo
+					{
+						Name = sample.Name,
+						Flags = SampleInfo.SampleFlag.None,
+						Type = SampleInfo.SampleType.Sample,
+						Volume = (ushort)(sample.Volume * 4),
+						Panning = -1,
+						LoopStart = sample.LoopStart,
+						LoopLength = sample.LoopLength,
+						NoteFrequencies = frequencies
+					};
+
+/*					if (sample.Type != SampleType.Normal)
+					{
+						// Don't have any modules with multiple octaves, so this part is missing
+					}
+					else*/
+					{
+						if (sample.SampleData != null)
+						{
+							sampleInfo.Sample = sample.SampleData;
+							sampleInfo.Length = (uint)sample.SampleData.Length;
+						}
+					}
+
+					// Find out the loop information
+					if (sampleInfo.LoopLength <= 2)
+					{
+						sampleInfo.LoopStart = 0;
+						sampleInfo.LoopLength = 0;
+					}
+					else
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+
+					yield return sampleInfo;
+				}
+			}
 		}
 
 
@@ -176,183 +352,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			try
-			{
-				switch (currentModuleType)
-				{
-					case ModuleType.Med112:
-						return LoadMed2Format(fileInfo, out errorMessage);
-
-					case ModuleType.Med200:
-						return LoadMed3Format(fileInfo, out errorMessage);
-				}
-			}
-			catch (Exception)
-			{
-				Cleanup();
-				throw;
-			}
-
-			return AgentResult.Error;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public override bool InitPlayer(out string errorMessage)
-		{
-			if (!base.InitPlayer(out errorMessage))
-				return false;
-
-			periods = currentModuleType == ModuleType.Med112 ? Tables.Periods112 : Tables.Periods200;
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the player
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupPlayer()
-		{
-			Cleanup();
-
-			base.CleanupPlayer();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the current song
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(int songNumber, out string errorMessage)
-		{
-			if (!base.InitSound(songNumber, out errorMessage))
-				return false;
-
-			InitializeSound(0);
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// This is the main player method
-		/// </summary>
-		/********************************************************************/
-		public override void Play()
-		{
-			playingInfo.Counter++;
-			if (playingInfo.Counter == 6)
-			{
-				playingInfo.Counter = 0;
-				ParseNextRow();
-			}
-
-			HandleEffects();
-
-			// Have we reached the end of the module
-			if (endReached)
-			{
-				OnEndReached(playingInfo.PlayPositionNumber);
-				endReached = false;
-
-				MarkPositionAsVisited(playingInfo.PlayPositionNumber);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns all the samples available in the module. If none, null
-		/// is returned
-		/// </summary>
-		/********************************************************************/
-		public override IEnumerable<SampleInfo> Samples
-		{
-			get
-			{
-				// Build frequency table
-				uint[] frequencies = new uint[10 * 12];
-
-				if (currentModuleType == ModuleType.Med112)
-				{
-					for (byte j = 0; j < 4 * 12; j++)
-						frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods112[j]);
-				}
-				else
-				{
-					for (byte j = 0; j < 3 * 12; j++)
-						frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods200[j]);
-				}
-
-				for (uint i = 1; i < 32; i++)		// Skip first sample, since it will always be empty
-				{
-					Sample sample = samples[i];
-
-					SampleInfo sampleInfo = new SampleInfo
-					{
-						Name = sample.Name,
-						Flags = SampleInfo.SampleFlag.None,
-						Type = SampleInfo.SampleType.Sample,
-						Volume = (ushort)(sample.Volume * 4),
-						Panning = -1,
-						LoopStart = sample.LoopStart,
-						LoopLength = sample.LoopLength,
-						NoteFrequencies = frequencies
-					};
-
-/*					if (sample.Type != SampleType.Normal)
-					{
-						// Don't have any modules with multiple octaves, so this part is missing
-					}
-					else*/
-					{
-						if (sample.SampleData != null)
-						{
-							sampleInfo.Sample = sample.SampleData;
-							sampleInfo.Length = (uint)sample.SampleData.Length;
-						}
-					}
-
-					// Find out the loop information
-					if (sampleInfo.LoopLength <= 2)
-					{
-						sampleInfo.LoopStart = 0;
-						sampleInfo.LoopLength = 0;
-					}
-					else
-						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
-
-					yield return sampleInfo;
-				}
-			}
-		}
-		#endregion
-
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

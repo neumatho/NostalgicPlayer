@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		private const int InfoPatternLine = 4;
 		private const int InfoSpeedLine = 5;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -78,82 +78,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_OKT_INFODESCLINE0;
-					value = songLength.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_OKT_INFODESCLINE1;
-					value = pattNum.ToString();
-					break;
-				}
-
-				// Used samples
-				case 2:
-				{
-					description = Resources.IDS_OKT_INFODESCLINE2;
-					value = sampNum.ToString();
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_OKT_INFODESCLINE3;
-					value = playingInfo.SongPos.ToString();
-					break;
-				}
-
-				// Playing pattern
-				case 4:
-				{
-					description = Resources.IDS_OKT_INFODESCLINE4;
-					value = patternTable[playingInfo.SongPos].ToString();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_OKT_INFODESCLINE5;
-					value = playingInfo.CurrentSpeed.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -300,9 +227,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -331,9 +258,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -368,9 +295,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				MarkPositionAsVisited(playingInfo.SongPos);
 			}
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Return the number of channels the module use
@@ -428,9 +355,82 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE0;
+					value = songLength.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE1;
+					value = pattNum.ToString();
+					break;
+				}
+
+				// Used samples
+				case 2:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE2;
+					value = sampNum.ToString();
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE3;
+					value = playingInfo.SongPos.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE4;
+					value = patternTable[playingInfo.SongPos].ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE5;
+					value = playingInfo.CurrentSpeed.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

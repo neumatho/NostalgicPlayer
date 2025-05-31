@@ -82,7 +82,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 				currentModuleType = ModuleType.Unknown;
 		}
 
-		#region IPlayerAgent implementation
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling what the player supports
+		/// </summary>
+		/********************************************************************/
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect | ModulePlayerSupportFlag.Visualize | ModulePlayerSupportFlag.EnableChannels;
+
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -106,108 +115,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public override string ModuleName => song.Name;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_HVL_INFODESCLINE0;
-					value = song.PositionNr.ToString();
-					break;
-				}
-
-				// Used tracks
-				case 1:
-				{
-					description = Resources.IDS_HVL_INFODESCLINE1;
-					value = (song.TrackNr + 1).ToString();
-					break;
-				}
-
-				// Used instruments
-				case 2:
-				{
-					description = Resources.IDS_HVL_INFODESCLINE2;
-					value = song.InstrumentNr.ToString();
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_HVL_INFODESCLINE3;
-					value = playingInfo.PosNr.ToString();
-					break;
-				}
-
-				// Playing tracks
-				case 4:
-				{
-					description = Resources.IDS_HVL_INFODESCLINE4;
-					value = FormatTracks();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_HVL_INFODESCLINE5;
-					value = playingInfo.Tempo.ToString();
-					break;
-				}
-
-				// Current tempo (Hz):
-				case 6:
-				{
-					description = Resources.IDS_HVL_INFODESCLINE6;
-					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return some flags telling what the player supports
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect | ModulePlayerSupportFlag.Visualize | ModulePlayerSupportFlag.EnableChannels;
-
-
-
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -557,9 +467,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
@@ -645,9 +555,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 
 			lastMixerInfo = mixerInfo;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -671,6 +581,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 				}
 			}
 		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => song.Name;
 
 
 
@@ -724,6 +643,87 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_HVL_INFODESCLINE0;
+					value = song.PositionNr.ToString();
+					break;
+				}
+
+				// Used tracks
+				case 1:
+				{
+					description = Resources.IDS_HVL_INFODESCLINE1;
+					value = (song.TrackNr + 1).ToString();
+					break;
+				}
+
+				// Used instruments
+				case 2:
+				{
+					description = Resources.IDS_HVL_INFODESCLINE2;
+					value = song.InstrumentNr.ToString();
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_HVL_INFODESCLINE3;
+					value = playingInfo.PosNr.ToString();
+					break;
+				}
+
+				// Playing tracks
+				case 4:
+				{
+					description = Resources.IDS_HVL_INFODESCLINE4;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_HVL_INFODESCLINE5;
+					value = playingInfo.Tempo.ToString();
+					break;
+				}
+
+				// Current tempo (Hz):
+				case 6:
+				{
+					description = Resources.IDS_HVL_INFODESCLINE6;
+					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Holds the channels used by visuals. Only needed for players using
 		/// buffer mode if possible
 		/// </summary>
@@ -732,7 +732,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 				new ChannelChanged(enabledChannels[i], x.Muted, x.NoteKicked, x.SampleNumber, -1, -1, 0x280, true, false, x.SamplePosition, x.Volume, x.Frequency)).ToArray();
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

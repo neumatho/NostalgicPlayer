@@ -38,8 +38,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			{ ModuleType.MedPacker , agent6Id },
 		};
 
-		internal static readonly string[] fileExtensions = [ "med", "mmd0", "mmd1", "mmd2", "mmd3", "mmdc", "omed", "ocss", "md0", "md1", "md2", "md3" ];
-
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -94,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// can be returned in IdentifyFormat()
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => fileExtensions;
+		public string[] FileExtensions => OctaMedIdentifier.FileExtensions;
 
 
 
@@ -106,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/********************************************************************/
 		public IdentifyFormatInfo IdentifyFormat(PlayerFileInfo fileInfo)
 		{
-			ModuleType moduleType = OctaMedWorker.TestModule(fileInfo);
+			ModuleType moduleType = OctaMedIdentifier.TestModule(fileInfo);
 			if (moduleType == ModuleType.Unknown)
 				return null;
 

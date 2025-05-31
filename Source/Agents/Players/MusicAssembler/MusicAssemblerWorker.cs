@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 		private const int InfoPositionLine = 4;
 		private const int InfoTrackLine = 5;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -73,6 +73,191 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 			moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 			return TestModule(buffer);
+		}
+		#endregion
+
+		#region Loading
+		/********************************************************************/
+		/// <summary>
+		/// Will load the file into memory
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			try
+			{
+				ModuleStream moduleStream = fileInfo.ModuleStream;
+
+				if (!LoadSubSongInfo(moduleStream))
+				{
+					errorMessage = Resources.IDS_MA_ERR_LOADING_SUBSONG;
+					return AgentResult.Error;
+				}
+
+				if (!LoadPositionLists(moduleStream))
+				{
+					errorMessage = Resources.IDS_MA_ERR_LOADING_POSITION_LISTS;
+					return AgentResult.Error;
+				}
+
+				if (!LoadTracks(moduleStream))
+				{
+					errorMessage = Resources.IDS_MA_ERR_LOADING_TRACKS;
+					return AgentResult.Error;
+				}
+
+				if (!LoadInstrumentInfo(moduleStream))
+				{
+					errorMessage = Resources.IDS_MA_ERR_LOADING_INSTRUMENTINFO;
+					return AgentResult.Error;
+				}
+
+				if (!LoadSampleInfo(moduleStream, out int[] sampleDataOffsets))
+				{
+					errorMessage = Resources.IDS_MA_ERR_LOADING_SAMPLEINFO;
+					return AgentResult.Error;
+				}
+
+				if (!LoadSampleData(moduleStream, sampleDataOffsets))
+				{
+					errorMessage = Resources.IDS_MA_ERR_LOADING_SAMPLES;
+					return AgentResult.Error;
+				}
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+
+			// Everything is loaded alright
+			return AgentResult.Ok;
+		}
+		#endregion
+
+		#region Initialization and cleanup
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			Cleanup();
+
+			base.CleanupPlayer();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the current song
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(int songNumber, out string errorMessage)
+		{
+			if (!base.InitSound(songNumber, out errorMessage))
+				return false;
+
+			InitializeSound(songNumber);
+
+			return true;
+		}
+		#endregion
+
+		#region Playing
+		/********************************************************************/
+		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			playingInfo.SpeedCounter--;
+
+			if (playingInfo.SpeedCounter == 0)
+			{
+				playingInfo.SpeedCounter = playingInfo.Speed;
+
+				for (int i = 0; i < 4; i++)
+				{
+					if (GetNextRowInTrack(voices[i], VirtualChannels[i]))
+						DoVoice(voices[i], VirtualChannels[i]);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < 4; i++)
+					DoVoice(voices[i], VirtualChannels[i]);
+			}
+		}
+		#endregion
+
+		#region Information
+		/********************************************************************/
+		/// <summary>
+		/// Return information about sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override SubSongInfo SubSongs => new SubSongInfo(subSongs.Count, 0);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override IEnumerable<SampleInfo> Samples
+		{
+			get
+			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 4 * 12; j++)
+					frequencies[3 * 12 + j] = PeriodToFrequency(Tables.Periods[j]);
+
+				foreach (Sample sample in samples)
+				{
+					SampleInfo sampleInfo = new SampleInfo
+					{
+						Name = sample.Name,
+						Flags = SampleInfo.SampleFlag.None,
+						Volume = 256,
+						Panning = -1,
+						NoteFrequencies = frequencies
+					};
+
+					if ((sample.Length > 1) && (sample.Length <= 128))
+					{
+						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
+						sampleInfo.Sample = null;
+						sampleInfo.Length = 0;
+						sampleInfo.LoopStart = 0;
+						sampleInfo.LoopLength = 0;
+					}
+					else
+					{
+						sampleInfo.Type = SampleInfo.SampleType.Sample;
+						sampleInfo.Sample = sample.SampleData;
+						sampleInfo.Length = sample.Length > 1 ? sample.Length * 2U : 0;
+
+						if (sample.LoopLength != 0)
+						{
+							sampleInfo.LoopStart = (uint)(sample.Length - sample.LoopLength) * 2;
+							sampleInfo.LoopLength = sample.LoopLength * 2U;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+						}
+					}
+
+					yield return sampleInfo;
+				}
+			}
 		}
 
 
@@ -157,192 +342,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			try
-			{
-				ModuleStream moduleStream = fileInfo.ModuleStream;
-
-				if (!LoadSubSongInfo(moduleStream))
-				{
-					errorMessage = Resources.IDS_MA_ERR_LOADING_SUBSONG;
-					return AgentResult.Error;
-				}
-
-				if (!LoadPositionLists(moduleStream))
-				{
-					errorMessage = Resources.IDS_MA_ERR_LOADING_POSITION_LISTS;
-					return AgentResult.Error;
-				}
-
-				if (!LoadTracks(moduleStream))
-				{
-					errorMessage = Resources.IDS_MA_ERR_LOADING_TRACKS;
-					return AgentResult.Error;
-				}
-
-				if (!LoadInstrumentInfo(moduleStream))
-				{
-					errorMessage = Resources.IDS_MA_ERR_LOADING_INSTRUMENTINFO;
-					return AgentResult.Error;
-				}
-
-				if (!LoadSampleInfo(moduleStream, out int[] sampleDataOffsets))
-				{
-					errorMessage = Resources.IDS_MA_ERR_LOADING_SAMPLEINFO;
-					return AgentResult.Error;
-				}
-
-				if (!LoadSampleData(moduleStream, sampleDataOffsets))
-				{
-					errorMessage = Resources.IDS_MA_ERR_LOADING_SAMPLES;
-					return AgentResult.Error;
-				}
-			}
-			catch (Exception)
-			{
-				Cleanup();
-				throw;
-			}
-
-			// Everything is loaded alright
-			return AgentResult.Ok;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the player
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupPlayer()
-		{
-			Cleanup();
-
-			base.CleanupPlayer();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the current song
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(int songNumber, out string errorMessage)
-		{
-			if (!base.InitSound(songNumber, out errorMessage))
-				return false;
-
-			InitializeSound(songNumber);
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// This is the main player method
-		/// </summary>
-		/********************************************************************/
-		public override void Play()
-		{
-			playingInfo.SpeedCounter--;
-
-			if (playingInfo.SpeedCounter == 0)
-			{
-				playingInfo.SpeedCounter = playingInfo.Speed;
-
-				for (int i = 0; i < 4; i++)
-				{
-					if (GetNextRowInTrack(voices[i], VirtualChannels[i]))
-						DoVoice(voices[i], VirtualChannels[i]);
-				}
-			}
-			else
-			{
-				for (int i = 0; i < 4; i++)
-					DoVoice(voices[i], VirtualChannels[i]);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(subSongs.Count, 0);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns all the samples available in the module. If none, null
-		/// is returned
-		/// </summary>
-		/********************************************************************/
-		public override IEnumerable<SampleInfo> Samples
-		{
-			get
-			{
-				// Build frequency table
-				uint[] frequencies = new uint[10 * 12];
-
-				for (int j = 0; j < 4 * 12; j++)
-					frequencies[3 * 12 + j] = PeriodToFrequency(Tables.Periods[j]);
-
-				foreach (Sample sample in samples)
-				{
-					SampleInfo sampleInfo = new SampleInfo
-					{
-						Name = sample.Name,
-						Flags = SampleInfo.SampleFlag.None,
-						Volume = 256,
-						Panning = -1,
-						NoteFrequencies = frequencies
-					};
-
-					if ((sample.Length > 1) && (sample.Length <= 128))
-					{
-						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
-						sampleInfo.Sample = null;
-						sampleInfo.Length = 0;
-						sampleInfo.LoopStart = 0;
-						sampleInfo.LoopLength = 0;
-					}
-					else
-					{
-						sampleInfo.Type = SampleInfo.SampleType.Sample;
-						sampleInfo.Sample = sample.SampleData;
-						sampleInfo.Length = sample.Length > 1 ? sample.Length * 2U : 0;
-
-						if (sample.LoopLength != 0)
-						{
-							sampleInfo.LoopStart = (uint)(sample.Length - sample.LoopLength) * 2;
-							sampleInfo.LoopLength = sample.LoopLength * 2U;
-							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
-						}
-					}
-
-					yield return sampleInfo;
-				}
-			}
-		}
-		#endregion
-
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

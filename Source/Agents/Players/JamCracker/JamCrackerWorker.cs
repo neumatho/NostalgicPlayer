@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		private const int InfoPatternLine = 4;
 		private const int InfoSpeedLine = 5;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -68,82 +68,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 			return AgentResult.Unknown;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE0;
-					value = songLen.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE1;
-					value = patternNum.ToString();
-					break;
-				}
-
-				// Used instruments
-				case 2:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE2;
-					value = samplesNum.ToString();
-					break;
-				}
-
-				// Playing position
-				case 3:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE3;
-					value = playingInfo.SongPos.ToString();
-					break;
-				}
-
-				// Playing pattern
-				case 4:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE4;
-					value = songTable[playingInfo.SongPos].ToString();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE5;
-					value = playingInfo.Wait.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -274,9 +201,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -305,9 +232,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -335,9 +262,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				MarkPositionAsVisited(playingInfo.SongPos);
 			}
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Returns all the samples available in the module. If none, null
@@ -400,9 +327,82 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE0;
+					value = songLen.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE1;
+					value = patternNum.ToString();
+					break;
+				}
+
+				// Used instruments
+				case 2:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE2;
+					value = samplesNum.ToString();
+					break;
+				}
+
+				// Playing position
+				case 3:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE3;
+					value = playingInfo.SongPos.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE4;
+					value = songTable[playingInfo.SongPos].ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE5;
+					value = playingInfo.Wait.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithPositionDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration

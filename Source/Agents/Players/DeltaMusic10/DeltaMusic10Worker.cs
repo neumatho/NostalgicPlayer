@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 		private const int InfoTrackLine = 4;
 		private const int InfoSpeedLine = 5;
 
-		#region IPlayerAgent implementation
+		#region Identify
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -73,82 +73,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Number of positions
-				case 0:
-				{
-					description = Resources.IDS_DM1_INFODESCLINE0;
-					value = FormatPositionLengths();
-					break;
-				}
-
-				// Used tracks
-				case 1:
-				{
-					description = Resources.IDS_DM1_INFODESCLINE1;
-					value = blocks.Length.ToString();
-					break;
-				}
-
-				// Supported / used samples
-				case 2:
-				{
-					description = Resources.IDS_DM1_INFODESCLINE2;
-					value = "20";
-					break;
-				}
-
-				// Playing positions
-				case 3:
-				{
-					description = Resources.IDS_DM1_INFODESCLINE3;
-					value = FormatPositions();
-					break;
-				}
-
-				// Playing tracks
-				case 4:
-				{
-					description = Resources.IDS_DM1_INFODESCLINE4;
-					value = FormatTracks();
-					break;
-				}
-
-				// Current speed
-				case 5:
-				{
-					description = Resources.IDS_DM1_INFODESCLINE5;
-					value = playingInfo.PlaySpeed.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
-		}
 		#endregion
 
-		#region IModulePlayerAgent implementation
+		#region Loading
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -293,9 +220,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 			// Ok, we're done
 			return AgentResult.Ok;
 		}
+		#endregion
 
-
-
+		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Cleanup the player
@@ -324,9 +251,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 
 			return true;
 		}
+		#endregion
 
-
-
+		#region Playing
 		/********************************************************************/
 		/// <summary>
 		/// This is the main player method
@@ -337,9 +264,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 			for (int i = 0; i < 4; i++)
 				CalculateFrequency(i, channels[i]);
 		}
+		#endregion
 
-
-
+		#region Information
 		/********************************************************************/
 		/// <summary>
 		/// Returns all the samples available in the module. If none, null
@@ -419,9 +346,82 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Number of positions
+				case 0:
+				{
+					description = Resources.IDS_DM1_INFODESCLINE0;
+					value = FormatPositionLengths();
+					break;
+				}
+
+				// Used tracks
+				case 1:
+				{
+					description = Resources.IDS_DM1_INFODESCLINE1;
+					value = blocks.Length.ToString();
+					break;
+				}
+
+				// Supported / used samples
+				case 2:
+				{
+					description = Resources.IDS_DM1_INFODESCLINE2;
+					value = "20";
+					break;
+				}
+
+				// Playing positions
+				case 3:
+				{
+					description = Resources.IDS_DM1_INFODESCLINE3;
+					value = FormatPositions();
+					break;
+				}
+
+				// Playing tracks
+				case 4:
+				{
+					description = Resources.IDS_DM1_INFODESCLINE4;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_DM1_INFODESCLINE5;
+					value = playingInfo.PlaySpeed.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
 		#endregion
 
-		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
