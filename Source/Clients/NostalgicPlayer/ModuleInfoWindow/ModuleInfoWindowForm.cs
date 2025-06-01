@@ -508,24 +508,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
-				val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize);
-				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
-
-				if (staticInfo.DecruncherAlgorithms != null)
-				{
-					val = staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN : string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE_VALUE, staticInfo.CrunchedSize);
-					val += string.Format(" / {0}", string.Join(" \u2b95 ", staticInfo.DecruncherAlgorithms));
-
-					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, val);
-					firstCustomLine++;
-				}
-
 				if (fileInfo.Type == MultiFileInfo.FileType.Url)
 				{
 					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_URL, fileInfo.Source);
 				}
 				else
 				{
+					val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize);
+					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
+
+					if (staticInfo.DecruncherAlgorithms != null)
+					{
+						val = staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN : string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE_VALUE, staticInfo.CrunchedSize);
+						val += string.Format(" / {0}", string.Join(" \u2b95 ", staticInfo.DecruncherAlgorithms));
+
+						moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, val);
+						firstCustomLine++;
+					}
+
 					if (Env.IsWindows10S)
 						moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.Source);
 					else
