@@ -120,4 +120,7 @@
   <data name="IDS_ERR_DURATION_TIMEOUT" xml:space="preserve">
     <value>Timeout occurred when calculating module duration</value>
   </data>
+  <data name="IDS_ERR_STREAMING_TIMEOUT" xml:space="preserve">
+    <value>Timeout occurred while streaming</value>
+  </data>
 </root>

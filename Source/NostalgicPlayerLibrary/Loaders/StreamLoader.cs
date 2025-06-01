@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 	/// </summary>
 	public class StreamLoader : LoaderBase
 	{
-		private int MaxNumberOfRedirects = 10;
+		private const int MaxNumberOfRedirects = 10;
 
 		private readonly Manager agentManager;
 

@@ -5,6 +5,8 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Polycode.NostalgicPlayer.Kit.Streams
 {
@@ -13,6 +15,8 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	/// </summary>
 	public class StreamingStream : Stream
 	{
+		private const int StreamingTimeout = 30000;
+
 		private readonly Stream wrapperStream;
 		private readonly bool leaveStreamOpen;
 
@@ -134,7 +138,17 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			return wrapperStream.Read(buffer, offset, count);
+			try
+			{
+				return Task.Run(() => wrapperStream.ReadAsync(buffer, offset, count, new CancellationTokenSource(StreamingTimeout).Token)).Result;
+			}
+			catch(AggregateException ex)
+			{
+				if (ex.InnerException is TaskCanceledException)
+					throw new TimeoutException(Resources.IDS_ERR_STREAMING_TIMEOUT);
+
+				throw;
+			}
 		}
 
 
