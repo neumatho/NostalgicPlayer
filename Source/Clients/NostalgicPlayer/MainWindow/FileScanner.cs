@@ -213,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
-				WaitHandle[] waitArray = { shutdownEvent, breakEvent };
+				WaitHandle[] waitArray = [ shutdownEvent, breakEvent ];
 
 				List<ModuleListItem> itemsToRemove = new List<ModuleListItem>();
 				List<ModuleListItemUpdateInfo> itemsToUpdate = new List<ModuleListItemUpdateInfo>();
@@ -226,8 +226,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (WaitHandle.WaitAny(waitArray, 0) != WaitHandle.WaitTimeout)
 						return;
 
+					// Skip stream items
+					if (listItem.ListItem is IStreamListItem)
+						continue;
+
 					// Get needed information
-					string fileName = listItem.ListItem.FullPath;
+					string fileName = listItem.ListItem.Source;
 					bool haveTime = listItem.HaveTime;
 
 					// If the item already have a time, skip it

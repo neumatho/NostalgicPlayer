@@ -1050,6 +1050,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open URL….
+        /// </summary>
+        internal static string IDS_MENU_FILE_OPEN_URL {
+            get {
+                return ResourceManager.GetString("IDS_MENU_FILE_OPEN_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         internal static string IDS_MENU_HELP {
@@ -1239,6 +1248,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to URL:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_URL {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Comment.
         /// </summary>
         internal static string IDS_MODULE_INFO_TAB_COMMENT {
@@ -1353,6 +1371,60 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_NOTIME {
             get {
                 return ResourceManager.GetString("IDS_NOTIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        internal static string IDS_OPENURL_BUTTON_ADD {
+            get {
+                return ResourceManager.GetString("IDS_OPENURL_BUTTON_ADD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string IDS_OPENURL_BUTTON_CANCEL {
+            get {
+                return ResourceManager.GetString("IDS_OPENURL_BUTTON_CANCEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        internal static string IDS_OPENURL_BUTTON_PLAY {
+            get {
+                return ResourceManager.GetString("IDS_OPENURL_BUTTON_PLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the name to be shown in the module list.
+        /// </summary>
+        internal static string IDS_OPENURL_NAME {
+            get {
+                return ResourceManager.GetString("IDS_OPENURL_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open url.
+        /// </summary>
+        internal static string IDS_OPENURL_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_OPENURL_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter an URL to the stream you want to listen to.
+        /// </summary>
+        internal static string IDS_OPENURL_URL {
+            get {
+                return ResourceManager.GetString("IDS_OPENURL_URL", resourceCulture);
             }
         }
         
@@ -1728,18 +1800,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized string similar to Apply.
         /// </summary>
-        internal static string IDS_SETTINGS_APPLY {
+        internal static string IDS_SETTINGS_BUTTON_APPLY {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_APPLY", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_BUTTON_APPLY", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        internal static string IDS_SETTINGS_CANCEL {
+        internal static string IDS_SETTINGS_BUTTON_CANCEL {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_CANCEL", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_BUTTON_CANCEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        internal static string IDS_SETTINGS_BUTTON_OK {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_BUTTON_OK", resourceCulture);
             }
         }
         
@@ -2137,15 +2218,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OK.
-        /// </summary>
-        internal static string IDS_SETTINGS_OK {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_OK", resourceCulture);
             }
         }
         

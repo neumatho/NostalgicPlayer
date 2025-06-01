@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 	{
 		private class ModuleItem
 		{
-			public Loader Loader;
+			public LoaderBase Loader;
 		}
 
 		private MainWindowForm mainWindowForm;
@@ -273,14 +273,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				{
 					ModuleItem item = new ModuleItem();
 
-					// Get the file name
-					string fileName = listItem.ListItem.FullPath;
+					string source = listItem.ListItem.Source;
 
 					// Create new loader
-					item.Loader = new Loader(agentManager);
+					item.Loader = listItem.ListItem.CreateLoader(agentManager);
 
 					// Load the module
-					if (!item.Loader.Load(fileName, out string errorMessage))
+					if (!item.Loader.Load(source, out string errorMessage))
 					{
 						if (showError)
 							ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);

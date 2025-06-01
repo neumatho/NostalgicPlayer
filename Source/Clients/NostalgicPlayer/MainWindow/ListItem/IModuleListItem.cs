@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
 	/// <summary>
@@ -16,8 +19,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		string DisplayName { get; }
 
 		/// <summary>
-		/// Return the full path to the file
+		/// Return the source to the item, e.g. a file path or a URL
 		/// </summary>
-		string FullPath { get; }
+		string Source { get; }
+
+		/// <summary>
+		/// Create the loader to use to load this item
+		/// </summary>
+		LoaderBase CreateLoader(Manager agentManager);
 	}
 }

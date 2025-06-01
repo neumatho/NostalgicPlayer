@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
@@ -19,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/********************************************************************/
 		public SingleFileListItem(string fullFileName)
 		{
-			FullPath = fullFileName;
+			Source = fullFileName;
 		}
 
 		#region IModuleListItem implementation
@@ -28,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/// Return the name which is shown in the list
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName => Path.GetFileName(FullPath);
+		public string DisplayName => Path.GetFileName(Source);
 
 
 
@@ -37,9 +39,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/// Return the full path to the file
 		/// </summary>
 		/********************************************************************/
-		public string FullPath
+		public string Source
 		{
 			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create the loader to use to load this item
+		/// </summary>
+		/********************************************************************/
+		public LoaderBase CreateLoader(Manager agentManager)
+		{
+			return new Loader(agentManager);
 		}
 		#endregion
 	}

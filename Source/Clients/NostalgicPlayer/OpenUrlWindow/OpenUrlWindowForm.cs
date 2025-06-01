@@ -4,58 +4,65 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using System.Linq;
+using Krypton.Toolkit;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow
 {
 	/// <summary>
-	/// This class holds a list item pointing to a file inside an archive
+	/// This shows the open URL window
 	/// </summary>
-	public class ArchiveFileListItem : IModuleListItem
+	public partial class OpenUrlWindowForm : KryptonForm
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileListItem(string fullArchivePath)
+		public OpenUrlWindowForm()
 		{
-			Source = fullArchivePath;
-		}
+			InitializeComponent();
 
-		#region IModuleListItem implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return the name which is shown in the list
-		/// </summary>
-		/********************************************************************/
-		public string DisplayName => Path.GetFileName(ArchivePath.GetEntryName(Source));
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the full path to the file
-		/// </summary>
-		/********************************************************************/
-		public string Source
-		{
-			get;
+			if (!DesignMode)
+			{
+				// Set the title of the window
+				Text = Resources.IDS_OPENURL_TITLE;
+			}
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Create the loader to use to load this item
+		/// Return the entered name
 		/// </summary>
 		/********************************************************************/
-		public LoaderBase CreateLoader(Manager agentManager)
+		public string GetName()
 		{
-			return new Loader(agentManager);
+			char[] invalidChars = Path.GetInvalidFileNameChars();
+
+			string name = nameTextBox.Text.Trim();
+			name = string.Concat(name.Where(c => !invalidChars.Contains(c)));
+
+			if (string.IsNullOrEmpty(name))
+			{
+				// If no name is entered, use the URL as the name
+				name = GetUrl();
+			}
+
+			return name;
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the entered URL
+		/// </summary>
+		/********************************************************************/
+		public string GetUrl()
+		{
+			return urlTextBox.Text.Trim();
+		}
 	}
 }

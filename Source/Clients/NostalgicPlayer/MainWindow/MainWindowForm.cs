@@ -24,6 +24,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
@@ -1356,6 +1357,54 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#endregion
 
 		#region Menu events
+
+		#region File menu
+		/********************************************************************/
+		/// <summary>
+		/// User selected the settings menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_File_OpenUrl_Click(object sender, EventArgs e)
+		{
+			using (OpenUrlWindowForm dialog = new OpenUrlWindowForm())
+			{
+				DialogResult result = dialog.ShowDialog(this);
+				if ((result != DialogResult.Cancel) && (!string.IsNullOrEmpty(dialog.GetUrl())))
+				{
+					using (new SleepCursor())
+					{
+						moduleListControl.BeginUpdate();
+
+						try
+						{
+							if (result == DialogResult.OK)
+							{
+								// Free any playing module
+								StopAndFreeModule();
+
+								moduleListControl.Items.Clear();
+							}
+
+							moduleListControl.Items.Add(new ModuleListItem(new UrlListItem(dialog.GetName(), dialog.GetUrl())));
+
+							if (result == DialogResult.OK)
+							{
+								// Load the module
+								LoadAndPlayModule(0);
+							}
+						}
+						finally
+						{
+							moduleListControl.EndUpdate();
+						}
+
+						// Update the controls
+						UpdateControls();
+					}
+				}
+			}
+		}
+		#endregion
 
 		#region Window menu
 		/********************************************************************/
@@ -3006,6 +3055,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			menuItem.Click += PlayButton_Click;
 			fileMenuItem.DropDownItems.Add(menuItem);
 
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_OPEN_URL);
+			menuItem.ShortcutKeys = Keys.Shift | Keys.Alt | Keys.O;
+			menuItem.Click += Menu_File_OpenUrl_Click;
+			fileMenuItem.DropDownItems.Add(menuItem);
+
 			fileMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_EXIT);
@@ -3512,7 +3566,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					MultiFileInfo fileInfo = GetFileInfo();
 					if (fileInfo != null)
-						moduleName = ArchivePath.IsArchivePath(fileInfo.FileName) ? ArchivePath.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
+						moduleName = fileInfo.DisplayName;
 				}
 
 				if (!string.IsNullOrEmpty(moduleName))
@@ -4233,13 +4287,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Update database if enabled
 			if (optionSettings.UseDatabase)
 			{
-				ModuleDatabaseInfo moduleDatabaseInfo = database.RetrieveInformation(listItem.ListItem.FullPath);
+				if (listItem.ListItem is IStreamListItem)
+					return;
+
+				ModuleDatabaseInfo moduleDatabaseInfo = database.RetrieveInformation(listItem.ListItem.Source);
 				if (moduleDatabaseInfo != null)
 					moduleDatabaseInfo = new ModuleDatabaseInfo(moduleHandler.PlayingModuleInformation.SongTotalTime, moduleDatabaseInfo.ListenCount + 1, DateTime.Now);
 				else
 					moduleDatabaseInfo = new ModuleDatabaseInfo(moduleHandler.PlayingModuleInformation.SongTotalTime, 1, DateTime.Now);
 
-				database.StoreInformation(listItem.ListItem.FullPath, moduleDatabaseInfo);
+				database.StoreInformation(listItem.ListItem.Source, moduleDatabaseInfo);
 			}
 		}
 

@@ -25,7 +25,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 			/// <summary>
 			/// File is stored inside an archive
 			/// </summary>
-			Archive
+			Archive,
+
+			/// <summary>
+			/// A network URL
+			/// </summary>
+			Url
 		}
 
 		/********************************************************************/
@@ -42,10 +47,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the file name
+		/// Holds the source, e.g. the full path to the file or the URL
 		/// </summary>
 		/********************************************************************/
-		public string FileName
+		public string Source
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the display name for the source
+		/// </summary>
+		/********************************************************************/
+		public string DisplayName
 		{
 			get; set;
 		}

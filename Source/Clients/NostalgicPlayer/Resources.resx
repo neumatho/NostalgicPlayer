@@ -524,6 +524,9 @@ Do you want to continue?</value>
   <data name="IDS_MENU_FILE_OPEN" xml:space="preserve">
     <value>Open…</value>
   </data>
+  <data name="IDS_MENU_FILE_OPEN_URL" xml:space="preserve">
+    <value>Open URL…</value>
+  </data>
   <data name="IDS_MENU_HELP" xml:space="preserve">
     <value>Help</value>
   </data>
@@ -587,6 +590,9 @@ Do you want to continue?</value>
   <data name="IDS_MODULE_INFO_ITEM_TIME" xml:space="preserve">
     <value>Total time:</value>
   </data>
+  <data name="IDS_MODULE_INFO_ITEM_URL" xml:space="preserve">
+    <value>URL:</value>
+  </data>
   <data name="IDS_MODULE_INFO_TAB_COMMENT" xml:space="preserve">
     <value>Comment</value>
   </data>
@@ -626,6 +632,24 @@ what has changed since your previous version.</value>
   </data>
   <data name="IDS_NO_AGENTS" xml:space="preserve">
     <value>None installed</value>
+  </data>
+  <data name="IDS_OPENURL_BUTTON_ADD" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="IDS_OPENURL_BUTTON_CANCEL" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="IDS_OPENURL_BUTTON_PLAY" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="IDS_OPENURL_NAME" xml:space="preserve">
+    <value>Enter the name to be shown in the module list</value>
+  </data>
+  <data name="IDS_OPENURL_TITLE" xml:space="preserve">
+    <value>Open url</value>
+  </data>
+  <data name="IDS_OPENURL_URL" xml:space="preserve">
+    <value>Enter an URL to the stream you want to listen to</value>
   </data>
   <data name="IDS_POSITION" xml:space="preserve">
     <value>Position: {0:d3}/{1:d3} = {2,2}%</value>
@@ -750,11 +774,14 @@ what has changed since your previous version.</value>
   <data name="IDS_SETTINGS_AGENTS_TAB_VISUALS" xml:space="preserve">
     <value>Visuals</value>
   </data>
-  <data name="IDS_SETTINGS_APPLY" xml:space="preserve">
+  <data name="IDS_SETTINGS_BUTTON_APPLY" xml:space="preserve">
     <value>Apply</value>
   </data>
-  <data name="IDS_SETTINGS_CANCEL" xml:space="preserve">
+  <data name="IDS_SETTINGS_BUTTON_CANCEL" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="IDS_SETTINGS_BUTTON_OK" xml:space="preserve">
+    <value>Ok</value>
   </data>
   <data name="IDS_SETTINGS_MIXER_CHANNELS" xml:space="preserve">
     <value>Channels</value>
@@ -888,9 +915,6 @@ in Module Information window</value>
   </data>
   <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP" xml:space="preserve">
     <value>Up</value>
-  </data>
-  <data name="IDS_SETTINGS_OK" xml:space="preserve">
-    <value>OK</value>
   </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL" xml:space="preserve">
     <value>General</value>

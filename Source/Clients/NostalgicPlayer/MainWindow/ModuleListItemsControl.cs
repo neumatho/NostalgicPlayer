@@ -742,7 +742,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						lastToolTipItem = index;
 
 						if (index != -1)
-							toolTip.SetToolTip(this, collection[index].ListItem.FullPath);
+							toolTip.SetToolTip(this, collection[index].ListItem.Source);
 						else
 							toolTip.SetToolTip(this, string.Empty);
 					}

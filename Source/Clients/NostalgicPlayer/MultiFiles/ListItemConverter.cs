@@ -22,29 +22,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/********************************************************************/
 		public static MultiFileInfo Convert(ModuleListItem listItem)
 		{
-			if (listItem.ListItem is SingleFileListItem singleFile)
+			MultiFileInfo multiFileInfo = new MultiFileInfo
 			{
-				return new MultiFileInfo
-				{
-					Type = MultiFileInfo.FileType.Plain,
-					FileName = singleFile.FullPath,
-					PlayTime = listItem.HaveTime ? listItem.Duration : null,
-					DefaultSubSong = listItem.DefaultSubSong
-				};
-			}
+				Source = listItem.ListItem.Source,
+				DisplayName = listItem.ListItem.DisplayName,
+				PlayTime = listItem.HaveTime ? listItem.Duration : null,
+				DefaultSubSong = listItem.DefaultSubSong
+			};
 
-			if (listItem.ListItem is ArchiveFileListItem archiveFile)
+			if (listItem.ListItem is SingleFileListItem)
 			{
-				return new MultiFileInfo
-				{
-					Type = MultiFileInfo.FileType.Archive,
-					FileName = archiveFile.FullPath,
-					PlayTime = listItem.HaveTime ? listItem.Duration : null,
-					DefaultSubSong = listItem.DefaultSubSong
-				};
+				multiFileInfo.Type = MultiFileInfo.FileType.Plain;
 			}
+			else if (listItem.ListItem is ArchiveFileListItem)
+			{
+				multiFileInfo.Type = MultiFileInfo.FileType.Archive;
+			}
+			else if (listItem.ListItem is UrlListItem)
+			{
+				multiFileInfo.Type = MultiFileInfo.FileType.Url;
+			}
+			else
+				throw new NotImplementedException("Unknown module list implementation");
 
-			throw new NotImplementedException("Unknown module list implementation");
+			return multiFileInfo;
 		}
 
 
@@ -62,13 +63,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 			{
 				case MultiFileInfo.FileType.Plain:
 				{
-					item = new SingleFileListItem(fileInfo.FileName);
+					item = new SingleFileListItem(fileInfo.Source);
 					break;
 				}
 
 				case MultiFileInfo.FileType.Archive:
 				{
-					item = new ArchiveFileListItem(fileInfo.FileName);
+					item = new ArchiveFileListItem(fileInfo.Source);
+					break;
+				}
+
+				case MultiFileInfo.FileType.Url:
+				{
+					item = new UrlListItem(fileInfo.DisplayName, fileInfo.Source);
 					break;
 				}
 

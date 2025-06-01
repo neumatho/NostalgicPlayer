@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => new [] { "npml" };
+		public string[] FileExtensions => [ "npml" ];
 
 
 
@@ -44,6 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 
 				// Write all the items to the file
 				string oldPath = string.Empty;
+				MultiFileInfo.FileType oldType = (MultiFileInfo.FileType)(-1);
 				string line;
 
 				foreach (MultiFileInfo listInfo in list)
@@ -54,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 						case MultiFileInfo.FileType.Plain:
 						{
 							// Check to see if the path is the same as the previous one
-							string path = Path.GetDirectoryName(listInfo.FileName);
+							string path = Path.GetDirectoryName(listInfo.Source);
 
 							if (path != oldPath)
 							{
@@ -72,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 							}
 
 							// Get the file name
-							line = Path.GetFileName(listInfo.FileName);
+							line = Path.GetFileName(listInfo.Source);
 							break;
 						}
 
@@ -80,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 						case MultiFileInfo.FileType.Archive:
 						{
 							// Check to see if the archive is the same as the previous one
-							string path = ArchivePath.GetArchiveName(listInfo.FileName);
+							string path = ArchivePath.GetArchiveName(listInfo.Source);
 
 							if (path != oldPath)
 							{
@@ -98,13 +99,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 							}
 
 							// Get the archive entry
-							line = ArchivePath.GetEntryPath(listInfo.FileName);
+							line = ArchivePath.GetEntryPath(listInfo.Source);
+							break;
+						}
+
+						// URL
+						case MultiFileInfo.FileType.Url:
+						{
+							if (oldType != MultiFileInfo.FileType.Url)
+							{
+								sw.WriteLine();
+								sw.WriteLine("@*Stream*@");
+							}
+
+							line = $"URL:{listInfo.Source}|{listInfo.DisplayName}";
+
+							oldPath = string.Empty;
 							break;
 						}
 
 						default:
 							throw new NotImplementedException($"File type {listInfo.Type} not implemented");
 					}
+
+					oldType = listInfo.Type;
 
 					// Append time if available
 					if (listInfo.PlayTime.HasValue)
@@ -142,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 					throw new Exception(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_VERSION, version));
 
 				string path = null;
-				bool archiveMode = false;
+				MultiFileInfo.FileType mode = MultiFileInfo.FileType.Plain;
 
 				while (!sr.EndOfStream)
 				{
@@ -156,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 							case "@*Path*@":
 							{
 								path = sr.ReadLine();
-								archiveMode = false;
+								mode = MultiFileInfo.FileType.Plain;
 								break;
 							}
 
@@ -164,7 +182,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 							case "@*Archive*@":
 							{
 								path = sr.ReadLine();
-								archiveMode = true;
+								mode = MultiFileInfo.FileType.Archive;
+								break;
+							}
+
+							// "Stream" command
+							case "@*Stream*@":
+							{
+								mode = MultiFileInfo.FileType.Url;
 								break;
 							}
 
@@ -173,57 +198,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 
 							default:
 							{
-								// If not a command, it's a file name or archive name
-								MultiFileInfo fileInfo = new MultiFileInfo
-								{
-									Type = archiveMode ? MultiFileInfo.FileType.Archive : MultiFileInfo.FileType.Plain
-								};
+								// If not a command, it's the source, e.g. a file name or URL
+								MultiFileInfo fileInfo = null;
 
-								// See if there is stored a default sub-song
-								int searchIndex = line.LastIndexOf('?');
-								if (searchIndex != -1)
+								switch (mode)
 								{
-									// Set the default sub-song
-									// It seems that it is possible to have ? in filenames on the Amiga,
-									// so we check to see if we could parse the rest
-									if (int.TryParse(line.Substring(searchIndex + 1), out int defaultSong) && (defaultSong >= 0))
+									case MultiFileInfo.FileType.Plain:
+									case MultiFileInfo.FileType.Archive:
 									{
-										fileInfo.DefaultSubSong = defaultSong;
-										line = line.Substring(0, searchIndex);
+										fileInfo = ParseFileLine(line, path, directory, mode);
+										break;
+									}
+
+									case MultiFileInfo.FileType.Url:
+									{
+										fileInfo = ParseStreamLine(line);
+										break;
 									}
 								}
 
-								// See if there is stored a module time
-								searchIndex = line.LastIndexOf(':');
-								if (searchIndex != -1)
-								{
-									// Set the time
-									long ticks = long.Parse(line.Substring(searchIndex + 1));
-									if (ticks != 0)
-										fileInfo.PlayTime = new TimeSpan(ticks);
+								if (fileInfo != null)
+									yield return fileInfo;
 
-									line = line.Substring(0, searchIndex);
-								}
-
-								// Check to see if there is loaded any path
-								if (string.IsNullOrEmpty(path))
-								{
-									if (archiveMode)
-										continue;		// Skip the entry, if no archive has been set
-
-									// Set the file name using the load path
-									fileInfo.FileName = Path.Combine(directory, line);
-								}
-								else
-								{
-									// Set the file name
-									if (archiveMode)
-										fileInfo.FileName = ArchivePath.CombinePathParts(path, line);
-									else
-										fileInfo.FileName = Path.Combine(path, line);
-								}
-
-								yield return fileInfo;
 								break;
 							}
 						}
@@ -231,5 +227,117 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 				}
 			}
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Parse file line
+		/// </summary>
+		/********************************************************************/
+		private MultiFileInfo ParseFileLine(string line, string path, string directory, MultiFileInfo.FileType mode)
+		{
+			MultiFileInfo fileInfo = new MultiFileInfo
+			{
+				Type = mode
+			};
+
+			line = ApplyExtraInformation(line, fileInfo);
+
+			// Check to see if there is loaded any path
+			if (string.IsNullOrEmpty(path))
+			{
+				if (mode == MultiFileInfo.FileType.Archive)
+					return null;		// Skip the entry, if no archive has been set
+
+				// Set the file name using the load path
+				fileInfo.Source = Path.Combine(directory, line);
+			}
+			else
+			{
+				// Set the file name
+				if (mode == MultiFileInfo.FileType.Archive)
+					fileInfo.Source = ArchivePath.CombinePathParts(path, line);
+				else
+					fileInfo.Source = Path.Combine(path, line);
+			}
+
+			return fileInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse stream line
+		/// </summary>
+		/********************************************************************/
+		private MultiFileInfo ParseStreamLine(string line)
+		{
+			MultiFileInfo fileInfo = new MultiFileInfo();
+
+			if (line.StartsWith("URL:"))
+			{
+				fileInfo.Type = MultiFileInfo.FileType.Url;
+				line = line.Substring(4);
+			}
+			else
+			{
+				// Skip the entry if it is not a valid stream entry
+				return null;
+			}
+
+			int searchIndex = line.IndexOf('|');
+			if (searchIndex == -1)
+			{
+				// Invalid entry
+				return null;
+			}
+
+			fileInfo.Source = line.Substring(0, searchIndex);
+			line = line.Substring(searchIndex + 1);
+
+			fileInfo.DisplayName = ApplyExtraInformation(line, fileInfo);
+
+			return fileInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check for extra information in the line
+		/// </summary>
+		/********************************************************************/
+		private string ApplyExtraInformation(string line, MultiFileInfo fileInfo)
+		{
+			// See if there is stored a default sub-song
+			int searchIndex = line.LastIndexOf('?');
+			if (searchIndex != -1)
+			{
+				// Set the default sub-song
+				// It seems that it is possible to have ? in filenames on the Amiga,
+				// so we check to see if we could parse the rest
+				if (int.TryParse(line.Substring(searchIndex + 1), out int defaultSong) && (defaultSong >= 0))
+				{
+					fileInfo.DefaultSubSong = defaultSong;
+					line = line.Substring(0, searchIndex);
+				}
+			}
+
+			// See if there is stored a module time
+			searchIndex = line.LastIndexOf(':');
+			if (searchIndex != -1)
+			{
+				// Set the time
+				long ticks = long.Parse(line.Substring(searchIndex + 1));
+				if (ticks != 0)
+					fileInfo.PlayTime = new TimeSpan(ticks);
+
+				line = line.Substring(0, searchIndex);
+			}
+
+			return line;
+		}
+		#endregion
 	}
 }
