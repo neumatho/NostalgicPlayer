@@ -140,7 +140,13 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			try
 			{
-				return Task.Run(() => wrapperStream.ReadAsync(buffer, offset, count, new CancellationTokenSource(StreamingTimeout).Token)).Result;
+				return Task.Run(() =>
+				{
+					using (CancellationTokenSource cancellationToken = new CancellationTokenSource(StreamingTimeout))
+					{
+						return wrapperStream.ReadAsync(buffer, offset, count, cancellationToken.Token);
+					}
+				}).Result;
 			}
 			catch(AggregateException ex)
 			{
