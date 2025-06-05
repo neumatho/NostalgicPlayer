@@ -296,9 +296,9 @@ Formats supported:
 
 ¤U¤F
 
-¤BOutput agents installed:
+¤BStreamer agents installed:
 
-¤U¤O
+¤U¤T
 
 ¤BSample converters installed:
 
@@ -307,6 +307,10 @@ Formats supported:
 ¤BModule converters installed:
 
 ¤U¤M
+
+¤BOutput agents installed:
+
+¤U¤O
 
 ¤BVisuals installed:
 

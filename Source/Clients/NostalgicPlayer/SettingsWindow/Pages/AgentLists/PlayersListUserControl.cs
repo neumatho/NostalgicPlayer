@@ -29,6 +29,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 
 			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ModuleConverters).GroupBy(a => a.AgentId).Select(g => g.First()))
 				yield return new AgentListInfo { Id = agentInfo.AgentId, Name = agentInfo.AgentName, Description = agentInfo.AgentDescription, AgentInfo = agentInfo };
+
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Streamers).GroupBy(a => a.AgentId).Select(g => g.First()))
+				yield return new AgentListInfo { Id = agentInfo.AgentId, Name = agentInfo.AgentName, Description = agentInfo.AgentDescription, AgentInfo = agentInfo };
 		}
 
 
@@ -41,9 +44,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		protected override Guid[] GetAgentIdsInUse(ModuleHandler handler)
 		{
 			if (handler.StaticModuleInformation.ConverterAgentInfo != null)
-				return new [] { handler.StaticModuleInformation.PlayerAgentInfo.AgentId, handler.StaticModuleInformation.ConverterAgentInfo.AgentId };
+				return [ handler.StaticModuleInformation.PlayerAgentInfo.AgentId, handler.StaticModuleInformation.ConverterAgentInfo.AgentId ];
 
-			return new [] { handler.StaticModuleInformation.PlayerAgentInfo.AgentId };
+			return [ handler.StaticModuleInformation.PlayerAgentInfo.AgentId ];
 		}
 
 

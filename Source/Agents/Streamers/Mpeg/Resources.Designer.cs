@@ -258,7 +258,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MPEG.
+        ///   Looks up a localized string similar to MPEG Streamer.
         /// </summary>
         internal static string IDS_NAME {
             get {

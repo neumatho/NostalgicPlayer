@@ -52,9 +52,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		private Color color;
 
 		private string[] supportedFormats;
-		private string[] outputAgents;
+		private string[] streamers;
 		private string[] sampleConverters;
 		private string[] moduleConverters;
+		private string[] outputAgents;
 		private string[] visualAgents;
 		private string[] decruncherAgents;
 
@@ -176,9 +177,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		private void FindAgents(Manager agentManager)
 		{
 			supportedFormats = FindAgentTypes(agentManager, Manager.AgentType.Players, Manager.AgentType.ModuleConverters);
-			outputAgents = FindAgentTypes(agentManager, Manager.AgentType.Output);
+			streamers = FindAgents(agentManager, Manager.AgentType.Streamers);
 			sampleConverters = FindAgents(agentManager, Manager.AgentType.SampleConverters);
 			moduleConverters = FindAgents(agentManager, Manager.AgentType.ModuleConverters);
+			outputAgents = FindAgentTypes(agentManager, Manager.AgentType.Output);
 			visualAgents = FindAgentTypes(agentManager, Manager.AgentType.Visuals);
 			decruncherAgents = FindAgentTypes(agentManager, Manager.AgentType.FileDecrunchers, Manager.AgentType.ArchiveDecrunchers);
 		}
@@ -481,12 +483,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 													break;
 												}
 
-												// Show output agents
-												case 'O':
+												// Show streamers
+												case 'T':
 												{
 													str = str.Substring(2);
 
-													agentsToShow = outputAgents;
+													agentsToShow = streamers;
 													agentIndex = 0;
 
 													showMode = Mode.Agents;
@@ -513,6 +515,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 													str = str.Substring(2);
 
 													agentsToShow = moduleConverters;
+													agentIndex = 0;
+
+													showMode = Mode.Agents;
+													moreCommands = false;
+													break;
+												}
+
+												// Show output agents
+												case 'O':
+												{
+													str = str.Substring(2);
+
+													agentsToShow = outputAgents;
 													agentIndex = 0;
 
 													showMode = Mode.Agents;

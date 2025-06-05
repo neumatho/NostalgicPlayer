@@ -27,17 +27,5 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers))
 				yield return new AgentListInfo { Id = agentInfo.TypeId, Name = agentInfo.TypeName, Description = agentInfo.TypeDescription, AgentInfo = agentInfo };
 		}
-
-		private void InitializeComponent()
-		{
-			this.SuspendLayout();
-			// 
-			// DecrunchersListUserControl
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.Name = "DecrunchersListUserControl";
-			this.ResumeLayout(false);
-
-		}
 	}
 }
