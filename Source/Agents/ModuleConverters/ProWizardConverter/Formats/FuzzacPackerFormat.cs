@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Check mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x4d312e30)		// M1.0
+			if (moduleStream.ReadMark() != "M1.0")
 				return false;
 
 			// Check sample information
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Check the end mark
 			moduleStream.Seek(samples - 4, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x53456e64)		// SEnd
+			if (moduleStream.ReadMark() != "SEnd")
 				return false;
 
 			// Check first pattern

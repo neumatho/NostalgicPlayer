@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Start to check the mark
 			moduleStream.Seek(0x438, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x47504d4f)		// GPMO
+			if (moduleStream.ReadMark() != "GPMO")
 				return false;
 
 			// Check sample information

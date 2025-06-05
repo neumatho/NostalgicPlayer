@@ -207,7 +207,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/// Check to see if the module is in the correct format
 		/// </summary>
 		/********************************************************************/
-		protected bool CheckForThePlayerFormat(ModuleStream moduleStream, uint mark)
+		protected bool CheckForThePlayerFormat(ModuleStream moduleStream, string mark)
 		{
 			if (moduleStream.Length < 20)
 				return false;
@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Start to check the ID
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != mark)
+			if (moduleStream.ReadMark() != mark)
 				return false;
 
 			// Get number of positions

@@ -613,8 +613,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		{
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint temp = moduleStream.Read_B_UINT32();
-			if ((temp != 0x50353041) && (temp != 0x50363041) && (temp != 0x50363141))
+			string temp = moduleStream.ReadMark();
+			if ((temp != "P50A") && (temp != "P60A") && (temp != "P61A"))
 			{
 				moduleStream.Seek(0, SeekOrigin.Begin);
 				return false;

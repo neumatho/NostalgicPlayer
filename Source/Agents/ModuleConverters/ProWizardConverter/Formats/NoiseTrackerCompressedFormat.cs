@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Check the first pattern mark
 			moduleStream.Seek(0x1f6, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x50415454)		// PATT
+			if (moduleStream.ReadMark() != "PATT")
 				return false;
 
 			// Check position list size
@@ -69,10 +69,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			{
 				for (;;)
 				{
-					uint temp4 = moduleStream.Read_B_UINT32();
+					string temp4 = moduleStream.ReadMark();
 					moduleStream.Seek(-2, SeekOrigin.Current);
 
-					if (temp4 == 0x50415454)	// PATT
+					if (temp4 == "PATT")
 						break;	// Go to next pattern
 
 					if (moduleStream.Position >= firstSampleOffset)

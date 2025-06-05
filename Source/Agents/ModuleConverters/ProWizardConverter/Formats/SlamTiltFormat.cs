@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Start to check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x5354494d)		// STIM
+			if (moduleStream.ReadMark() != "STIM")
 				return false;
 
 			// Check sample address

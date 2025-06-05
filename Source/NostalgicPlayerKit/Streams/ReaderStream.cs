@@ -821,7 +821,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			byte[] buffer = new byte[length];
 
-			ReadExactly(buffer, 0, length);
+			int read = Read(buffer, 0, length);
+			if (read != length)
+				return string.Empty;
 
 			string mark = Encoding.Latin1.GetString(buffer, 0, length);
 

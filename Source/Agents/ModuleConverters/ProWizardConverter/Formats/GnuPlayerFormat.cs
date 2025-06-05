@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Check the mark
 			moduleStream.Seek(0x92, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x476e506c)		// GnPl
+			if (moduleStream.ReadMark() != "GnPl")
 				return false;
 
 			// Check sample information

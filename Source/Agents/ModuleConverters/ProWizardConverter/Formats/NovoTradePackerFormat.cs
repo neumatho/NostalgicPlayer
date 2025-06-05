@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Start to check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x4d4f4455)		// MODU
+			if (moduleStream.ReadMark() != "MODU")
 				return false;
 
 			// Check different offsets
@@ -67,12 +67,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Lets verify the offsets
 			moduleStream.Seek(offset1, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x424f4459)		// BODY
+			if (moduleStream.ReadMark() != "BODY")
 				return false;
 
 			moduleStream.Seek(offset2, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x53414d50)		// SAMP
+			if (moduleStream.ReadMark() != "SAMP")
 				return false;
 
 			return true;

@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/********************************************************************/
 		protected override bool CheckModule(ModuleStream moduleStream)
 		{
-			return CheckForThePlayerFormat(moduleStream, 0x50333041);		// P30A
+			return CheckForThePlayerFormat(moduleStream, "P30A");
 		}
 		#endregion
 

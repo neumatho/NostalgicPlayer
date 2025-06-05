@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	{
 		// Period table with extra octaves
 		private static readonly ushort[] chipPeriods =
-		{
+		[
 			3424, 3232, 3048, 2880, 2712, 2560, 2416, 2280, 2152, 2032, 1920, 1812,
 			1712, 1616, 1524, 1440, 1356, 1280, 1208, 1140, 1076, 1016,  960,  906,
 			 856,  808,  762,  720,  678,  640,  604,  570,  538,  508,  480,  453,
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
 			 107,  101,   95,   90,   85,   80,   75,   71,   67,   63,   60,   56,
 			  53,   50,   47,   45,   42,   40,   37,   35,   33,   31,   30,   28
-		};
+		];
 
 		private int numberOfPositions;
 		private ushort[] trackOffsetTable;
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Check mark
 			moduleStream.Seek(0x3b8, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x4b524953)		// KRIS
+			if (moduleStream.ReadMark() != "KRIS")
 				return false;
 
 			// Check sample information

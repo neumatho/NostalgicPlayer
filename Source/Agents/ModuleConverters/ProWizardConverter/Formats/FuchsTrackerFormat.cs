@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Start to check the mark
 			moduleStream.Seek(192, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x534f4e47)		// SONG
+			if (moduleStream.ReadMark() != "SONG")
 				return false;
 
 			// All sample size

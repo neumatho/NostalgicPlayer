@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Start to check the ID
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if ((moduleStream.Read_B_UINT32() != 0x4d455858) || (moduleStream.Read_B_UINT32() != 0x5f545032))		// MEXX + _TP2
+			if (moduleStream.ReadMark(8) != "MEXX_TP2")
 				return false;
 
 			return CheckForTrackerPackerFormat(moduleStream);

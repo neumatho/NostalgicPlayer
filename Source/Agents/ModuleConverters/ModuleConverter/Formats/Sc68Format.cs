@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Containers;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Utility;
 using Polycode.NostalgicPlayer.Kit.Bases;
@@ -36,15 +35,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				return AgentResult.Unknown;
 
 			// Check ID
-			byte[] buf = new byte[56];
-
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.ReadExactly(buf, 0, 56);
 
-			if (Encoding.ASCII.GetString(buf, 0, 55) != Sc68Helper.IdString)
+			if (moduleStream.ReadMark(56) != Sc68Helper.IdString)
 				return AgentResult.Unknown;
 
-			if (moduleStream.Read_B_UINT32() != 0x53433638)		// SC68
+			if (moduleStream.ReadMark() != "SC68")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;

@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Start to check the ID
 			moduleStream.Seek(0x100, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x534b5954)		// SKYT
+			if (moduleStream.ReadMark() != "SKYT")
 				return false;
 
 			// Check sample information

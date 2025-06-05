@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Check ID
 			moduleStream.Seek(0x438, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x48525421)		// HRT!
+			if (moduleStream.ReadMark() != "HRT!")
 				return false;
 
 			// Check sample information

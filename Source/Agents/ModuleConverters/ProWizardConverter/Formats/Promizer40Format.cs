@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Check the ID
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x504d3430)		// PM40
+			if (moduleStream.ReadMark() != "PM40")
 				return false;
 
 			// Check size of position table

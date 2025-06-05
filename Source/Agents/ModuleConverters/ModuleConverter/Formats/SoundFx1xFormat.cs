@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			moduleStream.ReadArray_B_UINT32s(sampleSizes, 0, 15);
 
 			// Check the mark
-			if (moduleStream.Read_B_UINT32() != 0x534f4e47)		// SONG
+			if (moduleStream.ReadMark() != "SONG")
 				return AgentResult.Unknown;
 
 			// Check the sample sizes

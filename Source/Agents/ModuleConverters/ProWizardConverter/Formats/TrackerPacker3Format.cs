@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Start to check the ID
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if ((moduleStream.Read_B_UINT32() != 0x43504c58) || (moduleStream.Read_B_UINT32() != 0x5f545033))		// CPLX + _TP3
+			if (moduleStream.ReadMark(8) != "CPLX_TP3")
 				return false;
 
 			return CheckForTrackerPackerFormat(moduleStream);

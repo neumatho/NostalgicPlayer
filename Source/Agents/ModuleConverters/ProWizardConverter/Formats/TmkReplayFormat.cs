@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Start to check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x544d4b01)		// TMK\1
+			if ((moduleStream.ReadMark(3) != "TMK") || (moduleStream.Read_UINT8() != 1))
 				return false;
 
 			// Check position list length

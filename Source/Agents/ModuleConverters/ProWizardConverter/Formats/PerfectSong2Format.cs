@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Start to check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT64() != 0x50455246534e4732)		// PERFSNG2
+			if (moduleStream.ReadMark(8) != "PERFSNG2")
 				return false;
 
 			uint temp = moduleStream.Read_B_UINT32() + 12 + 12;

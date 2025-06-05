@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// No 'M.K.' in a Laxity module
 			moduleStream.Seek(0x438, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() == 0x4d2e4b2e)		// M.K.
+			if (moduleStream.ReadMark() == "M.K.")
 				return false;
 
 			// Check sample information

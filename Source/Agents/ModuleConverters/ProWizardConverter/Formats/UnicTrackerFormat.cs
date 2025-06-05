@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Check for special mark
 			moduleStream.Seek(0x438, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() == 0x534e542e)		// SNT.
+			if (moduleStream.ReadMark() == "SNT.")
 				return false;
 
 			// Check sample information

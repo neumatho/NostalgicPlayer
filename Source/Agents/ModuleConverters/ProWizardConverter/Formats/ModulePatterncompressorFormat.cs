@@ -50,8 +50,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Start to check the mark
 			moduleStream.Seek(1080, SeekOrigin.Begin);
 
-			uint temp = moduleStream.Read_B_UINT32();
-			if ((temp != 0x504d4433) && (temp != 0x504d6433))		// PMD3 + PMd3
+			string mark = moduleStream.ReadMark();
+			if ((mark != "PMD3") && (mark != "PMd3"))
 				return false;
 
 			// Check sample information
@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Check module length
 			moduleStream.Seek(1084, SeekOrigin.Begin);
 
-			temp = moduleStream.Read_B_UINT32();
+			uint temp = moduleStream.Read_B_UINT32();
 			uint temp2 = moduleStream.Read_B_UINT32();
 
 			if ((1092 + temp + temp2 + samplesSize) > (moduleStream.Length + MaxNumberOfMissingBytes))

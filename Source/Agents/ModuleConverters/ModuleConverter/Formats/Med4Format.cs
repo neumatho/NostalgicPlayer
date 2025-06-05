@@ -53,10 +53,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// Now check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark(3);
+			byte version = moduleStream.Read_UINT8();
 
 			// Check the mark
-			if (mark == 0x4d454404)		// MED\x04
+			if ((mark == "MED") && (version == 4))
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
@@ -544,7 +545,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 				for (;;)
 				{
-					uint id = moduleStream.Read_B_UINT32();
+					string id = moduleStream.ReadMark();
 					uint length = moduleStream.Read_B_UINT32();
 
 					if (moduleStream.EndOfStream)
@@ -552,20 +553,20 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 					switch (id)
 					{
-						case 0x4d454456:	// MEDV
+						case "MEDV":
 						{
 							moduleStream.Seek(length, SeekOrigin.Current);
 							break;
 						}
 
-						case 0x414e4e4f:	// ANNO
+						case "ANNO":
 						{
 							moduleStream.ReadInto(buffer, 0, (int)length);
 							annotation = encoder.GetString(buffer, 0, (int)length);
 							break;
 						}
 
-						case 0x484c4443:	// HLDC
+						case "HLDC":
 						{
 							holdAndDecay = new byte[length];
 							moduleStream.ReadInto(holdAndDecay, 0, (int)length);

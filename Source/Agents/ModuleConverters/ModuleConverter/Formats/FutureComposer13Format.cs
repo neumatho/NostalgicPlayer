@@ -222,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x534d4f44)		// SMOD
+			if (moduleStream.ReadMark() != "SMOD")
 				return AgentResult.Unknown;
 
 			// Skip the song length

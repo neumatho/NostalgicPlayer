@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			int offset = 0;
-			if (moduleStream.Read_B_UINT32() == 0x54524b31)		// TRK1
+			if (moduleStream.ReadMark() == "TRK1")
 				offset = 4;
 
 			// Do some common Cryptoburners check
@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		protected override bool PrepareConversion(ModuleStream moduleStream)
 		{
 			startOffset = 0;
-			if (moduleStream.Read_B_UINT32() == 0x54524b31)		// TRK1
+			if (moduleStream.ReadMark() == "TRK1")
 				startOffset = 4;
 
 			// Get number of positions and restart position

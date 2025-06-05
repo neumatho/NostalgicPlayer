@@ -40,11 +40,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = moduleStream.Read_B_UINT32();
-			byte version = (byte)(mark & 0xff);
-			mark &= 0xffffff00;
+			string mark = moduleStream.ReadMark(3);
+			byte version = moduleStream.Read_UINT8();
 
-			if (mark != 0x4d4f3300)		// MO3
+			if (mark != "MO3")
 				return AgentResult.Unknown;
 
 			if (version > 5)
@@ -574,7 +573,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 
 			while (mo3Stream.Position < (mo3Stream.Length - 8))
 			{
-				uint id = mo3Stream.Read_B_UINT32();
+				string id = mo3Stream.ReadMark();
 				uint len = mo3Stream.Read_L_UINT32();
 
 				if ((len >= module.MusicSize) || ((module.MusicSize - len) < mo3Stream.Position))
@@ -582,8 +581,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 
 				switch (id)
 				{
-					// VERS
-					case 0x56455253:
+					case "VERS":
 					{
 						// Tracker magic bytes (depending on format)
 						VersChunk versChunk = new VersChunk();
@@ -624,8 +622,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 						break;
 					}
 
-					// OMPT
-					case 0x4f4d5054:
+					case "OMPT":
 					{
 						// OpenMpt information chunk. Just load all data as it
 						// and write it back in the saver
@@ -640,8 +637,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 						break;
 					}
 
-					// MIDI
-					case 0x4d494449:
+					case "MIDI":
 					{
 						// Fill MIDI config
 						MidiChunk midiChunk = new MidiChunk
@@ -656,7 +652,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 					}
 
 					default:
-						throw new NotImplementedException($"Chunk with id {id:X8} not supported");
+						throw new NotImplementedException($"Chunk with id {id} not supported");
 				}
 
 				if (mo3Stream.EndOfStream)

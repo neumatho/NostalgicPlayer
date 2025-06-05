@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 				return false;
 
 			// Check the mark
-			if (moduleStream.Read_B_UINT32() != 0x2d47442d)		// -GD-
+			if (moduleStream.ReadMark() != "-GD-")
 				return false;
 
 			// Check sample information

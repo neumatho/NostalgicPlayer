@@ -41,10 +41,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			// Start to check the ID
 			moduleStream.Seek(0x438, SeekOrigin.Begin);
 
-			uint temp = moduleStream.Read_B_UINT32();
-			if (temp == 0x5057522e)			// PWR.
+			string temp = moduleStream.ReadMark();
+			if (temp == "PWR.")
 				sampleLoopDivision = 2;
-			else if (temp == 0x50535558)	// PSUX
+			else if (temp == "PSUX")
 				sampleLoopDivision = 1;
 			else
 				return false;

@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			// Start to check the mark
 			moduleStream.Seek(0x438, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x4675636b)		// Fuck
+			if (moduleStream.ReadMark() != "Fuck")
 				return false;
 
 			// Check sample information

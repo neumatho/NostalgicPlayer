@@ -41,9 +41,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 			// Check mark if any
 			moduleStream.Seek(checkStart + 0x17a, SeekOrigin.Begin);
 
-			uint temp1 = moduleStream.Read_B_UINT32();
-			if ((temp1 == 0x4d2e4b2e) || (temp1 == 0x4d264b21) || (temp1 == 0x464c5434) ||	// M.K. - M&K! - FLT4
-			    (temp1 == 0x45584f34) || (temp1 == 0x554e4943) || (temp1 == 0x534e542e))	// EXO4 - UNIC - SNT.
+			string temp1 = moduleStream.ReadMark();
+			if ((temp1 == "M.K.") || (temp1 == "M&K!") || (temp1 == "FLT4") ||
+			    (temp1 == "EXO4") || (temp1 == "UNIC") || (temp1 == "SNT."))
 			{
 				return false;
 			}
