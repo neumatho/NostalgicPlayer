@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArcFsStream(string agentName, ArcFsArchive.ArcFsEntry entry, Stream archiveStream) : base(new MemoryStream(), false)
+		public ArcFsStream(string agentName, ArcFsArchive.ArcFsEntry entry, ReaderStream archiveStream) : base(new MemoryStream(), false)
 		{
 			this.agentName = agentName;
 			this.entry = entry;
@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 		/// Read data from the stream
 		/// </summary>
 		/********************************************************************/
-		private void DecrunchData(Stream archiveStream)
+		private void DecrunchData(ReaderStream archiveStream)
 		{
 			byte[] crunchedData = new byte[entry.CrunchedSize];
 			byte[] decrunchedData = new byte[entry.DecrunchedSize];

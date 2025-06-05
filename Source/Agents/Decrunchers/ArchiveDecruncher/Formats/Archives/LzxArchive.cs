@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 		}
 
 		private readonly string agentName;
-		private readonly Stream stream;
+		private readonly ReaderStream stream;
 
 		private readonly List<FileEntry> entries;
 
@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public LzxArchive(string agentName, Stream archiveStream)
+		public LzxArchive(string agentName, ReaderStream archiveStream)
 		{
 			this.agentName = agentName;
 			stream = archiveStream;

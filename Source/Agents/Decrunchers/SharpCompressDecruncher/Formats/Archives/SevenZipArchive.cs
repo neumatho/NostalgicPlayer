@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
@@ -28,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SevenZipArchive(string agentName, Stream archiveStream)
+		public SevenZipArchive(string agentName, ReaderStream archiveStream)
 		{
 			this.agentName = agentName;
 

@@ -8,6 +8,7 @@ using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archiv
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 {
@@ -45,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream archiveStream)
+		public override AgentResult Identify(ReaderStream archiveStream)
 		{
 			// Check the file size
 			if (archiveStream.Length < 24)
@@ -88,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
+		public override IArchive OpenArchive(string archiveFileName, ReaderStream archiveStream)
 		{
 			return new LhaArchive(agentName, archiveStream);
 		}

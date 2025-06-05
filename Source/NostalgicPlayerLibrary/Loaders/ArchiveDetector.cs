@@ -105,10 +105,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			if (archiveDecruncher == null)
 				throw new Exception(Resources.IDS_LOADERR_NO_ARCHIVE_DECRUNCHER);
 
+			if (newStream is not ReaderStream)
+				newStream = new ReaderStream(newStream, false);
+
 			// Seek back to the beginning of the stream
 			newStream.Seek(0, SeekOrigin.Begin);
 
-			return archiveDecruncher.OpenArchive(archiveFileName, newStream);
+			return archiveDecruncher.OpenArchive(archiveFileName, (ReaderStream)newStream);
 		}
 		#endregion
 
@@ -150,21 +153,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			if ((decruncherAlgorithms != null) && (decruncher.DecruncherAlgorithms != null))
 				decruncherAlgorithms.AddRange(decruncher.DecruncherAlgorithms);
 
-			foreach ((AgentInfo agentInfo, IArchiveDecruncherAgent archiveDecruncher) in GetAllArchiveAgents())
+			using (ReaderStream readerStream = new ReaderStream(newStream, true))
 			{
-				// Check the file
-				AgentResult agentResult = archiveDecruncher.Identify(newStream);
-				if (agentResult == AgentResult.Ok)
+				foreach ((AgentInfo agentInfo, IArchiveDecruncherAgent archiveDecruncher) in GetAllArchiveAgents())
 				{
-					decruncherAlgorithms?.Add(agentInfo.TypeName);
+					// Check the file
+					AgentResult agentResult = archiveDecruncher.Identify(readerStream);
+					if (agentResult == AgentResult.Ok)
+					{
+						decruncherAlgorithms?.Add(agentInfo.TypeName);
 
-					return archiveDecruncher;
-				}
+						return archiveDecruncher;
+					}
 
-				if (agentResult != AgentResult.Unknown)
-				{
-					// Some error occurred
-					throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
+					if (agentResult != AgentResult.Unknown)
+					{
+						// Some error occurred
+						throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
+					}
 				}
 			}
 

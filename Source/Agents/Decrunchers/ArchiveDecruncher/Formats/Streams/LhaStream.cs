@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public LhaStream(string agentName, LhaArchive.FileEntry entry, Stream archiveStream) : base(archiveStream, true)
+		public LhaStream(string agentName, LhaArchive.FileEntry entry, ReaderStream archiveStream) : base(archiveStream, true)
 		{
 			this.agentName = agentName;
 			this.entry = entry;

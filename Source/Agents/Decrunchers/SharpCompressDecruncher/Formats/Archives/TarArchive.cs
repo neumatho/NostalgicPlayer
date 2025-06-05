@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
@@ -30,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public TarArchive(string agentName, Stream archiveStream)
+		public TarArchive(string agentName, ReaderStream archiveStream)
 		{
 			this.agentName = agentName;
 

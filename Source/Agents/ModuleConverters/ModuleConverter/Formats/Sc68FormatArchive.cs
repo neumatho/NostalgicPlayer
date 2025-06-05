@@ -5,13 +5,13 @@
 /******************************************************************************/
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Containers;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats.Archives;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Utility;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 {
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/// Has to be in lowercase
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new[] { "sc68" };
+		public override string[] FileExtensions => [ "sc68" ];
 
 
 
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream archiveStream)
+		public override AgentResult Identify(ReaderStream archiveStream)
 		{
 			// First check the length
 			long fileSize = archiveStream.Length;
@@ -57,12 +57,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				return AgentResult.Unknown;
 
 			// Check ID
-			byte[] buf = new byte[56];
-
 			archiveStream.Seek(0, SeekOrigin.Begin);
-			archiveStream.ReadExactly(buf, 0, 56);
 
-			if (Encoding.ASCII.GetString(buf, 0, 55) != Sc68Helper.IdString)
+			if (archiveStream.ReadMark(56) != Sc68Helper.IdString)
 				return AgentResult.Unknown;
 
 			List<Sc68DataBlockInfo> dataBlocks = Sc68Helper.FindAllModules(archiveStream, out string _);
@@ -79,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
+		public override IArchive OpenArchive(string archiveFileName, ReaderStream archiveStream)
 		{
 			return new Sc68Archive(agentName, archiveFileName, archiveStream);
 		}

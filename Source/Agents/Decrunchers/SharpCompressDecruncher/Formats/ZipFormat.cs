@@ -8,6 +8,7 @@ using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats
 {
@@ -36,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Has to be in lowercase
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new[] { "zip" };
+		public override string[] FileExtensions => [ "zip" ];
 
 
 
@@ -45,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream archiveStream)
+		public override AgentResult Identify(ReaderStream archiveStream)
 		{
 			archiveStream.Seek(0, SeekOrigin.Begin);
 
@@ -62,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
+		public override IArchive OpenArchive(string archiveFileName, ReaderStream archiveStream)
 		{
 			return new ZipArchive(agentName, archiveStream);
 		}

@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
@@ -23,11 +23,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Test the file to see if it could be identified
 		/// </summary>
-		AgentResult Identify(Stream archiveStream);
+		AgentResult Identify(ReaderStream archiveStream);
 
 		/// <summary>
 		/// Will open the archive and return it
 		/// </summary>
-		IArchive OpenArchive(string archiveFileName, Stream archiveStream);
+		IArchive OpenArchive(string archiveFileName, ReaderStream archiveStream);
 	}
 }

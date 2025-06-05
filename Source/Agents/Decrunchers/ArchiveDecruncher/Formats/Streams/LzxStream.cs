@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public LzxStream(string agentName, LzxArchive.FileEntry entry, Stream archiveStream) : base(archiveStream, true)
+		public LzxStream(string agentName, LzxArchive.FileEntry entry, ReaderStream archiveStream) : base(archiveStream, true)
 		{
 			this.agentName = agentName;
 			this.entry = entry;

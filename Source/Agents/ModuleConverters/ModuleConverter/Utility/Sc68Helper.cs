@@ -29,71 +29,68 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Utility
 		/// Find all modules inside a single file
 		/// </summary>
 		/********************************************************************/
-		public static List<Sc68DataBlockInfo> FindAllModules(Stream stream, out string errorMessage)
+		public static List<Sc68DataBlockInfo> FindAllModules(ReaderStream readerStream, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
-			stream.Seek(64, SeekOrigin.Begin);
+			readerStream.Seek(64, SeekOrigin.Begin);
 
 			List<Sc68DataBlockInfo> dataBlocks = new List<Sc68DataBlockInfo>();
 
 			long lastScmuPosition = 0;
 			int moduleLength = 0;
 
-			using (ReaderStream readerStream = new ReaderStream(stream, true))
+			for (;;)
 			{
-				for (;;)
+				string name = readerStream.ReadMark();
+				uint size = readerStream.Read_L_UINT32();
+
+				if (readerStream.EndOfStream)
 				{
-					uint name = readerStream.Read_B_UINT32();
-					uint size = readerStream.Read_L_UINT32();
-
-					if (readerStream.EndOfStream)
-					{
-						errorMessage = Resources.IDS_ERR_LOADING_EOF_REACHED;
-						return null;
-					}
-
-					// SCEF - End of file
-					if (name == 0x53434546)
-						break;
-
-					switch (name)
-					{
-						// SCMU - Start of new module
-						case 0x53434d55:
-						{
-							lastScmuPosition = readerStream.Position - 8;
-							moduleLength = 0;
-							break;
-						}
-
-						// SCDA - Data block
-						case 0x53434441:
-						{
-							if (lastScmuPosition == 0)
-							{
-								errorMessage = Resources.IDS_ERR_LOADING_NO_MUSIC_BLOCK;
-								return null;
-							}
-
-							moduleLength += (int)(size + 8);
-
-							dataBlocks.Add(new Sc68DataBlockInfo
-							{
-								ModuleStartPosition = lastScmuPosition,
-								ModuleLength = moduleLength,
-								DataStartPosition = readerStream.Position,
-								DataLength = (int)size
-							});
-
-							lastScmuPosition = 0;
-							break;
-						}
-					}
-
-					moduleLength += (int)size + 8;
-					readerStream.Seek(size, SeekOrigin.Current);
+					errorMessage = Resources.IDS_ERR_LOADING_EOF_REACHED;
+					return null;
 				}
+
+				// End of file
+				if (name == "SCEF")
+					break;
+
+				switch (name)
+				{
+					// Start of new module
+					case "SCMU":
+					{
+						lastScmuPosition = readerStream.Position - 8;
+						moduleLength = 0;
+						break;
+					}
+
+					// Data block
+					case "SCDA":
+					{
+						if (lastScmuPosition == 0)
+						{
+							errorMessage = Resources.IDS_ERR_LOADING_NO_MUSIC_BLOCK;
+							return null;
+						}
+
+						moduleLength += (int)(size + 8);
+
+						dataBlocks.Add(new Sc68DataBlockInfo
+						{
+							ModuleStartPosition = lastScmuPosition,
+							ModuleLength = moduleLength,
+							DataStartPosition = readerStream.Position,
+							DataLength = (int)size
+						});
+
+						lastScmuPosition = 0;
+						break;
+					}
+				}
+
+				moduleLength += (int)size + 8;
+				readerStream.Seek(size, SeekOrigin.Current);
 			}
 
 			return dataBlocks;

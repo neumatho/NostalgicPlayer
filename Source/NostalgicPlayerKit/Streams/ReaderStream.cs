@@ -785,6 +785,51 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 			return encoder.GetString(bytes, 0, bytesRead);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read a 4-byte long identifier marking
+		/// </summary>
+		/********************************************************************/
+		public string ReadMark()
+		{
+			return ReadMark(4);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read an identifier marking with any length
+		/// </summary>
+		/********************************************************************/
+		public string ReadMark(int length)
+		{
+			return ReadMark(length, true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read an identifier marking with any length
+		/// </summary>
+		/********************************************************************/
+		public string ReadMark(int length, bool trim)
+		{
+			byte[] buffer = new byte[length];
+
+			ReadExactly(buffer, 0, length);
+
+			string mark = Encoding.Latin1.GetString(buffer, 0, length);
+
+			if (trim)
+				mark = mark.TrimEnd('\0');
+
+			return mark;
+		}
 		#endregion
 	}
 }

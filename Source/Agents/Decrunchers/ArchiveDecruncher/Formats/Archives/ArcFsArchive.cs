@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 		}
 
 		private readonly string agentName;
-		private readonly Stream stream;
+		private readonly ReaderStream stream;
 		private readonly Encoding encoder;
 
 		private readonly List<ArcFsEntry> entries;
@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArcFsArchive(string agentName, Stream archiveStream)
+		public ArcFsArchive(string agentName, ReaderStream archiveStream)
 		{
 			this.agentName = agentName;
 			stream = archiveStream;
@@ -189,32 +189,29 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 
 			stream.Seek(8, SeekOrigin.Begin);
 
-			using (ReaderStream rs = new ReaderStream(stream, true))
-			{
-				header.EntriesLength = rs.Read_L_UINT32();
-				header.DataOffset = rs.Read_L_UINT32();
-				header.MinReadVersion = rs.Read_L_UINT32();
-				header.MinWriteVersion = rs.Read_L_UINT32();
-				header.FormatVersion = rs.Read_L_UINT32();
+			header.EntriesLength = stream.Read_L_UINT32();
+			header.DataOffset = stream.Read_L_UINT32();
+			header.MinReadVersion = stream.Read_L_UINT32();
+			header.MinWriteVersion = stream.Read_L_UINT32();
+			header.FormatVersion = stream.Read_L_UINT32();
 
-				if (rs.EndOfStream)
-					return null;
+			if (stream.EndOfStream)
+				return null;
 
-				if ((header.EntriesLength % EntrySize) != 0)
-					return null;
+			if ((header.EntriesLength % EntrySize) != 0)
+				return null;
 
-				if ((header.DataOffset < HeaderSize) || ((header.DataOffset - HeaderSize) < header.EntriesLength))
-					return null;
+			if ((header.DataOffset < HeaderSize) || ((header.DataOffset - HeaderSize) < header.EntriesLength))
+				return null;
 
-				// These seem to be the highest versions that exists
-				if ((header.MinReadVersion > 260) || (header.MinWriteVersion > 260) || (header.FormatVersion > 0x0a))
-					return null;
+			// These seem to be the highest versions that exists
+			if ((header.MinReadVersion > 260) || (header.MinWriteVersion > 260) || (header.FormatVersion > 0x0a))
+				return null;
 
-				if (header.DataOffset > stream.Length)
-					return null;
+			if (header.DataOffset > stream.Length)
+				return null;
 
-				rs.Seek(HeaderSize - 8 - (5 * 4), SeekOrigin.Current);
-			}
+			stream.Seek(HeaderSize - 8 - (5 * 4), SeekOrigin.Current);
 
 			return header;
 		}
@@ -230,25 +227,22 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 		{
 			ArcFsEntry entry = new ArcFsEntry();
 
-			using (ReaderStream rs = new ReaderStream(stream, true))
-			{
-				entry.Method = (EntryMethod)(rs.Read_UINT8());
+			entry.Method = (EntryMethod)(stream.Read_UINT8());
 
-				entry.FileName = rs.ReadString(encoder, 11);
-				entry.DecrunchedSize = rs.Read_L_INT32();
+			entry.FileName = stream.ReadString(encoder, 11);
+			entry.DecrunchedSize = stream.Read_L_INT32();
 
-				rs.Seek(9, SeekOrigin.Current);
+			stream.Seek(9, SeekOrigin.Current);
 
-				entry.CrunchingBits = rs.Read_UINT8();
-				entry.Crc16 = rs.Read_L_UINT16();
-				entry.CrunchedSize = rs.Read_L_INT32();
-				entry.ValueOffset = rs.Read_L_UINT32();
-				entry.IsDirectory = entry.ValueOffset >> 31 != 0;
-				entry.ValueOffset &= 0x7fffffff;
+			entry.CrunchingBits = stream.Read_UINT8();
+			entry.Crc16 = stream.Read_L_UINT16();
+			entry.CrunchedSize = stream.Read_L_INT32();
+			entry.ValueOffset = stream.Read_L_UINT32();
+			entry.IsDirectory = entry.ValueOffset >> 31 != 0;
+			entry.ValueOffset &= 0x7fffffff;
 
-				if (rs.EndOfStream)
-					return null;
-			}
+			if (stream.EndOfStream)
+				return null;
 
 			return entry;
 		}

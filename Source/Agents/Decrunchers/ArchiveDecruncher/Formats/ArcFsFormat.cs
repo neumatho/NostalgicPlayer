@@ -4,11 +4,11 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using System.Text;
 using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archives;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 {
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream archiveStream)
+		public override AgentResult Identify(ReaderStream archiveStream)
 		{
 			// Check the file size
 			if (archiveStream.Length < 96)
@@ -55,11 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 			// Check the header
 			archiveStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[8];
-
-			archiveStream.ReadExactly(buf, 0, 8);
-
-			if (Encoding.Latin1.GetString(buf) != "Archive\0")
+			if (archiveStream.ReadMark(8, false) != "Archive\0")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;
@@ -72,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
+		public override IArchive OpenArchive(string archiveFileName, ReaderStream archiveStream)
 		{
 			return new ArcFsArchive(agentName, archiveStream);
 		}

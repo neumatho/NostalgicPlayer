@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 	internal class Sc68Archive : IArchive
 	{
 		private readonly string agentName;
-		private readonly Stream stream;
+		private readonly ReaderStream stream;
 
 		private readonly List<Sc68Entry> entries;
 
@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Sc68Archive(string agentName, string archiveFileName, Stream archiveStream)
+		public Sc68Archive(string agentName, string archiveFileName, ReaderStream archiveStream)
 		{
 			this.agentName = agentName;
 			stream = archiveStream;

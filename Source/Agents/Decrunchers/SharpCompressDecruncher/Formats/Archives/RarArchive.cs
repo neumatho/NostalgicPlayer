@@ -24,14 +24,14 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		private readonly string agentName;
 		private readonly SharpCompress.Archives.Rar.RarArchive archive;
 
-		private Stream archiveStream;
+		private readonly ReaderStream archiveStream;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public RarArchive(string agentName, Stream archiveStream)
+		public RarArchive(string agentName, ReaderStream archiveStream)
 		{
 			this.agentName = agentName;
 
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		{
 			if (archive.IsSolid)
 			{
-				// Solid Rar archives is only supported trough the reader, so use that
+				// Solid Rar archives is only supported through the reader, so use that
 				archiveStream.Seek(0, SeekOrigin.Begin);
 				RarReader reader = RarReader.Open(archiveStream);
 

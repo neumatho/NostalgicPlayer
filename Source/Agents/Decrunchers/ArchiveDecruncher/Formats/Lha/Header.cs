@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 {
 	internal partial class LhaCore
 	{
-		private static readonly int[] dsboy = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+		private static readonly int[] dsboy = [ 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 ];
 
 		private byte[] getPtr;
 		private int getOffset;

@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		{
 			iffSample = null;
 
-			if (moduleStream.Read_B_UINT32() != 0x464f524d)		// FORM
+			if (moduleStream.ReadMark() != "FORM")
 			{
 				// Seek back again
 				moduleStream.Seek(-4, SeekOrigin.Current);
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 			uint originalFormLength = moduleStream.Read_B_UINT32();
 
-			if (moduleStream.Read_B_UINT32() != 0x38535658)		// 8SVX
+			if (moduleStream.ReadMark() != "8SVX")
 			{
 				// Seek back again
 				moduleStream.Seek(-8, SeekOrigin.Current);
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 			while (formLength > 0)
 			{
-				uint chunkName = moduleStream.Read_B_UINT32();
+				string chunkName = moduleStream.ReadMark();
 				uint chunkLength = moduleStream.Read_B_UINT32();
 				formLength -= 8;
 
@@ -56,8 +56,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 				switch (chunkName)
 				{
-					// VHDR
-					case 0x56484452:
+					case "VHDR":
 					{
 						info.OneShotHiSamples = moduleStream.Read_B_UINT32();
 						info.RepeatHiSamples = moduleStream.Read_B_UINT32();
@@ -76,8 +75,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 						break;
 					}
 
-					// BODY
-					case 0x424f4459:
+					case "BODY":
 					{
 						if ((info.SampleData != null) || (info.Octaves == 0))
 							return LoadResult.Error;

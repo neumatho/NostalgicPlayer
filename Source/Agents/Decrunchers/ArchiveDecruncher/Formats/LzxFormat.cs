@@ -8,6 +8,7 @@ using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archiv
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 {
@@ -45,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream archiveStream)
+		public override AgentResult Identify(ReaderStream archiveStream)
 		{
 			// Check the file size
 			if (archiveStream.Length < 10)
@@ -54,11 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 			// Check the mark
 			archiveStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[4];
-
-			archiveStream.ReadExactly(buf, 0, 4);
-
-			if ((buf[0] != 0x4c) || (buf[1] != 0x5a) || (buf[2] != 0x58) || (buf[3]) != 0x00)	// LZX\0
+			if (archiveStream.ReadMark(4, false) != "LZX\0")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;
@@ -71,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
+		public override IArchive OpenArchive(string archiveFileName, ReaderStream archiveStream)
 		{
 			return new LzxArchive(agentName, archiveStream);
 		}
