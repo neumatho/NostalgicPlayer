@@ -25,17 +25,6 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public StreamingStream(Stream wrapperStream, int icyMetaInt) : this(wrapperStream, false)
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
 		public StreamingStream(Stream wrapperStream, bool leaveOpen)
 		{
 			this.wrapperStream = wrapperStream;
