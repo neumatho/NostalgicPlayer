@@ -217,7 +217,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
 			// 
@@ -242,7 +241,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			bigFontPalette.BaseFontSize = 9F;
 			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// cancelButton
 			// 
