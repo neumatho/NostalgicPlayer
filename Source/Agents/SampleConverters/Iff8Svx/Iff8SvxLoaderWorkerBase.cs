@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -50,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Return the file extensions that is supported by the loader
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => new [] { "8svx", "iff" };
+		public string[] FileExtensions => [ "8svx", "iff" ];
 
 
 
@@ -65,23 +66,23 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the chunk names
-			if (moduleStream.Read_B_UINT32() == 0x464f524d)			// FORM
+			if (moduleStream.ReadMark() == "FORM")
 			{
 				moduleStream.Seek(4, SeekOrigin.Current);		// Skip length
-				if (moduleStream.Read_B_UINT32() == 0x38535658)		// 8SVX
+				if (moduleStream.ReadMark() == "8SVX")
 				{
 					// See if we can find the 'VHDR' chunk
 					for (;;)
 					{
 						// Read the chunk name and size
-						uint chunkName = moduleStream.Read_B_UINT32();
+						string chunkName = moduleStream.ReadMark();
 						uint chunkSize = moduleStream.Read_B_UINT32();
 
 						// Check if we reached the end of the file
 						if (moduleStream.EndOfStream)
 							return AgentResult.Unknown;
 
-						if (chunkName == 0x56484452)				// VHDR
+						if (chunkName == "VHDR")
 						{
 							// Got it, check the format
 							moduleStream.Seek(15, SeekOrigin.Current);
@@ -215,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			for (;;)
 			{
 				// Read the chunk name and size
-				uint chunkName = moduleStream.Read_B_UINT32();
+				string chunkName = moduleStream.ReadMark();
 				uint chunkSize = moduleStream.Read_B_UINT32();
 
 				// Check if we reached the end of the file
@@ -225,8 +226,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 				// Interpret the known chunks
 				switch (chunkName)
 				{
-					// 'NAME': Name chunk
-					case 0x4e414d45:
+					// Name chunk
+					case "NAME":
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
@@ -241,8 +242,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						break;
 					}
 
-					// 'AUTH': Author chunk
-					case 0x41555448:
+					// Author chunk
+					case "AUTH":
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
@@ -257,8 +258,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						break;
 					}
 
-					// '(c) ': Copyright chunk
-					case 0x28632920:
+					// Copyright chunk
+					case "(c) ":
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
@@ -273,8 +274,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						break;
 					}
 
-					// 'ANNO': Annotation chunk
-					case 0x414e4e4f:
+					// Annotation chunk
+					case "ANNO":
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
@@ -289,8 +290,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						break;
 					}
 
-					// 'CHAN': Channel chunk
-					case 0x4348414e:
+					// Channel chunk
+					case "CHAN":
 					{
 						uint chanVal = moduleStream.Read_B_UINT32();
 
@@ -308,8 +309,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						break;
 					}
 
-					// 'VHDR': Voice header chunk
-					case 0x56484452:
+					// Voice header chunk
+					case "VHDR":
 					{
 						// Begin to read the chunk data
 						uint oneShotLength = moduleStream.Read_B_UINT32();		// Number of samples in the one-shot part
@@ -354,8 +355,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						break;
 					}
 
-					// 'BODY': Body chunk
-					case 0x424f4459:
+					// Body chunk
+					case "BODY":
 					{
 						// Convert the total length from samples-pair to samples
 						if (formatInfo.Channels == 2)
@@ -377,18 +378,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					// Unknown chunks
 					default:
 					{
-						bool ok = true;
-						for (int i = 0; i < 4; i++)
-						{
-							byte byt = (byte)(chunkName & 0xff);
-							if ((byt < 32) || (byt > 127))
-							{
-								ok = false;
-								break;
-							}
-
-							chunkName >>= 8;
-						}
+						bool ok = chunkName.Select(t => (byte)t).All(byt => (byt >= 32) && (byt <= 127));
 
 						if (ok)
 							moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);

@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		/// Return the file extensions that is supported by the loader
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => new [] { "flac" };
+		public string[] FileExtensions => [ "flac" ];
 
 
 
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the ID
-			if (moduleStream.Read_B_UINT32() == 0x664c6143)			// fLaC
+			if (moduleStream.ReadMark() == "fLaC")
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;

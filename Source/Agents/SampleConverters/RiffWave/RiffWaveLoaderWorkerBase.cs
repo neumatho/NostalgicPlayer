@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -43,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Return the file extensions that is supported by the loader
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => new [] { "wav" };
+		public string[] FileExtensions => [ "wav" ];
 
 
 
@@ -58,23 +59,23 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the chunk names
-			if (moduleStream.Read_B_UINT32() == 0x52494646)			// RIFF
+			if (moduleStream.ReadMark() == "RIFF")
 			{
 				moduleStream.Seek(4, SeekOrigin.Current);		// Skip length
-				if (moduleStream.Read_B_UINT32() == 0x57415645)		// WAVE
+				if (moduleStream.ReadMark() == "WAVE")
 				{
 					// See if we can find the 'fmt ' chunk
 					for (;;)
 					{
 						// Read the chunk name and size
-						uint chunkName = moduleStream.Read_B_UINT32();
+						string chunkName = moduleStream.ReadMark();
 						uint chunkSize = moduleStream.Read_L_UINT32();
 
 						// Check if we reached the end of the file
 						if (moduleStream.EndOfStream)
 							return AgentResult.Unknown;
 
-						if (chunkName == 0x666d7420)				// fmt 
+						if (chunkName == "fmt ")
 						{
 							// Got it, check the format
 							WaveFormat format = (WaveFormat)moduleStream.Read_L_UINT16();
@@ -175,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			for (;;)
 			{
 				// Read the chunk name and size
-				uint chunkName = moduleStream.Read_B_UINT32();
+				string chunkName = moduleStream.ReadMark();
 				uint chunkSize = moduleStream.Read_L_UINT32();
 
 				// Check if we reached the end of the file
@@ -185,8 +186,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				// Interpret the known chunks
 				switch (chunkName)
 				{
-					// 'fmt ': Format chunk
-					case 0x666d7420:
+					// Format chunk
+					case "fmt ":
 					{
 						// Begin to read the chunk data
 						WaveFormat format = (WaveFormat)moduleStream.Read_L_UINT16();
@@ -211,8 +212,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 						break;
 					}
 
-					// 'fact': Fact chunk
-					case 0x66616374:
+					// Fact chunk
+					case "fact":
 					{
 						// Load the fact chunk
 						int factSize = LoadFactChunk(moduleStream);
@@ -224,8 +225,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 						break;
 					}
 
-					// 'data': Data chunk
-					case 0x64617461:
+					// Data chunk
+					case "data":
 					{
 						// Remember the position where the data starts
 						dataStarts = moduleStream.Position;
@@ -243,18 +244,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 					// Unknown chunks
 					default:
 					{
-						bool ok = true;
-						for (int i = 0; i < 4; i++)
-						{
-							byte byt = (byte)(chunkName & 0xff);
-							if ((byt < 32) || (byt > 127))
-							{
-								ok = false;
-								break;
-							}
-
-							chunkName >>= 8;
-						}
+						bool ok = chunkName.Select(t => (byte)t).All(byt => (byt >= 32) && (byt <= 127));
 
 						if (ok)
 							moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);

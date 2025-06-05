@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -43,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/// Return the file extensions that is supported by the loader
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => new [] { "aiff", "aif" };
+		public string[] FileExtensions => [ "aiff", "aif" ];
 
 
 
@@ -58,10 +59,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the chunk names
-			if (moduleStream.Read_B_UINT32() == 0x464f524d)			// FORM
+			if (moduleStream.ReadMark() == "FORM")
 			{
 				moduleStream.Seek(4, SeekOrigin.Current);		// Skip length
-				if (moduleStream.Read_B_UINT32() == 0x41494646)		// AIFF
+				if (moduleStream.ReadMark() == "AIFF")
 					return AgentResult.Ok;
 			}
 
@@ -137,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			for (;;)
 			{
 				// Read the chunk name and size
-				uint chunkName = moduleStream.Read_B_UINT32();
+				string chunkName = moduleStream.ReadMark();
 				uint chunkSize = moduleStream.Read_B_UINT32();
 
 				// Check if we reached the end of the file
@@ -147,8 +148,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 				// Interpret the known chunks
 				switch (chunkName)
 				{
-					// 'COMM': Common chunk
-					case 0x434f4d4d:
+					// Common chunk
+					case "COMM":
 					{
 						byte[] freq = new byte[10];
 
@@ -167,8 +168,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 						break;
 					}
 
-					// 'SSND': Sound data chunk
-					case 0x53534e44:
+					// Sound data chunk
+					case "SSND":
 					{
 						ssndLength = chunkSize;
 						ssndStart = moduleStream.Position + 8;
@@ -183,18 +184,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 					// Unknown chunks
 					default:
 					{
-						bool ok = true;
-						for (int i = 0; i < 4; i++)
-						{
-							byte byt = (byte)(chunkName & 0xff);
-							if ((byt < 32) || (byt > 127))
-							{
-								ok = false;
-								break;
-							}
-
-							chunkName >>= 8;
-						}
+						bool ok = chunkName.Select(t => (byte)t).All(byt => (byt >= 32) && (byt <= 127));
 
 						if (ok)
 							moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
