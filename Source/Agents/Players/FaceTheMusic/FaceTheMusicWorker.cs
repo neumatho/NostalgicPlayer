@@ -80,9 +80,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = moduleStream.Read_B_UINT32();
-			if ((mark & 0xffffff00) != 0x46544d00)      // FTM
+			string mark = moduleStream.ReadMark(3);
+			if (mark != "FTM")
 				return AgentResult.Unknown;
+
+			moduleStream.Seek(1, SeekOrigin.Current);
 
 			if (moduleStream.Read_UINT8() != 3)
 				return AgentResult.Unknown;

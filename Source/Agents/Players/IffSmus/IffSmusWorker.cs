@@ -59,14 +59,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x464f524d)		// FORM
+			string mark = moduleStream.ReadMark();
+			if (mark != "FORM")
 				return AgentResult.Unknown;
 
 			moduleStream.Seek(8, SeekOrigin.Begin);
 
-			mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x534d5553)		// SMUS
+			mark = moduleStream.ReadMark();
+			if (mark != "SMUS")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;
@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 				for (; totalSize > 0;)
 				{
 					// Read the chunk name and length
-					uint chunkName = moduleStream.Read_B_UINT32();
+					string chunkName = moduleStream.ReadMark();
 					int chunkSize = moduleStream.Read_B_INT32();
 					totalSize -= (chunkSize + 8);
 
@@ -128,51 +128,50 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 					switch (chunkName)
 					{
-						// Song name (NAME)
-						case 0x4e414d45:
+						// Song name
+						case "NAME":
 						{
 							ParseName(moduleStream, chunkSize, encoder, out errorMessage);
 							break;
 						}
 
-						// Author (AUTH)
-						case 0x41555448:
+						// Author
+						case "AUTH":
 						{
 							ParseAuth(moduleStream, chunkSize, encoder, out errorMessage);
 							break;
 						}
 
-						// Score header (SHDR)
-						case 0x53484452:
+						// Score header
+						case "SHDR":
 						{
 							ParseShdr(moduleStream, out errorMessage);
 							break;
 						}
 
-						// Instrument (INS1)
-						case 0x494e5331:
+						// Instrument
+						case "INS1":
 						{
 							ParseIns1(fileInfo, moduleStream, chunkSize, encoder, out errorMessage);
 							break;
 						}
 
-						// Track (TRAK)
-						case 0x5452414b:
+						// Track
+						case "TRAK":
 						{
 							ParseTrak(moduleStream, chunkSize, ref trackNumber, out errorMessage);
 							break;
 						}
 
-						// SNX1 - SNX9
-						case 0x534e5831:
-						case 0x534e5832:
-						case 0x534e5833:
-						case 0x534e5834:
-						case 0x534e5835:
-						case 0x534e5836:
-						case 0x534e5837:
-						case 0x534e5838:
-						case 0x534e5839:
+						case "SNX1":
+						case "SNX2":
+						case "SNX3":
+						case "SNX4":
+						case "SNX5":
+						case "SNX6":
+						case "SNX7":
+						case "SNX8":
+						case "SNX9":
 						{
 							ParseSnx(moduleStream, out errorMessage);
 							break;

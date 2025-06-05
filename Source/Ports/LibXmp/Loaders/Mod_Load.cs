@@ -853,7 +853,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (tracker_Id == InternalFormat.ModsGrave)
 				lib.common.LibXmp_Set_Type(m, tracker);
 			else
-				lib.common.LibXmp_Set_Type(m, string.Format("{0} {1}", tracker, Encoding.ASCII.GetString(magic, 0, 4)));
+				lib.common.LibXmp_Set_Type(m, string.Format("{0} {1}", tracker, Encoding.Latin1.GetString(magic, 0, 4)));
 
 			// Load samples
 			for (c_int i = 0; i < mod.Smp; i++)

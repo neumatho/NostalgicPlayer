@@ -51,38 +51,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 			// Check mark
 			moduleStream.Seek(1464, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark(4, false);
 
-			if (mark == 0x4d544e00)		// MNT\0
+			if (mark == "MTN\0")
 				return ModuleType.SoundTracker26;
 
-			if (mark == 0x49543130)		// IT10
+			if (mark == "IT10")
 				return ModuleType.IceTracker;
 
 			moduleStream.Seek(1080, SeekOrigin.Begin);
-			mark = moduleStream.Read_B_UINT32();
+			mark = moduleStream.ReadMark();
 
 			// Check the mark for valid characters
-			bool nonValid = false;
-			uint markCheck = mark;
-			for (int i = 0; i < 4; i++)
-			{
-				byte byt = (byte)(markCheck & 0xff);
-				if ((byt < 32) || (byt > 127))
-				{
-					nonValid = true;
-					break;
-				}
-
-				markCheck = markCheck >> 8;
-			}
+			bool valid = mark.Select(t => (byte)t).All(byt => (byt >= 32) && (byt <= 127));
 
 			ModuleType retVal;
 
-			if (nonValid)
-				retVal = Check15SamplesModule(moduleStream);
-			else
+			if (valid)
 				retVal = Check31SamplesModule(fileInfo, mark);
+			else
+				retVal = Check15SamplesModule(moduleStream);
 
 			return retVal;
 		}
@@ -112,11 +100,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private static bool CheckForProTrackerIff(ModuleStream moduleStream)
 		{
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x464f524d)		// FORM
+			if (moduleStream.ReadMark() != "FORM")
 				return false;
 
 			moduleStream.Seek(8, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() != 0x4d4f444c)		// MODL
+			if (moduleStream.ReadMark() != "MODL")
 				return false;
 
 			return true;
@@ -133,11 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		{
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint id1 = moduleStream.Read_B_UINT32();
-			uint id2 = moduleStream.Read_B_UINT32();
-			uint id3 = moduleStream.Read_B_UINT32();
-
-			if ((id1 == 0x46616d69) && (id2 == 0x54726163) && (id3 == 0x6b657220))	// FamiTracker
+			if (moduleStream.ReadMark(12) == "FamiTracker ")
 				return true;
 
 			return false;
@@ -496,16 +480,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Checks the module to see if it's a 31 samples module
 		/// </summary>
 		/********************************************************************/
-		private static ModuleType Check31SamplesModule(PlayerFileInfo fileInfo, uint mark)
+		private static ModuleType Check31SamplesModule(PlayerFileInfo fileInfo, string mark)
 		{
 			ModuleType retVal = ModuleType.Unknown;
 
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
-			if ((mark == 0x4d2e4b2e) || (mark == 0x4d214b21) ||		// M.K. || M!K!
-				(mark == 0x4d264b21) ||								// M&K! (Echobea3.mod and some His Master's Noise modules)
-				(mark == 0x4c415244) ||								// LARD (judgement_day_gvine.mod)
-				(mark == 0x4e534d53))								// NSMS (kingdomofpleasure.mod)
+			if ((mark == "M.K.") || (mark == "M!K!") ||
+				(mark == "M&K!") ||								// Echobea3.mod and some His Master's Noise modules
+				(mark == "LARD") ||								// judgement_day_gvine.mod
+				(mark == "NSMS"))								// kingdomofpleasure.mod
 			{
 				bool maybeWow = true;
 				uint totalSampleLength = 0;
@@ -571,7 +555,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						return ModuleType.Unknown;
 				}
 
-				if (mark != 0x4d264b21)	// Skip check for most likely His Master's Noise format
+				if (mark != "M&K!")		// Skip check for most likely His Master's Noise format
 				{
 					// Check the patterns for any BPM speed effects or ExtraEffect effects
 					// just to be sure it's not a NoiseTracker module.
@@ -679,7 +663,7 @@ stopLoop:
 						// Some His Master's Noise modules uses the "M&K!" mark, so check
 						// for that (this is not the real format, which is "FEST", but I do
 						// not know why some download web pages has modules in "M&K!" format)
-						if (((fineTune & 0xf0) != 0) && (mark == 0x4d264b21))
+						if (((fineTune & 0xf0) != 0) && (mark == "M&K!"))
 						{
 							retVal = ModuleType.HisMastersNoise;
 							break;
@@ -698,14 +682,14 @@ stopLoop:
 			}
 			else
 			{
-				if ((mark == 0x464c5434) || (mark == 0x45584f34))			// FLT4 || EXO4
+				if ((mark == "FLT4") || (mark == "EXO4"))
 				{
 					// Find out if the file is an Audio Sculpture module
 					retVal = CheckSynthFile(fileInfo);
 				}
-				else if (mark == 0x464c5438)								// FLT8
+				else if (mark == "FLT8")
 					retVal = ModuleType.StarTrekker8;
-				else if (mark == 0x46455354)								// FEST
+				else if (mark == "FEST")
 					retVal = ModuleType.HisMastersNoise;
 			}
 

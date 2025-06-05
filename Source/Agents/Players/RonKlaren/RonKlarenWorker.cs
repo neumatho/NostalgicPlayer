@@ -75,12 +75,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 				return AgentResult.Unknown;
 
 			// Check the identifier
-			byte[] buf = new byte[23];
-
 			moduleStream.Seek(40, SeekOrigin.Begin);
-			moduleStream.ReadInto(buf, 0, buf.Length);
 
-			if (Encoding.ASCII.GetString(buf, 0, 23) != "RON_KLAREN_SOUNDMODULE!")
+			if (moduleStream.ReadMark(23) != "RON_KLAREN_SOUNDMODULE!")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;

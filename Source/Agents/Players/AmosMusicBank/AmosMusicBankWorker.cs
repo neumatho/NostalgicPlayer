@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x416d426b)		// AmBk
+			if (moduleStream.ReadMark() != "AmBk")
 				return AgentResult.Unknown;
 
 			// Check the bank number. Normally, this will be 3, but
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 			// Check the identifier string
 			moduleStream.Seek(12, SeekOrigin.Begin);
 
-			if ((moduleStream.Read_B_UINT32() != 0x4d757369) || (moduleStream.Read_B_UINT32() != 0x63202020))	// "Music   "
+			if (moduleStream.ReadMark(8) != "Music   ")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;

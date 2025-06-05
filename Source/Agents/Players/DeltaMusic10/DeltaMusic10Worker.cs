@@ -58,8 +58,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 			// Check mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x414c4c20)				// ALL
+			string mark = moduleStream.ReadMark();
+			if (mark != "ALL ")
 				return AgentResult.Unknown;
 
 			// Check all the lengths

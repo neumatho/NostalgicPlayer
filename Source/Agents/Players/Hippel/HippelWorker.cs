@@ -555,15 +555,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		{
 			// Check the two marks
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark();
 
-			if (mark != 0x434f534f)		// COSO
+			if (mark != "COSO")
 				return AgentResult.Unknown;
 
 			moduleStream.Seek(32, SeekOrigin.Begin);
-			mark = moduleStream.Read_B_UINT32();
+			mark = moduleStream.ReadMark();
 
-			if (mark != 0x54464d58)		// TFMX
+			if (mark != "TFMX")
 				return AgentResult.Unknown;
 
 			// If number of samples is 0, it is probably an ST module

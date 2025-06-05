@@ -75,10 +75,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[12];
-			moduleStream.ReadExactly(buf, 0, 12);
-
-			if (Encoding.ASCII.GetString(buf, 0, 12) != "Fred Editor ")
+			if (moduleStream.ReadMark(12) != "Fred Editor ")
 				return AgentResult.Unknown;
 
 			// Check the version

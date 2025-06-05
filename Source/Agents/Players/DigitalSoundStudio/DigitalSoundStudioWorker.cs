@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalSoundStudio
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x4d4d5532)	// MMU2
+			if (moduleStream.ReadMark() != "MMU2")
 				return AgentResult.Unknown;
 
 			// Now check to see if it is a song or module. The only difference

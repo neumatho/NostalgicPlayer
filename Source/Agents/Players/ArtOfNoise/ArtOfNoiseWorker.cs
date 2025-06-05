@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 				for (;;)
 				{
 					// Read the chunk name and length
-					uint chunkName = moduleStream.Read_B_UINT32();
+					string chunkName = moduleStream.ReadMark();
 					int chunkSize = moduleStream.Read_B_INT32();
 
 					// Do we have any chunks left?
@@ -140,78 +140,78 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 					// Find out what the chunk is and begin to parse it
 					switch (chunkName)
 					{
-						// Song name (NAME)
-						case 0x4e414d45:
+						// Song name
+						case "NAME":
 						{
 							ParseName(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Author (AUTH)
-						case 0x41555448:
+						// Author
+						case "AUTH":
 						{
 							ParseAuth(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Remark (RMRK)
-						case 0x524d524b:
+						// Remark
+						case "RMRK":
 						{
 							ParseRmrk(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Information (INFO)
-						case 0x494e464f:
+						// Information
+						case "INFO":
 						{
 							ParseInfo(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Arpeggios (ARPG)
-						case 0x41525047:
+						// Arpeggios
+						case "ARPG":
 						{
 							ParseArpg(moduleStream, out errorMessage);
 							break;
 						}
 
-						// Position list (PLST)
-						case 0x504c5354:
+						// Position list
+						case "PLST":
 						{
 							ParsePlst(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Patterns (PATT)
-						case 0x50415454:
+						// Patterns
+						case "PATT":
 						{
 							ParsePatt(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Instruments (INST)
-						case 0x494e5354:
+						// Instruments
+						case "INST":
 						{
 							ParseInst(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Instrument names (INAM) - Does not always exist
-						case 0x494e414d:
+						// Instrument names - Does not always exist
+						case "INAM":
 						{
 							ParseInam(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Wave form lengths (WLEN)
-						case 0x574c454e:
+						// Wave form lengths
+						case "WLEN":
 						{
 							ParseWlen(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Sample data (WAVE)
-						case 0x57415645:
+						// Sample data
+						case "WAVE":
 						{
 							ParseWave(moduleStream, out errorMessage);
 							break;
@@ -590,13 +590,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 
 			// Read the module mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark();
 
 			// Check the mark
-			if (mark == 0x414f4e34)					// AON4
+			if (mark == "AON4")
 				return ModuleType.ArtOfNoise;
 
-			if (mark == 0x414f4e38)					// AON8
+			if (mark == "AON8")
 				return ModuleType.ArtOfNoise8V;
 
 			return ModuleType.Unknown;

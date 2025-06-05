@@ -501,10 +501,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 			// Now check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark();
 
 			// Check the mark
-			if (mark != 0x44424d30)		// DBM0
+			if (mark != "DBM0")
 				return ModuleType.Unknown;
 
 			// Check the version

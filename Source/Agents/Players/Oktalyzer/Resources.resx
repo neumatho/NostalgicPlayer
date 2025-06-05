@@ -143,7 +143,7 @@ This player is able to play all Oktalyzer modules with 4 to 8 channels.</value>
     <value>Can't read the sample data</value>
   </data>
   <data name="IDS_OKT_ERR_UNKNOWN_CHUNK" xml:space="preserve">
-    <value>Unknown chunk ({0}{1}{2}{3}) has been read</value>
+    <value>Unknown chunk ({0}) has been read</value>
   </data>
   <data name="IDS_OKT_INFODESCLINE0" xml:space="preserve">
     <value>Number of positions:</value>

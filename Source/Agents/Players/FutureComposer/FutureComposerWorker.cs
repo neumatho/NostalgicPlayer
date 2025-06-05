@@ -70,8 +70,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x46433134)					// FC14
+			string mark = moduleStream.ReadMark();
+			if (mark != "FC14")
 				return AgentResult.Unknown;
 
 			// Skip the song length
@@ -330,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					if (sampInfo[i].Length != 0)
 					{
 						// Read the first 4 bytes to see if it's a multi sample
-						if (moduleStream.Read_B_UINT32() == 0x53534d50)           // SSMP
+						if (moduleStream.ReadMark() == "SSMP")
 						{
 							// It is, so allocate the multi sample structure
 							// and fill in the information

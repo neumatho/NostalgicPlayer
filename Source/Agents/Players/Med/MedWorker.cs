@@ -430,14 +430,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 			// Now check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark(3);
+			byte version = moduleStream.Read_UINT8();
 
 			// Check the mark
-			if (mark == 0x4d454402)		// MED\x02
-				return ModuleType.Med112;
+			if (mark == "MED")
+			{
+				if (version == 2)
+					return ModuleType.Med112;
 
-			if (mark == 0x4d454403)		// MED\x03
-				return ModuleType.Med200;
+				if (version == 3)
+					return ModuleType.Med200;
+			}
 
 			return ModuleType.Unknown;
 		}

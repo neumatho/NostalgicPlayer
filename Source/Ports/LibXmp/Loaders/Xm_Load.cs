@@ -338,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			CMemory.MemCpy<uint8>(mod.Xxo, xfh.Order, mod.Len);
 
-			string tracker_Name = Encoding.ASCII.GetString(xfh.Tracker).TrimEnd(' ', '\0');
+			string tracker_Name = Encoding.Latin1.GetString(xfh.Tracker).TrimEnd(' ', '\0');
 
 			// OpenMPT accurately emulates weird FT2 bugs
 			if (tracker_Name.StartsWith("FastTracker v2.00"))

@@ -73,10 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[20];
-			moduleStream.ReadExactly(buf, 0, 20);
-
-			if (Encoding.ASCII.GetString(buf, 0, 20) != "DIGI Booster module\0")
+			if (moduleStream.ReadMark(20, false) != "DIGI Booster module\0")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;

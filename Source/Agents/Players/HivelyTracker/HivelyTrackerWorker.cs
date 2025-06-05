@@ -822,17 +822,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 
 			// Read the module mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark(3);
+			byte version = moduleStream.Read_UINT8();
 
 			// Check the mark
-			if (mark == 0x54485800)					// THX\0
-				return ModuleType.Ahx1;
+			if (mark == "THX")
+			{
+				if (version == 0)
+					return ModuleType.Ahx1;
 
-			if (mark == 0x54485801)					// THX\1
-				return ModuleType.Ahx2;
-
-			if ((mark == 0x48564c00) || (mark == 0x48564c01))	// HVL\0 or HVL\1
-				return ModuleType.HivelyTracker;
+				if (version == 1)
+					return ModuleType.Ahx2;
+			}
+			else if (mark == "HVL")
+			{
+				if ((version == 0) || (version == 1))
+					return ModuleType.HivelyTracker;
+			}
 
 			return ModuleType.Unknown;
 		}

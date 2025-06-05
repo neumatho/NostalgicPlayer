@@ -763,14 +763,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 				return ModuleType.Unknown;
 
 			// Read the module identifier
-			byte[] buf = new byte[24];
-
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.ReadExactly(buf, 0, 24);
+
+			string mark = moduleStream.ReadMark(24);
 
 			// Check the identifier
-			string mark = Encoding.ASCII.GetString(buf, 0, 24);
-
 			if (mark == " MUGICIAN/SOFTEYES 1990 ")
 				return ModuleType.DigitalMugician;
 

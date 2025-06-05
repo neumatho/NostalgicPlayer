@@ -1163,7 +1163,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				for (;;)
 				{
 					// Read the chunk name and length
-					uint chunkName = moduleStream.Read_B_UINT32();
+					string chunkName = moduleStream.ReadMark();
 					uint chunkSize = moduleStream.Read_B_UINT32() - 8;
 
 					// Do we have any chunks left?
@@ -1173,23 +1173,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					// Find out what the chunk is and begin to parse it
 					switch (chunkName)
 					{
-						// Version (VERS)
-						case 0x56455253:
+						// Version
+						case "VERS":
 						{
 							// Ignore the VERS chunk, but it has an invalid size, so skip an absolute number
 							moduleStream.Seek(10, SeekOrigin.Current);
 							break;
 						}
 
-						// Module information (INFO)
-						case 0x494e464f:
+						// Module information
+						case "INFO":
 						{
 							infoChunk = ParseInfo(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Ordinary module (PTDT)
-						case 0x50544454:
+						// Ordinary module
+						case "PTDT":
 						{
 							ParsePtdt(fileInfo, out errorMessage);
 							hasPtdt = true;

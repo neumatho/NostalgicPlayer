@@ -84,10 +84,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[8];
-			moduleStream.ReadExactly(buf, 0, 8);
-
-			if (Encoding.ASCII.GetString(buf, 0, 8) == "ISM!V1.2")
+			if (moduleStream.ReadMark(8) == "ISM!V1.2")
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;

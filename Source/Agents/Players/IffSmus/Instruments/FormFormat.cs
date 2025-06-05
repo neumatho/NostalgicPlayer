@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 		{
 			const string Id = "FORM";
 
-			string checkId = Encoding.ASCII.GetString(firstBytes, 0, Id.Length);
+			string checkId = Encoding.Latin1.GetString(firstBytes, 0, Id.Length);
 			return checkId.Equals(Id, StringComparison.OrdinalIgnoreCase);
 		}
 

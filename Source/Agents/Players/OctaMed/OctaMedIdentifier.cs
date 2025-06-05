@@ -39,14 +39,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 			// Now check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark(3);
+			byte markVersion = moduleStream.Read_UINT8();
 
 			// Check the mark
-			if ((mark & 0xffffff00) != 0x4d4d4400)	// MMD\0
+			if (mark != "MMD")
 				return ModuleType.Unknown;
-
-			// Mark out the mark and leave the version
-			byte markVersion = (byte)(mark & 0x000000ff);
 
 			if (((markVersion < '0') || (markVersion > '3')) && (markVersion != 'C'))
 				return ModuleType.Unknown;

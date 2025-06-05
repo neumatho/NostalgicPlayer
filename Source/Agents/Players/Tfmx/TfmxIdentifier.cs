@@ -212,9 +212,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the mark
-			uint mark = moduleStream.Read_B_UINT32();
-
-			if (mark == 0x54464844)		// TFHD
+			if (moduleStream.ReadMark() == "TFHD")
 			{
 				// Ok, it seems it's a TFHD file, so read the whole structure
 				TfhdHeader header = new TfhdHeader();
@@ -289,10 +287,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the mark
-			uint mark1 = moduleStream.Read_B_UINT32();
-			uint mark2 = moduleStream.Read_B_UINT32();
-
-			if ((mark1 == 0x54464d58) && (mark2 == 0x2d4d4f44))		// TFMX-MOD
+			if (moduleStream.ReadMark(8) == "TFMX-MOD")
 			{
 				TfmxModHeader header = new TfmxModHeader();
 

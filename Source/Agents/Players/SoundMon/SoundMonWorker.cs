@@ -626,13 +626,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 			// Read the module mark
 			moduleStream.Seek(26, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
+			string mark = moduleStream.ReadMark(3);
 
 			// Check the mark
-			if ((mark & 0xffffff00) == 0x562e3200)		// V.2
+			if (mark == "V.2")
 				return ModuleType.SoundMon11;
 
-			if ((mark & 0xffffff00) == 0x562e3300)		// V.3
+			if (mark == "V.3")
 				return ModuleType.SoundMon22;
 
 			return ModuleType.Unknown;

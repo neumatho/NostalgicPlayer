@@ -87,10 +87,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[8];
-			moduleStream.ReadExactly(buf, 0, 8);
-
-			if (Encoding.ASCII.GetString(buf, 0, 8) == "Synth4.0")
+			if (moduleStream.ReadMark(8) == "Synth4.0")
 			{
 				startOffset = 0;
 				return AgentResult.Ok;
@@ -100,9 +97,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 				return AgentResult.Unknown;
 
 			moduleStream.Seek(0x1f0e, SeekOrigin.Begin);
-			moduleStream.ReadExactly(buf, 0, 8);
 
-			if (Encoding.ASCII.GetString(buf, 0, 8) == "Synth4.2")
+			if (moduleStream.ReadMark(8) == "Synth4.2")
 			{
 				startOffset = 0x1f0e;
 				return AgentResult.Ok;

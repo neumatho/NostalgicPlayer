@@ -69,8 +69,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the mark
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x4f676753)			// OggS
+			string mark = moduleStream.ReadMark();
+			if (mark != "OggS")
 				return AgentResult.Unknown;
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
@@ -545,7 +545,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 					if (rs.Read(bytes, 0, length) != length)
 						return null;
 
-					string mimeType = Encoding.ASCII.GetString(bytes);
+					string mimeType = Encoding.Latin1.GetString(bytes);
 					if (mimeType == "-->")	// URL, we do not support that
 						return null;
 

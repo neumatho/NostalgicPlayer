@@ -73,10 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[8];
-			moduleStream.ReadExactly(buf, 0, 8);
-
-			if (Encoding.ASCII.GetString(buf, 0, 8) == "IS20DF10")
+			if (moduleStream.ReadMark(8) == "IS20DF10")
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
@@ -447,8 +444,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 		/********************************************************************/
 		private bool ReadSubSongs(ModuleStream moduleStream)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x5354424c)		// STBL
+			string mark = moduleStream.ReadMark();
+			if (mark != "STBL")
 				return false;
 
 			uint numberOfSubSongs = moduleStream.Read_B_UINT32();
@@ -483,8 +480,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 		/********************************************************************/
 		private bool ReadPositionInformation(ModuleStream moduleStream)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x4f565442)		// OVTB
+			string mark = moduleStream.ReadMark();
+			if (mark != "OVTB")
 				return false;
 
 			uint totalNumberOfPositions = moduleStream.Read_B_UINT32();
@@ -521,8 +518,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 		/********************************************************************/
 		private bool ReadTrackRows(ModuleStream moduleStream)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x4e54424c)		// NTBL
+			string mark = moduleStream.ReadMark();
+			if (mark != "NTBL")
 				return false;
 
 			uint totalNumberOfTrackRows = moduleStream.Read_B_UINT32();
@@ -563,8 +560,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 		/********************************************************************/
 		private bool ReadSampleInformation(ModuleStream moduleStream, Encoding encoder)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x53414d50)		// SAMP
+			string mark = moduleStream.ReadMark();
+			if (mark != "SAMP")
 				return false;
 
 			uint numberOfSamples = moduleStream.Read_B_UINT32();
@@ -649,8 +646,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 		/********************************************************************/
 		private bool ReadSynthInstrumentInformation(ModuleStream moduleStream, Encoding encoder)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x53594e54)		// SYNT
+			string mark = moduleStream.ReadMark();
+			if (mark != "SYNT")
 				return false;
 
 			uint numberOfInstruments = moduleStream.Read_B_UINT32();
@@ -660,8 +657,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 			{
 				Instrument instr = new Instrument();
 
-				mark = moduleStream.Read_B_UINT32();
-				if (mark != 0x49533230)		// IS20
+				mark = moduleStream.ReadMark();
+				if (mark != "IS20")
 					return false;
 
 				instr.Name = moduleStream.ReadString(encoder, 20);

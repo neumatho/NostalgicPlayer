@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() == 0x42654570)	// BeEp
+			if (moduleStream.ReadMark() == "BeEp")
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				ModuleStream moduleStream = fileInfo.ModuleStream;
 
 				// Skip the module mark
-				moduleStream.Read_B_UINT32();
+				moduleStream.Seek(4, SeekOrigin.Current);
 
 				// Get the number of instruments
 				samplesNum = moduleStream.Read_B_UINT16();

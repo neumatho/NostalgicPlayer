@@ -89,11 +89,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = moduleStream.Read_B_UINT32();
-			if ((mark != 0x53575444) && (mark != 0x53575454))		// SWTD && SWTT
+			string mark = moduleStream.ReadMark();
+			if ((mark != "SWTD") && (mark != "SWTT"))
 				return AgentResult.Unknown;
 
-			textVersion = mark == 0x53575454;
+			textVersion = mark == "SWTT";
 
 			if (textVersion)
 			{

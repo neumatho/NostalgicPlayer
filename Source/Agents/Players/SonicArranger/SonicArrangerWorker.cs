@@ -81,10 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[8];
-			moduleStream.ReadExactly(buf, 0, 8);
-
-			string mark = Encoding.ASCII.GetString(buf, 0, 8);
+			string mark = moduleStream.ReadMark(8);
 
 			if (mark == "SOARV1.0")
 			{
@@ -442,36 +439,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		{
 			errorMessage = string.Empty;
 
-			// STBL
-			if ((moduleStream.Read_B_UINT32() != 0x5354424c) || !ReadSubSongs(moduleStream))
+			if ((moduleStream.ReadMark() != "STBL") || !ReadSubSongs(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
 				return AgentResult.Error;
 			}
 
-			// OVTB
-			if ((moduleStream.Read_B_UINT32() != 0x4f565442) || !ReadPositionInformation(moduleStream))
+			if ((moduleStream.ReadMark() != "OVTB") || !ReadPositionInformation(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
 				return AgentResult.Error;
 			}
 
-			// NTBL
-			if ((moduleStream.Read_B_UINT32() != 0x4e54424c) || !ReadTrackRows(moduleStream))
+			if ((moduleStream.ReadMark() != "NTBL") || !ReadTrackRows(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_TRACK;
 				return AgentResult.Error;
 			}
 
-			// INST
-			if ((moduleStream.Read_B_UINT32() != 0x494e5354) || !ReadInstrumentInformation(moduleStream))
+			if ((moduleStream.ReadMark() != "INST") || !ReadInstrumentInformation(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_INSTRUMENT;
 				return AgentResult.Error;
 			}
 
-			// SD8B
-			if ((moduleStream.Read_B_UINT32() != 0x53443842) || !ReadSampleInformation(moduleStream, out int numberOfSamples))
+			if ((moduleStream.ReadMark() != "SD8B") || !ReadSampleInformation(moduleStream, out int numberOfSamples))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLEINFO;
 				return AgentResult.Error;
@@ -483,22 +475,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 				return AgentResult.Error;
 			}
 
-			// SYWT
-			if ((moduleStream.Read_B_UINT32() != 0x53595754) || !ReadWaveformData(moduleStream))
+			if ((moduleStream.ReadMark() != "SYWT") || !ReadWaveformData(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_WAVEFORM;
 				return AgentResult.Error;
 			}
 
-			// SYAR
-			if ((moduleStream.Read_B_UINT32() != 0x53594152) || !ReadAdsrTables(moduleStream))
+			if ((moduleStream.ReadMark() != "SYAR") || !ReadAdsrTables(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_ADSR;
 				return AgentResult.Error;
 			}
 
-			// SYAF
-			if ((moduleStream.Read_B_UINT32() != 0x53594146) || !ReadAmfTables(moduleStream))
+			if ((moduleStream.ReadMark() != "SYAF") || !ReadAmfTables(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_AMF;
 				return AgentResult.Error;
@@ -518,36 +507,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		{
 			errorMessage = string.Empty;
 
-			// @TBL
-			if ((moduleStream.Read_B_UINT32() != 0x4054424c) || !ReadSubSongs(moduleStream))
+			if ((moduleStream.ReadMark() != "@TBL") || !ReadSubSongs(moduleStream))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
 				return AgentResult.Error;
 			}
 
-			// @VTB
-			if ((moduleStream.Read_B_UINT32() != 0x40565442) || !ReadCompressedData(moduleStream, 4 * 4, ReadPositionInformation))
+			if ((moduleStream.ReadMark() != "@VTB") || !ReadCompressedData(moduleStream, 4 * 4, ReadPositionInformation))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
 				return AgentResult.Error;
 			}
 
-			// @TBL
-			if ((moduleStream.Read_B_UINT32() != 0x4054424c) || !ReadCompressedData(moduleStream, 4, ReadTrackRows))
+			if ((moduleStream.ReadMark() != "@TBL") || !ReadCompressedData(moduleStream, 4, ReadTrackRows))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_TRACK;
 				return AgentResult.Error;
 			}
 
-			// @NST
-			if ((moduleStream.Read_B_UINT32() != 0x404e5354) || !ReadCompressedData(moduleStream, 152, ReadInstrumentInformation))
+			if ((moduleStream.ReadMark() != "@NST") || !ReadCompressedData(moduleStream, 152, ReadInstrumentInformation))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_INSTRUMENT;
 				return AgentResult.Error;
 			}
 
-			// @D8B
-			if ((moduleStream.Read_B_UINT32() != 0x40443842) || !ReadSampleInformation(moduleStream, out int numberOfSamples))
+			if ((moduleStream.ReadMark() != "@D8B") || !ReadSampleInformation(moduleStream, out int numberOfSamples))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLEINFO;
 				return AgentResult.Error;
@@ -559,22 +543,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 				return AgentResult.Error;
 			}
 
-			// @YWT
-			if ((moduleStream.Read_B_UINT32() != 0x40595754) || !ReadCompressedData(moduleStream, 128, ReadWaveformData))
+			if ((moduleStream.ReadMark() != "@YWT") || !ReadCompressedData(moduleStream, 128, ReadWaveformData))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_WAVEFORM;
 				return AgentResult.Error;
 			}
 
-			// @YAR
-			if ((moduleStream.Read_B_UINT32() != 0x40594152) || !ReadCompressedData(moduleStream, 128, ReadAdsrTables))
+			if ((moduleStream.ReadMark() != "@YAR") || !ReadCompressedData(moduleStream, 128, ReadAdsrTables))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_ADSR;
 				return AgentResult.Error;
 			}
 
-			// @YAF
-			if ((moduleStream.Read_B_UINT32() != 0x40594146) || !ReadCompressedData(moduleStream, 128, ReadAmfTables))
+			if ((moduleStream.ReadMark() != "@YAF") || !ReadCompressedData(moduleStream, 128, ReadAmfTables))
 			{
 				errorMessage = Resources.IDS_SA_ERR_LOADING_AMF;
 				return AgentResult.Error;

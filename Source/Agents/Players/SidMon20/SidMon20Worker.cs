@@ -84,13 +84,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 				return AgentResult.Unknown;
 
 			// Check the identifier string
-			byte[] buf = new byte[28];
-
 			moduleStream.Seek(58, SeekOrigin.Begin);
-			moduleStream.ReadExactly(buf, 0, 28);
 
-			string id = Encoding.ASCII.GetString(buf);
-			if (id == "SIDMON II - THE MIDI VERSION")
+			if (moduleStream.ReadMark(28) == "SIDMON II - THE MIDI VERSION")
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;

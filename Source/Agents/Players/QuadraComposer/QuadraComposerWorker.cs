@@ -73,14 +73,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 			// Check chunk names
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint chunk = moduleStream.Read_B_UINT32();
-			if (chunk != 0x464f524d)				// FORM
+			string chunk = moduleStream.ReadMark();
+			if (chunk != "FORM")
 				return AgentResult.Unknown;
 
 			moduleStream.Seek(8, SeekOrigin.Begin);
 
-			ulong bigChunk = moduleStream.Read_B_UINT64();
-			if (bigChunk != 0x454d4f44454d4943)		// EMODEMIC
+			chunk = moduleStream.ReadMark(8);
+			if (chunk != "EMODEMIC")
 				return AgentResult.Unknown;
 
 			// Check version
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 				for (;;)
 				{
 					// Read the chunk name and length
-					uint chunkName = moduleStream.Read_B_UINT32();
+					string chunkName = moduleStream.ReadMark();
 					uint chunkSize = moduleStream.Read_B_UINT32();
 
 					// Do we have any chunks left?
@@ -128,22 +128,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 
 					switch (chunkName)
 					{
-						// Extended module info (EMIC)
-						case 0x454d4943:
+						// Extended module info
+						case "EMIC":
 						{
 							ParseEmic(moduleStream, out errorMessage);
 							break;
 						}
 
-						// Pattern data (PATT)
-						case 0x50415454:
+						// Pattern data
+						case "PATT":
 						{
 							ParsePatt(moduleStream, out errorMessage);
 							break;
 						}
 
-						// Sample data (8SMP)
-						case 0x38534d50:
+						// Sample data
+						case "8SMP":
 						{
 							Parse8Smp(moduleStream, out errorMessage);
 							break;

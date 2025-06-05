@@ -70,8 +70,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			moduleStream.ReadArray_B_UINT32s(sampleSizes, 0, 31);
 
 			// Check the mark
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x534f3331)					// SO31
+			string mark = moduleStream.ReadMark();
+			if (mark != "SO31")
 				return AgentResult.Unknown;
 
 			// Check the sample sizes

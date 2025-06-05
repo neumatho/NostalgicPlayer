@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown chunk ({0}{1}{2}{3}) has been read.
+        ///   Looks up a localized string similar to Unknown chunk ({0}) has been read.
         /// </summary>
         internal static string IDS_OKT_ERR_UNKNOWN_CHUNK {
             get {

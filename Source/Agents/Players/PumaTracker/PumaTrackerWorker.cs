@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 
 			moduleStream.Seek(offset, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() == 0x70617474)		// patt
+			if (moduleStream.ReadMark() == "patt")
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
@@ -528,7 +528,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 			for (int i = 0; i < numberOfTracks; i++)
 			{
 				// Check mark
-				if (moduleStream.Read_B_UINT32() != 0x70617474)     // patt
+				if (moduleStream.ReadMark() != "patt")
 					return false;
 
 				Track[] track = LoadSingleTrack(moduleStream);
@@ -539,7 +539,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 			}
 
 			// Check for extra mark
-			if (moduleStream.Read_B_UINT32() != 0x70617474)     // patt
+			if (moduleStream.ReadMark() != "patt")
 				return false;
 
 			return true;
@@ -596,14 +596,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 			{
 				Instrument instr = new Instrument();
 
-				if (moduleStream.Read_B_UINT32() != 0x696e7374)     // inst
+				if (moduleStream.ReadMark() != "inst")
 					return false;
 
 				instr.VolumeCommands = LoadCommands(moduleStream);
 				if (instr.VolumeCommands == null)
 					return false;
 
-				if (moduleStream.Read_B_UINT32() != 0x696e7366)     // insf
+				if (moduleStream.ReadMark() != "insf")
 					return false;
 
 				instr.FrequencyCommands = LoadCommands(moduleStream);
@@ -614,7 +614,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 			}
 
 			// Check for extra mark, but only if there are samples
-			if ((moduleStream.Position < moduleStream.Length) && (moduleStream.Read_B_UINT32() != 0x696e7374))     // inst
+			if ((moduleStream.Position < moduleStream.Length) && (moduleStream.ReadMark() != "inst"))
 				return false;
 
 			return true;

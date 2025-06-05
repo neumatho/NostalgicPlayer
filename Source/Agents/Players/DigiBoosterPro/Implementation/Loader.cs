@@ -1195,21 +1195,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 			while ((error == Error.None) && !moduleStream.EndOfStream && (neededChunkCount < 5))
 			{
-				uint name = moduleStream.Read_B_UINT32();
+				string name = moduleStream.ReadMark();
 				dc.Size = moduleStream.Read_B_INT32();
 				dc.Position = 0;
 
 				switch (name)
 				{
-					// NAME
-					case 0x4e414d45:
+					case "NAME":
 					{
 						error = Read_Chunk_Name(m, dc, moduleStream, m.CreatorVersion);
 						break;
 					}
 
-					// INFO
-					case 0x494e464f:
+					case "INFO":
 					{
 						error = Read_Chunk_Info(m, dc, moduleStream);
 						if (error == Error.None)
@@ -1219,8 +1217,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						break;
 					}
 
-					// SONG
-					case 0x534f4e47:
+					case "SONG":
 					{
 						if (haveInfo)
 							error = Read_Chunk_Song(m, dc, moduleStream);
@@ -1231,8 +1228,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						break;
 					}
 
-					// INST
-					case 0x494e5354:
+					case "INST":
 					{
 						if (haveInfo)
 							error = Read_Chunk_Inst(m, dc, moduleStream);
@@ -1243,8 +1239,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						break;
 					}
 
-					// PATT
-					case 0x50415454:
+					case "PATT":
 					{
 						if (haveInfo)
 							error = Read_Chunk_Patt(m, dc, moduleStream);
@@ -1255,8 +1250,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						break;
 					}
 
-					// SMPL
-					case 0x534d504c:
+					case "SMPL":
 					{
 						if (haveInfo)
 							error = Read_Chunk_Smpl(m, dc, moduleStream);
@@ -1267,8 +1261,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						break;
 					}
 
-					// VENV
-					case 0x56454e56:
+					case "VENV":
 					{
 						if (haveInfo)
 							error = Read_Chunk_Venv(m, dc, moduleStream);
@@ -1278,8 +1271,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						break;
 					}
 
-					// PENV
-					case 0x50454e56:
+					case "PENV":
 					{
 						if (haveInfo)
 							error = Read_Chunk_Penv(m, dc, moduleStream);
@@ -1289,8 +1281,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						break;
 					}
 
-					// DSPE
-					case 0x44535045:
+					case "DSPE":
 					{
 						if (haveInfo)
 							error = Read_Chunk_Dspe(m, dc, moduleStream);
@@ -1319,7 +1310,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		{
 			Error error = Error.None;
 
-			if (moduleStream.Read_B_UINT32() == 0x44424d30)		// DBM0
+			if (moduleStream.ReadMark() == "DBM0")
 			{
 				byte version = moduleStream.Read_UINT8();
 

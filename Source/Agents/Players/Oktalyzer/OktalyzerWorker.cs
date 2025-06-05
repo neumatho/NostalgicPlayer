@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if ((moduleStream.Read_B_UINT32() != 0x4f4b5441) || (moduleStream.Read_B_UINT32() != 0x534f4e47))	// OKTASONG
+			if (moduleStream.ReadMark(8) != "OKTASONG")
 				return AgentResult.Unknown;
 
 			return AgentResult.Ok;
@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				for (;;)
 				{
 					// Read the chunk name and length
-					uint chunkName = moduleStream.Read_B_UINT32();
+					string chunkName = moduleStream.ReadMark();
 					uint chunkSize = moduleStream.Read_B_UINT32();
 
 					// Do we have any chunks left?
@@ -121,50 +121,50 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					// Find out what the chunk is and begin to parse it
 					switch (chunkName)
 					{
-						// Channel modes (CMOD)
-						case 0x434d4f44:
+						// Channel modes
+						case "CMOD":
 						{
 							ParseCmod(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Sample information (SAMP)
-						case 0x53414d50:
+						// Sample information
+						case "SAMP":
 						{
 							ParseSamp(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Start speed (SPEE)
-						case 0x53504545:
+						// Start speed
+						case "SPEE":
 						{
 							ParseSpee(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Song length (SLEN)
-						case 0x534c454e:
+						// Song length
+						case "SLEN":
 						{
 							ParseSlen(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Number of pattern positions (PLEN)
-						case 0x504c454e:
+						// Number of pattern positions
+						case "PLEN":
 						{
 							ParsePlen(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Pattern table (PATT)
-						case 0x50415454:
+						// Pattern table
+						case "PATT":
 						{
 							ParsePatt(moduleStream, chunkSize, out errorMessage);
 							break;
 						}
 
-						// Pattern body (PBOD)
-						case 0x50424f44:
+						// Pattern body
+						case "PBOD":
 						{
 							if ((readPatt < pattNum) && (patterns != null))
 							{
@@ -179,8 +179,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 							break;
 						}
 
-						// Sample data (SBOD)
-						case 0x53424f44:
+						// Sample data
+						case "SBOD":
 						{
 							if ((readSamp < sampNum) && (samples != null))
 							{
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 						{
 							// Check to see if we had read all the samples
 							if ((readSamp == 0) || (readSamp < realUsedSampNum))
-								errorMessage = string.Format(Resources.IDS_OKT_ERR_UNKNOWN_CHUNK, (char)((chunkName >> 24) & 0xff), (char)((chunkName >> 16) & 0xff), (char)((chunkName >> 8) & 0xff), (char)(chunkName & 0xff));
+								errorMessage = string.Format(Resources.IDS_OKT_ERR_UNKNOWN_CHUNK, chunkName);
 							else
 							{
 								// Well, we had read all the samples, so if the file
