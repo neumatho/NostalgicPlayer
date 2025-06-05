@@ -166,18 +166,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		private void WriteMark(Mo3Module module, ConverterStream converterStream)
 		{
 			if (module.Header.NumChannels == 4)
-				converterStream.Write_B_UINT32(0x4d2e4b2e);		// M.K.
+				converterStream.WriteMark("M.K.");
 			else
 			{
 				if (module.Header.NumChannels < 10)
 				{
-					uint chn = (uint)((module.Header.NumChannels + 0x30) << 24);
-					converterStream.Write_B_UINT32(chn | 0x0043484e);	// xCHN
+					char chn = (char)(module.Header.NumChannels + 0x30);
+					converterStream.WriteMark(chn + "CHN");
 				}
 				else
 				{
-					uint chn = (uint)((((module.Header.NumChannels / 10) + 0x30) << 24) | (((module.Header.NumChannels % 10) + 0x30) << 16));
-					converterStream.Write_B_UINT32(chn | 0x00004348);	// xxCH
+					string chn = string.Format("{0}{1}", (char)((module.Header.NumChannels / 10) + 0x30), (char)((module.Header.NumChannels % 10) + 0x30));
+					converterStream.WriteMark(chn + "CH");
 				}
 			}
 		}

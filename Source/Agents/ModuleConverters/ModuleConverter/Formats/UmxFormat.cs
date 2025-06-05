@@ -211,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			if (type == UMusic.It)
 			{
-				if (Encoding.ASCII.GetString(sig, 0, 4) == "IMPM")
+				if (Encoding.Latin1.GetString(sig, 0, 4) == "IMPM")
 					return (int)UMusic.It;
 
 				return -1;
@@ -219,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			if (type == UMusic.Xm)
 			{
-				if (Encoding.ASCII.GetString(sig, 0, 16) != "Extended Module:")
+				if (Encoding.Latin1.GetString(sig, 0, 16) != "Extended Module:")
 					return -1;
 
 				moduleStream.ReadInto(sig, 0, 16);
@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			if (type == UMusic.Wav)
 			{
-				if ((Encoding.ASCII.GetString(sig, 0, 4) == "RIFF") && (Encoding.ASCII.GetString(sig, 8, 4) == "WAVE"))
+				if ((Encoding.Latin1.GetString(sig, 0, 4) == "RIFF") && (Encoding.Latin1.GetString(sig, 8, 4) == "WAVE"))
 					return (int)UMusic.Wav;
 
 				return -1;
@@ -255,7 +255,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			if (type == UMusic.S3M)
 			{
-				if (Encoding.ASCII.GetString(sig, 0, 4) == "SCRM")
+				if (Encoding.Latin1.GetString(sig, 0, 4) == "SCRM")
 					return (int)UMusic.S3M;
 
 				// SpaceMarines.umx and Starseek.umx from Return to NaPali
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			if (type == UMusic.Mod)
 			{
-				if ((Encoding.ASCII.GetString(sig, 0, 4) == "M.K.") || (Encoding.ASCII.GetString(sig, 0, 4) == "M!K!"))
+				if ((Encoding.Latin1.GetString(sig, 0, 4) == "M.K.") || (Encoding.Latin1.GetString(sig, 0, 4) == "M!K!"))
 					return (int)UMusic.Mod;
 
 				return -1;

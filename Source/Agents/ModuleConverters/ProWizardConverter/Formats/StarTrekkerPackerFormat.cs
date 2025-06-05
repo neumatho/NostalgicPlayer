@@ -230,9 +230,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/// Return the ID mark
 		/// </summary>
 		/********************************************************************/
-		protected override uint GetMark()
+		protected override string GetMark()
 		{
-			return 0x464c5434;		// FLT4
+			return "FLT4";
 		}
 
 

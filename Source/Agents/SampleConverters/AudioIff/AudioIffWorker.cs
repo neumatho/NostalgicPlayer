@@ -396,15 +396,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 				Encoding encoder = EncoderCollection.Macintosh;
 
 				// Write the IFF header
-				writerStream.Write_B_UINT32(0x464f524d);						// FORM
+				writerStream.WriteMark("FORM");
 				writerStream.Write_B_UINT32(0);									// File size
-				writerStream.Write_B_UINT32(0x41494646);						// AIFF
+				writerStream.WriteMark("AIFF");
 
 				// Write the annotation chunk
 				byte[] strBuf = encoder.GetBytes(Resources.IDS_AUDIOIFF_ANNO);
 				int strLen = strBuf.Length;
 
-				writerStream.Write_B_UINT32(0x414e4e4f);						// ANNO
+				writerStream.WriteMark("ANNO");
 				writerStream.Write_B_UINT32((uint)strLen);							// Chunk size
 				writerStream.Write(strBuf, 0, strLen);
 
@@ -414,7 +414,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 				// Write the common chunk
 				commPosition = writerStream.Position;								// Remember the position of the common chunk
 
-				writerStream.Write_B_UINT32(0x434f4d4d);						// COMM
+				writerStream.WriteMark("COMM");
 				writerStream.Write_B_UINT32(18);								// Chunk size
 				writerStream.Write_B_UINT16((ushort)saveFormat.Channels);			// Number of channels
 				writerStream.Write_B_UINT32(0);									// Sample frames
@@ -426,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 				// Write the sound data chunk
 				ssndPosition = (uint)writerStream.Position;							// Remember the position of the sound chunk
 
-				writerStream.Write_B_UINT32(0x53534e44);						// SSND
+				writerStream.WriteMark("SSND");
 				writerStream.Write_B_UINT32(0);									// Chunk size
 				writerStream.Write_B_UINT32(0);									// Offset
 				writerStream.Write_B_UINT32(0);									// Block size

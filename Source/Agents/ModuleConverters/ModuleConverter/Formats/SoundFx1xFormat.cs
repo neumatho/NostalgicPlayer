@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// Write the ID mark
 			moduleStream.Seek(4, SeekOrigin.Current);
-			converterStream.Write_B_UINT32(0x534f3331);			// SO31
+			converterStream.WriteMark("SO31");
 
 			// Copy the delay value and pads
 			Helpers.CopyData(moduleStream, converterStream, 2 + 14);

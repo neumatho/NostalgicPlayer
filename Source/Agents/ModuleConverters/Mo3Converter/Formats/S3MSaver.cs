@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 			converterStream.Write_L_UINT16(2);		// File format = standard (samples unsigned)
 
-			converterStream.Write_B_UINT32(0x5343524d);		// SCRM
+			converterStream.WriteMark("SCRM");
 
 			converterStream.Write_UINT8(header.GlobalVol);
 			converterStream.Write_UINT8(header.DefaultSpeed);
@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 					converterStream.Write(Enumerable.Repeat<byte>(0, 12).ToArray());	// Padding
 
 					converterStream.WriteString(sample.SampleName, 28);
-					converterStream.Write_B_UINT32(0x53435249);		// SCRI
+					converterStream.WriteMark("SCRI");
 				}
 				else
 				{
@@ -305,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 					converterStream.Write_L_UINT32(0);		// Int:Last used
 
 					converterStream.WriteString(sample.SampleName, 28);
-					converterStream.Write_B_UINT32(0x53435253);		// SCRS
+					converterStream.WriteMark("SCRS");
 				}
 			}
 

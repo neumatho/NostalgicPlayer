@@ -86,12 +86,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			using (WriterStream writerStream = new WriterStream(stream, true))
 			{
 				// Write RIFF header
-				writerStream.Write_B_UINT32(0x52494646);						// RIFF
+				writerStream.WriteMark("RIFF");
 				writerStream.Write_L_UINT32(0);									// File size
-				writerStream.Write_B_UINT32(0x57415645);						// WAVE
+				writerStream.WriteMark("WAVE");
 
 				// Write the fmt chunk
-				writerStream.Write_B_UINT32(0x666d7420);						// fmt
+				writerStream.WriteMark("fmt ");
 				writerStream.Write_L_UINT32(0);									// Chunk size
 				writerStream.Write_L_UINT16((ushort)FormatId);						// Format ID
 				writerStream.Write_L_UINT16((ushort)saveFormat.Channels);			// Number of channels
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				// Write the data chunk
 				dataPosition = (uint)writerStream.Position;							// Remember the position of the data chunk
 
-				writerStream.Write_B_UINT32(0x64617461);						// data
+				writerStream.WriteMark("data");
 				writerStream.Write_L_UINT32(0);									// Chunk size
 			}
 		}

@@ -1103,10 +1103,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			Console.WriteLine("Testing Flac__Metadata_Object_Picture_Is_Legal");
 			Assert.IsTrue(Metadata_Object.Flac__Metadata_Object_Picture_Is_Legal(block, out violation), $"Failed with violation: {violation}");
 
-			PI_Set_Data(picture, Encoding.ASCII.GetBytes("PNGDATA"), 7);
+			PI_Set_Data(picture, Encoding.Latin1.GetBytes("PNGDATA"), 7);
 
 			Console.WriteLine("Testing Flac__Metadata_Object_Picture_Set_Data(copy)");
-			Assert.IsTrue(Metadata_Object.Flac__Metadata_Object_Picture_Set_Data(block, Encoding.ASCII.GetBytes("PNGDATA"), 7, true));
+			Assert.IsTrue(Metadata_Object.Flac__Metadata_Object_Picture_Set_Data(block, Encoding.Latin1.GetBytes("PNGDATA"), 7, true));
 			Assert.IsTrue(Metadata_Utils.Compare_Block(block, picture));
 
 			Console.WriteLine("Testing Flac__Metadata_Object_Clone()");
@@ -1191,10 +1191,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			Console.WriteLine("Testing Flac__Metadata_Object_Picture_Is_Legal");
 			Assert.IsTrue(Metadata_Object.Flac__Metadata_Object_Picture_Is_Legal(block, out violation), $"Failed with violation: {violation}");
 
-			PI_Set_Data(picture, Encoding.ASCII.GetBytes("PNGDATA"), 7);
+			PI_Set_Data(picture, Encoding.Latin1.GetBytes("PNGDATA"), 7);
 
 			Console.WriteLine("Testing Flac__Metadata_Object_Picture_Set_Data(own)");
-			Assert.IsTrue(Metadata_Object.Flac__Metadata_Object_Picture_Set_Data(block, Encoding.ASCII.GetBytes("PNGDATA"), 7, false));
+			Assert.IsTrue(Metadata_Object.Flac__Metadata_Object_Picture_Set_Data(block, Encoding.Latin1.GetBytes("PNGDATA"), 7, false));
 			Assert.IsTrue(Metadata_Utils.Compare_Block(block, picture));
 
 			Console.WriteLine("Testing Flac__Metadata_Object_Clone()");
@@ -1419,7 +1419,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			{
 				Flac__StreamMetadata_VorbisComment_Entry entry = vc.Comments[i];
 
-				if ((entry.Length > n) && (Encoding.ASCII.GetString(entry.Entry, 0, (int)n) == name) && (entry.Entry[n] == (byte)'='))
+				if ((entry.Length > n) && (Encoding.Latin1.GetString(entry.Entry, 0, (int)n) == name) && (entry.Entry[n] == (byte)'='))
 					return (int)i;
 			}
 
@@ -1543,7 +1543,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 		{
 			track = new Flac__StreamMetadata_CueSheet_Track();
 
-			byte[] encodedBytes = Encoding.ASCII.GetBytes(isrc);
+			byte[] encodedBytes = Encoding.Latin1.GetBytes(isrc);
 
 			track.Offset = offset;
 			track.Number = number;
@@ -1838,7 +1838,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			if (metaPicture.Mime_Type != null)
 				block.Length -= (uint32_t)metaPicture.Mime_Type.Length - 1;
 
-			byte[] encodedBytes = Encoding.ASCII.GetBytes(s);
+			byte[] encodedBytes = Encoding.Latin1.GetBytes(s);
 
 			metaPicture.Mime_Type = new byte[encodedBytes.Length + 1];
 			Array.Copy(encodedBytes, metaPicture.Mime_Type, encodedBytes.Length);

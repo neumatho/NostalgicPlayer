@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 			Flac__StreamMetadata_Application metaApplication = new Flac__StreamMetadata_Application();
 			application1.Data = metaApplication;
 
-			Array.Copy(Encoding.ASCII.GetBytes("This"), metaApplication.Id, 4);
+			Array.Copy(Encoding.Latin1.GetBytes("This"), metaApplication.Id, 4);
 			metaApplication.Data = new byte[] { 0xf0, 0xe1, 0xd2, 0xc3 };
 
 			application2 = new Flac__StreamMetadata();
@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 			metaApplication = new Flac__StreamMetadata_Application();
 			application2.Data = metaApplication;
 
-			Array.Copy(Encoding.ASCII.GetBytes("Here"), metaApplication.Id, 4);
+			Array.Copy(Encoding.Latin1.GetBytes("Here"), metaApplication.Id, 4);
 			metaApplication.Data = null;
 
 			byte[] vendor_String = Encoding.UTF8.GetBytes("reference libFLAC 1.3.4 20220220");
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 			metaCueSheet.Tracks = ArrayHelper.InitializeArray<Flac__StreamMetadata_CueSheet_Track>((int)metaCueSheet.Num_Tracks);
 			metaCueSheet.Tracks[0].Offset = 0;
 			metaCueSheet.Tracks[0].Number = 1;
-			Array.Copy(Encoding.ASCII.GetBytes("ACBDE1234567"), metaCueSheet.Tracks[0].Isrc, 12);
+			Array.Copy(Encoding.Latin1.GetBytes("ACBDE1234567"), metaCueSheet.Tracks[0].Isrc, 12);
 			metaCueSheet.Tracks[0].Type = 0;
 			metaCueSheet.Tracks[0].Pre_Emphasis = 1;
 			metaCueSheet.Tracks[0].Num_Indices = 2;
@@ -170,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 			metaCueSheet.Tracks[0].Indices[1].Number = 1;
 			metaCueSheet.Tracks[1].Offset = 1234 * 588;
 			metaCueSheet.Tracks[1].Number = 2;
-			Array.Copy(Encoding.ASCII.GetBytes("ACBDE7654321"), metaCueSheet.Tracks[1].Isrc, 12);
+			Array.Copy(Encoding.Latin1.GetBytes("ACBDE7654321"), metaCueSheet.Tracks[1].Isrc, 12);
 			metaCueSheet.Tracks[1].Type = 1;
 			metaCueSheet.Tracks[1].Pre_Emphasis = 0;
 			metaCueSheet.Tracks[1].Num_Indices = 1;
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 			picture.Data = metaPicture;
 
 			metaPicture.Type = Flac__StreamMetadata_Picture_Type.Front_Cover;
-			picture.Length += Strdup("image/jpeg", Encoding.ASCII, out metaPicture.Mime_Type);
+			picture.Length += Strdup("image/jpeg", Encoding.Latin1, out metaPicture.Mime_Type);
 			picture.Length += Strdup("desc", Encoding.UTF8, out metaPicture.Description);
 			metaPicture.Width = 300;
 			metaPicture.Height = 300;
@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 			metaPicture.Colors = 0;
 			metaPicture.Data_Length = 12;
 			metaPicture.Data = new byte[metaPicture.Data_Length];
-			Array.Copy(Encoding.ASCII.GetBytes("SOMEJPEGDATA"), metaPicture.Data, 12);
+			Array.Copy(Encoding.Latin1.GetBytes("SOMEJPEGDATA"), metaPicture.Data, 12);
 			picture.Length += metaPicture.Data_Length;
 			
 			unknown = new Flac__StreamMetadata();
@@ -533,7 +533,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 		{
 			if (!blockCopy.Media_Catalog_Number.AsSpan().SequenceEqual(block.Media_Catalog_Number))
 			{
-				Console.WriteLine("FAILED, Media_Catalog_Number mismatch, expected {0}, got {1}", Encoding.ASCII.GetString(block.Media_Catalog_Number, 0, block.Media_Catalog_Number.Count(b => b != 0)), Encoding.ASCII.GetString(blockCopy.Media_Catalog_Number, 0, blockCopy.Media_Catalog_Number.Count(b => b != 0)));
+				Console.WriteLine("FAILED, Media_Catalog_Number mismatch, expected {0}, got {1}", Encoding.Latin1.GetString(block.Media_Catalog_Number, 0, block.Media_Catalog_Number.Count(b => b != 0)), Encoding.Latin1.GetString(blockCopy.Media_Catalog_Number, 0, blockCopy.Media_Catalog_Number.Count(b => b != 0)));
 				return false;
 			}
 
@@ -580,7 +580,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 				{
 					if (!blockCopy.Tracks[i].Isrc.AsSpan().SequenceEqual(block.Tracks[i].Isrc))
 					{
-						Console.WriteLine("FAILED, Tracks[{0}].Isrc mismatch, expected {1}, got {2}", i, Encoding.ASCII.GetString(block.Tracks[i].Isrc, 0, block.Tracks[i].Isrc.Count(b => b != 0)), Encoding.ASCII.GetString(blockCopy.Tracks[i].Isrc, 0, blockCopy.Tracks[i].Isrc.Count(b => b != 0)));
+						Console.WriteLine("FAILED, Tracks[{0}].Isrc mismatch, expected {1}, got {2}", i, Encoding.Latin1.GetString(block.Tracks[i].Isrc, 0, block.Tracks[i].Isrc.Count(b => b != 0)), Encoding.Latin1.GetString(blockCopy.Tracks[i].Isrc, 0, blockCopy.Tracks[i].Isrc.Count(b => b != 0)));
 						return false;
 					}
 
@@ -653,7 +653,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 
 			if (!blockCopy.Mime_Type.AsSpan().SequenceEqual(block.Mime_Type))
 			{
-				Console.WriteLine("FAILED, Mime_Type mismatch, expected {0}, got {1}", Encoding.ASCII.GetString(block.Mime_Type, 0, len), Encoding.ASCII.GetString(blockCopy.Mime_Type, 0, lenCopy));
+				Console.WriteLine("FAILED, Mime_Type mismatch, expected {0}, got {1}", Encoding.Latin1.GetString(block.Mime_Type, 0, len), Encoding.Latin1.GetString(blockCopy.Mime_Type, 0, lenCopy));
 				return false;
 			}
 

@@ -255,7 +255,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			uint[] newOffsetsAndLength = new uint[8];
 
 			// Start to write the ID mark
-			converterStream.Write_B_UINT32(0x46433134);			// FC14
+			converterStream.WriteMark("FC14");
 			moduleStream.Seek(4, SeekOrigin.Begin);
 
 			// Copy the sequence length and make it even

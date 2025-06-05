@@ -99,12 +99,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 				Encoding encoder = EncoderCollection.Amiga;
 
 				// Write FORM header
-				writerStream.Write_B_UINT32(0x464f524d);						// FORM
+				writerStream.WriteMark("FORM");
 				writerStream.Write_B_UINT32(0);									// File size
 				writerStream.Write_B_UINT32(0x38535658);						// 8SVX
 
 				// Write the VHDR chunk
-				writerStream.Write_B_UINT32(0x56484452);						// VHDR
+				writerStream.WriteMark("VHDR");
 				writerStream.Write_B_UINT32(20);								// Chunk size
 				writerStream.Write_B_UINT32(0);									// One-shot part length
 
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					strBuf = encoder.GetBytes(saveFormat.Name);
 					strLen = strBuf.Length;
 
-					writerStream.Write_B_UINT32(0x4e414d45);					// NAME
+					writerStream.WriteMark("NAME");
 					writerStream.Write_B_UINT32((uint)strLen);						// Chunk size
 					writerStream.Write(strBuf, 0, strLen);
 
@@ -141,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					strBuf = encoder.GetBytes(saveFormat.Author);
 					strLen = strBuf.Length;
 
-					writerStream.Write_B_UINT32(0x41555448);					// AUTH
+					writerStream.WriteMark("AUTH");
 					writerStream.Write_B_UINT32((uint)strLen);						// Chunk size
 					writerStream.Write(strBuf, 0, strLen);
 
@@ -153,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 				strBuf = encoder.GetBytes(Resources.IDS_IFF8SVX_ANNO);
 				strLen = strBuf.Length;
 
-				writerStream.Write_B_UINT32(0x414e4e4f);					// ANNO
+				writerStream.WriteMark("ANNO");
 				writerStream.Write_B_UINT32((uint)strLen);						// Chunk size
 				writerStream.Write(strBuf, 0, strLen);
 
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 				if (saveFormat.Channels == 2)
 				{
 					// Yes, write a CHAN chunk
-					writerStream.Write_B_UINT32(0x4348414e);				// CHAN
+					writerStream.WriteMark("CHAN");
 					writerStream.Write_B_UINT32(4);							// Chunk size
 					writerStream.Write_B_UINT32(6);							// Stereo indicator
 
@@ -187,7 +187,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 				// Write the BODY chunk
 				dataPosition = (uint)writerStream.Position;						// Remember the position of the BODY chunk
 
-				writerStream.Write_B_UINT32(0x424f4459);					// BODY
+				writerStream.WriteMark("BODY");
 				writerStream.Write_L_UINT32(0);								// Chunk size
 			}
 		}

@@ -3,12 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers.Chunks;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -53,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		{
 			FileHeader header = module.Header;
 
-			converterStream.Write(Encoding.ASCII.GetBytes("Extended Module: "));
+			converterStream.WriteMark("Extended Module: ");
 			converterStream.WriteString(module.Header.SongName, 20, 0x20);
 			converterStream.Write_UINT8(0x1a);
 
@@ -61,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			if (versChunk != null)
 				converterStream.WriteString(versChunk.CreatedWithTracker, 20, 0x20);
 			else
-				converterStream.WriteString(Encoding.ASCII.GetBytes("FastTracker v2.00"), 20, 0x20);
+				converterStream.WriteMark("FastTracker v2.00   ");
 
 			converterStream.Write_L_UINT16(0x0104);		// Version
 			converterStream.Write_L_UINT32(0x0114);		// Header size

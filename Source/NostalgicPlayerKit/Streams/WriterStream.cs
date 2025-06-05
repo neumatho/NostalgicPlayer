@@ -543,6 +543,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			if (toWrite < length)
 				Write(Enumerable.Repeat(padding, length - toWrite).ToArray());
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will write a marking
+		/// </summary>
+		/********************************************************************/
+		public void WriteMark(string marking)
+		{
+			byte[] buffer = Encoding.Latin1.GetBytes(marking);
+
+			Write(buffer, 0, buffer.Length);
+		}
 		#endregion
 	}
 }

@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		{
 			FileHeader header = module.Header;
 
-			converterStream.Write_B_UINT32(0x494d504d);			// IMPM
+			converterStream.WriteMark("IMPM");
 			converterStream.WriteString(header.SongName, 26);
 
 			converterStream.Write_L_UINT16(0);					// PHiligt
@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 				Instrument instr = module.Instruments[i];
 
-				converterStream.Write_B_UINT32(0x494d5049);		// IMPI
+				converterStream.WriteMark("IMPI");
 				converterStream.WriteString(instr.FileName, 12);
 				converterStream.Write_UINT8(0);
 
@@ -460,7 +460,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 				Sample sample = module.Samples[i];
 
-				converterStream.Write_B_UINT32(0x494d5053);		// IMPS
+				converterStream.WriteMark("IMPS");
 				converterStream.WriteString(sample.FileName, 12);
 
 				converterStream.Write_UINT8(0);

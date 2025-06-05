@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					metaPicture.Type = Flac__StreamMetadata_Picture_Type.Other;
 
 					// Now initialize mime_type and description with empty strings to make things easier on the client
-					if (!Copy_CString(Encoding.ASCII, ref metaPicture.Mime_Type, string.Empty))
+					if (!Copy_CString(Encoding.Latin1, ref metaPicture.Mime_Type, string.Empty))
 						return null;
 
 					if (!Copy_CString(Encoding.UTF8, ref metaPicture.Description, string.Empty))
@@ -971,7 +971,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				return false;
 
 			size_t field_Name_Length = (size_t)eq;
-			string field_Name = Encoding.ASCII.GetString(entry.Entry, 0, (int)field_Name_Length);
+			string field_Name = Encoding.Latin1.GetString(entry.Entry, 0, (int)field_Name_Length);
 
 			int i = VorbisComment_Find_Entry_From(@object, 0, field_Name);
 			if (i >= 0)
@@ -1081,7 +1081,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			if (!Format.Flac__Format_VorbisComment_Entry_Name_Is_Legal(field_Name))
 				return false;
 
-			byte[] encodedFieldName = Encoding.ASCII.GetBytes(field_Name);
+			byte[] encodedFieldName = Encoding.Latin1.GetBytes(field_Name);
 			encodedFieldName = Alloc.Safe_Realloc(encodedFieldName, (size_t)encodedFieldName.Length + 1);
 
 			byte[] encodedFieldValue = Encoding.UTF8.GetBytes(field_Value);
@@ -1134,7 +1134,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			size_t nn = eq;
 			size_t nv = entry.Length - nn - 1;	// -1 for the '='
 
-			field_Name = Encoding.ASCII.GetString(entry.Entry, 0, (int)nn);
+			field_Name = Encoding.Latin1.GetString(entry.Entry, 0, (int)nn);
 			field_Value = Encoding.UTF8.GetString(entry.Entry, (int)nn + 1, (int)nv);
 
 			return true;
@@ -1159,7 +1159,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			if (eq == -1)
 				return false;
 
-			return (eq == field_Name.Length) && Encoding.ASCII.GetString(entry.Entry, 0, eq).Equals(field_Name, StringComparison.InvariantCultureIgnoreCase);
+			return (eq == field_Name.Length) && Encoding.Latin1.GetString(entry.Entry, 0, eq).Equals(field_Name, StringComparison.InvariantCultureIgnoreCase);
 		}
 
 
@@ -1689,7 +1689,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			Flac__byte[] old = metaPicture.Mime_Type;
 			size_t old_Length = old != null ? (size_t)old.Length - 1 : 0;
 
-			Flac__byte[] @new = Encoding.ASCII.GetBytes(mime_Type);
+			Flac__byte[] @new = Encoding.Latin1.GetBytes(mime_Type);
 			size_t new_Length = (size_t)@new.Length;
 
 			// Here we should do the copy, but since we always creates a new byte array, this argument is not used

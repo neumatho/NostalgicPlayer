@@ -2427,7 +2427,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						metadata_Picture_Has_Type1 = true;
 
 						// Standard icon must be 32x32 pixel PNG
-						string mime = Encoding.ASCII.GetString(picture.Mime_Type);
+						string mime = Encoding.Latin1.GetString(picture.Mime_Type);
 
 						if ((picture.Type == Flac__StreamMetadata_Picture_Type.File_Icon_Standard) && (((mime != "image/png") && (mime != "-->")) || (picture.Width != 32) || (picture.Height != 32)))
 							return Flac__StreamEncoderInitStatus.Invalid_Metadata;

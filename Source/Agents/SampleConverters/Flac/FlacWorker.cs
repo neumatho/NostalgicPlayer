@@ -582,7 +582,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		/********************************************************************/
 		private void ParsePicture(Flac__StreamMetadata_Picture picture)
 		{
-			string mimeType = Encoding.ASCII.GetString(picture.Mime_Type, 0, picture.Mime_Type.Length - 1);
+			string mimeType = Encoding.Latin1.GetString(picture.Mime_Type, 0, picture.Mime_Type.Length - 1);
 			if (mimeType == "-->")	// URL, we do not support that
 				return;
 

@@ -224,9 +224,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/// Return the ID mark
 		/// </summary>
 		/********************************************************************/
-		protected override uint GetMark()
+		protected override string GetMark()
 		{
-			return eightChannels ? 0x43443831U : 0x4d2e4b2e;		// CD81 / M.K.
+			return eightChannels ? "CD81" : "M.K.";
 		}
 
 

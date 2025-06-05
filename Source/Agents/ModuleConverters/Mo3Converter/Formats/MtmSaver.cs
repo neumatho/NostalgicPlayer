@@ -96,9 +96,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		/********************************************************************/
 		private void WriteMark(Mo3Module module, ConverterStream converterStream)
 		{
-			converterStream.Write_UINT8(0x4d);		// M
-			converterStream.Write_UINT8(0x54);		// T
-			converterStream.Write_UINT8(0x4d);		// M
+			converterStream.WriteMark("MTM");
 
 			VersChunk versChunk = module.FindChunk<VersChunk>();
 			if (versChunk != null)

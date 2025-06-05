@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/********************************************************************/
 		private void WriteHeader(ConverterStream converterStream)
 		{
-			converterStream.Write_B_UINT32(0x4d4d4430);		// MMD0
+			converterStream.WriteMark("MMD0");					// Marking
 			converterStream.Write_B_UINT32(0);				// Length, unknown at the moment. Will be written at the end of the conversion
 			converterStream.Write_B_UINT32(0);				// Song pointer
 			converterStream.Write_B_UINT16(0);				// Internal player specific information

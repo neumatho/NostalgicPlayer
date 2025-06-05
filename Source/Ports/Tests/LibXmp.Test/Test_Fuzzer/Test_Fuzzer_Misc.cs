@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 		public void Test_Fuzzer_Misc()
 		{
 			// 0x84 is specifically to check for a Coconizer bug
-			byte[] buf = new byte[] { 0x84 }.Union(Encoding.ASCII.GetBytes("ZCDEFGH")).ToArray();
+			byte[] buf = new byte[] { 0x84 }.Union(Encoding.Latin1.GetBytes("ZCDEFGH")).ToArray();
 
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 

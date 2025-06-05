@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 				converterStream.Write(zeroBuf, 0, 128 - positionList.Length);
 
 			// Write mark
-			converterStream.Write_B_UINT32(GetMark());
+			converterStream.WriteMark(GetMark());
 
 			// Write the patterns
 			foreach (byte[] patternData in GetPatterns(moduleStream))
@@ -260,9 +260,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		/// Return the ID mark
 		/// </summary>
 		/********************************************************************/
-		protected virtual uint GetMark()
+		protected virtual string GetMark()
 		{
-			return 0x4d2e4b2e;		// M.K.
+			return "M.K.";
 		}
 		#endregion
 	}

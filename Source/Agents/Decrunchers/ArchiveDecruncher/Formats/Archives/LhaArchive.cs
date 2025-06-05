@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 			while (lha.GetHeader(out LzHeader hdr))
 			{
 				// Find compression method
-				int method = methods[Encoding.ASCII.GetString(hdr.Method)];
+				int method = methods[Encoding.Latin1.GetString(hdr.Method)];
 
 				// Don't add directory entries
 				if (((hdr.UnixMode & Constants.Unix_File_TypeMask) == Constants.Unix_File_Regular) && (method != Constants.LzhDirs_Method_Num))

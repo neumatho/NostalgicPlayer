@@ -418,7 +418,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/********************************************************************/
 		protected override void WriteFactChunk(WriterStream stream)
 		{
-			stream.Write_B_UINT32(0x66616374);			// fact
+			stream.WriteMark("fact");
 			stream.Write_L_UINT32(4);					// Chunk size
 
 			// Remember the position, so we can write back the right value when closing

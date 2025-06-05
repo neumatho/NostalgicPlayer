@@ -6,7 +6,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -157,8 +156,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			}
 
 			// Start to write the ID mark
-			byte[] mark = Encoding.ASCII.GetBytes("SOARV1.0");
-			converterStream.Write(mark, 0, mark.Length);
+			converterStream.WriteMark("SOARV1.0");
 
 			// Write all the different parts
 			if (!WriteSubSongs(offsets, moduleStream, converterStream))
@@ -261,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			if (count == 0)
 				return false;
 
-			converterStream.Write_B_UINT32(0x5354424c);		// STBL
+			converterStream.WriteMark("STBL");
 			converterStream.Write_B_UINT32(count);
 
 			return CopyData(moduleStream, converterStream, offsets[0], count, 12);
@@ -280,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			if (count == 0)
 				return false;
 
-			converterStream.Write_B_UINT32(0x4f565442);		// OVTB
+			converterStream.WriteMark("OVTB");
 			converterStream.Write_B_UINT32(count);
 
 			return CopyData(moduleStream, converterStream, offsets[1], count, 16);
@@ -299,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			if (count == 0)
 				return false;
 
-			converterStream.Write_B_UINT32(0x4e54424c);		// NTBL
+			converterStream.WriteMark("NTBL");
 			converterStream.Write_B_UINT32(count);
 
 			return CopyData(moduleStream, converterStream, offsets[2], count, 4);
@@ -324,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			List<InstrumentInfo> list = new List<InstrumentInfo>();
 
-			converterStream.Write_B_UINT32(0x494e5354);		// INST
+			converterStream.WriteMark("INST");
 			converterStream.Write_B_UINT32(count);
 
 			moduleStream.Seek(moduleOffset + offsets[3], SeekOrigin.Begin);
@@ -378,7 +376,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			if (moduleStream.EndOfStream)
 				return false;
 
-			converterStream.Write_B_UINT32(0x53443842);		// SD8B
+			converterStream.WriteMark("SD8B");
 			converterStream.Write_B_UINT32(count);
 
 			if (count == 0)
@@ -465,7 +463,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		{
 			uint count = (offsets[5] - offsets[4]) / 128;
 
-			converterStream.Write_B_UINT32(0x53595754);		// SYWT
+			converterStream.WriteMark("SYWT");
 			converterStream.Write_B_UINT32(count);
 
 			return CopyData(moduleStream, converterStream, offsets[4], count, 128);
@@ -482,7 +480,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		{
 			uint count = (offsets[6] - offsets[5]) / 128;
 
-			converterStream.Write_B_UINT32(0x53594152);		// SYAR
+			converterStream.WriteMark("SYAR");
 			converterStream.Write_B_UINT32(count);
 
 			return CopyData(moduleStream, converterStream, offsets[5], count, 128);
@@ -499,7 +497,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		{
 			uint count = (offsets[7] - offsets[6]) / 128;
 
-			converterStream.Write_B_UINT32(0x53594146);		// SYAF
+			converterStream.WriteMark("SYAF");
 			converterStream.Write_B_UINT32(count);
 
 			return CopyData(moduleStream, converterStream, offsets[6], count, 128);
@@ -514,8 +512,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/********************************************************************/
 		private void WriteEditorData(ConverterStream converterStream)
 		{
-			byte[] mark = Encoding.ASCII.GetBytes("EDATV1.1");
-			converterStream.Write(mark, 0, mark.Length);
+			converterStream.WriteMark("EDATV1.1");
 
 			// Enable voices
 			converterStream.Write_UINT8(1);
