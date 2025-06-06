@@ -106,8 +106,8 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Game Music Creator | .gmc | | Game Music Creator |
 | General Digital Music | .gdm | | Xmp |
 | GnoiPacker | .gnoi | ProWizard | ModTracker |
+| Gnu Protected Module | .gpmo | ProWizard | ModTracker |
 | GnuPlayer | .gnu | ProWizard | ModTracker |
-| GPMO | .gpmo | ProWizard | ModTracker |
 | HCD Protector | .hcd | ProWizard | ModTracker |
 | Heatseeker mc1.0 | .hmc / .crb | ProWizard | ModTracker |
 | Hippel | .hip | | Hippel |

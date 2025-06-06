@@ -372,7 +372,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 				return new GnuPlayerFormat();
 
 			if (typeId == agent55Id)
-				return new GpmoFormat();
+				return new GnuProtectedModuleFormat();
 
 			if (typeId == agent56Id)
 				return new HcdProtectorFormat();

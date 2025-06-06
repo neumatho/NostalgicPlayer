@@ -1198,7 +1198,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GPMO.
+        ///   Looks up a localized string similar to Gnu Protected Module.
         /// </summary>
         internal static string IDS_PROWIZ_NAME_AGENT55 {
             get {

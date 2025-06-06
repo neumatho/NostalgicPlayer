@@ -11,9 +11,9 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Formats
 {
 	/// <summary>
-	/// GPMO
+	/// Gnu Protected Module
 	/// </summary>
-	internal class GpmoFormat : ProWizardForPcBase
+	internal class GnuProtectedModuleFormat : ProWizardForPcBase
 	{
 		private byte numberOfPositions;
 		private byte restartPosition;

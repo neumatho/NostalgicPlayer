@@ -505,7 +505,7 @@ This is a group on the Atari, so the format can contains either 4 or 8 channels 
     <value>GnuPlayer</value>
   </data>
   <data name="IDS_PROWIZ_NAME_AGENT55" xml:space="preserve">
-    <value>GPMO</value>
+    <value>Gnu Protected Module</value>
   </data>
   <data name="IDS_PROWIZ_NAME_AGENT56" xml:space="preserve">
     <value>HCD Protector</value>
