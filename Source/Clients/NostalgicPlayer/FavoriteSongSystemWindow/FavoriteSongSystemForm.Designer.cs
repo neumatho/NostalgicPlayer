@@ -28,175 +28,183 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FavoriteSongSystemForm));
-			this.favoriteDataGridView = new Krypton.Toolkit.KryptonDataGridView();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
-			this.addButton = new Krypton.Toolkit.KryptonButton();
-			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
-			this.removeButton = new Krypton.Toolkit.KryptonButton();
-			this.resetButton = new Krypton.Toolkit.KryptonButton();
-			this.favoriteGroup = new Krypton.Toolkit.KryptonGroup();
-			this.showComboBox = new Krypton.Toolkit.KryptonComboBox();
-			this.otherNumberTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox();
-			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-			((System.ComponentModel.ISupportInitialize)(this.favoriteDataGridView)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.favoriteGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.favoriteGroup.Panel)).BeginInit();
-			this.favoriteGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.showComboBox)).BeginInit();
-			this.SuspendLayout();
+			favoriteDataGridView = new Krypton.Toolkit.KryptonDataGridView();
+			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			addButton = new Krypton.Toolkit.KryptonButton();
+			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			removeButton = new Krypton.Toolkit.KryptonButton();
+			resetButton = new Krypton.Toolkit.KryptonButton();
+			favoriteGroup = new Krypton.Toolkit.KryptonGroup();
+			showComboBox = new Krypton.Toolkit.KryptonComboBox();
+			otherNumberTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox();
+			toolTip = new System.Windows.Forms.ToolTip(components);
+			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).BeginInit();
+			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
+			((System.ComponentModel.ISupportInitialize)favoriteGroup).BeginInit();
+			((System.ComponentModel.ISupportInitialize)favoriteGroup.Panel).BeginInit();
+			favoriteGroup.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)showComboBox).BeginInit();
+			SuspendLayout();
 			// 
 			// favoriteDataGridView
 			// 
-			this.favoriteDataGridView.AllowUserToAddRows = false;
-			this.favoriteDataGridView.AllowUserToDeleteRows = false;
-			this.favoriteDataGridView.AllowUserToOrderColumns = true;
-			this.favoriteDataGridView.AllowUserToResizeRows = false;
-			this.favoriteDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.favoriteDataGridView.GridStyles.StyleDataCells = Krypton.Toolkit.GridStyle.Sheet;
-			this.favoriteDataGridView.Location = new System.Drawing.Point(0, 0);
-			this.favoriteDataGridView.Name = "favoriteDataGridView";
-			this.favoriteDataGridView.Palette = this.fontPalette;
-			this.favoriteDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.favoriteDataGridView.ReadOnly = true;
-			this.controlResource.SetResourceKey(this.favoriteDataGridView, null);
-			this.favoriteDataGridView.RowHeadersVisible = false;
-			this.favoriteDataGridView.RowTemplate.Height = 25;
-			this.favoriteDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.favoriteDataGridView.ShowCellErrors = false;
-			this.favoriteDataGridView.ShowEditingIcon = false;
-			this.favoriteDataGridView.ShowRowErrors = false;
-			this.favoriteDataGridView.Size = new System.Drawing.Size(404, 182);
-			this.favoriteDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			this.favoriteDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
-			this.favoriteDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			this.favoriteDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
-			this.favoriteDataGridView.TabIndex = 0;
-			this.favoriteDataGridView.SelectionChanged += new System.EventHandler(this.FavoriteDataGridView_SelectionChanged);
-			this.favoriteDataGridView.DoubleClick += new System.EventHandler(this.FavoriteDataGridView_DoubleClick);
+			favoriteDataGridView.AllowUserToAddRows = false;
+			favoriteDataGridView.AllowUserToDeleteRows = false;
+			favoriteDataGridView.AllowUserToOrderColumns = true;
+			favoriteDataGridView.AllowUserToResizeRows = false;
+			favoriteDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			favoriteDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			favoriteDataGridView.GridStyles.StyleDataCells = Krypton.Toolkit.GridStyle.Sheet;
+			favoriteDataGridView.Location = new System.Drawing.Point(0, 0);
+			favoriteDataGridView.Name = "favoriteDataGridView";
+			favoriteDataGridView.Palette = fontPalette;
+			favoriteDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			favoriteDataGridView.ReadOnly = true;
+			controlResource.SetResourceKey(favoriteDataGridView, null);
+			favoriteDataGridView.RowHeadersVisible = false;
+			favoriteDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			favoriteDataGridView.ShowCellErrors = false;
+			favoriteDataGridView.ShowEditingIcon = false;
+			favoriteDataGridView.ShowRowErrors = false;
+			favoriteDataGridView.Size = new System.Drawing.Size(404, 182);
+			favoriteDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
+			favoriteDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
+			favoriteDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
+			favoriteDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right;
+			favoriteDataGridView.TabIndex = 0;
+			favoriteDataGridView.SelectionChanged += FavoriteDataGridView_SelectionChanged;
+			favoriteDataGridView.DoubleClick += FavoriteDataGridView_DoubleClick;
+			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// addButton
 			// 
-			this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.addButton.Enabled = false;
-			this.addButton.Location = new System.Drawing.Point(8, 196);
-			this.addButton.Name = "addButton";
-			this.addButton.Palette = this.bigFontPalette;
-			this.addButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.addButton, "IDS_FAVORITE_BUTTON_ADD");
-			this.addButton.Size = new System.Drawing.Size(90, 21);
-			this.addButton.TabIndex = 1;
-			this.addButton.Values.Text = "Add";
-			this.addButton.Click += new System.EventHandler(this.AddButton_Click);
+			addButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			addButton.Enabled = false;
+			addButton.Location = new System.Drawing.Point(8, 200);
+			addButton.Name = "addButton";
+			addButton.Palette = bigFontPalette;
+			addButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(addButton, "IDS_FAVORITE_BUTTON_ADD");
+			addButton.Size = new System.Drawing.Size(90, 21);
+			addButton.TabIndex = 1;
+			addButton.Values.Text = "Add";
+			addButton.Click += AddButton_Click;
 			// 
 			// bigFontPalette
 			// 
-			this.bigFontPalette.BaseFontSize = 9F;
+			bigFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			bigFontPalette.BaseFontSize = 9F;
+			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			bigFontPalette.ThemeName = "";
+			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
 			// 
-			this.controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
+			controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
 			// 
 			// removeButton
 			// 
-			this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.removeButton.Enabled = false;
-			this.removeButton.Location = new System.Drawing.Point(102, 196);
-			this.removeButton.Name = "removeButton";
-			this.removeButton.Palette = this.bigFontPalette;
-			this.removeButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.removeButton, "IDS_FAVORITE_BUTTON_REMOVE");
-			this.removeButton.Size = new System.Drawing.Size(90, 21);
-			this.removeButton.TabIndex = 2;
-			this.removeButton.Values.Text = "Remove";
-			this.removeButton.Click += new System.EventHandler(this.RemoveButton_Click);
+			removeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			removeButton.Enabled = false;
+			removeButton.Location = new System.Drawing.Point(102, 200);
+			removeButton.Name = "removeButton";
+			removeButton.Palette = bigFontPalette;
+			removeButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(removeButton, "IDS_FAVORITE_BUTTON_REMOVE");
+			removeButton.Size = new System.Drawing.Size(90, 21);
+			removeButton.TabIndex = 2;
+			removeButton.Values.Text = "Remove";
+			removeButton.Click += RemoveButton_Click;
 			// 
 			// resetButton
 			// 
-			this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.resetButton.Location = new System.Drawing.Point(324, 196);
-			this.resetButton.Name = "resetButton";
-			this.resetButton.Palette = this.bigFontPalette;
-			this.resetButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.resetButton, "IDS_FAVORITE_BUTTON_RESET");
-			this.resetButton.Size = new System.Drawing.Size(90, 21);
-			this.resetButton.TabIndex = 5;
-			this.resetButton.Values.Text = "Reset";
-			this.resetButton.Click += new System.EventHandler(this.ResetButton_Click);
+			resetButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			resetButton.Location = new System.Drawing.Point(324, 200);
+			resetButton.Name = "resetButton";
+			resetButton.Palette = bigFontPalette;
+			resetButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(resetButton, "IDS_FAVORITE_BUTTON_RESET");
+			resetButton.Size = new System.Drawing.Size(90, 21);
+			resetButton.TabIndex = 5;
+			resetButton.Values.Text = "Reset";
+			resetButton.Click += ResetButton_Click;
 			// 
 			// favoriteGroup
 			// 
-			this.favoriteGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.favoriteGroup.Location = new System.Drawing.Point(8, 8);
-			this.favoriteGroup.Name = "favoriteGroup";
+			favoriteGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			favoriteGroup.Location = new System.Drawing.Point(8, 8);
+			favoriteGroup.Name = "favoriteGroup";
 			// 
 			// 
 			// 
-			this.favoriteGroup.Panel.Controls.Add(this.favoriteDataGridView);
-			this.controlResource.SetResourceKey(this.favoriteGroup, null);
-			this.favoriteGroup.Size = new System.Drawing.Size(406, 184);
-			this.favoriteGroup.TabIndex = 0;
+			favoriteGroup.Panel.Controls.Add(favoriteDataGridView);
+			controlResource.SetResourceKey(favoriteGroup, null);
+			favoriteGroup.Size = new System.Drawing.Size(406, 184);
+			favoriteGroup.TabIndex = 0;
 			// 
 			// showComboBox
 			// 
-			this.showComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.showComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this.showComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.showComboBox.DropDownWidth = 121;
-			this.showComboBox.IntegralHeight = false;
-			this.showComboBox.Location = new System.Drawing.Point(196, 198);
-			this.showComboBox.Name = "showComboBox";
-			this.showComboBox.Palette = this.fontPalette;
-			this.showComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.showComboBox, null);
-			this.showComboBox.Size = new System.Drawing.Size(90, 18);
-			this.showComboBox.TabIndex = 3;
-			this.showComboBox.SelectedIndexChanged += new System.EventHandler(this.ShowComboBox_SelectedIndexChanged);
+			showComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			showComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			showComboBox.DropDownWidth = 121;
+			showComboBox.IntegralHeight = false;
+			showComboBox.Location = new System.Drawing.Point(196, 202);
+			showComboBox.Name = "showComboBox";
+			showComboBox.Palette = fontPalette;
+			showComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(showComboBox, null);
+			showComboBox.Size = new System.Drawing.Size(90, 19);
+			showComboBox.TabIndex = 3;
+			showComboBox.SelectedIndexChanged += ShowComboBox_SelectedIndexChanged;
 			// 
 			// otherNumberTextBox
 			// 
-			this.otherNumberTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.otherNumberTextBox.Enabled = false;
-			this.otherNumberTextBox.Location = new System.Drawing.Point(290, 197);
-			this.otherNumberTextBox.Name = "otherNumberTextBox";
-			this.otherNumberTextBox.Palette = this.fontPalette;
-			this.otherNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.otherNumberTextBox, null);
-			this.otherNumberTextBox.Size = new System.Drawing.Size(30, 20);
-			this.otherNumberTextBox.TabIndex = 4;
-			this.otherNumberTextBox.TextChanged += new System.EventHandler(this.OtherNumberTextBox_TextChanged);
+			otherNumberTextBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			otherNumberTextBox.Enabled = false;
+			otherNumberTextBox.Location = new System.Drawing.Point(290, 201);
+			otherNumberTextBox.Name = "otherNumberTextBox";
+			otherNumberTextBox.Palette = fontPalette;
+			otherNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(otherNumberTextBox, null);
+			otherNumberTextBox.Size = new System.Drawing.Size(30, 20);
+			otherNumberTextBox.TabIndex = 4;
+			otherNumberTextBox.TextChanged += OtherNumberTextBox_TextChanged;
 			// 
 			// FavoriteSongSystemForm
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(422, 221);
-			this.Controls.Add(this.otherNumberTextBox);
-			this.Controls.Add(this.showComboBox);
-			this.Controls.Add(this.favoriteGroup);
-			this.Controls.Add(this.resetButton);
-			this.Controls.Add(this.removeButton);
-			this.Controls.Add(this.addButton);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(438, 260);
-			this.Name = "FavoriteSongSystemForm";
-			this.Palette = this.fontPalette;
-			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this, null);
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FavoriteSongSystemWindowForm_FormClosed);
-			((System.ComponentModel.ISupportInitialize)(this.favoriteDataGridView)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.favoriteGroup.Panel)).EndInit();
-			this.favoriteGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.favoriteGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.showComboBox)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			ClientSize = new System.Drawing.Size(422, 225);
+			Controls.Add(otherNumberTextBox);
+			Controls.Add(showComboBox);
+			Controls.Add(favoriteGroup);
+			Controls.Add(resetButton);
+			Controls.Add(removeButton);
+			Controls.Add(addButton);
+			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+			MinimizeBox = false;
+			MinimumSize = new System.Drawing.Size(438, 264);
+			Name = "FavoriteSongSystemForm";
+			Palette = fontPalette;
+			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(this, null);
+			FormClosed += FavoriteSongSystemWindowForm_FormClosed;
+			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).EndInit();
+			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
+			((System.ComponentModel.ISupportInitialize)favoriteGroup.Panel).EndInit();
+			favoriteGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)favoriteGroup).EndInit();
+			((System.ComponentModel.ISupportInitialize)showComboBox).EndInit();
+			ResumeLayout(false);
+			PerformLayout();
 
 		}
 
