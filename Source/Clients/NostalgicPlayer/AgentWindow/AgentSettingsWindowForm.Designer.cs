@@ -70,7 +70,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			bigFontPalette.BaseFontSize = 9F;
 			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// cancelButton
 			// 
