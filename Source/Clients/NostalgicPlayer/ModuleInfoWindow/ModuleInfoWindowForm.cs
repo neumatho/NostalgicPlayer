@@ -20,7 +20,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
@@ -66,13 +65,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private int firstCustomLine;
 
 		private static readonly float[][] fadeMatrix =
-		{
-			new float[] { 1, 0, 0, 0, 0 },
-			new float[] { 0, 1, 0, 0, 0 },
-			new float[] { 0, 0, 1, 0, 0 },
-			new float[] { 0, 0, 0, 1, 0 },
-			new float[] { 0, 0, 0, 0, 1 }
-		};
+		[
+			[ 1, 0, 0, 0, 0 ],
+			[ 0, 1, 0, 0, 0 ],
+			[ 0, 0, 1, 0, 0 ],
+			[ 0, 0, 0, 1, 0 ],
+			[ 0, 0, 0, 0, 1 ]
+		];
 
 		/********************************************************************/
 		/// <summary>

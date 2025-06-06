@@ -13,6 +13,7 @@ using Krypton.Toolkit;
 using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -119,6 +120,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private ModuleInfoWindowForm moduleInfoWindow = null;
 		private FavoriteSongSystemForm favoriteSongSystemWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
+		private AudiusWindowForm audiusWindow = null;
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
@@ -1421,6 +1423,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, this, optionSettings, userSettings);
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected the Audius menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_Audius_Click(object sender, EventArgs e)
+		{
+			if (IsAudiusWindowOpen())
+			{
+				if (audiusWindow.WindowState == FormWindowState.Minimized)
+					audiusWindow.WindowState = FormWindowState.Normal;
+
+				audiusWindow.Activate();
+			}
+			else
+			{
+				audiusWindow = new AudiusWindowForm(this, optionSettings);
+				audiusWindow.Disposed += (o, args) => { audiusWindow = null; };
+				audiusWindow.Show();
 			}
 		}
 
@@ -3075,6 +3101,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			menuItem.Click += Menu_Window_Settings_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
+			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
+
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AUDIUS);
+			menuItem.Click += Menu_Window_Audius_Click;
+			windowMenuItem.DropDownItems.Add(menuItem);
+
 			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
 			agentSettingsSeparatorMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsSeparatorMenuItem);
@@ -3300,6 +3332,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				sampleInfoWindow.Show();
 			}
 
+			if (mainWindowSettings.OpenAudiusWindow)
+			{
+				audiusWindow = new AudiusWindowForm(this, optionSettings);
+				audiusWindow.Show();
+			}
+
 			foreach (Guid typeId in mainWindowSettings.OpenAgentWindows)
 			{
 				AgentInfo agentInfo = agentManager.GetAllAgents().FirstOrDefault(a => a.TypeId == typeId);
@@ -3411,6 +3449,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			sampleInfoWindow = null;
 			mainWindowSettings.OpenSampleInformationWindow = openAgain;
+
+			// Close the Audius window
+			openAgain = IsAudiusWindowOpen();
+			if (openAgain)
+				audiusWindow.Close();
+
+			audiusWindow = null;
+			mainWindowSettings.OpenAudiusWindow = openAgain;
 		}
 
 
@@ -3433,6 +3479,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsSampleInfoWindowOpen())
 				yield return sampleInfoWindow;
+
+			if (IsAudiusWindowOpen())
+				yield return audiusWindow;
 
 			if (IsSettingsWindowOpen())
 				yield return settingsWindow;
@@ -3544,6 +3593,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool IsSampleInfoWindowOpen()
 		{
 			return (sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the Audius window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsAudiusWindowOpen()
+		{
+			return (audiusWindow != null) && !audiusWindow.IsDisposed;
 		}
 
 
