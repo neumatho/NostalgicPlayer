@@ -470,7 +470,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 			if (moduleHandler.IsPlaying && ((fileInfo = mainWindow.GetFileInfo()) != null))
 			{
-				firstCustomLine = 9;
+				firstCustomLine = 8;
 
 				// Module in memory, add items
 				ModuleInfoStatic staticInfo = moduleHandler.StaticModuleInformation;
@@ -533,6 +533,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.Source);
 						moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
 					}
+					firstCustomLine++;
 				}
 
 				// Add player specific items
