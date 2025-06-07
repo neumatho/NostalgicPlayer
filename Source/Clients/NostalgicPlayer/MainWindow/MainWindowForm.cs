@@ -1620,11 +1620,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				if (IsModuleInfoWindowOpen())
 					moduleInfoWindow.UpdateWindow(e.Line, e.Value);
-			}));
+			});
 		}
 
 
@@ -1636,7 +1636,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_PlayerFailed(object sender, PlayerFailedEventArgs e)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				ModuleListItem listItem = playItem;
 				string playerName = moduleHandler.StaticModuleInformation.PlayerAgentInfo.AgentName;
@@ -1645,7 +1645,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				moduleHandler.CloseOutputAgent();
 
 				ShowErrorMessage(string.Format(Resources.IDS_ERR_PLAYER_FAILED, playerName, e.ErrorMessage), listItem);
-			}));
+			});
 		}
 		#endregion
 
@@ -2853,7 +2853,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void AddFilesFromStartupHandler(string[] arguments)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				// Because Explorer calls the application for each file selected
 				// when multiple files are opened, we have a timeout for 1 second
@@ -2884,7 +2884,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 
 				lastAddedTimeFromExplorer = DateTime.Now.Ticks;
-			}));
+			});
 		}
 
 
