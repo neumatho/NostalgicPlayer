@@ -23,6 +23,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		private static readonly Padding gridPadding = new Padding(0);
 
 		private bool monospaceOnGrid = false;
+		private FontStyle fontStyle = FontStyle.Regular;
 		private float baseFontSize = DefaultFontSize;
 
 		private Font font;
@@ -83,9 +84,9 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		/// Return the regular font
 		/// </summary>
 		/********************************************************************/
-		public static Font GetRegularFont(float size = DefaultFontSize)
+		public static Font GetRegularFont(float size = DefaultFontSize, FontStyle style = FontStyle.Regular)
 		{
-			return new Font("Microsoft Sans", size, FontStyle.Regular, GraphicsUnit.Point);
+			return new Font("Microsoft Sans", size, style, GraphicsUnit.Point);
 		}
 
 
@@ -95,9 +96,9 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		/// Return the monospace font
 		/// </summary>
 		/********************************************************************/
-		public static Font GetMonospaceFont(float size = DefaultFontSize)
+		public static Font GetMonospaceFont(float size = DefaultFontSize, FontStyle style = FontStyle.Regular)
 		{
-			return new Font("Lucida Console", size, FontStyle.Regular, GraphicsUnit.Point);
+			return new Font("Lucida Console", size, style, GraphicsUnit.Point);
 		}
 
 
@@ -129,6 +130,29 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 				if (value != monospaceOnGrid)
 				{
 					monospaceOnGrid = value;
+					DefineFonts();
+					OnPalettePaint(this, new PaletteLayoutEventArgs(true, false));
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell what font style you want
+		/// </summary>
+		/********************************************************************/
+		[DefaultValue(FontStyle.Regular)]
+		public FontStyle FontStyle
+		{
+			get => fontStyle;
+
+			set
+			{
+				if (value != fontStyle)
+				{
+					fontStyle = value;
 					DefineFonts();
 					OnPalettePaint(this, new PaletteLayoutEventArgs(true, false));
 				}
@@ -231,7 +255,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 			gridFont?.Dispose();
 			groupFont?.Dispose();
 
-			font = GetRegularFont(BaseFontSize);
+			font = GetRegularFont(BaseFontSize, fontStyle);
 			tabFont = GetRegularFont(BaseFontSize + 2.0f);
 			gridFont = UseMonospaceOnGrid ? GetMonospaceFont(BaseFontSize) : GetRegularFont(BaseFontSize);
 			groupFont = GetRegularFont(BaseFontSize + 1.0f);

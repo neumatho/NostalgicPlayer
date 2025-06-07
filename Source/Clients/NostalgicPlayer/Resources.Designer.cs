@@ -153,6 +153,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_FAVORITE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_FAVORITE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_FAVORITES {
             get {
                 object obj = ResourceManager.GetObject("IDB_FAVORITES", resourceCulture);
@@ -353,6 +363,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_REPOST {
+            get {
+                object obj = ResourceManager.GetObject("IDB_REPOST", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_REWIND {
             get {
                 object obj = ResourceManager.GetObject("IDB_REWIND", resourceCulture);
@@ -529,6 +549,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_AGENTSETTINGS_TITLE {
             get {
                 return ResourceManager.GetString("IDS_AGENTSETTINGS_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} plays.
+        /// </summary>
+        internal static string IDS_AUDIUS_ITEM_PLAYS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_ITEM_PLAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} reposts.
+        /// </summary>
+        internal static string IDS_AUDIUS_ITEM_REPOSTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_ITEM_REPOSTS", resourceCulture);
             }
         }
         
@@ -1743,7 +1781,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:n0} bytes.
+        ///   Looks up a localized string similar to {0} bytes.
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE {
             get {
@@ -3012,33 +3050,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_TIME {
             get {
                 return ResourceManager.GetString("IDS_TIME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to hh\:mm\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to d\:hh\:mm\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT_BIG {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT_BIG", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to m\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT_SMALL {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT_SMALL", resourceCulture);
             }
         }
         

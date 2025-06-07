@@ -29,6 +29,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
+using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -3863,23 +3864,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				selectedTime += listItem.Duration;
 			}
 
-			// Build the selected time string
-			string selStr, listStr;
-
-			if ((int)selectedTime.TotalDays > 0)
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)selectedTime.TotalHours > 0)
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT);
-			else
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
-
-			// And build the list time string
-			if ((int)listTime.TotalDays > 0)
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)listTime.TotalHours > 0)
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT);
-			else
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
+			// Build the selected time string and list time string
+			string selStr = selectedTime.ToFormattedString();
+			string listStr = listTime.ToFormattedString();
 
 			// And update the label control
 			timeLabel.Text = $"{selStr}/{listStr}";
@@ -4001,7 +3988,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Format the time string
 				if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
-					timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToString(Resources.IDS_TIMEFORMAT));
+					timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToFormattedString(true));
 				else
 				{
 					// Calculate the remaining time
@@ -4012,7 +3999,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						tempSpan = new TimeSpan(0);
 
 					// Format the string
-					timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToString(Resources.IDS_TIMEFORMAT));
+					timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToFormattedString(true));
 				}
 			}
 			else

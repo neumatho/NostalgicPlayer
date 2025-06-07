@@ -40,6 +40,7 @@
 			typePlaylistsRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			typeTracksRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			genreComboBox = new Krypton.Toolkit.KryptonComboBox();
+			audiusListControl = new AudiusListControl();
 			panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
 			panel2.SuspendLayout();
@@ -74,7 +75,6 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// timeYearRadioButton
 			// 
@@ -128,8 +128,10 @@
 			// 
 			typePlaylistsRadioButton.Location = new System.Drawing.Point(66, 3);
 			typePlaylistsRadioButton.Name = "typePlaylistsRadioButton";
+			typePlaylistsRadioButton.Palette = fontPalette;
+			typePlaylistsRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typePlaylistsRadioButton, "IDS_AUDIUS_TAB_TRENDING_TYPE_PLAYLISTS");
-			typePlaylistsRadioButton.Size = new System.Drawing.Size(65, 20);
+			typePlaylistsRadioButton.Size = new System.Drawing.Size(63, 16);
 			typePlaylistsRadioButton.TabIndex = 1;
 			typePlaylistsRadioButton.Values.Text = "Playlists";
 			// 
@@ -138,8 +140,10 @@
 			typeTracksRadioButton.Checked = true;
 			typeTracksRadioButton.Location = new System.Drawing.Point(3, 3);
 			typeTracksRadioButton.Name = "typeTracksRadioButton";
+			typeTracksRadioButton.Palette = fontPalette;
+			typeTracksRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typeTracksRadioButton, "IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS");
-			typeTracksRadioButton.Size = new System.Drawing.Size(57, 20);
+			typeTracksRadioButton.Size = new System.Drawing.Size(55, 16);
 			typeTracksRadioButton.TabIndex = 0;
 			typeTracksRadioButton.Values.Text = "Tracks";
 			typeTracksRadioButton.CheckedChanged += TypeTracks_CheckedChanged;
@@ -151,15 +155,27 @@
 			genreComboBox.IntegralHeight = false;
 			genreComboBox.Location = new System.Drawing.Point(316, 8);
 			genreComboBox.Name = "genreComboBox";
+			genreComboBox.Palette = fontPalette;
+			genreComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(genreComboBox, null);
-			genreComboBox.Size = new System.Drawing.Size(189, 22);
+			genreComboBox.Size = new System.Drawing.Size(189, 19);
 			genreComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
 			genreComboBox.TabIndex = 2;
+			// 
+			// audiusListControl
+			// 
+			audiusListControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			audiusListControl.Location = new System.Drawing.Point(8, 68);
+			audiusListControl.Name = "audiusListControl";
+			controlResource.SetResourceKey(audiusListControl, null);
+			audiusListControl.Size = new System.Drawing.Size(750, 292);
+			audiusListControl.TabIndex = 3;
 			// 
 			// TrendingPageControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
+			Controls.Add(audiusListControl);
 			Controls.Add(genreComboBox);
 			Controls.Add(panel2);
 			Controls.Add(panel1);
@@ -188,5 +204,6 @@
 		private Krypton.Toolkit.KryptonRadioButton typeTracksRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton typePlaylistsRadioButton;
 		private Krypton.Toolkit.KryptonComboBox genreComboBox;
+		private AudiusListControl audiusListControl;
 	}
 }
