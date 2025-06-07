@@ -33,9 +33,10 @@
 			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
 			navigator = new Krypton.Navigator.KryptonNavigator();
 			navigatorTrendingPage = new Krypton.Navigator.KryptonPage();
-			trendingPageControl1 = new Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages.TrendingPageControl();
+			trendingPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages.TrendingPageControl();
 			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
 			((System.ComponentModel.ISupportInitialize)navigatorTrendingPage).BeginInit();
+			navigatorTrendingPage.SuspendLayout();
 			SuspendLayout();
 			// 
 			// fontPalette
@@ -71,43 +72,45 @@
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			navigator.SelectedIndex = 0;
-			navigator.Size = new System.Drawing.Size(768, 395);
+			navigator.Size = new System.Drawing.Size(768, 425);
 			navigator.TabIndex = 0;
 			// 
 			// navigatorTrendingPage
 			// 
 			navigatorTrendingPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorTrendingPage.Controls.Add(trendingPageControl1);
+			navigatorTrendingPage.Controls.Add(trendingPageControl);
 			navigatorTrendingPage.Flags = 65534;
 			navigatorTrendingPage.LastVisibleSet = true;
 			navigatorTrendingPage.MinimumSize = new System.Drawing.Size(150, 50);
 			navigatorTrendingPage.Name = "navigatorTrendingPage";
-			navigatorTrendingPage.Size = new System.Drawing.Size(766, 369);
+			navigatorTrendingPage.Size = new System.Drawing.Size(766, 399);
 			navigatorTrendingPage.Text = "";
 			navigatorTrendingPage.ToolTipTitle = "Page ToolTip";
 			navigatorTrendingPage.UniqueName = "c6800b895c2748d58349df89d8a596b0";
 			// 
-			// trendingPageControl1
+			// trendingPageControl
 			// 
-			trendingPageControl1.BackColor = System.Drawing.Color.Transparent;
-			trendingPageControl1.Location = new System.Drawing.Point(0, 0);
-			trendingPageControl1.Name = "trendingPageControl1";
-			trendingPageControl1.Size = new System.Drawing.Size(766, 368);
-			trendingPageControl1.TabIndex = 1;
+			trendingPageControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			trendingPageControl.BackColor = System.Drawing.Color.Transparent;
+			trendingPageControl.Location = new System.Drawing.Point(0, 0);
+			trendingPageControl.Name = "trendingPageControl";
+			trendingPageControl.Size = new System.Drawing.Size(766, 398);
+			trendingPageControl.TabIndex = 1;
 			// 
 			// AudiusWindowForm
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			ClientSize = new System.Drawing.Size(784, 411);
+			ClientSize = new System.Drawing.Size(784, 441);
 			Controls.Add(navigator);
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
-			MinimumSize = new System.Drawing.Size(800, 450);
+			MinimumSize = new System.Drawing.Size(800, 480);
 			Name = "AudiusWindowForm";
 			Palette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			((System.ComponentModel.ISupportInitialize)navigator).EndInit();
 			((System.ComponentModel.ISupportInitialize)navigatorTrendingPage).EndInit();
+			navigatorTrendingPage.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -116,6 +119,6 @@
 		private GuiKit.Components.FontPalette fontPalette;
 		private Krypton.Navigator.KryptonNavigator navigator;
 		private Krypton.Navigator.KryptonPage navigatorTrendingPage;
-		private Pages.TrendingPageControl trendingPageControl1;
+		private Pages.TrendingPageControl trendingPageControl;
 	}
 }
