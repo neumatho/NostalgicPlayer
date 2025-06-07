@@ -145,6 +145,9 @@
   <data name="IDB_FAST_FORWARD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\FastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_FAVORITE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Favorite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_FAVORITES" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Favorites.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -204,6 +207,9 @@
   </data>
   <data name="IDB_REMOVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Remove.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_REPOST" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Repost.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_REWIND" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Rewind.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -346,6 +352,12 @@ Formats supported:
   </data>
   <data name="IDS_AGENTSETTINGS_TITLE" xml:space="preserve">
     <value>Settings for {0}</value>
+  </data>
+  <data name="IDS_AUDIUS_ITEM_PLAYS" xml:space="preserve">
+    <value>{0} plays</value>
+  </data>
+  <data name="IDS_AUDIUS_ITEM_REPOSTS" xml:space="preserve">
+    <value>{0} reposts</value>
   </data>
   <data name="IDS_AUDIUS_TAB_TRENDING" xml:space="preserve">
     <value>Trending</value>
@@ -760,7 +772,7 @@ Do you want to continue?</value>
     <value>Module size:</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE" xml:space="preserve">
-    <value>{0:n0} bytes</value>
+    <value>{0} bytes</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_NA" xml:space="preserve">
     <value>n/a</value>
@@ -1185,15 +1197,6 @@ information</value>
   </data>
   <data name="IDS_TIME" xml:space="preserve">
     <value>Time:</value>
-  </data>
-  <data name="IDS_TIMEFORMAT" xml:space="preserve">
-    <value>hh\:mm\:ss</value>
-  </data>
-  <data name="IDS_TIMEFORMAT_BIG" xml:space="preserve">
-    <value>d\:hh\:mm\:ss</value>
-  </data>
-  <data name="IDS_TIMEFORMAT_SMALL" xml:space="preserve">
-    <value>m\:ss</value>
   </data>
   <data name="IDS_TIP_FAVORITE_ADD" xml:space="preserve">
     <value>Adds selected modules to the current play list</value>

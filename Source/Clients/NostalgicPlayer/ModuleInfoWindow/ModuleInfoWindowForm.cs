@@ -498,12 +498,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				if (floatingInfo.DurationInfo == null)
 					val = Resources.IDS_MODULE_INFO_UNKNOWN;
 				else
-				{
-					if ((int)floatingInfo.DurationInfo.TotalTime.TotalHours > 0)
-						val = floatingInfo.DurationInfo.TotalTime.ToString(Resources.IDS_TIMEFORMAT);
-					else
-						val = floatingInfo.DurationInfo.TotalTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
-				}
+					val = floatingInfo.DurationInfo.TotalTime.ToFormattedString();
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
@@ -513,7 +508,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				}
 				else
 				{
-					val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize);
+					val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize.ToBeautifiedString());
 					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
 
 					if (staticInfo.DecruncherAlgorithms != null)

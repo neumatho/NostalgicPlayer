@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 
@@ -79,6 +80,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_MOOMBAHTON) { Tag = "Moombahton" }
 			]);
 			genreComboBox.SelectedIndex = 0;
+
+			List<AudiusListItem> items = new List<AudiusListItem>();
+			for (int i = 0; i < 100; i++)
+				items.Add(new AudiusListItem(
+					i + 1,
+					"Hej",
+					"affdgdjklasjgklasjgklasjgijeiosrjtioerjtierujtioeuotijgdfiljsdklfgjlsdkjgklsdjgkljsdglkdjgkljsdlgjlsdgj",
+					TimeSpan.FromSeconds(Random.Shared.Next(900)),
+					Random.Shared.Next(2000),
+					Random.Shared.Next(2000),
+					Random.Shared.Next(2000)
+					));
+
+			audiusListControl.SetItems(items);
 		}
 
 		#region Event handlers
