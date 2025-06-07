@@ -449,10 +449,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				List<ModuleListItem> clonedList = new List<ModuleListItem>(itemsToRemove);
 				itemsToRemove.Clear();
 
-				mainWindowForm.BeginInvoke(new Action(() =>
+				mainWindowForm.BeginInvoke(() =>
 				{
 					mainWindowForm.RemoveItemsFromModuleList(clonedList);
-				}));
+				});
 			}
 
 			if (itemsToUpdate.Count > 0)
@@ -460,10 +460,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				List<ModuleListItemUpdateInfo> clonedList = new List<ModuleListItemUpdateInfo>(itemsToUpdate);
 				itemsToUpdate.Clear();
 
-				mainWindowForm.BeginInvoke(new Action(() =>
+				mainWindowForm.BeginInvoke(() =>
 				{
 					mainWindowForm.UpdateModuleList(clonedList);
-				}));
+				});
 			}
 		}
 		#endregion
