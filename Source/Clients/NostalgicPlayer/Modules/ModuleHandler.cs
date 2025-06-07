@@ -781,10 +781,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		private void ShowSimpleErrorMessage(string message)
 		{
-			mainWindowForm.BeginInvoke(new Action(() =>
+			mainWindowForm.BeginInvoke(() =>
 			{
 				mainWindowForm.ShowSimpleErrorMessage(message);
-			}));
+			});
 		}
 
 
@@ -796,10 +796,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		private void ShowErrorMessage(string message, ModuleListItem listItem)
 		{
-			mainWindowForm.BeginInvoke(new Action(() =>
+			mainWindowForm.BeginInvoke(() =>
 			{
 				mainWindowForm.ShowErrorMessage(message, listItem);
-			}));
+			});
 		}
 
 
