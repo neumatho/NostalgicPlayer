@@ -13,6 +13,7 @@ using Krypton.Toolkit;
 using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -28,6 +29,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
+using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -119,6 +121,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private ModuleInfoWindowForm moduleInfoWindow = null;
 		private FavoriteSongSystemForm favoriteSongSystemWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
+		private AudiusWindowForm audiusWindow = null;
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
@@ -1428,6 +1431,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// User selected the Audius menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_Audius_Click(object sender, EventArgs e)
+		{
+			if (IsAudiusWindowOpen())
+			{
+				if (audiusWindow.WindowState == FormWindowState.Minimized)
+					audiusWindow.WindowState = FormWindowState.Normal;
+
+				audiusWindow.Activate();
+			}
+			else
+			{
+				audiusWindow = new AudiusWindowForm(this, optionSettings);
+				audiusWindow.Disposed += (o, args) => { audiusWindow = null; };
+				audiusWindow.Show();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// User selected one of the agent settings menu items
 		/// </summary>
 		/********************************************************************/
@@ -1593,11 +1620,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				if (IsModuleInfoWindowOpen())
 					moduleInfoWindow.UpdateWindow(e.Line, e.Value);
-			}));
+			});
 		}
 
 
@@ -1609,7 +1636,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_PlayerFailed(object sender, PlayerFailedEventArgs e)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				ModuleListItem listItem = playItem;
 				string playerName = moduleHandler.StaticModuleInformation.PlayerAgentInfo.AgentName;
@@ -1618,7 +1645,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				moduleHandler.CloseOutputAgent();
 
 				ShowErrorMessage(string.Format(Resources.IDS_ERR_PLAYER_FAILED, playerName, e.ErrorMessage), listItem);
-			}));
+			});
 		}
 		#endregion
 
@@ -2826,7 +2853,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void AddFilesFromStartupHandler(string[] arguments)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				// Because Explorer calls the application for each file selected
 				// when multiple files are opened, we have a timeout for 1 second
@@ -2857,7 +2884,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 
 				lastAddedTimeFromExplorer = DateTime.Now.Ticks;
-			}));
+			});
 		}
 
 
@@ -3073,6 +3100,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_SETTINGS);
 			menuItem.Click += Menu_Window_Settings_Click;
+			windowMenuItem.DropDownItems.Add(menuItem);
+
+			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
+
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AUDIUS);
+			menuItem.Click += Menu_Window_Audius_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
 			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
@@ -3300,6 +3333,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				sampleInfoWindow.Show();
 			}
 
+			if (mainWindowSettings.OpenAudiusWindow)
+			{
+				audiusWindow = new AudiusWindowForm(this, optionSettings);
+				audiusWindow.Show();
+			}
+
 			foreach (Guid typeId in mainWindowSettings.OpenAgentWindows)
 			{
 				AgentInfo agentInfo = agentManager.GetAllAgents().FirstOrDefault(a => a.TypeId == typeId);
@@ -3411,6 +3450,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			sampleInfoWindow = null;
 			mainWindowSettings.OpenSampleInformationWindow = openAgain;
+
+			// Close the Audius window
+			openAgain = IsAudiusWindowOpen();
+			if (openAgain)
+				audiusWindow.Close();
+
+			audiusWindow = null;
+			mainWindowSettings.OpenAudiusWindow = openAgain;
 		}
 
 
@@ -3433,6 +3480,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsSampleInfoWindowOpen())
 				yield return sampleInfoWindow;
+
+			if (IsAudiusWindowOpen())
+				yield return audiusWindow;
 
 			if (IsSettingsWindowOpen())
 				yield return settingsWindow;
@@ -3544,6 +3594,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool IsSampleInfoWindowOpen()
 		{
 			return (sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the Audius window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsAudiusWindowOpen()
+		{
+			return (audiusWindow != null) && !audiusWindow.IsDisposed;
 		}
 
 
@@ -3802,23 +3864,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				selectedTime += listItem.Duration;
 			}
 
-			// Build the selected time string
-			string selStr, listStr;
-
-			if ((int)selectedTime.TotalDays > 0)
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)selectedTime.TotalHours > 0)
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT);
-			else
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
-
-			// And build the list time string
-			if ((int)listTime.TotalDays > 0)
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)listTime.TotalHours > 0)
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT);
-			else
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
+			// Build the selected time string and list time string
+			string selStr = selectedTime.ToFormattedString();
+			string listStr = listTime.ToFormattedString();
 
 			// And update the label control
 			timeLabel.Text = $"{selStr}/{listStr}";
@@ -3940,7 +3988,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Format the time string
 				if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
-					timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToString(Resources.IDS_TIMEFORMAT));
+					timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToFormattedString(true));
 				else
 				{
 					// Calculate the remaining time
@@ -3951,7 +3999,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						tempSpan = new TimeSpan(0);
 
 					// Format the string
-					timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToString(Resources.IDS_TIMEFORMAT));
+					timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToFormattedString(true));
 				}
 			}
 			else
