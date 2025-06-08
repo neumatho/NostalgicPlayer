@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 
 			try
 			{
-				foreach (Control ctrl in flowLayoutPanel.Controls)
+				foreach (AudiusListItemControl ctrl in flowLayoutPanel.Controls)
 					ctrl.Dispose();
 
 				flowLayoutPanel.Controls.Clear();
@@ -106,8 +106,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		private void FlowLayout_Resize(object sender, EventArgs e)
 		{
-			foreach (Control ctrl in flowLayoutPanel.Controls)
-				ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+			flowLayoutPanel.SuspendLayout();
+
+			try
+			{
+				foreach (AudiusListItemControl ctrl in flowLayoutPanel.Controls)
+					ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+			}
+			finally
+			{
+				flowLayoutPanel.ResumeLayout();
+			}
 
 			if (loadingLabel.Visible)
 				CenterLoadingLabel();

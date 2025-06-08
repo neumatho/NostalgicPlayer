@@ -109,6 +109,7 @@
 			Name = "AudiusWindowForm";
 			Palette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			FormClosed += AudiusForm_FormClosed;
 			Shown += AudiusForm_Shown;
 			((System.ComponentModel.ISupportInitialize)navigator).EndInit();
 			((System.ComponentModel.ISupportInitialize)navigatorTrendingPage).EndInit();
