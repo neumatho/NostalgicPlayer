@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusListItem(int position, string title, string artist, TimeSpan duration, int reposts, int favorites, int plays)
+		public AudiusListItem(int position, string title, string artist, TimeSpan duration, int reposts, int favorites, int plays, string coverUrl)
 		{
 			Position = position;
 			Title = title;
@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			Reposts = reposts;
 			Favorites = favorites;
 			Plays = plays;
+			CoverUrl = coverUrl;
 		}
 
 
@@ -108,6 +109,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// </summary>
 		/********************************************************************/
 		public int Plays
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the URL to the cover image
+		/// </summary>
+		/********************************************************************/
+		public string CoverUrl
 		{
 			get;
 		}
