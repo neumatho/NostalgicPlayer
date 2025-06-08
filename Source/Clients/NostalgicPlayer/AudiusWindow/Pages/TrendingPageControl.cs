@@ -5,16 +5,28 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Audius;
+using Polycode.NostalgicPlayer.Audius.Interfaces;
+using Polycode.NostalgicPlayer.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 {
 	/// <summary>
 	/// Holds all the controls for the Trending tab
 	/// </summary>
-	public partial class TrendingPageControl : UserControl
+	public partial class TrendingPageControl : UserControl, IAudiusPage
 	{
+		private MainWindowForm mainWindow;
+		private AudiusWindowForm audiusWindow;
+		private AudiusApi audius;
+
+		private TaskHelper taskHelper;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -79,22 +91,70 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_VAPORWAVE) { Tag = "Vaporwave" },
 				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_MOOMBAHTON) { Tag = "Moombahton" }
 			]);
+
 			genreComboBox.SelectedIndex = 0;
-
-			List<AudiusListItem> items = new List<AudiusListItem>();
-			for (int i = 0; i < 100; i++)
-				items.Add(new AudiusListItem(
-					i + 1,
-					"Hej",
-					"affdgdjklasjgklasjgklasjgijeiosrjtioerjtierujtioeuotijgdfiljsdklfgjlsdkjgklsdjgkljsdglkdjgkljsdlgjlsdgj",
-					TimeSpan.FromSeconds(Random.Shared.Next(900)),
-					Random.Shared.Next(2000),
-					Random.Shared.Next(2000),
-					Random.Shared.Next(2000)
-					));
-
-			audiusListControl.SetItems(items);
 		}
+
+		#region IAudiusPage implementation
+		/********************************************************************/
+		/// <summary>
+		/// Will initialize the control
+		/// </summary>
+		/********************************************************************/
+		public void Initialize(MainWindowForm mainWindow, AudiusWindowForm audiusWindow, AudiusApi audiusApi)
+		{
+			this.mainWindow = mainWindow;
+			this.audiusWindow = audiusWindow;
+			audius = audiusApi;
+
+			taskHelper = new TaskHelper();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will refresh the page with new data
+		/// </summary>
+		/********************************************************************/
+		public void RefreshPage()
+		{
+			using (new SleepCursor())
+			{
+				CleanupPage();
+				audiusListControl.SetLoading(true);
+
+				string time = string.Empty;
+
+				if (timeWeekRadioButton.Checked)
+					time = "week";
+				else if (timeMonthRadioButton.Checked)
+					time = "month";
+				else if (timeYearRadioButton.Checked)
+					time = "year";
+				else if (timeAllRadioButton.Checked)
+					time = "allTime";
+
+				if (typeTracksRadioButton.Checked)
+					GetTrendingTracks(time);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup used resources
+		/// </summary>
+		/********************************************************************/
+		public void CleanupPage()
+		{
+			using (new SleepCursor())
+			{
+				audiusListControl.ClearItems();
+			}
+		}
+		#endregion
 
 		#region Event handlers
 		/********************************************************************/
@@ -105,6 +165,72 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		private void TypeTracks_CheckedChanged(object sender, EventArgs e)
 		{
 			genreComboBox.Enabled = typeTracksRadioButton.Checked;
+
+			if (typeTracksRadioButton.Checked)
+				RefreshPage();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void TypePlaylists_CheckedChanged(object sender, EventArgs e)
+		{
+			if (typePlaylistsRadioButton.Checked)
+				RefreshPage();
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve the trending tracks from Audius
+		/// </summary>
+		/********************************************************************/
+		private void GetTrendingTracks(string time)
+		{
+			string genre = ((KryptonListItem)genreComboBox.SelectedItem).Tag!.ToString();
+
+			taskHelper.RunTask((cancellationToken) =>
+			{
+				ITrackClient trackClient = audius.GetTrackClient();
+				TrackModel[] tracks = trackClient.GetTrendingTracks(genre, time, cancellationToken);
+
+				List<AudiusListItem> items = tracks.Select((x, i) =>
+					new AudiusListItem(
+						i + 1,
+						x.Title,
+						x.User.Name,
+						TimeSpan.FromSeconds(x.Duration),
+						x.RepostCount,
+						x.FavoriteCount,
+						x.PlayCount
+					)
+				).ToList();
+
+				cancellationToken.ThrowIfCancellationRequested();
+
+				mainWindow.Invoke(() =>
+				{
+					using (new SleepCursor())
+					{
+						audiusListControl.SetLoading(false);
+						audiusListControl.SetItems(items);
+					}
+				});
+			}, (ex) =>
+			{
+				string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
+
+				mainWindow.BeginInvoke(() =>
+				{
+					audiusListControl.SetLoading(false);
+					mainWindow.ShowSimpleErrorMessage(audiusWindow, message);
+				});
+			});
 		}
 		#endregion
 	}

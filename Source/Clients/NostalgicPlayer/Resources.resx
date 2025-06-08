@@ -244,6 +244,9 @@
   <data name="IDB_SWAP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Swap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_UNKNOWN_ALBUM_COVER" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UnknownAlbumCover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_ZA" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\ZA.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -353,11 +356,17 @@ Formats supported:
   <data name="IDS_AGENTSETTINGS_TITLE" xml:space="preserve">
     <value>Settings for {0}</value>
   </data>
+  <data name="IDS_AUDIUS_ERR_TIMEOUT" xml:space="preserve">
+    <value>Got a timeout when talking to Audius</value>
+  </data>
   <data name="IDS_AUDIUS_ITEM_PLAYS" xml:space="preserve">
     <value>{0} plays</value>
   </data>
   <data name="IDS_AUDIUS_ITEM_REPOSTS" xml:space="preserve">
     <value>{0} reposts</value>
+  </data>
+  <data name="IDS_AUDIUS_LOADING" xml:space="preserve">
+    <value>Please wait while loading items…</value>
   </data>
   <data name="IDS_AUDIUS_TAB_TRENDING" xml:space="preserve">
     <value>Trending</value>
