@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -22,6 +23,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 	/// </summary>
 	public class StreamLoader : LoaderBase
 	{
+		private const int InitialTimeout = 10000;
 		private const int MaxNumberOfRedirects = 10;
 
 		private readonly Manager agentManager;
@@ -72,7 +74,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 			for (int i = 0; i < MaxNumberOfRedirects; i++)
 			{
-				responseMessage = Task.Run(() => httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead)).Result;
+				responseMessage = Task.Run(() =>
+				{
+					using (CancellationTokenSource cancellationToken = new CancellationTokenSource(InitialTimeout))
+					{
+						return httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken.Token);
+					}
+				}).Result;
 
 				if (responseMessage.StatusCode == HttpStatusCode.OK)
 					break;
