@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+			flowLayoutPanel = new GuiKit.Controls.ImprovedFlowLayoutPanel();
 			controlGroup = new Krypton.Toolkit.KryptonGroup();
 			loadingLabel = new Krypton.Toolkit.KryptonLabel();
 			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
@@ -87,7 +87,6 @@
 			bigFontPalette.BaseFontSize = 9F;
 			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
 			// 
@@ -110,7 +109,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel;
+		private GuiKit.Controls.ImprovedFlowLayoutPanel flowLayoutPanel;
 		private Krypton.Toolkit.KryptonGroup controlGroup;
 		private Krypton.Toolkit.KryptonLabel loadingLabel;
 		private GuiKit.Designer.ControlResource controlResource;

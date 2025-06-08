@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -66,6 +67,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		private void AudiusForm_Shown(object sender, EventArgs e)
 		{
 			RefreshCurrentPage();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the form is closed
+		/// </summary>
+		/********************************************************************/
+		private void AudiusForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			trendingPageControl.CleanupPage();
 		}
 
 

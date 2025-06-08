@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Audius;
@@ -151,6 +152,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		{
 			using (new SleepCursor())
 			{
+				taskHelper.CancelTask();
+
 				audiusListControl.ClearItems();
 			}
 		}
@@ -207,7 +210,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 						TimeSpan.FromSeconds(x.Duration),
 						x.RepostCount,
 						x.FavoriteCount,
-						x.PlayCount
+						x.PlayCount,
+						x.Artwork?._150x150
 					)
 				).ToList();
 
@@ -221,6 +225,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 						audiusListControl.SetItems(items);
 					}
 				});
+
+				return Task.CompletedTask;
 			}, (ex) =>
 			{
 				string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
