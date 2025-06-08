@@ -74,6 +74,7 @@
 			navigator.SelectedIndex = 0;
 			navigator.Size = new System.Drawing.Size(768, 425);
 			navigator.TabIndex = 0;
+			navigator.SelectedPageChanged += Navigator_SelectedPageChanged;
 			// 
 			// navigatorTrendingPage
 			// 
@@ -108,6 +109,7 @@
 			Name = "AudiusWindowForm";
 			Palette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			Shown += AudiusForm_Shown;
 			((System.ComponentModel.ISupportInitialize)navigator).EndInit();
 			((System.ComponentModel.ISupportInitialize)navigatorTrendingPage).EndInit();
 			navigatorTrendingPage.ResumeLayout(false);

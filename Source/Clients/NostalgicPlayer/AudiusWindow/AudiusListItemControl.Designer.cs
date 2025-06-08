@@ -132,6 +132,7 @@
 			// 
 			// itemPictureBox
 			// 
+			itemPictureBox.Image = Resources.IDB_UNKNOWN_ALBUM_COVER;
 			itemPictureBox.Location = new System.Drawing.Point(39, 8);
 			itemPictureBox.Name = "itemPictureBox";
 			itemPictureBox.Size = new System.Drawing.Size(128, 128);

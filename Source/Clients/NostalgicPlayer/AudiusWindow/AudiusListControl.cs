@@ -28,24 +28,72 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		#region Public methods
 		/********************************************************************/
 		/// <summary>
+		/// Set load state
+		/// </summary>
+		/********************************************************************/
+		public void SetLoading(bool loading)
+		{
+			loadingLabel.Visible = loading;
+
+			if (loading)
+				CenterLoadingLabel();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize the list with new items
 		/// </summary>
 		/********************************************************************/
 		public void SetItems(IEnumerable<AudiusListItem> items)
 		{
-			// First remove and dispose all existing items
-			foreach (Control ctrl in flowLayoutPanel.Controls)
-				ctrl.Dispose();
+			flowLayoutPanel.SuspendLayout();
 
-			flowLayoutPanel.Controls.Clear();
-
-			// Then add the new items
-			foreach (AudiusListItem item in items)
+			try
 			{
-				AudiusListItemControl ctrl = new AudiusListItemControl(item);
-				ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+				// First remove and dispose all existing items
+				ClearItems();
 
-				flowLayoutPanel.Controls.Add(ctrl);
+				// Then add the new items
+				foreach (AudiusListItem item in items)
+				{
+					AudiusListItemControl ctrl = new AudiusListItemControl(item);
+					ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+
+					flowLayoutPanel.Controls.Add(ctrl);
+				}
+
+				// Make sure the already visible items are updated
+				UpdateVisibleItems();
+			}
+			finally
+			{
+				flowLayoutPanel.ResumeLayout();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will clear the list
+		/// </summary>
+		/********************************************************************/
+		public void ClearItems()
+		{
+			flowLayoutPanel.SuspendLayout();
+
+			try
+			{
+				foreach (Control ctrl in flowLayoutPanel.Controls)
+					ctrl.Dispose();
+
+				flowLayoutPanel.Controls.Clear();
+			}
+			finally
+			{
+				flowLayoutPanel.ResumeLayout();
 			}
 		}
 		#endregion
@@ -60,6 +108,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			foreach (Control ctrl in flowLayoutPanel.Controls)
 				ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+
+			if (loadingLabel.Visible)
+				CenterLoadingLabel();
 		}
 
 
@@ -76,6 +127,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Center the loading label
+		/// </summary>
+		/********************************************************************/
+		private void CenterLoadingLabel()
+		{
+			loadingLabel.Location = new Point((ClientSize.Width - loadingLabel.Width) / 2, (ClientSize.Height - loadingLabel.Height) / 2);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Update visible items if needed

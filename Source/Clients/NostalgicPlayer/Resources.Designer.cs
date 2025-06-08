@@ -483,6 +483,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_UNKNOWN_ALBUM_COVER {
+            get {
+                object obj = ResourceManager.GetObject("IDB_UNKNOWN_ALBUM_COVER", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_ZA {
             get {
                 object obj = ResourceManager.GetObject("IDB_ZA", resourceCulture);
@@ -553,6 +563,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Got a timeout when talking to Audius.
+        /// </summary>
+        internal static string IDS_AUDIUS_ERR_TIMEOUT {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_ERR_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} plays.
         /// </summary>
         internal static string IDS_AUDIUS_ITEM_PLAYS {
@@ -567,6 +586,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_AUDIUS_ITEM_REPOSTS {
             get {
                 return ResourceManager.GetString("IDS_AUDIUS_ITEM_REPOSTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please wait while loading items….
+        /// </summary>
+        internal static string IDS_AUDIUS_LOADING {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_LOADING", resourceCulture);
             }
         }
         

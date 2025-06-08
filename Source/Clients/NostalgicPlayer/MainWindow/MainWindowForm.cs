@@ -330,10 +330,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void ShowSimpleErrorMessage(string message)
 		{
+			ShowSimpleErrorMessage(this, message);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show an error message to the user
+		/// </summary>
+		/********************************************************************/
+		public void ShowSimpleErrorMessage(IWin32Window owner, string message)
+		{
 			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
 				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-				dialog.ShowDialog(this);
+				dialog.ShowDialog(owner);
 			}
 		}
 
