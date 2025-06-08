@@ -134,6 +134,7 @@
 			typePlaylistsRadioButton.Size = new System.Drawing.Size(63, 16);
 			typePlaylistsRadioButton.TabIndex = 1;
 			typePlaylistsRadioButton.Values.Text = "Playlists";
+			typePlaylistsRadioButton.CheckedChanged += TypePlaylists_CheckedChanged;
 			// 
 			// typeTracksRadioButton
 			// 
