@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Audius
 	public class TaskHelper
 	{
 		/// <summary></summary>
-		public delegate void TaskHandler(CancellationToken cancellationToken);
+		public delegate Task TaskHandler(CancellationToken cancellationToken);
 		/// <summary></summary>
 		public delegate void TaskExceptionHandler(Exception ex);
 
@@ -32,21 +32,14 @@ namespace Polycode.NostalgicPlayer.Audius
 		{
 			lock (taskLock)
 			{
-				if ((runningTaskCancellationToken != null) && !runningTask.IsCompleted)
-				{
-					runningTaskCancellationToken.Cancel();
-					runningTask.Wait();
-
-					runningTask.Dispose();
-					runningTaskCancellationToken.Dispose();
-				}
+				CancelTask();
 
 				runningTaskCancellationToken = new CancellationTokenSource();
-				runningTask = Task.Run(() =>
+				runningTask = Task.Run(async () =>
 				{
 					try
 					{
-						handler(runningTaskCancellationToken.Token);
+						await handler(runningTaskCancellationToken.Token);
 					}
 					catch (OperationCanceledException)
 					{
@@ -60,6 +53,31 @@ namespace Polycode.NostalgicPlayer.Audius
 						exceptionHandler(ex);
 					}
 				});
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will cancel an already running task if any
+		/// </summary>
+		/********************************************************************/
+		public void CancelTask()
+		{
+			lock (taskLock)
+			{
+				if ((runningTaskCancellationToken != null) && !runningTask.IsCompleted)
+				{
+					runningTaskCancellationToken.Cancel();
+					runningTask.Wait();
+
+					runningTask.Dispose();
+					runningTaskCancellationToken.Dispose();
+				}
+
+				runningTaskCancellationToken = null;
+				runningTask = null;
 			}
 		}
 	}
