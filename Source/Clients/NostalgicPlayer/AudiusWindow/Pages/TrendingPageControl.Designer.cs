@@ -29,35 +29,36 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			panel1 = new System.Windows.Forms.Panel();
+			timePanel = new System.Windows.Forms.Panel();
 			timeAllRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
 			timeYearRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			timeMonthRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			timeWeekRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
-			panel2 = new System.Windows.Forms.Panel();
+			typePanel = new System.Windows.Forms.Panel();
+			typeUndergroundRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			typePlaylistsRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			typeTracksRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			genreComboBox = new Krypton.Toolkit.KryptonComboBox();
 			audiusListControl = new AudiusListControl();
-			panel1.SuspendLayout();
+			timePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
-			panel2.SuspendLayout();
+			typePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)genreComboBox).BeginInit();
 			SuspendLayout();
 			// 
-			// panel1
+			// timePanel
 			// 
-			panel1.Controls.Add(timeAllRadioButton);
-			panel1.Controls.Add(timeYearRadioButton);
-			panel1.Controls.Add(timeMonthRadioButton);
-			panel1.Controls.Add(timeWeekRadioButton);
-			panel1.Location = new System.Drawing.Point(8, 8);
-			panel1.Name = "panel1";
-			controlResource.SetResourceKey(panel1, null);
-			panel1.Size = new System.Drawing.Size(302, 25);
-			panel1.TabIndex = 0;
+			timePanel.Controls.Add(timeAllRadioButton);
+			timePanel.Controls.Add(timeYearRadioButton);
+			timePanel.Controls.Add(timeMonthRadioButton);
+			timePanel.Controls.Add(timeWeekRadioButton);
+			timePanel.Location = new System.Drawing.Point(8, 8);
+			timePanel.Name = "timePanel";
+			controlResource.SetResourceKey(timePanel, null);
+			timePanel.Size = new System.Drawing.Size(302, 25);
+			timePanel.TabIndex = 0;
 			// 
 			// timeAllRadioButton
 			// 
@@ -69,12 +70,14 @@
 			timeAllRadioButton.Size = new System.Drawing.Size(58, 16);
 			timeAllRadioButton.TabIndex = 3;
 			timeAllRadioButton.Values.Text = "All time";
+			timeAllRadioButton.CheckedChanged += TimeAll_CheckedChanged;
 			// 
 			// fontPalette
 			// 
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// timeYearRadioButton
 			// 
@@ -86,6 +89,7 @@
 			timeYearRadioButton.Size = new System.Drawing.Size(67, 16);
 			timeYearRadioButton.TabIndex = 2;
 			timeYearRadioButton.Values.Text = "This year";
+			timeYearRadioButton.CheckedChanged += TimeYear_CheckedChanged;
 			// 
 			// timeMonthRadioButton
 			// 
@@ -97,6 +101,7 @@
 			timeMonthRadioButton.Size = new System.Drawing.Size(76, 16);
 			timeMonthRadioButton.TabIndex = 1;
 			timeMonthRadioButton.Values.Text = "This month";
+			timeMonthRadioButton.CheckedChanged += TimeMonth_CheckedChanged;
 			// 
 			// timeWeekRadioButton
 			// 
@@ -109,20 +114,34 @@
 			timeWeekRadioButton.Size = new System.Drawing.Size(71, 16);
 			timeWeekRadioButton.TabIndex = 0;
 			timeWeekRadioButton.Values.Text = "This week";
+			timeWeekRadioButton.CheckedChanged += TimeWeek_CheckedChanged;
 			// 
 			// controlResource
 			// 
 			controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
 			// 
-			// panel2
+			// typePanel
 			// 
-			panel2.Controls.Add(typePlaylistsRadioButton);
-			panel2.Controls.Add(typeTracksRadioButton);
-			panel2.Location = new System.Drawing.Point(8, 37);
-			panel2.Name = "panel2";
-			controlResource.SetResourceKey(panel2, null);
-			panel2.Size = new System.Drawing.Size(302, 25);
-			panel2.TabIndex = 1;
+			typePanel.Controls.Add(typeUndergroundRadioButton);
+			typePanel.Controls.Add(typePlaylistsRadioButton);
+			typePanel.Controls.Add(typeTracksRadioButton);
+			typePanel.Location = new System.Drawing.Point(8, 37);
+			typePanel.Name = "typePanel";
+			controlResource.SetResourceKey(typePanel, null);
+			typePanel.Size = new System.Drawing.Size(302, 25);
+			typePanel.TabIndex = 1;
+			// 
+			// typeUndergroundRadioButton
+			// 
+			typeUndergroundRadioButton.Location = new System.Drawing.Point(137, 3);
+			typeUndergroundRadioButton.Name = "typeUndergroundRadioButton";
+			typeUndergroundRadioButton.Palette = fontPalette;
+			typeUndergroundRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(typeUndergroundRadioButton, "IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND");
+			typeUndergroundRadioButton.Size = new System.Drawing.Size(86, 16);
+			typeUndergroundRadioButton.TabIndex = 2;
+			typeUndergroundRadioButton.Values.Text = "Underground";
+			typeUndergroundRadioButton.CheckedChanged += TypeUnderground_CheckedChanged;
 			// 
 			// typePlaylistsRadioButton
 			// 
@@ -162,6 +181,7 @@
 			genreComboBox.Size = new System.Drawing.Size(189, 19);
 			genreComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
 			genreComboBox.TabIndex = 2;
+			genreComboBox.SelectedIndexChanged += Genre_SelectedIndexChanged;
 			// 
 			// audiusListControl
 			// 
@@ -178,33 +198,34 @@
 			BackColor = System.Drawing.Color.Transparent;
 			Controls.Add(audiusListControl);
 			Controls.Add(genreComboBox);
-			Controls.Add(panel2);
-			Controls.Add(panel1);
+			Controls.Add(typePanel);
+			Controls.Add(timePanel);
 			Name = "TrendingPageControl";
 			controlResource.SetResourceKey(this, null);
 			Size = new System.Drawing.Size(766, 368);
-			panel1.ResumeLayout(false);
-			panel1.PerformLayout();
+			timePanel.ResumeLayout(false);
+			timePanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
-			panel2.ResumeLayout(false);
-			panel2.PerformLayout();
+			typePanel.ResumeLayout(false);
+			typePanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)genreComboBox).EndInit();
 			ResumeLayout(false);
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Panel timePanel;
 		private Krypton.Toolkit.KryptonRadioButton timeWeekRadioButton;
 		private GuiKit.Designer.ControlResource controlResource;
 		private GuiKit.Components.FontPalette fontPalette;
 		private Krypton.Toolkit.KryptonRadioButton timeMonthRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton timeYearRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton timeAllRadioButton;
-		private System.Windows.Forms.Panel panel2;
+		private System.Windows.Forms.Panel typePanel;
 		private Krypton.Toolkit.KryptonRadioButton typeTracksRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton typePlaylistsRadioButton;
 		private Krypton.Toolkit.KryptonComboBox genreComboBox;
 		private AudiusListControl audiusListControl;
+		private Krypton.Toolkit.KryptonRadioButton typeUndergroundRadioButton;
 	}
 }

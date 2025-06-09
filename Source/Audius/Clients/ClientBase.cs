@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 					RestClient client = CreateRestClient(url);
 
 					request.Timeout = TimeSpan.FromMilliseconds(Timeout);
-					request.AddParameter("app_name", ApplicationName);
+					request.AddQueryParameter("app_name", ApplicationName);
 
 					return client.GetAsync<DataModel<T>>(request, cancellationToken);
 				}).Result.Data;
