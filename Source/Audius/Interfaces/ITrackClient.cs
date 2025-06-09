@@ -17,5 +17,10 @@ namespace Polycode.NostalgicPlayer.Audius.Interfaces
 		/// Gets the top 100 trending (most popular) tracks on Audius
 		/// </summary>
 		TrackModel[] GetTrendingTracks(string genre, string time, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets the top 100 trending underground tracks on Audius
+		/// </summary>
+		TrackModel[] GetTrendingUndergroundTracks(CancellationToken cancellationToken);
 	}
 }
