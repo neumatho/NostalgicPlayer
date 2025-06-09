@@ -30,5 +30,20 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 
 			return DoRequest<TrackModel[]>(request, cancellationToken);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the top 100 trending underground tracks on Audius
+		/// </summary>
+		/********************************************************************/
+		public TrackModel[] GetTrendingUndergroundTracks(CancellationToken cancellationToken)
+		{
+			RestRequest request = new RestRequest("v1/tracks/trending/underground");
+			request.AddQueryParameter("limit", "100");
+
+			return DoRequest<TrackModel[]>(request, cancellationToken);
+		}
 	}
 }

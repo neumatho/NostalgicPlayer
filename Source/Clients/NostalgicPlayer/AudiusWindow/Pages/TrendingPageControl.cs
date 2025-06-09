@@ -125,19 +125,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				CleanupPage();
 				audiusListControl.SetLoading(true);
 
-				string time = string.Empty;
-
-				if (timeWeekRadioButton.Checked)
-					time = "week";
-				else if (timeMonthRadioButton.Checked)
-					time = "month";
-				else if (timeYearRadioButton.Checked)
-					time = "year";
-				else if (timeAllRadioButton.Checked)
-					time = "allTime";
-
 				if (typeTracksRadioButton.Checked)
-					GetTrendingTracks(time);
+					GetTrendingTracks();
+				else if (typeUndergroundRadioButton.Checked)
+					GetUndergroundTracks();
 			}
 		}
 
@@ -281,30 +272,75 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Return the string to use as the time parameter
+		/// </summary>
+		/********************************************************************/
+		private string GetTimeValue()
+		{
+			string time = string.Empty;
+
+			if (timeWeekRadioButton.Checked)
+				time = "week";
+			else if (timeMonthRadioButton.Checked)
+				time = "month";
+			else if (timeYearRadioButton.Checked)
+				time = "year";
+			else if (timeAllRadioButton.Checked)
+				time = "allTime";
+
+			return time;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the string to use as the genre parameter
+		/// </summary>
+		/********************************************************************/
+		private string GetGenreValue()
+		{
+			return ((KryptonListItem)genreComboBox.SelectedItem).Tag!.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Show error message
+		/// </summary>
+		/********************************************************************/
+		private void ShowErrorMessage(Exception ex)
+		{
+			string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
+
+			mainWindow.BeginInvoke(() =>
+			{
+				audiusListControl.SetLoading(false);
+				audiusListControl.SetItems(new List<AudiusListItem>());
+
+				mainWindow.ShowSimpleErrorMessage(audiusWindow, message);
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Retrieve the trending tracks from Audius
 		/// </summary>
 		/********************************************************************/
-		private void GetTrendingTracks(string time)
+		private void GetTrendingTracks()
 		{
-			string genre = ((KryptonListItem)genreComboBox.SelectedItem).Tag!.ToString();
+			string time = GetTimeValue();
+			string genre = GetGenreValue();
 
 			taskHelper.RunTask((cancellationToken) =>
 			{
 				ITrackClient trackClient = audius.GetTrackClient();
 				TrackModel[] tracks = trackClient.GetTrendingTracks(genre, time, cancellationToken);
 
-				List<AudiusListItem> items = tracks.Select((x, i) =>
-					new AudiusListItem(
-						i + 1,
-						x.Title,
-						x.User.Name,
-						x.Duration.HasValue ? TimeSpan.FromSeconds(x.Duration.Value) : TimeSpan.Zero,
-						x.RepostCount,
-						x.FavoriteCount,
-						x.PlayCount,
-						x.Artwork?._150x150
-					)
-				).ToList();
+				List<AudiusListItem> items = tracks.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1)).ToList();
 
 				cancellationToken.ThrowIfCancellationRequested();
 
@@ -318,18 +354,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, (ex) =>
+			}, ShowErrorMessage);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve the underground trending tracks from Audius
+		/// </summary>
+		/********************************************************************/
+		private void GetUndergroundTracks()
+		{
+			taskHelper.RunTask((cancellationToken) =>
 			{
-				string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
+				ITrackClient trackClient = audius.GetTrackClient();
+				TrackModel[] tracks = trackClient.GetTrendingUndergroundTracks(cancellationToken);
 
-				mainWindow.BeginInvoke(() =>
+				List<AudiusListItem> items = tracks.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1)).ToList();
+
+				cancellationToken.ThrowIfCancellationRequested();
+
+				mainWindow.Invoke(() =>
 				{
-					audiusListControl.SetLoading(false);
-					audiusListControl.SetItems(new List<AudiusListItem>());
-
-					mainWindow.ShowSimpleErrorMessage(audiusWindow, message);
+					using (new SleepCursor())
+					{
+						audiusListControl.SetLoading(false);
+						audiusListControl.SetItems(items);
+					}
 				});
-			});
+
+				return Task.CompletedTask;
+			}, ShowErrorMessage);
 		}
 		#endregion
 	}
