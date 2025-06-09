@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 			genreComboBox.Items.AddRange(
 			[
-				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_ALL) { Tag = "All Genres" },
+				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_ALL) { Tag = "" },
 				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC) { Tag = "Electronic" },
 				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_ROCK) { Tag = "Rock" },
 				new KryptonListItem(Resources.IDS_AUDIUS_TAB_TRENDING_GENRE_METAL) { Tag = "Metal" },
@@ -165,12 +165,80 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void TimeWeek_CheckedChanged(object sender, EventArgs e)
+		{
+			if (timeWeekRadioButton.Checked)
+				RefreshPage();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void TimeMonth_CheckedChanged(object sender, EventArgs e)
+		{
+			if (timeMonthRadioButton.Checked)
+				RefreshPage();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void TimeYear_CheckedChanged(object sender, EventArgs e)
+		{
+			if (timeYearRadioButton.Checked)
+				RefreshPage();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void TimeAll_CheckedChanged(object sender, EventArgs e)
+		{
+			if (timeAllRadioButton.Checked)
+				RefreshPage();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Genre_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (taskHelper != null)
+				RefreshPage();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private void TypeTracks_CheckedChanged(object sender, EventArgs e)
 		{
-			genreComboBox.Enabled = typeTracksRadioButton.Checked;
-
 			if (typeTracksRadioButton.Checked)
+			{
+				timePanel.Enabled = true;
+				genreComboBox.Enabled = true;
+
 				RefreshPage();
+			}
 		}
 
 
@@ -183,7 +251,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		private void TypePlaylists_CheckedChanged(object sender, EventArgs e)
 		{
 			if (typePlaylistsRadioButton.Checked)
+			{
+				timePanel.Enabled = true;
+				genreComboBox.Enabled = false;
+
 				RefreshPage();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void TypeUnderground_CheckedChanged(object sender, EventArgs e)
+		{
+			if (typeUndergroundRadioButton.Checked)
+			{
+				timePanel.Enabled = false;
+				genreComboBox.Enabled = false;
+
+				RefreshPage();
+			}
 		}
 		#endregion
 
@@ -207,7 +298,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 						i + 1,
 						x.Title,
 						x.User.Name,
-						TimeSpan.FromSeconds(x.Duration),
+						x.Duration.HasValue ? TimeSpan.FromSeconds(x.Duration.Value) : TimeSpan.Zero,
 						x.RepostCount,
 						x.FavoriteCount,
 						x.PlayCount,
@@ -234,6 +325,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				mainWindow.BeginInvoke(() =>
 				{
 					audiusListControl.SetLoading(false);
+					audiusListControl.SetItems(new List<AudiusListItem>());
+
 					mainWindow.ShowSimpleErrorMessage(audiusWindow, message);
 				});
 			});

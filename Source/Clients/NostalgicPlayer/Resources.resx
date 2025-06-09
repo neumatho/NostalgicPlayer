@@ -368,6 +368,9 @@ Formats supported:
   <data name="IDS_AUDIUS_LOADING" xml:space="preserve">
     <value>Please wait while loading items…</value>
   </data>
+  <data name="IDS_AUDIUS_NO_ITEMS" xml:space="preserve">
+    <value>No items found</value>
+  </data>
   <data name="IDS_AUDIUS_TAB_TRENDING" xml:space="preserve">
     <value>Trending</value>
   </data>
@@ -544,6 +547,9 @@ Formats supported:
   </data>
   <data name="IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS" xml:space="preserve">
     <value>Tracks</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND" xml:space="preserve">
+    <value>Underground</value>
   </data>
   <data name="IDS_AUDIUS_TITLE" xml:space="preserve">
     <value>Welcome to Audius</value>
