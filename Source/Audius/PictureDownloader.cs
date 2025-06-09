@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Audius
 	public class PictureDownloader : IDisposable
 	{
 		private const int DownloadPictureTimeout = 30000;
+		private const int MaxNumberOfItemsInCache = 20;
 
 		private class DownloadWaitInfo
 		{
@@ -28,8 +29,14 @@ namespace Polycode.NostalgicPlayer.Audius
 			public int WaitingCount;
 		}
 
+		private class PictureCacheEntry
+		{
+			public Bitmap Picture;
+			public DateTime LastAccessed;
+		}
+
 		private readonly object downloadLock = new object();	// Cannot use Lock class here, because the way it is used
-		private readonly Dictionary<string, Bitmap> downloadedPictures;
+		private readonly Dictionary<string, PictureCacheEntry> downloadedPictures;
 		private readonly Dictionary<string, DownloadWaitInfo> aboutToBeDownloaded;
 
 		/********************************************************************/
@@ -39,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Audius
 		/********************************************************************/
 		public PictureDownloader()
 		{
-			downloadedPictures = new Dictionary<string, Bitmap>(StringComparer.OrdinalIgnoreCase);
+			downloadedPictures = new Dictionary<string, PictureCacheEntry>(StringComparer.OrdinalIgnoreCase);
 			aboutToBeDownloaded = new Dictionary<string, DownloadWaitInfo>(StringComparer.OrdinalIgnoreCase);
 		}
 
@@ -54,8 +61,8 @@ namespace Polycode.NostalgicPlayer.Audius
 		{
 			lock (downloadLock)
 			{
-				foreach (Bitmap bitmap in downloadedPictures.Values)
-					bitmap.Dispose();
+				foreach (PictureCacheEntry entry in downloadedPictures.Values)
+					entry.Picture.Dispose();
 
 				downloadedPictures.Clear();
 
@@ -80,8 +87,11 @@ namespace Polycode.NostalgicPlayer.Audius
 
 			try
 			{
-				if (downloadedPictures.TryGetValue(url, out Bitmap picture))
-					return picture;
+				if (downloadedPictures.TryGetValue(url, out PictureCacheEntry entry))
+				{
+					entry.LastAccessed = DateTime.Now;
+					return entry.Picture;
+				}
 
 				if (aboutToBeDownloaded.TryGetValue(url, out DownloadWaitInfo downloadWaitInfo))
 				{
@@ -106,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Audius
 					}
 
 					// Return the bitmap or null if something went wrong
-					return downloadedPictures.GetValueOrDefault(url);
+					return downloadedPictures.GetValueOrDefault(url)?.Picture;
 				}
 				else
 				{
@@ -151,7 +161,15 @@ namespace Polycode.NostalgicPlayer.Audius
 				lock (downloadLock)
 				{
 					if (downloadedPicture != null)
-						downloadedPictures[url] = downloadedPicture;
+					{
+						MakeSureThereIsRoom();
+
+						downloadedPictures[url] = new PictureCacheEntry
+						{
+							Picture = downloadedPicture,
+							LastAccessed = DateTime.Now
+						};
+					}
 
 					if (aboutToBeDownloaded.Remove(url, out DownloadWaitInfo downloadWaitInfo))
 					{
@@ -166,5 +184,34 @@ namespace Polycode.NostalgicPlayer.Audius
 
 			return downloadedPicture;
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will make sure that there is room for a new picture in the cache
+		/// </summary>
+		/********************************************************************/
+		private void MakeSureThereIsRoom()
+		{
+			while (downloadedPictures.Count >= MaxNumberOfItemsInCache)
+			{
+				// Find the oldest picture and remove it
+				string oldestUrl = null;
+				DateTime oldestAccessed = DateTime.MaxValue;
+
+				foreach (KeyValuePair<string, PictureCacheEntry> pair in downloadedPictures)
+				{
+					if (pair.Value.LastAccessed < oldestAccessed)
+					{
+						oldestAccessed = pair.Value.LastAccessed;
+						oldestUrl = pair.Key;
+					}
+				}
+
+				if (downloadedPictures.Remove(oldestUrl, out PictureCacheEntry entry))
+					entry.Picture.Dispose();
+			}
+		}
+		#endregion
 	}
 }
