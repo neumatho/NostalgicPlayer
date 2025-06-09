@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Audius
 	public class PictureDownloader : IDisposable
 	{
 		private const int DownloadPictureTimeout = 30000;
-		private const int MaxNumberOfItemsInCache = 20;
+		private const int MaxNumberOfItemsInCache = 100;
 
 		private class DownloadWaitInfo
 		{

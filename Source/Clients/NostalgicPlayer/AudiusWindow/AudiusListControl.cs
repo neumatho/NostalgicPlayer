@@ -40,10 +40,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		public void SetLoading(bool loading)
 		{
-			loadingLabel.Visible = loading;
+			statusLabel.Visible = loading;
 
 			if (loading)
-				CenterLoadingLabel();
+			{
+				statusLabel.Text = Resources.IDS_AUDIUS_LOADING;
+				CenterStatusLabel();
+			}
 		}
 
 
@@ -53,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Initialize the list with new items
 		/// </summary>
 		/********************************************************************/
-		public void SetItems(IEnumerable<AudiusListItem> items)
+		public void SetItems(List<AudiusListItem> items)
 		{
 			flowLayoutPanel.SuspendLayout();
 
@@ -62,17 +65,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				// First remove and dispose all existing items
 				ClearItems();
 
-				// Then add the new items
-				foreach (AudiusListItem item in items)
+				if (items.Count == 0)
 				{
-					AudiusListItemControl ctrl = new AudiusListItemControl(item);
-					ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
-
-					flowLayoutPanel.Controls.Add(ctrl);
+					statusLabel.Visible = true;
+					statusLabel.Text = Resources.IDS_AUDIUS_NO_ITEMS;
+					CenterStatusLabel();
 				}
+				else
+				{
+					// Then add the new items
+					foreach (AudiusListItem item in items)
+					{
+						AudiusListItemControl ctrl = new AudiusListItemControl(item);
+						ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
 
-				// Make sure the already visible items are updated
-				UpdateVisibleItems();
+						flowLayoutPanel.Controls.Add(ctrl);
+					}
+
+					// Make sure the already visible items are updated
+					UpdateVisibleItems();
+				}
 			}
 			finally
 			{
@@ -139,8 +151,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				flowLayoutPanel.ResumeLayout();
 			}
 
-			if (loadingLabel.Visible)
-				CenterLoadingLabel();
+			if (statusLabel.Visible)
+				CenterStatusLabel();
 		}
 
 
@@ -162,9 +174,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Center the loading label
 		/// </summary>
 		/********************************************************************/
-		private void CenterLoadingLabel()
+		private void CenterStatusLabel()
 		{
-			loadingLabel.Location = new Point((ClientSize.Width - loadingLabel.Width) / 2, (ClientSize.Height - loadingLabel.Height) / 2);
+			statusLabel.PerformLayout();
+			statusLabel.Location = new Point((ClientSize.Width - statusLabel.Width) / 2, (ClientSize.Height - statusLabel.Height) / 2);
 		}
 
 
