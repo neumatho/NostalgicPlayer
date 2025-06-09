@@ -105,8 +105,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 
 			try
 			{
-				foreach (AudiusListItemControl ctrl in flowLayoutPanel.Controls)
-					ctrl.Dispose();
+				while (flowLayoutPanel.Controls.Count > 0)
+				{
+					// When disposing the control, it is automatically removed from the collection
+					flowLayoutPanel.Controls[0].Dispose();
+				}
 
 				flowLayoutPanel.Controls.Clear();
 			}
