@@ -23,6 +23,10 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 		public TrackModel[] GetTrendingTracks(string genre, string time, CancellationToken cancellationToken)
 		{
 			RestRequest request = new RestRequest("v1/tracks/trending");
+			request.AddQueryParameter("time", time);
+
+			if (!string.IsNullOrEmpty(genre))
+				request.AddQueryParameter("genre", genre);
 
 			return DoRequest<TrackModel[]>(request, cancellationToken);
 		}

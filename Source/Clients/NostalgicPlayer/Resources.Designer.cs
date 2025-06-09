@@ -599,6 +599,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No items found.
+        /// </summary>
+        internal static string IDS_AUDIUS_NO_ITEMS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_NO_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Trending.
         /// </summary>
         internal static string IDS_AUDIUS_TAB_TRENDING {
@@ -1126,6 +1135,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS {
             get {
                 return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Underground.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND", resourceCulture);
             }
         }
         

@@ -72,8 +72,7 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Tracks
 
 		/// <summary></summary>
 		[JsonPropertyName("duration")]
-		[JsonRequired]
-		public int Duration { get; set; }
+		public int? Duration { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("downloadable")]
