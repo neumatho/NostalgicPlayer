@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Audius;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
@@ -15,6 +16,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// </summary>
 	public partial class AudiusListControl : UserControl
 	{
+		private readonly PictureDownloader pictureDownloader;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -23,6 +26,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		public AudiusListControl()
 		{
 			InitializeComponent();
+
+			Disposed += AudiusListControl_Disposed;
+
+			pictureDownloader = new PictureDownloader();
 		}
 
 		#region Public methods
@@ -99,6 +106,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		#endregion
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void AudiusListControl_Disposed(object sender, EventArgs e)
+		{
+			// Items are already disposed at this point, so no need to dispose them again
+
+			pictureDownloader.Dispose();
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the flow layout resizes
@@ -185,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				if (!IsItemVisible(startYOfVisibleArea, endYOfVisibleArea, itemYPosition, itemYPosition + itemHeight))
 					break;
 
-				item.RefreshItem();
+				item.RefreshItem(pictureDownloader);
 
 				itemYPosition += itemHeight;
 			}
