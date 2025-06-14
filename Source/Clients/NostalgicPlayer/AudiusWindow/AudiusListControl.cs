@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			InitializeComponent();
 
 			Disposed += AudiusListControl_Disposed;
+			flowLayoutPanel.MouseWheel += FlowLayout_MouseWheel;
 		}
 
 		#region Public methods
@@ -171,6 +172,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 
 			if (statusLabel.Visible)
 				CenterStatusLabel();
+
+			UpdateVisibleItems();
 		}
 
 
@@ -181,6 +184,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// </summary>
 		/********************************************************************/
 		private void FlowLayout_Scroll(object sender, ScrollEventArgs e)
+		{
+			UpdateVisibleItems();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the flow layout scrolls via mouse wheel
+		/// </summary>
+		/********************************************************************/
+		private void FlowLayout_MouseWheel(object sender, MouseEventArgs e)
 		{
 			UpdateVisibleItems();
 		}
