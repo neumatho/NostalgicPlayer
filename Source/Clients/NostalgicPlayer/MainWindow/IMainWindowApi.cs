@@ -57,6 +57,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		void AddFilesToModuleList(string[] files, int startIndex = -1, bool checkForList = false);
 
 		/// <summary>
+		/// Will add the given module list items to the module list
+		/// </summary>
+		void AddItemsToModuleList(ModuleListItem[] items, bool clearAndPlay);
+
+		/// <summary>
 		/// Will replace the given item with the new list of items
 		/// </summary>
 		void ReplaceItemInModuleList(ModuleListItem listItem, List<ModuleListItem> newItems);
