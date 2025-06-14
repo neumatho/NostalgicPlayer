@@ -345,6 +345,9 @@ This is a group on the Atari, so the format can contains either 4 or 8 channels 
   <data name="IDS_PROWIZ_DESCRIPTION_AGENT7" xml:space="preserve">
     <value>A module packer created by Eureka of the demo group Concept.</value>
   </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT70" xml:space="preserve">
+    <value>This format is a lot like Unic Tracker, but with some small differences.</value>
+  </data>
   <data name="IDS_PROWIZ_DESCRIPTION_AGENT8" xml:space="preserve">
     <value>A module packer created by Charlet Franck.</value>
   </data>
@@ -554,6 +557,9 @@ This is a group on the Atari, so the format can contains either 4 or 8 channels 
   </data>
   <data name="IDS_PROWIZ_NAME_AGENT7" xml:space="preserve">
     <value>Eureka Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT70" xml:space="preserve">
+    <value>Images Music System</value>
   </data>
   <data name="IDS_PROWIZ_NAME_AGENT8" xml:space="preserve">
     <value>FC-M Packer</value>

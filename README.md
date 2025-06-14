@@ -121,6 +121,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |
 | IFF-SMUS | .smus | | IFF-SMUS |
+| Images Music System | .ims | ProWizard | ModTracker |
 | Imago Orpheus | .imf | | Xmp |
 | Impulse Tracker | .it | | Xmp |
 | InStereo! 1.0 | .is / .is10 | | InStereo! 1.0 |

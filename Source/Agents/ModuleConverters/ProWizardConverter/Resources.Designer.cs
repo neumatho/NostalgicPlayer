@@ -721,6 +721,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This format is a lot like Unic Tracker, but with some small differences..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT70 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT70", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A module packer created by Charlet Franck..
         /// </summary>
         internal static string IDS_PROWIZ_DESCRIPTION_AGENT8 {
@@ -1347,6 +1356,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         internal static string IDS_PROWIZ_NAME_AGENT7 {
             get {
                 return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Images Music System.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT70 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT70", resourceCulture);
             }
         }
         

@@ -1317,6 +1317,14 @@
             <uap:DisplayName>Coconizer</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="imsfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ims">.ims</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Images Music System</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

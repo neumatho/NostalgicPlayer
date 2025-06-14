@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 	internal abstract class ProWizardConverterWorker31SamplesBase : ProWizardConverterWorkerBase
 	{
 		#region Tuning periods
-		protected static short[,] tuningPeriods = new short[16, 36]
+		protected static readonly short[,] tuningPeriods = new short[16, 36]
 		{
 			{
 				856, 808, 762, 720, 678, 640, 604, 570, 538, 508, 480, 453,
