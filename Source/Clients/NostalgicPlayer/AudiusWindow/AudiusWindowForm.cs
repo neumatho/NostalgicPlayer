@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// <summary>
 	/// This shows the Audius window
 	/// </summary>
-	public partial class AudiusWindowForm : WindowFormBase
+	public partial class AudiusWindowForm : WindowFormBase, IAudiusWindowApi
 	{
 		private const int Page_Trending = 0;
 
@@ -51,6 +51,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				trendingPageControl.Initialize(mainWindow, this, audiusApi);
 			}
 		}
+
+		#region IAudiusWindowApi implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return the form of the Audius window
+		/// </summary>
+		/********************************************************************/
+		public Form Form => this;
+		#endregion
 
 		#region Event handlers
 		/********************************************************************/
