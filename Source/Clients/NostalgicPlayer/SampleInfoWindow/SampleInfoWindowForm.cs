@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings)
+		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 
