@@ -10,6 +10,7 @@ using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler;
 
@@ -185,7 +186,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						return false;
 
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(0, null, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					DurationInfo durationInfo = null;
+
+					if (loaderInfo is IStreamMetadata streamMetadata)
+						durationInfo = new DurationInfo(streamMetadata.Duration, []);
+
+					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 
 				soundStream.Start();
