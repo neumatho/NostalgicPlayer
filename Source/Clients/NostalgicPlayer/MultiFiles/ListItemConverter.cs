@@ -30,15 +30,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 				DefaultSubSong = listItem.DefaultSubSong
 			};
 
-			if (listItem.ListItem is SingleFileListItem)
+			if (listItem.ListItem is SingleFileModuleListItem)
 			{
 				multiFileInfo.Type = MultiFileInfo.FileType.Plain;
 			}
-			else if (listItem.ListItem is ArchiveFileListItem)
+			else if (listItem.ListItem is ArchiveFileModuleListItem)
 			{
 				multiFileInfo.Type = MultiFileInfo.FileType.Archive;
 			}
-			else if (listItem.ListItem is UrlListItem)
+			else if (listItem.ListItem is UrlModuleListItem)
 			{
 				multiFileInfo.Type = MultiFileInfo.FileType.Url;
 			}
@@ -63,19 +63,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 			{
 				case MultiFileInfo.FileType.Plain:
 				{
-					item = new SingleFileListItem(fileInfo.Source);
+					item = new SingleFileModuleListItem(fileInfo.Source);
 					break;
 				}
 
 				case MultiFileInfo.FileType.Archive:
 				{
-					item = new ArchiveFileListItem(fileInfo.Source);
+					item = new ArchiveFileModuleListItem(fileInfo.Source);
 					break;
 				}
 
 				case MultiFileInfo.FileType.Url:
 				{
-					item = new UrlListItem(fileInfo.DisplayName, fileInfo.Source);
+					item = new UrlModuleListItem(fileInfo.DisplayName, fileInfo.Source);
 					break;
 				}
 

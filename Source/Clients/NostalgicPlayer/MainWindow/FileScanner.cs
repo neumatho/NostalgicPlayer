@@ -227,7 +227,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						return;
 
 					// Skip stream items
-					if (listItem.ListItem is IStreamListItem)
+					if (listItem.ListItem is IStreamModuleListItem)
 						continue;
 
 					// Get needed information
@@ -294,7 +294,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (isArchive)
 					{
 						foreach (string archiveFileName in detector.GetEntries(fileName))
-							list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+							list.Add(new ModuleListItem(new ArchiveFileModuleListItem(archiveFileName)));
 					}
 				}
 

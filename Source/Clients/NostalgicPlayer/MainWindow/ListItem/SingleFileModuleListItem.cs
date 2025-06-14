@@ -4,25 +4,24 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
 	/// <summary>
-	/// This class holds a list item pointing to a file inside an archive
+	/// This class holds a list item pointing to a file
 	/// </summary>
-	public class ArchiveFileListItem : IModuleListItem
+	public class SingleFileModuleListItem : IModuleListItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileListItem(string fullArchivePath)
+		public SingleFileModuleListItem(string fullFileName)
 		{
-			Source = fullArchivePath;
+			Source = fullFileName;
 		}
 
 		#region IModuleListItem implementation
@@ -31,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/// Return the name which is shown in the list
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName => Path.GetFileName(ArchivePath.GetEntryName(Source));
+		public string DisplayName => Path.GetFileName(Source);
 
 
 
