@@ -25,6 +25,11 @@ namespace Polycode.NostalgicPlayer.Audius.Interfaces
 		TrackModel[] GetTrendingUndergroundTracks(CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Return track information for the given track
+		/// </summary>
+		TrackModel GetTrackInfo(string trackId, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Will return the streaming URL for the given track ID
 		/// </summary>
 		Uri GetStreamingUrl(string trackId);
