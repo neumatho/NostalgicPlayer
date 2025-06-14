@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 	public partial class TrendingPageControl : UserControl, IAudiusPage
 	{
 		private IMainWindowApi mainWindowApi;
-		private AudiusWindowForm audiusWindow;
+		private IAudiusWindowApi audiusWindowApi;
 		private AudiusApi audius;
 
 		private TaskHelper taskHelper;
@@ -102,10 +102,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, AudiusWindowForm audiusWindow, AudiusApi audiusApi)
+		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, AudiusApi audiusApi)
 		{
 			mainWindowApi = mainWindow;
-			this.audiusWindow = audiusWindow;
+			audiusWindowApi = audiusWindow;
 			audius = audiusApi;
 
 			taskHelper = new TaskHelper();
@@ -319,7 +319,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				audiusListControl.SetLoading(false);
 				audiusListControl.SetItems(new List<AudiusListItem>());
 
-				mainWindowApi.ShowSimpleErrorMessage(audiusWindow, message);
+				mainWindowApi.ShowSimpleErrorMessage(audiusWindowApi.Form, message);
 			});
 		}
 
