@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// <summary>
 		/// Will initialize the control
 		/// </summary>
-		void Initialize(MainWindowForm mainWindow, AudiusWindowForm audiusWindow, AudiusApi audiusApi);
+		void Initialize(IMainWindowApi mainWindow, AudiusWindowForm audiusWindow, AudiusApi audiusApi);
 
 		/// <summary>
 		/// Will refresh the page with new data

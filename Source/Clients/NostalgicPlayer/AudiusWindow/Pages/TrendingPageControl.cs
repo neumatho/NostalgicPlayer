@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 	/// </summary>
 	public partial class TrendingPageControl : UserControl, IAudiusPage
 	{
-		private MainWindowForm mainWindow;
+		private IMainWindowApi mainWindowApi;
 		private AudiusWindowForm audiusWindow;
 		private AudiusApi audius;
 
@@ -102,9 +102,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(MainWindowForm mainWindow, AudiusWindowForm audiusWindow, AudiusApi audiusApi)
+		public void Initialize(IMainWindowApi mainWindow, AudiusWindowForm audiusWindow, AudiusApi audiusApi)
 		{
-			this.mainWindow = mainWindow;
+			mainWindowApi = mainWindow;
 			this.audiusWindow = audiusWindow;
 			audius = audiusApi;
 
@@ -314,12 +314,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		{
 			string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
 
-			mainWindow.BeginInvoke(() =>
+			BeginInvoke(() =>
 			{
 				audiusListControl.SetLoading(false);
 				audiusListControl.SetItems(new List<AudiusListItem>());
 
-				mainWindow.ShowSimpleErrorMessage(audiusWindow, message);
+				mainWindowApi.ShowSimpleErrorMessage(audiusWindow, message);
 			});
 		}
 
@@ -344,7 +344,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 				cancellationToken.ThrowIfCancellationRequested();
 
-				mainWindow.Invoke(() =>
+				Invoke(() =>
 				{
 					using (new SleepCursor())
 					{
@@ -375,7 +375,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 				cancellationToken.ThrowIfCancellationRequested();
 
-				mainWindow.Invoke(() =>
+				Invoke(() =>
 				{
 					using (new SleepCursor())
 					{
