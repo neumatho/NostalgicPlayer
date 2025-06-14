@@ -448,6 +448,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Will add the given module list items to the module list
+		/// </summary>
+		/********************************************************************/
+		public void AddItemsToModuleList(ModuleListItem[] items, bool clearAndPlay)
+		{
+			AddItemsToList(items, clearAndPlay);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will replace the given item with the new list of items
 		/// </summary>
 		/********************************************************************/
@@ -1402,33 +1414,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					using (new SleepCursor())
 					{
-						moduleListControl.BeginUpdate();
-
-						try
-						{
-							if (result == DialogResult.OK)
-							{
-								// Free any playing module
-								StopAndFreeModule();
-
-								moduleListControl.Items.Clear();
-							}
-
-							moduleListControl.Items.Add(new ModuleListItem(new UrlListItem(dialog.GetName(), dialog.GetUrl())));
-
-							if (result == DialogResult.OK)
-							{
-								// Load the module
-								LoadAndPlayModule(0);
-							}
-						}
-						finally
-						{
-							moduleListControl.EndUpdate();
-						}
-
-						// Update the controls
-						UpdateControls();
+						ModuleListItem item = new ModuleListItem(new UrlListItem(dialog.GetName(), dialog.GetUrl()));
+						AddItemsToList([ item ], result == DialogResult.OK);
 					}
 				}
 			}
@@ -4972,6 +4959,44 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Tell the file scanner to scan the new items
 			fileScanner.ScanItems(moduleListControl.Items.Skip(startIndex == -1 ? currentCount : startIndex).Take(itemList.Count));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will add the given module list items to the module list
+		/// </summary>
+		/********************************************************************/
+		private void AddItemsToList(ModuleListItem[] items, bool clearAndPlay)
+		{
+			moduleListControl.BeginUpdate();
+
+			try
+			{
+				if (clearAndPlay)
+				{
+					// Free any playing module
+					StopAndFreeModule();
+
+					moduleListControl.Items.Clear();
+				}
+
+				moduleListControl.Items.AddRange(items);
+
+				if (clearAndPlay)
+				{
+					// Load the module
+					LoadAndPlayModule(0);
+				}
+			}
+			finally
+			{
+				moduleListControl.EndUpdate();
+			}
+
+			// Update the controls
+			UpdateControls();
 		}
 
 
