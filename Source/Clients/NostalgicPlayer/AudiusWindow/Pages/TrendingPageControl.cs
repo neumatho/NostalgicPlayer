@@ -24,7 +24,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 	{
 		private IMainWindowApi mainWindowApi;
 		private IAudiusWindowApi audiusWindowApi;
-		private AudiusApi audius;
 
 		private TaskHelper taskHelper;
 
@@ -102,11 +101,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, AudiusApi audiusApi)
+		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow)
 		{
 			mainWindowApi = mainWindow;
 			audiusWindowApi = audiusWindow;
-			audius = audiusApi;
+
+			audiusListControl.Initialize(mainWindowApi);
 
 			taskHelper = new TaskHelper();
 		}
@@ -337,7 +337,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 			taskHelper.RunTask((cancellationToken) =>
 			{
-				ITrackClient trackClient = audius.GetTrackClient();
+				AudiusApi audiusApi = new AudiusApi();
+
+				ITrackClient trackClient = audiusApi.GetTrackClient();
 				TrackModel[] tracks = trackClient.GetTrendingTracks(genre, time, cancellationToken);
 
 				List<AudiusListItem> items = tracks.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1)).ToList();
@@ -368,7 +370,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		{
 			taskHelper.RunTask((cancellationToken) =>
 			{
-				ITrackClient trackClient = audius.GetTrackClient();
+				AudiusApi audiusApi = new AudiusApi();
+
+				ITrackClient trackClient = audiusApi.GetTrackClient();
 				TrackModel[] tracks = trackClient.GetTrendingUndergroundTracks(cancellationToken);
 
 				List<AudiusListItem> items = tracks.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1)).ToList();
