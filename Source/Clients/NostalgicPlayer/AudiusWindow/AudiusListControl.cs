@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
@@ -16,7 +17,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// </summary>
 	public partial class AudiusListControl : UserControl
 	{
-		private readonly PictureDownloader pictureDownloader;
+		private IMainWindowApi mainWindowApi;
+
+		private PictureDownloader pictureDownloader;
 
 		/********************************************************************/
 		/// <summary>
@@ -28,11 +31,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			InitializeComponent();
 
 			Disposed += AudiusListControl_Disposed;
+		}
+
+		#region Public methods
+		/********************************************************************/
+		/// <summary>
+		/// Will initialize the control
+		/// </summary>
+		/********************************************************************/
+		public void Initialize(IMainWindowApi mainWindow)
+		{
+			mainWindowApi = mainWindow;
 
 			pictureDownloader = new PictureDownloader();
 		}
 
-		#region Public methods
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Set load state
@@ -76,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 					// Then add the new items
 					foreach (AudiusListItem item in items)
 					{
-						AudiusListItemControl ctrl = new AudiusListItemControl(item);
+						AudiusListItemControl ctrl = new AudiusListItemControl(item, mainWindowApi);
 						ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
 
 						flowLayoutPanel.Controls.Add(ctrl);

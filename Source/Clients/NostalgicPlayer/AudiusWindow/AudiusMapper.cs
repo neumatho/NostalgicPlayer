@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			return new AudiusListItem(
 				position,
+				track.Id,
 				track.Title,
 				track.User.Name,
 				track.Duration.HasValue ? TimeSpan.FromSeconds(track.Duration.Value) : TimeSpan.Zero,

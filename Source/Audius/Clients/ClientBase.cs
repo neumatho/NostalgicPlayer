@@ -56,6 +56,23 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 		{
 			return DoRequest<T>(audiusUrl, request, cancellationToken);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Build a URL to Audius
+		/// </summary>
+		/********************************************************************/
+		protected Uri BuildUrl(string path)
+		{
+			UriBuilder builder = new UriBuilder(audiusUrl);
+
+			builder.Path = path;
+			builder.Query = $"app_name={ApplicationName}";
+
+			return builder.Uri;
+		}
 		#endregion
 
 		#region Private methods
@@ -94,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 					request.AddQueryParameter("app_name", ApplicationName);
 
 					return client.GetAsync<DataModel<T>>(request, cancellationToken);
-				}).Result.Data;
+				}, cancellationToken).Result.Data;
 			}
 			catch(AggregateException aggregateException)
 			{

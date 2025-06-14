@@ -1414,8 +1414,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					using (new SleepCursor())
 					{
-						ModuleListItem item = new ModuleListItem(new UrlModuleListItem(dialog.GetName(), dialog.GetUrl()));
-						AddItemsToList([ item ], result == DialogResult.OK);
+						ModuleListItem listItem = new ModuleListItem(new UrlModuleListItem(dialog.GetName(), dialog.GetUrl()));
+						AddItemsToList([ listItem ], result == DialogResult.OK);
 					}
 				}
 			}

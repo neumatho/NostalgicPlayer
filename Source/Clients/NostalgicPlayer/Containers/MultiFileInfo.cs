@@ -30,7 +30,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 			/// <summary>
 			/// A network URL
 			/// </summary>
-			Url
+			Url,
+
+			/// <summary>
+			/// An Audius track
+			/// </summary>
+			Audius
 		}
 
 		/********************************************************************/

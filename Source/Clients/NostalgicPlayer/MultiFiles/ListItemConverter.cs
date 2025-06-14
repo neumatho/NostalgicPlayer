@@ -42,6 +42,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 			{
 				multiFileInfo.Type = MultiFileInfo.FileType.Url;
 			}
+			else if (listItem.ListItem is AudiusModuleListItem)
+			{
+				multiFileInfo.Type = MultiFileInfo.FileType.Audius;
+			}
 			else
 				throw new NotImplementedException("Unknown module list implementation");
 
@@ -76,6 +80,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 				case MultiFileInfo.FileType.Url:
 				{
 					item = new UrlModuleListItem(fileInfo.DisplayName, fileInfo.Source);
+					break;
+				}
+
+				case MultiFileInfo.FileType.Audius:
+				{
+					item = new AudiusModuleListItem(fileInfo.DisplayName, fileInfo.Source);
 					break;
 				}
 
