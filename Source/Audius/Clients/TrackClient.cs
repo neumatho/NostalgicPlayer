@@ -51,6 +51,21 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 
 		/********************************************************************/
 		/// <summary>
+		/// Return track information for the given track
+		/// </summary>
+		/********************************************************************/
+		public TrackModel GetTrackInfo(string trackId, CancellationToken cancellationToken)
+		{
+			RestRequest request = new RestRequest("v1/tracks/{id}");
+			request.AddUrlSegment("id", trackId);
+
+			return DoRequest<TrackModel>(request, cancellationToken);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will return the streaming URL for the given track ID
 		/// </summary>
 		/********************************************************************/
