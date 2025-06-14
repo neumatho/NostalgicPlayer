@@ -18,7 +18,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	public partial class AudiusListControl : UserControl
 	{
 		private IMainWindowApi mainWindowApi;
-
 		private PictureDownloader pictureDownloader;
 
 		/********************************************************************/
@@ -30,7 +29,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			InitializeComponent();
 
-			Disposed += AudiusListControl_Disposed;
 			flowLayoutPanel.MouseWheel += FlowLayout_MouseWheel;
 		}
 
@@ -40,11 +38,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow)
+		public void Initialize(IMainWindowApi mainWindow, PictureDownloader downloader)
 		{
 			mainWindowApi = mainWindow;
-
-			pictureDownloader = new PictureDownloader();
+			pictureDownloader = downloader;
 		}
 
 
@@ -137,20 +134,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		#endregion
 
 		#region Event handlers
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void AudiusListControl_Disposed(object sender, EventArgs e)
-		{
-			// Items are already disposed at this point, so no need to dispose them again
-
-			pictureDownloader.Dispose();
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the flow layout resizes

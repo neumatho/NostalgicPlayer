@@ -21,7 +21,6 @@ namespace Polycode.NostalgicPlayer.Audius
 	public class PictureDownloader : IDisposable
 	{
 		private const int DownloadPictureTimeout = 30000;
-		private const int MaxNumberOfItemsInCache = 100;
 
 		private class DownloadWaitInfo
 		{
@@ -38,16 +37,18 @@ namespace Polycode.NostalgicPlayer.Audius
 		private readonly object downloadLock = new object();	// Cannot use Lock class here, because the way it is used
 		private readonly Dictionary<string, PictureCacheEntry> downloadedPictures;
 		private readonly Dictionary<string, DownloadWaitInfo> aboutToBeDownloaded;
+		private readonly int maxNumberOfItemsInCache;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PictureDownloader()
+		public PictureDownloader(int maxNumberOfItemsInCache)
 		{
 			downloadedPictures = new Dictionary<string, PictureCacheEntry>(StringComparer.OrdinalIgnoreCase);
 			aboutToBeDownloaded = new Dictionary<string, DownloadWaitInfo>(StringComparer.OrdinalIgnoreCase);
+			this.maxNumberOfItemsInCache = maxNumberOfItemsInCache;
 		}
 
 
@@ -193,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Audius
 		/********************************************************************/
 		private void MakeSureThereIsRoom()
 		{
-			while (downloadedPictures.Count >= MaxNumberOfItemsInCache)
+			while (downloadedPictures.Count >= maxNumberOfItemsInCache)
 			{
 				// Find the oldest picture and remove it
 				string oldestUrl = null;

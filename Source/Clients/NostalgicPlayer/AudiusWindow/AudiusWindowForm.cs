@@ -20,6 +20,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	{
 		private const int Page_Trending = 0;
 
+		private PictureDownloader pictureDownloader;
+
 		private IAudiusPage currentPage;
 
 		/********************************************************************/
@@ -31,12 +33,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			InitializeComponent();
 
+			Disposed += AudiusWindowForm_Disposed;
+
 			if (!DesignMode)
 			{
 				InitializeWindow(mainWindow, optionSettings);
 
 				// Load window settings
 				LoadWindowSettings("AudiusWindow");
+
+				// Initialize picture downloader
+				pictureDownloader = new PictureDownloader(100);
 
 				// Set the title of the window
 				Text = Resources.IDS_AUDIUS_TITLE;
@@ -45,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				navigator.Pages[Page_Trending].Text = Resources.IDS_AUDIUS_TAB_TRENDING;
 
 				// Initialize all pages
-				trendingPageControl.Initialize(mainWindow, this);
+				trendingPageControl.Initialize(mainWindow, this, pictureDownloader);
 			}
 		}
 
@@ -59,6 +66,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		#endregion
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void AudiusWindowForm_Disposed(object sender, EventArgs e)
+		{
+			pictureDownloader?.Dispose();
+			pictureDownloader = null;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the form is shown for the first time

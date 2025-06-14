@@ -24,6 +24,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// </summary>
 	public class AudiusLoader : StreamLoader, IStreamMetadata
 	{
+		private static readonly PictureDownloader pictureDownloader;
+
+		/********************************************************************/
+		/// <summary>
+		/// Static constructor - initialize the picture downloader
+		/// </summary>
+		/********************************************************************/
+		static AudiusLoader()
+		{
+			pictureDownloader = new PictureDownloader(5);
+
+			AppDomain.CurrentDomain.ProcessExit += AudiusLoader_Dtor;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Destructor - dispose the picture downloader
+		/// </summary>
+		/********************************************************************/
+		static void AudiusLoader_Dtor(object sender, EventArgs e)
+		{
+			pictureDownloader.Dispose();
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -143,16 +171,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				{
 					PictureInfo picture = Task.Run(async () =>
 					{
-						using (PictureDownloader pictureDownloader = new PictureDownloader())
+						Bitmap bitmap = await pictureDownloader.GetPictureAsync(track.Artwork._480x480, CancellationToken.None);
+
+						using (MemoryStream ms = new MemoryStream())
 						{
-							Bitmap bitmap = await pictureDownloader.GetPictureAsync(track.Artwork._480x480, CancellationToken.None);
+							bitmap.Save(ms, ImageFormat.Png);
 
-							using (MemoryStream ms = new MemoryStream())
-							{
-								bitmap.Save(ms, ImageFormat.Png);
-
-								return new PictureInfo(ms.ToArray(), Resources.IDS_AUDIUS_PICTURE_NAME);
-							}
+							return new PictureInfo(ms.ToArray(), Resources.IDS_AUDIUS_PICTURE_NAME);
 						}
 					}).Result;
 

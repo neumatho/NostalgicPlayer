@@ -101,12 +101,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow)
+		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader)
 		{
 			mainWindowApi = mainWindow;
 			audiusWindowApi = audiusWindow;
 
-			audiusListControl.Initialize(mainWindowApi);
+			audiusListControl.Initialize(mainWindowApi, downloader);
 
 			taskHelper = new TaskHelper();
 		}
