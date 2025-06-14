@@ -31,7 +31,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 	public partial class ModuleInfoWindowForm : WindowFormBase
 	{
 		private ModuleHandler moduleHandler;
-		private MainWindowForm mainWindow;
 
 		private PictureInfo[] pictures;
 		private int pictureIndex;
@@ -78,13 +77,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoWindowForm(ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings, ModuleSettings moduleSettings)
+		public ModuleInfoWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optionSettings, ModuleSettings moduleSettings)
 		{
 			InitializeComponent();
 
 			// Remember the arguments
 			this.moduleHandler = moduleHandler;
-			this.mainWindow = mainWindow;
 			this.moduleSettings = moduleSettings;
 
 			if (!DesignMode)
@@ -225,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void ModuleInfoWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (mainWindow != null)     // Main window is null, if the window has already been closed (because Owner has been set)
+			if (mainWindowApi != null)     // Main window is null, if the window has already been closed (because Owner has been set)
 			{
 				// Save the settings
 				settings.Column1Width = moduleInfoInfoDataGridView.Columns[0].Width;
@@ -234,7 +232,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Cleanup
 				CleanupPictures();
 
-				mainWindow = null;
+				mainWindowApi = null;
 				moduleHandler = null;
 			}
 		}
@@ -467,7 +465,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// Check to see if there are any module loaded at the moment
 			MultiFileInfo fileInfo;
 
-			if (moduleHandler.IsPlaying && ((fileInfo = mainWindow.GetFileInfo()) != null))
+			if (moduleHandler.IsPlaying && ((fileInfo = mainWindowApi.GetFileInfo()) != null))
 			{
 				firstCustomLine = 8;
 

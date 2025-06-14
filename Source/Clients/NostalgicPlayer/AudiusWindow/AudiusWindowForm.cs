@@ -20,9 +20,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	{
 		private const int Page_Trending = 0;
 
-		private readonly MainWindowForm mainWindow;
-		private readonly AudiusApi audiusApi;
-
 		private IAudiusPage currentPage;
 
 		/********************************************************************/
@@ -30,12 +27,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusWindowForm(MainWindowForm mainWindow, OptionSettings optionSettings)
+		public AudiusWindowForm(IMainWindowApi mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
-
-			// Remember the arguments
-			this.mainWindow = mainWindow;
 
 			if (!DesignMode)
 			{
@@ -51,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				navigator.Pages[Page_Trending].Text = Resources.IDS_AUDIUS_TAB_TRENDING;
 
 				// Initialize the Audius API
-				audiusApi = new AudiusApi();
+				AudiusApi audiusApi = new AudiusApi();
 
 				// Initialize all pages
 				trendingPageControl.Initialize(mainWindow, this, audiusApi);

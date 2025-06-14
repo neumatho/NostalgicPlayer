@@ -30,7 +30,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// </summary>
 		protected bool disableEscapeKey = false;
 
-		private MainWindowForm mainWindow;
+		/// <summary>
+		/// Holds the interface to the main window API
+		/// </summary>
+		protected IMainWindowApi mainWindowApi;
+
 		private OptionSettings optionSettings;
 		private WindowSettings windowSettings;
 
@@ -62,9 +66,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// Set option settings. Should only be used by the main window
 		/// </summary>
 		/********************************************************************/
-		protected void SetOptions(MainWindowForm mainForm, OptionSettings optSettings)
+		protected void SetOptions(IMainWindowApi mainWindow, OptionSettings optSettings)
 		{
-			mainWindow = mainForm;
+			mainWindowApi = mainWindow;
 			optionSettings = optSettings;
 		}
 
@@ -75,14 +79,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// Call this to initialize the window with basis settings
 		/// </summary>
 		/********************************************************************/
-		protected void InitializeWindow(MainWindowForm mainForm, OptionSettings optSettings)
+		protected void InitializeWindow(IMainWindowApi mainWindow, OptionSettings optSettings)
 		{
-			SetOptions(mainForm, optSettings);
+			SetOptions(mainWindow, optSettings);
 
 			// Set how the window should act in the task bar and task switcher
 			if (!optionSettings.SeparateWindows)
 			{
-				Owner = mainWindow;
+				Owner = mainWindow.Form;
 				ShowInTaskbar = false;
 			}
 			else
@@ -231,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 			if (string.IsNullOrEmpty(url))
 				return false;
 
-			mainWindow.OpenHelpWindow(url);
+			mainWindowApi.OpenHelpWindow(url);
 
 			return true;
 		}

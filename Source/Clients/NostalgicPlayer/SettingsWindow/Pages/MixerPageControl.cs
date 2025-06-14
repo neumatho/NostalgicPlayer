@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private Manager manager;
 		private ModuleHandler moduleHandler;
-		private MainWindowForm mainWin;
+		private IMainWindowApi mainWindowApi;
 
 		private SoundSettings soundSettings;
 
@@ -96,11 +96,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, ISettings userSettings, ISettings windowSettings)
+		public void InitSettings(Manager agentManager, ModuleHandler modHandler, IMainWindowApi mainWindow, ISettings userSettings, ISettings windowSettings)
 		{
 			manager = agentManager;
 			moduleHandler = modHandler;
-			mainWin = mainWindow;
+			mainWindowApi = mainWindow;
 
 			soundSettings = new SoundSettings(userSettings);
 		}
@@ -342,9 +342,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			AgentInfo agentInfo = (AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag;
 
 			if (!agentInfo.Enabled)
-				mainWin.ShowSimpleErrorMessage(Resources.IDS_ERR_AGENT_DISABLED);
+				mainWindowApi.ShowSimpleErrorMessage(Resources.IDS_ERR_AGENT_DISABLED);
 			else
-				mainWin.OpenAgentSettingsWindow(agentInfo);
+				mainWindowApi.OpenAgentSettingsWindow(agentInfo);
 		}
 
 
