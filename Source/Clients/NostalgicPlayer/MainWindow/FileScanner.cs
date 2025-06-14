@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly OptionSettings settings;
 		private readonly Manager manager;
 		private readonly ModuleDatabase database;
-		private readonly MainWindowForm mainWindowForm;
+		private readonly IMainWindowApi mainWindowApi;
 
 		private ManualResetEvent shutdownEvent;
 		private AutoResetEvent breakEvent;
@@ -50,13 +50,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner(ModuleListControl listControl, OptionSettings optionSettings, Manager agentManager, ModuleDatabase moduleDatabase, MainWindowForm mainWindow)
+		public FileScanner(ModuleListControl listControl, OptionSettings optionSettings, Manager agentManager, ModuleDatabase moduleDatabase, IMainWindowApi mainWindow)
 		{
 			moduleListControl = listControl;
 			settings = optionSettings;
 			manager = agentManager;
 			database = moduleDatabase;
-			mainWindowForm = mainWindow;
+			mainWindowApi = mainWindow;
 		}
 
 
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Replace the list item with the new list
 					moduleListControl.Invoke(() =>
 					{
-						mainWindowForm.ReplaceItem(listItem, list);
+						mainWindowApi.ReplaceItemInModuleList(listItem, list);
 					});
 
 					// Add the new items in the queue for a scan
@@ -449,9 +449,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				List<ModuleListItem> clonedList = new List<ModuleListItem>(itemsToRemove);
 				itemsToRemove.Clear();
 
-				mainWindowForm.BeginInvoke(() =>
+				mainWindowApi.Form.BeginInvoke(() =>
 				{
-					mainWindowForm.RemoveItemsFromModuleList(clonedList);
+					mainWindowApi.RemoveItemsFromModuleList(clonedList);
 				});
 			}
 
@@ -460,9 +460,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				List<ModuleListItemUpdateInfo> clonedList = new List<ModuleListItemUpdateInfo>(itemsToUpdate);
 				itemsToUpdate.Clear();
 
-				mainWindowForm.BeginInvoke(() =>
+				mainWindowApi.Form.BeginInvoke(() =>
 				{
-					mainWindowForm.UpdateModuleList(clonedList);
+					mainWindowApi.UpdateModuleList(clonedList);
 				});
 			}
 		}

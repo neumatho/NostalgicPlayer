@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	/// <summary>
 	/// This is the main window
 	/// </summary>
-	public partial class MainWindowForm : WindowFormBase, IExtraChannels
+	public partial class MainWindowForm : WindowFormBase, IMainWindowApi, IExtraChannels
 	{
 		private class AgentEntry
 		{
@@ -200,105 +200,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				AddFilesFromStartupHandler(arguments);
 		}
 
-
-
+		#region WindowFormBase overrides
 		/********************************************************************/
 		/// <summary>
-		/// Add a single agent to the menu if needed
+		/// Return the URL to the help page
 		/// </summary>
 		/********************************************************************/
-		public void AddAgentToMenu(AgentInfo agentInfo)
-		{
-			if (agentInfo.HasSettings)
-			{
-				// Create the menu item
-				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
-				newMenuItem.Tag = agentInfo;
-				newMenuItem.Click += Menu_Window_AgentSettings_Click;
+		protected override string HelpUrl => "howtouse.html";
+		#endregion
 
-				// Find the right place in the menu to insert the agent
-				int insertPos = 0;
-
-				foreach (ToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
-				{
-					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
-						break;
-
-					insertPos++;
-				}
-
-				agentSettingsMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
-			}
-
-			if (agentInfo.HasDisplay)
-			{
-				// Create the menu item
-				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
-				newMenuItem.Tag = agentInfo;
-				newMenuItem.Click += Menu_Window_AgentDisplay_Click;
-
-				// Find the right place in the menu to insert the agent
-				int insertPos = 0;
-
-				foreach (ToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
-				{
-					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
-						break;
-
-					insertPos++;
-				}
-
-				agentShowMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
-			}
-
-			// Hide/show different menu items
-			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
-			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
-			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
-		}
+		#region IMainWindowApi implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return the form of the main window
+		/// </summary>
+		/********************************************************************/
+		public Form Form => this;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Remove a single agent from the menu if needed
+		/// Return the extra channel implementation
 		/// </summary>
 		/********************************************************************/
-		public void RemoveAgentFromMenu(AgentInfo agentInfo)
-		{
-			if (agentInfo.HasSettings)
-			{
-				// Find the agent menu
-				for (int i = agentSettingsMenuItem.DropDownItems.Count - 1; i >= 0; i--)
-				{
-					if (((AgentInfo)agentSettingsMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
-					{
-						// Found it, so remove it
-						agentSettingsMenuItem.DropDownItems.RemoveAt(i);
-						break;
-					}
-				}
-			}
-
-			if (agentInfo.HasDisplay)
-			{
-				// Find the agent menu
-				for (int i = agentShowMenuItem.DropDownItems.Count - 1; i >= 0; i--)
-				{
-					if (((AgentInfo)agentShowMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
-					{
-						// Found it, so remove it
-						agentShowMenuItem.DropDownItems.RemoveAt(i);
-						break;
-					}
-				}
-			}
-
-			// Hide/show different menu items
-			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
-			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
-			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
-		}
+		public IExtraChannels ExtraChannelsImplementation => this;
 
 
 
@@ -319,6 +245,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			helpWindow.Navigate(newUrl);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show a question to the user
+		/// </summary>
+		/********************************************************************/
+		public bool ShowQuestion(string question)
+		{
+			using (CustomMessageBox dialog = new CustomMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
+			{
+				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
+				dialog.AddButton(Resources.IDS_BUT_NO, 'n');
+				dialog.ShowDialog(this);
+
+				return dialog.GetButtonResult('n') == 'y';
+			}
 		}
 
 
@@ -491,76 +436,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will show a question to the user
+		/// Will add all the given files to the module list
 		/// </summary>
 		/********************************************************************/
-		public bool ShowQuestion(string question)
+		public void AddFilesToModuleList(string[] files, int startIndex = -1, bool checkForList = false)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
-			{
-				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
-				dialog.AddButton(Resources.IDS_BUT_NO, 'n');
-				dialog.ShowDialog(this);
-
-				return dialog.GetButtonResult('n') == 'y';
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return some information about the current playing file
-		/// </summary>
-		/********************************************************************/
-		public MultiFileInfo GetFileInfo()
-		{
-			return playItem == null ? null : ListItemConverter.Convert(playItem);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will stop the current playing module and free it
-		/// </summary>
-		/********************************************************************/
-		public void StopModule()
-		{
-			StopAndFreeModule();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Enable/disable user interface settings
-		/// </summary>
-		/********************************************************************/
-		public void EnableUserInterfaceSettings()
-		{
-			using (new SleepCursor())
-			{
-				toolTip.Active = optionSettings.ToolTips;
-
-				SetTitle();
-				moduleListControl.EnableListNumber(optionSettings.ShowListNumber);
-				moduleListControl.EnableFullPath(optionSettings.ShowFullPath);
-
-				if (optionSettings.UseDatabase)
-				{
-					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES);
-					favoritesButton.Enabled = true;
-				}
-				else
-				{
-					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES_DISABLED);
-					favoritesButton.Enabled = false;
-
-					if (IsFavoriteSongSystemWindowOpen())
-						favoriteSongSystemWindow.Close();
-				}
-			}
+			AddFilesToList(files, startIndex, checkForList);
 		}
 
 
@@ -570,7 +451,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will replace the given item with the new list of items
 		/// </summary>
 		/********************************************************************/
-		public void ReplaceItem(ModuleListItem listItem, List<ModuleListItem> newItems)
+		public void ReplaceItemInModuleList(ModuleListItem listItem, List<ModuleListItem> newItems)
 		{
 			if ((listItem != null) && (newItems.Count > 0))
 			{
@@ -659,16 +540,132 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			UpdateTimes();
 		}
 
-		#region WindowFormBase overrides
+
+
 		/********************************************************************/
 		/// <summary>
-		/// Return the URL to the help page
+		/// Return some information about the current playing file
 		/// </summary>
 		/********************************************************************/
-		protected override string HelpUrl => "howtouse.html";
-		#endregion
+		public MultiFileInfo GetFileInfo()
+		{
+			return playItem == null ? null : ListItemConverter.Convert(playItem);
+		}
 
-		#region Agent window handling
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will stop the current playing module and free it
+		/// </summary>
+		/********************************************************************/
+		public void StopModule()
+		{
+			StopAndFreeModule();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add a single agent to the menu if needed
+		/// </summary>
+		/********************************************************************/
+		public void AddAgentToMenu(AgentInfo agentInfo)
+		{
+			if (agentInfo.HasSettings)
+			{
+				// Create the menu item
+				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				newMenuItem.Tag = agentInfo;
+				newMenuItem.Click += Menu_Window_AgentSettings_Click;
+
+				// Find the right place in the menu to insert the agent
+				int insertPos = 0;
+
+				foreach (ToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
+				{
+					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
+						break;
+
+					insertPos++;
+				}
+
+				agentSettingsMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
+			}
+
+			if (agentInfo.HasDisplay)
+			{
+				// Create the menu item
+				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				newMenuItem.Tag = agentInfo;
+				newMenuItem.Click += Menu_Window_AgentDisplay_Click;
+
+				// Find the right place in the menu to insert the agent
+				int insertPos = 0;
+
+				foreach (ToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
+				{
+					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
+						break;
+
+					insertPos++;
+				}
+
+				agentShowMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
+			}
+
+			// Hide/show different menu items
+			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
+			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
+			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Remove a single agent from the menu if needed
+		/// </summary>
+		/********************************************************************/
+		public void RemoveAgentFromMenu(AgentInfo agentInfo)
+		{
+			if (agentInfo.HasSettings)
+			{
+				// Find the agent menu
+				for (int i = agentSettingsMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+				{
+					if (((AgentInfo)agentSettingsMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
+					{
+						// Found it, so remove it
+						agentSettingsMenuItem.DropDownItems.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			if (agentInfo.HasDisplay)
+			{
+				// Find the agent menu
+				for (int i = agentShowMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+				{
+					if (((AgentInfo)agentShowMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
+					{
+						// Found it, so remove it
+						agentShowMenuItem.DropDownItems.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			// Hide/show different menu items
+			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
+			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
+			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will open/activate a settings window for the given agent
@@ -769,15 +766,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Get all opened visuals
+		/// Enable/disable user interface settings
 		/// </summary>
 		/********************************************************************/
-		public IEnumerable<AgentDisplayWindowForm> GetAllOpenedVisuals()
+		public void EnableUserInterfaceSettings()
 		{
-			lock (openAgentDisplays)
+			using (new SleepCursor())
 			{
-				foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
-					yield return agentDisplayWindow;
+				toolTip.Active = optionSettings.ToolTips;
+
+				SetTitle();
+				moduleListControl.EnableListNumber(optionSettings.ShowListNumber);
+				moduleListControl.EnableFullPath(optionSettings.ShowFullPath);
+
+				if (optionSettings.UseDatabase)
+				{
+					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES);
+					favoritesButton.Enabled = true;
+				}
+				else
+				{
+					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES_DISABLED);
+					favoritesButton.Enabled = false;
+
+					if (IsFavoriteSongSystemWindowOpen())
+						favoriteSongSystemWindow.Close();
+				}
 			}
 		}
 		#endregion
@@ -4912,7 +4926,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will add all the given files to the module list
 		/// </summary>
 		/********************************************************************/
-		public void AddFilesToList(string[] files, int startIndex = -1, bool checkForList = false)
+		private void AddFilesToList(string[] files, int startIndex = -1, bool checkForList = false)
 		{
 			List<ModuleListItem> itemList = new List<ModuleListItem>();
 
