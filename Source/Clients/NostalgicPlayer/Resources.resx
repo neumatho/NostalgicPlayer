@@ -371,6 +371,9 @@ Formats supported:
   <data name="IDS_AUDIUS_NO_ITEMS" xml:space="preserve">
     <value>No items found</value>
   </data>
+  <data name="IDS_AUDIUS_PICTURE_NAME" xml:space="preserve">
+    <value>Cover</value>
+  </data>
   <data name="IDS_AUDIUS_TAB_TRENDING" xml:space="preserve">
     <value>Trending</value>
   </data>

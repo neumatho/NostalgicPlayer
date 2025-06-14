@@ -608,6 +608,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cover.
+        /// </summary>
+        internal static string IDS_AUDIUS_PICTURE_NAME {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_PICTURE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Trending.
         /// </summary>
         internal static string IDS_AUDIUS_TAB_TRENDING {
