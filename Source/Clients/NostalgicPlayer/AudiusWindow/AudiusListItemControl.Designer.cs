@@ -227,6 +227,7 @@
 			addButton.TabIndex = 9;
 			addButton.Values.Image = Resources.IDB_ADD;
 			addButton.Values.Text = "";
+			addButton.Click += Add_Click;
 			// 
 			// playButton
 			// 
@@ -237,6 +238,7 @@
 			playButton.TabIndex = 8;
 			playButton.Values.Image = Resources.IDB_PLAY;
 			playButton.Values.Text = "";
+			playButton.Click += Play_Click;
 			// 
 			// AudiusListItemControl
 			// 
