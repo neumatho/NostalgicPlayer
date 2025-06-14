@@ -8,7 +8,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 	/// <summary>
 	/// All list item types that are streams, must implement this interface
 	/// </summary>
-	public interface IStreamListItem : IModuleListItem
+	public interface IStreamModuleListItem : IModuleListItem
 	{
 	}
 }

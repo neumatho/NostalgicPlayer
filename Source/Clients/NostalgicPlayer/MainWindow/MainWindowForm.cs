@@ -1414,7 +1414,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					using (new SleepCursor())
 					{
-						ModuleListItem item = new ModuleListItem(new UrlListItem(dialog.GetName(), dialog.GetUrl()));
+						ModuleListItem item = new ModuleListItem(new UrlModuleListItem(dialog.GetName(), dialog.GetUrl()));
 						AddItemsToList([ item ], result == DialogResult.OK);
 					}
 				}
@@ -4348,7 +4348,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Update database if enabled
 			if (optionSettings.UseDatabase)
 			{
-				if (listItem.ListItem is IStreamListItem)
+				if (listItem.ListItem is IStreamModuleListItem)
 					return;
 
 				ModuleDatabaseInfo moduleDatabaseInfo = database.RetrieveInformation(listItem.ListItem.Source);
@@ -4609,18 +4609,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (isArchive)
 						{
 							foreach (string archiveFileName in detector.GetEntries(fileName))
-								list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+								list.Add(new ModuleListItem(new ArchiveFileModuleListItem(archiveFileName)));
 						}
 						else
 						{
 							// Just a plain file
-							list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+							list.Add(new ModuleListItem(new SingleFileModuleListItem(fileName)));
 						}
 					}
 					else
 					{
 						// Just a plain file
-						list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+						list.Add(new ModuleListItem(new SingleFileModuleListItem(fileName)));
 					}
 				}
 			}
