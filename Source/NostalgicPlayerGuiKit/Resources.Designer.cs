@@ -71,6 +71,33 @@ namespace Polycode.NostalgicPlayer.GuiKit {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to hh\:mm\:ss.
+        /// </summary>
+        internal static string IDS_TIMEFORMAT {
+            get {
+                return ResourceManager.GetString("IDS_TIMEFORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to d\:hh\:mm\:ss.
+        /// </summary>
+        internal static string IDS_TIMEFORMAT_BIG {
+            get {
+                return ResourceManager.GetString("IDS_TIMEFORMAT_BIG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to m\:ss.
+        /// </summary>
+        internal static string IDS_TIMEFORMAT_SMALL {
+            get {
+                return ResourceManager.GetString("IDS_TIMEFORMAT_SMALL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Information {

@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AboutWindowForm(Manager agentManager, MainWindowForm mainWindow, OptionSettings optionSettings)
+		public AboutWindowForm(Manager agentManager, IMainWindowApi mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 

@@ -109,10 +109,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 							if (oldType != MultiFileInfo.FileType.Url)
 							{
 								sw.WriteLine();
-								sw.WriteLine("@*Stream*@");
+								sw.WriteLine("@*URL*@");
 							}
 
-							line = $"URL:{listInfo.Source}|{listInfo.DisplayName}";
+							line = $"{listInfo.Source}|{listInfo.DisplayName}";
+
+							oldPath = string.Empty;
+							break;
+						}
+
+						// Audius track
+						case MultiFileInfo.FileType.Audius:
+						{
+							if (oldType != MultiFileInfo.FileType.Audius)
+							{
+								sw.WriteLine();
+								sw.WriteLine("@*Audius*@");
+							}
+
+							line = $"{listInfo.Source}|{listInfo.DisplayName}";
 
 							oldPath = string.Empty;
 							break;
@@ -186,10 +201,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 								break;
 							}
 
-							// "Stream" command
-							case "@*Stream*@":
+							// "URL" command
+							case "@*URL*@":
 							{
 								mode = MultiFileInfo.FileType.Url;
+								break;
+							}
+
+							// "Audius" command
+							case "@*Audius*@":
+							{
+								mode = MultiFileInfo.FileType.Audius;
 								break;
 							}
 
@@ -213,6 +235,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 									case MultiFileInfo.FileType.Url:
 									{
 										fileInfo = ParseStreamLine(line);
+										break;
+									}
+
+									case MultiFileInfo.FileType.Audius:
+									{
+										fileInfo = ParseAudiusLine(line);
 										break;
 									}
 								}
@@ -273,18 +301,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/********************************************************************/
 		private MultiFileInfo ParseStreamLine(string line)
 		{
-			MultiFileInfo fileInfo = new MultiFileInfo();
+			MultiFileInfo fileInfo = new MultiFileInfo
+			{
+				Type = MultiFileInfo.FileType.Url
+			};
 
-			if (line.StartsWith("URL:"))
+			int searchIndex = line.IndexOf('|');
+			if (searchIndex == -1)
 			{
-				fileInfo.Type = MultiFileInfo.FileType.Url;
-				line = line.Substring(4);
-			}
-			else
-			{
-				// Skip the entry if it is not a valid stream entry
+				// Invalid entry
 				return null;
 			}
+
+			fileInfo.Source = line.Substring(0, searchIndex);
+			line = line.Substring(searchIndex + 1);
+
+			fileInfo.DisplayName = ApplyExtraInformation(line, fileInfo);
+
+			return fileInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse Audius line
+		/// </summary>
+		/********************************************************************/
+		private MultiFileInfo ParseAudiusLine(string line)
+		{
+			MultiFileInfo fileInfo = new MultiFileInfo()
+			{
+				Type = MultiFileInfo.FileType.Audius
+			};
 
 			int searchIndex = line.IndexOf('|');
 			if (searchIndex == -1)

@@ -3,12 +3,17 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+using System.Text.Json.Serialization;
+
+namespace Polycode.NostalgicPlayer.Audius.Models.Tracks
 {
 	/// <summary>
-	/// All list item types that are streams, must implement this interface
+	/// 
 	/// </summary>
-	public interface IStreamListItem : IModuleListItem
+	public class TrackElementModel
 	{
+		/// <summary></summary>
+		[JsonPropertyName("parent_track_id")]
+		public string ParentTrackId { get; set; }
 	}
 }

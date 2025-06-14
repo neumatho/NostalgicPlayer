@@ -9,6 +9,7 @@ using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
@@ -128,20 +129,31 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		internal ModuleInfoStatic(StreamLoader loader, IStreamerAgent streamerAgent) : this(loader)
 		{
-			ModuleName = string.Empty;
-			Comment = null;
 			CommentFont = null;
 			Lyrics = null;
 			LyricsFont = null;
-			Pictures = null;
+
+			if (loader is IStreamMetadata streamMetadata)
+			{
+				// If the loader supports stream metadata, then we can get some extra information
+				ModuleName = streamMetadata.Title;
+				Author = streamMetadata.Author;
+				Comment = streamMetadata.Comment;
+				Pictures = streamMetadata.Pictures;
+			}
+			else
+			{
+				ModuleName = string.Empty;
+				Author = string.Empty;
+				Comment = null;
+				Pictures = null;
+			}
 
 			Channels = streamerAgent.ChannelCount;
 			VirtualChannels = streamerAgent.ChannelCount;
 			MaxSongNumber = 1;
 			CanChangePosition = false;
 			Frequency = streamerAgent.Frequency;
-
-			Author = string.Empty;
 		}
 
 		#region Common properties
