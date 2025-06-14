@@ -44,11 +44,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				// Set the tab titles
 				navigator.Pages[Page_Trending].Text = Resources.IDS_AUDIUS_TAB_TRENDING;
 
-				// Initialize the Audius API
-				AudiusApi audiusApi = new AudiusApi();
-
 				// Initialize all pages
-				trendingPageControl.Initialize(mainWindow, this, audiusApi);
+				trendingPageControl.Initialize(mainWindow, this);
 			}
 		}
 

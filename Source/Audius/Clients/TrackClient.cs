@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Threading;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
@@ -44,6 +45,18 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 			request.AddQueryParameter("limit", "100");
 
 			return DoRequest<TrackModel[]>(request, cancellationToken);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will return the streaming URL for the given track ID
+		/// </summary>
+		/********************************************************************/
+		public Uri GetStreamingUrl(string trackId)
+		{
+			return BuildUrl($"/v1/tracks/{trackId}/stream");
 		}
 	}
 }

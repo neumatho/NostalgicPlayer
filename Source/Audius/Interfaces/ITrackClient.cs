@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Threading;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 
@@ -22,5 +23,10 @@ namespace Polycode.NostalgicPlayer.Audius.Interfaces
 		/// Gets the top 100 trending underground tracks on Audius
 		/// </summary>
 		TrackModel[] GetTrendingUndergroundTracks(CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Will return the streaming URL for the given track ID
+		/// </summary>
+		Uri GetStreamingUrl(string trackId);
 	}
 }

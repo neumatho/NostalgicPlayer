@@ -17,9 +17,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusListItem(int position, string title, string artist, TimeSpan duration, int reposts, int favorites, int plays, string coverUrl)
+		public AudiusListItem(int position, string itemId, string title, string artist, TimeSpan duration, int reposts, int favorites, int plays, string coverUrl)
 		{
 			Position = position;
+			ItemId = itemId;
 			Title = title;
 			Artist = artist;
 			Duration = duration;
@@ -37,6 +38,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// </summary>
 		/********************************************************************/
 		public int Position
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the ID of the item
+		/// </summary>
+		/********************************************************************/
+		public string ItemId
 		{
 			get;
 		}
