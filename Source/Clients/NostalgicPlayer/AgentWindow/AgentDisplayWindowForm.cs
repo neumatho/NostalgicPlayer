@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AgentDisplayWindowForm(Manager agentManager, AgentInfo agentInfo, ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings)
+		public AgentDisplayWindowForm(Manager agentManager, AgentInfo agentInfo, ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 

@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			public LoaderBase Loader;
 		}
 
-		private MainWindowForm mainWindowForm;
+		private IMainWindowApi mainWindowApi;
 		private Manager agentManager;
 		private SoundSettings soundSettings;
 
@@ -102,10 +102,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(MainWindowForm mainWindow, Manager manager, SoundSettings sndSettings, int startVolume)
+		public void Initialize(IMainWindowApi mainWindow, Manager manager, SoundSettings sndSettings, int startVolume)
 		{
 			// Remember the arguments
-			mainWindowForm = mainWindow;
+			mainWindowApi = mainWindow;
 			agentManager = manager;
 			soundSettings = sndSettings;
 
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				EnableInterpolation = sndSettings.Interpolation,
 				SwapSpeakers = sndSettings.SwapSpeakers,
 				EnableAmigaFilter = sndSettings.AmigaFilter,
-				ExtraChannels = mainWindow
+				ExtraChannels = mainWindow.ExtraChannelsImplementation
 			};
 
 			// Initialize the loader
@@ -614,7 +614,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		public void ChangeMixerSettings(MixerConfiguration newMixerConfiguration)
 		{
 			mixerConfiguration = newMixerConfiguration;
-			mixerConfiguration.ExtraChannels = mainWindowForm;
+			mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
 
 			IPlayer player = GetActivePlayer();
 
@@ -781,10 +781,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		private void ShowSimpleErrorMessage(string message)
 		{
-			mainWindowForm.BeginInvoke(new Action(() =>
+			mainWindowApi.Form.BeginInvoke(() =>
 			{
-				mainWindowForm.ShowSimpleErrorMessage(message);
-			}));
+				mainWindowApi.ShowSimpleErrorMessage(message);
+			});
 		}
 
 
@@ -796,10 +796,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		private void ShowErrorMessage(string message, ModuleListItem listItem)
 		{
-			mainWindowForm.BeginInvoke(new Action(() =>
+			mainWindowApi.Form.BeginInvoke(() =>
 			{
-				mainWindowForm.ShowErrorMessage(message, listItem);
-			}));
+				mainWindowApi.ShowErrorMessage(message, listItem);
+			});
 		}
 
 
@@ -895,7 +895,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					{
 						player.StopPlaying();
 
-						if (!mainWindowForm.ShowQuestion(string.Format(Resources.IDS_ERR_PLAYER_WARNINGS, player.StaticModuleInformation.PlayerName, warningMessage)))
+						if (!mainWindowApi.ShowQuestion(string.Format(Resources.IDS_ERR_PLAYER_WARNINGS, player.StaticModuleInformation.PlayerName, warningMessage)))
 							return false;
 					}
 				}
@@ -915,7 +915,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					if (!modulePlayer.SelectSong(subSong, out string errorMessage))
 					{
 						if (showError)
-							mainWindowForm.ShowErrorMessage(errorMessage, listItem);
+							mainWindowApi.ShowErrorMessage(errorMessage, listItem);
 
 						return false;
 					}
@@ -947,7 +947,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						if (!player.StartPlaying(loadedFiles[0].Loader, out string errorMessage, mixerConfiguration))
 						{
 							if (showError && !string.IsNullOrEmpty(errorMessage))
-								mainWindowForm.ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
+								mainWindowApi.ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
 
 							return false;
 						}

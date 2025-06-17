@@ -3,58 +3,56 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.GuiKit.Controls
 {
 	/// <summary>
-	/// This class holds a list item pointing to a file inside an archive
+	/// Improved version of the FlowLayoutPanel that can be used to create a more responsive layout
 	/// </summary>
-	public class ArchiveFileListItem : IModuleListItem
+	public class ImprovedFlowLayoutPanel : FlowLayoutPanel
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileListItem(string fullArchivePath)
+		public ImprovedFlowLayoutPanel()
 		{
-			Source = fullArchivePath;
+			SetStyle(ControlStyles.UserPaint, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 		}
 
-		#region IModuleListItem implementation
+		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the name which is shown in the list
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName => Path.GetFileName(ArchivePath.GetEntryName(Source));
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the full path to the file
-		/// </summary>
-		/********************************************************************/
-		public string Source
+		protected override CreateParams CreateParams
 		{
-			get;
+			get
+			{
+				CreateParams cp = base.CreateParams;
+				cp.ExStyle |= 0x02000000;		// WS_EX_COMPOSITED to reduce flickering
+
+				return cp;
+			}
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Create the loader to use to load this item
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public LoaderBase CreateLoader(Manager agentManager)
+		protected override void OnScroll(ScrollEventArgs se)
 		{
-			return new Loader(agentManager);
+			Invalidate();
+
+			base.OnScroll(se);
 		}
 		#endregion
 	}
