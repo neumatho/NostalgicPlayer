@@ -3,36 +3,50 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Audius.Clients;
-using Polycode.NostalgicPlayer.Audius.Interfaces;
+using System;
 
-namespace Polycode.NostalgicPlayer.Audius
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events
 {
+	/// <summary></summary>
+	public delegate void TrackEventHandler(object sender, TrackEventArgs e);
+
 	/// <summary>
-	/// Main class for the Audius API
+	/// Event class holding needed information when playing a track
 	/// </summary>
-	public class AudiusApi
+	public class TrackEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Returns the client for interacting with tracks
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ITrackClient GetTrackClient()
+		public TrackEventArgs(AudiusListItem item)
 		{
-			return new TrackClient();
+			Items = [ item ];
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the client for interacting with playlists
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public IPlaylistClient GetPlaylistClient()
+		public TrackEventArgs(AudiusListItem[] items)
 		{
-			return new PlaylistClient();
+			Items = items;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holding the track item
+		/// </summary>
+		/********************************************************************/
+		public AudiusListItem[] Items
+		{
+			get;
 		}
 	}
 }

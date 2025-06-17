@@ -4,150 +4,121 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Audius;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
+using System.Windows.Forms;
+using Polycode.NostalgicPlayer.GuiKit.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
 	/// <summary>
-	/// This class is used for each item in an Audius list
+	/// Render a single track item in an Audius play list
 	/// </summary>
-	public class AudiusListItem
+	public partial class AudiusTrackListItemControl : UserControl, IAudiusListItem
 	{
+		private AudiusListItem item;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusListItem(int position, string itemId, string title, string artist, TimeSpan duration, int reposts, int favorites, int plays, string coverUrl)
+		public AudiusTrackListItemControl()
 		{
-			Position = position;
-			ItemId = itemId;
-			Title = title;
-			Artist = artist;
-			Duration = duration;
-			Reposts = reposts;
-			Favorites = favorites;
-			Plays = plays;
-			CoverUrl = coverUrl;
+			InitializeComponent();
+		}
+
+		#region IAudiusListItem implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return the control itself
+		/// </summary>
+		/********************************************************************/
+		public Control Control => this;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will initialize the control
+		/// </summary>
+		/********************************************************************/
+		public void Initialize(AudiusListItem listItem)
+		{
+			item = listItem;
+
+			SetupControls();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the position of the item
+		/// Will make sure that the item is refreshed with all missing data
 		/// </summary>
 		/********************************************************************/
-		public int Position
+		public void RefreshItem(PictureDownloader pictureDownloader)
 		{
-			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the ID of the item
+		/// Event called when to play tracks
 		/// </summary>
 		/********************************************************************/
-		public string ItemId
+		public event TrackEventHandler PlayTracks;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when to add tracks
+		/// </summary>
+		/********************************************************************/
+		public event TrackEventHandler AddTracks;
+		#endregion
+
+		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Play_Click(object sender, EventArgs e)
 		{
-			get;
+			// Just call the next event handler
+			if (PlayTracks != null)
+				PlayTracks(sender, new TrackEventArgs(item));
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the title of the item
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public string Title
+		private void Add_Click(object sender, EventArgs e)
 		{
-			get;
+			// Just call the next event handler
+			if (AddTracks != null)
+				AddTracks(sender, new TrackEventArgs(item));
 		}
+		#endregion
 
-
-
+		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Returns the artist of the item
+		/// Setup all the controls with the values from the item
 		/// </summary>
 		/********************************************************************/
-		public string Artist
+		private void SetupControls()
 		{
-			get;
+			titleLabel.Text = $"{item.Position}. {item.Title} by {item.Artist}";
+			durationLabel.Text = item.Duration.ToFormattedString();
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the total duration of the item
-		/// </summary>
-		/********************************************************************/
-		public TimeSpan Duration
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the number of reposts for the item
-		/// </summary>
-		/********************************************************************/
-		public int Reposts
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the number of favorites for the item
-		/// </summary>
-		/********************************************************************/
-		public int Favorites
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the number of plays for the item
-		/// </summary>
-		/********************************************************************/
-		public int Plays
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the URL to the cover image
-		/// </summary>
-		/********************************************************************/
-		public string CoverUrl
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns a list of tracks. Only used for playlists
-		/// </summary>
-		/********************************************************************/
-		public AudiusListItem[] Tracks
-		{
-			get; init;
-		}
+		#endregion
 	}
 }

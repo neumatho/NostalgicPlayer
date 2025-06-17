@@ -78,6 +78,7 @@
 			controlGroup.Panel.Controls.Add(addButton);
 			controlGroup.Panel.Controls.Add(playButton);
 			controlGroup.Size = new System.Drawing.Size(463, 144);
+			controlGroup.StateCommon.Back.Color1 = System.Drawing.Color.White;
 			controlGroup.TabIndex = 0;
 			// 
 			// artistLabel
@@ -99,7 +100,7 @@
 			titleLabel.Name = "titleLabel";
 			titleLabel.Palette = bigBoldFontPalette;
 			titleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			titleLabel.Size = new System.Drawing.Size(247, 19);
+			titleLabel.Size = new System.Drawing.Size(230, 19);
 			titleLabel.TabIndex = 1;
 			titleLabel.Values.Text = "";
 			// 

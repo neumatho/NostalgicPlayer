@@ -61,6 +61,19 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 
 		/********************************************************************/
 		/// <summary>
+		/// Make a REST call to Audius and return the data, but using the
+		/// main Audius URL instead of the one that was retrieved
+		/// </summary>
+		/********************************************************************/
+		protected T DoRequestOnMainUrl<T>(RestRequest request, CancellationToken cancellationToken)
+		{
+			return DoRequest<T>("https://api.audius.co", request, cancellationToken);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Build a URL to Audius
 		/// </summary>
 		/********************************************************************/
@@ -147,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 		/********************************************************************/
 		private string GetAudiusUrl()
 		{
-			string[] availableUrls = DoRequest<string[]>("https://api.audius.co", new RestRequest(), CancellationToken.None);
+			string[] availableUrls = DoRequestOnMainUrl<string[]>(new RestRequest(), CancellationToken.None);
 			return availableUrls[Random.Shared.Next(availableUrls.Length)];
 		}
 		#endregion
