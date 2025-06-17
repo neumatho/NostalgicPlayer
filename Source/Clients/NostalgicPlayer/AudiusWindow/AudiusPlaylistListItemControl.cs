@@ -4,34 +4,27 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
-using Polycode.NostalgicPlayer.GuiKit.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
 	/// <summary>
-	/// Render a single item in an Audius list, such as a track or playlist
+	/// Render a single play list item
 	/// </summary>
-	public partial class AudiusListItemControl : UserControl, IAudiusListItem
+	public partial class AudiusPlaylistListItemControl : UserControl, IAudiusListItem
 	{
 		private AudiusListItem item;
-
-		private TaskHelper taskHelper;
-		private Bitmap coverBitmap = null;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusListItemControl()
+		public AudiusPlaylistListItemControl()
 		{
 			InitializeComponent();
-
-			Disposed += AudiusListItemControl_Disposed;
 		}
 
 		#region IAudiusListItem implementation
@@ -53,9 +46,45 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			item = listItem;
 
-			SetupControls();
+			audiusListItemControl.Initialize(listItem);
 
-			taskHelper = new TaskHelper();
+			audiusListItemControl.PlayTracks += ListItem_PlayAllTracks;
+			audiusListItemControl.AddTracks += ListItem_AddAllTracks;
+
+			if (listItem.Tracks != null)
+			{
+				tracksFlowLayoutPanel.SuspendLayout();
+
+				try
+				{
+					foreach (AudiusListItem trackItem in listItem.Tracks)
+					{
+						IAudiusListItem trackListItem = new AudiusTrackListItemControl();
+
+						trackListItem.Initialize(trackItem);
+
+						trackListItem.PlayTracks += ListItem_PlayTracks;
+						trackListItem.AddTracks += ListItem_AddTracks;
+
+						tracksFlowLayoutPanel.Controls.Add(trackListItem.Control);
+					}
+
+					// Calculate the height of the first 6 tracks
+					int trackHeight = 0;
+
+					for (int i = Math.Min(6, tracksFlowLayoutPanel.Controls.Count) - 1; i >= 0; i--)
+						trackHeight += tracksFlowLayoutPanel.Controls[i].Height;
+
+					Height = audiusListItemControl.Height + 2 + trackHeight;
+				}
+				finally
+				{
+					tracksFlowLayoutPanel.ResumeLayout();
+				}
+
+				// This need to be done after the layout is resumed, otherwise it will not work correctly
+				SetItemWidths();
+			}
 		}
 
 
@@ -67,26 +96,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		public void RefreshItem(PictureDownloader pictureDownloader)
 		{
-			if (!string.IsNullOrEmpty(item.CoverUrl) && (coverBitmap == null))
-			{
-				taskHelper.RunTask(async (cancellationToken) =>
-				{
-					Bitmap originalBitmap = await pictureDownloader.GetPictureAsync(item.CoverUrl, cancellationToken);
-					if (originalBitmap == null)
-						return;
-
-					// Scale the bitmap to 128 x 128 pixels
-					coverBitmap = new Bitmap(originalBitmap, 128, 128);
-
-					BeginInvoke(() =>
-					{
-						itemPictureBox.Image = coverBitmap;
-					});
-				}, (ex) =>
-				{
-					// Ignore any exceptions
-				});
-			}
+			audiusListItemControl.RefreshItem(pictureDownloader);
 		}
 
 
@@ -111,67 +121,88 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Is called when the flow layout resizes
 		/// </summary>
 		/********************************************************************/
-		private void AudiusListItemControl_Disposed(object sender, EventArgs e)
+		private void TrackFlowLayout_Resize(object sender, EventArgs e)
 		{
-			taskHelper.CancelTask();
-
-			coverBitmap?.Dispose();
+			SetItemWidths();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Is called when to clear the list and start playing the given
+		/// track
 		/// </summary>
 		/********************************************************************/
-		private void Play_Click(object sender, EventArgs e)
+		private void ListItem_PlayAllTracks(object sender, TrackEventArgs e)
 		{
-			// Just call the next event handler
 			if (PlayTracks != null)
-				PlayTracks(sender, new TrackEventArgs(item));
+				PlayTracks(this, new TrackEventArgs(item.Tracks));
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Is called when to add the given track to the list
 		/// </summary>
 		/********************************************************************/
-		private void Add_Click(object sender, EventArgs e)
+		private void ListItem_AddAllTracks(object sender, TrackEventArgs e)
 		{
-			// Just call the next event handler
 			if (AddTracks != null)
-				AddTracks(sender, new TrackEventArgs(item));
+				AddTracks(this, new TrackEventArgs(item.Tracks));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when to clear the list and start playing the given
+		/// track
+		/// </summary>
+		/********************************************************************/
+		private void ListItem_PlayTracks(object sender, TrackEventArgs e)
+		{
+			if (PlayTracks != null)
+				PlayTracks(sender, e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when to add the given track to the list
+		/// </summary>
+		/********************************************************************/
+		private void ListItem_AddTracks(object sender, TrackEventArgs e)
+		{
+			if (AddTracks != null)
+				AddTracks(sender, e);
 		}
 		#endregion
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Setup all the controls with the values from the item
+		/// Set width of all items
 		/// </summary>
 		/********************************************************************/
-		private void SetupControls()
+		private void SetItemWidths()
 		{
-			positionLabel.Text = item.Position.ToString();
-			titleLabel.Text = item.Title;
-			artistLabel.Text = item.Artist;
-			durationLabel.Text = item.Duration.ToFormattedString();
-			repostsLabel.Text = string.Format(Resources.IDS_AUDIUS_ITEM_REPOSTS, item.Reposts.ToBeautifiedString());
-			favoritesLabel.Text = item.Favorites.ToBeautifiedString();
+			tracksFlowLayoutPanel.SuspendLayout();
 
-			if (item.Plays != 0)
+			try
 			{
-				playsLabel.Visible = true;
-				playsLabel.Text = string.Format(Resources.IDS_AUDIUS_ITEM_PLAYS, item.Plays.ToBeautifiedString());
+				foreach (Control ctrl in tracksFlowLayoutPanel.Controls)
+					ctrl.Width = tracksFlowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
 			}
-			else
-				playsLabel.Visible = false;
+			finally
+			{
+				tracksFlowLayoutPanel.ResumeLayout();
+			}
 		}
 		#endregion
 	}

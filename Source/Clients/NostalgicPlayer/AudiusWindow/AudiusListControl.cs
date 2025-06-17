@@ -6,9 +6,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
@@ -89,19 +92,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 					// Then add the new items
 					foreach (AudiusListItem item in items)
 					{
-						AudiusListItemControl ctrl = new AudiusListItemControl(item, mainWindowApi);
-						ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+						IAudiusListItem listItem;
 
-						flowLayoutPanel.Controls.Add(ctrl);
+						if (item.Tracks != null)
+							listItem = new AudiusPlaylistListItemControl();
+						else
+							listItem = new AudiusListItemControl();
+
+						listItem.Initialize(item);
+
+						listItem.PlayTracks += ListItem_PlayTracks;
+						listItem.AddTracks += ListItem_AddTracks;
+
+						flowLayoutPanel.Controls.Add(listItem.Control);
 					}
-
-					// Make sure the already visible items are updated
-					UpdateVisibleItems();
 				}
 			}
 			finally
 			{
 				flowLayoutPanel.ResumeLayout();
+			}
+
+			// This need to be done after the layout is resumed, otherwise it will not work correctly
+			if (flowLayoutPanel.Controls.Count > 0)
+			{
+				SetItemWidths();
+
+				// Make sure the already visible items are updated
+				UpdateVisibleItems();
 			}
 		}
 
@@ -141,17 +159,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		private void FlowLayout_Resize(object sender, EventArgs e)
 		{
-			flowLayoutPanel.SuspendLayout();
-
-			try
-			{
-				foreach (AudiusListItemControl ctrl in flowLayoutPanel.Controls)
-					ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
-			}
-			finally
-			{
-				flowLayoutPanel.ResumeLayout();
-			}
+			SetItemWidths();
 
 			if (statusLabel.Visible)
 				CenterStatusLabel();
@@ -182,6 +190,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			UpdateVisibleItems();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when to clear the list and start playing the given
+		/// track
+		/// </summary>
+		/********************************************************************/
+		private void ListItem_PlayTracks(object sender, TrackEventArgs e)
+		{
+			ModuleListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
+
+			mainWindowApi.AddItemsToModuleList(listItems, true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when to add the given track to the list
+		/// </summary>
+		/********************************************************************/
+		private void ListItem_AddTracks(object sender, TrackEventArgs e)
+		{
+			ModuleListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
+
+			mainWindowApi.AddItemsToModuleList(listItems, false);
+		}
 		#endregion
 
 		#region Private methods
@@ -194,6 +231,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			statusLabel.PerformLayout();
 			statusLabel.Location = new Point((ClientSize.Width - statusLabel.Width) / 2, (ClientSize.Height - statusLabel.Height) / 2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set width of all items
+		/// </summary>
+		/********************************************************************/
+		private void SetItemWidths()
+		{
+			flowLayoutPanel.SuspendLayout();
+
+			try
+			{
+				foreach (Control ctrl in flowLayoutPanel.Controls)
+					ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+			}
+			finally
+			{
+				flowLayoutPanel.ResumeLayout();
+			}
 		}
 
 
@@ -215,8 +274,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			// First skip all items that are not visible (has been scrolled up)
 			for (i = 0; i < flowLayoutPanel.Controls.Count; i++)
 			{
-				AudiusListItemControl item = (AudiusListItemControl)flowLayoutPanel.Controls[i];
-				int itemHeight = item.Height + item.Margin.Vertical;
+				IAudiusListItem item = (IAudiusListItem)flowLayoutPanel.Controls[i];
+				int itemHeight = item.Control.Height + item.Control.Margin.Vertical;
 
 				// Stop loop if item is visible
 				if (IsItemVisible(startYOfVisibleArea, endYOfVisibleArea, itemYPosition, itemYPosition + itemHeight))
@@ -228,8 +287,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			// Update all visible items
 			for (; i < flowLayoutPanel.Controls.Count; i++)
 			{
-				AudiusListItemControl item = (AudiusListItemControl)flowLayoutPanel.Controls[i];
-				int itemHeight = item.Height + item.Margin.Vertical;
+				IAudiusListItem item = (IAudiusListItem)flowLayoutPanel.Controls[i];
+				int itemHeight = item.Control.Height + item.Control.Margin.Vertical;
 
 				// If the item is not visible, then stop the loop
 				if (!IsItemVisible(startYOfVisibleArea, endYOfVisibleArea, itemYPosition, itemYPosition + itemHeight))
@@ -251,6 +310,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		private bool IsItemVisible(int visibleStart, int visibleEnd, int itemStart, int itemEnd)
 		{
 			return (itemStart < visibleEnd) && (itemEnd > visibleStart);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will create a module item from the given Audius item
+		/// </summary>
+		/********************************************************************/
+		private ModuleListItem CreateModuleListItem(AudiusListItem item)
+		{
+			return new ModuleListItem(new AudiusModuleListItem(item.Title, item.ItemId))
+			{
+				Duration = item.Duration
+			};
 		}
 		#endregion
 	}

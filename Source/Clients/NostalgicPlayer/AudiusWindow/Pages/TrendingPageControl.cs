@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
+using Polycode.NostalgicPlayer.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
@@ -127,6 +128,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 				if (typeTracksRadioButton.Checked)
 					GetTrendingTracks();
+				else if (typePlaylistsRadioButton.Checked)
+					GetTrendingPlaylists();
 				else if (typeUndergroundRadioButton.Checked)
 					GetUndergroundTracks();
 			}
@@ -343,6 +346,41 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				TrackModel[] tracks = trackClient.GetTrendingTracks(genre, time, cancellationToken);
 
 				List<AudiusListItem> items = tracks.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1)).ToList();
+
+				cancellationToken.ThrowIfCancellationRequested();
+
+				Invoke(() =>
+				{
+					using (new SleepCursor())
+					{
+						audiusListControl.SetLoading(false);
+						audiusListControl.SetItems(items);
+					}
+				});
+
+				return Task.CompletedTask;
+			}, ShowErrorMessage);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve the trending playlists from Audius
+		/// </summary>
+		/********************************************************************/
+		private void GetTrendingPlaylists()
+		{
+			string time = GetTimeValue();
+
+			taskHelper.RunTask((cancellationToken) =>
+			{
+				AudiusApi audiusApi = new AudiusApi();
+
+				IPlaylistClient playlistClient = audiusApi.GetPlaylistClient();
+				TrendingPlaylistModel[] playlists = playlistClient.GetTrendingPlaylists(time, cancellationToken);
+
+				List<AudiusListItem> items = playlists.Select((x, i) => AudiusMapper.MapPlaylistToItem(x, i + 1)).ToList();
 
 				cancellationToken.ThrowIfCancellationRequested();
 
