@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			mark = moduleStream.ReadMark();
 
 			// Check the mark for valid characters
-			bool valid = mark.Select(t => (byte)t).All(byt => (byt >= 32) && (byt <= 127));
+			bool valid = (mark.Length == 4) && mark.Select(t => (byte)t).All(byt => (byt >= 32) && (byt <= 127));
 
 			ModuleType retVal;
 
