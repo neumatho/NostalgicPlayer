@@ -93,6 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		private static readonly Guid agent69Id = Guid.Parse("615E17E3-55F7-4AEA-B7D7-2DE1BB7B6FB7");
 
 		private static readonly Guid agent70Id = Guid.Parse("4C0049C7-9B3C-4D84-A47B-EC6A1B51A66E");
+		private static readonly Guid agent71Id = Guid.Parse("750B008B-D8B0-4221-A9C9-9A096BFFEE19");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -200,7 +201,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 			new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT69, Resources.IDS_PROWIZ_DESCRIPTION_AGENT69, agent69Id),
 
 			// These formats are from LibXmp
-			new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT70, Resources.IDS_PROWIZ_DESCRIPTION_AGENT70, agent70Id)
+			new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT70, Resources.IDS_PROWIZ_DESCRIPTION_AGENT70, agent70Id),
+			new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT71, Resources.IDS_PROWIZ_DESCRIPTION_AGENT71, agent71Id)
 		];
 
 
@@ -424,6 +426,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 			// These formats are from LibXmp
 			if (typeId == agent70Id)
 				return new ImagesMusicSystemFormat();
+
+			if (typeId == agent71Id)
+				return new MagneticFieldsPackerFormat();
 
 			return null;
 		}

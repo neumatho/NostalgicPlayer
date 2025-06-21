@@ -220,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 			// Write the patterns
 			foreach (byte[] patternData in GetPatterns(moduleStream))
 			{
-				if (moduleStream.EndOfStream)
+				if ((patternData == null) || moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_ERR_LOADING_PATTERNS;
 					return AgentResult.Error;
@@ -230,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 			}
 
 			// At last, write the sample data
-			if (!WriteSampleData(moduleStream, converterStream))
+			if (!WriteSampleData(fileInfo, moduleStream, converterStream))
 			{
 				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
 				return AgentResult.Error;

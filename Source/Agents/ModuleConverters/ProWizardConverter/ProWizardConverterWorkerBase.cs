@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
@@ -118,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		/// Write all the samples
 		/// </summary>
 		/********************************************************************/
-		protected abstract bool WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream);
+		protected abstract bool WriteSampleData(PlayerFileInfo fileInfo, ModuleStream moduleStream, ConverterStream converterStream);
 		#endregion
 
 		#region Helper methods

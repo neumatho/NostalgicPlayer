@@ -131,6 +131,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Laxity Tracker | .lax / .unic2 | ProWizard | ModTracker |
 | Liquid Tracker | .liq | | Xmp |
 | Liquid Tracker NO | .liq | | Xmp |
+| Magnetic Fields Packer | .mfp | ProWizard | ModTracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
 | MED 1.12 | .med | | MED |
 | MED 2.00 | .med | | MED |

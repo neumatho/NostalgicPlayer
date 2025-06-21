@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Formats
@@ -289,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/// Write all the samples
 		/// </summary>
 		/********************************************************************/
-		protected override bool WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream)
+		protected override bool WriteSampleData(PlayerFileInfo fileInfo, ModuleStream moduleStream, ConverterStream converterStream)
 		{
 			moduleStream.Seek(1084 + 2 + patternSourceSize + 2 + referenceTableSize, SeekOrigin.Begin);
 

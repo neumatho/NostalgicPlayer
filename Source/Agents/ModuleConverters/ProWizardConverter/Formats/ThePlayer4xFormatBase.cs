@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -158,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/// Write all the samples
 		/// </summary>
 		/********************************************************************/
-		protected override bool WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream)
+		protected override bool WriteSampleData(PlayerFileInfo fileInfo, ModuleStream moduleStream, ConverterStream converterStream)
 		{
 			uint sampleOffset = sampleDataOffset + 4;
 

@@ -730,6 +730,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Shaun Southern. Samples are stored in a separate file..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT71 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT71", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A module packer created by Charlet Franck..
         /// </summary>
         internal static string IDS_PROWIZ_DESCRIPTION_AGENT8 {
@@ -1365,6 +1374,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         internal static string IDS_PROWIZ_NAME_AGENT70 {
             get {
                 return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT70", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Magnetic Fields Packer.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT71 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT71", resourceCulture);
             }
         }
         

@@ -31,8 +31,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Will try to open a file with the same name as the current module,
 		/// but with a different extension. It will also try to use the
-		/// extension as a prefix. Will add the file sizes to one or both of
-		/// ModuleSize and CrunchedSize.
+		/// extension as a prefix.
 		/// 
 		/// If addSize is set to true, it will add the file sizes to one or
 		/// both of ModuleSize and CrunchedSize. If false, you need to call
