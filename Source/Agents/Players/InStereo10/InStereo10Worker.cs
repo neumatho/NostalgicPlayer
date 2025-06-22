@@ -425,10 +425,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => moduleName;
+		public override string Title => moduleName;
 
 
 

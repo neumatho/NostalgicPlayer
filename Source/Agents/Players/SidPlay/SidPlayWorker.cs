@@ -475,10 +475,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => sidTune.GetInfo().InfoString(0);
+		public override string Title => sidTune.GetInfo().InfoString(0);
 
 
 

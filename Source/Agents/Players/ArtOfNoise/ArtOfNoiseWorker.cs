@@ -332,10 +332,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => songName;
+		public override string Title => songName;
 
 
 

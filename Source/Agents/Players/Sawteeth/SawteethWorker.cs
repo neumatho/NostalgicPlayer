@@ -606,10 +606,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => name;
+		public override string Title => name;
 
 
 

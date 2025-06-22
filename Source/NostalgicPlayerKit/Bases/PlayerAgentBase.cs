@@ -67,10 +67,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		#region IModuleInformation implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public virtual string ModuleName => string.Empty;
+		public virtual string Title => string.Empty;
 
 
 

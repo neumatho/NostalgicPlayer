@@ -500,10 +500,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => subSongs[subSongMapping[0]].Name;
+		public override string Title => subSongs[subSongMapping[0]].Name;
 
 
 

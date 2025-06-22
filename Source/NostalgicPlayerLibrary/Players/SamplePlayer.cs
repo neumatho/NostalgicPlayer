@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 				soundStream.Start();
 
-				if (outputAgent.SwitchStream(soundStream, loaderInfo.Source, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
+				if (outputAgent.SwitchStream(soundStream, loaderInfo.Source, StaticModuleInformation.Title, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
 					return false;
 
 				StaticModuleInformation.PlayBackSpeakers = soundStream.VisualizerSpeakers;

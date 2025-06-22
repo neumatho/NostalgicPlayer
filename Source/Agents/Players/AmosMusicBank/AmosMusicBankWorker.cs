@@ -216,10 +216,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => songInfo[0].Name;
+		public override string Title => songInfo[0].Name;
 
 
 

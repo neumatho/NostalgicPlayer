@@ -1185,15 +1185,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Module name / file name:.
-        /// </summary>
-        internal static string IDS_MODULE_INFO_ITEM_MODULENAME {
-            get {
-                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_MODULENAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Module size:.
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_MODULESIZE {
@@ -1244,6 +1235,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODULE_INFO_ITEM_TIME {
             get {
                 return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_TIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module name / file name:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_TITLE", resourceCulture);
             }
         }
         

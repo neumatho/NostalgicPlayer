@@ -476,11 +476,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				ModuleInfoStatic staticInfo = moduleHandler.StaticModuleInformation;
 				ModuleInfoFloating floatingInfo = moduleHandler.PlayingModuleInformation;
 
-				string val = staticInfo.ModuleName;
+				string val = staticInfo.Title;
 				if (string.IsNullOrEmpty(val))
 					val = fileInfo.DisplayName;
 
-				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, val);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TITLE, val);
 
 				val = staticInfo.Author;
 				if (string.IsNullOrEmpty(val))
@@ -616,7 +616,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// No module in memory
 				string na = Resources.IDS_MODULE_INFO_ITEM_NA;
 
-				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TITLE, na);
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_AUTHOR, na);
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, na);
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, na);

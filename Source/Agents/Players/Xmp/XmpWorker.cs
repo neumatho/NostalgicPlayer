@@ -299,10 +299,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => moduleInfo.Mod.Name;
+		public override string Title => moduleInfo.Mod.Name;
 
 
 

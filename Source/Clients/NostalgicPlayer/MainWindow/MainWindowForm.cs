@@ -3560,17 +3560,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Show we change the title
 			if (optionSettings.ShowNameInTitle && moduleHandler.IsModuleLoaded)
 			{
-				string moduleName = moduleHandler.StaticModuleInformation.ModuleName;
+				string moduleTitle = moduleHandler.StaticModuleInformation.Title;
 
-				if (string.IsNullOrEmpty(moduleName))
+				if (string.IsNullOrEmpty(moduleTitle))
 				{
 					MultiFileInfo fileInfo = GetFileInfo();
 					if (fileInfo != null)
-						moduleName = fileInfo.DisplayName;
+						moduleTitle = fileInfo.DisplayName;
 				}
 
-				if (!string.IsNullOrEmpty(moduleName))
-					title += " / " + moduleName;
+				if (!string.IsNullOrEmpty(moduleTitle))
+					title += " / " + moduleTitle;
 			}
 
 			Text = title;

@@ -9,14 +9,14 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// Player can provide extra information about the module they are playing
+	/// Player can provide extra information about the module that is playing
 	/// </summary>
 	public interface IModuleInformation
 	{
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
-		string ModuleName { get; }
+		string Title { get; }
 
 		/// <summary>
 		/// Return the name of the author

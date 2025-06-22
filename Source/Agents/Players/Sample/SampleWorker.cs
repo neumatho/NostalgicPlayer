@@ -166,10 +166,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => formatInfo.Name;
+		public override string Title => formatInfo.Name;
 
 
 

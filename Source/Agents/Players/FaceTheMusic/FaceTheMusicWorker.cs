@@ -240,10 +240,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => songTitle;
+		public override string Title => songTitle;
 
 
 

@@ -273,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// interrupting the sound
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author, out string errorMessage)
+		public override AgentResult SwitchStream(SoundStream soundStream, string fileName, string title, string author, out string errorMessage)
 		{
 			lock (streamLock)
 			{
@@ -315,18 +315,18 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 					SpeakerFlag speakers = channels == 1 ? SpeakerFlag.FrontCenter : SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
 					soundStream.SetOutputFormat(new OutputInfo(channels, settings.OutputFrequency, mixerBufferSizeInFrames, speakers));
 
-					formatInfo = new SaveSampleFormatInfo((byte)settings.OutputSize, channels, (uint)settings.OutputFrequency, 0, 0, moduleName, author);
+					formatInfo = new SaveSampleFormatInfo((byte)settings.OutputSize, channels, (uint)settings.OutputFrequency, 0, 0, title, author);
 				}
 				else
 				{
 					SaverStream saverStream = new SaverStream(this, soundStream);
 					soundStream = saverStream;
 
-					if (outputAgentInUse.SwitchStream(soundStream, fileName, moduleName, author, out errorMessage) == AgentResult.Error)
+					if (outputAgentInUse.SwitchStream(soundStream, fileName, title, author, out errorMessage) == AgentResult.Error)
 						return AgentResult.Error;
 
 					int outputChannels = saverStream.OutputInfo.Channels >= 2 ? 2 : 1;
-					formatInfo = new SaveSampleFormatInfo(OutputInfo.BytesPerSample * 8, outputChannels, (uint)saverStream.OutputInfo.Frequency, 0, 0, moduleName, author);
+					formatInfo = new SaveSampleFormatInfo(OutputInfo.BytesPerSample * 8, outputChannels, (uint)saverStream.OutputInfo.Frequency, 0, 0, title, author);
 				}
 
 				stream = soundStream;

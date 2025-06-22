@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// <summary>
 	/// Agents of this type can play from a stream
 	/// </summary>
-	public interface IStreamerAgent : ISampleAgent, IModuleInformation, IAgentWorker
+	public interface IStreamerAgent : ISampleAgent, IAgentWorker
 	{
 		/// <summary>
 		/// Return an array of mime types that this agent can handle

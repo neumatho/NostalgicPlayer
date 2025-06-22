@@ -160,10 +160,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => module.Name;
+		public override string Title => module.Name;
 
 
 

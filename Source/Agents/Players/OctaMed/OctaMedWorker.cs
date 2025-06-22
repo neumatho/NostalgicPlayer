@@ -1195,10 +1195,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => sg.CurrSS().GetSongName();
+		public override string Title => sg.CurrSS().GetSongName();
 
 
 

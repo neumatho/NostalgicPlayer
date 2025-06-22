@@ -226,7 +226,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 						Console.WriteLine();
 
 						if (player is not IStreamingPlayer)
-							Console.WriteLine("Module name/file name: " + (string.IsNullOrEmpty(moduleInfoStatic.ModuleName) ? Path.GetFileName(loaderInfo.Source) : moduleInfoStatic.ModuleName));
+							Console.WriteLine("Module name/file name: " + (string.IsNullOrEmpty(moduleInfoStatic.Title) ? Path.GetFileName(loaderInfo.Source) : moduleInfoStatic.Title));
 
 						Console.WriteLine("Author: " + (string.IsNullOrEmpty(moduleInfoStatic.Author) ? "Unknown" : moduleInfoStatic.Author));
 						Console.WriteLine("Module format: " + moduleInfoStatic.Format);

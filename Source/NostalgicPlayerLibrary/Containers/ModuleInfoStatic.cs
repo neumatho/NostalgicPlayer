@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		public ModuleInfoStatic()
 		{
-			ModuleName = string.Empty;
+			Title = string.Empty;
 			Author = string.Empty;
 			Format = string.Empty;
 			PlayerName = string.Empty;
@@ -64,9 +64,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(LoaderInfoBase loaderInfo, IPlayerAgent playerAgent) : this(loaderInfo)
+		private ModuleInfoStatic(LoaderInfoBase loaderInfo, IModuleInformation playerAgent) : this(loaderInfo)
 		{
-			ModuleName = playerAgent.ModuleName?.Trim();
+			Title = playerAgent.Title?.Trim();
+			Author = string.Empty;
 			Comment = playerAgent.Comment;
 			CommentFont = playerAgent.CommentFont;
 			Lyrics = playerAgent.Lyrics;
@@ -81,7 +82,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(Loader loader, IModulePlayerAgent modulePlayerAgent) : this(loader, (IPlayerAgent)modulePlayerAgent)
+		internal ModuleInfoStatic(Loader loader, IModulePlayerAgent modulePlayerAgent) : this(loader, (IModuleInformation)modulePlayerAgent)
 		{
 			Channels = modulePlayerAgent.ModuleChannelCount;
 			VirtualChannels = modulePlayerAgent.VirtualChannelCount;
@@ -108,7 +109,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(Loader loader, ISamplePlayerAgent samplePlayerAgent) : this(loader, (IPlayerAgent)samplePlayerAgent)
+		internal ModuleInfoStatic(Loader loader, ISamplePlayerAgent samplePlayerAgent) : this(loader, (IModuleInformation)samplePlayerAgent)
 		{
 			Channels = samplePlayerAgent.ChannelCount;
 			VirtualChannels = samplePlayerAgent.ChannelCount;
@@ -126,22 +127,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(StreamLoader loader, IStreamerAgent streamerAgent) : this(loader)
+		internal ModuleInfoStatic(StreamLoader loader, IStreamerAgent streamerAgent) : this(loader, (IModuleInformation)streamerAgent)
 		{
-			ModuleName = string.Empty;
-			Comment = null;
-			CommentFont = null;
-			Lyrics = null;
-			LyricsFont = null;
-			Pictures = null;
-
 			Channels = streamerAgent.ChannelCount;
 			VirtualChannels = streamerAgent.ChannelCount;
 			MaxSongNumber = 1;
 			CanChangePosition = false;
 			Frequency = streamerAgent.Frequency;
-
-			Author = string.Empty;
 		}
 
 		#region Common properties
@@ -159,10 +151,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public string ModuleName
+		public string Title
 		{
 			get;
 		}

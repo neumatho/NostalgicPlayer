@@ -586,10 +586,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the module
+		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => song.Name;
+		public override string Title => song.Name;
 
 
 
