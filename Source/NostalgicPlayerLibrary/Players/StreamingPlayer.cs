@@ -8,6 +8,7 @@ using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
@@ -27,6 +28,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		private IOutputAgent outputAgent;
 		private ResamplerStream soundStream;
+		private StreamingStream streamingStream;
 
 		/********************************************************************/
 		/// <summary>
@@ -83,8 +85,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				{
 					// Initialize the player
 					IMetadata metadata = loader as IMetadata;
+					streamingStream = loader.Stream;
 
-					initOk = currentPlayer.InitPlayer(loader.Stream, metadata, out errorMessage);
+					initOk = currentPlayer.InitPlayer(streamingStream, metadata, out errorMessage);
 
 					if (initOk)
 					{
@@ -276,6 +279,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			if (currentPlayer != null)
 			{
+				if (streamingStream.CanSeek)
+					streamingStream.Position = streamingStream.Position;    // This will force the stream to reset its position
+
 				soundStream.Resume();
 				outputAgent.Play();
 			}

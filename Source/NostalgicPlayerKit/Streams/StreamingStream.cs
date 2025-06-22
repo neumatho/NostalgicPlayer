@@ -21,6 +21,8 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		private Stream wrapperStream;
 		private readonly IStreamSeek seeker;
 
+		private long currentPosition;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -30,6 +32,8 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			this.wrapperStream = wrapperStream;
 			seeker = streamSeek;
+
+			currentPosition = 0;
 		}
 
 
@@ -90,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Position
 		{
-			get => throw new NotSupportedException("Get position not supported");
+			get => currentPosition;
 
 			set
 			{
@@ -101,6 +105,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				wrapperStream = null;
 
 				wrapperStream = seeker.SetPosition(value);
+				currentPosition = value;
 			}
 		}
 
@@ -142,13 +147,17 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				if (wrapperStream == null)
 					return 0;
 
-				return Task.Run(() =>
+				int bytesRead = Task.Run(() =>
 				{
 					using (CancellationTokenSource cancellationToken = new CancellationTokenSource(StreamingTimeout))
 					{
 						return wrapperStream.ReadAsync(buffer, offset, count, cancellationToken.Token);
 					}
 				}).Result;
+
+				currentPosition += bytesRead;
+
+				return bytesRead;
 			}
 			catch(AggregateException ex)
 			{
