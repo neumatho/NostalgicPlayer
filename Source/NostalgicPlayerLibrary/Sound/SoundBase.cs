@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 			set
 			{
-				clockUpdatedEvent.SetClockToGivenTime(value * IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000);
+				clockUpdatedEvent.SetClockToGivenTime(value * IDuration.NumberOfSecondsBetweenEachSnapshot * 1000);
 				positionChangedEvent.SongPosition = value;
 			}
 		}

@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// <summary>
 	/// Base interface for all players that can calculate the duration
 	/// </summary>
-	public interface IDurationPlayer
+	public interface IDuration
 	{
 		/// <summary>
 		/// Defines the number of seconds between each position
