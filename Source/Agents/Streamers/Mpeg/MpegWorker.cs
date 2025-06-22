@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibMpg123;
@@ -43,9 +44,9 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer(StreamingStream streamingStream, out string errorMessage)
+		public override bool InitPlayer(StreamingStream streamingStream, IMetadata metadata, out string errorMessage)
 		{
-			if (!base.InitPlayer(streamingStream, out errorMessage))
+			if (!base.InitPlayer(streamingStream, metadata, out errorMessage))
 				return false;
 
 			// Get a Mpg123 handle, which is used on all other calls

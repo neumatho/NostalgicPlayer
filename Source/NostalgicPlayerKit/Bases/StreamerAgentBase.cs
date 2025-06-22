@@ -23,6 +23,14 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		protected StreamingStream stream;
 
+		private string title;
+		private string author;
+		private string[] comment;
+		private Font commentFont;
+		private string[] lyrics;
+		private Font lyricsFont;
+		private PictureInfo[] pictures;
+
 		private readonly Dictionary<int, ModuleInfoChanged> changedModuleInfo = new Dictionary<int, ModuleInfoChanged>();
 
 		#region IStreamerAgent implementation
@@ -40,11 +48,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public virtual bool InitPlayer(StreamingStream streamingStream, out string errorMessage)
+		public virtual bool InitPlayer(StreamingStream streamingStream, IMetadata metadata, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
 			stream = streamingStream;
+
+			title = metadata?.Title ?? string.Empty;
+			author = metadata?.Author ?? string.Empty;
+			comment = metadata?.Comment ?? [];
+			commentFont = metadata?.CommentFont;
+			lyrics = metadata?.Lyrics ?? [];
+			lyricsFont = metadata?.LyricsFont;
+			pictures = metadata?.Pictures;
 
 			return true;
 		}
@@ -133,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public virtual string Title => string.Empty;
+		public virtual string Title => title;
 
 
 
@@ -142,7 +158,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the name of the author
 		/// </summary>
 		/********************************************************************/
-		public virtual string Author => string.Empty;
+		public virtual string Author => author;
 
 
 
@@ -151,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the comment separated in lines
 		/// </summary>
 		/********************************************************************/
-		public virtual string[] Comment => [];
+		public virtual string[] Comment => comment;
 
 
 
@@ -160,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return a specific font to be used for the comments
 		/// </summary>
 		/********************************************************************/
-		public virtual Font CommentFont => null;
+		public virtual Font CommentFont => commentFont;
 
 
 
@@ -169,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the lyrics separated in lines
 		/// </summary>
 		/********************************************************************/
-		public virtual string[] Lyrics => [];
+		public virtual string[] Lyrics => lyrics;
 
 
 
@@ -178,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return a specific font to be used for the lyrics
 		/// </summary>
 		/********************************************************************/
-		public virtual Font LyricsFont => null;
+		public virtual Font LyricsFont => lyricsFont;
 
 
 
@@ -187,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return all pictures available
 		/// </summary>
 		/********************************************************************/
-		public virtual PictureInfo[] Pictures => null;
+		public virtual PictureInfo[] Pictures => pictures;
 
 
 
