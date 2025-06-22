@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the player
 		/// </summary>
-		bool InitPlayer(StreamingStream streamingStream, out string errorMessage);
+		bool InitPlayer(StreamingStream streamingStream, IMetadata metadata, out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the player

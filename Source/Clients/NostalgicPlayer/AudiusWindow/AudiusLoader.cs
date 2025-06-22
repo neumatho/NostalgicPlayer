@@ -13,8 +13,8 @@ using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// <summary>
 	/// Loader class that helps start an Audius streaming
 	/// </summary>
-	public class AudiusLoader : StreamLoader, IStreamMetadata
+	public class AudiusLoader : StreamLoader, IMetadata
 	{
 		private static readonly PictureDownloader pictureDownloader;
 
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		}
 		#endregion
 
-		#region IStreamMetaData implementation
+		#region IMetadata implementation
 		/********************************************************************/
 		/// <summary>
 		/// Return the title of the song
@@ -119,6 +119,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			get;
 			private set;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the comments
+		/// </summary>
+		/********************************************************************/
+		public Font CommentFont => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the lyrics separated in lines
+		/// </summary>
+		/********************************************************************/
+		public string[] Lyrics => [];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the lyrics
+		/// </summary>
+		/********************************************************************/
+		public Font LyricsFont => null;
 
 
 

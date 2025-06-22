@@ -10,7 +10,6 @@ using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler;
 
@@ -82,7 +81,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				lock (currentPlayer)
 				{
 					// Initialize the player
-					initOk = currentPlayer.InitPlayer(loader.Stream, out errorMessage);
+					IMetadata metadata = loader as IMetadata;
+
+					initOk = currentPlayer.InitPlayer(loader.Stream, metadata, out errorMessage);
 
 					if (initOk)
 					{
@@ -186,12 +187,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						return false;
 
 					// Initialize the module information
-					DurationInfo durationInfo = null;
-
-					if (loaderInfo is IStreamMetadata streamMetadata)
-						durationInfo = new DurationInfo(streamMetadata.Duration, []);
-
-					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(0, null, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 
 				soundStream.Start();
@@ -345,7 +341,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
 		#endregion
 
-		#region IStreamingPlayer implementation
+		#region ISamplePlayer implementation
+		/********************************************************************/
+		/// <summary>
+		/// Will set a new song position
+		/// </summary>
+		/********************************************************************/
+		public void SetSongPosition(int position)
+		{
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Event called when the position is changed
