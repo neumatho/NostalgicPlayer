@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// <summary>
 	/// Loader class that helps start an Audius streaming
 	/// </summary>
-	public class AudiusLoader : StreamLoader, IMetadata
+	public class AudiusLoader : StreamLoader, IMetadata, IStreamSeek
 	{
 		private static readonly PictureDownloader pictureDownloader;
 
@@ -173,6 +173,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			private set;
 		}
 		#endregion
+
+		#region IStreamSeek implementation
+		/********************************************************************/
+		/// <summary>
+		/// Tells whether the stream supports seeking or not
+		/// </summary>
+		/********************************************************************/
+		public bool CanSeek => true;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the stream to the current position. Return the new stream to
+		/// use
+		/// </summary>
+		/********************************************************************/
+		public Stream SetPosition(long newPosition)
+		{
+			return ReconnectToPosition(newPosition);
+		}
+		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a seeking implementation of the stream supports it
+		/// </summary>
+		/********************************************************************/
+		protected override IStreamSeek GetSeeker()
+		{
+			return this;
+		}
 
 		#region Private methods
 		/********************************************************************/

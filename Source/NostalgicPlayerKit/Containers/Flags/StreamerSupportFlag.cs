@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 	/// Different flags indicating what a sample player supports
 	/// </summary>
 	[Flags]
-	public enum SamplePlayerSupportFlag
+	public enum StreamerSupportFlag
 	{
 		/// <summary>
 		/// Nothing

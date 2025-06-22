@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 
 		/// <summary>
 		/// Set this if your player can change to a certain position. You
-		/// also need to implement SetSongPosition() in the IDurationPlayer
+		/// also need to implement SetSongPosition() in the IDuration
 		/// interface
 		/// </summary>
 		SetPosition = 0x0001,

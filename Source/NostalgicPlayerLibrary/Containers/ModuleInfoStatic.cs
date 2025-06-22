@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			Channels = streamerAgent.ChannelCount;
 			VirtualChannels = streamerAgent.ChannelCount;
 			MaxSongNumber = 1;
-			CanChangePosition = false;
+			CanChangePosition = (streamerAgent is IDuration) && ((streamerAgent.SupportFlags & StreamerSupportFlag.SetPosition) != 0);
 			Frequency = streamerAgent.Frequency;
 		}
 
