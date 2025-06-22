@@ -6,17 +6,35 @@
 using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Kit.Bases
 {
 	/// <summary>
-	/// Derive from this class, if you want to calculate the duration in your sample player
+	/// Derive from this class, if you want to calculate the duration in your streamer player
 	/// </summary>
-	public abstract class SamplePlayerWithDurationAgentBase : SamplePlayerAgentBase, ISampleDuration
+	public abstract class StreamerWithDurationAgentBase : StreamerAgentBase, IStreamerDuration
 	{
+		private TimeSpan duration;
 		private bool hasCalculatedDuration = false;
+
+		#region IStreamerAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer(StreamingStream streamingStream, IMetadata metadata, out string errorMessage)
+		{
+			if (!base.InitPlayer(streamingStream, metadata, out errorMessage))
+				return false;
+
+			duration = metadata?.Duration ?? TimeSpan.Zero;
+
+			return true;
+		}
+		#endregion
 
 		#region ISampleDuration implementation
 		/********************************************************************/
@@ -26,45 +44,36 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public DurationInfo[] CalculateDuration()
 		{
-			doNotTrigEvents = true;
+			InitDuration();
 
 			try
 			{
-				InitDuration();
+				TimeSpan totalTime = GetTotalDuration();
+				if (totalTime == TimeSpan.Zero)
+					return null;
 
-				try
+				TimeSpan increment = new TimeSpan(0, 0, (int)IDuration.NumberOfSecondsBetweenEachSnapshot);
+
+				List<PositionInfo> positionInfoList = new List<PositionInfo>();
+
+				TimeSpan currentTotalTime = TimeSpan.Zero;
+				
+				for (;;)
 				{
-					TimeSpan totalTime = GetTotalDuration();
-					if (totalTime == TimeSpan.Zero)
-						return null;
+					positionInfoList.Add(new PositionInfo(currentTotalTime));
 
-					TimeSpan increment = new TimeSpan(0, 0, (int)IDuration.NumberOfSecondsBetweenEachSnapshot);
-
-					List<PositionInfo> positionInfoList = new List<PositionInfo>();
-
-					TimeSpan currentTotalTime = TimeSpan.Zero;
-					
-					for (;;)
-					{
-						positionInfoList.Add(new PositionInfo(currentTotalTime));
-
-						currentTotalTime += increment;
-						if (currentTotalTime >= totalTime)
-							break;
-					}
-
-					hasCalculatedDuration = true;
-
-					return [ new DurationInfo(totalTime, positionInfoList.ToArray()) ];
+					currentTotalTime += increment;
+					if (currentTotalTime >= totalTime)
+						break;
 				}
-				finally
-				{
-					CleanupDuration();
-				}
+
+				hasCalculatedDuration = true;
+
+				return [ new DurationInfo(totalTime, positionInfoList.ToArray()) ];
 			}
 			finally
 			{
-				doNotTrigEvents = false;
+				CleanupDuration();
 			}
 		}
 
@@ -123,7 +132,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the total time of the sample
 		/// </summary>
 		/********************************************************************/
-		protected abstract TimeSpan GetTotalDuration();
+		protected virtual TimeSpan GetTotalDuration()
+		{
+			return duration;
+		}
 
 
 
@@ -133,43 +145,5 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		protected abstract void SetPosition(TimeSpan time);
-
-		#region SamplePlayerAgentBase implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return some flags telling what the player supports
-		/// </summary>
-		/********************************************************************/
-		public override SamplePlayerSupportFlag SupportFlags
-		{
-			get
-			{
-				SamplePlayerSupportFlag flag = base.SupportFlags;
-
-				if (hasCalculatedDuration)
-					flag |= SamplePlayerSupportFlag.SetPosition;
-
-				return flag;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initializes the player to start the sample from start
-		/// </summary>
-		/********************************************************************/
-		public override bool InitSound(out string errorMessage)
-		{
-			if (!base.InitSound(out errorMessage))
-				return false;
-
-			if ((SupportFlags & SamplePlayerSupportFlag.SetPosition) != 0)
-				SetPosition(TimeSpan.Zero);
-
-			return true;
-		}
-		#endregion
 	}
 }

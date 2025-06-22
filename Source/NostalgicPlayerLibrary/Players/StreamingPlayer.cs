@@ -23,6 +23,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		private readonly Manager agentManager;
 
 		private IStreamerAgent currentPlayer;
+		private DurationInfo durationInfo;
 
 		private IOutputAgent outputAgent;
 		private ResamplerStream soundStream;
@@ -87,6 +88,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 					if (initOk)
 					{
+						// Calculate the duration of the stream
+						CalculateDuration();
+
 						// Initialize module information
 						StaticModuleInformation = new ModuleInfoStatic(loader, currentPlayer);
 
@@ -149,6 +153,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					currentPlayer.CleanupSound();
 					currentPlayer.CleanupPlayer();
 
+					durationInfo = null;
 					currentPlayer = null;
 
 					// Clear player information
@@ -187,7 +192,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						return false;
 
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(0, null, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 
 				soundStream.Start();
@@ -431,6 +436,28 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Just call the next event handler
 				if (ModuleInfoChanged != null)
 					ModuleInfoChanged(sender, e);
+			}
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the duration of all sub-songs
+		/// </summary>
+		/********************************************************************/
+		private void CalculateDuration()
+		{
+			if (currentPlayer is IDuration durationPlayer)
+			{
+				DurationInfo[] allSongsInfo = durationPlayer.CalculateDuration();
+				if ((allSongsInfo != null) && (allSongsInfo.Length > 0))
+				{
+					durationInfo = allSongsInfo[0];
+
+					// Initialize the module information
+					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, null);
+				}
 			}
 		}
 		#endregion
