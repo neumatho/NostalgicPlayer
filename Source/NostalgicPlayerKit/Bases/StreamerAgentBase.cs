@@ -45,6 +45,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return some flags telling what the player supports
+		/// </summary>
+		/********************************************************************/
+		public virtual StreamerSupportFlag SupportFlags => StreamerSupportFlag.None;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/

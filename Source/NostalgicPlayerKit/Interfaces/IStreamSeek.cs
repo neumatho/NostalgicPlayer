@@ -3,25 +3,24 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using System.IO;
 
-namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
+namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// Different flags indicating what a sample player supports
+	/// 
 	/// </summary>
-	[Flags]
-	public enum SamplePlayerSupportFlag
+	public interface IStreamSeek
 	{
 		/// <summary>
-		/// Nothing
+		/// Tells whether the stream supports seeking or not
 		/// </summary>
-		None = 0,
+		bool CanSeek { get; }
 
 		/// <summary>
-		/// Set this if your player can change to a certain position. You also
-		/// need to implement SetSongPosition() in the IDuration interface
+		/// Set the stream to the current position. Return the new stream to
+		/// use
 		/// </summary>
-		SetPosition = 0x0001
+		Stream SetPosition(long newPosition);
 	}
 }

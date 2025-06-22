@@ -355,6 +355,8 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 		/********************************************************************/
 		protected override void SetPosition(TimeSpan time)
 		{
+			long newPos = mpg123Handle.Mpg123_Timeframe64(time.TotalSeconds) * frameInfo.FrameSize;
+			stream.Position = newPos;
 		}
 		#endregion
 

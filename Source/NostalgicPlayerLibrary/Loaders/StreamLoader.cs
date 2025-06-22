@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -82,7 +83,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 					}
 				}).Result;
 
-				if (responseMessage.StatusCode == HttpStatusCode.OK)
+				if (responseMessage.StatusCode is HttpStatusCode.OK or HttpStatusCode.PartialContent)
 					break;
 
 				// If we get a redirect, we will follow it but only once
@@ -255,6 +256,48 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			get; private set;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a seeking implementation of the stream supports it
+		/// </summary>
+		/********************************************************************/
+		protected virtual IStreamSeek GetSeeker()
+		{
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Close the connection and open a new connection, setting the
+		/// stream position to the given position
+		/// </summary>
+		/********************************************************************/
+		protected Stream ReconnectToPosition(long newPosition)
+		{
+			responseMessage?.Dispose();
+			responseMessage = null;
+
+			responseMessage = Task.Run(() =>
+			{
+				using (CancellationTokenSource cancellationToken = new CancellationTokenSource(InitialTimeout))
+				{
+					HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+					request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(newPosition, null);
+
+					return httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken.Token);
+				}
+			}).Result;
+
+			if (responseMessage.StatusCode is HttpStatusCode.OK or HttpStatusCode.PartialContent)
+				return responseMessage.Content.ReadAsStream();
+
+			return null;
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -337,7 +380,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				formatDescription = PlayerAgentInfo.TypeDescription;
 			}
 
-			Stream = new StreamingStream(responseMessage.Content.ReadAsStream(), false);
+			Stream = new StreamingStream(responseMessage.Content.ReadAsStream(), GetSeeker());
 
 			Player = new StreamingPlayer(agentManager);
 		}

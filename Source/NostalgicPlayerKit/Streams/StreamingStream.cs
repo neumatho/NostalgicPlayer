@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Streams
 {
@@ -17,18 +18,18 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	{
 		private const int StreamingTimeout = 30000;
 
-		private readonly Stream wrapperStream;
-		private readonly bool leaveStreamOpen;
+		private Stream wrapperStream;
+		private readonly IStreamSeek seeker;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public StreamingStream(Stream wrapperStream, bool leaveOpen)
+		public StreamingStream(Stream wrapperStream, IStreamSeek streamSeek)
 		{
 			this.wrapperStream = wrapperStream;
-			leaveStreamOpen = leaveOpen;
+			seeker = streamSeek;
 		}
 
 
@@ -42,8 +43,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			base.Dispose(disposing);
 
-			if (!leaveStreamOpen)
-				wrapperStream.Dispose();
+			wrapperStream.Dispose();
 		}
 
 		#region Stream implementation
@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports seeking
 		/// </summary>
 		/********************************************************************/
-		public override bool CanSeek => false;
+		public override bool CanSeek => (seeker != null) && seeker.CanSeek;
 
 
 
@@ -91,7 +91,17 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		public override long Position
 		{
 			get => throw new NotSupportedException("Get position not supported");
-			set => throw new NotSupportedException("Set position not supported");
+
+			set
+			{
+				if (!CanSeek)
+					throw new NotSupportedException("Set position not supported");
+
+				wrapperStream?.Dispose();
+				wrapperStream = null;
+
+				wrapperStream = seeker.SetPosition(value);
+			}
 		}
 
 
@@ -129,6 +139,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			try
 			{
+				if (wrapperStream == null)
+					return 0;
+
 				return Task.Run(() =>
 				{
 					using (CancellationTokenSource cancellationToken = new CancellationTokenSource(StreamingTimeout))

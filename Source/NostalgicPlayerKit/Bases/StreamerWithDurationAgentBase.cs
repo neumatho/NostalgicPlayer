@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -145,5 +146,25 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		protected abstract void SetPosition(TimeSpan time);
+
+		#region StreamerAgentBase implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling what the player supports
+		/// </summary>
+		/********************************************************************/
+		public override StreamerSupportFlag SupportFlags
+		{
+			get
+			{
+				StreamerSupportFlag flag = base.SupportFlags;
+
+				if (hasCalculatedDuration && stream.CanSeek)
+					flag |= StreamerSupportFlag.SetPosition;
+
+				return flag;
+			}
+		}
+		#endregion
 	}
 }
