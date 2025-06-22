@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			{
 				lock (currentPlayer)
 				{
-					if (currentPlayer is IDurationPlayer durationPlayer)
+					if (currentPlayer is IDuration durationPlayer)
 						durationPlayer.SetSongPosition(durationInfo?.PositionInfo[position]);
 
 					ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
@@ -464,7 +464,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void CalculateDuration()
 		{
-			if (currentPlayer is IDurationPlayer durationPlayer)
+			if (currentPlayer is IDuration durationPlayer)
 			{
 				DurationInfo[] allSongsInfo = durationPlayer.CalculateDuration();
 				if ((allSongsInfo != null) && (allSongsInfo.Length > 0))

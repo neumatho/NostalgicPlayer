@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class SidPlayWorker : ModulePlayerAgentBase, IDurationPlayer, IAgentSettingsRegistrar
+	internal class SidPlayWorker : ModulePlayerAgentBase, IDuration, IAgentSettingsRegistrar
 	{
 		private const int BufferSize = 512;
 		private const int ClockCyclesToPlay = 5000;
@@ -747,7 +747,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				return null;
 
 			DurationInfo[] result = new DurationInfo[songLengths.Count];
-			TimeSpan increment = new TimeSpan(0, 0, (int)IDurationPlayer.NumberOfSecondsBetweenEachSnapshot);
+			TimeSpan increment = new TimeSpan(0, 0, (int)IDuration.NumberOfSecondsBetweenEachSnapshot);
 
 			for (int i = songLengths.Count - 1; i >= 0; i--)
 			{

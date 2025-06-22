@@ -6,9 +6,13 @@
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// Add some extra methods for a sample duration player
+	/// Add some extra methods for a module duration player
 	/// </summary>
-	public interface ISampleDurationPlayer : IDurationPlayer
+	public interface IModuleDuration : IDuration
 	{
+		/// <summary>
+		/// Initialize player to play the given sub-song
+		/// </summary>
+		bool SetSubSong(int subSong, out string errorMessage);
 	}
 }

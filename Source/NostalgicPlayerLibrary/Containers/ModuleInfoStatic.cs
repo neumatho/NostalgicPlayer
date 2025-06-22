@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			Channels = modulePlayerAgent.ModuleChannelCount;
 			VirtualChannels = modulePlayerAgent.VirtualChannelCount;
 			MaxSongNumber = modulePlayerAgent.SubSongs.Number;
-			CanChangePosition = (modulePlayerAgent is IDurationPlayer) && ((modulePlayerAgent.SupportFlags & ModulePlayerSupportFlag.SetPosition) != 0);
+			CanChangePosition = (modulePlayerAgent is IDuration) && ((modulePlayerAgent.SupportFlags & ModulePlayerSupportFlag.SetPosition) != 0);
 			ConverterAgentInfo = loader.ConverterAgentInfo;
 
 			Instruments = modulePlayerAgent.Instruments?.ToArray();
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			Channels = samplePlayerAgent.ChannelCount;
 			VirtualChannels = samplePlayerAgent.ChannelCount;
 			MaxSongNumber = 1;
-			CanChangePosition = (samplePlayerAgent is IDurationPlayer) && ((samplePlayerAgent.SupportFlags & SamplePlayerSupportFlag.SetPosition) != 0);
+			CanChangePosition = (samplePlayerAgent is IDuration) && ((samplePlayerAgent.SupportFlags & SamplePlayerSupportFlag.SetPosition) != 0);
 			Frequency = samplePlayerAgent.Frequency;
 
 			Author = FindAuthor(samplePlayerAgent);

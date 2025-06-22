@@ -95,8 +95,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer.Events
 		{
 			int samplesPerPosition = CalculateSamplesPerPositionChange();
 
-			currentSongPosition = (int)(restartTime / (IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f));
-			int samplesLeftToPositionChange = (int)(samplesPerPosition - (((restartTime - (currentSongPosition * IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)) / 1000.0f) * mixerFrequency));
+			currentSongPosition = (int)(restartTime / (IDuration.NumberOfSecondsBetweenEachSnapshot * 1000.0f));
+			int samplesLeftToPositionChange = (int)(samplesPerPosition - (((restartTime - (currentSongPosition * IDuration.NumberOfSecondsBetweenEachSnapshot * 1000.0f)) / 1000.0f) * mixerFrequency));
 
 			noLatencyTimedEventHandler.RemoveEvents(this);
 			noLatencyTimedEventHandler.AddEvent(this, samplesLeftToPositionChange);
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer.Events
 		/********************************************************************/
 		private int CalculateSamplesPerPositionChange()
 		{
-			return (int)(IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * mixerFrequency);
+			return (int)(IDuration.NumberOfSecondsBetweenEachSnapshot * mixerFrequency);
 		}
 		#endregion
 	}
