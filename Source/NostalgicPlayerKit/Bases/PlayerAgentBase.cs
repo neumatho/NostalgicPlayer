@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -63,9 +62,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual string ExtraFormatInfo => null;
+		#endregion
 
-
-
+		#region IModuleInformation implementation
 		/********************************************************************/
 		/// <summary>
 		/// Return the name of the module
@@ -89,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the comment separated in lines
 		/// </summary>
 		/********************************************************************/
-		public virtual string[] Comment => Array.Empty<string>();
+		public virtual string[] Comment => [];
 
 
 
@@ -107,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the lyrics separated in lines
 		/// </summary>
 		/********************************************************************/
-		public virtual string[] Lyrics => Array.Empty<string>();
+		public virtual string[] Lyrics => [];
 
 
 
@@ -126,9 +125,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual PictureInfo[] Pictures => null;
-		#endregion
 
-		#region IModuleInformation implementation
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the description and value on the line given. If the line

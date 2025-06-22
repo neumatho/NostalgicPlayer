@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -127,6 +128,69 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		#endregion
 
 		#region IModuleInformation implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public virtual string ModuleName => string.Empty;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the author
+		/// </summary>
+		/********************************************************************/
+		public virtual string Author => string.Empty;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		/********************************************************************/
+		public virtual string[] Comment => [];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the comments
+		/// </summary>
+		/********************************************************************/
+		public virtual Font CommentFont => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the lyrics separated in lines
+		/// </summary>
+		/********************************************************************/
+		public virtual string[] Lyrics => [];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the lyrics
+		/// </summary>
+		/********************************************************************/
+		public virtual Font LyricsFont => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all pictures available
+		/// </summary>
+		/********************************************************************/
+		public virtual PictureInfo[] Pictures => null;
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the description and value on the line given. If the line
