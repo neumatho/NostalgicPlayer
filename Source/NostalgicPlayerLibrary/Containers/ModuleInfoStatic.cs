@@ -68,7 +68,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		{
 			Title = playerAgent.Title?.Trim();
 			Author = string.Empty;
-			Author = string.Empty;
 			Comment = playerAgent.Comment;
 			CommentFont = playerAgent.CommentFont;
 			Lyrics = playerAgent.Lyrics;
@@ -130,6 +129,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		internal ModuleInfoStatic(StreamLoader loader, IStreamerAgent streamerAgent) : this(loader, (IModuleInformation)streamerAgent)
 		{
+			Author = streamerAgent.Author?.Trim();
+
 			Channels = streamerAgent.ChannelCount;
 			VirtualChannels = streamerAgent.ChannelCount;
 			MaxSongNumber = 1;
