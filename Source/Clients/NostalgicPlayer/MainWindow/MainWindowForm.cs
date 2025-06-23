@@ -4979,10 +4979,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Free any playing module
 					StopAndFreeModule();
 
-					moduleListControl.Items.Clear();
+					EmptyList();
 				}
 
 				moduleListControl.Items.AddRange(items);
+
+				// Add time from each item
+				listTime += new TimeSpan(items.Where(x => x.HaveTime).Select(x => x.Duration).Sum(x => x.Ticks));
 
 				if (clearAndPlay)
 				{
@@ -5015,8 +5018,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			fileScanner.ClearQueue();
 
 			// Clear the time variables
-			listTime = new TimeSpan(0);
-			selectedTime = new TimeSpan(0);
+			listTime = TimeSpan.Zero;
+			selectedTime = TimeSpan.Zero;
 
 			// And update the window
 			UpdateControls();
