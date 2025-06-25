@@ -34,9 +34,13 @@
 			navigator = new Krypton.Navigator.KryptonNavigator();
 			navigatorTrendingPage = new Krypton.Navigator.KryptonPage();
 			trendingPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages.TrendingPageControl();
+			navigatorSearchPage = new Krypton.Navigator.KryptonPage();
+			searchPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages.SearchPageControl();
 			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
 			((System.ComponentModel.ISupportInitialize)navigatorTrendingPage).BeginInit();
 			navigatorTrendingPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)navigatorSearchPage).BeginInit();
+			navigatorSearchPage.SuspendLayout();
 			SuspendLayout();
 			// 
 			// fontPalette
@@ -67,11 +71,11 @@
 			navigator.NavigatorMode = Krypton.Navigator.NavigatorMode.BarTabGroup;
 			navigator.Owner = null;
 			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
-			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorTrendingPage });
+			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorTrendingPage, navigatorSearchPage });
 			navigator.Palette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			navigator.SelectedIndex = 0;
+			navigator.SelectedIndex = 1;
 			navigator.Size = new System.Drawing.Size(768, 425);
 			navigator.TabIndex = 0;
 			navigator.SelectedPageChanged += Navigator_SelectedPageChanged;
@@ -96,7 +100,29 @@
 			trendingPageControl.Location = new System.Drawing.Point(0, 0);
 			trendingPageControl.Name = "trendingPageControl";
 			trendingPageControl.Size = new System.Drawing.Size(766, 398);
-			trendingPageControl.TabIndex = 1;
+			trendingPageControl.TabIndex = 0;
+			// 
+			// navigatorSearchPage
+			// 
+			navigatorSearchPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
+			navigatorSearchPage.Controls.Add(searchPageControl);
+			navigatorSearchPage.Flags = 65534;
+			navigatorSearchPage.LastVisibleSet = true;
+			navigatorSearchPage.MinimumSize = new System.Drawing.Size(150, 50);
+			navigatorSearchPage.Name = "navigatorSearchPage";
+			navigatorSearchPage.Size = new System.Drawing.Size(766, 399);
+			navigatorSearchPage.Text = "";
+			navigatorSearchPage.ToolTipTitle = "Page ToolTip";
+			navigatorSearchPage.UniqueName = "714a1f4654a044a1809724d72e41db75";
+			// 
+			// searchPageControl
+			// 
+			searchPageControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			searchPageControl.BackColor = System.Drawing.Color.Transparent;
+			searchPageControl.Location = new System.Drawing.Point(0, 0);
+			searchPageControl.Name = "searchPageControl";
+			searchPageControl.Size = new System.Drawing.Size(766, 398);
+			searchPageControl.TabIndex = 0;
 			// 
 			// AudiusWindowForm
 			// 
@@ -114,6 +140,8 @@
 			((System.ComponentModel.ISupportInitialize)navigator).EndInit();
 			((System.ComponentModel.ISupportInitialize)navigatorTrendingPage).EndInit();
 			navigatorTrendingPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)navigatorSearchPage).EndInit();
+			navigatorSearchPage.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -123,5 +151,7 @@
 		private Krypton.Navigator.KryptonNavigator navigator;
 		private Krypton.Navigator.KryptonPage navigatorTrendingPage;
 		private Pages.TrendingPageControl trendingPageControl;
+		private Krypton.Navigator.KryptonPage navigatorSearchPage;
+		private Pages.SearchPageControl searchPageControl;
 	}
 }

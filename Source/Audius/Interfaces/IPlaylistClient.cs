@@ -17,5 +17,10 @@ namespace Polycode.NostalgicPlayer.Audius.Interfaces
 		/// Gets the most popular playlists on Audius
 		/// </summary>
 		TrendingPlaylistModel[] GetTrendingPlaylists(string time, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Will use the query given to search after playlists
+		/// </summary>
+		PlaylistModel[] Search(string query, CancellationToken cancellationToken);
 	}
 }

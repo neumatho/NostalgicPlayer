@@ -29,5 +29,20 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 			// timeout), so we have to use the main Audius URL
 			return DoRequestOnMainUrl<TrendingPlaylistModel[]>(request, cancellationToken);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will use the query given to search after playlists
+		/// </summary>
+		/********************************************************************/
+		public PlaylistModel[] Search(string query, CancellationToken cancellationToken)
+		{
+			RestRequest request = new RestRequest("v1/playlists/search");
+			request.AddQueryParameter("query", query);
+
+			return DoRequest<PlaylistModel[]>(request, cancellationToken) ?? [];
+		}
 	}
 }

@@ -117,7 +117,6 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Users
 
 		/// <summary></summary>
 		[JsonPropertyName("total_audio_balance")]
-		[JsonRequired]
-		public int TotalAudioBalance { get; set; }
+		public int? TotalAudioBalance { get; set; }
 	}
 }

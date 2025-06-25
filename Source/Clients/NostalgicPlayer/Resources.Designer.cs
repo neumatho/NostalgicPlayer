@@ -443,6 +443,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_SEARCH {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SEARCH", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_SET_SUBSONG {
             get {
                 object obj = ResourceManager.GetObject("IDB_SET_SUBSONG", resourceCulture);
@@ -613,6 +623,51 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_AUDIUS_PICTURE_NAME {
             get {
                 return ResourceManager.GetString("IDS_AUDIUS_PICTURE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Searching….
+        /// </summary>
+        internal static string IDS_AUDIUS_SEARCHING {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_SEARCHING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlists.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH_TYPE_PLAYLISTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH_TYPE_PLAYLISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profiles.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH_TYPE_PROFILES {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH_TYPE_PROFILES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracks.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS", resourceCulture);
             }
         }
         

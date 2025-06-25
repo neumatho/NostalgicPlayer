@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 
@@ -30,8 +31,18 @@ namespace Polycode.NostalgicPlayer.Audius.Interfaces
 		TrackModel GetTrackInfo(string trackId, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Return track information for multiple tracks
+		/// </summary>
+		TrackModel[] GetBulkTrackInfo(IEnumerable<string> trackIds, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Will return the streaming URL for the given track ID
 		/// </summary>
 		Uri GetStreamingUrl(string trackId);
+
+		/// <summary>
+		/// Will use the query given to search after tracks
+		/// </summary>
+		TrackModel[] Search(string query, CancellationToken cancellationToken);
 	}
 }
