@@ -54,13 +54,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Set load state
 		/// </summary>
 		/********************************************************************/
-		public void SetLoading(bool loading)
+		public void SetLoading(bool loading, string loadingText = null)
 		{
 			statusLabel.Visible = loading;
 
 			if (loading)
 			{
-				statusLabel.Text = Resources.IDS_AUDIUS_LOADING;
+				statusLabel.Text = loadingText ?? Resources.IDS_AUDIUS_LOADING;
 				CenterStatusLabel();
 			}
 		}

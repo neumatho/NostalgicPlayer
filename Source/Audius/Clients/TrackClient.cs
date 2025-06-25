@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
@@ -66,12 +67,44 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 
 		/********************************************************************/
 		/// <summary>
+		/// Return track information for multiple tracks
+		/// </summary>
+		/********************************************************************/
+		public TrackModel[] GetBulkTrackInfo(IEnumerable<string> trackIds, CancellationToken cancellationToken)
+		{
+			RestRequest request = new RestRequest("v1/tracks");
+
+			foreach (string id in trackIds)
+				request.AddQueryParameter("id", id);
+
+			return DoRequest<TrackModel[]>(request, cancellationToken) ?? [];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will return the streaming URL for the given track ID
 		/// </summary>
 		/********************************************************************/
 		public Uri GetStreamingUrl(string trackId)
 		{
 			return BuildUrl($"/v1/tracks/{trackId}/stream");
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will use the query given to search after tracks
+		/// </summary>
+		/********************************************************************/
+		public TrackModel[] Search(string query, CancellationToken cancellationToken)
+		{
+			RestRequest request = new RestRequest("v1/tracks/search");
+			request.AddQueryParameter("query", query);
+
+			return DoRequest<TrackModel[]>(request, cancellationToken) ?? [];
 		}
 	}
 }

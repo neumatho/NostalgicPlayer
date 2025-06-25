@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
@@ -57,6 +58,36 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			)
 			{
 				Tracks = playlist.Tracks.Select((x, i) => MapTrackToItem(x, i + 1)).ToArray()
+			};
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Map from a playlist to item
+		/// </summary>
+		/********************************************************************/
+		public static AudiusListItem MapPlaylistToItem(PlaylistModel playlist, Dictionary<string, TrackModel> tracks, int position)
+		{
+			TrackModel[] playlistTracks = playlist.Tracks
+				.Select(x => tracks.GetValueOrDefault(x.TrackId))
+				.Where(x => x != null)
+				.ToArray();
+
+			return new AudiusListItem(
+				position,
+				playlist.Id,
+				playlist.PlaylistName,
+				playlist.User.Name,
+				TimeSpan.FromSeconds(playlistTracks.Sum(x => x.Duration ?? 0)),
+				playlist.RepostCount,
+				playlist.FavoriteCount,
+				playlist.TotalPlayCount,
+				playlist.Artwork?._150x150
+			)
+			{
+				Tracks = playlistTracks.Select((x, i) => MapTrackToItem(x, i + 1)).ToArray()
 			};
 		}
 	}

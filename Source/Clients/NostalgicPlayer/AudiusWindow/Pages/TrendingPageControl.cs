@@ -320,7 +320,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 			BeginInvoke(() =>
 			{
 				audiusListControl.SetLoading(false);
-				audiusListControl.SetItems(new List<AudiusListItem>());
+				audiusListControl.SetItems([]);
 
 				mainWindowApi.ShowSimpleErrorMessage(audiusWindowApi.Form, message);
 			});

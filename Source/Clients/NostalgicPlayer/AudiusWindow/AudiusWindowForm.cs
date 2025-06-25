@@ -19,6 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	public partial class AudiusWindowForm : WindowFormBase, IAudiusWindowApi
 	{
 		private const int Page_Trending = 0;
+		private const int Page_Search = 1;
 
 		private PictureDownloader pictureDownloader;
 
@@ -50,9 +51,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 
 				// Set the tab titles
 				navigator.Pages[Page_Trending].Text = Resources.IDS_AUDIUS_TAB_TRENDING;
+				navigator.Pages[Page_Search].Text = Resources.IDS_AUDIUS_TAB_SEARCH;
 
 				// Initialize all pages
 				trendingPageControl.Initialize(mainWindow, this, pictureDownloader);
+				searchPageControl.Initialize(mainWindow, this, pictureDownloader);
 			}
 		}
 
@@ -99,6 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		private void AudiusForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			trendingPageControl.CleanupPage();
+			searchPageControl.CleanupPage();
 		}
 
 
@@ -130,6 +134,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				case Page_Trending:
 				{
 					currentPage = trendingPageControl;
+					break;
+				}
+
+				case Page_Search:
+				{
+					currentPage = searchPageControl;
 					break;
 				}
 			}
