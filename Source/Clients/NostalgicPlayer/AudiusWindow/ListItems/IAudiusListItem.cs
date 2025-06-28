@@ -5,9 +5,8 @@
 /******************************************************************************/
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	/// <summary>
 	/// All the different controls that can be added as a list item,
@@ -29,15 +28,5 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Will make sure that the item is refreshed with all missing data
 		/// </summary>
 		void RefreshItem(PictureDownloader pictureDownloader);
-
-		/// <summary>
-		/// Event called when to play tracks
-		/// </summary>
-		public event TrackEventHandler PlayTracks;
-
-		/// <summary>
-		/// Event called when to add tracks
-		/// </summary>
-		public event TrackEventHandler AddTracks;
 	}
 }

@@ -13,11 +13,11 @@ using Polycode.NostalgicPlayer.GuiKit.Extensions;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	/// <summary>
-	/// Render a single item in an Audius list, such as a track or playlist
+	/// Render a single music item in an Audius list, such as a track or playlist
 	/// </summary>
-	public partial class AudiusMusicListItemControl : UserControl, IAudiusListItem
+	public partial class AudiusMusicListItemControl : UserControl, IAudiusMusicListItem
 	{
-		private AudiusListItem item;
+		private AudiusMusicListItem item;
 
 		private TaskHelper taskHelper;
 		private Bitmap coverBitmap = null;
@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 		{
 			InitializeComponent();
 
-			Disposed += AudiusListItemControl_Disposed;
+			Disposed += AudiusMusicListItemControl_Disposed;
 		}
 
 		#region IAudiusListItem implementation
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 		/********************************************************************/
 		public void Initialize(AudiusListItem listItem)
 		{
-			item = listItem;
+			item = (AudiusMusicListItem)listItem;
 
 			SetupControls();
 
@@ -67,11 +67,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 		/********************************************************************/
 		public void RefreshItem(PictureDownloader pictureDownloader)
 		{
-			if (!string.IsNullOrEmpty(item.CoverUrl) && (coverBitmap == null))
+			if (!string.IsNullOrEmpty(item.ImageUrl) && (coverBitmap == null))
 			{
 				taskHelper.RunTask(async (cancellationToken) =>
 				{
-					Bitmap originalBitmap = await pictureDownloader.GetPictureAsync(item.CoverUrl, cancellationToken);
+					Bitmap originalBitmap = await pictureDownloader.GetPictureAsync(item.ImageUrl, cancellationToken);
 					if (originalBitmap == null)
 						return;
 
@@ -88,9 +88,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 				});
 			}
 		}
+		#endregion
 
-
-
+		#region IAudiusMusicListItem implementation
 		/********************************************************************/
 		/// <summary>
 		/// Event called when to play tracks
@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void AudiusListItemControl_Disposed(object sender, EventArgs e)
+		private void AudiusMusicListItemControl_Disposed(object sender, EventArgs e)
 		{
 			taskHelper.CancelTask();
 

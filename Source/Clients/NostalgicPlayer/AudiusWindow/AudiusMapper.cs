@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
@@ -21,9 +22,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Map from a track to item
 		/// </summary>
 		/********************************************************************/
-		public static AudiusListItem MapTrackToItem(TrackModel track, int position)
+		public static AudiusMusicListItem MapTrackToItem(TrackModel track, int position)
 		{
-			return new AudiusListItem(
+			return new AudiusMusicListItem(
 				position,
 				track.Id,
 				track.Title,
@@ -43,9 +44,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Map from a playlist to item
 		/// </summary>
 		/********************************************************************/
-		public static AudiusListItem MapPlaylistToItem(TrendingPlaylistModel playlist, int position)
+		public static AudiusMusicListItem MapPlaylistToItem(TrendingPlaylistModel playlist, int position)
 		{
-			return new AudiusListItem(
+			return new AudiusMusicListItem(
 				position,
 				playlist.Id,
 				playlist.PlaylistName,
@@ -68,14 +69,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Map from a playlist to item
 		/// </summary>
 		/********************************************************************/
-		public static AudiusListItem MapPlaylistToItem(PlaylistModel playlist, Dictionary<string, TrackModel> tracks, int position)
+		public static AudiusMusicListItem MapPlaylistToItem(PlaylistModel playlist, Dictionary<string, TrackModel> tracks, int position)
 		{
 			TrackModel[] playlistTracks = playlist.Tracks
 				.Select(x => tracks.GetValueOrDefault(x.TrackId))
 				.Where(x => x != null)
 				.ToArray();
 
-			return new AudiusListItem(
+			return new AudiusMusicListItem(
 				position,
 				playlist.Id,
 				playlist.PlaylistName,

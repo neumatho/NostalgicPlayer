@@ -13,9 +13,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 	/// <summary>
 	/// Render a single play list item
 	/// </summary>
-	public partial class AudiusPlaylistListItemControl : UserControl, IAudiusListItem
+	public partial class AudiusPlaylistListItemControl : UserControl, IAudiusMusicListItem
 	{
-		private AudiusListItem item;
+		private AudiusMusicListItem item;
 
 		/********************************************************************/
 		/// <summary>
@@ -44,22 +44,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 		/********************************************************************/
 		public void Initialize(AudiusListItem listItem)
 		{
-			item = listItem;
+			item = (AudiusMusicListItem)listItem;
 
 			audiusMusicListItemControl.Initialize(listItem);
 
 			audiusMusicListItemControl.PlayTracks += ListItem_PlayAllTracks;
 			audiusMusicListItemControl.AddTracks += ListItem_AddAllTracks;
 
-			if (listItem.Tracks != null)
+			if (item.Tracks != null)
 			{
 				tracksFlowLayoutPanel.SuspendLayout();
 
 				try
 				{
-					foreach (AudiusListItem trackItem in listItem.Tracks)
+					foreach (AudiusListItem trackItem in item.Tracks)
 					{
-						IAudiusListItem trackListItem = new AudiusTrackListItemControl();
+						IAudiusMusicListItem trackListItem = new AudiusTrackListItemControl();
 
 						trackListItem.Initialize(trackItem);
 
@@ -98,9 +98,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 		{
 			audiusMusicListItemControl.RefreshItem(pictureDownloader);
 		}
+		#endregion
 
-
-
+		#region IAudiusMusicListItem implementation
 		/********************************************************************/
 		/// <summary>
 		/// Event called when to play tracks
