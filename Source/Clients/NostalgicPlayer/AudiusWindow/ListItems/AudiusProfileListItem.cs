@@ -3,48 +3,46 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Audius.Clients;
-using Polycode.NostalgicPlayer.Audius.Interfaces;
-
-namespace Polycode.NostalgicPlayer.Audius
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	/// <summary>
-	/// Main class for the Audius API
+	/// This class is used for each item in an Audius list
 	/// </summary>
-	public class AudiusApi
+	public class AudiusProfileListItem : AudiusListItem
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Returns the client for interacting with tracks
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ITrackClient GetTrackClient()
+		public AudiusProfileListItem(int position, string itemId, string name, string handle, string imageUrl) : base(position, itemId, imageUrl)
 		{
-			return new TrackClient();
+			Name = name;
+			Handle = handle;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the client for interacting with playlists
+		/// Returns the name of the user
 		/// </summary>
 		/********************************************************************/
-		public IPlaylistClient GetPlaylistClient()
+		public string Name
 		{
-			return new PlaylistClient();
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the client for interacting with users
+		/// Returns the handle of the user
 		/// </summary>
 		/********************************************************************/
-		public IUserClient GetUserClient()
+		public string Handle
 		{
-			return new UserClient();
+			get;
 		}
 	}
 }

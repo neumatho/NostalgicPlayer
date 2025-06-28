@@ -105,6 +105,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 							((IAudiusMusicListItem)listItem).PlayTracks += ListItem_PlayTracks;
 							((IAudiusMusicListItem)listItem).AddTracks += ListItem_AddTracks;
 						}
+						else if (item is AudiusProfileListItem profileItem)
+						{
+							listItem = new AudiusProfileListItemControl();
+						}
 						else
 							continue;
 
