@@ -5,53 +5,26 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	/// <summary>
 	/// This class is used for each item in an Audius list
 	/// </summary>
-	public class AudiusListItem
+	public class AudiusMusicListItem : AudiusListItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusListItem(int position, string itemId, string title, string artist, TimeSpan duration, int reposts, int favorites, int plays, string coverUrl)
+		public AudiusMusicListItem(int position, string itemId, string title, string artist, TimeSpan duration, int reposts, int favorites, int plays, string imageUrl) : base(position, itemId, imageUrl)
 		{
-			Position = position;
-			ItemId = itemId;
 			Title = title;
 			Artist = artist;
 			Duration = duration;
 			Reposts = reposts;
 			Favorites = favorites;
 			Plays = plays;
-			CoverUrl = coverUrl;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the position of the item
-		/// </summary>
-		/********************************************************************/
-		public int Position
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the ID of the item
-		/// </summary>
-		/********************************************************************/
-		public string ItemId
-		{
-			get;
 		}
 
 
@@ -130,22 +103,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the URL to the cover image
-		/// </summary>
-		/********************************************************************/
-		public string CoverUrl
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns a list of tracks. Only used for playlists
 		/// </summary>
 		/********************************************************************/
-		public AudiusListItem[] Tracks
+		public AudiusMusicListItem[] Tracks
 		{
 			get; init;
 		}

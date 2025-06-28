@@ -3,49 +3,57 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
-
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
-	/// <summary></summary>
-	public delegate void TrackEventHandler(object sender, TrackEventArgs e);
-
 	/// <summary>
-	/// Event class holding needed information when playing a track
+	/// This class is used for each item in an Audius list
 	/// </summary>
-	public class TrackEventArgs : EventArgs
+	public class AudiusListItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public TrackEventArgs(AudiusMusicListItem item)
+		public AudiusListItem(int position, string itemId, string imageUrl)
 		{
-			Items = [ item ];
+			Position = position;
+			ItemId = itemId;
+			ImageUrl = imageUrl;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Return the position of the item
 		/// </summary>
 		/********************************************************************/
-		public TrackEventArgs(AudiusMusicListItem[] items)
+		public int Position
 		{
-			Items = items;
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holding the track item
+		/// Returns the ID of the item
 		/// </summary>
 		/********************************************************************/
-		public AudiusMusicListItem[] Items
+		public string ItemId
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the URL to the image
+		/// </summary>
+		/********************************************************************/
+		public string ImageUrl
 		{
 			get;
 		}

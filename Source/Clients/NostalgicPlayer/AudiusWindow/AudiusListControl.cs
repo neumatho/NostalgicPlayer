@@ -95,15 +95,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 					{
 						IAudiusListItem listItem;
 
-						if (item.Tracks != null)
-							listItem = new AudiusPlaylistListItemControl();
+						if (item is AudiusMusicListItem musicItem)
+						{
+							if (musicItem.Tracks != null)
+								listItem = new AudiusPlaylistListItemControl();
+							else
+								listItem = new AudiusMusicListItemControl();
+
+							((IAudiusMusicListItem)listItem).PlayTracks += ListItem_PlayTracks;
+							((IAudiusMusicListItem)listItem).AddTracks += ListItem_AddTracks;
+						}
 						else
-							listItem = new AudiusMusicListItemControl();
+							continue;
 
 						listItem.Initialize(item);
-
-						listItem.PlayTracks += ListItem_PlayTracks;
-						listItem.AddTracks += ListItem_AddTracks;
 
 						flowLayoutPanel.Controls.Add(listItem.Control);
 					}
@@ -320,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Will create a module item from the given Audius item
 		/// </summary>
 		/********************************************************************/
-		private ModuleListItem CreateModuleListItem(AudiusListItem item)
+		private ModuleListItem CreateModuleListItem(AudiusMusicListItem item)
 		{
 			return new ModuleListItem(new AudiusModuleListItem(item.Title, item.ItemId))
 			{

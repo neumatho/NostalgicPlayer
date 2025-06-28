@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 
@@ -345,7 +346,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				ITrackClient trackClient = audiusApi.GetTrackClient();
 				TrackModel[] tracks = trackClient.GetTrendingTracks(genre, time, cancellationToken);
 
-				List<AudiusListItem> items = tracks.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1)).ToList();
+				List<AudiusListItem> items = tracks
+					.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1))
+					.Cast<AudiusListItem>()
+					.ToList();
 
 				cancellationToken.ThrowIfCancellationRequested();
 
@@ -380,7 +384,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				IPlaylistClient playlistClient = audiusApi.GetPlaylistClient();
 				TrendingPlaylistModel[] playlists = playlistClient.GetTrendingPlaylists(time, cancellationToken);
 
-				List<AudiusListItem> items = playlists.Select((x, i) => AudiusMapper.MapPlaylistToItem(x, i + 1)).ToList();
+				List<AudiusListItem> items = playlists
+					.Select((x, i) => AudiusMapper.MapPlaylistToItem(x, i + 1))
+					.Cast<AudiusListItem>()
+					.ToList();
 
 				cancellationToken.ThrowIfCancellationRequested();
 
@@ -413,7 +420,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				ITrackClient trackClient = audiusApi.GetTrackClient();
 				TrackModel[] tracks = trackClient.GetTrendingUndergroundTracks(cancellationToken);
 
-				List<AudiusListItem> items = tracks.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1)).ToList();
+				List<AudiusListItem> items = tracks
+					.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1))
+					.Cast<AudiusListItem>()
+					.ToList();
 
 				cancellationToken.ThrowIfCancellationRequested();
 
