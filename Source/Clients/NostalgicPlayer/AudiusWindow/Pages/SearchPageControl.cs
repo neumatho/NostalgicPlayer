@@ -23,8 +23,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 	/// </summary>
 	public partial class SearchPageControl : UserControl, IAudiusPage
 	{
-		private const int MaxSearchResults = 100;
-
 		private IMainWindowApi mainWindowApi;
 		private IAudiusWindowApi audiusWindowApi;
 
@@ -218,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				TrackModel[] tracks = trackClient.Search(searchText, cancellationToken);
 
 				List<AudiusListItem> items = tracks
-					.Take(MaxSearchResults)
+					.Take(AudiusConstants.MaxSearchResults)
 					.Select((x, i) => AudiusMapper.MapTrackToItem(x, i + 1))
 					.Cast<AudiusListItem>()
 					.ToList();
@@ -258,13 +256,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 				Dictionary<string, TrackModel> trackInfo = new Dictionary<string, TrackModel>();
 
-				foreach (PlaylistModel playlist in playlists.Take(MaxSearchResults))
+				foreach (PlaylistModel playlist in playlists.Take(AudiusConstants.MaxSearchResults))
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 
 					List<string> tracksToRetrieve = playlist.Tracks
 						.Select(x => x.TrackId)
 						.Where(x => !trackInfo.ContainsKey(x))
+						.Distinct()
 						.ToList();
 
 					TrackModel[] playlistTracks = trackClient.GetBulkTrackInfo(tracksToRetrieve, cancellationToken);
@@ -274,7 +273,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				}
 
 				List<AudiusListItem> items = playlists
-					.Take(MaxSearchResults)
 					.Select((x, i) => AudiusMapper.MapPlaylistToItem(x, trackInfo, i + 1))
 					.Cast<AudiusListItem>()
 					.ToList();
