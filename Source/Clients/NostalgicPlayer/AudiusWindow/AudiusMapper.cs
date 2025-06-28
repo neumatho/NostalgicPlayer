@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.Audius.Models.Users;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
@@ -90,6 +91,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			{
 				Tracks = playlistTracks.Select((x, i) => MapTrackToItem(x, i + 1)).ToArray()
 			};
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Map from an user to item
+		/// </summary>
+		/********************************************************************/
+		public static AudiusProfileListItem MapUserToItem(UserModel user, int position)
+		{
+			return new AudiusProfileListItem(
+				position,
+				user.Id,
+				user.Name,
+				user.Handle,
+				user.ProfilePicture?._150x150
+			);
 		}
 	}
 }

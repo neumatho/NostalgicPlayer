@@ -3,23 +3,19 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
+using System.Threading;
+using Polycode.NostalgicPlayer.Audius.Models.Users;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
+namespace Polycode.NostalgicPlayer.Audius.Interfaces
 {
 	/// <summary>
-	/// This implementation is for specific music list items
+	/// Interface for interacting of users with Audius
 	/// </summary>
-	public interface IAudiusMusicListItem : IAudiusListItem
+	public interface IUserClient
 	{
 		/// <summary>
-		/// Event called when to play tracks
+		/// Will use the query given to search after users
 		/// </summary>
-		public event TrackEventHandler PlayTracks;
-
-		/// <summary>
-		/// Event called when to add tracks
-		/// </summary>
-		public event TrackEventHandler AddTracks;
+		UserModel[] Search(string query, CancellationToken cancellationToken);
 	}
 }

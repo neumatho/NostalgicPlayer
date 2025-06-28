@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.Audius.Models.Users;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
@@ -196,6 +197,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 					SearchForTracks(searchText);
 				else if (typePlaylistsRadioButton.Checked)
 					SearchForPlaylists(searchText);
+				else if (typeProfilesRadioButton.Checked)
+					SearchForProfiles(searchText);
 			}
 		}
 
@@ -276,6 +279,43 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 					.Select((x, i) => AudiusMapper.MapPlaylistToItem(x, trackInfo, i + 1))
 					.Cast<AudiusListItem>()
 					.ToList();
+
+				Invoke(() =>
+				{
+					using (new SleepCursor())
+					{
+						audiusListControl.SetLoading(false);
+						audiusListControl.SetItems(items);
+					}
+				});
+
+				return Task.CompletedTask;
+			}, ShowErrorMessage);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will search after profiles with the text given
+		/// </summary>
+		/********************************************************************/
+		private void SearchForProfiles(string searchText)
+		{
+			taskHelper.RunTask((cancellationToken) =>
+			{
+				AudiusApi audiusApi = new AudiusApi();
+
+				IUserClient userClient = audiusApi.GetUserClient();
+				UserModel[] users = userClient.Search(searchText, cancellationToken);
+
+				List<AudiusListItem> items = users
+					.Take(AudiusConstants.MaxSearchResults)
+					.Select((x, i) => AudiusMapper.MapUserToItem(x, i + 1))
+					.Cast<AudiusListItem>()
+					.ToList();
+
+				cancellationToken.ThrowIfCancellationRequested();
 
 				Invoke(() =>
 				{

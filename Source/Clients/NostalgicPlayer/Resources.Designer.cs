@@ -463,6 +463,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_SHOW_PROFILE_INFO {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SHOW_PROFILE_INFO", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_SHUFFLE {
             get {
                 object obj = ResourceManager.GetObject("IDB_SHUFFLE", resourceCulture);
@@ -496,6 +506,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_UNKNOWN_ALBUM_COVER {
             get {
                 object obj = ResourceManager.GetObject("IDB_UNKNOWN_ALBUM_COVER", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_UNKNOWN_PROFILE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_UNKNOWN_PROFILE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_UNKNOWN_PROFILE_SMALL {
+            get {
+                object obj = ResourceManager.GetObject("IDB_UNKNOWN_PROFILE_SMALL", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
