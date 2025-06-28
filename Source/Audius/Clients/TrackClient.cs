@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
@@ -72,12 +73,22 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 		/********************************************************************/
 		public TrackModel[] GetBulkTrackInfo(IEnumerable<string> trackIds, CancellationToken cancellationToken)
 		{
-			RestRequest request = new RestRequest("v1/tracks");
+			List<string> bulkIds = new List<string>(trackIds);
+			List<TrackModel> result = new List<TrackModel>();
 
-			foreach (string id in trackIds)
-				request.AddQueryParameter("id", id);
+			while (bulkIds.Count > 0)
+			{
+				RestRequest request = new RestRequest("v1/tracks");
 
-			return DoRequest<TrackModel[]>(request, cancellationToken) ?? [];
+				foreach (string id in bulkIds.Take(200))
+					request.AddQueryParameter("id", id);
+
+				result.AddRange(DoRequest<TrackModel[]>(request, cancellationToken) ?? []);
+
+				bulkIds.RemoveRange(0, Math.Min(bulkIds.Count, 200));
+			}
+
+			return result.ToArray();
 		}
 
 

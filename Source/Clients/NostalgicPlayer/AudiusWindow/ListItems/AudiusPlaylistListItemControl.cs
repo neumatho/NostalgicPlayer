@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
@@ -57,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 
 				try
 				{
-					foreach (AudiusListItem trackItem in item.Tracks)
+					foreach (AudiusMusicListItem trackItem in item.Tracks.Take(AudiusConstants.MaxTracksPerPlaylist))
 					{
 						IAudiusMusicListItem trackListItem = new AudiusTrackListItemControl();
 
