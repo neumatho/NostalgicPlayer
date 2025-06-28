@@ -1,4 +1,4 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	partial class AudiusTrackListItemControl
 	{

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 
@@ -97,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 						if (item.Tracks != null)
 							listItem = new AudiusPlaylistListItemControl();
 						else
-							listItem = new AudiusListItemControl();
+							listItem = new AudiusMusicListItemControl();
 
 						listItem.Initialize(item);
 

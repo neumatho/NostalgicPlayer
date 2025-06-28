@@ -1,4 +1,4 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	partial class AudiusPlaylistListItemControl
 	{
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			audiusListItemControl = new AudiusListItemControl();
+			audiusMusicListItemControl = new AudiusMusicListItemControl();
 			tracksGroup = new Krypton.Toolkit.KryptonGroup();
 			tracksFlowLayoutPanel = new Polycode.NostalgicPlayer.GuiKit.Controls.ImprovedFlowLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)tracksGroup).BeginInit();
@@ -36,15 +36,15 @@
 			tracksGroup.Panel.SuspendLayout();
 			SuspendLayout();
 			// 
-			// audiusListItemControl
+			// audiusMusicListItemControl
 			// 
-			audiusListItemControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			audiusListItemControl.BackColor = System.Drawing.Color.Transparent;
-			audiusListItemControl.Location = new System.Drawing.Point(0, 0);
-			audiusListItemControl.Margin = new System.Windows.Forms.Padding(8);
-			audiusListItemControl.Name = "audiusListItemControl";
-			audiusListItemControl.Size = new System.Drawing.Size(463, 144);
-			audiusListItemControl.TabIndex = 0;
+			audiusMusicListItemControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			audiusMusicListItemControl.BackColor = System.Drawing.Color.Transparent;
+			audiusMusicListItemControl.Location = new System.Drawing.Point(0, 0);
+			audiusMusicListItemControl.Margin = new System.Windows.Forms.Padding(8);
+			audiusMusicListItemControl.Name = "audiusMusicListItemControl";
+			audiusMusicListItemControl.Size = new System.Drawing.Size(463, 144);
+			audiusMusicListItemControl.TabIndex = 0;
 			// 
 			// tracksGroup
 			// 
@@ -75,7 +75,7 @@
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
 			Controls.Add(tracksGroup);
-			Controls.Add(audiusListItemControl);
+			Controls.Add(audiusMusicListItemControl);
 			DoubleBuffered = true;
 			Name = "AudiusPlaylistListItemControl";
 			Size = new System.Drawing.Size(463, 257);
@@ -87,7 +87,7 @@
 
 		#endregion
 
-		private AudiusListItemControl audiusListItemControl;
+		private AudiusMusicListItemControl audiusMusicListItemControl;
 		private Krypton.Toolkit.KryptonGroup tracksGroup;
 		private GuiKit.Controls.ImprovedFlowLayoutPanel tracksFlowLayoutPanel;
 	}
