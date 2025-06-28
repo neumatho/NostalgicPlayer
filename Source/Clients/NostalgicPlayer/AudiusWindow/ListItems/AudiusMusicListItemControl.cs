@@ -10,12 +10,12 @@ using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.GuiKit.Extensions;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	/// <summary>
 	/// Render a single item in an Audius list, such as a track or playlist
 	/// </summary>
-	public partial class AudiusListItemControl : UserControl, IAudiusListItem
+	public partial class AudiusMusicListItemControl : UserControl, IAudiusListItem
 	{
 		private AudiusListItem item;
 
@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusListItemControl()
+		public AudiusMusicListItemControl()
 		{
 			InitializeComponent();
 

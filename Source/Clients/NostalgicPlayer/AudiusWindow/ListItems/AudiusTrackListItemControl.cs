@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.GuiKit.Extensions;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	/// <summary>
 	/// Render a single track item in an Audius play list

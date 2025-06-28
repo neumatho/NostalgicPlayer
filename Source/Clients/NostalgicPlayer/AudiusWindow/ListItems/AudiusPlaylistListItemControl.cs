@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
 	/// <summary>
 	/// Render a single play list item
@@ -46,10 +46,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			item = listItem;
 
-			audiusListItemControl.Initialize(listItem);
+			audiusMusicListItemControl.Initialize(listItem);
 
-			audiusListItemControl.PlayTracks += ListItem_PlayAllTracks;
-			audiusListItemControl.AddTracks += ListItem_AddAllTracks;
+			audiusMusicListItemControl.PlayTracks += ListItem_PlayAllTracks;
+			audiusMusicListItemControl.AddTracks += ListItem_AddAllTracks;
 
 			if (listItem.Tracks != null)
 			{
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 					for (int i = Math.Min(6, tracksFlowLayoutPanel.Controls.Count) - 1; i >= 0; i--)
 						trackHeight += tracksFlowLayoutPanel.Controls[i].Height;
 
-					Height = audiusListItemControl.Height + 2 + trackHeight;
+					Height = audiusMusicListItemControl.Height + 2 + trackHeight;
 				}
 				finally
 				{
@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		public void RefreshItem(PictureDownloader pictureDownloader)
 		{
-			audiusListItemControl.RefreshItem(pictureDownloader);
+			audiusMusicListItemControl.RefreshItem(pictureDownloader);
 		}
 
 

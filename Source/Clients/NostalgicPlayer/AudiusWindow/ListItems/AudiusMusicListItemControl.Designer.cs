@@ -1,6 +1,6 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
-	partial class AudiusListItemControl
+	partial class AudiusMusicListItemControl
 	{
 		/// <summary> 
 		/// Required designer variable.
