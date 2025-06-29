@@ -3,33 +3,37 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Audius.Models.Users;
+using System;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events
 {
+	/// <summary></summary>
+	public delegate void ProfileEventHandler(object sender, ProfileEventArgs e);
+
 	/// <summary>
-	/// This class is used for each item in an Audius list
+	/// Event class holding needed information when showing a profile
 	/// </summary>
-	public class AudiusProfileListItem : AudiusListItem
+	public class ProfileEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusProfileListItem(int position, UserModel user) : base(position, user.Id, user.ProfilePicture?._150x150)
+		public ProfileEventArgs(AudiusProfileListItem item)
 		{
-			User = user;
+			Item = item;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the whole user model
+		/// Holding the track item
 		/// </summary>
 		/********************************************************************/
-		public UserModel User
+		public AudiusProfileListItem Item
 		{
 			get;
 		}

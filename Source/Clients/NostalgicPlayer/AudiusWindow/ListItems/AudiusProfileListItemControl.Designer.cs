@@ -71,6 +71,8 @@
 			handleLabel.AutoSize = false;
 			handleLabel.Location = new System.Drawing.Point(171, 36);
 			handleLabel.Name = "handleLabel";
+			handleLabel.Palette = fontPalette;
+			handleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			handleLabel.Size = new System.Drawing.Size(247, 20);
 			handleLabel.TabIndex = 2;
 			handleLabel.Values.Text = "";
@@ -130,7 +132,7 @@
 			separatorGroup.Location = new System.Drawing.Point(171, 104);
 			separatorGroup.Name = "separatorGroup";
 			separatorGroup.Size = new System.Drawing.Size(284, 2);
-			separatorGroup.TabIndex = 7;
+			separatorGroup.TabIndex = 3;
 			// 
 			// showInfoButton
 			// 
@@ -138,9 +140,10 @@
 			showInfoButton.Location = new System.Drawing.Point(171, 112);
 			showInfoButton.Name = "showInfoButton";
 			showInfoButton.Size = new System.Drawing.Size(24, 24);
-			showInfoButton.TabIndex = 8;
+			showInfoButton.TabIndex = 4;
 			showInfoButton.Values.Image = Resources.IDB_SHOW_PROFILE_INFO;
 			showInfoButton.Values.Text = "";
+			showInfoButton.Click += ShowInfo_Click;
 			// 
 			// fontPalette
 			// 

@@ -102,12 +102,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 							else
 								listItem = new AudiusMusicListItemControl();
 
-							((IAudiusMusicListItem)listItem).PlayTracks += ListItem_PlayTracks;
-							((IAudiusMusicListItem)listItem).AddTracks += ListItem_AddTracks;
+							((IAudiusMusicListItem)listItem).PlayTracks += MusicListItem_PlayTracks;
+							((IAudiusMusicListItem)listItem).AddTracks += MusicListItem_AddTracks;
 						}
 						else if (item is AudiusProfileListItem profileItem)
 						{
 							listItem = new AudiusProfileListItemControl();
+
+							((IAudiusProfileListItem)listItem).ShowProfile += ProfileListItem_ShowInfo;
 						}
 						else
 							continue;
@@ -159,6 +161,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				flowLayoutPanel.ResumeLayout();
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when to show user information
+		/// </summary>
+		/********************************************************************/
+		public event ProfileEventHandler ShowProfile;
 		#endregion
 
 		#region Event handlers
@@ -209,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// track
 		/// </summary>
 		/********************************************************************/
-		private void ListItem_PlayTracks(object sender, TrackEventArgs e)
+		private void MusicListItem_PlayTracks(object sender, TrackEventArgs e)
 		{
 			ModuleListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
 
@@ -223,11 +234,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Is called when to add the given track to the list
 		/// </summary>
 		/********************************************************************/
-		private void ListItem_AddTracks(object sender, TrackEventArgs e)
+		private void MusicListItem_AddTracks(object sender, TrackEventArgs e)
 		{
 			ModuleListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
 
 			mainWindowApi.AddItemsToModuleList(listItems, false);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when to show the profile information
+		/// </summary>
+		/********************************************************************/
+		private void ProfileListItem_ShowInfo(object sender, ProfileEventArgs e)
+		{
+			// Just call the next event handler
+			if (ShowProfile != null)
+				ShowProfile(sender, e);
 		}
 		#endregion
 

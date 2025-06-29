@@ -3,11 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {
@@ -16,5 +12,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 	/// </summary>
 	public interface IAudiusProfileListItem : IAudiusListItem
 	{
+		/// <summary>
+		/// Event called when to show user information
+		/// </summary>
+		public event ProfileEventHandler ShowProfile;
 	}
 }

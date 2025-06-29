@@ -39,9 +39,11 @@
 			searchButton = new Krypton.Toolkit.KryptonButton();
 			searchTextBox = new Krypton.Toolkit.KryptonTextBox();
 			audiusListControl = new AudiusListControl();
+			controlPanel = new System.Windows.Forms.Panel();
 			typePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
 			searchPanel.SuspendLayout();
+			controlPanel.SuspendLayout();
 			SuspendLayout();
 			// 
 			// typePanel
@@ -146,14 +148,25 @@
 			controlResource.SetResourceKey(audiusListControl, null);
 			audiusListControl.Size = new System.Drawing.Size(750, 324);
 			audiusListControl.TabIndex = 2;
+			audiusListControl.ShowProfile += AudiusList_ShowProfile;
+			// 
+			// controlPanel
+			// 
+			controlPanel.Controls.Add(audiusListControl);
+			controlPanel.Controls.Add(searchPanel);
+			controlPanel.Controls.Add(typePanel);
+			controlPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			controlPanel.Location = new System.Drawing.Point(0, 0);
+			controlPanel.Name = "controlPanel";
+			controlResource.SetResourceKey(controlPanel, null);
+			controlPanel.Size = new System.Drawing.Size(766, 368);
+			controlPanel.TabIndex = 0;
 			// 
 			// SearchPageControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
-			Controls.Add(audiusListControl);
-			Controls.Add(searchPanel);
-			Controls.Add(typePanel);
+			Controls.Add(controlPanel);
 			Name = "SearchPageControl";
 			controlResource.SetResourceKey(this, null);
 			Size = new System.Drawing.Size(766, 368);
@@ -162,6 +175,7 @@
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
 			searchPanel.ResumeLayout(false);
 			searchPanel.PerformLayout();
+			controlPanel.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -177,5 +191,6 @@
 		private Krypton.Toolkit.KryptonTextBox searchTextBox;
 		private Krypton.Toolkit.KryptonButton searchButton;
 		private AudiusListControl audiusListControl;
+		private System.Windows.Forms.Panel controlPanel;
 	}
 }

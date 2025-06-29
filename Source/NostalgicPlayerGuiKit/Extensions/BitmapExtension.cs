@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Extensions
 		/// Create a circular bitmap from the given source bitmap
 		/// </summary>
 		/********************************************************************/
-		public static Bitmap CreateCircularBitmap(this Bitmap bitmap)
+		public static Bitmap CreateCircularBitmap(this Bitmap bitmap, int borderWidth = 0)
 		{
 			int size = Math.Min(bitmap.Width, bitmap.Height);
 			Bitmap newBitmap = new Bitmap(size, size);
@@ -28,11 +28,21 @@ namespace Polycode.NostalgicPlayer.GuiKit.Extensions
 			{
 				g.SmoothingMode = SmoothingMode.AntiAlias;
 
-				using (Brush brush = new TextureBrush(bitmap))
+				using (GraphicsPath path = new GraphicsPath())
 				{
-					GraphicsPath path = new GraphicsPath();
 					path.AddEllipse(0, 0, size, size);
-					g.FillPath(brush, path);
+					g.SetClip(path);
+					g.DrawImage(bitmap, 0, 0, size, size);
+					g.ResetClip();
+				}
+
+				if (borderWidth > 0)
+				{
+					using (Pen borderPen = new Pen(Color.White, borderWidth))
+					{
+						float offset = borderWidth / 2.0f;
+						g.DrawEllipse(borderPen, offset, offset, size - borderWidth, size - borderWidth);
+					}
 				}
 			}
 

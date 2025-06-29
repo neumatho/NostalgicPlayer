@@ -87,6 +87,8 @@
 			artistLabel.AutoSize = false;
 			artistLabel.Location = new System.Drawing.Point(171, 36);
 			artistLabel.Name = "artistLabel";
+			artistLabel.Palette = fontPalette;
+			artistLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			artistLabel.Size = new System.Drawing.Size(247, 20);
 			artistLabel.TabIndex = 2;
 			artistLabel.Values.Text = "";
@@ -241,14 +243,14 @@
 			playButton.Values.Text = "";
 			playButton.Click += Play_Click;
 			// 
-			// AudiusListItemControl
+			// AudiusMusicListItemControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
 			Controls.Add(controlGroup);
 			DoubleBuffered = true;
 			Margin = new System.Windows.Forms.Padding(8);
-			Name = "AudiusListItemControl";
+			Name = "AudiusMusicListItemControl";
 			Size = new System.Drawing.Size(463, 144);
 			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).EndInit();
 			controlGroup.Panel.ResumeLayout(false);

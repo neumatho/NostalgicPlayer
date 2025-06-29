@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Audius.Models.Users;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
@@ -27,7 +29,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		private IMainWindowApi mainWindowApi;
 		private IAudiusWindowApi audiusWindowApi;
 
+		private PictureDownloader pictureDownloader;
+
 		private TaskHelper taskHelper;
+
+		private ProfileControl profileControl;
 
 		/********************************************************************/
 		/// <summary>
@@ -49,6 +55,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		{
 			mainWindowApi = mainWindow;
 			audiusWindowApi = audiusWindow;
+
+			pictureDownloader = downloader;
 
 			audiusListControl.Initialize(mainWindowApi, downloader);
 
@@ -154,6 +162,45 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				e.Handled = true;
 				e.SuppressKeyPress = true;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void AudiusList_ShowProfile(object sender, ProfileEventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				controlPanel.Visible = false;
+
+				profileControl = new ProfileControl();
+				profileControl.Dock = DockStyle.Fill;
+
+				profileControl.Close += Profile_Close;
+
+				Controls.Add(profileControl);
+
+				profileControl.Initialize(e.Item.User, pictureDownloader);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Profile_Close(object sender, EventArgs e)
+		{
+			profileControl.Close -= Profile_Close;
+			profileControl.Dispose();
+
+			controlPanel.Visible = true;
 		}
 		#endregion
 
