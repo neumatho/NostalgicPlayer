@@ -95,11 +95,11 @@
 			// 
 			// trendingPageControl
 			// 
-			trendingPageControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			trendingPageControl.BackColor = System.Drawing.Color.Transparent;
+			trendingPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			trendingPageControl.Location = new System.Drawing.Point(0, 0);
 			trendingPageControl.Name = "trendingPageControl";
-			trendingPageControl.Size = new System.Drawing.Size(766, 398);
+			trendingPageControl.Size = new System.Drawing.Size(766, 399);
 			trendingPageControl.TabIndex = 0;
 			// 
 			// navigatorSearchPage
@@ -117,11 +117,11 @@
 			// 
 			// searchPageControl
 			// 
-			searchPageControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			searchPageControl.BackColor = System.Drawing.Color.Transparent;
+			searchPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			searchPageControl.Location = new System.Drawing.Point(0, 0);
 			searchPageControl.Name = "searchPageControl";
-			searchPageControl.Size = new System.Drawing.Size(766, 398);
+			searchPageControl.Size = new System.Drawing.Size(766, 399);
 			searchPageControl.TabIndex = 0;
 			// 
 			// AudiusWindowForm

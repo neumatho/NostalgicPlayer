@@ -686,6 +686,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Playlists.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_PLAYLISTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_PLAYLISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string IDS_AUDIUS_TAB_SEARCH {
@@ -718,6 +727,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS {
             get {
                 return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracks.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRACKS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRACKS", resourceCulture);
             }
         }
         

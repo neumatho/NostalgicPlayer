@@ -5,6 +5,8 @@
 /******************************************************************************/
 using System.Threading;
 using Polycode.NostalgicPlayer.Audius.Interfaces;
+using Polycode.NostalgicPlayer.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Audius.Models.Users;
 using RestSharp;
 
@@ -26,6 +28,36 @@ namespace Polycode.NostalgicPlayer.Audius.Clients
 			request.AddQueryParameter("query", query);
 
 			return DoRequest<UserModel[]>(request, cancellationToken) ?? [];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve all the tracks for the given user
+		/// </summary>
+		/********************************************************************/
+		public TrackModel[] GetTracks(string userId, CancellationToken cancellationToken)
+		{
+			RestRequest request = new RestRequest("v1/users/{id}/tracks");
+			request.AddUrlSegment("id", userId);
+
+			return DoRequest<TrackModel[]>(request, cancellationToken) ?? [];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve all the playlists for the given user
+		/// </summary>
+		/********************************************************************/
+		public PlaylistModel[] GetPlaylists(string userId, CancellationToken cancellationToken)
+		{
+			RestRequest request = new RestRequest("v1/users/{id}/playlists");
+			request.AddUrlSegment("id", userId);
+
+			return DoRequest<PlaylistModel[]>(request, cancellationToken) ?? [];
 		}
 	}
 }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Audius.Models.Users;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.GuiKit.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
@@ -19,9 +20,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 	/// </summary>
 	public partial class ProfileControl : UserControl
 	{
+		private const int Page_Tracks = 0;
+		private const int Page_Playlists = 1;
+
 		private PictureDownloader pictureDownloader;
 
 		private UserModel userModel;
+		private IAudiusPage currentPage;
 
 		/********************************************************************/
 		/// <summary>
@@ -31,6 +36,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		public ProfileControl()
 		{
 			InitializeComponent();
+
+			Disposed += ProfileControl_Disposed;
+
+			if (!DesignMode)
+			{
+				// Set the tab titles
+				navigator.Pages[Page_Tracks].Text = Resources.IDS_AUDIUS_TAB_TRACKS;
+				navigator.Pages[Page_Playlists].Text = Resources.IDS_AUDIUS_TAB_PLAYLISTS;
+			}
 		}
 
 
@@ -40,13 +54,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(UserModel user, PictureDownloader downloader)
+		public void Initialize(UserModel user, IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader)
 		{
 			pictureDownloader = downloader;
 
 			userModel = user;
 
 			SetupControls();
+
+			// Initialize all pages
+			profileTracksPageControl.Initialize(mainWindow, audiusWindow, pictureDownloader, user.Id);
+			profilePlaylistsPageControl.Initialize(mainWindow, audiusWindow, pictureDownloader, user.Id);
+
+			RefreshCurrentPage();
 		}
 
 		#region Events
@@ -59,6 +79,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		#endregion
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void ProfileControl_Disposed(object sender, EventArgs e)
+		{
+			currentPage?.CleanupPage();
+			currentPage = null;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -79,7 +112,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		private void Close_MouseLeave(object sender, EventArgs e)
 		{
 			closeButton.Values.Image = Resources.IDB_CLOSE_WHITE;
-
 		}
 
 
@@ -93,6 +125,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		{
 			if (Close != null)
 				Close(this, EventArgs.Empty);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a tab is selected
+		/// </summary>
+		/********************************************************************/
+		private void Navigator_SelectedPageChanged(object sender, EventArgs e)
+		{
+			RefreshCurrentPage();
 		}
 		#endregion
 
@@ -161,6 +205,36 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 					profilePictureBox.Image = scaledBitmap.CreateCircularBitmap(2);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Refresh current page
+		/// </summary>
+		/********************************************************************/
+		private void RefreshCurrentPage()
+		{
+			currentPage?.CleanupPage();
+			currentPage = null;
+
+			switch (navigator.SelectedIndex)
+			{
+				case Page_Tracks:
+				{
+					currentPage = profileTracksPageControl;
+					break;
+				}
+
+				case Page_Playlists:
+				{
+					currentPage = profilePlaylistsPageControl;
+					break;
+				}
+			}
+
+			currentPage?.RefreshPage();
 		}
 		#endregion
 	}

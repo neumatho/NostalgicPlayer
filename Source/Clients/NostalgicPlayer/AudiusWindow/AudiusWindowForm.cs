@@ -54,8 +54,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				navigator.Pages[Page_Search].Text = Resources.IDS_AUDIUS_TAB_SEARCH;
 
 				// Initialize all pages
-				trendingPageControl.Initialize(mainWindow, this, pictureDownloader);
-				searchPageControl.Initialize(mainWindow, this, pictureDownloader);
+				trendingPageControl.Initialize(mainWindow, this, pictureDownloader, null);
+				searchPageControl.Initialize(mainWindow, this, pictureDownloader, null);
 			}
 		}
 
