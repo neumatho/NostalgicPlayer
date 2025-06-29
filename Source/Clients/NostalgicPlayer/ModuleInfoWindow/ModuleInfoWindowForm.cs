@@ -20,7 +20,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
@@ -32,7 +31,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 	public partial class ModuleInfoWindowForm : WindowFormBase
 	{
 		private ModuleHandler moduleHandler;
-		private MainWindowForm mainWindow;
 
 		private PictureInfo[] pictures;
 		private int pictureIndex;
@@ -64,28 +62,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private readonly ModuleSettings moduleSettings;
 
 		private int firstCustomLine;
+		private bool showingFileName;
 
 		private static readonly float[][] fadeMatrix =
-		{
-			new float[] { 1, 0, 0, 0, 0 },
-			new float[] { 0, 1, 0, 0, 0 },
-			new float[] { 0, 0, 1, 0, 0 },
-			new float[] { 0, 0, 0, 1, 0 },
-			new float[] { 0, 0, 0, 0, 1 }
-		};
+		[
+			[ 1, 0, 0, 0, 0 ],
+			[ 0, 1, 0, 0, 0 ],
+			[ 0, 0, 1, 0, 0 ],
+			[ 0, 0, 0, 1, 0 ],
+			[ 0, 0, 0, 0, 1 ]
+		];
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoWindowForm(ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings, ModuleSettings moduleSettings)
+		public ModuleInfoWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optionSettings, ModuleSettings moduleSettings)
 		{
 			InitializeComponent();
 
 			// Remember the arguments
 			this.moduleHandler = moduleHandler;
-			this.mainWindow = mainWindow;
 			this.moduleSettings = moduleSettings;
 
 			if (!DesignMode)
@@ -226,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void ModuleInfoWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (mainWindow != null)     // Main window is null, if the window has already been closed (because Owner has been set)
+			if (mainWindowApi != null)     // Main window is null, if the window has already been closed (because Owner has been set)
 			{
 				// Save the settings
 				settings.Column1Width = moduleInfoInfoDataGridView.Columns[0].Width;
@@ -235,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Cleanup
 				CleanupPictures();
 
-				mainWindow = null;
+				mainWindowApi = null;
 				moduleHandler = null;
 			}
 		}
@@ -249,7 +247,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void ModuleInfoInfoDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (!Env.IsWindows10S)
+			if (!Env.IsWindows10S && showingFileName)
 			{
 				// Check if the file name has been clicked
 				if ((e.RowIndex == 7) && (e.ColumnIndex == 1))
@@ -468,9 +466,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// Check to see if there are any module loaded at the moment
 			MultiFileInfo fileInfo;
 
-			if (moduleHandler.IsPlaying && ((fileInfo = mainWindow.GetFileInfo()) != null))
+			if (moduleHandler.IsPlaying && ((fileInfo = mainWindowApi.GetFileInfo()) != null))
 			{
-				firstCustomLine = 8;
+				firstCustomLine = 7;
 
 				// Module in memory, add items
 				ModuleInfoStatic staticInfo = moduleHandler.StaticModuleInformation;
@@ -499,41 +497,45 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				if (floatingInfo.DurationInfo == null)
 					val = Resources.IDS_MODULE_INFO_UNKNOWN;
 				else
-				{
-					if ((int)floatingInfo.DurationInfo.TotalTime.TotalHours > 0)
-						val = floatingInfo.DurationInfo.TotalTime.ToString(Resources.IDS_TIMEFORMAT);
-					else
-						val = floatingInfo.DurationInfo.TotalTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
-				}
+					val = floatingInfo.DurationInfo.TotalTime.ToFormattedString();
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
-				if (fileInfo.Type == MultiFileInfo.FileType.Url)
-				{
-					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_URL, fileInfo.Source);
-				}
-				else
-				{
-					val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize);
-					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
+				showingFileName = false;
 
-					if (staticInfo.DecruncherAlgorithms != null)
+				if (fileInfo.Type != MultiFileInfo.FileType.Audius)
+				{
+					if (fileInfo.Type == MultiFileInfo.FileType.Url)
 					{
-						val = staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN : string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE_VALUE, staticInfo.CrunchedSize);
-						val += string.Format(" / {0}", string.Join(" \u2b95 ", staticInfo.DecruncherAlgorithms));
-
-						moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, val);
+						moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_URL, fileInfo.Source);
 						firstCustomLine++;
 					}
-
-					if (Env.IsWindows10S)
-						moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.Source);
 					else
 					{
-						row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.Source);
-						moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
+						val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize.ToBeautifiedString());
+						moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
+						firstCustomLine++;
+
+						if (staticInfo.DecruncherAlgorithms != null)
+						{
+							val = staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN : string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE_VALUE, staticInfo.CrunchedSize);
+							val += string.Format(" / {0}", string.Join(" \u2b95 ", staticInfo.DecruncherAlgorithms));
+
+							moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, val);
+							firstCustomLine++;
+						}
+
+						if (Env.IsWindows10S)
+							moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.Source);
+						else
+						{
+							row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.Source);
+							moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
+						}
+						firstCustomLine++;
+
+						showingFileName = true;
 					}
-					firstCustomLine++;
 				}
 
 				// Add player specific items

@@ -620,6 +620,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
+		/// Return a 64 bit MPEG frame offset corresponding to an offset in
+		/// seconds.
+		/// This assumes that the samples per frame do not change in the
+		/// file/stream, which is a good assumption for any sane file/stream
+		/// only
+		/// </summary>
+		/********************************************************************/
+		public int64_t Mpg123_Timeframe64(c_double seconds)
+		{
+			Mpg123_Handle mh = handle;
+
+			if (mh == null)
+				return (int64_t)Mpg123_Errors.Err;
+
+			int64_t b = Init_Track(mh);
+			if (b < 0)
+				return b;
+
+			// Overflow checking here would be a bit more elaborate. TODO?
+			return (int64_t)(seconds / parse.Mpg123_Tpf(mh));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the current 64-bit position in samples.
 		/// On the next successful read, you'd get audio data with that
 		/// offset

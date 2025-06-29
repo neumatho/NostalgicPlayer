@@ -113,6 +113,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_CLOSE_BLACK {
+            get {
+                object obj = ResourceManager.GetObject("IDB_CLOSE_BLACK", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_CLOSE_WHITE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_CLOSE_WHITE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_DIRECTORY {
             get {
                 object obj = ResourceManager.GetObject("IDB_DIRECTORY", resourceCulture);
@@ -146,6 +166,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_FAST_FORWARD {
             get {
                 object obj = ResourceManager.GetObject("IDB_FAST_FORWARD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_FAVORITE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_FAVORITE", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -353,6 +383,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_REPOST {
+            get {
+                object obj = ResourceManager.GetObject("IDB_REPOST", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_REWIND {
             get {
                 object obj = ResourceManager.GetObject("IDB_REWIND", resourceCulture);
@@ -423,9 +463,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_SEARCH {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SEARCH", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_SET_SUBSONG {
             get {
                 object obj = ResourceManager.GetObject("IDB_SET_SUBSONG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_SHOW_PROFILE_INFO {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SHOW_PROFILE_INFO", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -456,6 +516,36 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_SWAP {
             get {
                 object obj = ResourceManager.GetObject("IDB_SWAP", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_UNKNOWN_ALBUM_COVER {
+            get {
+                object obj = ResourceManager.GetObject("IDB_UNKNOWN_ALBUM_COVER", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_UNKNOWN_PROFILE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_UNKNOWN_PROFILE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_UNKNOWN_PROFILE_SMALL {
+            get {
+                object obj = ResourceManager.GetObject("IDB_UNKNOWN_PROFILE_SMALL", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -529,6 +619,672 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_AGENTSETTINGS_TITLE {
             get {
                 return ResourceManager.GetString("IDS_AGENTSETTINGS_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Got a timeout when talking to Audius.
+        /// </summary>
+        internal static string IDS_AUDIUS_ERR_TIMEOUT {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_ERR_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} plays.
+        /// </summary>
+        internal static string IDS_AUDIUS_ITEM_PLAYS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_ITEM_PLAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} reposts.
+        /// </summary>
+        internal static string IDS_AUDIUS_ITEM_REPOSTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_ITEM_REPOSTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please wait while loading items….
+        /// </summary>
+        internal static string IDS_AUDIUS_LOADING {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_LOADING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No items found.
+        /// </summary>
+        internal static string IDS_AUDIUS_NO_ITEMS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_NO_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cover.
+        /// </summary>
+        internal static string IDS_AUDIUS_PICTURE_NAME {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_PICTURE_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Searching….
+        /// </summary>
+        internal static string IDS_AUDIUS_SEARCHING {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_SEARCHING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlists.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_PLAYLISTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_PLAYLISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlists.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH_TYPE_PLAYLISTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH_TYPE_PLAYLISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profiles.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH_TYPE_PROFILES {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH_TYPE_PROFILES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracks.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracks.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRACKS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRACKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trending.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acoustic.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ACOUSTIC {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ACOUSTIC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All genres.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ALL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ALL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alternative.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ALTERNATIVE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ALTERNATIVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ambient.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_AMBIENT {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_AMBIENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audiobooks.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_AUDIOBOOKS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_AUDIOBOOKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blues.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_BLUES {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_BLUES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Classical.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_CLASSICAL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_CLASSICAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comedy.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_COMEDY {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_COMEDY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Country.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_COUNTRY {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_COUNTRY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dancehall.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_DANCEHALL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_DANCEHALL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Devotional.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_DEVOTIONAL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_DEVOTIONAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Deep house.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DEEP_HOUSE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DEEP_HOUSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Disco.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DISCO {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DISCO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Downtempo.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DOWNTEMPO {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DOWNTEMPO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Drum &amp; bass.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DRUM_AND_BASS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DRUM_AND_BASS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Dubstep.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DUBSTEP {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DUBSTEP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Electro.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_ELECTRO {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_ELECTRO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Future bass.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_FUTURE_BASS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_FUTURE_BASS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Future house.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_FUTURE_HOUSE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_FUTURE_HOUSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Glitch hop.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_GLITCH_HOP {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_GLITCH_HOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Hardstyle.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_HARDSTYLE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_HARDSTYLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - House.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_HOUSE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_HOUSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Jersey club.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_JERSEY_CLUB {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_JERSEY_CLUB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Jungle.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_JUNGLE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_JUNGLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Moombahton.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_MOOMBAHTON {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_MOOMBAHTON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Progressive house.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_PROGRESSIVE_HOUSE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_PROGRESSIVE_HOUSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Tech house.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TECH_HOUSE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TECH_HOUSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Techno.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TECHNO {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TECHNO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Trance.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TRANCE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TRANCE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Trap.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TRAP {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TRAP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Tropical house.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TROPICAL_HOUSE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TROPICAL_HOUSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic - Vaporwave.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_VAPORWAVE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_VAPORWAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Experimental.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_EXPERIMENTAL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_EXPERIMENTAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folk.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_FOLK {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_FOLK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Funk.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_FUNK {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_FUNK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hip-Hop / rap.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_HIP_HOP_RAP {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_HIP_HOP_RAP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hyperpop.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_HYPERPOP {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_HYPERPOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jazz.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_JAZZ {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_JAZZ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kids.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_KIDS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_KIDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Latin.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_LATIN {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_LATIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lo-fi.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_LOFI {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_LOFI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Metal.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_METAL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_METAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Podcasts.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_PODCASTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_PODCASTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pop.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_POP {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_POP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Punk.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_PUNK {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_PUNK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to R&amp;B / soul.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_R_AND_B_SOUL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_R_AND_B_SOUL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reggae.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_REGGAE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_REGGAE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rock.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_ROCK {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_ROCK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Soundtrack.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_SOUNDTRACK {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_SOUNDTRACK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spoken word.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_SPOKEN_WORK {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_SPOKEN_WORK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to World.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_GENRE_WORLD {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_GENRE_WORLD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All time.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TIME_ALL {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TIME_ALL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This month.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TIME_MONTH {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TIME_MONTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This week.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TIME_WEEK {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TIME_WEEK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This year.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TIME_YEAR {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TIME_YEAR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlists.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TYPE_PLAYLISTS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TYPE_PLAYLISTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracks.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Underground.
+        /// </summary>
+        internal static string IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to Audius.
+        /// </summary>
+        internal static string IDS_AUDIUS_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_AUDIUS_TITLE", resourceCulture);
             }
         }
         
@@ -1113,6 +1869,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Audius….
+        /// </summary>
+        internal static string IDS_MENU_WINDOW_AUDIUS {
+            get {
+                return ResourceManager.GetString("IDS_MENU_WINDOW_AUDIUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings….
         /// </summary>
         internal static string IDS_MENU_WINDOW_SETTINGS {
@@ -1194,7 +1959,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:n0} bytes.
+        ///   Looks up a localized string similar to {0} bytes.
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE {
             get {
@@ -2463,33 +3228,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_TIME {
             get {
                 return ResourceManager.GetString("IDS_TIME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to hh\:mm\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to d\:hh\:mm\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT_BIG {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT_BIG", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to m\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT_SMALL {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT_SMALL", resourceCulture);
             }
         }
         

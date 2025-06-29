@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	/// </summary>
 	public partial class OptionsPageControl : UserControl, ISettingsPage
 	{
-		private MainWindowForm mainWin;
+		private IMainWindowApi mainWindowApi;
 
 		private OptionSettings optionSettings;
 
@@ -38,9 +38,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, ISettings userSettings, ISettings windowSettings)
+		public void InitSettings(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, ISettings userSettings, ISettings windowSettings)
 		{
-			mainWin = mainWindow;
+			mainWindowApi = mainWindow;
 
 			optionSettings = new OptionSettings(userSettings);
 		}
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			optionSettings.RemoveUnknownModules = removeUnknownCheckBox.Checked;
 			optionSettings.ExtractPlayingTime = extractPlayingTimeCheckBox.Checked;
 
-			mainWin.EnableUserInterfaceSettings();
+			mainWindowApi.EnableUserInterfaceSettings();
 		}
 
 

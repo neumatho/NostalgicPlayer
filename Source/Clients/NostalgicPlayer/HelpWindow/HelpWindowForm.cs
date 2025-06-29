@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public HelpWindowForm(MainWindowForm mainWindow, OptionSettings optionSettings)
+		public HelpWindowForm(IMainWindowApi mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 

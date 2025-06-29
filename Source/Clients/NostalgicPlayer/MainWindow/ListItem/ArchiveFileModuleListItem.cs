@@ -13,14 +13,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 	/// <summary>
 	/// This class holds a list item pointing to a file inside an archive
 	/// </summary>
-	public class ArchiveFileListItem : IModuleListItem
+	public class ArchiveFileModuleListItem : IModuleListItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileListItem(string fullArchivePath)
+		public ArchiveFileModuleListItem(string fullArchivePath)
 		{
 			Source = fullArchivePath;
 		}

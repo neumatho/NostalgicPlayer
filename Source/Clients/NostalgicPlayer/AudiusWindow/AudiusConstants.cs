@@ -3,12 +3,17 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
 	/// <summary>
-	/// All list item types that are streams, must implement this interface
+	/// Different constants used by Audius
 	/// </summary>
-	public interface IStreamListItem : IModuleListItem
+	public static class AudiusConstants
 	{
+		/// <summary></summary>
+		public const int MaxSearchResults = 100;
+
+		/// <summary></summary>
+		public const int MaxTracksPerPlaylist = 150;
 	}
 }

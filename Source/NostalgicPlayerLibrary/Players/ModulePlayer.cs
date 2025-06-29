@@ -425,7 +425,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 								return false;
 							}
 
-							if (currentPlayer is IModuleDurationPlayer moduleDurationPlayer)
+							if (currentPlayer is IModuleDuration moduleDurationPlayer)
 							{
 								if (!moduleDurationPlayer.SetSubSong(songNum, out errorMessage))
 								{
@@ -466,7 +466,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				{
 					lock (currentPlayer)
 					{
-						if (currentPlayer is IDurationPlayer durationPlayer)
+						if (currentPlayer is IDuration durationPlayer)
 							durationPlayer.SetSongPosition(PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
 
 						ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
@@ -592,7 +592,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void CalculateDuration()
 		{
-			if (currentPlayer is IDurationPlayer durationPlayer)
+			if (currentPlayer is IDuration durationPlayer)
 			{
 				SpeakerFlag speakerFlags = currentPlayer.SpeakerFlags;
 				int mixerChannelCount = Enum.GetValues<SpeakerFlag>().Count(flag => (speakerFlags & flag) != 0);	// Count number of bits set

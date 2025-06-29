@@ -133,6 +133,12 @@
   <data name="IDB_CLEAR_SUBSONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\ClearSubSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_CLOSE_BLACK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\CloseBlack.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_CLOSE_WHITE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\CloseWhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_DIRECTORY" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Directory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -144,6 +150,9 @@
   </data>
   <data name="IDB_FAST_FORWARD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\FastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_FAVORITE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Favorite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_FAVORITES" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Favorites.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -205,6 +214,9 @@
   <data name="IDB_REMOVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Remove.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_REPOST" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Repost.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_REWIND" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Rewind.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -226,8 +238,14 @@
   <data name="IDB_SAVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_SEARCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_SET_SUBSONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\SetSubSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_SHOW_PROFILE_INFO" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ShowProfileInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_SHUFFLE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Shuffle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -237,6 +255,15 @@
   </data>
   <data name="IDB_SWAP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Swap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_UNKNOWN_ALBUM_COVER" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UnknownAlbumCover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_UNKNOWN_PROFILE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UnknownProfile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_UNKNOWN_PROFILE_SMALL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UnknownProfileSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_ZA" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\ZA.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -346,6 +373,228 @@ Formats supported:
   </data>
   <data name="IDS_AGENTSETTINGS_TITLE" xml:space="preserve">
     <value>Settings for {0}</value>
+  </data>
+  <data name="IDS_AUDIUS_ERR_TIMEOUT" xml:space="preserve">
+    <value>Got a timeout when talking to Audius</value>
+  </data>
+  <data name="IDS_AUDIUS_ITEM_PLAYS" xml:space="preserve">
+    <value>{0} plays</value>
+  </data>
+  <data name="IDS_AUDIUS_ITEM_REPOSTS" xml:space="preserve">
+    <value>{0} reposts</value>
+  </data>
+  <data name="IDS_AUDIUS_LOADING" xml:space="preserve">
+    <value>Please wait while loading items…</value>
+  </data>
+  <data name="IDS_AUDIUS_NO_ITEMS" xml:space="preserve">
+    <value>No items found</value>
+  </data>
+  <data name="IDS_AUDIUS_PICTURE_NAME" xml:space="preserve">
+    <value>Cover</value>
+  </data>
+  <data name="IDS_AUDIUS_SEARCHING" xml:space="preserve">
+    <value>Searching…</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_PLAYLISTS" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_SEARCH" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_SEARCH_TYPE_PLAYLISTS" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_SEARCH_TYPE_PROFILES" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS" xml:space="preserve">
+    <value>Tracks</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRACKS" xml:space="preserve">
+    <value>Tracks</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING" xml:space="preserve">
+    <value>Trending</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ACOUSTIC" xml:space="preserve">
+    <value>Acoustic</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ALL" xml:space="preserve">
+    <value>All genres</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ALTERNATIVE" xml:space="preserve">
+    <value>Alternative</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_AMBIENT" xml:space="preserve">
+    <value>Ambient</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_AUDIOBOOKS" xml:space="preserve">
+    <value>Audiobooks</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_BLUES" xml:space="preserve">
+    <value>Blues</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_CLASSICAL" xml:space="preserve">
+    <value>Classical</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_COMEDY" xml:space="preserve">
+    <value>Comedy</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_COUNTRY" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_DANCEHALL" xml:space="preserve">
+    <value>Dancehall</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_DEVOTIONAL" xml:space="preserve">
+    <value>Devotional</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC" xml:space="preserve">
+    <value>Electronic</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DEEP_HOUSE" xml:space="preserve">
+    <value>Electronic - Deep house</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DISCO" xml:space="preserve">
+    <value>Electronic - Disco</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DOWNTEMPO" xml:space="preserve">
+    <value>Electronic - Downtempo</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DRUM_AND_BASS" xml:space="preserve">
+    <value>Electronic - Drum &amp; bass</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_DUBSTEP" xml:space="preserve">
+    <value>Electronic - Dubstep</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_ELECTRO" xml:space="preserve">
+    <value>Electronic - Electro</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_FUTURE_BASS" xml:space="preserve">
+    <value>Electronic - Future bass</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_FUTURE_HOUSE" xml:space="preserve">
+    <value>Electronic - Future house</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_GLITCH_HOP" xml:space="preserve">
+    <value>Electronic - Glitch hop</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_HARDSTYLE" xml:space="preserve">
+    <value>Electronic - Hardstyle</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_HOUSE" xml:space="preserve">
+    <value>Electronic - House</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_JERSEY_CLUB" xml:space="preserve">
+    <value>Electronic - Jersey club</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_JUNGLE" xml:space="preserve">
+    <value>Electronic - Jungle</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_MOOMBAHTON" xml:space="preserve">
+    <value>Electronic - Moombahton</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_PROGRESSIVE_HOUSE" xml:space="preserve">
+    <value>Electronic - Progressive house</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TECHNO" xml:space="preserve">
+    <value>Electronic - Techno</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TECH_HOUSE" xml:space="preserve">
+    <value>Electronic - Tech house</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TRANCE" xml:space="preserve">
+    <value>Electronic - Trance</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TRAP" xml:space="preserve">
+    <value>Electronic - Trap</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_TROPICAL_HOUSE" xml:space="preserve">
+    <value>Electronic - Tropical house</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ELECTRONIC_VAPORWAVE" xml:space="preserve">
+    <value>Electronic - Vaporwave</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_EXPERIMENTAL" xml:space="preserve">
+    <value>Experimental</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_FOLK" xml:space="preserve">
+    <value>Folk</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_FUNK" xml:space="preserve">
+    <value>Funk</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_HIP_HOP_RAP" xml:space="preserve">
+    <value>Hip-Hop / rap</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_HYPERPOP" xml:space="preserve">
+    <value>Hyperpop</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_JAZZ" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_KIDS" xml:space="preserve">
+    <value>Kids</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_LATIN" xml:space="preserve">
+    <value>Latin</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_LOFI" xml:space="preserve">
+    <value>Lo-fi</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_METAL" xml:space="preserve">
+    <value>Metal</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_PODCASTS" xml:space="preserve">
+    <value>Podcasts</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_POP" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_PUNK" xml:space="preserve">
+    <value>Punk</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_REGGAE" xml:space="preserve">
+    <value>Reggae</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_ROCK" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_R_AND_B_SOUL" xml:space="preserve">
+    <value>R&amp;B / soul</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_SOUNDTRACK" xml:space="preserve">
+    <value>Soundtrack</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_SPOKEN_WORK" xml:space="preserve">
+    <value>Spoken word</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_GENRE_WORLD" xml:space="preserve">
+    <value>World</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TIME_ALL" xml:space="preserve">
+    <value>All time</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TIME_MONTH" xml:space="preserve">
+    <value>This month</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TIME_WEEK" xml:space="preserve">
+    <value>This week</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TIME_YEAR" xml:space="preserve">
+    <value>This year</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TYPE_PLAYLISTS" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS" xml:space="preserve">
+    <value>Tracks</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND" xml:space="preserve">
+    <value>Underground</value>
+  </data>
+  <data name="IDS_AUDIUS_TITLE" xml:space="preserve">
+    <value>Welcome to Audius</value>
   </data>
   <data name="IDS_BUT_NO" xml:space="preserve">
     <value>&amp;No</value>
@@ -549,6 +798,9 @@ Do you want to continue?</value>
   <data name="IDS_MENU_WINDOW_AGENT_SHOW" xml:space="preserve">
     <value>Show</value>
   </data>
+  <data name="IDS_MENU_WINDOW_AUDIUS" xml:space="preserve">
+    <value>Audius…</value>
+  </data>
   <data name="IDS_MENU_WINDOW_SETTINGS" xml:space="preserve">
     <value>Settings…</value>
   </data>
@@ -577,7 +829,7 @@ Do you want to continue?</value>
     <value>Module size:</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE" xml:space="preserve">
-    <value>{0:n0} bytes</value>
+    <value>{0} bytes</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_NA" xml:space="preserve">
     <value>n/a</value>
@@ -1002,15 +1254,6 @@ information</value>
   </data>
   <data name="IDS_TIME" xml:space="preserve">
     <value>Time:</value>
-  </data>
-  <data name="IDS_TIMEFORMAT" xml:space="preserve">
-    <value>hh\:mm\:ss</value>
-  </data>
-  <data name="IDS_TIMEFORMAT_BIG" xml:space="preserve">
-    <value>d\:hh\:mm\:ss</value>
-  </data>
-  <data name="IDS_TIMEFORMAT_SMALL" xml:space="preserve">
-    <value>m\:ss</value>
   </data>
   <data name="IDS_TIP_FAVORITE_ADD" xml:space="preserve">
     <value>Adds selected modules to the current play list</value>
