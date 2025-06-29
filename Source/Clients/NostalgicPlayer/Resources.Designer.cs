@@ -113,6 +113,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_CLOSE_BLACK {
+            get {
+                object obj = ResourceManager.GetObject("IDB_CLOSE_BLACK", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_CLOSE_WHITE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_CLOSE_WHITE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_DIRECTORY {
             get {
                 object obj = ResourceManager.GetObject("IDB_DIRECTORY", resourceCulture);

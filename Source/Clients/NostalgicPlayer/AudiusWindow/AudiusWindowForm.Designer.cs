@@ -131,7 +131,7 @@
 			Controls.Add(navigator);
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
-			MinimumSize = new System.Drawing.Size(800, 480);
+			MinimumSize = new System.Drawing.Size(600, 480);
 			Name = "AudiusWindowForm";
 			Palette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;

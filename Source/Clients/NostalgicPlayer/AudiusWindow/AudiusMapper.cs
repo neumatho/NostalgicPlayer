@@ -102,13 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		public static AudiusProfileListItem MapUserToItem(UserModel user, int position)
 		{
-			return new AudiusProfileListItem(
-				position,
-				user.Id,
-				user.Name,
-				user.Handle,
-				user.ProfilePicture?._150x150
-			);
+			return new AudiusProfileListItem(position, user);
 		}
 	}
 }

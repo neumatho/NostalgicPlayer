@@ -84,6 +84,9 @@ namespace Polycode.NostalgicPlayer.Audius
 		/********************************************************************/
 		public async Task<Bitmap> GetPictureAsync(string url, CancellationToken cancellationToken)
 		{
+			if (string.IsNullOrEmpty(url))
+				return null;
+
 			Monitor.Enter(downloadLock);
 
 			try
