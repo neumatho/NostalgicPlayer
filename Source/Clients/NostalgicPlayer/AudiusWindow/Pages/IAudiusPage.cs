@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// <summary>
 		/// Will initialize the control
 		/// </summary>
-		void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader);
+		void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader, string id);
 
 		/// <summary>
 		/// Will refresh the page with new data

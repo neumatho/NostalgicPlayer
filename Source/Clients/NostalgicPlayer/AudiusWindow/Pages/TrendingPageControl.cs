@@ -103,12 +103,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader)
+		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader, string id)
 		{
 			mainWindowApi = mainWindow;
 			audiusWindowApi = audiusWindow;
 
-			audiusListControl.Initialize(mainWindowApi, downloader);
+			audiusListControl.Initialize(mainWindow, downloader);
 
 			taskHelper = new TaskHelper();
 		}
@@ -311,26 +311,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 		/********************************************************************/
 		/// <summary>
-		/// Show error message
-		/// </summary>
-		/********************************************************************/
-		private void ShowErrorMessage(Exception ex)
-		{
-			string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
-
-			BeginInvoke(() =>
-			{
-				audiusListControl.SetLoading(false);
-				audiusListControl.SetItems([]);
-
-				mainWindowApi.ShowSimpleErrorMessage(audiusWindowApi.Form, message);
-			});
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Retrieve the trending tracks from Audius
 		/// </summary>
 		/********************************************************************/
@@ -363,7 +343,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, ShowErrorMessage);
+			}, (ex) => AudiusHelper.ShowErrorMessage(ex, audiusListControl, mainWindowApi, audiusWindowApi));
 		}
 
 
@@ -401,7 +381,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, ShowErrorMessage);
+			}, (ex) => AudiusHelper.ShowErrorMessage(ex, audiusListControl, mainWindowApi, audiusWindowApi));
 		}
 
 
@@ -437,7 +417,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, ShowErrorMessage);
+			}, (ex) => AudiusHelper.ShowErrorMessage(ex, audiusListControl, mainWindowApi, audiusWindowApi));
 		}
 		#endregion
 	}

@@ -14,8 +14,7 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Users
 	{
 		/// <summary></summary>
 		[JsonPropertyName("album_count")]
-		[JsonRequired]
-		public int AlbumCount { get; set; }
+		public int? AlbumCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("artist_pick_track_id")]
@@ -31,13 +30,11 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Users
 
 		/// <summary></summary>
 		[JsonPropertyName("followee_count")]
-		[JsonRequired]
-		public int FolloweeCount { get; set; }
+		public int? FolloweeCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("follower_count")]
-		[JsonRequired]
-		public int FollowerCount { get; set; }
+		public int? FollowerCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("does_follow_current_user")]
@@ -68,8 +65,7 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Users
 
 		/// <summary></summary>
 		[JsonPropertyName("playlist_count")]
-		[JsonRequired]
-		public int PlaylistCount { get; set; }
+		public int? PlaylistCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("profile_picture")]
@@ -77,13 +73,11 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Users
 
 		/// <summary></summary>
 		[JsonPropertyName("repost_count")]
-		[JsonRequired]
-		public int RepostCount { get; set; }
+		public int? RepostCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("track_count")]
-		[JsonRequired]
-		public int TrackCount { get; set; }
+		public int? TrackCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("is_deactivated")]
@@ -107,13 +101,11 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Users
 
 		/// <summary></summary>
 		[JsonPropertyName("supporter_count")]
-		[JsonRequired]
-		public int SupporterCount { get; set; }
+		public int? SupporterCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("supporting_count")]
-		[JsonRequired]
-		public int SupportingCount { get; set; }
+		public int? SupportingCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("total_audio_balance")]

@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Threading;
+using Polycode.NostalgicPlayer.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Audius.Models.Users;
 
 namespace Polycode.NostalgicPlayer.Audius.Interfaces
@@ -17,5 +19,15 @@ namespace Polycode.NostalgicPlayer.Audius.Interfaces
 		/// Will use the query given to search after users
 		/// </summary>
 		UserModel[] Search(string query, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Retrieve all the tracks for the given user
+		/// </summary>
+		TrackModel[] GetTracks(string userId, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Retrieve all the playlists for the given user
+		/// </summary>
+		PlaylistModel[] GetPlaylists(string userId, CancellationToken cancellationToken);
 	}
 }

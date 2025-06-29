@@ -395,6 +395,9 @@ Formats supported:
   <data name="IDS_AUDIUS_SEARCHING" xml:space="preserve">
     <value>Searching…</value>
   </data>
+  <data name="IDS_AUDIUS_TAB_PLAYLISTS" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
   <data name="IDS_AUDIUS_TAB_SEARCH" xml:space="preserve">
     <value>Search</value>
   </data>
@@ -405,6 +408,9 @@ Formats supported:
     <value>Profiles</value>
   </data>
   <data name="IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS" xml:space="preserve">
+    <value>Tracks</value>
+  </data>
+  <data name="IDS_AUDIUS_TAB_TRACKS" xml:space="preserve">
     <value>Tracks</value>
   </data>
   <data name="IDS_AUDIUS_TAB_TRENDING" xml:space="preserve">

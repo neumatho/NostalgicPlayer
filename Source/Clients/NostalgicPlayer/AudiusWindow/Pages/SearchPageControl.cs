@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -51,14 +50,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader)
+		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader, string id)
 		{
 			mainWindowApi = mainWindow;
 			audiusWindowApi = audiusWindow;
 
 			pictureDownloader = downloader;
 
-			audiusListControl.Initialize(mainWindowApi, downloader);
+			audiusListControl.Initialize(mainWindow, downloader);
 
 			taskHelper = new TaskHelper();
 		}
@@ -184,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 
 				Controls.Add(profileControl);
 
-				profileControl.Initialize(e.Item.User, pictureDownloader);
+				profileControl.Initialize(e.Item.User, mainWindowApi, audiusWindowApi, pictureDownloader);
 			}
 		}
 
@@ -205,26 +204,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		#endregion
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Show error message
-		/// </summary>
-		/********************************************************************/
-		private void ShowErrorMessage(Exception ex)
-		{
-			string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
-
-			BeginInvoke(() =>
-			{
-				audiusListControl.SetLoading(false);
-				audiusListControl.SetItems([]);
-
-				mainWindowApi.ShowSimpleErrorMessage(audiusWindowApi.Form, message);
-			});
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will search after the given text
@@ -283,7 +262,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, ShowErrorMessage);
+			}, (ex) => AudiusHelper.ShowErrorMessage(ex, audiusListControl, mainWindowApi, audiusWindowApi));
 		}
 
 
@@ -302,30 +281,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				IPlaylistClient playlistClient = audiusApi.GetPlaylistClient();
 				PlaylistModel[] playlists = playlistClient.Search(searchText, cancellationToken);
 
-				ITrackClient trackClient = audiusApi.GetTrackClient();
-
-				Dictionary<string, TrackModel> trackInfo = new Dictionary<string, TrackModel>();
-
-				foreach (PlaylistModel playlist in playlists.Take(AudiusConstants.MaxSearchResults))
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-
-					List<string> tracksToRetrieve = playlist.Tracks
-						.Select(x => x.TrackId)
-						.Where(x => !trackInfo.ContainsKey(x))
-						.Distinct()
-						.ToList();
-
-					TrackModel[] playlistTracks = trackClient.GetBulkTrackInfo(tracksToRetrieve, cancellationToken);
-
-					foreach (TrackModel track in playlistTracks)
-						trackInfo[track.Id] = track;
-				}
-
-				List<AudiusListItem> items = playlists
-					.Select((x, i) => AudiusMapper.MapPlaylistToItem(x, trackInfo, i + 1))
-					.Cast<AudiusListItem>()
-					.ToList();
+				List<AudiusListItem> items = AudiusHelper.FillPlaylistsWithTracks(playlists, cancellationToken);
 
 				Invoke(() =>
 				{
@@ -337,7 +293,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, ShowErrorMessage);
+			}, (ex) => AudiusHelper.ShowErrorMessage(ex, audiusListControl, mainWindowApi, audiusWindowApi));
 		}
 
 
@@ -374,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, ShowErrorMessage);
+			}, (ex) => AudiusHelper.ShowErrorMessage(ex, audiusListControl, mainWindowApi, audiusWindowApi));
 		}
 		#endregion
 	}
