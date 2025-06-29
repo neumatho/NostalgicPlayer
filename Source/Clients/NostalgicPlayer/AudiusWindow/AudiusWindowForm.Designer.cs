@@ -75,7 +75,7 @@
 			navigator.Palette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			navigator.SelectedIndex = 1;
+			navigator.SelectedIndex = 0;
 			navigator.Size = new System.Drawing.Size(768, 425);
 			navigator.TabIndex = 0;
 			navigator.SelectedPageChanged += Navigator_SelectedPageChanged;
