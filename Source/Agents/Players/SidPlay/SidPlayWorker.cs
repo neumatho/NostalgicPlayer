@@ -25,13 +25,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	/// </summary>
 	internal class SidPlayWorker : ModulePlayerAgentBase, IDurationPlayer, IAgentSettingsRegistrar
 	{
-		private const int BufferSize = 2048;
+		private const int BufferSize = 512;
+		private const int ClockCyclesToPlay = 5000;
 
 		private SidTune sidTune;
 
 		private SidPlayFp engine;
 
 		private SidConfig engineConfig;
+
+		private short[] outputBuffer;
+		private int outputBufferLeftToDo;
+		private int outputBufferPosition;
 
 		private short[] leftOutputBuffer;
 		private short[] rightOutputBuffer;
@@ -421,9 +426,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				durationTimer.Dispose();
 				durationTimer = null;
 			}
-
-			if (engine != null)
-				engine.Stop();
 		}
 
 
@@ -441,6 +443,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			engineConfig.playback = channels == 1 ? SidConfig.playback_t.MONO : SidConfig.playback_t.STEREO;
 
 			engine.Config(engineConfig, true);
+
+			// Initialize the mixer
+			engine.InitMixer(true);
+
+			short[][] sidBuffers = new short[engine.Info().MaxSids()][];
+			engine.Buffers(sidBuffers);
+
+			outputBuffer = new short[sidBuffers[0].Length * 2];
+			outputBufferLeftToDo = 0;
+			outputBufferPosition = 0;
 		}
 		#endregion
 
@@ -460,8 +472,38 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				firstTime = false;
 			}
 
-			// Run the emulators and fill out the output buffer
-			engine.Play(leftOutputBuffer, rightOutputBuffer, BufferSize);
+			// Run the emulator and fill out the output buffer
+			int todo = BufferSize;
+			int offset = 0;
+
+			do
+			{
+				if (outputBufferLeftToDo == 0)
+				{
+					// No samples left in the output buffer, so fill it up
+					int samplesPlayed = engine.Play(ClockCyclesToPlay);
+					engine.Mix(outputBuffer, (uint)samplesPlayed);
+
+					outputBufferLeftToDo = samplesPlayed;
+					outputBufferPosition = 0;
+				}
+
+				// Split the output buffer into left and right channels
+				int toCopy = Math.Min(todo, outputBufferLeftToDo);
+
+				for (int i = 0, j = outputBufferPosition * 2; i < toCopy; i++, j += 2)
+				{
+					leftOutputBuffer[offset + i] = outputBuffer[j];
+					rightOutputBuffer[offset + i] = outputBuffer[j + 1];
+				}
+
+				offset += toCopy;
+				todo -= toCopy;
+				outputBufferPosition += toCopy;
+				outputBufferLeftToDo -= toCopy;
+			}
+			while (todo > 0);
+
 
 			// Setup the NostalgicPlayer channel
 			IChannel channel = VirtualChannels[0];
@@ -766,6 +808,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			comments = null;
 
+			outputBuffer = null;
 			leftOutputBuffer = null;
 			rightOutputBuffer = null;
 

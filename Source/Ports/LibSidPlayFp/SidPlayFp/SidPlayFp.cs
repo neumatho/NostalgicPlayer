@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
@@ -68,6 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		/// Stop the engine
 		/// </summary>
 		/********************************************************************/
+		[Obsolete]
 		public void Stop()
 		{
 			sidPlayer.Stop();
@@ -80,6 +82,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		/// Run emulation and produce samples to play if a buffer is given
 		/// </summary>
 		/********************************************************************/
+		[Obsolete("Use play(uint)")]
 		public uint_least32_t Play(short[] leftBuffer, short[] rightBuffer, uint_least32_t count)
 		{
 			return sidPlayer.Play(leftBuffer, rightBuffer, count);
@@ -105,9 +108,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		/// The value will be limited to a reasonable amount if too large
 		/// </summary>
 		/********************************************************************/
-		public c_int Play(uint cycles)
+		public int Play(uint cycles)
 		{
 			return sidPlayer.Play(cycles);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reinitialize the engine
+		/// </summary>
+		/********************************************************************/
+		public bool Reset()
+		{
+			return sidPlayer.Reset();
 		}
 
 
@@ -255,6 +270,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public uint InstalledSids()
 		{
 			return sidPlayer.InstalledSids();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Init mixer
+		/// </summary>
+		/********************************************************************/
+		public void InitMixer(bool stereo)
+		{
+			sidPlayer.InitMixer(stereo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mix buffers
+		/// </summary>
+		/********************************************************************/
+		public uint Mix(short[] buffer, uint samples)
+		{
+			return sidPlayer.Mix(buffer, samples);
 		}
 	}
 }

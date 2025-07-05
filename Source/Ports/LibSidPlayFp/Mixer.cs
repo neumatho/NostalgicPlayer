@@ -76,8 +76,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		private uint_least32_t sampleCount = 0;
 		private uint_least32_t sampleIndex = 0;
 
-		private uint_least32_t sampleRate = 0;
-
 		private bool stereo = false;
 
 		private bool wait = false;
@@ -256,19 +254,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				mix = new mixer_func_t[stereo ? 2 : 1];
 				UpdateParams();
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set sample rate
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void SetSampleRate(uint_least32_t rate)
-		{
-			sampleRate = rate;
 		}
 
 

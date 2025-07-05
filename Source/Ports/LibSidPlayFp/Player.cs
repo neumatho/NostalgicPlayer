@@ -64,6 +64,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		private uint8_t videoSwitch;
 
+		private SimpleMixer simpleMixer;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -275,7 +277,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			info.channels = isStereo ? (uint)2 : 1;
 
 			mixer.SetStereo(isStereo);
-			mixer.SetSampleRate(config.frequency);
 			mixer.SetVolume((int)config.leftVolume, (int)config.rightVolume);
 
 			// Update configuration
@@ -341,6 +342,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Init mixer
+		/// </summary>
+		/********************************************************************/
+		public void InitMixer(bool stereo)
+		{
+			short[][] bufs = new short[Mixer.MAX_SIDS][];
+			Buffers(bufs);
+			simpleMixer = new SimpleMixer(stereo, bufs, (int)InstalledSids());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mix buffers
+		/// </summary>
+		/********************************************************************/
+		public uint Mix(short[] buffer, uint samples)
+		{
+			return simpleMixer.DoMix(buffer, samples);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Get the buffer pointers for each of the installed SID chips
 		/// </summary>
 		/********************************************************************/
@@ -361,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// The value will be limited to a reasonable amount if too large
 		/// </summary>
 		/********************************************************************/
-		public c_int Play(uint cycles)
+		public int Play(uint cycles)
 		{
 			// Make sure a tune is loaded
 			if (tune == null)
@@ -405,6 +432,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			{
 				errorString = Resources.IDS_SID_ERR_ILLEGAL_INST;
 				return -1;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reinitialize the engine
+		/// </summary>
+		/********************************************************************/
+		public bool Reset()
+		{
+			try
+			{
+				Initialize();
+
+				return true;
+			}
+			catch (ConfigErrorException)
+			{
+				return false;
 			}
 		}
 

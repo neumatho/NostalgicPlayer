@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 			}
 
 			// 20 ms buffer
-			c_int bufferSize = (c_int)Math.Ceiling((freq / 1000.0f) * 20.0f);
+			int bufferSize = (int)Math.Ceiling((freq / 1000.0f) * 20.0f);
 			buffer = new short[bufferSize];
 
 			status = true;

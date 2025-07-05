@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			});
 
 			for (;;)
-				engine.Play(null, null, 0);
+				engine.Play(3000);
 		}
 		#endregion
 	}

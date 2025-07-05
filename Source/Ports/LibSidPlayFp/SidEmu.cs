@@ -13,11 +13,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 	/// </summary>
 	internal abstract class SidEmu : C64Sid
 	{
-		/// <summary>
-		/// Buffer size. 5000 is roughly 50 ms at 96 kHz
-		/// </summary>
-		protected const uint OUTPUTBUFFERSIZE = 5000;
-
 		private readonly SidBuilder builder;
 
 		protected EventScheduler eventScheduler = null;
