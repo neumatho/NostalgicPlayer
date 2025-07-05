@@ -15,10 +15,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Native
 	{
 		/// <summary></summary>
 		[DllImport("user32.dll")]
-		public static extern bool HideCaret(IntPtr hWnd);
-
-		/// <summary></summary>
-		[DllImport("user32.dll")]
 		public static extern IntPtr SendMessageW(IntPtr hWnd, WM msg, IntPtr wParam, IntPtr lParam);
 	}
 }
