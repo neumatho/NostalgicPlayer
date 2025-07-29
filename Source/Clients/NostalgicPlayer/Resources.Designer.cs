@@ -2113,7 +2113,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Position: ???/??? = ??%.
+        ///   Looks up a localized string similar to Time position: ???/??? = ??%.
         /// </summary>
         internal static string IDS_NOPOSITION {
             get {
@@ -2194,7 +2194,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Position: {0:d3}/{1:d3} = {2,2}%.
+        ///   Looks up a localized string similar to Time position: {0:d3}/{1:d3} = {2,2}%.
         /// </summary>
         internal static string IDS_POSITION {
             get {

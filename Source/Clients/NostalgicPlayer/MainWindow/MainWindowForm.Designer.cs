@@ -34,8 +34,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowForm));
 			menuStrip = new System.Windows.Forms.MenuStrip();
 			infoLabel = new KryptonLabel();
-			bigFontPalette = new GuiKit.Components.FontPalette(components);
-			fontPalette = new GuiKit.Components.FontPalette(components);
+			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
 			infoGroup = new KryptonGroup();
 			moduleInfoButton = new KryptonButton();
 			masterVolumeTrackBar = new KryptonTrackBar();
@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F);
 			menuStrip.Location = new System.Drawing.Point(0, 0);
 			menuStrip.Name = "menuStrip";
-			menuStrip.Size = new System.Drawing.Size(384, 24);
+			menuStrip.Size = new System.Drawing.Size(416, 24);
 			menuStrip.TabIndex = 0;
 			menuStrip.Text = "menuStrip";
 			// 
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			infoLabel.Name = "infoLabel";
 			infoLabel.Palette = bigFontPalette;
 			infoLabel.PaletteMode = PaletteMode.Custom;
-			infoLabel.Size = new System.Drawing.Size(342, 16);
+			infoLabel.Size = new System.Drawing.Size(374, 16);
 			infoLabel.TabIndex = 0;
 			infoLabel.Values.Text = "";
 			// 
@@ -136,14 +136,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// 
 			infoGroup.Panel.Controls.Add(infoLabel);
-			infoGroup.Size = new System.Drawing.Size(348, 24);
+			infoGroup.Size = new System.Drawing.Size(380, 24);
 			infoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
 			infoGroup.TabIndex = 1;
 			// 
 			// moduleInfoButton
 			// 
 			moduleInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-			moduleInfoButton.Location = new System.Drawing.Point(356, 28);
+			moduleInfoButton.Location = new System.Drawing.Point(388, 28);
 			moduleInfoButton.Name = "moduleInfoButton";
 			moduleInfoButton.Size = new System.Drawing.Size(24, 24);
 			moduleInfoButton.TabIndex = 2;
@@ -265,14 +265,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			listInfoGroup.Panel.Controls.Add(totalLabel);
 			listInfoGroup.Panel.Controls.Add(timeLabel);
-			listInfoGroup.Size = new System.Drawing.Size(142, 34);
+			listInfoGroup.Size = new System.Drawing.Size(174, 34);
 			listInfoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
 			listInfoGroup.TabIndex = 7;
 			// 
 			// totalLabel
 			// 
 			totalLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-			totalLabel.Location = new System.Drawing.Point(106, 7);
+			totalLabel.Location = new System.Drawing.Point(138, 7);
 			totalLabel.Name = "totalLabel";
 			totalLabel.Palette = bigFontPalette;
 			totalLabel.PaletteMode = PaletteMode.Custom;
@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			positionTrackBar.Location = new System.Drawing.Point(4, 216);
 			positionTrackBar.Maximum = 100;
 			positionTrackBar.Name = "positionTrackBar";
-			positionTrackBar.Size = new System.Drawing.Size(376, 21);
+			positionTrackBar.Size = new System.Drawing.Size(408, 21);
 			positionTrackBar.TabIndex = 8;
 			positionTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			// 
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// functionsGroup
 			// 
 			functionsGroup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			functionsGroup.Location = new System.Drawing.Point(290, 243);
+			functionsGroup.Location = new System.Drawing.Point(322, 243);
 			functionsGroup.Name = "functionsGroup";
 			// 
 			// 
@@ -477,15 +477,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moduleListControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			moduleListControl.Location = new System.Drawing.Point(35, 56);
 			moduleListControl.Name = "moduleListControl";
-			moduleListControl.SelectedIndex = -1;
-			moduleListControl.Size = new System.Drawing.Size(345, 116);
+			moduleListControl.Size = new System.Drawing.Size(377, 116);
 			moduleListControl.TabIndex = 5;
-			moduleListControl.TopIndex = 0;
 			// 
 			// MainWindowForm
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			ClientSize = new System.Drawing.Size(384, 281);
+			ClientSize = new System.Drawing.Size(416, 281);
 			Controls.Add(moduleListControl);
 			Controls.Add(muteCheckButton);
 			Controls.Add(functionsGroup);
@@ -501,7 +499,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			KeyPreview = true;
 			MainMenuStrip = menuStrip;
 			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			MinimumSize = new System.Drawing.Size(400, 320);
+			MinimumSize = new System.Drawing.Size(432, 320);
 			Name = "MainWindowForm";
 			Palette = fontPalette;
 			PaletteMode = PaletteMode.Custom;

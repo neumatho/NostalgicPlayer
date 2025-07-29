@@ -878,7 +878,7 @@ what has changed since your previous version.</value>
     <value>Time: -??:??:??</value>
   </data>
   <data name="IDS_NOPOSITION" xml:space="preserve">
-    <value>Position: ???/??? = ??%</value>
+    <value>Time position: ???/??? = ??%</value>
   </data>
   <data name="IDS_NOSUBSONGS" xml:space="preserve">
     <value>Subsongs: ??/??</value>
@@ -908,7 +908,7 @@ what has changed since your previous version.</value>
     <value>Enter an URL to the stream you want to listen to</value>
   </data>
   <data name="IDS_POSITION" xml:space="preserve">
-    <value>Position: {0:d3}/{1:d3} = {2,2}%</value>
+    <value>Time position: {0:d3}/{1:d3} = {2,2}%</value>
   </data>
   <data name="IDS_SAMPLE_INFO_INST_COLUMN_NAME" xml:space="preserve">
     <value>Name</value>
