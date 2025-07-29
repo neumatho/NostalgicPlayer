@@ -71,7 +71,7 @@
 			handleLabel.AutoSize = false;
 			handleLabel.Location = new System.Drawing.Point(171, 36);
 			handleLabel.Name = "handleLabel";
-			handleLabel.Palette = fontPalette;
+			handleLabel.LocalCustomPalette = fontPalette;
 			handleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			handleLabel.Size = new System.Drawing.Size(247, 20);
 			handleLabel.TabIndex = 2;
@@ -84,7 +84,7 @@
 			nameLabel.LabelStyle = Krypton.Toolkit.LabelStyle.BoldPanel;
 			nameLabel.Location = new System.Drawing.Point(171, 8);
 			nameLabel.Name = "nameLabel";
-			nameLabel.Palette = bigBoldFontPalette;
+			nameLabel.LocalCustomPalette = bigBoldFontPalette;
 			nameLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			nameLabel.Size = new System.Drawing.Size(230, 19);
 			nameLabel.TabIndex = 1;
@@ -97,13 +97,12 @@
 			bigBoldFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigBoldFontPalette.FontStyle = System.Drawing.FontStyle.Bold;
 			bigBoldFontPalette.ThemeName = "";
-			bigBoldFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// positionLabel
 			// 
 			positionLabel.Location = new System.Drawing.Point(4, 63);
 			positionLabel.Name = "positionLabel";
-			positionLabel.Palette = bigFontPalette;
+			positionLabel.LocalCustomPalette = bigFontPalette;
 			positionLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			positionLabel.Size = new System.Drawing.Size(6, 2);
 			positionLabel.TabIndex = 0;
@@ -115,7 +114,6 @@
 			bigFontPalette.BaseFontSize = 10F;
 			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// itemPictureBox
 			// 
@@ -150,7 +148,6 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// AudiusProfileListItemControl
 			// 

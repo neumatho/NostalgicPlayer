@@ -61,7 +61,7 @@
 			durationLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
 			durationLabel.Location = new System.Drawing.Point(449, 8);
 			durationLabel.Name = "durationLabel";
-			durationLabel.Palette = fontPalette;
+			durationLabel.LocalCustomPalette = fontPalette;
 			durationLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			durationLabel.Size = new System.Drawing.Size(6, 2);
 			durationLabel.TabIndex = 3;
@@ -72,7 +72,6 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// titleLabel
 			// 
@@ -80,7 +79,7 @@
 			titleLabel.AutoSize = false;
 			titleLabel.Location = new System.Drawing.Point(56, 8);
 			titleLabel.Name = "titleLabel";
-			titleLabel.Palette = fontPalette;
+			titleLabel.LocalCustomPalette = fontPalette;
 			titleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			titleLabel.Size = new System.Drawing.Size(358, 19);
 			titleLabel.TabIndex = 2;
