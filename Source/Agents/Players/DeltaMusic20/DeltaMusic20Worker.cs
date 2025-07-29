@@ -584,7 +584,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					BlockPosition = 0,
 					CurrentTrackPosition = -1,
 					NextTrackPosition = 0,
-					Instrument = instruments[0],
+					Instrument = null,
 					ArpeggioPosition = 0,
 					Arpeggio = arpeggios[0],
 					ActualVolume = 0,
