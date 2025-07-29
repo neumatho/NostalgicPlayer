@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.ciaGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.ciaGroupBox.Location = new System.Drawing.Point(8, 4);
 			this.ciaGroupBox.Name = "ciaGroupBox";
-			this.ciaGroupBox.Palette = this.fontPalette;
+			this.ciaGroupBox.LocalCustomPalette = this.fontPalette;
 			this.ciaGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.model8521RadioButton.Location = new System.Drawing.Point(4, 26);
 			this.model8521RadioButton.Name = "model8521RadioButton";
-			this.model8521RadioButton.Palette = this.fontPalette;
+			this.model8521RadioButton.LocalCustomPalette = this.fontPalette;
 			this.model8521RadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.model8521RadioButton, "IDS_SETTINGS_CIA_8521");
 			this.model8521RadioButton.Size = new System.Drawing.Size(75, 16);
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.model6526w4485RadioButton.Location = new System.Drawing.Point(4, 47);
 			this.model6526w4485RadioButton.Name = "model6526w4485RadioButton";
-			this.model6526w4485RadioButton.Palette = this.fontPalette;
+			this.model6526w4485RadioButton.LocalCustomPalette = this.fontPalette;
 			this.model6526w4485RadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.model6526w4485RadioButton, "IDS_SETTINGS_CIA_6526_W4485");
 			this.model6526w4485RadioButton.Size = new System.Drawing.Size(171, 16);
@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.model6526RadioButton.Location = new System.Drawing.Point(4, 5);
 			this.model6526RadioButton.Name = "model6526RadioButton";
-			this.model6526RadioButton.Palette = this.fontPalette;
+			this.model6526RadioButton.LocalCustomPalette = this.fontPalette;
 			this.model6526RadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.model6526RadioButton, "IDS_SETTINGS_CIA_6526");
 			this.model6526RadioButton.Size = new System.Drawing.Size(75, 16);
@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.clockGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.clockGroupBox.Location = new System.Drawing.Point(310, 4);
 			this.clockGroupBox.Name = "clockGroupBox";
-			this.clockGroupBox.Palette = this.fontPalette;
+			this.clockGroupBox.LocalCustomPalette = this.fontPalette;
 			this.clockGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.palmRadioButton.Location = new System.Drawing.Point(236, 5);
 			this.palmRadioButton.Name = "palmRadioButton";
-			this.palmRadioButton.Palette = this.fontPalette;
+			this.palmRadioButton.LocalCustomPalette = this.fontPalette;
 			this.palmRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.palmRadioButton, "IDS_SETTINGS_CLOCK_PALM");
 			this.palmRadioButton.Size = new System.Drawing.Size(56, 16);
@@ -176,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.dreanRadioButton.Location = new System.Drawing.Point(179, 5);
 			this.dreanRadioButton.Name = "dreanRadioButton";
-			this.dreanRadioButton.Palette = this.fontPalette;
+			this.dreanRadioButton.LocalCustomPalette = this.fontPalette;
 			this.dreanRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.dreanRadioButton, "IDS_SETTINGS_CLOCK_DREAN");
 			this.dreanRadioButton.Size = new System.Drawing.Size(52, 16);
@@ -187,7 +187,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.ntscOldRadioButton.Location = new System.Drawing.Point(104, 5);
 			this.ntscOldRadioButton.Name = "ntscOldRadioButton";
-			this.ntscOldRadioButton.Palette = this.fontPalette;
+			this.ntscOldRadioButton.LocalCustomPalette = this.fontPalette;
 			this.ntscOldRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.ntscOldRadioButton, "IDS_SETTINGS_CLOCK_NTSC_OLD");
 			this.ntscOldRadioButton.Size = new System.Drawing.Size(72, 16);
@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.ntscRadioButton.Location = new System.Drawing.Point(50, 5);
 			this.ntscRadioButton.Name = "ntscRadioButton";
-			this.ntscRadioButton.Palette = this.fontPalette;
+			this.ntscRadioButton.LocalCustomPalette = this.fontPalette;
 			this.ntscRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.ntscRadioButton, "IDS_SETTINGS_CLOCK_NTSC");
 			this.ntscRadioButton.Size = new System.Drawing.Size(52, 16);
@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.palRadioButton.Location = new System.Drawing.Point(4, 5);
 			this.palRadioButton.Name = "palRadioButton";
-			this.palRadioButton.Palette = this.fontPalette;
+			this.palRadioButton.LocalCustomPalette = this.fontPalette;
 			this.palRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.palRadioButton, "IDS_SETTINGS_CLOCK_PAL");
 			this.palRadioButton.Size = new System.Drawing.Size(43, 16);
@@ -230,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.clockAlwaysRadioButton.Location = new System.Drawing.Point(0, 21);
 			this.clockAlwaysRadioButton.Name = "clockAlwaysRadioButton";
-			this.clockAlwaysRadioButton.Palette = this.fontPalette;
+			this.clockAlwaysRadioButton.LocalCustomPalette = this.fontPalette;
 			this.clockAlwaysRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.clockAlwaysRadioButton, "IDS_SETTINGS_CLOCK_ALWAYS");
 			this.clockAlwaysRadioButton.Size = new System.Drawing.Size(145, 16);
@@ -241,7 +241,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.clockNotKnownRadioButton.Location = new System.Drawing.Point(0, 0);
 			this.clockNotKnownRadioButton.Name = "clockNotKnownRadioButton";
-			this.clockNotKnownRadioButton.Palette = this.fontPalette;
+			this.clockNotKnownRadioButton.LocalCustomPalette = this.fontPalette;
 			this.clockNotKnownRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.clockNotKnownRadioButton, "IDS_SETTINGS_CLOCK_NOT_KNOWN");
 			this.clockNotKnownRadioButton.Size = new System.Drawing.Size(171, 16);
@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.sidGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.sidGroupBox.Location = new System.Drawing.Point(8, 100);
 			this.sidGroupBox.Name = "sidGroupBox";
-			this.sidGroupBox.Palette = this.fontPalette;
+			this.sidGroupBox.LocalCustomPalette = this.fontPalette;
 			this.sidGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -271,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.sid8580RadioButton.Location = new System.Drawing.Point(80, 5);
 			this.sid8580RadioButton.Name = "sid8580RadioButton";
-			this.sid8580RadioButton.Palette = this.fontPalette;
+			this.sid8580RadioButton.LocalCustomPalette = this.fontPalette;
 			this.sid8580RadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.sid8580RadioButton, "IDS_SETTINGS_SID_8580");
 			this.sid8580RadioButton.Size = new System.Drawing.Size(75, 16);
@@ -282,7 +282,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.sid6581RadioButton.Location = new System.Drawing.Point(4, 5);
 			this.sid6581RadioButton.Name = "sid6581RadioButton";
-			this.sid6581RadioButton.Palette = this.fontPalette;
+			this.sid6581RadioButton.LocalCustomPalette = this.fontPalette;
 			this.sid6581RadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.sid6581RadioButton, "IDS_SETTINGS_SID_6581");
 			this.sid6581RadioButton.Size = new System.Drawing.Size(75, 16);
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.sidAlwaysRadioButton.Location = new System.Drawing.Point(0, 21);
 			this.sidAlwaysRadioButton.Name = "sidAlwaysRadioButton";
-			this.sidAlwaysRadioButton.Palette = this.fontPalette;
+			this.sidAlwaysRadioButton.LocalCustomPalette = this.fontPalette;
 			this.sidAlwaysRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.sidAlwaysRadioButton, "IDS_SETTINGS_SID_ALWAYS");
 			this.sidAlwaysRadioButton.Size = new System.Drawing.Size(131, 16);
@@ -314,7 +314,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.sidNotKnownRadioButton.Location = new System.Drawing.Point(0, 0);
 			this.sidNotKnownRadioButton.Name = "sidNotKnownRadioButton";
-			this.sidNotKnownRadioButton.Palette = this.fontPalette;
+			this.sidNotKnownRadioButton.LocalCustomPalette = this.fontPalette;
 			this.sidNotKnownRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.sidNotKnownRadioButton, "IDS_SETTINGS_SID_NOT_KNOWN");
 			this.sidNotKnownRadioButton.Size = new System.Drawing.Size(171, 16);
@@ -328,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.hvscGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.hvscGroupBox.Location = new System.Drawing.Point(8, 196);
 			this.hvscGroupBox.Name = "hvscGroupBox";
-			this.hvscGroupBox.Palette = this.fontPalette;
+			this.hvscGroupBox.LocalCustomPalette = this.fontPalette;
 			this.hvscGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -348,7 +348,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.hvscLabel.Location = new System.Drawing.Point(4, 5);
 			this.hvscLabel.Name = "hvscLabel";
-			this.hvscLabel.Palette = this.fontPalette;
+			this.hvscLabel.LocalCustomPalette = this.fontPalette;
 			this.hvscLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.hvscLabel, "IDS_SETTINGS_HVSC_PATH");
 			this.hvscLabel.Size = new System.Drawing.Size(127, 16);
@@ -361,7 +361,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.hvscvPathTextBox.Location = new System.Drawing.Point(140, 3);
 			this.hvscvPathTextBox.Name = "hvscvPathTextBox";
-			this.hvscvPathTextBox.Palette = this.fontPalette;
+			this.hvscvPathTextBox.LocalCustomPalette = this.fontPalette;
 			this.hvscvPathTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.hvscvPathTextBox, null);
 			this.hvscvPathTextBox.Size = new System.Drawing.Size(422, 20);
@@ -383,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.songLengthCheckBox.Location = new System.Drawing.Point(348, 28);
 			this.songLengthCheckBox.Name = "songLengthCheckBox";
-			this.songLengthCheckBox.Palette = this.fontPalette;
+			this.songLengthCheckBox.LocalCustomPalette = this.fontPalette;
 			this.songLengthCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.songLengthCheckBox, "IDS_SETTINGS_HVSC_SONGLENGTH");
 			this.songLengthCheckBox.Size = new System.Drawing.Size(165, 16);
@@ -394,7 +394,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.stilCheckBox.Location = new System.Drawing.Point(140, 28);
 			this.stilCheckBox.Name = "stilCheckBox";
-			this.stilCheckBox.Palette = this.fontPalette;
+			this.stilCheckBox.LocalCustomPalette = this.fontPalette;
 			this.stilCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.stilCheckBox, "IDS_SETTINGS_HVSC_STIL");
 			this.stilCheckBox.Size = new System.Drawing.Size(83, 16);
@@ -405,7 +405,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.bugListCheckBox.Location = new System.Drawing.Point(237, 28);
 			this.bugListCheckBox.Name = "bugListCheckBox";
-			this.bugListCheckBox.Palette = this.fontPalette;
+			this.bugListCheckBox.LocalCustomPalette = this.fontPalette;
 			this.bugListCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.bugListCheckBox, "IDS_SETTINGS_HVSC_BUGLIST");
 			this.bugListCheckBox.Size = new System.Drawing.Size(95, 16);
@@ -418,7 +418,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.optionsGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.optionsGroupBox.Location = new System.Drawing.Point(310, 100);
 			this.optionsGroupBox.Name = "optionsGroupBox";
-			this.optionsGroupBox.Palette = this.fontPalette;
+			this.optionsGroupBox.LocalCustomPalette = this.fontPalette;
 			this.optionsGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -436,7 +436,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.digiboostCheckBox.Location = new System.Drawing.Point(4, 26);
 			this.digiboostCheckBox.Name = "digiboostCheckBox";
-			this.digiboostCheckBox.Palette = this.fontPalette;
+			this.digiboostCheckBox.LocalCustomPalette = this.fontPalette;
 			this.digiboostCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.digiboostCheckBox, "IDS_SETTINGS_OPTIONS_DIGIBOOST");
 			this.digiboostCheckBox.Size = new System.Drawing.Size(178, 16);
@@ -447,7 +447,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.enableFilterCheckBox.Location = new System.Drawing.Point(4, 5);
 			this.enableFilterCheckBox.Name = "enableFilterCheckBox";
-			this.enableFilterCheckBox.Palette = this.fontPalette;
+			this.enableFilterCheckBox.LocalCustomPalette = this.fontPalette;
 			this.enableFilterCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.enableFilterCheckBox, "IDS_SETTINGS_OPTIONS_FILTER_ENABLE");
 			this.enableFilterCheckBox.Size = new System.Drawing.Size(81, 16);
@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.mixerLabel.Location = new System.Drawing.Point(1, 48);
 			this.mixerLabel.Name = "mixerLabel";
-			this.mixerLabel.Palette = this.fontPalette;
+			this.mixerLabel.LocalCustomPalette = this.fontPalette;
 			this.mixerLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.mixerLabel, "IDS_SETTINGS_OPTIONS_MIXER");
 			this.mixerLabel.Size = new System.Drawing.Size(37, 16);
@@ -473,7 +473,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.mixerComboBox.IntegralHeight = false;
 			this.mixerComboBox.Location = new System.Drawing.Point(40, 47);
 			this.mixerComboBox.Name = "mixerComboBox";
-			this.mixerComboBox.Palette = this.fontPalette;
+			this.mixerComboBox.LocalCustomPalette = this.fontPalette;
 			this.mixerComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.mixerComboBox, null);
 			this.mixerComboBox.Size = new System.Drawing.Size(160, 18);

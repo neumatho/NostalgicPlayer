@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			navigator.Owner = null;
 			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorInstrumentPage, navigatorSamplePage });
-			navigator.Palette = fontPalette;
+			navigator.LocalCustomPalette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			controlResource.SetResourceKey(navigator, null);
@@ -152,7 +152,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			monoFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			monoFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			monoFontPalette.ThemeName = "";
-			monoFontPalette.UseKryptonFileDialogs = true;
 			monoFontPalette.UseMonospaceOnGrid = true;
 			// 
 			// navigatorSamplePage
@@ -179,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			saveFormatLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			saveFormatLabel.Location = new System.Drawing.Point(123, 125);
 			saveFormatLabel.Name = "saveFormatLabel";
-			saveFormatLabel.Palette = fontPalette;
+			saveFormatLabel.LocalCustomPalette = fontPalette;
 			saveFormatLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(saveFormatLabel, "IDS_SAMPLE_INFO_SAMP_SAVEFORMAT");
 			saveFormatLabel.Size = new System.Drawing.Size(69, 16);
@@ -191,7 +190,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// saveFormatComboBox
 			// 
@@ -201,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			saveFormatComboBox.IntegralHeight = false;
 			saveFormatComboBox.Location = new System.Drawing.Point(198, 123);
 			saveFormatComboBox.Name = "saveFormatComboBox";
-			saveFormatComboBox.Palette = fontPalette;
+			saveFormatComboBox.LocalCustomPalette = fontPalette;
 			saveFormatComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(saveFormatComboBox, null);
 			saveFormatComboBox.Size = new System.Drawing.Size(160, 19);
@@ -214,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			saveButton.Enabled = false;
 			saveButton.Location = new System.Drawing.Point(362, 121);
 			saveButton.Name = "saveButton";
-			saveButton.Palette = fontPalette;
+			saveButton.LocalCustomPalette = fontPalette;
 			saveButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(saveButton, "IDS_SAMPLE_INFO_SAMP_SAVE");
 			saveButton.Size = new System.Drawing.Size(60, 21);
@@ -227,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			polyphonyLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			polyphonyLabel.Location = new System.Drawing.Point(75, 125);
 			polyphonyLabel.Name = "polyphonyLabel";
-			polyphonyLabel.Palette = fontPalette;
+			polyphonyLabel.LocalCustomPalette = fontPalette;
 			polyphonyLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(polyphonyLabel, null);
 			polyphonyLabel.Size = new System.Drawing.Size(16, 16);
@@ -283,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			octaveLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			octaveLabel.Location = new System.Drawing.Point(4, 125);
 			octaveLabel.Name = "octaveLabel";
-			octaveLabel.Palette = fontPalette;
+			octaveLabel.LocalCustomPalette = fontPalette;
 			octaveLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(octaveLabel, null);
 			octaveLabel.Size = new System.Drawing.Size(16, 16);
@@ -303,7 +301,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(464, 227);
 			Name = "SampleInfoWindowForm";
-			Palette = fontPalette;
+			LocalCustomPalette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(this, null);
 			FormClosed += SampleInfoWindowForm_FormClosed;

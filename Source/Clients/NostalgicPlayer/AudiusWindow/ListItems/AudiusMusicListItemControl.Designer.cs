@@ -87,7 +87,7 @@
 			artistLabel.AutoSize = false;
 			artistLabel.Location = new System.Drawing.Point(171, 36);
 			artistLabel.Name = "artistLabel";
-			artistLabel.Palette = fontPalette;
+			artistLabel.LocalCustomPalette = fontPalette;
 			artistLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			artistLabel.Size = new System.Drawing.Size(247, 20);
 			artistLabel.TabIndex = 2;
@@ -100,7 +100,7 @@
 			titleLabel.LabelStyle = Krypton.Toolkit.LabelStyle.BoldPanel;
 			titleLabel.Location = new System.Drawing.Point(171, 8);
 			titleLabel.Name = "titleLabel";
-			titleLabel.Palette = bigBoldFontPalette;
+			titleLabel.LocalCustomPalette = bigBoldFontPalette;
 			titleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			titleLabel.Size = new System.Drawing.Size(230, 19);
 			titleLabel.TabIndex = 1;
@@ -113,13 +113,12 @@
 			bigBoldFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigBoldFontPalette.FontStyle = System.Drawing.FontStyle.Bold;
 			bigBoldFontPalette.ThemeName = "";
-			bigBoldFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// positionLabel
 			// 
 			positionLabel.Location = new System.Drawing.Point(4, 63);
 			positionLabel.Name = "positionLabel";
-			positionLabel.Palette = bigFontPalette;
+			positionLabel.LocalCustomPalette = bigFontPalette;
 			positionLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			positionLabel.Size = new System.Drawing.Size(6, 2);
 			positionLabel.TabIndex = 0;
@@ -131,7 +130,6 @@
 			bigFontPalette.BaseFontSize = 10F;
 			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// itemPictureBox
 			// 
@@ -157,7 +155,7 @@
 			favoritesLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			favoritesLabel.Location = new System.Drawing.Point(277, 98);
 			favoritesLabel.Name = "favoritesLabel";
-			favoritesLabel.Palette = fontPalette;
+			favoritesLabel.LocalCustomPalette = fontPalette;
 			favoritesLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			favoritesLabel.Size = new System.Drawing.Size(6, 2);
 			favoritesLabel.TabIndex = 5;
@@ -168,14 +166,13 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// repostsLabel
 			// 
 			repostsLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			repostsLabel.Location = new System.Drawing.Point(187, 98);
 			repostsLabel.Name = "repostsLabel";
-			repostsLabel.Palette = fontPalette;
+			repostsLabel.LocalCustomPalette = fontPalette;
 			repostsLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			repostsLabel.Size = new System.Drawing.Size(6, 2);
 			repostsLabel.TabIndex = 4;
@@ -196,7 +193,7 @@
 			playsLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			playsLabel.Location = new System.Drawing.Point(449, 98);
 			playsLabel.Name = "playsLabel";
-			playsLabel.Palette = fontPalette;
+			playsLabel.LocalCustomPalette = fontPalette;
 			playsLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			playsLabel.Size = new System.Drawing.Size(6, 2);
 			playsLabel.TabIndex = 6;
@@ -207,7 +204,7 @@
 			durationLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
 			durationLabel.Location = new System.Drawing.Point(449, 8);
 			durationLabel.Name = "durationLabel";
-			durationLabel.Palette = fontPalette;
+			durationLabel.LocalCustomPalette = fontPalette;
 			durationLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			durationLabel.Size = new System.Drawing.Size(6, 2);
 			durationLabel.TabIndex = 3;
