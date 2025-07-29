@@ -1,0 +1,41 @@
+Position list:
+
+Each position contains 2 bytes.
+
+Command byte:
+  xx = Number of times to play track
+  40 = Loop list (no data byte)
+  4x = Set loop position to current position and count to x (no data byte)
+  fd = Start master volume fade
+  fe = End of list and stop playing
+  ff = End of list
+
+Data byte:
+  If command is fe or ff, it is a new start position
+  If command is fd, it is the fade speed
+  Else it is a track number
+
+
+Track:
+
+Each track position consist of at least 2 bytes.
+
+xx (yy) zz
+
+xx = ff = End of track
+     If bit 7 is set, yy is read and used. Else yy is skipped.
+     If bit 6 is set, envelope is resetted/stopped?
+     Else it is a speed counter / hold counter
+yy = If positive, set as instrument number. Negative means portamento.
+zz = Note
+
+
+Envelope:
+
+Each point consist of 3 bytes.
+
+xx yy zz
+
+xx = Ticks to wait. If >= 0xc0, set new position to xx & 3f
+yy = Volume increment value (can be negative)
+zz = Number of times to process the same point

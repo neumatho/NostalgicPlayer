@@ -44,6 +44,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
 | AC1D Packer | .ac1d / .ac1 | ProWizard | ModTracker |
+| Activision Pro | .avp | | Activision Pro |
 | AHX 1.x | .ahx / .thx | | HivelyTracker |
 | AHX 2.x | .ahx / .thx | | HivelyTracker |
 | AMOS Music Bank | .abk | | AMOS Music Bank |

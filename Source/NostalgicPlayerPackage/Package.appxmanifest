@@ -1333,6 +1333,14 @@
             <uap:DisplayName>Magnetic Fields Packer</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="avpfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-avp">.avp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Activision Pro</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
