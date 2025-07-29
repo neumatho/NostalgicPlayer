@@ -8,6 +8,7 @@ using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
@@ -23,9 +24,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		private readonly Manager agentManager;
 
 		private IStreamerAgent currentPlayer;
+		private DurationInfo durationInfo;
 
 		private IOutputAgent outputAgent;
 		private ResamplerStream soundStream;
+		private StreamingStream streamingStream;
 
 		/********************************************************************/
 		/// <summary>
@@ -81,10 +84,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				lock (currentPlayer)
 				{
 					// Initialize the player
-					initOk = currentPlayer.InitPlayer(loader.Stream, out errorMessage);
+					IMetadata metadata = loader as IMetadata;
+					streamingStream = loader.Stream;
+
+					initOk = currentPlayer.InitPlayer(streamingStream, metadata, out errorMessage);
 
 					if (initOk)
 					{
+						// Calculate the duration of the stream
+						CalculateDuration();
+
 						// Initialize module information
 						StaticModuleInformation = new ModuleInfoStatic(loader, currentPlayer);
 
@@ -147,6 +156,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					currentPlayer.CleanupSound();
 					currentPlayer.CleanupPlayer();
 
+					durationInfo = null;
 					currentPlayer = null;
 
 					// Clear player information
@@ -185,7 +195,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						return false;
 
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(0, null, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 
 				soundStream.Start();
@@ -269,6 +279,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			if (currentPlayer != null)
 			{
+				if (streamingStream.CanSeek)
+					streamingStream.Position = streamingStream.Position;    // This will force the stream to reset its position
+
 				soundStream.Resume();
 				outputAgent.Play();
 			}
@@ -339,7 +352,36 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
 		#endregion
 
-		#region IStreamingPlayer implementation
+		#region ISamplePlayer implementation
+		/********************************************************************/
+		/// <summary>
+		/// Will set a new song position
+		/// </summary>
+		/********************************************************************/
+		public void SetSongPosition(int position)
+		{
+			if (currentPlayer != null)
+			{
+				lock (currentPlayer)
+				{
+					if (currentPlayer is IDuration durationPlayer)
+						durationPlayer.SetSongPosition(durationInfo?.PositionInfo[position]);
+
+					ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
+					if ((moduleInfoChanges != null) && (ModuleInfoChanged != null))
+					{
+						foreach (ModuleInfoChanged moduleInfoChanged in moduleInfoChanges)
+							ModuleInfoChanged(this, new ModuleInfoChangedEventArgs(moduleInfoChanged.Line, moduleInfoChanged.Value));
+					}
+				}
+
+				soundStream.SongPosition = position;
+				PlayingModuleInformation.SongPosition = position;
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Event called when the position is changed
@@ -418,6 +460,28 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Just call the next event handler
 				if (ModuleInfoChanged != null)
 					ModuleInfoChanged(sender, e);
+			}
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the duration of all sub-songs
+		/// </summary>
+		/********************************************************************/
+		private void CalculateDuration()
+		{
+			if (currentPlayer is IDuration durationPlayer)
+			{
+				DurationInfo[] allSongsInfo = durationPlayer.CalculateDuration();
+				if ((allSongsInfo != null) && (allSongsInfo.Length > 0))
+				{
+					durationInfo = allSongsInfo[0];
+
+					// Initialize the module information
+					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, null);
+				}
 			}
 		}
 		#endregion

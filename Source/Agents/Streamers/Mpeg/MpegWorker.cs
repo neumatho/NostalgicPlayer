@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibMpg123;
@@ -16,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class MpegWorker : StreamerAgentBase
+	internal class MpegWorker : StreamerWithDurationAgentBase
 	{
 		private int oldBitRate;
 
@@ -43,9 +44,9 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer(StreamingStream streamingStream, out string errorMessage)
+		public override bool InitPlayer(StreamingStream streamingStream, IMetadata metadata, out string errorMessage)
 		{
-			if (!base.InitPlayer(streamingStream, out errorMessage))
+			if (!base.InitPlayer(streamingStream, metadata, out errorMessage))
 				return false;
 
 			// Get a Mpg123 handle, which is used on all other calls
@@ -343,6 +344,19 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 			}
 
 			return true;
+		}
+		#endregion
+
+		#region Duration calculation
+		/********************************************************************/
+		/// <summary>
+		/// Set the position in the playing sample to the time given
+		/// </summary>
+		/********************************************************************/
+		protected override void SetPosition(TimeSpan time)
+		{
+			long newPos = mpg123Handle.Mpg123_Timeframe64(time.TotalSeconds) * frameInfo.FrameSize;
+			stream.Position = newPos;
 		}
 		#endregion
 

@@ -25,7 +25,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 	/// </summary>
 	public partial class FavoriteSongSystemForm : WindowFormBase
 	{
-		private MainWindowForm mainWindow;
 		private ModuleDatabase database;
 
 		private readonly FavoriteSongSystemWindowSettings settings;
@@ -35,12 +34,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FavoriteSongSystemForm(MainWindowForm mainWindow, ModuleDatabase database, OptionSettings optionSettings)
+		public FavoriteSongSystemForm(IMainWindowApi mainWindow, ModuleDatabase database, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 
 			// Remember the arguments
-			this.mainWindow = mainWindow;
 			this.database = database;
 
 			if (!DesignMode)
@@ -224,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		/********************************************************************/
 		private void FavoriteSongSystemWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (mainWindow != null)		// Main window is null, if the window has already been closed (because Owner has been set)
+			if (mainWindowApi != null)		// Main window is null, if the window has already been closed (because Owner has been set)
 			{
 				// Save the settings
 				settings.Column1Width = favoriteDataGridView.Columns[0].Width;
@@ -238,7 +236,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 
 				// Cleanup
 				database = null;
-				mainWindow = null;
+				mainWindowApi = null;
 			}
 		}
 
@@ -273,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		private void FavoriteDataGridView_DoubleClick(object sender, EventArgs e)
 		{
 			if (favoriteDataGridView.SelectedRows.Count > 0)
-				mainWindow.AddFilesToList(new[] { favoriteDataGridView.SelectedRows[0].Tag as string });
+				mainWindowApi.AddFilesToModuleList(new[] { favoriteDataGridView.SelectedRows[0].Tag as string });
 		}
 
 
@@ -330,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 					for (int i = 0; i < count; i++)
 						files[i] = selectedRows[i].Tag as string;
 
-					mainWindow.AddFilesToList(files);
+					mainWindowApi.AddFilesToModuleList(files);
 				}
 			}
 		}

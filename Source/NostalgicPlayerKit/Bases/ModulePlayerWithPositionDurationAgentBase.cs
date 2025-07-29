@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	/// Derive from this class in your player, if you want to find sub-songs and calculate
 	/// their durations based on the position list
 	/// </summary>
-	public abstract class ModulePlayerWithPositionDurationAgentBase : ModulePlayerAgentBase, IModuleDurationPlayer
+	public abstract class ModulePlayerWithPositionDurationAgentBase : ModulePlayerAgentBase, IModuleDuration
 	{
 		private int[] originalPositionSubSong;
 		private DurationInfo[] allDurationInfo;
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		private DurationInfo currentDurationInfo;
 		private TimeSpan playerRestartTime;
 
-		#region IModuleDurationPlayer implementation
+		#region IModuleDuration implementation
 		/********************************************************************/
 		/// <summary>
 		/// Calculate the duration for all sub-songs
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 								throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
 
 							// Time to create a new snapshot?
-							if ((currentTotalTime - lastSnapshotTime) >= IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
+							if ((currentTotalTime - lastSnapshotTime) >= IDuration.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
 							{
 								positionInfoList.Add(new PositionInfoForPositionDuration(new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond)), PlayingFrequency, AmigaFilter, originalPositionSubSong, CreateSnapshot()));
 								lastSnapshotTime = currentTotalTime;
@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				if (restartPosition < currentDurationInfo.PlayerPositionTime.Length)
 				{
 					playerRestartTime = currentDurationInfo.PlayerPositionTime[restartPosition];
-					InitializeWorkingPositionSubSongArray(GetPositionInfo((int)(playerRestartTime.TotalSeconds / IDurationPlayer.NumberOfSecondsBetweenEachSnapshot)));
+					InitializeWorkingPositionSubSongArray(GetPositionInfo((int)(playerRestartTime.TotalSeconds / IDuration.NumberOfSecondsBetweenEachSnapshot)));
 				}
 				else
 					playerRestartTime = TimeSpan.Zero;

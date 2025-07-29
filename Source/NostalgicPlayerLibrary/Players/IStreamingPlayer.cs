@@ -3,18 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
 	/// <summary>
 	/// Interface for players that streams
 	/// </summary>
-	public interface IStreamingPlayer : IPlayer
+	public interface IStreamingPlayer : ISamplePlayer
 	{
-		/// <summary>
-		/// Event called when the position is changed
-		/// </summary>
-		event EventHandler PositionChanged;
 	}
 }

@@ -208,6 +208,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Streamers", "Streamers", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivisionPro", "Agents\Players\ActivisionPro\ActivisionPro.csproj", "{9C764461-0340-4F41-8DAB-AD5FE28889C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audius", "Audius\Audius.csproj", "{4BA52648-90AB-4590-A489-91C79620885C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1637,6 +1639,22 @@ Global
 		{9C764461-0340-4F41-8DAB-AD5FE28889C5}.Release|x64.Build.0 = Release|Any CPU
 		{9C764461-0340-4F41-8DAB-AD5FE28889C5}.Release|x86.ActiveCfg = Release|Any CPU
 		{9C764461-0340-4F41-8DAB-AD5FE28889C5}.Release|x86.Build.0 = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|x64.Build.0 = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Debug|x86.Build.0 = Debug|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|ARM64.Build.0 = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|x64.ActiveCfg = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|x64.Build.0 = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|x86.ActiveCfg = Release|Any CPU
+		{4BA52648-90AB-4590-A489-91C79620885C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

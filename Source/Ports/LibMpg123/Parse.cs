@@ -94,7 +94,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 		};
 
-		private static readonly c_long[] freqs = { 44100, 48000, 32000, 22050, 24000, 16000, 11025, 12000, 8000 };
+		private static readonly c_long[] freqs = [ 44100, 48000, 32000, 22050, 24000, 16000, 11025, 12000, 8000 ];
+		private static readonly c_int[] bs = [ 0, 384, 1152, 1152 ];
 
 		private readonly LibMpg123 lib;
 
@@ -466,6 +467,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		public c_double Int123_Compute_Bpf(Mpg123_Handle fr)
 		{
 			return (fr.Hdr.FrameSize > 0) ? fr.Hdr.FrameSize + 4.0 : 1.0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_double Mpg123_Tpf(Mpg123_Handle fr)
+		{
+			if ((fr == null) || (fr.FirstHead == 0))
+				return (c_double)(Mpg123_Errors.Err);
+
+			c_double tpf = bs[fr.Hdr.Lay];
+			tpf /= freqs[fr.Hdr.Sampling_Frequency] << (fr.Hdr.Lsf);
+
+			return tpf;
 		}
 
 		#region Private methods

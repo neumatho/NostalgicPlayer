@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			public AgentInfo AgentInfo;
 		}
 
-		private MainWindowForm mainWin;
+		private IMainWindowApi mainWindowApi;
 
 		/// <summary></summary>
 		protected Manager manager;
@@ -137,9 +137,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, ISettings userSettings, ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
+		public void InitSettings(Manager agentManager, ModuleHandler modHandler, IMainWindowApi mainWindow, ISettings userSettings, ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
 		{
-			mainWin = mainWindow;
+			mainWindowApi = mainWindow;
 
 			manager = agentManager;
 
@@ -386,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			AgentInfo agentInfo = ((AgentListInfo)agentsDataGridView.SelectedRows[0].Tag)?.AgentInfo;
 			if (agentInfo != null)
-				mainWin.OpenAgentSettingsWindow(agentInfo);
+				mainWindowApi.OpenAgentSettingsWindow(agentInfo);
 		}
 
 
@@ -400,7 +400,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			AgentInfo agentInfo = ((AgentListInfo)agentsDataGridView.SelectedRows[0].Tag)?.AgentInfo;
 			if (agentInfo != null)
-				mainWin.OpenAgentDisplayWindow(agentInfo);
+				mainWindowApi.OpenAgentDisplayWindow(agentInfo);
 		}
 		#endregion
 
@@ -542,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 				if (!agentInfo.Enabled)
 				{
 					// Add any menu items
-					mainWin.AddAgentToMenu(agentInfo);
+					mainWindowApi.AddAgentToMenu(agentInfo);
 
 					// And enable the agent
 					agentInfo.Enabled = true;
@@ -568,18 +568,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// If the agent is in use, free the playing module
 			if ((inUseAgents != null) && inUseAgents.Contains(agentListInfo.Id))
 			{
-				mainWin.StopModule();
+				mainWindowApi.StopModule();
 				CloseAgent(moduleHandler);
 			}
 
 			foreach (AgentInfo agentInfo in GetAgentCollection(agentListInfo))
 			{
 				// Close any opened windows
-				mainWin.CloseAgentSettingsWindow(agentInfo);
-				mainWin.CloseAgentDisplayWindow(agentInfo);
+				mainWindowApi.CloseAgentSettingsWindow(agentInfo);
+				mainWindowApi.CloseAgentDisplayWindow(agentInfo);
 
 				// Remove any menu items
-				mainWin.RemoveAgentFromMenu(agentInfo);
+				mainWindowApi.RemoveAgentFromMenu(agentInfo);
 
 				// Change the enable status
 				agentInfo.Enabled = false;

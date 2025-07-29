@@ -118,6 +118,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Open Audius window
+		/// </summary>
+		/********************************************************************/
+		public bool OpenAudiusWindow
+		{
+			get => settings.GetBoolEntry("Window", "AudiusOpenWindow");
+
+			set => settings.SetBoolEntry("Window", "AudiusOpenWindow", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Open agent windows
 		/// </summary>
 		/********************************************************************/

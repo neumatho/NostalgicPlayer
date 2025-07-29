@@ -3,16 +3,17 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Interfaces
+using System.Text.Json.Serialization;
+
+namespace Polycode.NostalgicPlayer.Audius.Models.Tracks
 {
 	/// <summary>
-	/// Add some extra methods for a module duration player
+	/// 
 	/// </summary>
-	public interface IModuleDurationPlayer : IDurationPlayer
+	public class TrackElementModel
 	{
-		/// <summary>
-		/// Initialize player to play the given sub-song
-		/// </summary>
-		bool SetSubSong(int subSong, out string errorMessage);
+		/// <summary></summary>
+		[JsonPropertyName("parent_track_id")]
+		public string ParentTrackId { get; set; }
 	}
 }

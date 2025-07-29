@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.GuiKit.Components;
+using Polycode.NostalgicPlayer.GuiKit.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -1091,7 +1092,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (!item.HaveTime)
 				return 0;
 
-			string moduleTime = item.Duration.ToString((int)item.Duration.TotalHours > 0 ? Resources.IDS_TIMEFORMAT : Resources.IDS_TIMEFORMAT_SMALL);
+			string moduleTime = item.Duration.ToFormattedString();
 
 			Size size = TextRenderer.MeasureText(g, moduleTime, font);
 			TextRenderer.DrawText(g, moduleTime, font, new Point(Width - size.Width, y + 1), textColor, TextFormatFlags.NoPrefix);

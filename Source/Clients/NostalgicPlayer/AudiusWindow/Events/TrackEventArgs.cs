@@ -3,61 +3,51 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using System;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events
 {
+	/// <summary></summary>
+	public delegate void TrackEventHandler(object sender, TrackEventArgs e);
+
 	/// <summary>
-	/// This class holds a list item pointing to an URL
+	/// Event class holding needed information when playing a track
 	/// </summary>
-	public class UrlListItem : IStreamListItem
+	public class TrackEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public UrlListItem(string displayName, string url)
+		public TrackEventArgs(AudiusMusicListItem item)
 		{
-			DisplayName = displayName;
-			Source = url;
+			Items = [ item ];
 		}
 
-		#region IModuleListItem implementation
+
+
 		/********************************************************************/
 		/// <summary>
-		/// Return the name which is shown in the list
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName
+		public TrackEventArgs(AudiusMusicListItem[] items)
+		{
+			Items = items;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holding the track item
+		/// </summary>
+		/********************************************************************/
+		public AudiusMusicListItem[] Items
 		{
 			get;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the full path to the file
-		/// </summary>
-		/********************************************************************/
-		public string Source
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Create the loader to use to load this item
-		/// </summary>
-		/********************************************************************/
-		public LoaderBase CreateLoader(Manager agentManager)
-		{
-			return new StreamLoader(agentManager);
-		}
-		#endregion
 	}
 }

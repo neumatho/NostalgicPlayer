@@ -296,7 +296,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 							currentPlayer.HasEndReached = false;
 							hasEndReached = true;
 
-							if (currentPlayer is IDurationPlayer durationPlayer)
+							if (currentPlayer is IDuration durationPlayer)
 							{
 								double restartTime = durationPlayer.GetRestartTime().TotalMilliseconds;
 								RestartPosition(restartTime);

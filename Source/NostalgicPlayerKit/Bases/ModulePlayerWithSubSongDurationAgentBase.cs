@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	/// sub-songs durations. This can also be used, if you only have one sub-song
 	/// in the format, but uses different position lists for each track
 	/// </summary>
-	public abstract class ModulePlayerWithSubSongDurationAgentBase : ModulePlayerAgentBase, IModuleDurationPlayer
+	public abstract class ModulePlayerWithSubSongDurationAgentBase : ModulePlayerAgentBase, IModuleDuration
 	{
 		private DurationInfo[] allDurationInfo;
 
@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		private TimeSpan playerRestartTime;
 		private bool[] channelsDone;
 
-		#region IModuleDurationPlayer implementation
+		#region IModuleDuration implementation
 		/********************************************************************/
 		/// <summary>
 		/// Calculate the duration for all sub-songs
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 								throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
 
 							// Time to create a new snapshot?
-							if ((currentTotalTime - lastSnapshotTime) >= IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
+							if ((currentTotalTime - lastSnapshotTime) >= IDuration.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
 							{
 								positionInfoList.Add(new PositionInfo(new TimeSpan((long)(Math.Round(currentTotalTime, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond)), PlayingFrequency, AmigaFilter, CreateSnapshot()));
 								lastSnapshotTime = currentTotalTime;

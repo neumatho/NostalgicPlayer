@@ -13,6 +13,7 @@ using Krypton.Toolkit;
 using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -28,6 +29,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
+using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -45,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	/// <summary>
 	/// This is the main window
 	/// </summary>
-	public partial class MainWindowForm : WindowFormBase, IExtraChannels
+	public partial class MainWindowForm : WindowFormBase, IMainWindowApi, IExtraChannels
 	{
 		private class AgentEntry
 		{
@@ -119,6 +121,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private ModuleInfoWindowForm moduleInfoWindow = null;
 		private FavoriteSongSystemForm favoriteSongSystemWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
+		private AudiusWindowForm audiusWindow = null;
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
@@ -197,105 +200,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				AddFilesFromStartupHandler(arguments);
 		}
 
-
-
+		#region WindowFormBase overrides
 		/********************************************************************/
 		/// <summary>
-		/// Add a single agent to the menu if needed
+		/// Return the URL to the help page
 		/// </summary>
 		/********************************************************************/
-		public void AddAgentToMenu(AgentInfo agentInfo)
-		{
-			if (agentInfo.HasSettings)
-			{
-				// Create the menu item
-				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
-				newMenuItem.Tag = agentInfo;
-				newMenuItem.Click += Menu_Window_AgentSettings_Click;
+		protected override string HelpUrl => "howtouse.html";
+		#endregion
 
-				// Find the right place in the menu to insert the agent
-				int insertPos = 0;
-
-				foreach (ToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
-				{
-					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
-						break;
-
-					insertPos++;
-				}
-
-				agentSettingsMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
-			}
-
-			if (agentInfo.HasDisplay)
-			{
-				// Create the menu item
-				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
-				newMenuItem.Tag = agentInfo;
-				newMenuItem.Click += Menu_Window_AgentDisplay_Click;
-
-				// Find the right place in the menu to insert the agent
-				int insertPos = 0;
-
-				foreach (ToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
-				{
-					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
-						break;
-
-					insertPos++;
-				}
-
-				agentShowMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
-			}
-
-			// Hide/show different menu items
-			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
-			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
-			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
-		}
+		#region IMainWindowApi implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return the form of the main window
+		/// </summary>
+		/********************************************************************/
+		public Form Form => this;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Remove a single agent from the menu if needed
+		/// Return the extra channel implementation
 		/// </summary>
 		/********************************************************************/
-		public void RemoveAgentFromMenu(AgentInfo agentInfo)
-		{
-			if (agentInfo.HasSettings)
-			{
-				// Find the agent menu
-				for (int i = agentSettingsMenuItem.DropDownItems.Count - 1; i >= 0; i--)
-				{
-					if (((AgentInfo)agentSettingsMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
-					{
-						// Found it, so remove it
-						agentSettingsMenuItem.DropDownItems.RemoveAt(i);
-						break;
-					}
-				}
-			}
-
-			if (agentInfo.HasDisplay)
-			{
-				// Find the agent menu
-				for (int i = agentShowMenuItem.DropDownItems.Count - 1; i >= 0; i--)
-				{
-					if (((AgentInfo)agentShowMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
-					{
-						// Found it, so remove it
-						agentShowMenuItem.DropDownItems.RemoveAt(i);
-						break;
-					}
-				}
-			}
-
-			// Hide/show different menu items
-			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
-			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
-			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
-		}
+		public IExtraChannels ExtraChannelsImplementation => this;
 
 
 
@@ -322,15 +251,46 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Will show a question to the user
+		/// </summary>
+		/********************************************************************/
+		public bool ShowQuestion(string question)
+		{
+			using (CustomMessageBox dialog = new CustomMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
+			{
+				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
+				dialog.AddButton(Resources.IDS_BUT_NO, 'n');
+				dialog.ShowDialog(this);
+
+				return dialog.GetButtonResult('n') == 'y';
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will show an error message to the user
 		/// </summary>
 		/********************************************************************/
 		public void ShowSimpleErrorMessage(string message)
 		{
+			ShowSimpleErrorMessage(this, message);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show an error message to the user
+		/// </summary>
+		/********************************************************************/
+		public void ShowSimpleErrorMessage(IWin32Window owner, string message)
+		{
 			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
 				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-				dialog.ShowDialog(this);
+				dialog.ShowDialog(owner);
 			}
 		}
 
@@ -476,76 +436,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will show a question to the user
+		/// Will add all the given files to the module list
 		/// </summary>
 		/********************************************************************/
-		public bool ShowQuestion(string question)
+		public void AddFilesToModuleList(string[] files, int startIndex = -1, bool checkForList = false)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
-			{
-				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
-				dialog.AddButton(Resources.IDS_BUT_NO, 'n');
-				dialog.ShowDialog(this);
-
-				return dialog.GetButtonResult('n') == 'y';
-			}
+			AddFilesToList(files, startIndex, checkForList);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return some information about the current playing file
+		/// Will add the given module list items to the module list
 		/// </summary>
 		/********************************************************************/
-		public MultiFileInfo GetFileInfo()
+		public void AddItemsToModuleList(ModuleListItem[] items, bool clearAndPlay)
 		{
-			return playItem == null ? null : ListItemConverter.Convert(playItem);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will stop the current playing module and free it
-		/// </summary>
-		/********************************************************************/
-		public void StopModule()
-		{
-			StopAndFreeModule();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Enable/disable user interface settings
-		/// </summary>
-		/********************************************************************/
-		public void EnableUserInterfaceSettings()
-		{
-			using (new SleepCursor())
-			{
-				toolTip.Active = optionSettings.ToolTips;
-
-				SetTitle();
-				moduleListControl.EnableListNumber(optionSettings.ShowListNumber);
-				moduleListControl.EnableFullPath(optionSettings.ShowFullPath);
-
-				if (optionSettings.UseDatabase)
-				{
-					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES);
-					favoritesButton.Enabled = true;
-				}
-				else
-				{
-					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES_DISABLED);
-					favoritesButton.Enabled = false;
-
-					if (IsFavoriteSongSystemWindowOpen())
-						favoriteSongSystemWindow.Close();
-				}
-			}
+			AddItemsToList(items, clearAndPlay);
 		}
 
 
@@ -555,7 +463,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will replace the given item with the new list of items
 		/// </summary>
 		/********************************************************************/
-		public void ReplaceItem(ModuleListItem listItem, List<ModuleListItem> newItems)
+		public void ReplaceItemInModuleList(ModuleListItem listItem, List<ModuleListItem> newItems)
 		{
 			if ((listItem != null) && (newItems.Count > 0))
 			{
@@ -644,16 +552,132 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			UpdateTimes();
 		}
 
-		#region WindowFormBase overrides
+
+
 		/********************************************************************/
 		/// <summary>
-		/// Return the URL to the help page
+		/// Return some information about the current playing file
 		/// </summary>
 		/********************************************************************/
-		protected override string HelpUrl => "howtouse.html";
-		#endregion
+		public MultiFileInfo GetFileInfo()
+		{
+			return playItem == null ? null : ListItemConverter.Convert(playItem);
+		}
 
-		#region Agent window handling
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will stop the current playing module and free it
+		/// </summary>
+		/********************************************************************/
+		public void StopModule()
+		{
+			StopAndFreeModule();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add a single agent to the menu if needed
+		/// </summary>
+		/********************************************************************/
+		public void AddAgentToMenu(AgentInfo agentInfo)
+		{
+			if (agentInfo.HasSettings)
+			{
+				// Create the menu item
+				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				newMenuItem.Tag = agentInfo;
+				newMenuItem.Click += Menu_Window_AgentSettings_Click;
+
+				// Find the right place in the menu to insert the agent
+				int insertPos = 0;
+
+				foreach (ToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
+				{
+					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
+						break;
+
+					insertPos++;
+				}
+
+				agentSettingsMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
+			}
+
+			if (agentInfo.HasDisplay)
+			{
+				// Create the menu item
+				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				newMenuItem.Tag = agentInfo;
+				newMenuItem.Click += Menu_Window_AgentDisplay_Click;
+
+				// Find the right place in the menu to insert the agent
+				int insertPos = 0;
+
+				foreach (ToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
+				{
+					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
+						break;
+
+					insertPos++;
+				}
+
+				agentShowMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
+			}
+
+			// Hide/show different menu items
+			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
+			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
+			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Remove a single agent from the menu if needed
+		/// </summary>
+		/********************************************************************/
+		public void RemoveAgentFromMenu(AgentInfo agentInfo)
+		{
+			if (agentInfo.HasSettings)
+			{
+				// Find the agent menu
+				for (int i = agentSettingsMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+				{
+					if (((AgentInfo)agentSettingsMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
+					{
+						// Found it, so remove it
+						agentSettingsMenuItem.DropDownItems.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			if (agentInfo.HasDisplay)
+			{
+				// Find the agent menu
+				for (int i = agentShowMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+				{
+					if (((AgentInfo)agentShowMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
+					{
+						// Found it, so remove it
+						agentShowMenuItem.DropDownItems.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			// Hide/show different menu items
+			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
+			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
+			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will open/activate a settings window for the given agent
@@ -754,15 +778,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Get all opened visuals
+		/// Enable/disable user interface settings
 		/// </summary>
 		/********************************************************************/
-		public IEnumerable<AgentDisplayWindowForm> GetAllOpenedVisuals()
+		public void EnableUserInterfaceSettings()
 		{
-			lock (openAgentDisplays)
+			using (new SleepCursor())
 			{
-				foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
-					yield return agentDisplayWindow;
+				toolTip.Active = optionSettings.ToolTips;
+
+				SetTitle();
+				moduleListControl.EnableListNumber(optionSettings.ShowListNumber);
+				moduleListControl.EnableFullPath(optionSettings.ShowFullPath);
+
+				if (optionSettings.UseDatabase)
+				{
+					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES);
+					favoritesButton.Enabled = true;
+				}
+				else
+				{
+					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES_DISABLED);
+					favoritesButton.Enabled = false;
+
+					if (IsFavoriteSongSystemWindowOpen())
+						favoriteSongSystemWindow.Close();
+				}
 			}
 		}
 		#endregion
@@ -1373,33 +1414,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					using (new SleepCursor())
 					{
-						moduleListControl.BeginUpdate();
-
-						try
-						{
-							if (result == DialogResult.OK)
-							{
-								// Free any playing module
-								StopAndFreeModule();
-
-								moduleListControl.Items.Clear();
-							}
-
-							moduleListControl.Items.Add(new ModuleListItem(new UrlListItem(dialog.GetName(), dialog.GetUrl())));
-
-							if (result == DialogResult.OK)
-							{
-								// Load the module
-								LoadAndPlayModule(0);
-							}
-						}
-						finally
-						{
-							moduleListControl.EndUpdate();
-						}
-
-						// Update the controls
-						UpdateControls();
+						ModuleListItem listItem = new ModuleListItem(new UrlModuleListItem(dialog.GetName(), dialog.GetUrl()));
+						AddItemsToList([ listItem ], result == DialogResult.OK);
 					}
 				}
 			}
@@ -1421,6 +1437,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, this, optionSettings, userSettings);
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected the Audius menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_Audius_Click(object sender, EventArgs e)
+		{
+			if (IsAudiusWindowOpen())
+			{
+				if (audiusWindow.WindowState == FormWindowState.Minimized)
+					audiusWindow.WindowState = FormWindowState.Normal;
+
+				audiusWindow.Activate();
+			}
+			else
+			{
+				audiusWindow = new AudiusWindowForm(this, optionSettings);
+				audiusWindow.Disposed += (o, args) => { audiusWindow = null; };
+				audiusWindow.Show();
 			}
 		}
 
@@ -1593,11 +1633,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				if (IsModuleInfoWindowOpen())
 					moduleInfoWindow.UpdateWindow(e.Line, e.Value);
-			}));
+			});
 		}
 
 
@@ -1609,7 +1649,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_PlayerFailed(object sender, PlayerFailedEventArgs e)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				ModuleListItem listItem = playItem;
 				string playerName = moduleHandler.StaticModuleInformation.PlayerAgentInfo.AgentName;
@@ -1618,7 +1658,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				moduleHandler.CloseOutputAgent();
 
 				ShowErrorMessage(string.Format(Resources.IDS_ERR_PLAYER_FAILED, playerName, e.ErrorMessage), listItem);
-			}));
+			});
 		}
 		#endregion
 
@@ -2826,7 +2866,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void AddFilesFromStartupHandler(string[] arguments)
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				// Because Explorer calls the application for each file selected
 				// when multiple files are opened, we have a timeout for 1 second
@@ -2857,7 +2897,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 
 				lastAddedTimeFromExplorer = DateTime.Now.Ticks;
-			}));
+			});
 		}
 
 
@@ -3073,6 +3113,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_SETTINGS);
 			menuItem.Click += Menu_Window_Settings_Click;
+			windowMenuItem.DropDownItems.Add(menuItem);
+
+			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
+
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AUDIUS);
+			menuItem.Click += Menu_Window_Audius_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
 			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
@@ -3300,6 +3346,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				sampleInfoWindow.Show();
 			}
 
+			if (mainWindowSettings.OpenAudiusWindow)
+			{
+				audiusWindow = new AudiusWindowForm(this, optionSettings);
+				audiusWindow.Show();
+			}
+
 			foreach (Guid typeId in mainWindowSettings.OpenAgentWindows)
 			{
 				AgentInfo agentInfo = agentManager.GetAllAgents().FirstOrDefault(a => a.TypeId == typeId);
@@ -3411,6 +3463,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			sampleInfoWindow = null;
 			mainWindowSettings.OpenSampleInformationWindow = openAgain;
+
+			// Close the Audius window
+			openAgain = IsAudiusWindowOpen();
+			if (openAgain)
+				audiusWindow.Close();
+
+			audiusWindow = null;
+			mainWindowSettings.OpenAudiusWindow = openAgain;
 		}
 
 
@@ -3433,6 +3493,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsSampleInfoWindowOpen())
 				yield return sampleInfoWindow;
+
+			if (IsAudiusWindowOpen())
+				yield return audiusWindow;
 
 			if (IsSettingsWindowOpen())
 				yield return settingsWindow;
@@ -3544,6 +3607,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool IsSampleInfoWindowOpen()
 		{
 			return (sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the Audius window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsAudiusWindowOpen()
+		{
+			return (audiusWindow != null) && !audiusWindow.IsDisposed;
 		}
 
 
@@ -3802,23 +3877,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				selectedTime += listItem.Duration;
 			}
 
-			// Build the selected time string
-			string selStr, listStr;
-
-			if ((int)selectedTime.TotalDays > 0)
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)selectedTime.TotalHours > 0)
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT);
-			else
-				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
-
-			// And build the list time string
-			if ((int)listTime.TotalDays > 0)
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)listTime.TotalHours > 0)
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT);
-			else
-				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
+			// Build the selected time string and list time string
+			string selStr = selectedTime.ToFormattedString();
+			string listStr = listTime.ToFormattedString();
 
 			// And update the label control
 			timeLabel.Text = $"{selStr}/{listStr}";
@@ -3940,7 +4001,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Format the time string
 				if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
-					timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToString(Resources.IDS_TIMEFORMAT));
+					timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToFormattedString(true));
 				else
 				{
 					// Calculate the remaining time
@@ -3951,7 +4012,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						tempSpan = new TimeSpan(0);
 
 					// Format the string
-					timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToString(Resources.IDS_TIMEFORMAT));
+					timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToFormattedString(true));
 				}
 			}
 			else
@@ -4287,7 +4348,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Update database if enabled
 			if (optionSettings.UseDatabase)
 			{
-				if (listItem.ListItem is IStreamListItem)
+				if (listItem.ListItem is IStreamModuleListItem)
 					return;
 
 				ModuleDatabaseInfo moduleDatabaseInfo = database.RetrieveInformation(listItem.ListItem.Source);
@@ -4548,18 +4609,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (isArchive)
 						{
 							foreach (string archiveFileName in detector.GetEntries(fileName))
-								list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+								list.Add(new ModuleListItem(new ArchiveFileModuleListItem(archiveFileName)));
 						}
 						else
 						{
 							// Just a plain file
-							list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+							list.Add(new ModuleListItem(new SingleFileModuleListItem(fileName)));
 						}
 					}
 					else
 					{
 						// Just a plain file
-						list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+						list.Add(new ModuleListItem(new SingleFileModuleListItem(fileName)));
 					}
 				}
 			}
@@ -4852,7 +4913,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will add all the given files to the module list
 		/// </summary>
 		/********************************************************************/
-		public void AddFilesToList(string[] files, int startIndex = -1, bool checkForList = false)
+		private void AddFilesToList(string[] files, int startIndex = -1, bool checkForList = false)
 		{
 			List<ModuleListItem> itemList = new List<ModuleListItem>();
 
@@ -4904,6 +4965,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Will add the given module list items to the module list
+		/// </summary>
+		/********************************************************************/
+		private void AddItemsToList(ModuleListItem[] items, bool clearAndPlay)
+		{
+			moduleListControl.BeginUpdate();
+
+			try
+			{
+				if (clearAndPlay)
+				{
+					// Free any playing module
+					StopAndFreeModule();
+
+					EmptyList();
+				}
+
+				moduleListControl.Items.AddRange(items);
+
+				// Add time from each item
+				listTime += new TimeSpan(items.Where(x => x.HaveTime).Select(x => x.Duration).Sum(x => x.Ticks));
+
+				if (clearAndPlay)
+				{
+					// Load the module
+					LoadAndPlayModule(0);
+				}
+			}
+			finally
+			{
+				moduleListControl.EndUpdate();
+			}
+
+			// Update the controls
+			UpdateControls();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will remove all the items from the module list
 		/// </summary>
 		/********************************************************************/
@@ -4916,8 +5018,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			fileScanner.ClearQueue();
 
 			// Clear the time variables
-			listTime = new TimeSpan(0);
-			selectedTime = new TimeSpan(0);
+			listTime = TimeSpan.Zero;
+			selectedTime = TimeSpan.Zero;
 
 			// And update the window
 			UpdateControls();

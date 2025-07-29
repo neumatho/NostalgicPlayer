@@ -66,6 +66,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// 
 			navigator.AllowPageReorder = false;
 			navigator.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			navigator.Button.ButtonDisplayLogic = Krypton.Navigator.ButtonDisplayLogic.Context;
+			navigator.Button.CloseButtonAction = Krypton.Navigator.CloseButtonAction.RemovePageAndDispose;
+			navigator.Button.CloseButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
+			navigator.Button.ContextButtonAction = Krypton.Navigator.ContextButtonAction.SelectPage;
+			navigator.Button.ContextButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
+			navigator.Button.ContextMenuMapImage = Krypton.Navigator.MapKryptonPageImage.Small;
+			navigator.Button.ContextMenuMapText = Krypton.Navigator.MapKryptonPageText.TextTitle;
+			navigator.Button.NextButtonAction = Krypton.Navigator.DirectionButtonAction.ModeAppropriateAction;
+			navigator.Button.NextButtonDisplay = Krypton.Navigator.ButtonDisplay.Logic;
+			navigator.Button.PreviousButtonAction = Krypton.Navigator.DirectionButtonAction.ModeAppropriateAction;
+			navigator.Button.PreviousButtonDisplay = Krypton.Navigator.ButtonDisplay.Logic;
 			navigator.ControlKryptonFormFeatures = false;
 			navigator.Location = new System.Drawing.Point(8, 8);
 			navigator.Name = "navigator";
@@ -75,6 +86,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorOptionsPage, navigatorModulesPage, navigatorPathsPage, navigatorMixerPage, navigatorAgentsPage });
 			navigator.Palette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			controlResource.SetResourceKey(navigator, null);
 			navigator.SelectedIndex = 0;
 			navigator.Size = new System.Drawing.Size(610, 383);

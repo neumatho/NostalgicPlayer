@@ -23,7 +23,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 	{
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
-		private MainWindowForm mainWindow;
 
 		private readonly ISettings userSettings;
 		private readonly SettingsWindowSettings windowSettings;
@@ -39,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings, ISettings userSettings)
+		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optionSettings, ISettings userSettings)
 		{
 			InitializeComponent();
 
@@ -52,7 +51,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// Remember the arguments
 			this.agentManager = agentManager;
 			this.moduleHandler = moduleHandler;
-			this.mainWindow = mainWindow;
 			this.userSettings = userSettings;
 
 			if (!DesignMode)
@@ -87,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/********************************************************************/
 		public void RefreshWindow()
 		{
-			if (mainWindow != null)
+			if (mainWindowApi != null)
 			{
 				optionsPageControl.RefreshWindow();
 				modulesPageControl.RefreshWindow();
@@ -142,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/********************************************************************/
 		private void SettingsWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			if (mainWindow != null)
+			if (mainWindowApi != null)
 			{
 				// Cancel the settings
 				CancelSettings();
@@ -159,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 				// Cleanup
 				agentManager = null;
 				moduleHandler = null;
-				mainWindow = null;
+				mainWindowApi = null;
 			}
 		}
 		#endregion
@@ -215,11 +213,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private void InitSettings()
 		{
 			// Initialize the tab pages
-			optionsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
-			modulesPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
-			pathsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
-			mixerPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
-			agentsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
+			optionsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
+			modulesPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
+			pathsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
+			mixerPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
+			agentsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
 
 			// Make a backup of the settings. This is used for real-time
 			// settings, that can be restored back when clicking cancel

@@ -137,6 +137,7 @@
     <ProjectReference Include="..\..\Agents\Visuals\Piano\Piano.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\SpectrumAnalyzer\SpectrumAnalyzer.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\SpinningSquares\SpinningSquares.csproj" />
+    <ProjectReference Include="..\..\Audius\Audius.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerGuiKit\NostalgicPlayerGuiKit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj" />

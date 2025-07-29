@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -18,9 +19,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		string[] PlayableMimeTypes { get; }
 
 		/// <summary>
+		/// Return some flags telling what the player supports
+		/// </summary>
+		StreamerSupportFlag SupportFlags { get; }
+
+		/// <summary>
 		/// Initializes the player
 		/// </summary>
-		bool InitPlayer(StreamingStream streamingStream, out string errorMessage);
+		bool InitPlayer(StreamingStream streamingStream, IMetadata metadata, out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the player

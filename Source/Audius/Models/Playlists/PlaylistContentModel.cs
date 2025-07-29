@@ -3,12 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Interfaces
+using System.Text.Json.Serialization;
+
+namespace Polycode.NostalgicPlayer.Audius.Models.Playlists
 {
 	/// <summary>
-	/// Add some extra methods for a sample duration player
+	/// 
 	/// </summary>
-	public interface ISampleDurationPlayer : IDurationPlayer
+	public class PlaylistContentModel
 	{
+		/// <summary></summary>
+		[JsonPropertyName("track_id")]
+		[JsonRequired]
+		public string TrackId { get; set; }
 	}
 }

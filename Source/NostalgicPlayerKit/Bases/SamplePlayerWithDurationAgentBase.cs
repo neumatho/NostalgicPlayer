@@ -14,11 +14,11 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	/// <summary>
 	/// Derive from this class, if you want to calculate the duration in your sample player
 	/// </summary>
-	public abstract class SamplePlayerWithDurationAgentBase : SamplePlayerAgentBase, ISampleDurationPlayer
+	public abstract class SamplePlayerWithDurationAgentBase : SamplePlayerAgentBase, ISampleDuration
 	{
 		private bool hasCalculatedDuration = false;
 
-		#region ISampleDurationPlayer implementation
+		#region ISampleDuration implementation
 		/********************************************************************/
 		/// <summary>
 		/// Calculate the duration for all sub-songs
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 					if (totalTime == TimeSpan.Zero)
 						return null;
 
-					TimeSpan increment = new TimeSpan(0, 0, (int)IDurationPlayer.NumberOfSecondsBetweenEachSnapshot);
+					TimeSpan increment = new TimeSpan(0, 0, (int)IDuration.NumberOfSecondsBetweenEachSnapshot);
 
 					List<PositionInfo> positionInfoList = new List<PositionInfo>();
 
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 					hasCalculatedDuration = true;
 
-					return new DurationInfo[] { new DurationInfo(totalTime, positionInfoList.ToArray()) };
+					return [ new DurationInfo(totalTime, positionInfoList.ToArray()) ];
 				}
 				finally
 				{
