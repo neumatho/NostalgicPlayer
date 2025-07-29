@@ -83,7 +83,7 @@
 			// 
 			handleLabel.Location = new System.Drawing.Point(144, 155);
 			handleLabel.Name = "handleLabel";
-			handleLabel.Palette = bigFontPalette;
+			handleLabel.LocalCustomPalette = bigFontPalette;
 			handleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			handleLabel.Size = new System.Drawing.Size(6, 2);
 			handleLabel.StateCommon.ShortText.Color1 = System.Drawing.Color.White;
@@ -96,13 +96,12 @@
 			bigFontPalette.BaseFontSize = 10F;
 			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// nameLabel
 			// 
 			nameLabel.Location = new System.Drawing.Point(144, 126);
 			nameLabel.Name = "nameLabel";
-			nameLabel.Palette = extraBigBoldFontPalette;
+			nameLabel.LocalCustomPalette = extraBigBoldFontPalette;
 			nameLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			nameLabel.Size = new System.Drawing.Size(6, 2);
 			nameLabel.StateCommon.ShortText.Color1 = System.Drawing.Color.White;
@@ -116,7 +115,6 @@
 			extraBigBoldFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			extraBigBoldFontPalette.FontStyle = System.Drawing.FontStyle.Bold;
 			extraBigBoldFontPalette.ThemeName = "";
-			extraBigBoldFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// profilePictureBox
 			// 
@@ -148,7 +146,7 @@
 			navigator.Owner = null;
 			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorTracksPage, navigatorPlaylistsPage });
-			navigator.Palette = fontPalette;
+			navigator.LocalCustomPalette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			navigator.SelectedIndex = 0;
@@ -205,7 +203,6 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// ProfileControl
 			// 

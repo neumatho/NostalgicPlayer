@@ -64,7 +64,7 @@
 			// 
 			timeAllRadioButton.Location = new System.Drawing.Point(235, 3);
 			timeAllRadioButton.Name = "timeAllRadioButton";
-			timeAllRadioButton.Palette = fontPalette;
+			timeAllRadioButton.LocalCustomPalette = fontPalette;
 			timeAllRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(timeAllRadioButton, "IDS_AUDIUS_TAB_TRENDING_TIME_ALL");
 			timeAllRadioButton.Size = new System.Drawing.Size(58, 16);
@@ -77,13 +77,12 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// timeYearRadioButton
 			// 
 			timeYearRadioButton.Location = new System.Drawing.Point(162, 3);
 			timeYearRadioButton.Name = "timeYearRadioButton";
-			timeYearRadioButton.Palette = fontPalette;
+			timeYearRadioButton.LocalCustomPalette = fontPalette;
 			timeYearRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(timeYearRadioButton, "IDS_AUDIUS_TAB_TRENDING_TIME_YEAR");
 			timeYearRadioButton.Size = new System.Drawing.Size(67, 16);
@@ -95,7 +94,7 @@
 			// 
 			timeMonthRadioButton.Location = new System.Drawing.Point(80, 3);
 			timeMonthRadioButton.Name = "timeMonthRadioButton";
-			timeMonthRadioButton.Palette = fontPalette;
+			timeMonthRadioButton.LocalCustomPalette = fontPalette;
 			timeMonthRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(timeMonthRadioButton, "IDS_AUDIUS_TAB_TRENDING_TIME_MONTH");
 			timeMonthRadioButton.Size = new System.Drawing.Size(76, 16);
@@ -108,7 +107,7 @@
 			timeWeekRadioButton.Checked = true;
 			timeWeekRadioButton.Location = new System.Drawing.Point(3, 3);
 			timeWeekRadioButton.Name = "timeWeekRadioButton";
-			timeWeekRadioButton.Palette = fontPalette;
+			timeWeekRadioButton.LocalCustomPalette = fontPalette;
 			timeWeekRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(timeWeekRadioButton, "IDS_AUDIUS_TAB_TRENDING_TIME_WEEK");
 			timeWeekRadioButton.Size = new System.Drawing.Size(71, 16);
@@ -135,7 +134,7 @@
 			// 
 			typeUndergroundRadioButton.Location = new System.Drawing.Point(137, 3);
 			typeUndergroundRadioButton.Name = "typeUndergroundRadioButton";
-			typeUndergroundRadioButton.Palette = fontPalette;
+			typeUndergroundRadioButton.LocalCustomPalette = fontPalette;
 			typeUndergroundRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typeUndergroundRadioButton, "IDS_AUDIUS_TAB_TRENDING_TYPE_UNDERGROUND");
 			typeUndergroundRadioButton.Size = new System.Drawing.Size(86, 16);
@@ -147,7 +146,7 @@
 			// 
 			typePlaylistsRadioButton.Location = new System.Drawing.Point(66, 3);
 			typePlaylistsRadioButton.Name = "typePlaylistsRadioButton";
-			typePlaylistsRadioButton.Palette = fontPalette;
+			typePlaylistsRadioButton.LocalCustomPalette = fontPalette;
 			typePlaylistsRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typePlaylistsRadioButton, "IDS_AUDIUS_TAB_TRENDING_TYPE_PLAYLISTS");
 			typePlaylistsRadioButton.Size = new System.Drawing.Size(63, 16);
@@ -160,7 +159,7 @@
 			typeTracksRadioButton.Checked = true;
 			typeTracksRadioButton.Location = new System.Drawing.Point(3, 3);
 			typeTracksRadioButton.Name = "typeTracksRadioButton";
-			typeTracksRadioButton.Palette = fontPalette;
+			typeTracksRadioButton.LocalCustomPalette = fontPalette;
 			typeTracksRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typeTracksRadioButton, "IDS_AUDIUS_TAB_TRENDING_TYPE_TRACKS");
 			typeTracksRadioButton.Size = new System.Drawing.Size(55, 16);
@@ -175,7 +174,7 @@
 			genreComboBox.IntegralHeight = false;
 			genreComboBox.Location = new System.Drawing.Point(316, 8);
 			genreComboBox.Name = "genreComboBox";
-			genreComboBox.Palette = fontPalette;
+			genreComboBox.LocalCustomPalette = fontPalette;
 			genreComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(genreComboBox, null);
 			genreComboBox.Size = new System.Drawing.Size(189, 19);

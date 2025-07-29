@@ -69,7 +69,7 @@
 			// 
 			statusLabel.Location = new System.Drawing.Point(44, 78);
 			statusLabel.Name = "statusLabel";
-			statusLabel.Palette = bigFontPalette;
+			statusLabel.LocalCustomPalette = bigFontPalette;
 			statusLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			statusLabel.Size = new System.Drawing.Size(6, 2);
 			statusLabel.TabIndex = 1;
@@ -82,7 +82,6 @@
 			bigFontPalette.BaseFontSize = 9F;
 			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
 			// 
 			// AudiusListControl
 			// 

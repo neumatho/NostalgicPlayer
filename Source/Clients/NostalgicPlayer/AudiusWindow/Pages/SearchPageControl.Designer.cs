@@ -61,7 +61,7 @@
 			// 
 			typeProfilesRadioButton.Location = new System.Drawing.Point(137, 4);
 			typeProfilesRadioButton.Name = "typeProfilesRadioButton";
-			typeProfilesRadioButton.Palette = fontPalette;
+			typeProfilesRadioButton.LocalCustomPalette = fontPalette;
 			typeProfilesRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typeProfilesRadioButton, "IDS_AUDIUS_TAB_SEARCH_TYPE_PROFILES");
 			typeProfilesRadioButton.Size = new System.Drawing.Size(59, 16);
@@ -74,13 +74,12 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// typePlaylistsRadioButton
 			// 
 			typePlaylistsRadioButton.Location = new System.Drawing.Point(66, 4);
 			typePlaylistsRadioButton.Name = "typePlaylistsRadioButton";
-			typePlaylistsRadioButton.Palette = fontPalette;
+			typePlaylistsRadioButton.LocalCustomPalette = fontPalette;
 			typePlaylistsRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typePlaylistsRadioButton, "IDS_AUDIUS_TAB_SEARCH_TYPE_PLAYLISTS");
 			typePlaylistsRadioButton.Size = new System.Drawing.Size(63, 16);
@@ -93,7 +92,7 @@
 			typeTracksRadioButton.Checked = true;
 			typeTracksRadioButton.Location = new System.Drawing.Point(3, 4);
 			typeTracksRadioButton.Name = "typeTracksRadioButton";
-			typeTracksRadioButton.Palette = fontPalette;
+			typeTracksRadioButton.LocalCustomPalette = fontPalette;
 			typeTracksRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(typeTracksRadioButton, "IDS_AUDIUS_TAB_SEARCH_TYPE_TRACKS");
 			typeTracksRadioButton.Size = new System.Drawing.Size(55, 16);
@@ -133,7 +132,7 @@
 			searchTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			searchTextBox.Location = new System.Drawing.Point(0, 1);
 			searchTextBox.Name = "searchTextBox";
-			searchTextBox.Palette = fontPalette;
+			searchTextBox.LocalCustomPalette = fontPalette;
 			searchTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(searchTextBox, null);
 			searchTextBox.Size = new System.Drawing.Size(510, 20);
