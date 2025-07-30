@@ -12,25 +12,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public TrackLine[,] CurrentPattern;
-		public ushort CurrentPosition;
-		public ushort NewPosition;
-		public ushort BreakRow;
-		public ushort NewRow;
-		public ushort RowCount;
-		public ushort LoopRow;
-		public byte PatternWait;
+		public TrackLine[,] CurrentPattern { get; set; }
+		public ushort CurrentPosition { get; set; }
+		public ushort NewPosition { get; set; }
+		public ushort BreakRow { get; set; }
+		public ushort NewRow { get; set; }
+		public ushort RowCount { get; set; }
+		public ushort LoopRow { get; set; }
+		public byte PatternWait { get; set; }
 
-		public ushort Tempo;
-		public ushort Speed;
-		public ushort SpeedCount;
+		public ushort Tempo { get; set; }
+		public ushort Speed { get; set; }
+		public ushort SpeedCount { get; set; }
 
-		public bool NewPositionFlag;
-		public bool JumpBreakFlag;
-		public byte LoopCount;
-		public bool IntroRow;
+		public bool NewPositionFlag { get; set; }
+		public bool JumpBreakFlag { get; set; }
+		public byte LoopCount { get; set; }
+		public bool IntroRow { get; set; }
 
-		public bool SetTempo;
+		public bool SetTempo { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.CKit;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -13,44 +14,47 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Player_Data
+	internal class Player_Data : IDeepCloneable<Player_Data>
 	{
-		public c_int Ord;
-		public c_int Pos;
-		public c_int Row;
-		public c_int Frame;
-		public c_int Speed;
-		public c_int Bpm;
-		public Xmp_Mode Mode;
-		public Xmp_Flags Player_Flags;
-		public Xmp_Flags Flags;
+		public c_int Ord { get; set; }
+		public c_int Pos { get; set; }
+		public c_int Row { get; set; }
+		public c_int Frame { get; set; }
+		public c_int Speed { get; set; }
+		public ref c_int Bpm => ref _Bpm;
+		private c_int _Bpm;
+		public Xmp_Mode Mode { get; set; }
+		public Xmp_Flags Player_Flags { get; set; }
+		public Xmp_Flags Flags { get; set; }
 
-		public c_double Scan_Time_Factor;		// m->time_factor for most recent scan
-		public c_double Current_Time;			// Current time based on scan time factor
+		public c_double Scan_Time_Factor { get; set; }		// m->time_factor for most recent scan
+		public c_double Current_Time { get; set; }			// Current time based on scan time factor
 
-		public c_int Loop_Count;
-		public c_int Sequence;
-		public byte[] Sequence_Control = new byte[Constants.Xmp_Max_Mod_Length];
+		public c_int Loop_Count { get; set; }
+		public c_int Sequence { get; set; }
+		public byte[] Sequence_Control { get; set; } = new byte[Constants.Xmp_Max_Mod_Length];
 
 		/// <summary>
 		/// Music volume
 		/// </summary>
-		public c_int Master_Vol;
-		public c_int GVol;
+		public c_int Master_Vol { get; set; }
+		public ref c_int GVol => ref _GVol;
+		private c_int _GVol;
 
-		public Flow_Control Flow = new Flow_Control();
+		public Flow_Control Flow { get; set; } = new Flow_Control();
 
-		public Scan_Data[] Scan;
+		public Scan_Data[] Scan { get; set; }
 
-		public Channel_Data[] Xc_Data;
+		public Channel_Data[] Xc_Data { get; set; }
 
-		public c_int[] Channel_Vol = new c_int[Constants.Xmp_Max_Channels];
-		public bool[] Channel_Mute = new bool[Constants.Xmp_Max_Channels];
+		public c_int[] Channel_Vol { get; set; } = new c_int[Constants.Xmp_Max_Channels];
+		public bool[] Channel_Mute { get; set; } = new bool[Constants.Xmp_Max_Channels];
 
-		public Virt_Control Virt = new Virt_Control();
+		public Virt_Control Virt { get; set; } = new Virt_Control();
 
-		public Xmp_Event[] Inject_Event = ArrayHelper.InitializeArray<Xmp_Event>(Constants.Xmp_Max_Channels);
+		public Xmp_Event[] Inject_Event { get; set; } = ArrayHelper.InitializeArray<Xmp_Event>(Constants.Xmp_Max_Channels);
 
+		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Consumed,
 			c_int In_Size,
@@ -60,12 +64,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// For IceTracker speed effect
 		/// </summary>
-		public c_int St26_Speed;
+		public c_int St26_Speed { get; set; }
 
 		/// <summary>
 		/// Amiga led filter
 		/// </summary>
-		public bool Filter;
+		public bool Filter { get; set; }
 
 		/********************************************************************/
 		/// <summary>

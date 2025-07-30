@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public short SampleNumber;
-		public sbyte[] Address;
-		public ushort Length;
-		public ushort LoopStart;
-		public ushort LoopLength;
-		public MultiSample Multi;
+		public short SampleNumber { get; set; }
+		public sbyte[] Address { get; set; }
+		public ushort Length { get; set; }
+		public ushort LoopStart { get; set; }
+		public ushort LoopLength { get; set; }
+		public MultiSample Multi { get; set; }
 	}
 }

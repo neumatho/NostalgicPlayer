@@ -12,15 +12,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Lzw
 	/// </summary>
 	internal class Lzw_Tree
 	{
-		public CPointer<Lzw_Code> Codes;
-		public uint Bits;
-		public uint Length;
-		public uint MaxLength;
-		public uint DefaultLength;
-		public uint AllocLength;
-		public uint Previous_Code;
-		public bool New_Inc;
-		public c_int Flags;
-		public uint8 Previous_First_Char;
+		public ref CPointer<Lzw_Code> Codes => ref _Codes;
+		private CPointer<Lzw_Code> _Codes;
+		public uint Bits { get; set; }
+		public uint Length { get; set; }
+		public uint MaxLength { get; set; }
+		public uint DefaultLength { get; set; }
+		public uint AllocLength { get; set; }
+		public uint Previous_Code { get; set; }
+		public bool New_Inc { get; set; }
+		public c_int Flags { get; set; }
+		public uint8 Previous_First_Char { get; set; }
 	}
 }

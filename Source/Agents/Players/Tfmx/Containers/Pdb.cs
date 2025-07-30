@@ -11,15 +11,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class Pdb : IDeepCloneable<Pdb>
 	{
-		public uint PAddr;
-		public byte PNum;
-		public sbyte PxPose;
-		public ushort PLoop;
-		public ushort PStep;
-		public byte PWait;
-		public uint PrOAddr;
-		public ushort PrOStep;
-		public bool Looped;
+		public uint PAddr { get; set; }
+		public byte PNum { get; set; }
+		public sbyte PxPose { get; set; }
+		public ushort PLoop { get; set; }
+		public ushort PStep { get; set; }
+		public byte PWait { get; set; }
+		public uint PrOAddr { get; set; }
+		public ushort PrOStep { get; set; }
+		public bool Looped { get; set; }
 
 		/********************************************************************/
 		/// <summary>

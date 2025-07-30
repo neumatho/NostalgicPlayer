@@ -13,9 +13,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte PlaySpeed;
+		public byte PlaySpeed { get; set; }
 
-		public Instrument[] Instruments;
+		public Instrument[] Instruments { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -12,48 +12,48 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	/// </summary>
 	internal class ModChannel : IDeepCloneable<ModChannel>
 	{
-		public TrackLine TrackLine = new TrackLine();
+		public TrackLine TrackLine { get; set; } = new TrackLine();
 
-		public short SampleNumber;		// Current sample number
-		public sbyte[] SampleData;
-		public uint Offset;
-		public ushort Length;
-		public uint LoopStart;
-		public ushort LoopLength;
-		public uint StartOffset;
-		public ushort Period;
-		public byte FineTune;
-		public sbyte FineTuneHmn;
-		public sbyte Volume;			// Volume set from sample data or changed by effects
-		public byte TonePortDirec;
-		public byte TonePortSpeed;
-		public ushort WantedPeriod;
-		public byte VibratoCmd;
-		public sbyte VibratoPos;
-		public byte TremoloCmd;
-		public sbyte TremoloPos;
-		public byte WaveControl;
-		public byte GlissFunk;
-		public byte SampleOffset;
-		public sbyte PattPos;
-		public byte LoopCount;
-		public byte FunkOffset;
-		public uint WaveStart;
-		public bool AutoSlide;
-		public byte AutoSlideArg;
+		public short SampleNumber { get; set; }		// Current sample number
+		public sbyte[] SampleData { get; set; }
+		public uint Offset { get; set; }
+		public ushort Length { get; set; }
+		public uint LoopStart { get; set; }
+		public ushort LoopLength { get; set; }
+		public uint StartOffset { get; set; }
+		public ushort Period { get; set; }
+		public byte FineTune { get; set; }
+		public sbyte FineTuneHmn { get; set; }
+		public sbyte Volume { get; set; }			// Volume set from sample data or changed by effects
+		public byte TonePortDirec { get; set; }
+		public byte TonePortSpeed { get; set; }
+		public ushort WantedPeriod { get; set; }
+		public byte VibratoCmd { get; set; }
+		public sbyte VibratoPos { get; set; }
+		public byte TremoloCmd { get; set; }
+		public sbyte TremoloPos { get; set; }
+		public byte WaveControl { get; set; }
+		public byte GlissFunk { get; set; }
+		public byte SampleOffset { get; set; }
+		public sbyte PattPos { get; set; }
+		public byte LoopCount { get; set; }
+		public byte FunkOffset { get; set; }
+		public uint WaveStart { get; set; }
+		public bool AutoSlide { get; set; }
+		public byte AutoSlideArg { get; set; }
 
-		public bool SynthSample;		// True if synth sample, false if normal
+		public bool SynthSample { get; set; }		// True if synth sample, false if normal
 
 		// For StarTrekker synths
-		public AmToDo AmToDo;			// Switch number
-		public ushort VibDegree;		// Vibrato degree
-		public short SustainCounter;	// Sustain time counter
-		public short StarVolume;		// Calculated volume from synth samples (0-256)
+		public AmToDo AmToDo { get; set; }			// Switch number
+		public ushort VibDegree { get; set; }		// Vibrato degree
+		public short SustainCounter { get; set; }	// Sustain time counter
+		public short StarVolume { get; set; }		// Calculated volume from synth samples (0-256)
 
 		// For His Master's Noise synths
-		public byte DataCounter;
-		public short HmnVolume;			// Calculated volume from synth samples (0-64)
-		public HmnSynthData SynthData;
+		public byte DataCounter { get; set; }
+		public short HmnVolume { get; set; }			// Calculated volume from synth samples (0-64)
+		public HmnSynthData SynthData { get; set; }
 
 		/********************************************************************/
 		/// <summary>

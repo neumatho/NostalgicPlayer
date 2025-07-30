@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class InsStep
 	{
-		public byte Note;				// 8 bit note
-		public bool Relative;
-		public byte WForm;				// Max 15
+		public byte Note { get; set; }				// 8 bit note
+		public bool Relative { get; set; }
+		public byte WForm { get; set; }				// Max 15
 	}
 }

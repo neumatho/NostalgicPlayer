@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Local_Data
 		private class Local_Data
 		{
-			public c_int SNum;
+			public c_int SNum { get; set; }
 		}
 		#endregion
 

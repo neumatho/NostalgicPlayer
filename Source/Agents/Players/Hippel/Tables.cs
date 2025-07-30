@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Default envelope table
 		/// </summary>
 		/********************************************************************/
-		public static byte[] DefaultCommandTable =
+		public static readonly byte[] DefaultCommandTable =
 		[
 			0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe1
 		];

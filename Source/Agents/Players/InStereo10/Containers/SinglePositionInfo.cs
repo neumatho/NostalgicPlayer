@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10.Containers
 	/// </summary>
 	internal class SinglePositionInfo
 	{
-		public ushort StartTrackRow;
-		public sbyte SoundTranspose;
-		public sbyte NoteTranspose;
+		public ushort StartTrackRow { get; set; }
+		public sbyte SoundTranspose { get; set; }
+		public sbyte NoteTranspose { get; set; }
 	}
 }

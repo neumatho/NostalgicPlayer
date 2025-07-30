@@ -27,17 +27,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Local_Data
 		private class Local_Data
 		{
-			public c_int Year;
-			public c_int Month;
-			public c_int Day;
-			public bool PFlag;
-			public bool SFlag;
-			public c_int Max_Ins;
-			public c_int Max_Pat;
-			public bool Has_MVox;
-			public bool Has_PNum;
-			public readonly uint8[] Ster = new uint8[8];
-			public readonly uint8[] Rows = new uint8[64];
+			public c_int Year { get; set; }
+			public c_int Month { get; set; }
+			public c_int Day { get; set; }
+			public bool PFlag { get; set; }
+			public bool SFlag { get; set; }
+			public c_int Max_Ins { get; set; }
+			public c_int Max_Pat { get; set; }
+			public bool Has_MVox { get; set; }
+			public bool Has_PNum { get; set; }
+			public uint8[] Ster { get; } = new uint8[8];
+			public uint8[] Rows { get; } = new uint8[64];
 		}
 		#endregion
 
@@ -64,6 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		];
 		#endregion
 
+		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_MUSX = Common.Magic4('M', 'U', 'S', 'X');
 		private static readonly uint32 Magic_MNAM = Common.Magic4('M', 'N', 'A', 'M');
 		private static readonly uint32 Magic_SNAM = Common.Magic4('S', 'N', 'A', 'M');
@@ -72,6 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static readonly uint32 Magic_ROFS = Common.Magic4('R', 'O', 'F', 'S');
 		private static readonly uint32 Magic_RLEN = Common.Magic4('R', 'L', 'E', 'N');
 		private static readonly uint32 Magic_SDAT = Common.Magic4('S', 'D', 'A', 'T');
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

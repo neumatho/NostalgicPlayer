@@ -11,9 +11,9 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 	public class ConvertSampleInfo
 	{
 		/// <summary></summary>
-		public uint Position;
+		public uint Position { get; set; }
 
 		/// <summary></summary>
-		public int Length;
+		public int Length { get; set; }
 	}
 }

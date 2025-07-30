@@ -20,8 +20,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 
 		private struct Test_Seq
 		{
-			public c_int Entry;
-			public c_int Ticks;
+			public c_int Entry { get; set; }
+			public c_int Ticks { get; set; }
 		}
 
 		/********************************************************************/

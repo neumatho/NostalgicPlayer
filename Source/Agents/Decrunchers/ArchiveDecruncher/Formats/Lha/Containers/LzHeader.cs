@@ -12,27 +12,27 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 	/// </summary>
 	internal class LzHeader
 	{
-		public byte HeaderSize;
-		public byte[] Method = new byte[Constants.Method_Type_Strage];
-		public int PackedSize;
-		public int OriginalSize;
-		public int LastModifiedStamp;
-		public byte Attribute;
-		public byte HeaderLevel;
-		public byte[] Name = new byte[256];
-		public ushort Crc;
-		public bool HasCrc;
-		public byte ExtendType;
-		public byte MinorVersion;
+		public byte HeaderSize { get; set; }
+		public byte[] Method { get; } = new byte[Constants.Method_Type_Strage];
+		public int PackedSize { get; set; }
+		public int OriginalSize { get; set; }
+		public int LastModifiedStamp { get; set; }
+		public byte Attribute { get; set; }
+		public byte HeaderLevel { get; set; }
+		public byte[] Name { get; } = new byte[256];
+		public ushort Crc { get; set; }
+		public bool HasCrc { get; set; }
+		public byte ExtendType { get; set; }
+		public byte MinorVersion { get; set; }
 
 		// ExtendType == Extend_Unix and convert from other type
-		public int UnixLastModifiedStamp;
-		public ushort UnixMode;
-		public ushort UnixUId;
-		public ushort UnixGid;
+		public int UnixLastModifiedStamp { get; set; }
+		public ushort UnixMode { get; set; }
+		public ushort UnixUId { get; set; }
+		public ushort UnixGid { get; set; }
 
 		// Converted properties to .NET data types
-		public string DecodedName;			// Directory + file name decoded from the right character set
-		public DateTime ConvertedLastModifiedStamp;
+		public string DecodedName { get; set; }			// Directory + file name decoded from the right character set
+		public DateTime ConvertedLastModifiedStamp { get; set; }
 	}
 }

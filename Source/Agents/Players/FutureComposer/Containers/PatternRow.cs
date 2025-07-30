@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class PatternRow
 	{
-		public byte Note;
-		public byte Info;
+		public byte Note { get; set; }
+		public byte Info { get; set; }
 	}
 }

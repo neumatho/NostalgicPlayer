@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class DB3ModuleSong
 	{
-		public string Name;
-		public uint16_t NumberOfOrders;			// Play list length
-		public uint16_t[] PlayList;				// Play list table
+		public string Name { get; set; }
+		public uint16_t NumberOfOrders { get; set; }	// Play list length
+		public uint16_t[] PlayList { get; set; }		// Play list table
 	}
 }

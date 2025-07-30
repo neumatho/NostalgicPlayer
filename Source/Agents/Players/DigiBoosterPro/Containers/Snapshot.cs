@@ -13,9 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public ModuleSynth ModuleSynth;
-		public EffectMaster EffectMaster;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -25,6 +22,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 		{
 			ModuleSynth = moduleSynth.MakeDeepClone();
 			EffectMaster = effectMaster.MakeDeepClone();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public ModuleSynth ModuleSynth
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public EffectMaster EffectMaster
+		{
+			get;
 		}
 	}
 }

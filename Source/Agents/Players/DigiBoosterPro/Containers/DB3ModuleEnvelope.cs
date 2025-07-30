@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class DB3ModuleEnvelope
 	{
-		public uint16_t InstrumentNumber;		// Number of instrument (from 0)
-		public uint16_t NumberOfSections;
-		public uint16_t LoopFirst;				// Point number
-		public uint16_t LoopLast;				// Point number, loop disabled if 0xffff
-		public uint16_t SustainA;				// Point number, disabled if 0xffff
-		public uint16_t SustainB;				// Point number, disabled if 0xffff
-		public DB3ModuleEnvelopePoint[] Points = new DB3ModuleEnvelopePoint[Constants.Envelope_Max_Points];
+		public uint16_t InstrumentNumber { get; set; }	// Number of instrument (from 0)
+		public uint16_t NumberOfSections { get; set; }
+		public uint16_t LoopFirst { get; set; }			// Point number
+		public uint16_t LoopLast { get; set; }			// Point number, loop disabled if 0xffff
+		public uint16_t SustainA { get; set; }			// Point number, disabled if 0xffff
+		public uint16_t SustainB { get; set; }			// Point number, disabled if 0xffff
+		public DB3ModuleEnvelopePoint[] Points { get; } = new DB3ModuleEnvelopePoint[Constants.Envelope_Max_Points];
 	}
 }

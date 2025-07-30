@@ -3,9 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers.Exceptions;
 using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 using Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors;
@@ -24,8 +22,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal
 
 		private struct DecompressorPair
 		{
-			public CheckMethod First;
-			public CreateMethod Second;
+			public CheckMethod First { get; set; }
+			public CreateMethod Second { get; set; }
 		}
 
 		private static readonly DecompressorPair[] decompressors =

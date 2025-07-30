@@ -26,8 +26,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		private class LineInfo
 		{
-			public LineType Type;
-			public string Line;
+			public LineType Type { get; set; }
+			public string Line { get; set; }
 		}
 
 		private string comp;

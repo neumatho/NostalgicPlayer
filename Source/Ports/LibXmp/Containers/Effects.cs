@@ -10,6 +10,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 	/// </summary>
 	internal static class Effects
 	{
+		// ReSharper disable InconsistentNaming
 		/// <summary>
 		/// ProTracker effects
 		/// </summary>
@@ -197,5 +198,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const uint8 Fx_VSlide_Dn_2 = 0xc1;
 		public const uint8 Fx_F_VSlide_Up_2 = 0xc2;
 		public const uint8 Fx_F_VSlide_Dn_2 = 0xc3;
+		// ReSharper restore InconsistentNaming
 	}
 }

@@ -12,14 +12,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20.Containers
 	/// </summary>
 	internal class SampleNegateInfo : IDeepCloneable<SampleNegateInfo>
 	{
-		public uint StartOffset;
-		public uint EndOffset;
-		public ushort LoopIndex;
-		public ushort Status;
-		public short Speed;
-		public int Position;
-		public ushort Index;
-		public short DoNegation;
+		public uint StartOffset { get; set; }
+		public uint EndOffset { get; set; }
+		public ushort LoopIndex { get; set; }
+		public ushort Status { get; set; }
+		public short Speed { get; set; }
+		public int Position { get; set; }
+		public ushort Index { get; set; }
+		public short DoNegation { get; set; }
 
 		/********************************************************************/
 		/// <summary>

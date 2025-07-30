@@ -12,29 +12,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public string Name;
-		public ushort WaveformLength;
-		public byte Volume;
-		public byte VibratoDelay;
-		public byte VibratoSpeed;
-		public byte VibratoLevel;
-		public byte PortamentoSpeed;
-		public byte AdsrLength;
-		public byte AdsrRepeat;
-		public byte SustainPoint;
-		public byte SustainSpeed;
-		public byte AmfLength;
-		public byte AmfRepeat;
-		public EnvelopeGeneratorMode EnvelopeGeneratorMode;
-		public byte StartLen;
-		public byte StopRep;
-		public byte SpeedUp;
-		public byte SpeedDown;
-		public byte[] AdsrTable = new byte[128];
-		public sbyte[] LfoTable = new sbyte[128];
-		public Arpeggio[] Arpeggios = ArrayHelper.InitializeArray<Arpeggio>(3);
-		public byte[] EnvelopeGeneratorTable = new byte[128];
-		public sbyte[] Waveform1 = new sbyte[256];
-		public sbyte[] Waveform2 = new sbyte[256];
+		public string Name { get; set; }
+		public ushort WaveformLength { get; set; }
+		public byte Volume { get; set; }
+		public byte VibratoDelay { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoLevel { get; set; }
+		public byte PortamentoSpeed { get; set; }
+		public byte AdsrLength { get; set; }
+		public byte AdsrRepeat { get; set; }
+		public byte SustainPoint { get; set; }
+		public byte SustainSpeed { get; set; }
+		public byte AmfLength { get; set; }
+		public byte AmfRepeat { get; set; }
+		public EnvelopeGeneratorMode EnvelopeGeneratorMode { get; set; }
+		public byte StartLen { get; set; }
+		public byte StopRep { get; set; }
+		public byte SpeedUp { get; set; }
+		public byte SpeedDown { get; set; }
+		public byte[] AdsrTable { get; } = new byte[128];
+		public sbyte[] LfoTable { get; } = new sbyte[128];
+		public Arpeggio[] Arpeggios { get; } = ArrayHelper.InitializeArray<Arpeggio>(3);
+		public byte[] EnvelopeGeneratorTable { get; } = new byte[128];
+		public sbyte[] Waveform1 { get; } = new sbyte[256];
+		public sbyte[] Waveform2 { get; } = new sbyte[256];
 	}
 }

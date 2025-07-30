@@ -13,41 +13,41 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers
 	/// </summary>
 	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public byte Volume;
-		public byte SlideVolumeOld;
-		public bool OffEnable;
-		public byte SampleOffset;
-		public byte RetraceCount;
-		public byte OldSampleNumber;
-		public byte RobotOldValue;
-		public bool RobotEnable;
-		public int RobotBytesToPlay;
-		public int RobotCurrentPosition;
-		public sbyte[][] RobotBuffers;
-		public short MainPeriod;
-		public byte MainVolume;
-		public bool PlayPointer;
-		public LastRoundInfo LastRoundInfo = new LastRoundInfo();
-		public sbyte LoopPatternPosition;
-		public byte LoopSongPosition;
-		public byte LoopHowMany;
-		public byte BackwardEnabled;		// 0 = Normal (forward), 1 = Backwards once, 2 = Backwards with loop
-		public byte PortamentoUpOldValue;
-		public byte PortamentoDownOldValue;
-		public ushort VibratoPeriod;
-		public sbyte VibratoValue;
-		public byte VibratoOldValue;
-		public byte GlissandoOldValue;
-		public bool GlissandoEnable;
-		public ushort GlissandoOldPeriod;
-		public ushort GlissandoNewPeriod;
-		public bool OnOffChannel;
-		public ushort OriginalPeriod;
-		public byte OldVolume;
+		public byte Volume { get; set; }
+		public byte SlideVolumeOld { get; set; }
+		public bool OffEnable { get; set; }
+		public byte SampleOffset { get; set; }
+		public byte RetraceCount { get; set; }
+		public byte OldSampleNumber { get; set; }
+		public byte RobotOldValue { get; set; }
+		public bool RobotEnable { get; set; }
+		public int RobotBytesToPlay { get; set; }
+		public int RobotCurrentPosition { get; set; }
+		public sbyte[][] RobotBuffers { get; set; }
+		public short MainPeriod { get; set; }
+		public byte MainVolume { get; set; }
+		public bool PlayPointer { get; set; }
+		public LastRoundInfo LastRoundInfo { get; set; } = new LastRoundInfo();
+		public sbyte LoopPatternPosition { get; set; }
+		public byte LoopSongPosition { get; set; }
+		public byte LoopHowMany { get; set; }
+		public byte BackwardEnabled { get; set; }		// 0 = Normal (forward), 1 = Backwards once, 2 = Backwards with loop
+		public byte PortamentoUpOldValue { get; set; }
+		public byte PortamentoDownOldValue { get; set; }
+		public ushort VibratoPeriod { get; set; }
+		public sbyte VibratoValue { get; set; }
+		public byte VibratoOldValue { get; set; }
+		public byte GlissandoOldValue { get; set; }
+		public bool GlissandoEnable { get; set; }
+		public ushort GlissandoOldPeriod { get; set; }
+		public ushort GlissandoNewPeriod { get; set; }
+		public bool OnOffChannel { get; set; }
+		public ushort OriginalPeriod { get; set; }
+		public byte OldVolume { get; set; }
 
-		public bool IsActive;
-		public sbyte[] SampleData;
-		public uint StartOffset;
+		public bool IsActive { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint StartOffset { get; set; }
 
 		/********************************************************************/
 		/// <summary>

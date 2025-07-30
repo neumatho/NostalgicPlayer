@@ -24,12 +24,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 	{
 		private class ConvertInfo
 		{
-			public AgentInfo Agent;
-			public string OriginalFormat;
-			public Stream SampleDataStream;
-			public MemoryStream ConvertedStream;
-			public long TotalLength;
-			public bool HasSampleMarkings;
+			public AgentInfo Agent { get; set; }
+			public string OriginalFormat { get; set; }
+			public Stream SampleDataStream { get; set; }
+			public MemoryStream ConvertedStream { get; set; }
+			public long TotalLength { get; set; }
+			public bool HasSampleMarkings { get; set; }
 		}
 
 		private readonly Manager agentManager;

@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 	/// </summary>
 	internal class Track
 	{
-		public byte BlockNumber;
-		public sbyte Transpose;
+		public byte BlockNumber { get; set; }
+		public sbyte Transpose { get; set; }
 	}
 }

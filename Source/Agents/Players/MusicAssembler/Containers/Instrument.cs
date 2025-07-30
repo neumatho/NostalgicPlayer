@@ -10,22 +10,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public byte SampleNumber;
+		public byte SampleNumber { get; set; }
 
-		public byte Attack;
-		public byte Decay_Sustain;
-		public byte Release;
+		public byte Attack { get; set; }
+		public byte Decay_Sustain { get; set; }
+		public byte Release { get; set; }
 
-		public byte VibratoDelay;
-		public byte VibratoSpeed;
-		public byte VibratoLevel;
+		public byte VibratoDelay { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoLevel { get; set; }
 
-		public byte Arpeggio;
-		public byte FxArp_SpdLp;
+		public byte Arpeggio { get; set; }
+		public byte FxArp_SpdLp { get; set; }
 
-		public byte Hold;
+		public byte Hold { get; set; }
 
-		public byte Key_WaveRate;
-		public byte WaveLevel_Speed;
+		public byte Key_WaveRate { get; set; }
+		public byte WaveLevel_Speed { get; set; }
 	}
 }

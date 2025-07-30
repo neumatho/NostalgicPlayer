@@ -7,10 +7,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker.Containers
 {
 	internal class Track
 	{
-		public byte Note;
-		public byte Instrument;
-		public TrackEffect Effect;
-		public byte EffectArgument;
-		public byte RowsToWait;
+		public byte Note { get; set; }
+		public byte Instrument { get; set; }
+		public TrackEffect Effect { get; set; }
+		public byte EffectArgument { get; set; }
+		public byte RowsToWait { get; set; }
 	}
 }

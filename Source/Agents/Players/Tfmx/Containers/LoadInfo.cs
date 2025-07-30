@@ -10,13 +10,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class LoadInfo
 	{
-		public int ModuleStartOffset;
-		public int ModuleSize;
-		public int SampleStartOffset;       // Is -1 if two files
-		public int SampleSize;
+		public int ModuleStartOffset { get; set; }
+		public int ModuleSize { get; set; }
+		public int SampleStartOffset { get; set; }		// Is -1 if two files
+		public int SampleSize { get; set; }
 
-		public int StartSong;
-		public string ModuleName;
-		public string Author;
+		public int StartSong { get; set; }
+		public string ModuleName { get; set; }
+		public string Author { get; set; }
 	}
 }

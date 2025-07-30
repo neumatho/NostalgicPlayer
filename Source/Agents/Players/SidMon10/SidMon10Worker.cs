@@ -24,9 +24,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 	{
 		private class SpecialSampleInfo
 		{
-			public uint InstrumentNumber;
-			public int SampleOffset;
-			public int Length;
+			public uint InstrumentNumber { get; set; }
+			public int SampleOffset { get; set; }
+			public int Length { get; set; }
 		}
 
 		private int baseOffset;

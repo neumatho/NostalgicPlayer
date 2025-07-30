@@ -13,56 +13,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public bool ChannelEnabled;
+		public bool ChannelEnabled { get; set; }
 
-		public byte[] PositionList;
-		public int CurrentPosition;
-		public int NextPosition;
+		public byte[] PositionList { get; set; }
+		public int CurrentPosition { get; set; }
+		public int NextPosition { get; set; }
 
-		public int PlayingTrack;
-		public byte[] Track;
-		public int NextTrackPosition;
+		public int PlayingTrack { get; set; }
+		public byte[] Track { get; set; }
+		public int NextTrackPosition { get; set; }
 
-		public bool SwitchToNextPosition;
-		public byte TrackLoopCounter;
-		public byte TicksLeftForNextTrackCommand;
+		public bool SwitchToNextPosition { get; set; }
+		public byte TrackLoopCounter { get; set; }
+		public byte TicksLeftForNextTrackCommand { get; set; }
 
-		public sbyte Transpose;
-		public byte TransposedNote;
-		public byte PreviousTransposedNote;
-		public bool UseNewNote;
+		public sbyte Transpose { get; set; }
+		public byte TransposedNote { get; set; }
+		public byte PreviousTransposedNote { get; set; }
+		public bool UseNewNote { get; set; }
 
-		public byte Portamento1Enabled;
-		public bool Portamento2Enabled;
-		public byte PortamentoStartDelay;
-		public byte PortamentoDuration;
-		public sbyte PortamentoDeltaNoteNumber;
+		public byte Portamento1Enabled { get; set; }
+		public bool Portamento2Enabled { get; set; }
+		public byte PortamentoStartDelay { get; set; }
+		public byte PortamentoDuration { get; set; }
+		public sbyte PortamentoDeltaNoteNumber { get; set; }
 
-		public byte PortamentoControlFlag;
-		public byte PortamentoStartDelayCounter;
-		public byte PortamentoDurationCounter;
-		public int PortamentoAddValue;
+		public byte PortamentoControlFlag { get; set; }
+		public byte PortamentoStartDelayCounter { get; set; }
+		public byte PortamentoDurationCounter { get; set; }
+		public int PortamentoAddValue { get; set; }
 
-		public bool VolumeFadeEnabled;
-		public byte VolumeFadeInitSpeed;
-		public byte VolumeFadeDuration;
-		public short VolumeFadeInitAddValue;
+		public bool VolumeFadeEnabled { get; set; }
+		public byte VolumeFadeInitSpeed { get; set; }
+		public byte VolumeFadeDuration { get; set; }
+		public short VolumeFadeInitAddValue { get; set; }
 
-		public bool VolumeFadeRunning;
-		public byte VolumeFadeSpeed;
-		public byte VolumeFadeSpeedCounter;
-		public byte VolumeFadeDurationCounter;
-		public short VolumeFadeAddValue;
-		public short VolumeFadeValue;
+		public bool VolumeFadeRunning { get; set; }
+		public byte VolumeFadeSpeed { get; set; }
+		public byte VolumeFadeSpeedCounter { get; set; }
+		public byte VolumeFadeDurationCounter { get; set; }
+		public short VolumeFadeAddValue { get; set; }
+		public short VolumeFadeValue { get; set; }
 
-		public ushort ChannelVolume;
-		public ushort ChannelVolumeSlideSpeed;
-		public short ChannelVolumeSlideAddValue;
+		public ushort ChannelVolume { get; set; }
+		public ushort ChannelVolumeSlideSpeed { get; set; }
+		public short ChannelVolumeSlideAddValue { get; set; }
 
-		public Sample SampleInfo;
-		public Sample SampleInfo2;
+		public Sample SampleInfo { get; set; }
+		public Sample SampleInfo2 { get; set; }
 
-		public byte[] SampleMapping = new byte[10];
+		public byte[] SampleMapping { get; set; } = new byte[10];
 
 		/********************************************************************/
 		/// <summary>

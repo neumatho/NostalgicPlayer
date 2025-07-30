@@ -13,20 +13,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort PlayPositionNumber;
-		public ushort PlayBlock;
-		public ushort PlayLine;
+		public ushort PlayPositionNumber { get; set; }
+		public ushort PlayBlock { get; set; }
+		public ushort PlayLine { get; set; }
 
-		public byte Counter;
-		public ushort CurrentTrackCount;
-		public bool NextBlock;
+		public byte Counter { get; set; }
+		public ushort CurrentTrackCount { get; set; }
+		public bool NextBlock { get; set; }
 
-		public ushort[] PreviousPeriod;
-		public byte[] PreviousNotes;
-		public byte[] PreviousSamples;
-		public byte[] PreviousVolumes;
-		public Effect[] Effects;
-		public byte[] EffectArgs;
+		public ushort[] PreviousPeriod { get; set; }
+		public byte[] PreviousNotes { get; set; }
+		public byte[] PreviousSamples { get; set; }
+		public byte[] PreviousVolumes { get; set; }
+		public Effect[] Effects { get; set; }
+		public byte[] EffectArgs { get; set; }
 
 		/********************************************************************/
 		/// <summary>

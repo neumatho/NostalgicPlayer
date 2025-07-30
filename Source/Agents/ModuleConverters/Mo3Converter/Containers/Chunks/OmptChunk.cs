@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class OmptChunk : IChunk
 	{
-		public byte[] Data;
+		public byte[] Data { get; set; }
 	}
 }

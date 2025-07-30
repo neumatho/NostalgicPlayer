@@ -10,39 +10,39 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public short InstrumentNumber;
+		public short InstrumentNumber { get; set; }
 
-		public string Name;
-		public ushort RepeatLen;
-		public ushort Length;
-		public ushort Period;
-		public byte VibDelay;
-		public sbyte VibSpeed;
-		public sbyte VibAmpl;
-		public byte EnvVol;
-		public byte AttackSpeed;
-		public byte AttackVolume;
-		public byte DecaySpeed;
-		public byte DecayVolume;
-		public byte SustainDelay;
-		public byte ReleaseSpeed;
-		public byte ReleaseVolume;
-		public sbyte[] Arpeggio = new sbyte[16];
-		public byte ArpSpeed;
-		public InstrumentType InstType;
-		public sbyte PulseRateMin;
-		public sbyte PulseRatePlus;
-		public byte PulseSpeed;
-		public byte PulseStart;
-		public byte PulseEnd;
-		public byte PulseDelay;
-		public SynchronizeFlag InstSync;
-		public byte Blend;
-		public byte BlendDelay;
-		public byte PulseShotCounter;
-		public byte BlendShotCounter;
-		public byte ArpCount;
+		public string Name { get; set; }
+		public ushort RepeatLen { get; set; }
+		public ushort Length { get; set; }
+		public ushort Period { get; set; }
+		public byte VibDelay { get; set; }
+		public sbyte VibSpeed { get; set; }
+		public sbyte VibAmpl { get; set; }
+		public byte EnvVol { get; set; }
+		public byte AttackSpeed { get; set; }
+		public byte AttackVolume { get; set; }
+		public byte DecaySpeed { get; set; }
+		public byte DecayVolume { get; set; }
+		public byte SustainDelay { get; set; }
+		public byte ReleaseSpeed { get; set; }
+		public byte ReleaseVolume { get; set; }
+		public sbyte[] Arpeggio { get; }= new sbyte[16];
+		public byte ArpSpeed { get; set; }
+		public InstrumentType InstType { get; set; }
+		public sbyte PulseRateMin { get; set; }
+		public sbyte PulseRatePlus { get; set; }
+		public byte PulseSpeed { get; set; }
+		public byte PulseStart { get; set; }
+		public byte PulseEnd { get; set; }
+		public byte PulseDelay { get; set; }
+		public SynchronizeFlag InstSync { get; set; }
+		public byte Blend { get; set; }
+		public byte BlendDelay { get; set; }
+		public byte PulseShotCounter { get; set; }
+		public byte BlendShotCounter { get; set; }
+		public byte ArpCount { get; set; }
 
-		public sbyte[] SampleAddr;
+		public sbyte[] SampleAddr { get; set; }
 	}
 }

@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class SoundEffectLine
 	{
-		public SoundEffect Effect;
-		public byte Argument1;
-		public ushort Argument2;
+		public SoundEffect Effect { get; set; }
+		public byte Argument1 { get; set; }
+		public ushort Argument2 { get; set; }
 	}
 }

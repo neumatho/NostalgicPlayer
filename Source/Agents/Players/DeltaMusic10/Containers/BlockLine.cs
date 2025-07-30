@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 	/// </summary>
 	internal class BlockLine
 	{
-		public byte Instrument;
-		public byte Note;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Instrument { get; set; }
+		public byte Note { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 	}
 }

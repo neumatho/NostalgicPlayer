@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker.Containers
 	/// </summary>
 	internal class Position
 	{
-		public readonly VoicePosition[] VoicePosition = new VoicePosition[4];
-		public byte Speed;
+		public VoicePosition[] VoicePosition { get; } = new VoicePosition[4];
+		public byte Speed { get; set; }
 	}
 }

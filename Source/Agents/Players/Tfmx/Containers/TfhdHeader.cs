@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class TfhdHeader
 	{
-		public uint HeaderSize;
-		public byte Type;				// 0 = Unchecked, 1 = 1.5, 2 = Pro, 3 = 7V. Bit 7 = forced
-		public byte Version;
-		public uint MdatSize;
-		public uint SmplSize;
+		public uint HeaderSize { get; set; }
+		public byte Type { get; set; }				// 0 = Unchecked, 1 = 1.5, 2 = Pro, 3 = 7V. Bit 7 = forced
+		public byte Version { get; set; }
+		public uint MdatSize { get; set; }
+		public uint SmplSize { get; set; }
 	}
 }

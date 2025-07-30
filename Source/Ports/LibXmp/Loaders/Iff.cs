@@ -18,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	{
 		private class Iff_Data
 		{
-			public readonly List<Iff_Info> Iff_List = new List<Iff_Info>();
-			public uint Id_Size;
-			public Iff_Quirk_Flag Flags;
+			public List<Iff_Info> Iff_List { get; } = new List<Iff_Info>();
+			public uint Id_Size { get; set; }
+			public Iff_Quirk_Flag Flags { get; set; }
 		}
 
 		private const c_long Iff_Max_Chunk_Size = 0x800000;

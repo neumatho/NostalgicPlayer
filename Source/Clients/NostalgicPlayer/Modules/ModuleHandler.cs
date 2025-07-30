@@ -26,14 +26,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 	{
 		private class ModuleItem
 		{
-			public LoaderBase Loader;
+			public LoaderBase Loader { get; set; }
 		}
 
 		private IMainWindowApi mainWindowApi;
 		private Manager agentManager;
 		private SoundSettings soundSettings;
 
-		private Lock outputAgentLock = new Lock();
+		private readonly Lock outputAgentLock = new Lock();
 		private IOutputAgent outputAgent;
 
 		private List<ModuleItem> loadedFiles;

@@ -9,8 +9,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 {
 	internal class MixPlayingInfo : IDeepCloneable<MixPlayingInfo>
 	{
-		public uint Counter;
-		public uint Position;
+		public uint Counter { get; set; }
+		public uint Position { get; set; }
 
 		/********************************************************************/
 		/// <summary>

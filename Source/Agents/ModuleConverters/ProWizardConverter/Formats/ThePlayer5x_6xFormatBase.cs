@@ -18,10 +18,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// </summary>
 	internal abstract class ThePlayer5x_6xFormatBase : ProWizardConverterWorker31SamplesBase
 	{
-		private static sbyte[] packTable =
-		{
+		private static readonly sbyte[] packTable =
+		[
 			0, 1, 2, 4, 8, 16, 32, 64, -128, -64, -32, -16, -8, -4, -2, -1
-		};
+		];
 
 		private uint trackDataOffset;
 		private uint sampleDataOffset;

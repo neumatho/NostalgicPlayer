@@ -12,8 +12,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class TrackRow
 	{
-		public byte Instrument;
-		public byte Note;
-		public List<(Effect, byte)> Effects;
+		public byte Instrument { get; set; }
+		public byte Note { get; set; }
+		public List<(Effect, byte)> Effects { get; set; }
 	}
 }

@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Lzw
 	/// </summary>
 	internal class Lzw_Code
 	{
-		public uint16 Prev;
-		public uint16 Length;
-		public uint8 Value;
+		public uint16 Prev { get; set; }
+		public uint16 Length { get; set; }
+		public uint8 Value { get; set; }
 	}
 }

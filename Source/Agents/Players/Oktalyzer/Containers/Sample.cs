@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public uint Length;
-		public ushort RepeatStart;
-		public ushort RepeatLength;
-		public ushort Volume;
-		public ushort Mode;						// 0 = 8, 1 = 4, 2 = B
-		public sbyte[] SampleData;
+		public string Name { get; set; }
+		public uint Length { get; set; }
+		public ushort RepeatStart { get; set; }
+		public ushort RepeatLength { get; set; }
+		public ushort Volume { get; set; }
+		public ushort Mode { get; set; }			// 0 = 8, 1 = 4, 2 = B
+		public sbyte[] SampleData { get; set; }
 	}
 }

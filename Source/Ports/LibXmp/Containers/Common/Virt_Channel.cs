@@ -12,8 +12,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Virt_Channel : IDeepCloneable<Virt_Channel>
 	{
-		public c_int Count;
-		public c_int Map;
+		public c_int Count { get; set; }
+		public c_int Map { get; set; }
 
 		/********************************************************************/
 		/// <summary>

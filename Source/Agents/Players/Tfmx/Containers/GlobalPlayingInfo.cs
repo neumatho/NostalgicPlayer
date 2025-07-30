@@ -13,20 +13,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public Hdb[] Hdb;
-		public Mdb Mdb;
-		public Cdb[] Cdb;
-		public PdBlk Pdb;
-		public Idb Idb;
+		public Hdb[] Hdb { get; set; }
+		public Mdb Mdb { get; set; }
+		public Cdb[] Cdb { get; set; }
+		public PdBlk Pdb { get; set; }
+		public Idb Idb { get; set; }
 
-		public bool MultiMode;
+		public bool MultiMode { get; set; }
 
-		public int Loops;
+		public int Loops { get; set; }
 
-		public uint EClocks;
-		public int ERem;
+		public uint EClocks { get; set; }
+		public int ERem { get; set; }
 
-		public int[] LastTrackPlayed;
+		public int[] LastTrackPlayed { get; set; }
 
 		/********************************************************************/
 		/// <summary>
@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 			clone.LastTrackPlayed = ArrayHelper.CloneArray(LastTrackPlayed);
 
 			for (int i = clone.Hdb.Length - 1; i >= 0; i--)
-				clone.Cdb[i].hw = clone.Hdb[i];
+				clone.Cdb[i].Hw = clone.Hdb[i];
 
 			return clone;
 		}

@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class FxPlugin : IPlugin
 	{
-		public byte Plugin;
-		public byte[] Data;
+		public byte Plugin { get; set; }
+		public byte[] Data { get; set; }
 	}
 }

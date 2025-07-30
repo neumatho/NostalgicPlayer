@@ -21,8 +21,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	/// </summary>
 	internal class Mgt_Load : IFormatLoader
 	{
+		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_MGT = Common.Magic4('\0', 'M', 'G', 'T');
 		private static readonly uint32 Magic_MCS = Common.Magic4((char)0xbd, 'M', 'C', 'S');
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

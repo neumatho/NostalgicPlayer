@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class TrackRow
 	{
-		public byte Note;
-		public byte Instrument;
-		public byte Effect;
-		public byte EffectParam;
+		public byte Note { get; set; }
+		public byte Instrument { get; set; }
+		public byte Effect { get; set; }
+		public byte EffectParam { get; set; }
 	}
 }

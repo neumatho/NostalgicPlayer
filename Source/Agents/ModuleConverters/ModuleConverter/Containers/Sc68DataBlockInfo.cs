@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Contain
 	/// </summary>
 	internal class Sc68DataBlockInfo
 	{
-		public long ModuleStartPosition;
-		public int ModuleLength;
-		public long DataStartPosition;
-		public int DataLength;
+		public long ModuleStartPosition { get; set; }
+		public int ModuleLength { get; set; }
+		public long DataStartPosition { get; set; }
+		public int DataLength { get; set; }
 	}
 }

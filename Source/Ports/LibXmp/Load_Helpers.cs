@@ -17,9 +17,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	{
 		private class Module_Quirk
 		{
-			public uint8[] Md5;
-			public Xmp_Flags Flags;
-			public Xmp_Mode Mode;
+			public uint8[] Md5 { get; set; }
+			public Xmp_Flags Flags { get; set; }
+			public Xmp_Mode Mode { get; set; }
 		}
 
 		private static readonly Module_Quirk[] mq =

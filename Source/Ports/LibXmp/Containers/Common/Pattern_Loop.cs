@@ -12,8 +12,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Pattern_Loop : IDeepCloneable<Pattern_Loop>
 	{
-		public c_int Start;
-		public c_int Count;
+		public ref c_int Start => ref _Start;
+		private c_int _Start;
+		public ref c_int Count => ref _Count;
+		private c_int _Count;
 
 		/********************************************************************/
 		/// <summary>

@@ -12,29 +12,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public int SequenceIndex;
-		public Sequence CurrentSequence;
-		public int RowIndex;
-		public Track CurrentTrack;
-		public Instrument CurrentInstrument;
-		public int InstrumentNumber;
-		public ushort NotePeriod;
-		public byte BendTo;
-		public sbyte BendSpeed;
-		public sbyte NoteOffset;
-		public byte ArpeggioIndex;
-		public EnvelopeState EnvelopeInProgress;
-		public byte RowCount;
-		public byte Volume;
-		public byte SustainControl;
-		public ushort PitchControl;
-		public byte PhaseIndex;
-		public byte PhaseSpeed;
-		public ushort PitchFallControl;
-		public byte WaveIndex;
-		public byte WaveformNumber;
-		public byte WaveSpeed;
-		public bool LoopControl;
+		public int SequenceIndex { get; set; }
+		public Sequence CurrentSequence { get; set; }
+		public int RowIndex { get; set; }
+		public Track CurrentTrack { get; set; }
+		public Instrument CurrentInstrument { get; set; }
+		public int InstrumentNumber { get; set; }
+		public ushort NotePeriod { get; set; }
+		public byte BendTo { get; set; }
+		public sbyte BendSpeed { get; set; }
+		public sbyte NoteOffset { get; set; }
+		public byte ArpeggioIndex { get; set; }
+		public EnvelopeState EnvelopeInProgress { get; set; }
+		public byte RowCount { get; set; }
+		public byte Volume { get; set; }
+		public byte SustainControl { get; set; }
+		public ushort PitchControl { get; set; }
+		public byte PhaseIndex { get; set; }
+		public byte PhaseSpeed { get; set; }
+		public ushort PitchFallControl { get; set; }
+		public byte WaveIndex { get; set; }
+		public byte WaveformNumber { get; set; }
+		public byte WaveSpeed { get; set; }
+		public bool LoopControl { get; set; }
 
 		/********************************************************************/
 		/// <summary>

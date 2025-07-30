@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class AdsrPoint
 	{
-		public byte Point;
-		public byte Increment;
+		public byte Point { get; set; }
+		public byte Increment { get; set; }
 	}
 }

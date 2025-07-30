@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler.Containers
 	/// </summary>
 	internal class PositionInfo
 	{
-		public byte TrackNumber;
-		public byte Transpose;
-		public sbyte RepeatCounter;
+		public byte TrackNumber { get; set; }
+		public byte Transpose { get; set; }
+		public sbyte RepeatCounter { get; set; }
 	}
 }

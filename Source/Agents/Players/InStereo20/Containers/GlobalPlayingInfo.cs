@@ -12,12 +12,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte SpeedCounter;
-		public byte CurrentSpeed;
+		public byte SpeedCounter { get; set; }
+		public byte CurrentSpeed { get; set; }
 
-		public short SongPosition;
-		public byte RowPosition;
-		public byte RowsPerTrack;
+		public short SongPosition { get; set; }
+		public byte RowPosition { get; set; }
+		public byte RowsPerTrack { get; set; }
 
 		/********************************************************************/
 		/// <summary>

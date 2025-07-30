@@ -319,22 +319,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		private c_int Test_Module(out Xmp_Test_Info info, Hio h)
 		{
-			for (c_int i = 0; Format.format_Loaders[i] != null; i++)
+			for (c_int i = 0; Format.Format_Loaders[i] != null; i++)
 			{
-				if (Format.format_Loaders[i].OnlyAvailableInTest && !LibXmp.UnitTestMode)
+				if (Format.Format_Loaders[i].OnlyAvailableInTest && !LibXmp.UnitTestMode)
 					continue;
 
 				h.Hio_Seek(0, SeekOrigin.Begin);
 
-				IFormatLoader loader = Format.format_Loaders[i].Create(lib, ctx);
+				IFormatLoader loader = Format.Format_Loaders[i].Create(lib, ctx);
 
 				if (loader.Test(h, out string buf, 0) == 0)
 				{
 					info = new Xmp_Test_Info
 					{
 						Name = buf,
-						Type = Format.format_Loaders[i].Name,
-						Id = Format.format_Loaders[i].Id
+						Type = Format.Format_Loaders[i].Name,
+						Id = Format.Format_Loaders[i].Id
 					};
 
 					return 0;
@@ -360,16 +360,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			c_int test_Result = -1, load_Result = -1;
 
-			for (c_int i = 0; Format.format_Loaders[i] != null; i++)
+			for (c_int i = 0; Format.Format_Loaders[i] != null; i++)
 			{
-				if (Format.format_Loaders[i].OnlyAvailableInTest && !LibXmp.UnitTestMode)
+				if (Format.Format_Loaders[i].OnlyAvailableInTest && !LibXmp.UnitTestMode)
 					continue;
 
-				if (!formatToUse.HasValue || (Format.format_Loaders[i].Id == formatToUse.Value))
+				if (!formatToUse.HasValue || (Format.Format_Loaders[i].Id == formatToUse.Value))
 				{
 					h.Hio_Seek(0, SeekOrigin.Begin);
 
-					IFormatLoader loader = Format.format_Loaders[i].Create(lib, ctx);
+					IFormatLoader loader = Format.Format_Loaders[i].Create(lib, ctx);
 
 					test_Result = loader.Test(h, out _, 0);
 					if (test_Result == 0)

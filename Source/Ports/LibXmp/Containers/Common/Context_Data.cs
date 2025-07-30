@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Context_Data
 	{
-		public Player_Data P = new Player_Data();
-		public Mixer_Data S = new Mixer_Data();
-		public Module_Data M = new Module_Data();
-		public Rng_State Rng = new Rng_State();
-		public Xmp_State State;
+		public Player_Data P { get; set; } = new Player_Data();
+		public Mixer_Data S { get; } = new Mixer_Data();
+		public Module_Data M { get; } = new Module_Data();
+		public Rng_State Rng { get; } = new Rng_State();
+		public Xmp_State State { get; set; }
 	}
 }

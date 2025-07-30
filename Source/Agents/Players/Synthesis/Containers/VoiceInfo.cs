@@ -14,55 +14,55 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis.Containers
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
 		// Position information
-		public ushort StartTrackRow;
-		public sbyte SoundTranspose;
-		public sbyte NoteTranspose;
+		public ushort StartTrackRow { get; set; }
+		public sbyte SoundTranspose { get; set; }
+		public sbyte NoteTranspose { get; set; }
 
 		// Track row information
-		public byte Note;
-		public byte Instrument;
-		public byte Arpeggio;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Note { get; set; }
+		public byte Instrument { get; set; }
+		public byte Arpeggio { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 
-		public byte UseBuffer;
-		public sbyte[] SynthSample1 = new sbyte[256];
-		public sbyte[] SynthSample2 = new sbyte[256];
+		public byte UseBuffer { get; set; }
+		public sbyte[] SynthSample1 { get; set; } = new sbyte[256];
+		public sbyte[] SynthSample2 { get; set; } = new sbyte[256];
 
-		public byte TransposedNote;
-		public byte PreviousTransposedNote;
+		public byte TransposedNote { get; set; }
+		public byte PreviousTransposedNote { get; set; }
 
-		public byte TransposedInstrument;
+		public byte TransposedInstrument { get; set; }
 
-		public byte CurrentVolume;
-		public byte NewVolume;
+		public byte CurrentVolume { get; set; }
+		public byte NewVolume { get; set; }
 
-		public byte ArpeggioPosition;
+		public byte ArpeggioPosition { get; set; }
 
-		public sbyte SlideSpeed;
-		public short SlideIncrement;
+		public sbyte SlideSpeed { get; set; }
+		public short SlideIncrement { get; set; }
 
-		public sbyte PortamentoSpeed;
-		public short PortamentoSpeedCounter;
+		public sbyte PortamentoSpeed { get; set; }
+		public short PortamentoSpeedCounter { get; set; }
 
-		public byte VibratoDelay;
-		public byte VibratoPosition;
+		public byte VibratoDelay { get; set; }
+		public byte VibratoPosition { get; set; }
 
-		public bool AdsrEnabled;
-		public ushort AdsrPosition;
+		public bool AdsrEnabled { get; set; }
+		public ushort AdsrPosition { get; set; }
 
-		public bool EnvelopeGeneratorCounterDisabled;
-		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode;
-		public ushort EnvelopeGeneratorCounterPosition;
+		public bool EnvelopeGeneratorCounterDisabled { get; set; }
+		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode { get; set; }
+		public ushort EnvelopeGeneratorCounterPosition { get; set; }
 
-		public bool SynthEffectDisabled;
-		public SynthesisEffect SynthEffect;
-		public byte SynthEffectArg1;
-		public byte SynthEffectArg2;
-		public byte SynthEffectArg3;
+		public bool SynthEffectDisabled { get; set; }
+		public SynthesisEffect SynthEffect { get; set; }
+		public byte SynthEffectArg1 { get; set; }
+		public byte SynthEffectArg2 { get; set; }
+		public byte SynthEffectArg3 { get; set; }
 
-		public byte SynthPosition;
-		public byte SlowMotionCounter;
+		public byte SynthPosition { get; set; }
+		public byte SlowMotionCounter { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -12,22 +12,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class SoundEffectState : IDeepCloneable<SoundEffectState>
 	{
-		public SoundEffectScript EffectScript;
-		public int ScriptPosition;
+		public SoundEffectScript EffectScript { get; set; }
+		public int ScriptPosition { get; set; }
 
-		public ushort WaitCounter;
-		public ushort LoopCounter;
+		public ushort WaitCounter { get; set; }
+		public ushort LoopCounter { get; set; }
 
-		public VoiceInfo VoiceInfo;
+		public VoiceInfo VoiceInfo { get; set; }
 
-		public ushort NewPitchGotoLineNumber;
-		public ushort NewVolumeGotoLineNumber;
-		public ushort NewSampleGotoLineNumber;
-		public ushort ReleaseGotoLineNumber;
-		public ushort PortamentoGotoLineNumber;
-		public ushort VolumeDownGotoLineNumber;
+		public ushort NewPitchGotoLineNumber { get; set; }
+		public ushort NewVolumeGotoLineNumber { get; set; }
+		public ushort NewSampleGotoLineNumber { get; set; }
+		public ushort ReleaseGotoLineNumber { get; set; }
+		public ushort PortamentoGotoLineNumber { get; set; }
+		public ushort VolumeDownGotoLineNumber { get; set; }
 
-		public ushort InterruptLineNumber;
+		public ushort InterruptLineNumber { get; set; }
 
 		/********************************************************************/
 		/// <summary>

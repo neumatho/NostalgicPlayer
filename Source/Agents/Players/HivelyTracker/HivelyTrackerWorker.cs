@@ -37,12 +37,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		#region VisualizerChannel class
 		private class VisualizerChannel
 		{
-			public bool Muted;
-			public bool NoteKicked;
-			public short SampleNumber;
-			public int? SamplePosition;
-			public ushort? Volume;
-			public uint? Frequency;
+			public bool Muted { get; set; }
+			public bool NoteKicked { get; set; }
+			public short SampleNumber { get; set; }
+			public int? SamplePosition { get; set; }
+			public ushort? Volume { get; set; }
+			public uint? Frequency { get; set; }
 		}
 		#endregion
 
@@ -1754,7 +1754,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 			if ((voice.Waveform == 3 - 1) || voice.PlantSquare)
 			{
 				// Calc square
-				sbyte[] squarePtr = waves.filterSets[voice.FilterPos - 1].Squares;
+				sbyte[] squarePtr = waves.FilterSets[voice.FilterPos - 1].Squares;
 				int x = voice.SquarePos << (5 - voice.WaveLength);
 
 				if (x > 0x20)
@@ -2237,7 +2237,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 			if (waveform == 3 - 1)
 				return playingInfo.SquareWaveform;
 
-			HvlWaves.Waves wave = waves.filterSets[filter - 1];
+			HvlWaves.Waves wave = waves.FilterSets[filter - 1];
 
 			switch (waveform)
 			{

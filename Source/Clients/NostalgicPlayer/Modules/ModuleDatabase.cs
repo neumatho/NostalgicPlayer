@@ -24,18 +24,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		private class DatabaseValue
 		{
-			public Dictionary<string, DatabaseValue> NextLevel = new Dictionary<string, DatabaseValue>(StringComparer.InvariantCultureIgnoreCase);
-			public ModuleDatabaseInfo Info;
+			public Dictionary<string, DatabaseValue> NextLevel { get; set; } = new Dictionary<string, DatabaseValue>(StringComparer.InvariantCultureIgnoreCase);
+			public ModuleDatabaseInfo Info { get; set; }
 		}
 
 		private class QueueInfo
 		{
-			public string FullPath;
-			public ModuleDatabaseInfo Info;
+			public string FullPath { get; set; }
+			public ModuleDatabaseInfo Info { get; set; }
 		}
 
 		private class CleanupState
 		{
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
 			public CleanupState(string path, Dictionary<string, DatabaseValue> level)
 			{
 				Path = path;
@@ -45,10 +50,53 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				AllKeys = level.Keys.ToArray();
 			}
 
-			public readonly string Path;
-			public readonly Dictionary<string, DatabaseValue> Level;
-			public int Index;
-			public readonly string[] AllKeys;
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public string Path
+			{
+				get;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public Dictionary<string, DatabaseValue> Level
+			{
+				get;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public int Index
+			{
+				get; set;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public string[] AllKeys
+			{
+				get;
+			}
 		}
 
 		// The internal structure is built like this:

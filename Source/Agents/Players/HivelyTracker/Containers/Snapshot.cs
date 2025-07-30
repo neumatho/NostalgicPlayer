@@ -14,9 +14,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-		public HvlVoice[] Channels;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -26,6 +23,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Channels = ArrayHelper.CloneObjectArray(channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public HvlVoice[] Channels
+		{
+			get;
 		}
 	}
 }

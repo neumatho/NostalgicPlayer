@@ -12,8 +12,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -22,6 +20,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 		public Snapshot(GlobalPlayingInfo playingInfo)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
 		}
 	}
 }

@@ -1368,7 +1368,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							amSample.PitchFall = moduleStream.Read_B_UINT16();
 							amSample.VibAmp = (short)moduleStream.Read_B_UINT16();
 							amSample.VibSpeed = moduleStream.Read_B_UINT16();
-							amSample.baseFreq = moduleStream.Read_B_UINT16();
+							amSample.BaseFreq = moduleStream.Read_B_UINT16();
 
 							moduleStream.Seek(84, SeekOrigin.Current);
 
@@ -1817,7 +1817,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								modChan.AmToDo = AmToDo.Attack1;
 								modChan.StarVolume = (short)amSample.StartAmp;
 								modChan.VibDegree = 0;
-								modChan.Period = (ushort)(modChan.Period << amSample.baseFreq);
+								modChan.Period = (ushort)(modChan.Period << amSample.BaseFreq);
 							}
 						}
 						else if (currentModuleType == ModuleType.HisMastersNoise)

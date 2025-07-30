@@ -13,12 +13,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Number of rows
 		/// </summary>
-		public c_int Rows;
+		public c_int Rows { get; internal set; }
 
 		/// <summary>
 		/// Event data
 		/// </summary>
-		public Xmp_Event[] Event;
+		public Xmp_Event[] Event { get; internal set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -19,9 +19,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 	{
 		private class InstrumentInfo
 		{
-			public ushort SampleNumber;
-			public ushort OneshotLength;
-			public ushort RepeatLength;
+			public ushort SampleNumber { get; set; }
+			public ushort OneshotLength { get; set; }
+			public ushort RepeatLength { get; set; }
 		}
 
 		private int moduleOffset;

@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 	/// </summary>
 	internal class ArcCode
 	{
-		public ushort Prev;
-		public ushort Length;
-		public byte Value;
+		public ushort Prev { get; set; }
+		public ushort Length { get; set; }
+		public byte Value { get; set; }
 	}
 }

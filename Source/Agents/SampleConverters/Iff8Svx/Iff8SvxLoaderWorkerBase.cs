@@ -21,9 +21,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 	{
 		private class LoadInfo
 		{
-			public byte[] LoadBuffer;
-			public int LoadBufferFillCount;
-			public int LoadBufferOffset;
+			public byte[] LoadBuffer { get; set; }
+			public int LoadBufferFillCount { get; set; }
+			public int LoadBufferOffset { get; set; }
 		}
 
 		private ModuleStream moduleStream2;

@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class ChannelPlugin : IPlugin
 	{
-		public uint[] Plugins;
+		public uint[] Plugins { get; set; }
 	}
 }

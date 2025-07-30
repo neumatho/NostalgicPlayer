@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 	/// </summary>
 	internal class VoiceSampleInfo
 	{
-		public SampleFlag Flags;
-		public VoiceSample Sample = new VoiceSample();
-		public VoiceSample Loop;
+		public SampleFlag Flags { get; set; }
+		public VoiceSample Sample { get; } = new VoiceSample();
+		public VoiceSample Loop { get; set; }
 	}
 }

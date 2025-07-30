@@ -13,9 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-		public VoiceInfo[] Channels;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -25,6 +22,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Channels = ArrayHelper.CloneObjectArray(channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public VoiceInfo[] Channels
+		{
+			get;
 		}
 	}
 }

@@ -28,10 +28,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		#region SampleRange class
 		private class SampleRange : IComparable<SampleRange>
 		{
-			public int Start;
-			public int End;
-			public int LoopStart;
-			public int LoopLength;
+			public int Start { get; set; }
+			public int End { get; set; }
+			public int LoopStart { get; set; }
+			public int LoopLength { get; set; }
 
 			public int CompareTo(SampleRange other)
 			{
@@ -949,8 +949,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			for (int x = 0; x < 8; x++)
 			{
 				playingInfo.Hdb[x].C = playingInfo.Cdb[x];
-				playingInfo.Pdb.p[x].PNum = 0xff;
-				playingInfo.Pdb.p[x].PAddr = 0;
+				playingInfo.Pdb.P[x].PNum = 0xff;
+				playingInfo.Pdb.P[x].PAddr = 0;
 
 				ChannelOff(x);
 			}
@@ -992,10 +992,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			for (int x = 0; x < 8; x++)
 			{
-				playingInfo.Pdb.p[x].PAddr = 0;
-				playingInfo.Pdb.p[x].PNum = 0xff;
-				playingInfo.Pdb.p[x].PxPose = 0;
-				playingInfo.Pdb.p[x].PStep = 0;
+				playingInfo.Pdb.P[x].PAddr = 0;
+				playingInfo.Pdb.P[x].PNum = 0xff;
+				playingInfo.Pdb.P[x].PxPose = 0;
+				playingInfo.Pdb.P[x].PStep = 0;
 			}
 
 			if (mode != 2)
@@ -1184,21 +1184,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					// DMA off
 					case 0x13:
 					{
-						c.hw.Loop = LoopOff;
+						c.Hw.Loop = LoopOff;
 
 						if (x.b1 == 0)
 						{
-							c.hw.Mode = 0;
+							c.Hw.Mode = 0;
 
 							// Added by Stefan Ohlsson
 							// Removes glitch in Turrican II World 2 Song 0, among others
 							if (c.NewStyleMacro != 0)
-								c.hw.SLen = 0;
+								c.Hw.SLen = 0;
 
 							break;
 						}
 
-						c.hw.Mode |= 4;
+						c.Hw.Mode |= 4;
 						c.NewStyleMacro = 0;
 						return;
 					}
@@ -1207,16 +1207,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					case 0x1:
 					{
 						c.EfxRun = (sbyte)x.b1;
-						c.hw.Mode = 1;
+						c.Hw.Mode = 1;
 
 						if ((c.NewStyleMacro == 0) || dangerFreakHack)
 						{
-							c.hw.SampleStart = (int)c.SaveAddr;
-							c.hw.SampleLength = (ushort)(c.SaveLen != 0 ? c.SaveLen << 1 : 131072);
-							c.hw.SBeg = c.hw.SampleStart;
-							c.hw.SLen = c.hw.SampleLength;
-							c.hw.Pos = 0;
-							c.hw.Mode |= 2;
+							c.Hw.SampleStart = (int)c.SaveAddr;
+							c.Hw.SampleLength = (ushort)(c.SaveLen != 0 ? c.SaveLen << 1 : 131072);
+							c.Hw.SBeg = c.Hw.SampleStart;
+							c.Hw.SLen = c.Hw.SampleLength;
+							c.Hw.Pos = 0;
+							c.Hw.Mode |= 2;
 						}
 						break;
 					}
@@ -1278,8 +1278,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					// Wait on DMA
 					case 0x1a:
 					{
-						c.hw.Loop = LoopOn;
-						c.hw.C = c;
+						c.Hw.Loop = LoopOn;
+						c.Hw.C = c;
 						c.WaitDmaCount = x.w1;
 						c.MacroRun = 0;
 
@@ -1742,17 +1742,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			DoEffects(c);
 
 			// Has to be here because of if (efxRun = 1)
-			c.hw.Delta = c.CurPeriod != 0 ? (3579545 << 9) / (c.CurPeriod * mixerFreq >> 5) : 0;
-			c.hw.SampleStart = (int)c.SaveAddr;
-			c.hw.SampleLength = (ushort)(c.SaveLen != 0 ? c.SaveLen << 1 : 131072);
+			c.Hw.Delta = c.CurPeriod != 0 ? (3579545 << 9) / (c.CurPeriod * mixerFreq >> 5) : 0;
+			c.Hw.SampleStart = (int)c.SaveAddr;
+			c.Hw.SampleLength = (ushort)(c.SaveLen != 0 ? c.SaveLen << 1 : 131072);
 
-			if ((c.hw.Mode & 3) == 1)
+			if ((c.Hw.Mode & 3) == 1)
 			{
-				c.hw.SBeg = c.hw.SampleStart;
-				c.hw.SLen = c.hw.SampleLength;
+				c.Hw.SBeg = c.Hw.SampleStart;
+				c.Hw.SLen = c.Hw.SampleLength;
 			}
 
-			c.hw.Vol = (byte)((c.CurVol * playingInfo.Mdb.MasterVol) >> 6);
+			c.Hw.Vol = (byte)((c.CurVol * playingInfo.Mdb.MasterVol) >> 6);
 		}
 
 
@@ -1791,16 +1791,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			Cdb c = playingInfo.Cdb[i & 0xf];
 			if (c.SfxFlag == 0)
 			{
-				c.hw.Mode = 0;
+				c.Hw.Mode = 0;
 				c.AddBeginTime = c.AddBeginReset = 0;
 				c.MacroRun = 0;
 				c.NewStyleMacro = 0xff;
 				c.SaveAddr = 0;
 				c.CurVol = 0;
-				c.hw.Vol = 0;
+				c.Hw.Vol = 0;
 				c.SaveLen = c.CurrLength = 1;
-				c.hw.Loop = LoopOff;
-				c.hw.C = c;
+				c.Hw.Loop = LoopOff;
+				c.Hw.C = c;
 			}
 		}
 
@@ -1984,16 +1984,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					{
 						ushort lv = BitConverter.ToUInt16(musicData, l + x * 2);
 
-						playingInfo.Pdb.p[x].PxPose = (sbyte)(lv & 0xff);
+						playingInfo.Pdb.P[x].PxPose = (sbyte)(lv & 0xff);
 
-						byte y = playingInfo.Pdb.p[x].PNum = (byte)(lv >> 8);
+						byte y = playingInfo.Pdb.P[x].PNum = (byte)(lv >> 8);
 						if (y < 0x80)
 						{
-							playingInfo.Pdb.p[x].PStep = 0;
-							playingInfo.Pdb.p[x].PWait = 0;
-							playingInfo.Pdb.p[x].PLoop = 0xffff;
-							playingInfo.Pdb.p[x].PAddr = BitConverter.ToUInt32(musicData, patternStart + y * 4);
-							playingInfo.Pdb.p[x].Looped = false;
+							playingInfo.Pdb.P[x].PStep = 0;
+							playingInfo.Pdb.P[x].PWait = 0;
+							playingInfo.Pdb.P[x].PLoop = 0xffff;
+							playingInfo.Pdb.P[x].PAddr = BitConverter.ToUInt32(musicData, patternStart + y * 4);
+							playingInfo.Pdb.P[x].Looped = false;
 						}
 					}
 					break;
@@ -2255,7 +2255,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 				for (int x = 0; x < 8; x++)
 				{
-					if (DoTrack(playingInfo.Pdb.p, playingInfo.Pdb.p[x], false))
+					if (DoTrack(playingInfo.Pdb.P, playingInfo.Pdb.P[x], false))
 					{
 						if (endReached)
 							break;
@@ -2268,7 +2268,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				int y = 0;
 				for (int x = 0; x < 8; x++)
 				{
-					if (playingInfo.Pdb.p[x].PNum >= 0x80)
+					if (playingInfo.Pdb.P[x].PNum >= 0x80)
 						y++;
 				}
 
@@ -2304,8 +2304,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			for (int x = 0; x < 8; x++)
 			{
 				Cdb c = playingInfo.Cdb[x];
-				c.hw = playingInfo.Hdb[x];
-				c.hw.C = c;			// Wait on DMA
+				c.Hw = playingInfo.Hdb[x];
+				c.Hw.C = c;			// Wait on DMA
 
 				playingInfo.Hdb[x].Mode = 0;
 				c.MacroWait = 0;
@@ -2316,9 +2316,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				c.Loop = c.SfxLockTime = -1;
 				c.NewStyleMacro = 0xff;
 
-				c.hw.SBeg = c.hw.SampleStart = 0;
-				c.hw.SampleLength = c.hw.SLen = c.SaveLen = 2;
-				c.hw.Loop = LoopOff;
+				c.Hw.SBeg = c.Hw.SampleStart = 0;
+				c.Hw.SampleLength = c.Hw.SLen = c.SaveLen = 2;
+				c.Hw.Loop = LoopOff;
 			}
 		}
 

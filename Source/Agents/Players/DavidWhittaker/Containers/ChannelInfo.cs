@@ -9,41 +9,41 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 {
 	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public int ChannelNumber;
+		public int ChannelNumber { get; set; }
 
-		public uint[] PositionList;
-		public ushort CurrentPosition;
-		public ushort RestartPosition;
+		public uint[] PositionList { get; set; }
+		public ushort CurrentPosition { get; set; }
+		public ushort RestartPosition { get; set; }
 
-		public byte[] TrackData;
-		public int TrackDataPosition;
+		public byte[] TrackData { get; set; }
+		public int TrackDataPosition { get; set; }
 
-		public Sample CurrentSampleInfo;
-		public byte Note;
-		public sbyte Transpose;
+		public Sample CurrentSampleInfo { get; set; }
+		public byte Note { get; set; }
+		public sbyte Transpose { get; set; }
 
-		public bool EnableHalfVolume;
+		public bool EnableHalfVolume { get; set; }
 
-		public ushort Speed;
-		public ushort SpeedCounter;
+		public ushort Speed { get; set; }
+		public ushort SpeedCounter { get; set; }
 
-		public byte[] ArpeggioList;
-		public int ArpeggioListPosition;
+		public byte[] ArpeggioList { get; set; }
+		public int ArpeggioListPosition { get; set; }
 
-		public byte[] EnvelopeList;
-		public int EnvelopeListPosition;
-		public byte EnvelopeSpeed;
-		public sbyte EnvelopeCounter;
+		public byte[] EnvelopeList { get; set; }
+		public int EnvelopeListPosition { get; set; }
+		public byte EnvelopeSpeed { get; set; }
+		public sbyte EnvelopeCounter { get; set; }
 
-		public bool SlideEnabled;
-		public sbyte SlideSpeed;
-		public byte SlideCounter;
-		public short SlideValue;
+		public bool SlideEnabled { get; set; }
+		public sbyte SlideSpeed { get; set; }
+		public byte SlideCounter { get; set; }
+		public short SlideValue { get; set; }
 
-		public sbyte VibratoDirection;
-		public byte VibratoSpeed;
-		public byte VibratoValue;
-		public byte VibratoMaxValue;
+		public sbyte VibratoDirection { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoValue { get; set; }
+		public byte VibratoMaxValue { get; set; }
 
 		/********************************************************************/
 		/// <summary>

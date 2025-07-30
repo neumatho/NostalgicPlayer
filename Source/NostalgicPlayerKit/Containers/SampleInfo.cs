@@ -83,33 +83,33 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// <summary>
 			/// The sample itself
 			/// </summary>
-			public Array Sample;
+			public Array Sample { get; set; }
 
 			/// <summary>
 			/// Holds the number of samples into the sample array where the real
 			/// data starts
 			/// </summary>
-			public uint SampleOffset;
+			public uint SampleOffset { get; set; }
 
 			/// <summary>
 			/// Holds the length of the sample in samples for one channel
 			/// </summary>
-			public uint Length;
+			public uint Length { get; set; }
 
 			/// <summary>
 			/// How many notes to add to the playing note
 			/// </summary>
-			public int NoteAdd;
+			public int NoteAdd { get; set; }
 
 			/// <summary>
 			/// Holds the start offset to the loop point in samples
 			/// </summary>
-			public uint LoopStart;
+			public uint LoopStart { get; set; }
 
 			/// <summary>
 			/// Holds the loop length in samples
 			/// </summary>
-			public uint LoopLength;
+			public uint LoopLength { get; set; }
 		}
 
 		private Array sample;

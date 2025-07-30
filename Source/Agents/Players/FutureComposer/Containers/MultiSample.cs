@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class MultiSample
 	{
-		public Sample[] Sample = new Sample[20];
+		public Sample[] Sample { get; } = new Sample[20];
 	}
 }

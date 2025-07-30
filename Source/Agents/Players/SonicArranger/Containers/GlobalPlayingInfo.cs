@@ -12,14 +12,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort MasterVolume;
+		public ushort MasterVolume { get; set; }
 
-		public ushort SpeedCounter;
-		public ushort CurrentSpeed;
+		public ushort SpeedCounter { get; set; }
+		public ushort CurrentSpeed { get; set; }
 
-		public short SongPosition;
-		public ushort RowPosition;
-		public ushort RowsPerTrack;
+		public short SongPosition { get; set; }
+		public ushort RowPosition { get; set; }
+		public ushort RowsPerTrack { get; set; }
 
 		/********************************************************************/
 		/// <summary>

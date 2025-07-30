@@ -17,108 +17,112 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 		/// <summary>
 		/// Channel number
 		/// </summary>
-		public c_int Chn;
+		public c_int Chn { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Root;
+		public c_int Root { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Note;
+		public c_int Note { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Pan;
+		public c_int Pan { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Vol;
+		public c_int Vol { get; set; }
 
 		/// <summary>
 		/// Current period
 		/// </summary>
-		public c_double Period;
+		public c_double Period { get; set; }
 
 		/// <summary>
 		/// Position in sample
 		/// </summary>
-		public c_double Pos;
+		public c_double Pos { get; set; }
 
 		/// <summary>
 		/// Position in sample before mixing
 		/// </summary>
-		public c_int Pos0;
+		public c_int Pos0 { get; set; }
 
 		/// <summary>
 		/// Mixer function index
 		/// </summary>
-		public Mixer_Index_Flag FIdx;
+		public Mixer_Index_Flag FIdx { get; set; }
 
 		/// <summary>
 		/// Instrument number
 		/// </summary>
-		public c_int Ins;
+		public c_int Ins { get; set; }
 
 		/// <summary>
 		/// Sample number
 		/// </summary>
-		public c_int Smp;
+		public c_int Smp { get; set; }
 
 		/// <summary>
 		/// Loop start
 		/// </summary>
-		public c_int Start;
+		public c_int Start { get; set; }
 
 		/// <summary>
 		/// Loop end
 		/// </summary>
-		public c_int End;
+		public c_int End { get; set; }
 
 		/// <summary>
 		/// NNA info and status of voice
 		/// </summary>
-		public Virt_Action Act;
+		public Virt_Action Act { get; set; }
 
 		/// <summary>
 		/// Key for DCA note check
 		/// </summary>
-		public c_int Key;
+		public c_int Key { get; set; }
 
 		/// <summary>
 		/// Previous volume, left channel
 		/// </summary>
-		public c_int Old_VL;
+		// ReSharper disable once InconsistentNaming
+		public c_int Old_VL { get; set; }
 
 		/// <summary>
 		/// Previous volume, right channel
 		/// </summary>
-		public c_int Old_VR;
+		// ReSharper disable once InconsistentNaming
+		public c_int Old_VR { get; set; }
 
 		/// <summary>
 		/// Last left sample output, in 32bit
 		/// </summary>
-		public c_int SLeft;
+		public c_int SLeft { get; set; }
 
 		/// <summary>
 		/// Last right sample output, in 32bit
 		/// </summary>
-		public c_int SRight;
+		public c_int SRight { get; set; }
 
 		/// <summary>
 		/// Flags
 		/// </summary>
-		public Mixer_Flag Flags;
+		public Mixer_Flag Flags { get; set; }
 
 		/// <summary>
 		/// Sample pointer
 		/// </summary>
-		public CPointer<byte> SPtr;
+		public ref CPointer<byte> SPtr => ref _SPtr;
+		private CPointer<byte> _SPtr;
 
+		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Smp,
 			c_int Dummy
@@ -137,6 +141,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 			c_int B1,
 			c_int CutOff,
 			c_int Resonance
+		// ReSharper disable once InconsistentNaming
 		) Filter;
 
 		/********************************************************************/

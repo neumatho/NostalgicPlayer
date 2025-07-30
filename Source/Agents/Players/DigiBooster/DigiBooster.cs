@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 	/// </summary>
 	public class DigiBooster : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("BF9FC836-F4AE-425C-94C7-530F393B9D26");
+		private static readonly Guid agent1Id = Guid.Parse("BF9FC836-F4AE-425C-94C7-530F393B9D26");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_DIGI_NAME_AGENT1, Resources.IDS_DIGI_DESCRIPTION_AGENT1, Agent1Id)
+			new AgentSupportInfo(Resources.IDS_DIGI_NAME_AGENT1, Resources.IDS_DIGI_DESCRIPTION_AGENT1, agent1Id)
 		];
 
 

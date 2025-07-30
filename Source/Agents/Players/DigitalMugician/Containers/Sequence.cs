@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class Sequence
 	{
-		public byte TrackNumber;
-		public sbyte Transpose;
+		public byte TrackNumber { get; set; }
+		public sbyte Transpose { get; set; }
 	}
 }

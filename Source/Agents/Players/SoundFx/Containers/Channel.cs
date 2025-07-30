@@ -12,22 +12,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 	/// </summary>
 	internal class Channel : IDeepCloneable<Channel>
 	{
-		public uint PatternData;
-		public short SampleNumber;
-		public sbyte[] Sample;
-		public uint SampleLen;
-		public uint LoopStart;
-		public uint LoopLength;
-		public ushort CurrentNote;
-		public ushort Volume;
-		public short StepValue;
-		public ushort StepNote;
-		public ushort StepEndNote;
-		public ushort SlideControl;
-		public bool SlideDirection;
-		public ushort SlideParam;
-		public ushort SlidePeriod;
-		public ushort SlideSpeed;
+		public uint PatternData { get; set; }
+		public short SampleNumber { get; set; }
+		public sbyte[] Sample { get; set; }
+		public uint SampleLen { get; set; }
+		public uint LoopStart { get; set; }
+		public uint LoopLength { get; set; }
+		public ushort CurrentNote { get; set; }
+		public ushort Volume { get; set; }
+		public short StepValue { get; set; }
+		public ushort StepNote { get; set; }
+		public ushort StepEndNote { get; set; }
+		public ushort SlideControl { get; set; }
+		public bool SlideDirection { get; set; }
+		public ushort SlideParam { get; set; }
+		public ushort SlidePeriod { get; set; }
+		public ushort SlideSpeed { get; set; }
 
 		/********************************************************************/
 		/// <summary>

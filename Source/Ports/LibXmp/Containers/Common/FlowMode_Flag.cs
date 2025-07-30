@@ -10,6 +10,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	[Flags]
 	internal enum FlowMode_Flag
 	{
+		// ReSharper disable InconsistentNaming
 		/// <summary>
 		/// 
 		/// </summary>
@@ -149,5 +150,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		Mode_DTM_2015 = (Loop_Global | Loop_First_Effect | Loop_No_Break_Jump),
 		Mode_DTM_2015_6CH = (Loop_Global | Loop_First_Effect | Loop_Delay_Break | Loop_Unset_Break | Loop_Shared_Break),
 		Mode_DTM_19 = (Loop_Global_Target | Loop_Unset_Break | Loop_Shared_Break),
+		// ReSharper restore InconsistentNaming
 	}
 }

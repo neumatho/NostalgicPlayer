@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank.Containers
 	/// </summary>
 	internal class PositionList
 	{
-		public short[] TrackNumbers;
+		public short[] TrackNumbers { get; set; }
 	}
 }

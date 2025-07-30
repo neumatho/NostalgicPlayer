@@ -15,19 +15,19 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		//
 
 		/// <summary></summary>
-		public uint OneShotHiSamples;
+		public uint OneShotHiSamples { get; set; }
 		/// <summary></summary>
-		public uint RepeatHiSamples;
+		public uint RepeatHiSamples { get; set; }
 		/// <summary></summary>
-		public uint SamplesPerHiCycle;
+		public uint SamplesPerHiCycle { get; set; }
 		/// <summary></summary>
-		public ushort SamplesPerSec;
+		public ushort SamplesPerSec { get; set; }
 		/// <summary></summary>
-		public byte Octaves;
+		public byte Octaves { get; set; }
 		/// <summary></summary>
-		public uint Volume;
+		public uint Volume { get; set; }
 
 		/// <summary></summary>
-		public sbyte[] SampleData;
+		public sbyte[] SampleData { get; set; }
 	}
 }

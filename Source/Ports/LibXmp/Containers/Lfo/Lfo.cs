@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Lfo
 	/// </summary>
 	internal class Lfo : IDeepCloneable<Lfo>
 	{
-		public c_int Type;
-		public c_int Rate;
-		public c_int Depth;
-		public c_int Phase;
+		public c_int Type { get; set; }
+		public c_int Rate { get; set; }
+		public c_int Depth { get; set; }
+		public c_int Phase { get; set; }
 
 		/********************************************************************/
 		/// <summary>

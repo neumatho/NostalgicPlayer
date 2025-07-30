@@ -34,22 +34,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			/// <summary>
 			/// The ID to use that make the agent unique
 			/// </summary>
-			public Guid Id;
+			public Guid Id { get; set; }
 
 			/// <summary>
 			/// The name of the agent
 			/// </summary>
-			public string Name;
+			public string Name { get; set; }
 
 			/// <summary>
 			/// Some description of the agent
 			/// </summary>
-			public string Description;
+			public string Description { get; set; }
 
 			/// <summary>
 			/// Extra agent information
 			/// </summary>
-			public AgentInfo AgentInfo;
+			public AgentInfo AgentInfo { get; set; }
 		}
 
 		private IMainWindowApi mainWindowApi;

@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers
 	/// </summary>
 	internal class PatternLine
 	{
-		public byte Note;
-		public byte SampleNum;
-		public byte Effect;
-		public byte EffectArg;
+		public byte Note { get; set; }
+		public byte SampleNum { get; set; }
+		public byte Effect { get; set; }
+		public byte EffectArg { get; set; }
 	}
 }

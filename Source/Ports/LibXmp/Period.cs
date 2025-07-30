@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			/* 27-32 */ 22866.67, 22050.0,  21289.66, 20580.0, 19916.13, 19294.75
 		];
 
+		// ReSharper disable once InconsistentNaming
 		private const c_double M_LN2 = 0.69314718055994530942;
 
 		private readonly Xmp_Context ctx;

@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 	/// </summary>
 	public class FaceTheMusic : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("5D616DDE-E12B-4C0F-8843-2A300E4B065E");
+		private static readonly Guid agent1Id = Guid.Parse("5D616DDE-E12B-4C0F-8843-2A300E4B065E");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_FTM_NAME_AGENT1, Resources.IDS_FTM_DESCRIPTION_AGENT1, Agent1Id)
+			new AgentSupportInfo(Resources.IDS_FTM_NAME_AGENT1, Resources.IDS_FTM_DESCRIPTION_AGENT1, agent1Id)
 		];
 
 

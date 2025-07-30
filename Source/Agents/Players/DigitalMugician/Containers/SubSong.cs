@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class SubSong
 	{
-		public bool LoopSong;
-		public byte LoopPosition;
-		public byte SongSpeed;
-		public byte NumberOfSequences;
-		public string Name;
+		public bool LoopSong { get; set; }
+		public byte LoopPosition { get; set; }
+		public byte SongSpeed { get; set; }
+		public byte NumberOfSequences { get; set; }
+		public string Name { get; set; }
 	}
 }

@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class HvlStep
 	{
-		public int Note;
-		public int Instrument;
-		public int Fx;
-		public int FxParam;
-		public int FxB;
-		public int FxBParam;
+		public int Note { get; set; }
+		public int Instrument { get; set; }
+		public int Fx { get; set; }
+		public int FxParam { get; set; }
+		public int FxB { get; set; }
+		public int FxBParam { get; set; }
 	}
 }

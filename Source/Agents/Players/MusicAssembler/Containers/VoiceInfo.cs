@@ -12,48 +12,48 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public int ChannelNumber;
+		public int ChannelNumber { get; set; }
 
-		public PositionInfo[] PositionList;
+		public PositionInfo[] PositionList { get; set; }
 
-		public ushort CurrentPosition;
-		public ushort CurrentTrackRow;
-		public sbyte TrackRepeatCounter;
-		public sbyte RowDelayCounter;
+		public ushort CurrentPosition { get; set; }
+		public ushort CurrentTrackRow { get; set; }
+		public sbyte TrackRepeatCounter { get; set; }
+		public sbyte RowDelayCounter { get; set; }
 
-		public VoiceFlag Flag;
+		public VoiceFlag Flag { get; set; }
 
-		public Instrument CurrentInstrument;
+		public Instrument CurrentInstrument { get; set; }
 
-		public byte CurrentNote;
-		public byte Transpose;
+		public byte CurrentNote { get; set; }
+		public byte Transpose { get; set; }
 
-		public byte Volume;
-		public bool DecreaseVolume;
-		public byte SustainCounter;
+		public byte Volume { get; set; }
+		public bool DecreaseVolume { get; set; }
+		public byte SustainCounter { get; set; }
 
-		public byte ArpeggioCounter;
-		public byte ArpeggioValueToUse;
+		public byte ArpeggioCounter { get; set; }
+		public byte ArpeggioValueToUse { get; set; }
 
-		public byte PortamentoOrVibratoValue;
+		public byte PortamentoOrVibratoValue { get; set; }
 
-		public short PortamentoAddValue;
+		public short PortamentoAddValue { get; set; }
 
-		public byte VibratoDelayCounter;
-		public byte VibratoDirection;
-		public byte VibratoSpeedCounter;
-		public short VibratoAddValue;
+		public byte VibratoDelayCounter { get; set; }
+		public byte VibratoDirection { get; set; }
+		public byte VibratoSpeedCounter { get; set; }
+		public short VibratoAddValue { get; set; }
 
-		public ushort WaveLengthModifier;
-		public bool WaveDirection;
-		public byte WaveSpeedCounter;
+		public ushort WaveLengthModifier { get; set; }
+		public bool WaveDirection { get; set; }
+		public byte WaveSpeedCounter { get; set; }
 
 		// These are used to hold the Amiga hardware registers.
 		// It is needed, because the original player does not set
 		// all the hardware registers at the same time
-		public sbyte[] SampleData;
-		public uint SampleStartOffset;
-		public ushort SampleLength;
+		public sbyte[] SampleData { get; set; }
+		public uint SampleStartOffset { get; set; }
+		public ushort SampleLength { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers
 	/// </summary>
 	internal class Pattern
 	{
-		public TrackLine[,] Rows = new TrackLine[8, 64];
+		public TrackLine[,] Rows { get; } = new TrackLine[8, 64];
 	}
 }

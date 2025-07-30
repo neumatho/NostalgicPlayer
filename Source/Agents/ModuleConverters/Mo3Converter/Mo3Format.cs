@@ -694,7 +694,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 		/********************************************************************/
 		private ModuleType FindModuleType(FileHeader header)
 		{
-			if ((header.Flags & HeaderFlag.IsIT) != 0)
+			if ((header.Flags & HeaderFlag.IsIt) != 0)
 				return ModuleType.It;
 
 			if ((header.Flags & HeaderFlag.IsS3M) != 0)
@@ -703,7 +703,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 			if ((header.Flags & HeaderFlag.IsMod) != 0)
 				return ModuleType.Mod;
 
-			if ((header.Flags & HeaderFlag.IsMTM) != 0)
+			if ((header.Flags & HeaderFlag.IsMtm) != 0)
 				return ModuleType.Mtm;
 
 			return ModuleType.Xm;

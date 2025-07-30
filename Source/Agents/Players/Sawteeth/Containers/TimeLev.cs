@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class TimeLev
 	{
-		public byte Time;
-		public byte Lev;
+		public byte Time { get; set; }
+		public byte Lev { get; set; }
 	}
 }

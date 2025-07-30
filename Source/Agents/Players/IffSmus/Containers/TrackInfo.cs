@@ -12,8 +12,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class TrackInfo : IDeepCloneable<TrackInfo>
 	{
-		public byte InstrumentNumber;
-		public byte TimeLeft;
+		public byte InstrumentNumber { get; set; }
+		public byte TimeLeft { get; set; }
 
 		/********************************************************************/
 		/// <summary>

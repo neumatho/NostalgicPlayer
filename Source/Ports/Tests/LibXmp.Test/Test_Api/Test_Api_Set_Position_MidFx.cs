@@ -35,10 +35,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 				Volume = volume;
 			}
 
-			public c_int Row;
-			public c_int Frame;
-			public c_int Note;
-			public c_int Volume;
+			public c_int Row { get; }
+			public c_int Frame { get; }
+			public c_int Note { get; }
+			public c_int Volume { get; }
 		}
 
 		/********************************************************************/

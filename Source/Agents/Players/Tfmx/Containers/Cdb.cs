@@ -11,59 +11,59 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class Cdb : IDeepCloneable<Cdb>
 	{
-		public sbyte MacroRun;
-		public sbyte EfxRun;
-		public byte NewStyleMacro;
-		public byte PrevNote;
-		public byte CurrNote;
-		public byte Velocity;
-		public byte FineTune;
-		public bool KeyUp;
-		public byte ReallyWait;
-		public uint MacroPtr;
-		public ushort MacroStep;
-		public ushort MacroWait;
-		public ushort MacroNum;
-		public short Loop;
+		public sbyte MacroRun { get; set; }
+		public sbyte EfxRun { get; set; }
+		public byte NewStyleMacro { get; set; }
+		public byte PrevNote { get; set; }
+		public byte CurrNote { get; set; }
+		public byte Velocity { get; set; }
+		public byte FineTune { get; set; }
+		public bool KeyUp { get; set; }
+		public byte ReallyWait { get; set; }
+		public uint MacroPtr { get; set; }
+		public ushort MacroStep { get; set; }
+		public ushort MacroWait { get; set; }
+		public ushort MacroNum { get; set; }
+		public short Loop { get; set; }
 
-		public uint CurAddr;
-		public uint SaveAddr;
-		public ushort CurrLength;
-		public ushort SaveLen;
+		public uint CurAddr { get; set; }
+		public uint SaveAddr { get; set; }
+		public ushort CurrLength { get; set; }
+		public ushort SaveLen { get; set; }
 
-		public ushort WaitDmaCount;
+		public ushort WaitDmaCount { get; set; }
 
-		public byte EnvReset;
-		public byte EnvTime;
-		public byte EnvRate;
-		public sbyte EnvEndVol;
-		public sbyte CurVol;
+		public byte EnvReset { get; set; }
+		public byte EnvTime { get; set; }
+		public byte EnvRate { get; set; }
+		public sbyte EnvEndVol { get; set; }
+		public sbyte CurVol { get; set; }
 
-		public short VibOffset;
-		public sbyte VibWidth;
-		public bool VibFlag;
-		public byte VibReset;
-		public byte VibTime;
+		public short VibOffset { get; set; }
+		public sbyte VibWidth { get; set; }
+		public bool VibFlag { get; set; }
+		public byte VibReset { get; set; }
+		public byte VibTime { get; set; }
 
-		public byte PortaReset;
-		public byte PortaTime;
-		public ushort CurPeriod;
-		public ushort DestPeriod;
-		public ushort PortaPer;
-		public short PortaRate;
+		public byte PortaReset { get; set; }
+		public byte PortaTime { get; set; }
+		public ushort CurPeriod { get; set; }
+		public ushort DestPeriod { get; set; }
+		public ushort PortaPer { get; set; }
+		public short PortaRate { get; set; }
 
-		public byte AddBeginTime;
-		public byte AddBeginReset;
-		public ushort ReturnPtr;
-		public ushort ReturnStep;
-		public int AddBegin;
+		public byte AddBeginTime { get; set; }
+		public byte AddBeginReset { get; set; }
+		public ushort ReturnPtr { get; set; }
+		public ushort ReturnStep { get; set; }
+		public int AddBegin { get; set; }
 
-		public byte SfxFlag;
-		public byte SfxPriority;
-		public short SfxLockTime;
-		public uint SfxCode;
+		public byte SfxFlag { get; set; }
+		public byte SfxPriority { get; set; }
+		public short SfxLockTime { get; set; }
+		public uint SfxCode { get; set; }
 
-		public Hdb hw;
+		public Hdb Hw { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -15,31 +15,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Sample name
 		/// </summary>
-		public string Name = string.Empty;
+		public ref string Name => ref _Name;
+		private string _Name = string.Empty;
 
 		/// <summary>
 		/// Sample length
 		/// </summary>
-		public c_int Len;
+		public c_int Len { get; internal set; }
 
 		/// <summary>
 		/// Loop start
 		/// </summary>
-		public c_int Lps;
+		public c_int Lps { get; internal set; }
 
 		/// <summary>
 		/// Loop end
 		/// </summary>
-		public c_int Lpe;
+		public c_int Lpe { get; internal set; }
 
 		/// <summary>
 		/// Flags
 		/// </summary>
-		public Xmp_Sample_Flag Flg;
+		public Xmp_Sample_Flag Flg { get; internal set; }
 
 		/// <summary>
 		/// Sample data
 		/// </summary>
-		public CPointer<byte> Data;
+		public ref CPointer<byte> Data => ref _Data;
+		private CPointer<byte> _Data;
 	}
 }

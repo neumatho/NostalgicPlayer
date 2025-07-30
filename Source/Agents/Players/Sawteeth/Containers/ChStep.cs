@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class ChStep
 	{
-		public byte Part;
-		public sbyte Transp;
-		public byte DAmp;
+		public byte Part { get; set; }
+		public sbyte Transp { get; set; }
+		public byte DAmp { get; set; }
 	}
 }

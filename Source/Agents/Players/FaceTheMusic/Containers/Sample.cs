@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public sbyte[] SampleData;
-		public ushort OneshotLength;	// In words
-		public uint LoopStart;			// In bytes
-		public ushort LoopLength;       // In words
-		public uint TotalLength;        // In bytes
+		public string Name { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public ushort OneshotLength { get; set; }	// In words
+		public uint LoopStart { get; set; }			// In bytes
+		public ushort LoopLength { get; set; }		// In words
+		public uint TotalLength { get; set; }		// In bytes
 	}
 }

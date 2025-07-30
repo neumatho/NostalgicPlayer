@@ -9,11 +9,6 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 	/// </summary>
 	internal class HuffmanCode<T>
 	{
-		public uint32_t Length;
-		public uint32_t Code;
-
-		public T Value;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -24,6 +19,42 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			Length = length;
 			Code = code;
 			Value = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint32_t Length
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint32_t Code
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public T Value
+		{
+			get;
 		}
 	}
 }

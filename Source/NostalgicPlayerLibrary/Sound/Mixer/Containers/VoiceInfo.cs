@@ -10,21 +10,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 	/// </summary>
 	internal class VoiceInfo
 	{
-		public bool Enabled;					// True -> the channel is enabled
-		public bool Kick;						// True -> sample has to be restarted
-		public bool Active;						// True -> sample is playing
-		public VoiceFlag Flags;					// Special flags for the voice, not the sample
-		public VoiceSampleInfo SampleInfo;		// Information for the current playing sample
-		public VoiceSampleInfo NewSampleInfo;	// Information for a new sample to use when loop is restarted
-		public int NewPosition;					// New position to use immediately
-		public bool RelativePosition;			// Indicate if the new position is relative or absolute
-		public uint Frequency;					// Current frequency
-		public int Volume;						// Current volume
-		public int Panning;						// Current panning position
-		public int RampVolume;
-		public int[] PanningVolume;				// Volume factor in range 0-255
-		public int[] OldPanningVolume;
-		public long Current;					// Current index in the sample
-		public long Increment;					// Increment value
+		public bool Enabled { get; set; }					// True -> the channel is enabled
+		public bool Kick { get; set; }						// True -> sample has to be restarted
+		public bool Active { get; set; }					// True -> sample is playing
+		public VoiceFlag Flags { get; set; }				// Special flags for the voice, not the sample
+		public VoiceSampleInfo SampleInfo { get; set; }		// Information for the current playing sample
+		public VoiceSampleInfo NewSampleInfo { get; set; }	// Information for a new sample to use when loop is restarted
+		public int NewPosition { get; set; }				// New position to use immediately
+		public bool RelativePosition { get; set; }			// Indicate if the new position is relative or absolute
+		public uint Frequency { get; set; }					// Current frequency
+		public int Volume { get; set; }						// Current volume
+		public int Panning { get; set; }					// Current panning position
+		public int RampVolume { get; set; }
+		public int[] PanningVolume { get; set; }			// Volume factor in range 0-255
+		public int[] OldPanningVolume { get; set; }
+		public long Current { get; set; }					// Current index in the sample
+		public long Increment { get; set; }					// Increment value
 	}
 }

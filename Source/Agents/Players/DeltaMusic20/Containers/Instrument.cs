@@ -10,18 +10,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public short Number;
+		public short Number { get; set; }
 
-		public ushort SampleLength;
-		public ushort RepeatStart;
-		public ushort RepeatLength;
-		public readonly VolumeInfo[] VolumeTable = new VolumeInfo[5];
-		public readonly VibratoInfo[] VibratoTable = new VibratoInfo[5];
-		public ushort PitchBend;
-		public bool IsSample;
-		public byte SampleNumber;
-		public readonly byte[] Table = new byte[48];
+		public ushort SampleLength { get; set; }
+		public ushort RepeatStart { get; set; }
+		public ushort RepeatLength { get; set; }
+		public VolumeInfo[] VolumeTable { get; } = new VolumeInfo[5];
+		public VibratoInfo[] VibratoTable { get; } = new VibratoInfo[5];
+		public ushort PitchBend { get; set; }
+		public bool IsSample { get; set; }
+		public byte SampleNumber { get; set; }
+		public byte[] Table { get; } = new byte[48];
 
-		public sbyte[] SampleData;
+		public sbyte[] SampleData { get; set; }
 	}
 }

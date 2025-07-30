@@ -13,48 +13,48 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20.Containers
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
 		// Position information
-		public ushort StartTrackRow;
-		public sbyte SoundTranspose;
-		public sbyte NoteTranspose;
+		public ushort StartTrackRow { get; set; }
+		public sbyte SoundTranspose { get; set; }
+		public sbyte NoteTranspose { get; set; }
 
 		// Track row information
-		public byte Note;
-		public byte Instrument;
-		public bool DisableSoundTranspose;
-		public bool DisableNoteTranspose;
-		public byte Arpeggio;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Note { get; set; }
+		public byte Instrument { get; set; }
+		public bool DisableSoundTranspose { get; set; }
+		public bool DisableNoteTranspose { get; set; }
+		public byte Arpeggio { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 
-		public byte TransposedNote;
-		public byte PreviousTransposedNote;
+		public byte TransposedNote { get; set; }
+		public byte PreviousTransposedNote { get; set; }
 
-		public byte TransposedInstrument;
-		public VoicePlayingMode PlayingMode;
+		public byte TransposedInstrument { get; set; }
+		public VoicePlayingMode PlayingMode { get; set; }
 
-		public byte CurrentVolume;
+		public byte CurrentVolume { get; set; }
 
-		public ushort ArpeggioPosition;
-		public bool ArpeggioEffectNibble;
+		public ushort ArpeggioPosition { get; set; }
+		public bool ArpeggioEffectNibble { get; set; }
 
-		public sbyte SlideSpeed;
-		public short SlideValue;
+		public sbyte SlideSpeed { get; set; }
+		public short SlideValue { get; set; }
 
-		public ushort PortamentoSpeedCounter;
-		public ushort PortamentoSpeed;
+		public ushort PortamentoSpeedCounter { get; set; }
+		public ushort PortamentoSpeed { get; set; }
 
-		public byte VibratoDelay;
-		public byte VibratoSpeed;
-		public byte VibratoLevel;
-		public ushort VibratoPosition;
+		public byte VibratoDelay { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoLevel { get; set; }
+		public ushort VibratoPosition { get; set; }
 
-		public ushort AdsrPosition;
-		public ushort SustainCounter;
+		public ushort AdsrPosition { get; set; }
+		public ushort SustainCounter { get; set; }
 
-		public sbyte EnvelopeGeneratorDuration;
-		public ushort EnvelopeGeneratorPosition;
+		public sbyte EnvelopeGeneratorDuration { get; set; }
+		public ushort EnvelopeGeneratorPosition { get; set; }
 
-		public ushort LfoPosition;
+		public ushort LfoPosition { get; set; }
 
 		/********************************************************************/
 		/// <summary>

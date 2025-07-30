@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers
 	/// </summary>
 	internal class TrackLine
 	{
-		public byte Sample;		// The sample
-		public sbyte Note;		// The note to play
-		public Effect Effect;	// The effect to use
-		public byte EffectArg;	// Effect argument
+		public byte Sample { get; set; }		// The sample
+		public sbyte Note { get; set; }			// The note to play
+		public Effect Effect { get; set; }		// The effect to use
+		public byte EffectArg { get; set; }		// Effect argument
 	}
 }

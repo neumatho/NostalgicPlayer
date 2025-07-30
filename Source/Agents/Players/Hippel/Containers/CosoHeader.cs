@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class CosoHeader
 	{
-		public uint FrequenciesOffset;
-		public uint EnvelopesOffset;
-		public uint TracksOffset;
-		public uint PositionListOffset;
-		public uint SubSongsOffset;
-		public uint SampleInfoOffset;
-		public int SampleDataOffset;
+		public uint FrequenciesOffset { get; set; }
+		public uint EnvelopesOffset { get; set; }
+		public uint TracksOffset { get; set; }
+		public uint PositionListOffset { get; set; }
+		public uint SubSongsOffset { get; set; }
+		public uint SampleInfoOffset { get; set; }
+		public int SampleDataOffset { get; set; }
 	}
 }

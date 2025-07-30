@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class PatternLoopInfo : IDeepCloneable<PatternLoopInfo>
 	{
-		public uint TrackPosition;
-		public ushort LoopStartPosition;
-		public short LoopCount;
-		public short OriginalLoopCount;
+		public uint TrackPosition { get; set; }
+		public ushort LoopStartPosition { get; set; }
+		public short LoopCount { get; set; }
+		public short OriginalLoopCount { get; set; }
 
 		/********************************************************************/
 		/// <summary>

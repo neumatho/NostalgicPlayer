@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class Track
 	{
-		public Event[] Events;
+		public Event[] Events { get; set; }
 	}
 }

@@ -16,125 +16,125 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Implementation
 	internal class HvlVoice : IDeepCloneable<HvlVoice>
 	{
 		// Read those variables for mixing
-		public int VoiceVolume;
-		public int VoicePeriod;
-		public sbyte[] VoiceBuffer = new sbyte[0x281];
+		public int VoiceVolume { get; set; }
+		public int VoicePeriod { get; set; }
+		public sbyte[] VoiceBuffer { get; set; } = new sbyte[0x281];
 
-		public int Track;
-		public int Transpose;
-		public int NextTrack;
-		public int NextTranspose;
-		public int OverrideTranspose;
+		public int Track { get; set; }
+		public int Transpose { get; set; }
+		public int NextTrack { get; set; }
+		public int NextTranspose { get; set; }
+		public int OverrideTranspose { get; set; }
 
-		public int AdsrVolume;							// Fixed point 8:8
-		public HvlEnvelope Adsr = new HvlEnvelope();	// Frames / delta fixed 8:8
+		public int AdsrVolume { get; set; }							// Fixed point 8:8
+		public HvlEnvelope Adsr { get; set; } = new HvlEnvelope();	// Frames / delta fixed 8:8
 
-		public HvlInstrument Instrument;				// Current instrument
-		public int InstrumentNumber;
-		public int SamplePos;
-		public int Delta;
+		public HvlInstrument Instrument { get; set; }				// Current instrument
+		public int InstrumentNumber { get; set; }
+		public int SamplePos { get; set; }
+		public int Delta { get; set; }
 
-		public int InstrPeriod;
-		public int TrackPeriod;
-		public int VibratoPeriod;
+		public int InstrPeriod { get; set; }
+		public int TrackPeriod { get; set; }
+		public int VibratoPeriod { get; set; }
 
-		public int NoteMaxVolume;
-		public int PerfSubVolume;
-		public int TrackMasterVolume;
+		public int NoteMaxVolume { get; set; }
+		public int PerfSubVolume { get; set; }
+		public int TrackMasterVolume { get; set; }
 
-		public bool NewWaveform;
-		public int Waveform;
-		public bool PlantSquare;
-		public bool PlantPeriod;
-		public bool KickNote;
-		public bool IgnoreSquare;
+		public bool NewWaveform { get; set; }
+		public int Waveform { get; set; }
+		public bool PlantSquare { get; set; }
+		public bool PlantPeriod { get; set; }
+		public bool KickNote { get; set; }
+		public bool IgnoreSquare { get; set; }
 
-		public bool TrackOn;
-		public bool FixedNote;
+		public bool TrackOn { get; set; }
+		public bool FixedNote { get; set; }
 
-		public int VolumeSlideUp;
-		public int VolumeSlideDown;
+		public int VolumeSlideUp { get; set; }
+		public int VolumeSlideDown { get; set; }
 
-		public int HardCut;
-		public bool HardCutRelease;
-		public int HardCutReleaseF;
+		public int HardCut { get; set; }
+		public bool HardCutRelease { get; set; }
+		public int HardCutReleaseF { get; set; }
 
-		public int PeriodSlideSpeed;
-		public int PeriodSlidePeriod;
-		public int PeriodSlideLimit;
-		public bool PeriodSlideOn;
-		public bool PeriodSlideWithLimit;
+		public int PeriodSlideSpeed { get; set; }
+		public int PeriodSlidePeriod { get; set; }
+		public int PeriodSlideLimit { get; set; }
+		public bool PeriodSlideOn { get; set; }
+		public bool PeriodSlideWithLimit { get; set; }
 
-		public int PeriodPerfSlideSpeed;
-		public int PeriodPerfSlidePeriod;
-		public bool PeriodPerfSlideOn;
+		public int PeriodPerfSlideSpeed { get; set; }
+		public int PeriodPerfSlidePeriod { get; set; }
+		public bool PeriodPerfSlideOn { get; set; }
 
-		public int VibratoDelay;
-		public int VibratoCurrent;
-		public int VibratoDepth;
-		public int VibratoSpeed;
+		public int VibratoDelay { get; set; }
+		public int VibratoCurrent { get; set; }
+		public int VibratoDepth { get; set; }
+		public int VibratoSpeed { get; set; }
 
-		public bool SquareOn;
-		public bool SquareInit;
-		public int SquareWait;
-		public int SquareLowerLimit;
-		public int SquareUpperLimit;
-		public int SquarePos;
-		public int SquareSign;
-		public bool SquareSlidingIn;
-		public bool SquareReverse;
+		public bool SquareOn { get; set; }
+		public bool SquareInit { get; set; }
+		public int SquareWait { get; set; }
+		public int SquareLowerLimit { get; set; }
+		public int SquareUpperLimit { get; set; }
+		public int SquarePos { get; set; }
+		public int SquareSign { get; set; }
+		public bool SquareSlidingIn { get; set; }
+		public bool SquareReverse { get; set; }
 
-		public bool FilterOn;
-		public bool FilterInit;
-		public int FilterWait;
-		public int FilterLowerLimit;
-		public int FilterUpperLimit;
-		public int FilterPos;
-		public int FilterSign;
-		public int FilterSpeed;
-		public bool FilterSlidingIn;
-		public int IgnoreFilter;
+		public bool FilterOn { get; set; }
+		public bool FilterInit { get; set; }
+		public int FilterWait { get; set; }
+		public int FilterLowerLimit { get; set; }
+		public int FilterUpperLimit { get; set; }
+		public int FilterPos { get; set; }
+		public int FilterSign { get; set; }
+		public int FilterSpeed { get; set; }
+		public bool FilterSlidingIn { get; set; }
+		public int IgnoreFilter { get; set; }
 
-		public int PerfCurrent;
-		public int PerfSpeed;
-		public int PerfWait;
+		public int PerfCurrent { get; set; }
+		public int PerfSpeed { get; set; }
+		public int PerfWait { get; set; }
 
-		public int WaveLength;
+		public int WaveLength { get; set; }
 
-		public HvlPList PerfList;
+		public HvlPList PerfList { get; set; }
 
-		public int NoteDelayWait;
-		public bool NoteDelayOn;
-		public int NoteCutWait;
-		public bool NoteCutOn;
+		public int NoteDelayWait { get; set; }
+		public bool NoteDelayOn { get; set; }
+		public int NoteCutWait { get; set; }
+		public bool NoteCutOn { get; set; }
 
-		public int Pan;
-		public int SetPan;
+		public int Pan { get; set; }
+		public int SetPan { get; set; }
 
-		public int RingSamplePos;
-		public int RingDelta;
-		public sbyte[] RingMixSource;
-		public bool RingPlantPeriod;
-		public int RingBasePeriod;
-		public int RingAudioPeriod;
-		public bool RingNewWaveform;
-		public int RingWaveform;
-		public bool RingFixedPeriod;
+		public int RingSamplePos { get; set; }
+		public int RingDelta { get; set; }
+		public sbyte[] RingMixSource { get; set; }
+		public bool RingPlantPeriod { get; set; }
+		public int RingBasePeriod { get; set; }
+		public int RingAudioPeriod { get; set; }
+		public bool RingNewWaveform { get; set; }
+		public int RingWaveform { get; set; }
+		public bool RingFixedPeriod { get; set; }
 
-		public sbyte[] AudioSource;
-		public int AudioOffset;
+		public sbyte[] AudioSource { get; set; }
+		public int AudioOffset { get; set; }
 
-		public sbyte[] RingAudioSource;
-		public int RingAudioOffset;
+		public sbyte[] RingAudioSource { get; set; }
+		public int RingAudioOffset { get; set; }
 
-		public int AudioPeriod;
-		public int AudioVolume;
+		public int AudioPeriod { get; set; }
+		public int AudioVolume { get; set; }
 
-		public int WnRandom;
-		public sbyte[] MixSource;
+		public int WnRandom { get; set; }
+		public sbyte[] MixSource { get; set; }
 
-		public sbyte[] SquareTempBuffer = new sbyte[0x80];
-		public sbyte[] RingVoiceBuffer = new sbyte[0x282 * 4];
+		public sbyte[] SquareTempBuffer { get; set; } = new sbyte[0x80];
+		public sbyte[] RingVoiceBuffer { get; set; } = new sbyte[0x282 * 4];
 
 		/********************************************************************/
 		/// <summary>

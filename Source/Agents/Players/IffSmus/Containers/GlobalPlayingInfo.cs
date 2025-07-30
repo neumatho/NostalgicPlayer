@@ -14,31 +14,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public short RepeatCount;
-		public int CurrentTime;
+		public short RepeatCount { get; set; }
+		public int CurrentTime { get; set; }
 
-		public byte Flag;
-		public ushort SpeedCounter;
-		public ushort CurrentTempo;
-		public ushort CalculatedTempo;
-		public ushort CalculatedSpeed;
+		public byte Flag { get; set; }
+		public ushort SpeedCounter { get; set; }
+		public ushort CurrentTempo { get; set; }
+		public ushort CalculatedTempo { get; set; }
+		public ushort CalculatedSpeed { get; set; }
 
-		public ushort MaxVolume;
-		public ushort NewVolume;
-		public ushort CurrentVolume;
+		public ushort MaxVolume { get; set; }
+		public ushort NewVolume { get; set; }
+		public ushort CurrentVolume { get; set; }
 
-		public Instrument[] CurrentInstruments;
-		public short[] InstrumentNumbers;
+		public Instrument[] CurrentInstruments { get; set; }
+		public short[] InstrumentNumbers { get; set; }
 
 		// The total note duration is these two numbers added together
-		public uint[] HoldNoteDurationCounters;
-		public uint[] ReleaseNoteDurationCounters;
+		public uint[] HoldNoteDurationCounters { get; set; }
+		public uint[] ReleaseNoteDurationCounters { get; set; }
 
-		public int[] CurrentTrackPositions;
+		public int[] CurrentTrackPositions { get; set; }
 
-		public SynthesisPlayInfo[] SynthesisPlayInfo;
-		public SampledSoundPlayInfo[] SamplePlayInfo;
-		public FormPlayInfo[] FormPlayInfo;
+		public SynthesisPlayInfo[] SynthesisPlayInfo { get; set; }
+		public SampledSoundPlayInfo[] SamplePlayInfo { get; set; }
+		public FormPlayInfo[] FormPlayInfo { get; set; }
 
 		/********************************************************************/
 		/// <summary>

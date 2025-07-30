@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public sbyte[] SampleData;
-		public uint Length;
-		public ushort Volume;
-		public uint LoopStart;
-		public uint LoopLength;
+		public string Name { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint Length { get; set; }
+		public ushort Volume { get; set; }
+		public uint LoopStart { get; set; }
+		public uint LoopLength { get; set; }
 	}
 }

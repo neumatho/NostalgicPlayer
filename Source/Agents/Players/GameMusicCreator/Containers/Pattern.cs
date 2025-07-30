@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator.Containers
 	/// </summary>
 	internal class Pattern
 	{
-		public TrackLine[,] Tracks = new TrackLine[4, 64];		// All the channel tracks
+		public TrackLine[,] Tracks { get; } = new TrackLine[4, 64];		// All the channel tracks
 	}
 }

@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 	/// </summary>
 	internal class Track
 	{
-		public sbyte Note;
-		public byte Instrument;
-		public Optional Optional;
-		public byte OptionalData;
+		public sbyte Note { get; set; }
+		public byte Instrument { get; set; }
+		public Optional Optional { get; set; }
+		public byte OptionalData { get; set; }
 	}
 }

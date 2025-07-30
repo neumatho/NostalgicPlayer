@@ -19,21 +19,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 		private class EffectGroupInfo : IDeepCloneable<EffectGroupInfo>
 		{
-			public EchoArguments Arguments;
-			public uint MixerFrequency;
+			public EchoArguments Arguments { get; set; }
+			public uint MixerFrequency { get; set; }
 
-			public short[][] DelayLine;				// Echo delay line
-			public int BufferSize;					// Delay line length in frames
-			public int WritePos;					// Current write position in the delay line
-			public int DelayTime;					// In frames
+			public short[][] DelayLine { get; set; }	// Echo delay line
+			public int BufferSize { get; set; }			// Delay line length in frames
+			public int WritePos { get; set; }			// Current write position in the delay line
+			public int DelayTime { get; set; }			// In frames
 
 			// Echo calculation coefficients
-			public int PMix;
-			public int NMix;
-			public int PCrossPBack;
-			public int PCrossNBack;
-			public int NCrossPBack;
-			public int NCrossNBack;
+			public int PMix { get; set; }
+			public int NMix { get; set; }
+			public int PCrossPBack { get; set; }
+			public int PCrossNBack { get; set; }
+			public int NCrossPBack { get; set; }
+			public int NCrossNBack { get; set; }
 
 			/********************************************************************/
 			/// <summary>

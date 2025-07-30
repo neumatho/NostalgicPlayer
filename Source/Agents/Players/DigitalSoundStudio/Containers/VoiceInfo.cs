@@ -12,32 +12,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalSoundStudio.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public byte Sample;
-		public ushort Period;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Sample { get; set; }
+		public ushort Period { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 
-		public byte FineTune;
-		public byte Volume;
+		public byte FineTune { get; set; }
+		public byte Volume { get; set; }
 
-		public byte PlayingSampleNumber;
-		public sbyte[] SampleData;
-		public uint SampleStartOffset;
-		public ushort SampleLength;
-		public uint LoopStart;
-		public ushort LoopLength;
-		public ushort SampleOffset;
+		public byte PlayingSampleNumber { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint SampleStartOffset { get; set; }
+		public ushort SampleLength { get; set; }
+		public uint LoopStart { get; set; }
+		public ushort LoopLength { get; set; }
+		public ushort SampleOffset { get; set; }
 
-		public ushort PitchPeriod;
-		public bool PortamentoDirection;
-		public byte PortamentoSpeed;
-		public ushort PortamentoEndPeriod;
+		public ushort PitchPeriod { get; set; }
+		public bool PortamentoDirection { get; set; }
+		public byte PortamentoSpeed { get; set; }
+		public ushort PortamentoEndPeriod { get; set; }
 
-		public bool UseTonePortamentoForSlideEffects;
-		public bool UseTonePortamentoForPortamentoEffects;
+		public bool UseTonePortamentoForSlideEffects { get; set; }
+		public bool UseTonePortamentoForPortamentoEffects { get; set; }
 
-		public short LoopRow;
-		public ushort LoopCounter;
+		public short LoopRow { get; set; }
+		public ushort LoopCounter { get; set; }
 
 		/********************************************************************/
 		/// <summary>

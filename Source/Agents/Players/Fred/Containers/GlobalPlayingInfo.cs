@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte CurrentTempo;
+		public byte CurrentTempo { get; set; }
 
 		/********************************************************************/
 		/// <summary>

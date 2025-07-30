@@ -26,24 +26,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region C669_File_Header
 		private class C669_File_Header
 		{
-			public readonly uint8[] Marker = new uint8[2];		// 'if' = standard (Composer), 'JN'=extended (Unis)
-			public readonly uint8[] Message = new uint8[108];	// Song message
-			public uint8 Nos;									// Number of samples (0-64)
-			public uint8 Nop;									// Number of patterns (0-128)
-			public uint8 Loop;									// Loop order number
-			public readonly uint8[] Order = new uint8[128];		// Order list
-			public readonly uint8[] Speed = new uint8[128];		// Tempo list for patterns
-			public readonly uint8[] PBrk = new uint8[128];		// Break list for patterns
+			public uint8[] Marker { get; } = new uint8[2];		// 'if' = standard (Composer), 'JN'=extended (Unis)
+			public uint8[] Message { get; } = new uint8[108];	// Song message
+			public uint8 Nos { get; set; }						// Number of samples (0-64)
+			public uint8 Nop { get; set; }						// Number of patterns (0-128)
+			public uint8 Loop { get; set; }						// Loop order number
+			public uint8[] Order { get; } = new uint8[128];		// Order list
+			public uint8[] Speed { get; } = new uint8[128];		// Tempo list for patterns
+			public uint8[] PBrk { get; } = new uint8[128];		// Break list for patterns
 		}
 		#endregion
 
 		#region C669_Instrument_Header
 		private class C669_Instrument_Header
 		{
-			public readonly uint8[] Name = new uint8[13];		// ASCIIZ instrument name
-			public uint32 Length;								// Instrument length
-			public uint32 Loop_Start;							// Instrument loop start
-			public uint32 LoopEnd;								// Instrument loop end
+			public uint8[] Name { get; } = new uint8[13];		// ASCIIZ instrument name
+			public uint32 Length { get; set; }					// Instrument length
+			public uint32 Loop_Start { get; set; }				// Instrument loop start
+			public uint32 LoopEnd { get; set; }					// Instrument loop end
 		}
 		#endregion
 

@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class Part
 	{
-		public string Name;
+		public string Name { get; set; }
 
-		public Step[] Steps;
-		public byte Sps;				// PAL-screens per step
-		public byte Len;
+		public Step[] Steps { get; set; }
+		public byte Sps { get; set; }				// PAL-screens per step
+		public byte Len { get; set; }
 	}
 }

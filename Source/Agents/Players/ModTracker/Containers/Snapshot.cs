@@ -13,9 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-		public ModChannel[] Channels;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -25,6 +22,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Channels = ArrayHelper.CloneObjectArray(channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public ModChannel[] Channels
+		{
+			get;
 		}
 	}
 }

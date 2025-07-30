@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	/// </summary>
 	internal class Mmd1BlockInfo
 	{
-		public uint HlMask;
-		public uint BlockName;
-		public uint BlockNameLen;
-		public uint PageTable;
-		public uint CmdExtTable;
+		public uint HlMask { get; set; }
+		public uint BlockName { get; set; }
+		public uint BlockNameLen { get; set; }
+		public uint PageTable { get; set; }
+		public uint CmdExtTable { get; set; }
 	}
 }

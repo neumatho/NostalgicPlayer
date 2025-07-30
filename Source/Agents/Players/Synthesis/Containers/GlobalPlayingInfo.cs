@@ -12,16 +12,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte SyncMark;
+		public byte SyncMark { get; set; }
 
-		public byte SpeedCounter;
-		public byte CurrentSpeed;
+		public byte SpeedCounter { get; set; }
+		public byte CurrentSpeed { get; set; }
 
-		public ushort SongPosition;
-		public byte RowPosition;
-		public byte RowsPerTrack;
+		public ushort SongPosition { get; set; }
+		public byte RowPosition { get; set; }
+		public byte RowsPerTrack { get; set; }
 
-		public TransposeMode TransposeEnableStatus;
+		public TransposeMode TransposeEnableStatus { get; set; }
 
 		/********************************************************************/
 		/// <summary>

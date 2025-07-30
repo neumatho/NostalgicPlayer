@@ -10,13 +10,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class ChannelInfo
 	{
-		public byte Left;
-		public byte Right;
+		public byte Left { get; set; }
+		public byte Right { get; set; }
 
-		public ushort Len;
-		public ushort LLoop;
-		public ushort RLoop;
+		public ushort Len { get; set; }
+		public ushort LLoop { get; set; }
+		public ushort RLoop { get; set; }
 
-		public ChStep[] Steps;
+		public ChStep[] Steps { get; set; }
 	}
 }

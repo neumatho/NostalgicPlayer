@@ -20,8 +20,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 	{
 		private class DataChunk
 		{
-			public int Size;
-			public int Position;
+			public int Size { get; set; }
+			public int Position { get; set; }
 		}
 
 		// Pattern decoder state machine states

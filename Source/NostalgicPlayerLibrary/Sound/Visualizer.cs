@@ -21,16 +21,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 	{
 		private class ChannelDataInfo
 		{
-			public int FramesLeftBeforeTriggering;
-			public ChannelChanged[] ChannelChanges;
+			public int FramesLeftBeforeTriggering { get; set; }
+			public ChannelChanged[] ChannelChanges { get; set; }
 		}
 
 		private class SampleDataInfo
 		{
-			public int[] Buffer;
-			public ReadOnlyDictionary<SpeakerFlag, int> ChannelMapping;
-			public int OutputChannelCount;
-			public long TimeWhenBufferWasRendered;
+			public int[] Buffer { get; set; }
+			public ReadOnlyDictionary<SpeakerFlag, int> ChannelMapping { get; set; }
+			public int OutputChannelCount { get; set; }
+			public long TimeWhenBufferWasRendered { get; set; }
 		}
 
 		private const int SampleBufferSizeInMs = 20;

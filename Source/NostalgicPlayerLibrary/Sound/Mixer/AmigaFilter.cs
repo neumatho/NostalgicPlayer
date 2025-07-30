@@ -41,10 +41,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		private class FilterValues
 		{
-			public long X1;
-			public long X2;
-			public long Y1;
-			public long Y2;
+			public long X1 { get; set; }
+			public long X2 { get; set; }
+			public long Y1 { get; set; }
+			public long Y2 { get; set; }
 		}
 
 		private readonly long a1;

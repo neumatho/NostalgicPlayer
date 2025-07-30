@@ -13,16 +13,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort CurrentSpeed;
-		public ushort SpeedCounter;
-		public short SongPos;
-		public short NewSongPos;
-		public short PattPos;
-		public bool FilterStatus;
+		public ushort CurrentSpeed { get; set; }
+		public ushort SpeedCounter { get; set; }
+		public short SongPos { get; set; }
+		public short NewSongPos { get; set; }
+		public short PattPos { get; set; }
+		public bool FilterStatus { get; set; }
 
-		public PatternLine[] CurrLine;
-		public ChannelInfo[] ChanInfo;
-		public sbyte[] ChanVol;
+		public PatternLine[] CurrLine { get; set; }
+		public ChannelInfo[] ChanInfo { get; set; }
+		public sbyte[] ChanVol { get; set; }
 
 		/********************************************************************/
 		/// <summary>

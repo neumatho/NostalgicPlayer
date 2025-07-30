@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med.Containers
 	/// </summary>
 	internal class Block
 	{
-		public TrackLine[,] Rows;
+		public TrackLine[,] Rows { get; set; }
 	}
 }

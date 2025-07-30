@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class Track
 	{
-		public int TrackNumber;
-		public short Transpose;
-		public ushort NumberOfRepeatTimes;
+		public int TrackNumber { get; set; }
+		public short Transpose { get; set; }
+		public ushort NumberOfRepeatTimes { get; set; }
 	}
 }

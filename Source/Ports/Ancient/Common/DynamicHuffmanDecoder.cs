@@ -17,11 +17,13 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		#region Node class
 		private class Node
 		{
+			// ReSharper disable InconsistentNaming
 			public uint32_t Frequency;
 			public uint32_t Index;
 			public uint32_t Parent;
 			public uint32_t LeftLeaf;
 			public uint32_t RightLeaf;
+			// ReSharper restore InconsistentNaming
 		}
 		#endregion
 

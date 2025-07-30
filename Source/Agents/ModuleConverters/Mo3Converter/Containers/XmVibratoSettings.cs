@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class XmVibratoSettings
 	{
-		public byte Type;
-		public byte Sweep;
-		public byte Depth;
-		public byte Rate;
+		public byte Type { get; set; }
+		public byte Sweep { get; set; }
+		public byte Depth { get; set; }
+		public byte Rate { get; set; }
 	}
 }

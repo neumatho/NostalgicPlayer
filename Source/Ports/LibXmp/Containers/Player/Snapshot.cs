@@ -14,9 +14,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public Player_Data PlayerData;
-		public IModuleExtra ModuleExtra;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -26,6 +23,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 		{
 			PlayerData = playerData.MakeDeepClone();
 			ModuleExtra = moduleExtra?.MakeDeepClone();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Player_Data PlayerData
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public IModuleExtra ModuleExtra
+		{
+			get;
 		}
 	}
 }

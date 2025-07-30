@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers
 	/// </summary>
 	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public byte CurrNote;
-		public short CurrPeriod;
-		public uint ReleaseStart;
-		public uint ReleaseLength;
+		public byte CurrNote { get; set; }
+		public short CurrPeriod { get; set; }
+		public uint ReleaseStart { get; set; }
+		public uint ReleaseLength { get; set; }
 
 		/********************************************************************/
 		/// <summary>

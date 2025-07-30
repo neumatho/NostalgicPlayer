@@ -12,13 +12,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public bool EnablePlaying;
+		public bool EnablePlaying { get; set; }
 
-		public short MasterVolume;
-		public short MasterVolumeFadeSpeed;
-		public short MasterVolumeFadeSpeedCounter;
+		public short MasterVolume { get; set; }
+		public short MasterVolumeFadeSpeed { get; set; }
+		public short MasterVolumeFadeSpeedCounter { get; set; }
 
-		public ushort Counter;
+		public ushort Counter { get; set; }
 
 		/********************************************************************/
 		/// <summary>

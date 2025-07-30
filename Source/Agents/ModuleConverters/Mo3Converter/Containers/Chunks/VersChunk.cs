@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class VersChunk : IChunk
 	{
-		public ushort Cwtv;					// Created with tracker
-		public ushort Cmwt;					// Compatible with tracker
-		public byte[] CreatedWithTracker;	// Name of tracker (XM only)
+		public ushort Cwtv { get; set; }				// Created with tracker
+		public ushort Cmwt { get; set; }				// Compatible with tracker
+		public byte[] CreatedWithTracker { get; set; }	// Name of tracker (XM only)
 	}
 }

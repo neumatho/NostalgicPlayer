@@ -12,22 +12,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class Instrument : IDeepCloneable<Instrument>
 	{
-		public byte WaveformNumber;		// >= 32 -> sample number
-		public ushort LoopLength;
-		public byte Finetune;
-		public byte ArpeggioNumber;
-		public byte Volume;
-		public byte VolumeSpeed;
-		public bool VolumeLoop;
-		public byte Pitch;
-		public byte PitchSpeed;
-		public byte PitchLoop;
-		public byte Delay;
-		public InstrumentEffect Effect;
-		public byte EffectSpeed;
-		public byte EffectIndex;
-		public byte SourceWave1;
-		public byte SourceWave2;
+		public byte WaveformNumber { get; set; }		// >= 32 -> sample number
+		public ushort LoopLength { get; set; }
+		public byte Finetune { get; set; }
+		public byte ArpeggioNumber { get; set; }
+		public byte Volume { get; set; }
+		public byte VolumeSpeed { get; set; }
+		public bool VolumeLoop { get; set; }
+		public byte Pitch { get; set; }
+		public byte PitchSpeed { get; set; }
+		public byte PitchLoop { get; set; }
+		public byte Delay { get; set; }
+		public InstrumentEffect Effect { get; set; }
+		public byte EffectSpeed { get; set; }
+		public byte EffectIndex { get; set; }
+		public byte SourceWave1 { get; set; }
+		public byte SourceWave2 { get; set; }
 
 		/********************************************************************/
 		/// <summary>

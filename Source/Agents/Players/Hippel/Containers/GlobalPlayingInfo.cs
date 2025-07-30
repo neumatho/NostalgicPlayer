@@ -12,9 +12,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort SpeedCounter;
-		public ushort Speed;
-		public ushort Random;
+		public ushort SpeedCounter { get; set; }
+		public ushort Speed { get; set; }
+		public ushort Random { get; set; }
 
 		/********************************************************************/
 		/// <summary>

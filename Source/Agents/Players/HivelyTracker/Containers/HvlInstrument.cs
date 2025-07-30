@@ -10,27 +10,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class HvlInstrument
 	{
-		public string Name;
+		public string Name { get; set; }
 
-		public int Volume;
-		public int WaveLength;
-		public HvlEnvelope Envelope = new HvlEnvelope();
+		public int Volume { get; set; }
+		public int WaveLength { get; set; }
+		public HvlEnvelope Envelope { get; } = new HvlEnvelope();
 
-		public int FilterLowerLimit;
-		public int FilterUpperLimit;
-		public int FilterSpeed;
+		public int FilterLowerLimit { get; set; }
+		public int FilterUpperLimit { get; set; }
+		public int FilterSpeed { get; set; }
 
-		public int SquareLowerLimit;
-		public int SquareUpperLimit;
-		public int SquareSpeed;
+		public int SquareLowerLimit { get; set; }
+		public int SquareUpperLimit { get; set; }
+		public int SquareSpeed { get; set; }
 
-		public int VibratoDelay;
-		public int VibratoDepth;
-		public int VibratoSpeed;
+		public int VibratoDelay { get; set; }
+		public int VibratoDepth { get; set; }
+		public int VibratoSpeed { get; set; }
 
-		public int HardCutReleaseFrames;
-		public bool HardCutRelease;
+		public int HardCutReleaseFrames { get; set; }
+		public bool HardCutRelease { get; set; }
 
-		public HvlPList PlayList = new HvlPList();
+		public HvlPList PlayList { get; } = new HvlPList();
 	}
 }

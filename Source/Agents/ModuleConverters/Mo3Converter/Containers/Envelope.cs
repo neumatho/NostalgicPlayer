@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class Envelope
 	{
-		public EnvelopeFlag Flags;
-		public byte NumNodes;
-		public byte SustainStart;
-		public byte SustainEnd;
-		public byte LoopStart;
-		public byte LoopEnd;
-		public short[] Points = new short[25 * 2];
+		public EnvelopeFlag Flags { get; set; }
+		public byte NumNodes { get; set; }
+		public byte SustainStart { get; set; }
+		public byte SustainEnd { get; set; }
+		public byte LoopStart { get; set; }
+		public byte LoopEnd { get; set; }
+		public short[] Points { get; } = new short[25 * 2];
 	}
 }

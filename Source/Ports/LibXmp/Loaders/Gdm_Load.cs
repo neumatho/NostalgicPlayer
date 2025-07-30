@@ -20,8 +20,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	/// </summary>
 	internal class Gdm_Load : IFormatLoader
 	{
+		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_GDM = Common.Magic4('G', 'D', 'M', '\xfe');
 		private static readonly uint32 Magic_GMFS = Common.Magic4('G', 'M', 'F', 'S');
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

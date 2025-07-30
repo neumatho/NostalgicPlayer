@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 	/// </summary>
 	internal class Step
 	{
-		public ushort TrackNumber;
-		public sbyte SoundTranspose;
-		public sbyte Transpose;
+		public ushort TrackNumber { get; set; }
+		public sbyte SoundTranspose { get; set; }
+		public sbyte Transpose { get; set; }
 	}
 }

@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class Event
 	{
-		public EventType Type;
-		public byte Data;
+		public EventType Type { get; set; }
+		public byte Data { get; set; }
 	}
 }

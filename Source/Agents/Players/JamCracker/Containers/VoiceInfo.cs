@@ -13,28 +13,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public ushort WaveOffset = 0;
-		public ushort Dmacon;
-		public short InsNum;
-		public ushort InsLen;
-		public sbyte[] InsAddress;
-		public sbyte[] RealInsAddress;
-		public sbyte[] WaveBuffer = new sbyte[0x40];
-		public int PerIndex;
-		public ushort[] Pers = new ushort[3];
-		public short Por;
-		public short DeltaPor;
-		public short PorLevel;
-		public short Vib;
-		public short DeltaVib;
-		public short Vol;
-		public short DeltaVol;
-		public ushort VolLevel;
-		public ushort Phase;
-		public short DeltaPhase;
-		public byte VibCnt;
-		public byte VibMax;
-		public byte Flags;
+		public ushort WaveOffset { get; set; } = 0;
+		public ushort Dmacon { get; set; }
+		public short InsNum { get; set; }
+		public ushort InsLen { get; set; }
+		public sbyte[] InsAddress { get; set; }
+		public sbyte[] RealInsAddress { get; set; }
+		public sbyte[] WaveBuffer { get; set; } = new sbyte[0x40];
+		public int PerIndex { get; set; }
+		public ushort[] Pers { get; set; } = new ushort[3];
+		public short Por { get; set; }
+		public short DeltaPor { get; set; }
+		public short PorLevel { get; set; }
+		public short Vib { get; set; }
+		public short DeltaVib { get; set; }
+		public short Vol { get; set; }
+		public short DeltaVol { get; set; }
+		public ushort VolLevel { get; set; }
+		public ushort Phase { get; set; }
+		public short DeltaPhase { get; set; }
+		public byte VibCnt { get; set; }
+		public byte VibMax { get; set; }
+		public byte Flags { get; set; }
 
 		/********************************************************************/
 		/// <summary>

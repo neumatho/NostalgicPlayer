@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public sbyte[] SampleData;
-		public uint Length;
-		public uint LoopStart;
-		public uint LoopLength;
-		public byte Volume;
-		public sbyte FineTune;
+		public string Name { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint Length { get; set; }
+		public uint LoopStart { get; set; }
+		public uint LoopLength { get; set; }
+		public byte Volume { get; set; }
+		public sbyte FineTune { get; set; }
 	}
 }

@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class HvlPListEntry
 	{
-		public int Note;
-		public bool Fixed;
-		public int Waveform;
-		public int[] Fx;
-		public int[] FxParam;
+		public int Note { get; set; }
+		public bool Fixed { get; set; }
+		public int Waveform { get; set; }
+		public int[] Fx { get; set; }
+		public int[] FxParam { get; set; }
 	}
 }

@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers.Chunks;
@@ -16,16 +15,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class Mo3Module
 	{
-		public byte Version;
-		public uint MusicSize;
-		public ModuleType ModuleType;
-		public FileHeader Header;
-		public PatternInfo PatternInfo;
-		public Track[] Tracks;
-		public Instrument[] Instruments;
-		public Sample[] Samples;
-		public IPlugin[] Plugins;
-		public IChunk[] Chunks;
+		public byte Version { get; set; }
+		public uint MusicSize { get; set; }
+		public ModuleType ModuleType { get; set; }
+		public FileHeader Header { get; set; }
+		public PatternInfo PatternInfo { get; set; }
+		public Track[] Tracks { get; set; }
+		public Instrument[] Instruments { get; set; }
+		public Sample[] Samples { get; set; }
+		public IPlugin[] Plugins { get; set; }
+		public IChunk[] Chunks { get; set; }
 
 		/********************************************************************/
 		/// <summary>

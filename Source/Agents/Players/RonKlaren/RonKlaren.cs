@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 	/// </summary>
 	public class RonKlaren : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("41B70305-7417-4C38-AC14-354A788E88F3");
+		private static readonly Guid agent1Id = Guid.Parse("41B70305-7417-4C38-AC14-354A788E88F3");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_RK_NAME_AGENT1, Resources.IDS_RK_DESCRIPTION_AGENT1, Agent1Id)
+			new AgentSupportInfo(Resources.IDS_RK_NAME_AGENT1, Resources.IDS_RK_DESCRIPTION_AGENT1, agent1Id)
 		];
 
 

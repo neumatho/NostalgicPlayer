@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 		LinearSlides = 0x0001,
 		IsS3M = 0x0002,
 		S3MFastSlides = 0x0004,
-		IsMTM = 0x0008,						// Actually this is simply "not XM". But if none of the S3M, MOD and IT flags are set, it's an MTM
+		IsMtm = 0x0008,						// Actually this is simply "not XM". But if none of the S3M, MOD and IT flags are set, it's an MTM
 		S3MAmigaLimits = 0x0010,
 
 		// 0x20 and 0x40 have been used in old versions for things that can be inferred from the file format anyway.
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 		Unused2 = 0x0040,
 
 		IsMod = 0x0080,
-		IsIT = 0x0100,
+		IsIt = 0x0100,
 		InstrumentMode = 0x0200,
 		ItCompactGxx = 0x0400,
 		ItOldFx = 0x0800,

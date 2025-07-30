@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public InstrumentCommand[] VolumeCommands;
-		public InstrumentCommand[] FrequencyCommands;
+		public InstrumentCommand[] VolumeCommands { get; set; }
+		public InstrumentCommand[] FrequencyCommands { get; set; }
 	}
 }

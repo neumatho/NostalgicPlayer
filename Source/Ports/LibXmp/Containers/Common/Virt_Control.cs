@@ -17,26 +17,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// Number of tracks
 		/// </summary>
-		public c_int Num_Tracks;
+		public c_int Num_Tracks { get; set; }
 
 		/// <summary>
 		/// Number of virtual channels
 		/// </summary>
-		public c_int Virt_Channels;
+		public c_int Virt_Channels { get; set; }
 
 		/// <summary>
 		/// Number of voices currently in use
 		/// </summary>
-		public c_int Virt_Used;
+		public c_int Virt_Used { get; set; }
 
 		/// <summary>
 		/// Number of sound card voices
 		/// </summary>
-		public c_int MaxVoc;
+		public c_int MaxVoc { get; set; }
 
-		public Virt_Channel[] Virt_Channel;
+		public Virt_Channel[] Virt_Channel { get; set; }
 
-		public Mixer_Voice[] Voice_Array;
+		public Mixer_Voice[] Voice_Array { get; set; }
 
 		/********************************************************************/
 		/// <summary>

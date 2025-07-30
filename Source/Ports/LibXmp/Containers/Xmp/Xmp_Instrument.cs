@@ -15,37 +15,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Instrument name
 		/// </summary>
-		public string Name = string.Empty;
+		public ref string Name => ref _Name;
+		private string _Name = string.Empty;
 
 		/// <summary>
 		/// Instrument volume
 		/// </summary>
-		public c_int Vol;
+		public c_int Vol { get; internal set; }
 
 		/// <summary>
 		/// Number of samples
 		/// </summary>
-		public c_int Nsm;
+		public c_int Nsm { get; internal set; }
 
 		/// <summary>
 		/// Release (fadeout)
 		/// </summary>
-		public c_int Rls;
+		public c_int Rls { get; internal set; }
 
 		/// <summary>
 		/// Amplitude envelope info
 		/// </summary>
-		public Xmp_Envelope Aei = new Xmp_Envelope();
+		public Xmp_Envelope Aei { get; } = new Xmp_Envelope();
 
 		/// <summary>
 		/// Pan envelope info
 		/// </summary>
-		public Xmp_Envelope Pei = new Xmp_Envelope();
+		public Xmp_Envelope Pei { get; } = new Xmp_Envelope();
 
 		/// <summary>
 		/// Frequency envelope info
 		/// </summary>
-		public Xmp_Envelope Fei = new Xmp_Envelope();
+		public Xmp_Envelope Fei { get; } = new Xmp_Envelope();
 
 		/// <summary>
 		/// 
@@ -55,27 +56,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 			/// <summary>
 			/// Instrument number for each key
 			/// </summary>
-			public byte Ins;
+			public byte Ins { get; internal set; }
 
 			/// <summary>
 			/// Instrument transpose for each key
 			/// </summary>
-			public sbyte Xpo;
+			public sbyte Xpo { get; internal set; }
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public _Map[] Map = new _Map[Constants.Xmp_Max_Keys];
+		public _Map[] Map { get; } = new _Map[Constants.Xmp_Max_Keys];
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Xmp_SubInstrument[] Sub;
+		public Xmp_SubInstrument[] Sub { get; internal set; }
 
 		/// <summary>
 		/// Extra fields
 		/// </summary>
-		public IInstrumentExtra Extra;
+		public IInstrumentExtra Extra { get; internal set; }
 	}
 }

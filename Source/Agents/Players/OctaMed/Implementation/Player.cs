@@ -31,29 +31,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				Hybrid
 			}
 
-			public SyType SynthType;
-			public int PeriodChange;
-			public uint VibOffs;			// Vibrato offset
-			public uint VibSpeed;			// Speed
-			public int VibDep;				// Depth
-			public uint VibWfNum;			// Waveform number (0 = default sine)
-			public uint ArpStart;			// Arpeggio sequence start offset (in wfTable)
-			public uint ArpOffs;			// Current arpeggio offset
-			public uint VolCmdPos;			// Current volume execution position
-			public uint WfCmdPos;			// Current waveform execution position
-			public uint VolWait;			// Current volume wait
-			public uint WfWait;				// Current waveform wait
-			public uint VolChgSpeed;		// Volume change speed
-			public uint WfChgSpeed;			// Waveform change speed
-			public uint VolXSpeed;			// Execution speed
-			public uint WfXSpeed;			// ...for waveform too
-			public int VolXCnt;				// Execution counter
-			public int WfXCnt;
-			public uint EnvWfNum;			// Envelope waveform # (0 = none)
-			public bool EnvLoop;			// Envelope looping?
-			public ushort EnvCount;			// Envelope position counter
-			public int Vol;					// Current synth volume
-			public NoteNum NoteNumber;		// Note number with transpose for arpeggio
+			public SyType SynthType { get; set; }
+			public int PeriodChange { get; set; }
+			public uint VibOffs { get; set; }				// Vibrato offset
+			public uint VibSpeed { get; set; }				// Speed
+			public int VibDep { get; set; }					// Depth
+			public uint VibWfNum { get; set; }				// Waveform number (0 = default sine)
+			public uint ArpStart { get; set; }				// Arpeggio sequence start offset (in wfTable)
+			public uint ArpOffs { get; set; }				// Current arpeggio offset
+			public uint VolCmdPos { get; set; }				// Current volume execution position
+			public uint WfCmdPos { get; set; }				// Current waveform execution position
+			public uint VolWait { get; set; }				// Current volume wait
+			public uint WfWait { get; set; }				// Current waveform wait
+			public uint VolChgSpeed { get; set; }			// Volume change speed
+			public uint WfChgSpeed { get; set; }			// Waveform change speed
+			public uint VolXSpeed { get; set; }				// Execution speed
+			public uint WfXSpeed { get; set; }				// ...for waveform too
+			public int VolXCnt { get; set; }				// Execution counter
+			public int WfXCnt { get; set; }
+			public uint EnvWfNum { get; set; }				// Envelope waveform # (0 = none)
+			public bool EnvLoop { get; set; }				// Envelope looping?
+			public ushort EnvCount { get; set; }			// Envelope position counter
+			public int Vol { get; set; }					// Current synth volume
+			public NoteNum NoteNumber { get; set; }			// Note number with transpose for arpeggio
 
 			/********************************************************************/
 			/// <summary>
@@ -90,36 +90,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				StopNote = 0x04
 			}
 
-			public NoteNum TrkPrevNote;
-			public InstNum TrkPrevINum;
-			public byte TrkPrevVol;
-			public byte TrkPrevMidiN;		// 0 = None, 1 = 0, 2 = 1, ...
-			public MiscFlag TrkMiscFlags;
-			public int TrkNoteOffCnt;		// -1 = None
-			public uint TrkInitHold;
-			public uint TrkInitDecay;
-			public uint TrkDecay;
-			public uint TrkFadeSpeed;		// Fading speed for decay
-			public int TrkSTransp;
-			public int TrkFineTune;
-			public int TrkArpAdjust;
-			public int TrkVibrAdjust;
-			public uint TrkSOffset;
-			public NoteNum TrkCurrNote;
-			public FxType TrkFxType;
-			public int TrkFrequency;
-			public int TrkPortTargetFreq;	// Portamento (cmd 03) target frequency
-			public ushort TrkPortSpeed;
-			public int TrkCutOffTarget;		// Filter cutoff sweep (cmd 23) target value
-			public ushort TrkCutOffSwSpeed;	// Cutoff sweep speed
-			public int TrkCutOffLogPos;		// Logarithmic position of cutoff sweep
-			public byte TrkVibShift;		// Depends on cmd 04 or 14
-			public byte TrkVibSpeed;
-			public byte TrkVibSize;
-			public byte TrkTempVol;			// Temporary volume (+1; 0 = none)
-			public ushort TrkVibOffs;
-			public bool TrkLastNoteMidi;	// True if last note was MIDI note
-			public SynthData TrkSy = new SynthData();
+			public NoteNum TrkPrevNote { get; set; }
+			public InstNum TrkPrevINum { get; set; }
+			public byte TrkPrevVol { get; set; }
+			public byte TrkPrevMidiN { get; set; }			// 0 = None, 1 = 0, 2 = 1, ...
+			public MiscFlag TrkMiscFlags { get; set; }
+			public int TrkNoteOffCnt { get; set; }			// -1 = None
+			public uint TrkInitHold { get; set; }
+			public uint TrkInitDecay { get; set; }
+			public uint TrkDecay { get; set; }
+			public uint TrkFadeSpeed { get; set; }			// Fading speed for decay
+			public int TrkSTransp { get; set; }
+			public int TrkFineTune { get; set; }
+			public int TrkArpAdjust { get; set; }
+			public int TrkVibrAdjust { get; set; }
+			public uint TrkSOffset { get; set; }
+			public NoteNum TrkCurrNote { get; set; }
+			public FxType TrkFxType { get; set; }
+			public int TrkFrequency { get; set; }
+			public int TrkPortTargetFreq { get; set; }		// Portamento (cmd 03) target frequency
+			public ushort TrkPortSpeed { get; set; }
+			public int TrkCutOffTarget { get; set; }		// Filter cutoff sweep (cmd 23) target value
+			public ushort TrkCutOffSwSpeed { get; set; }	// Cutoff sweep speed
+			public int TrkCutOffLogPos { get; set; }		// Logarithmic position of cutoff sweep
+			public byte TrkVibShift { get; set; }			// Depends on cmd 04 or 14
+			public byte TrkVibSpeed { get; set; }
+			public byte TrkVibSize { get; set; }
+			public byte TrkTempVol { get; set; }			// Temporary volume (+1; 0 = none)
+			public ushort TrkVibOffs { get; set; }
+			public bool TrkLastNoteMidi { get; set; }		// True if last note was MIDI note
+			public SynthData TrkSy { get; set; } = new SynthData();
 
 			/********************************************************************/
 			/// <summary>

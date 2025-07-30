@@ -12,8 +12,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public Implementation.Player Player;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -22,6 +20,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 		public Snapshot(Implementation.Player player)
 		{
 			Player = player.MakeDeepClone();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Implementation.Player Player
+		{
+			get;
 		}
 	}
 }

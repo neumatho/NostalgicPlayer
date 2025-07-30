@@ -20,52 +20,54 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 	internal class UmxFormat : ModuleConverterAgentBase
 	{
 		#pragma warning disable 649
+
 		#region GenHist struct
 		/// <summary>
 		/// For UPkg versions >= 68
 		/// </summary>
 		private struct GenHist
 		{
-			public int ExportCount;
-			public int NameCount;
+			public int ExportCount { get; set; }
+			public int NameCount { get; set; }
 		}
 		#endregion
 
 		#region UPkgHdr class
 		private class UPkgHdr
 		{
-			public uint Tag;							// UPkgHdrTag
-			public int FileVersion;
-			public uint PkgFlags;
-			public int NameCount;						// Number of names in name table (>= 0)
-			public int NameOffset;						// Offset to name table (>= 0)
-			public int ExportCount;						// Num. exports in export table (>= 0)
-			public int ExportOffset;					// Offset to export table (>= 0)
-			public int ImportCount;						// Num. imports in export table (>= 0)
-			public int ImportOffset;					// Offset to import table (>= 0)
+			public uint Tag { get; set; }				// UPkgHdrTag
+			public int FileVersion { get; set; }
+			public uint PkgFlags { get; set; }
+			public int NameCount { get; set; }			// Number of names in name table (>= 0)
+			public int NameOffset { get; set; }			// Offset to name table (>= 0)
+			public int ExportCount { get; set; }		// Num. exports in export table (>= 0)
+			public int ExportOffset { get; set; }		// Offset to export table (>= 0)
+			public int ImportCount { get; set; }		// Num. imports in export table (>= 0)
+			public int ImportOffset { get; set; }		// Offset to import table (>= 0)
 
 			// Number of GUIDs in heritage table (>= 1) and table's offset:
 			// only with versions < 68
-			public int HeritageCount;
-			public int HeritageOffset;
+			public int HeritageCount { get; set; }
+			public int HeritageOffset { get; set; }
 
 			// With versions >= 68: a GUID, a dword for generation count
 			// and export_count and name_count dwords for each generation
-			public readonly uint[] Guid = new uint[4];
-			public int GenerationCount;
+			public uint[] Guid { get; }= new uint[4];
+			public int GenerationCount { get; set; }
 
-			public GenHist[] Gen;
+			public GenHist[] Gen { get; set; }
 		}
 		#endregion
 
 		#region UmxInfo class
 		private class UmxInfo
 		{
-			public UMusic Type;
-			public int Ofs;
-			public int Size;
+			public UMusic Type { get; set; }
+			public int Ofs { get; set; }
+			public int Size { get; set; }
 		}
 		#endregion
+
 		#pragma warning restore 649
 
 		private enum UMusic
@@ -79,10 +81,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		}
 
 		private static readonly string[] musType =
-		{
+		[
 			"IT", "S3M", "XM", "MOD",
 			"WAV", "MP2", null
-		};
+		];
 
 		private const uint UPkgHdrTag = 0x9e2a83c1;
 		private const int UPkgHdrSize = 64;

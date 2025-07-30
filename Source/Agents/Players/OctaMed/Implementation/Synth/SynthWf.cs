@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Synth
 	/// </summary>
 	internal class SynthWf
 	{
-		public uint SyWfLength;						// Length in WORDS, not bytes/samples
-		public sbyte[] SyWfData = new sbyte[128];
+		public uint SyWfLength { get; set; }				// Length in WORDS, not bytes/samples
+		public sbyte[] SyWfData { get; } = new sbyte[128];
 	}
 }

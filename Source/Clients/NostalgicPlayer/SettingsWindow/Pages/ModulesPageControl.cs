@@ -22,8 +22,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	{
 		private class ModuleInfoOrderListBoxItem
 		{
-			public string Name;
-			public ModuleSettings.ModuleInfoTab Tab;
+			public string Name { get; set; }
+			public ModuleSettings.ModuleInfoTab Tab { get; set; }
 
 			public override string ToString()
 			{

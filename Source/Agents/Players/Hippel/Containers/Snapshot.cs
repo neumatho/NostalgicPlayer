@@ -13,9 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-		public VoiceInfo[] Voices;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -25,6 +22,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Voices = ArrayHelper.CloneObjectArray(voices);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public VoiceInfo[] Voices
+		{
+			get;
 		}
 	}
 }

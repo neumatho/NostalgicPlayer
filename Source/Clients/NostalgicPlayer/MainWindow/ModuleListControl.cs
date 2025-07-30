@@ -332,11 +332,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		public struct DragDropInformation
 		{
 			/// <summary></summary>
-			public DragDropType Type;
+			public DragDropType Type { get; set; }
 			/// <summary></summary>
-			public int IndexOfItemUnderMouseToDrop;
+			public int IndexOfItemUnderMouseToDrop { get; set; }
 			/// <summary></summary>
-			public FileDropType DropType;
+			public FileDropType DropType { get; set; }
 		}
 
 		private int updateCount;

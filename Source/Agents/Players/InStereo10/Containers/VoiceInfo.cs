@@ -14,43 +14,43 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10.Containers
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
 		// Position information
-		public ushort StartTrackRow;
-		public sbyte SoundTranspose;
-		public sbyte NoteTranspose;
+		public ushort StartTrackRow { get; set; }
+		public sbyte SoundTranspose { get; set; }
+		public sbyte NoteTranspose { get; set; }
 
 		// Track row information
-		public byte Note;
-		public byte Instrument;
-		public byte Arpeggio;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Note { get; set; }
+		public byte Instrument { get; set; }
+		public byte Arpeggio { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 
-		public byte UseBuffer;
-		public sbyte[] SynthSample1 = new sbyte[256];
-		public sbyte[] SynthSample2 = new sbyte[256];
+		public byte UseBuffer { get; set; }
+		public sbyte[] SynthSample1 { get; set; } = new sbyte[256];
+		public sbyte[] SynthSample2 { get; set; } = new sbyte[256];
 
-		public byte TransposedNote;
-		public byte PreviousTransposedNote;
+		public byte TransposedNote { get; set; }
+		public byte PreviousTransposedNote { get; set; }
 
-		public byte TransposedInstrument;
+		public byte TransposedInstrument { get; set; }
 
-		public byte CurrentVolume;
+		public byte CurrentVolume { get; set; }
 
-		public sbyte SlideSpeed;
-		public short SlideIncrement;
+		public sbyte SlideSpeed { get; set; }
+		public short SlideIncrement { get; set; }
 
-		public bool PortamentoEnabled;
-		public sbyte PortamentoSpeed;
-		public short PortamentoSpeedCounter;
+		public bool PortamentoEnabled { get; set; }
+		public sbyte PortamentoSpeed { get; set; }
+		public short PortamentoSpeedCounter { get; set; }
 
-		public byte VibratoDelay;
-		public byte VibratoPosition;
+		public byte VibratoDelay { get; set; }
+		public byte VibratoPosition { get; set; }
 
-		public bool AdsrEnabled;
-		public ushort AdsrPosition;
+		public bool AdsrEnabled { get; set; }
+		public ushort AdsrPosition { get; set; }
 
-		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode;
-		public ushort EnvelopeGeneratorCounterPosition;
+		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode { get; set; }
+		public ushort EnvelopeGeneratorCounterPosition { get; set; }
 
 		/********************************************************************/
 		/// <summary>

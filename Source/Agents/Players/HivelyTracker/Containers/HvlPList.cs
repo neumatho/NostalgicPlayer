@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class HvlPList
 	{
-		public int Speed;
-		public int Length;
-		public HvlPListEntry[] Entries;
+		public int Speed { get; set; }
+		public int Length { get; set; }
+		public HvlPListEntry[] Entries { get; set; }
 	}
 }

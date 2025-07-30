@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise.Containers
 	/// </summary>
 	internal class SampleInstrument : Instrument
 	{
-		public uint StartOffset;
-		public uint Length;
-		public uint LoopStart;
-		public uint LoopLength;
+		public uint StartOffset { get; set; }
+		public uint Length { get; set; }
+		public uint LoopStart { get; set; }
+		public uint LoopLength { get; set; }
 	}
 }

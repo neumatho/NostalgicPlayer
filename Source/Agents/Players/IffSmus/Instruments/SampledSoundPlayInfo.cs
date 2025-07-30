@@ -12,21 +12,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 	/// </summary>
 	internal class SampledSoundPlayInfo : IDeepCloneable<SampledSoundPlayInfo>
 	{
-		public sbyte[] LoopSampleData;
-		public uint LoopStart;
-		public ushort LoopLengthInWords;
+		public sbyte[] LoopSampleData { get; set; }
+		public uint LoopStart { get; set; }
+		public ushort LoopLengthInWords { get; set; }
 
-		public ushort MappedNote;
+		public ushort MappedNote { get; set; }
 
-		public ushort EnvelopeIndex;
-		public int EnvelopeVolume;
+		public ushort EnvelopeIndex { get; set; }
+		public int EnvelopeVolume { get; set; }
 
-		public ushort VibratoIndex;
-		public ushort VibratoDelayCounter;
-		public short VibratoValue;
+		public ushort VibratoIndex { get; set; }
+		public ushort VibratoDelayCounter { get; set; }
+		public short VibratoValue { get; set; }
 
-		public byte Octave;
-		public byte Note;
+		public byte Octave { get; set; }
+		public byte Note { get; set; }
 
 		/********************************************************************/
 		/// <summary>

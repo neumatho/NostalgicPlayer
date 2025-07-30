@@ -12,6 +12,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 	/// </summary>
 	internal static class Constants
 	{
+		// ReSharper disable InconsistentNaming
 		public const int FileName_Length = 1024;
 
 		public const string LzHuff0_Method = "-lh0-";
@@ -133,5 +134,6 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 
 		public const byte CBit = 9;
 		public const short UShrtBit = 16;
+		// ReSharper restore InconsistentNaming
 	}
 }

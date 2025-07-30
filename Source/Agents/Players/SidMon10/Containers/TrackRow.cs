@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 	/// </summary>
 	internal class TrackRow
 	{
-		public sbyte Note;
-		public byte Instrument;
-		public byte Effect;
-		public byte EffectParam;
-		public byte Duration;
+		public sbyte Note { get; set; }
+		public byte Instrument { get; set; }
+		public byte Effect { get; set; }
+		public byte EffectParam { get; set; }
+		public byte Duration { get; set; }
 	}
 }

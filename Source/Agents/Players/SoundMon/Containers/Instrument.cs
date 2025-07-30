@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 	/// </summary>
 	internal abstract class Instrument
 	{
-		public ushort Volume;				// Volume
+		public ushort Volume { get; set; }
 	}
 }

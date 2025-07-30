@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Lzw
 	/// </summary>
 	internal class BitStream
 	{
-		public uint32 Buf;
-		public size_t Num_Read;
-		public size_t Max_Read;
-		public c_int Bits;
+		public uint32 Buf { get; set; }
+		public size_t Num_Read { get; set; }
+		public size_t Max_Read { get; set; }
+		public c_int Bits { get; set; }
 	}
 }

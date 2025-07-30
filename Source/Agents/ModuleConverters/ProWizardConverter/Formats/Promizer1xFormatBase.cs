@@ -18,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	{
 		protected struct Offsets
 		{
-			public uint Offset1;
-			public uint Offset2;
-			public uint Offset3;
+			public uint Offset1 { get; set; }
+			public uint Offset2 { get; set; }
+			public uint Offset3 { get; set; }
 		}
 
 		private Offsets offsets;

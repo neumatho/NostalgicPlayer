@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public uint StartOffset;
-		public uint EndOffset;
-		public int LoopStart;
-		public sbyte[] SampleData;
+		public uint StartOffset { get; set; }
+		public uint EndOffset { get; set; }
+		public int LoopStart { get; set; }
+		public sbyte[] SampleData { get; set; }
 	}
 }

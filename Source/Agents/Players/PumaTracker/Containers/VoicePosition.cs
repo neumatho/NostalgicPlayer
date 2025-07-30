@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker.Containers
 	/// </summary>
 	internal class VoicePosition
 	{
-		public byte TrackNumber;
-		public sbyte InstrumentTranspose;
-		public sbyte NoteTranspose;
+		public byte TrackNumber { get; set; }
+		public sbyte InstrumentTranspose { get; set; }
+		public sbyte NoteTranspose { get; set; }
 	}
 }

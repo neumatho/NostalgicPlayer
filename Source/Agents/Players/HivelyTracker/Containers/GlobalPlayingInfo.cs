@@ -12,20 +12,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public int StepWaitFrames;
-		public bool GetNewPosition;
+		public int StepWaitFrames { get; set; }
+		public bool GetNewPosition { get; set; }
 
-		public bool PatternBreak;
+		public bool PatternBreak { get; set; }
 
-		public int Tempo;
+		public int Tempo { get; set; }
 
-		public int PosNr;
-		public int PosJump;
+		public int PosNr { get; set; }
+		public int PosJump { get; set; }
 
-		public int NoteNr;
-		public int PosJumpNote;
+		public int NoteNr { get; set; }
+		public int PosJumpNote { get; set; }
 
-		public sbyte[] SquareWaveform;
+		public sbyte[] SquareWaveform { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public uint LastNoiseValue;
-		public byte GlobalVolume;
-		public sbyte PlaySpeed;
-		public sbyte Tick;
+		public uint LastNoiseValue { get; set; }
+		public byte GlobalVolume { get; set; }
+		public sbyte PlaySpeed { get; set; }
+		public sbyte Tick { get; set; }
 
 		/********************************************************************/
 		/// <summary>

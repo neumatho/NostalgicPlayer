@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// These values are the SoundTracker tempos (approx.)
 		/// </summary>
 		/********************************************************************/
-		public static ushort[] SoundTrackerTempos =
+		public static readonly ushort[] SoundTrackerTempos =
 		[
 			0x0f00, 2417, 4833, 7250, 9666, 12083, 14500, 16916, 19332, 21436, 24163
 		];
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// Multiple octave shift counts
 		/// </summary>
 		/********************************************************************/
-		public static byte[] ShiftCount =
+		public static readonly byte[] ShiftCount =
 		[
 			4, 3, 2, 1, 1, 0, 2, 2, 1, 1, 0, 0
 		];
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// Multiple octave multiply values
 		/// </summary>
 		/********************************************************************/
-		public static byte[] MultiplyLengthCount =
+		public static readonly byte[] MultiplyLengthCount =
 		[
 			15, 7, 3, 1, 1, 0, 3, 3, 1, 1, 0, 0
 		];
@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// Multiple octave start note
 		/// </summary>
 		/********************************************************************/
-		public static byte[] OctaveStart =
+		public static readonly byte[] OctaveStart =
 		[
 			12, 12, 12, 12, 24, 24, 0, 12, 12, 24, 24, 36
 		];

@@ -17,9 +17,11 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		#region Node class
 		private class Node
 		{
+			// ReSharper disable InconsistentNaming
 			public uint32_t Left;
 			public uint32_t Right;
 			public T Value;
+			// ReSharper restore InconsistentNaming
 
 			/********************************************************************/
 			/// <summary>

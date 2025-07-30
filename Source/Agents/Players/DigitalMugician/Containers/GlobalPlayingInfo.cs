@@ -13,17 +13,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort Speed;
-		public ushort CurrentSpeed;
-		public ushort LastShownSpeed;
-		public bool NewPattern;
-		public bool NewRow;
-		public ushort CurrentPosition;
-		public ushort SongLength;
-		public ushort CurrentRow;
-		public ushort PatternLength;
+		public ushort Speed { get; set; }
+		public ushort CurrentSpeed { get; set; }
+		public ushort LastShownSpeed { get; set; }
+		public bool NewPattern { get; set; }
+		public bool NewRow { get; set; }
+		public ushort CurrentPosition { get; set; }
+		public ushort SongLength { get; set; }
+		public ushort CurrentRow { get; set; }
+		public ushort PatternLength { get; set; }
 
-		public VoiceInfo[] VoiceInfo;
+		public VoiceInfo[] VoiceInfo { get; set; }
 
 		/********************************************************************/
 		/// <summary>

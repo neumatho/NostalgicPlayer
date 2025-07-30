@@ -69,16 +69,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 
 		private class AgentLoadInfo
 		{
-			public AssemblyLoadContext LoadContext;
-			public string FileName;
-			public AgentInfo[] AgentInfo;
+			public AssemblyLoadContext LoadContext { get; set; }
+			public string FileName { get; set; }
+			public AgentInfo[] AgentInfo { get; set; }
 		}
 
 		private class AgentSettingsLoadInfo
 		{
-			public AssemblyLoadContext LoadContext;
-			public string FileName;
-			public IAgentSettings Settings;
+			public AssemblyLoadContext LoadContext { get; set; }
+			public string FileName { get; set; }
+			public IAgentSettings Settings { get; set; }
 		}
 
 		private readonly Lock listLock = new Lock();

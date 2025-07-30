@@ -32,29 +32,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Local_Data
 		private class Local_Data
 		{
-			public bool Vers_Flag;
-			public bool Patt_Flag;
-			public bool SV19_Flag;
-			public bool PFlag;
-			public bool SFlag;
-			public c_int Stereo;								// 0 = Old stereo, ff = Panoramic stereo (>=2.04)
-			public c_int Depth;									// Global sample depth used by pre-2.04 modules
-			public c_int C2Spd;									// Global sample rate used by pre-2.04 modules
-			public c_int Version;
-			public c_int Version_Derived;
-			public c_int Format;
-			public c_int RealPat;
-			public c_int Last_Pat;
-			public c_int InsNum;
-			public c_int Chn;
+			public bool Vers_Flag { get; set; }
+			public bool Patt_Flag { get; set; }
+			public bool SV19_Flag { get; set; }
+			public bool PFlag { get; set; }
+			public bool SFlag { get; set; }
+			public c_int Stereo { get; set; }					// 0 = Old stereo, ff = Panoramic stereo (>=2.04)
+			public c_int Depth { get; set; }					// Global sample depth used by pre-2.04 modules
+			public c_int C2Spd { get; set; }					// Global sample rate used by pre-2.04 modules
+			public c_int Version { get; set; }
+			public c_int Version_Derived { get; set; }
+			public c_int Format { get; set; }
+			public c_int RealPat { get; set; }
+			public c_int Last_Pat { get; set; }
+			public c_int InsNum { get; set; }
+			public c_int Chn { get; set; }
 
-			public CPointer<uint8> PatBuf;
-			public size_t PatBuf_Alloc;
+			public ref CPointer<uint8> PatBuf => ref _PatBuf;
+			private CPointer<uint8> _PatBuf;
+			public size_t PatBuf_Alloc { get; set; }
 		}
 		#endregion
 
 		#endregion
 
+		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_D_T_ = Common.Magic4('D', '.', 'T', '.');
 
 		// Values to compare against version_derived for compatibility.
@@ -90,6 +92,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		// communicated in the documentation or UI until Digital Home Studio
 		private const int DTM_Old_Stereo = 0x00;
 		private const int DTM_Panoramic_Stereo = 0xff;
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

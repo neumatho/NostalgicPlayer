@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public uint Length;
-		public uint LoopStart;
-		public uint LoopLength;
-		public ushort Volume;
-		public sbyte[] SampleData;
+		public string Name { get; set; }
+		public uint Length { get; set; }
+		public uint LoopStart { get; set; }
+		public uint LoopLength { get; set; }
+		public ushort Volume { get; set; }
+		public sbyte[] SampleData { get; set; }
 	}
 }

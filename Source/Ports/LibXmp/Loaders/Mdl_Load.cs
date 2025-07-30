@@ -29,46 +29,55 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Mdl_Envelope
 		private class Mdl_Envelope
 		{
-			public uint8 Num;
-			public readonly uint8[] Data = new uint8[30];
-			public uint8 Sus;
-			public uint8 Loop;
+			public uint8 Num { get; set; }
+			public uint8[] Data { get; } = new uint8[30];
+			public uint8 Sus { get; set; }
+			public uint8 Loop { get; set; }
 		}
 		#endregion
 
 		#region Local_Data
 		private class Local_Data
 		{
-			public CPointer<c_int> I_Index;
-			public CPointer<c_int> S_Index;
-			public CPointer<c_int> V_Index;		// Volume envelope
-			public CPointer<c_int> P_Index;		// Pan envelope
-			public CPointer<c_int> F_Index;		// Pitch envelope
-			public CPointer<c_int> PackInfo;
-			public bool Has_In;
-			public bool Has_Pa;
-			public bool Has_Tr;
-			public bool Has_Ii;
-			public bool Has_Is;
-			public bool Has_Sa;
-			public c_int V_EnvNum;
-			public c_int P_EnvNum;
-			public c_int F_EnvNum;
-			public Mdl_Envelope[] V_Env;
-			public Mdl_Envelope[] P_Env;
-			public Mdl_Envelope[] F_Env;
+			public ref CPointer<c_int> I_Index => ref _I_Index;
+			private CPointer<c_int> _I_Index;
+			public ref CPointer<c_int> S_Index => ref _S_Index;
+			private CPointer<c_int> _S_Index;
+			public ref CPointer<c_int> V_Index => ref _V_Index;	// Volume envelope
+			private CPointer<c_int> _V_Index;
+			public ref CPointer<c_int> P_Index => ref _P_Index;	// Pan envelope
+			private CPointer<c_int> _P_Index;
+			public ref CPointer<c_int> F_Index => ref _F_Index;	// Pitch envelope
+			private CPointer<c_int> _F_Index;
+			public ref CPointer<c_int> PackInfo => ref _PackInfo;
+			private CPointer<c_int> _PackInfo;
+			public bool Has_In { get; set; }
+			public bool Has_Pa { get; set; }
+			public bool Has_Tr { get; set; }
+			public bool Has_Ii { get; set; }
+			public bool Has_Is { get; set; }
+			public bool Has_Sa { get; set; }
+			public c_int V_EnvNum { get; set; }
+			public c_int P_EnvNum { get; set; }
+			public c_int F_EnvNum { get; set; }
+			public Mdl_Envelope[] V_Env { get; set; }
+			public Mdl_Envelope[] P_Env { get; set; }
+			public Mdl_Envelope[] F_Env { get; set; }
 		}
 		#endregion
 
 		#region Bits
 		private class Bits
 		{
-			public uint32 B;
-			public uint32 N;
+			public uint32 B { get; set; }
+			public uint32 N { get; set; }
 		}
 		#endregion
 
 		#endregion
+
+		// ReSharper disable InconsistentNaming
+		private static readonly uint32 Magic_DMDL = Common.Magic4('D', 'M', 'D', 'L');
 
 		private const c_int Mdl_Note_Follows = 0x04;
 		private const c_int Mdl_Instrument_Follows = 0x08;
@@ -76,8 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private const c_int Mdl_Effect_Follows = 0x20;
 		private const c_int Mdl_Parameter1_Follows = 0x40;
 		private const c_int Mdl_Parameter2_Follows = 0x80;
-
-		private static readonly uint32 Magic_DMDL = Common.Magic4('D', 'M', 'D', 'L');
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

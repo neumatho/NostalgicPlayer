@@ -12,20 +12,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 	/// </summary>
 	internal class Instrument : IDeepCloneable<Instrument>
 	{
-		public uint WaveformNumber;		// >= 16 -> sample number
-		public byte[] Arpeggio = new byte[16];
-		public byte AttackSpeed;
-		public byte AttackMax;
-		public byte DecaySpeed;
-		public byte DecayMin;
-		public byte SustainTime;
-		public byte ReleaseSpeed;
-		public byte ReleaseMin;
-		public byte PhaseShift;
-		public byte PhaseSpeed;
-		public byte FineTune;
-		public sbyte PitchFall;
-		public ushort Volume;
+		public uint WaveformNumber { get; set; }		// >= 16 -> sample number
+		public byte[] Arpeggio { get; set; } = new byte[16];
+		public byte AttackSpeed { get; set; }
+		public byte AttackMax { get; set; }
+		public byte DecaySpeed { get; set; }
+		public byte DecayMin { get; set; }
+		public byte SustainTime { get; set; }
+		public byte ReleaseSpeed { get; set; }
+		public byte ReleaseMin { get; set; }
+		public byte PhaseShift { get; set; }
+		public byte PhaseSpeed { get; set; }
+		public byte FineTune { get; set; }
+		public sbyte PitchFall { get; set; }
+		public ushort Volume { get; set; }
 
 		/********************************************************************/
 		/// <summary>

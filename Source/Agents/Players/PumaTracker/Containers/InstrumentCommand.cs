@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker.Containers
 	/// </summary>
 	internal class InstrumentCommand
 	{
-		public byte Command;
-		public byte Argument1;
-		public byte Argument2;
-		public byte Argument3;
+		public byte Command { get; set; }
+		public byte Argument1 { get; set; }
+		public byte Argument2 { get; set; }
+		public byte Argument3 { get; set; }
 	}
 }

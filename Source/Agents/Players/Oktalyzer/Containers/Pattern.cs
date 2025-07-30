@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers
 	/// </summary>
 	internal class Pattern
 	{
-		public short LineNum;
-		public PatternLine[] Lines;
+		public short LineNum { get; set; }
+		public PatternLine[] Lines { get; set; }
 	}
 }

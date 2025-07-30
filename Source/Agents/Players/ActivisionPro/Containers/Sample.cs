@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public ushort Length;
-		public ushort LoopStart;
-		public ushort LoopLength;
-		public sbyte[] SampleData;
+		public ushort Length { get; set; }
+		public ushort LoopStart { get; set; }
+		public ushort LoopLength { get; set; }
+		public sbyte[] SampleData { get; set; }
 	}
 }

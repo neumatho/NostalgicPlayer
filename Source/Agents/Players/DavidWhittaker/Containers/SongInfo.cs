@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 	/// </summary>
 	internal class SongInfo
 	{
-		public ushort Speed;
-		public byte DelayCounterSpeed;
-		public PositionList[] PositionLists;
+		public ushort Speed { get; set; }
+		public byte DelayCounterSpeed { get; set; }
+		public PositionList[] PositionLists { get; set; }
 	}
 }

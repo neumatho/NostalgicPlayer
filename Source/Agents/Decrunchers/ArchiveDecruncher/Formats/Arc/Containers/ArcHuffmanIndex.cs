@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 	/// </summary>
 	internal class ArcHuffmanIndex
 	{
-		public readonly short[] Value = new short[2];
+		public short[] Value { get; } = new short[2];
 	}
 }

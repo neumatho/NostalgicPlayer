@@ -14,23 +14,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public VoiceStatus Status;
+		public VoiceStatus Status { get; set; }
 
-		public InstrumentSetup InstrumentSetupSequence;
-		public IInstrumentFormat InstrumentFormat;
-		public short InstrumentNumber;
+		public InstrumentSetup InstrumentSetupSequence { get; set; }
+		public IInstrumentFormat InstrumentFormat { get; set; }
+		public short InstrumentNumber { get; set; }
 
-		public byte Note;
-		public ushort Volume;
+		public byte Note { get; set; }
+		public ushort Volume { get; set; }
 
-		public SetSample SetSampleSequence;
-		public sbyte[] SampleData;
-		public uint SampleStartOffset;
-		public ushort SampleLengthInWords;
-		public ushort Period;
-		public ushort FinalVolume;
+		public SetSample SetSampleSequence { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint SampleStartOffset { get; set; }
+		public ushort SampleLengthInWords { get; set; }
+		public ushort Period { get; set; }
+		public ushort FinalVolume { get; set; }
 
-		public sbyte[] CalculatedSynthesisSample;
+		public sbyte[] CalculatedSynthesisSample { get; set; }
 
 		/********************************************************************/
 		/// <summary>

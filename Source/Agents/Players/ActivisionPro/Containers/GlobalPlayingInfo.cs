@@ -12,16 +12,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public sbyte SpeedVariationCounter;
-		public sbyte SpeedIndex;
-		public byte SpeedVariation2Counter;
-		public byte SpeedVariation2Speed;
+		public sbyte SpeedVariationCounter { get; set; }
+		public sbyte SpeedIndex { get; set; }
+		public byte SpeedVariation2Counter { get; set; }
+		public byte SpeedVariation2Speed { get; set; }
 
-		public sbyte MasterVolumeFadeCounter;
-		public sbyte MasterVolumeFadeSpeed;
-		public ushort MasterVolume;
+		public sbyte MasterVolumeFadeCounter { get; set; }
+		public sbyte MasterVolumeFadeSpeed { get; set; }
+		public ushort MasterVolume { get; set; }
 
-		public sbyte GlobalTranspose;
+		public sbyte GlobalTranspose { get; set; }
 
 		/********************************************************************/
 		/// <summary>

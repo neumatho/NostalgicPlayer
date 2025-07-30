@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class SinglePositionInfo
 	{
-		public byte Track;
-		public sbyte NoteTranspose;
-		public sbyte EnvelopeTranspose;
-		public byte Command;
+		public byte Track { get; set; }
+		public sbyte NoteTranspose { get; set; }
+		public sbyte EnvelopeTranspose { get; set; }
+		public byte Command { get; set; }
 	}
 }

@@ -22,8 +22,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 	{
 		private class InstInfo
 		{
-			public int SampleOffset;
-			public ushort SampleLength;
+			public int SampleOffset { get; set; }
+			public ushort SampleLength { get; set; }
 		}
 
 		private int moduleOffset;

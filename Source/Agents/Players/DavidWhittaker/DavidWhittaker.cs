@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 	/// </summary>
 	public class DavidWhittaker : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("67DA1C7B-3848-4BAB-B639-663553C19479");
+		private static readonly Guid agent1Id = Guid.Parse("67DA1C7B-3848-4BAB-B639-663553C19479");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_DW_NAME_AGENT1, Resources.IDS_DW_DESCRIPTION_AGENT1, Agent1Id)
+			new AgentSupportInfo(Resources.IDS_DW_NAME_AGENT1, Resources.IDS_DW_DESCRIPTION_AGENT1, agent1Id)
 		];
 
 

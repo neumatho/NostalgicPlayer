@@ -12,24 +12,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort OldSongPos;
-		public ushort SongPos;
-		public ushort PatternPos;
-		public ushort BreakPos;
-		public bool PosJumpFlag;
-		public bool BreakFlag;
-		public bool GotBreak;
-		public bool GotPositionJump;
-		public byte Tempo;
-		public byte SpeedEven;
-		public byte SpeedOdd;
-		public byte LastShownSpeed;
-		public byte Counter;
-		public byte LowMask;
-		public byte PattDelayTime;
-		public byte PattDelayTime2;
-		public short LastUsedPositionJumpArgument;
-		public short LastUsedBreakPositionArgument;
+		public ushort OldSongPos { get; set; }
+		public ushort SongPos { get; set; }
+		public ushort PatternPos { get; set; }
+		public ushort BreakPos { get; set; }
+		public bool PosJumpFlag { get; set; }
+		public bool BreakFlag { get; set; }
+		public bool GotBreak { get; set; }
+		public bool GotPositionJump { get; set; }
+		public byte Tempo { get; set; }
+		public byte SpeedEven { get; set; }
+		public byte SpeedOdd { get; set; }
+		public byte LastShownSpeed { get; set; }
+		public byte Counter { get; set; }
+		public byte LowMask { get; set; }
+		public byte PattDelayTime { get; set; }
+		public byte PattDelayTime2 { get; set; }
+		public short LastUsedPositionJumpArgument { get; set; }
+		public short LastUsedBreakPositionArgument { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class TrackLine
 	{
-		public TrackEffect Effect;
-		public ushort EffectArgument;
-		public byte Note;
+		public TrackEffect Effect { get; set; }
+		public ushort EffectArgument { get; set; }
+		public byte Note { get; set; }
 	}
 }

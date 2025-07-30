@@ -10,13 +10,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 	/// </summary>
 	internal class SampledSoundSampleData
 	{
-		public string SampleName;
+		public string SampleName { get; set; }
 
 		// Information from sample file
-		public ushort LengthOfOctaveOne;
-		public ushort LoopLengthOfOctaveOne;
-		public byte StartOctave;
-		public byte EndOctave;
-		public sbyte[] SampleData;
+		public ushort LengthOfOctaveOne { get; set; }
+		public ushort LoopLengthOfOctaveOne { get; set; }
+		public byte StartOctave { get; set; }
+		public byte EndOctave { get; set; }
+		public sbyte[] SampleData { get; set; }
 	}
 }

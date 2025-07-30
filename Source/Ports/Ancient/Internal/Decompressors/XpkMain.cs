@@ -23,9 +23,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 
 		private struct DecompressorPair
 		{
-			public CheckMethod First;
-			public CreateSubDecompressor Second;
-			public DecompressorType Type;
+			public CheckMethod First { get; set; }
+			public CreateSubDecompressor Second { get; set; }
+			public DecompressorType Type { get; set; }
 		}
 
 		private static readonly DecompressorPair[] decompressors =

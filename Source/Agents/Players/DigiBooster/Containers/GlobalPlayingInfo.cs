@@ -12,17 +12,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort CiaTempo;
-		public byte Tempo;
-		public byte Count;
+		public ushort CiaTempo { get; set; }
+		public byte Tempo { get; set; }
+		public byte Count { get; set; }
 
-		public byte SongPosition;
-		public sbyte PatternPosition;
+		public byte SongPosition { get; set; }
+		public sbyte PatternPosition { get; set; }
 
-		public TrackLine[] CurrentRow;
+		public TrackLine[] CurrentRow { get; set; }
 
-		public ushort PauseVbl;
-		public bool PauseEnabled;
+		public ushort PauseVbl { get; set; }
+		public bool PauseEnabled { get; set; }
 
 		/********************************************************************/
 		/// <summary>

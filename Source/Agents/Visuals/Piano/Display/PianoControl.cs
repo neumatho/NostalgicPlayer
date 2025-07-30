@@ -19,26 +19,26 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 	{
 		private class VisualChannelInfo
 		{
-			public bool Enabled;
-			public bool Active;
+			public bool Enabled { get; set; }
+			public bool Active { get; set; }
 
-			public Point KeyPosition;
-			public Color Color;
-			public int Alpha;
+			public Point KeyPosition { get; set; }
+			public Color Color { get; set; }
+			public int Alpha { get; set; }
 
-			public int ReservedIndex1;
-			public int ReservedIndex2;
+			public int ReservedIndex1 { get; set; }
+			public int ReservedIndex2 { get; set; }
 
-			public short SampleNumber;
-			public uint Frequency;
-			public uint SampleLength;
-			public float CalculatedSamplePosition;
+			public short SampleNumber { get; set; }
+			public uint Frequency { get; set; }
+			public uint SampleLength { get; set; }
+			public float CalculatedSamplePosition { get; set; }
 
-			public bool Retrig;
-			public bool Pulsing;
-			public bool Direction;
+			public bool Retrig { get; set; }
+			public bool Pulsing { get; set; }
+			public bool Direction { get; set; }
 
-			public int Volume0Counter;
+			public int Volume0Counter { get; set; }
 		}
 
 		private const int NumberOfOctaves = 10;

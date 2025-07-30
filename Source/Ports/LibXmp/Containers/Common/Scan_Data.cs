@@ -13,9 +13,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// Reply time in ms
 		/// </summary>
-		public c_int Time;	// TODO: double
-		public c_int Row;
-		public c_int Ord;
-		public c_int Num;
+		public c_int Time { get; set; }	// TODO: double
+		public c_int Row { get; set; }
+		public c_int Ord { get; set; }
+		public c_int Num { get; set; }
 	}
 }

@@ -17,8 +17,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 	{
 		public class Far_Channel_Extra_Info : IChannelExtraInfo
 		{
-			public c_int Vib_Sustain;		// Is vibrato persistent?
-			public c_int Vib_Rate;			// Vibrato rate
+			public c_int Vib_Sustain { get; set; }		// Is vibrato persistent?
+			public c_int Vib_Rate { get; set; }			// Vibrato rate
 		}
 
 		private readonly LibXmp lib;
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 					if (!Is_Valid_Instrument(mod, xc.Ins))
 						break;
 
-					c_int tempo = Far_Module_Extra.far_Tempos[me.Coarse_Tempo] + me.Fine_Tempo;
+					c_int tempo = Far_Module_Extra.Far_Tempos[me.Coarse_Tempo] + me.Fine_Tempo;
 
 					Set_Per(xc, Channel_Flag.TonePorta);
 
@@ -190,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 				// FAR persistent slide-to-volume
 				case Effects.Fx_Far_SlideVol:
 				{
-					c_int tempo = Far_Module_Extra.far_Tempos[me.Coarse_Tempo] + me.Fine_Tempo;
+					c_int tempo = Far_Module_Extra.Far_Tempos[me.Coarse_Tempo] + me.Fine_Tempo;
 					c_int target = Common.Msn(fxP) << 4;
 					fxP = Common.Lsn(fxP);
 
@@ -381,7 +381,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 			if ((me.Coarse_Tempo < 0) || (me.Coarse_Tempo > 15) || (param < 1))
 				return -1;
 
-			c_int delay = (Far_Module_Extra.far_Tempos[me.Coarse_Tempo] + me.Fine_Tempo) / param;
+			c_int delay = (Far_Module_Extra.Far_Tempos[me.Coarse_Tempo] + me.Fine_Tempo) / param;
 
 			if (me.Tempo_Mode != 0)
 			{

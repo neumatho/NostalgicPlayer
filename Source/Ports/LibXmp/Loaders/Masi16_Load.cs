@@ -21,7 +21,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	/// </summary>
 	internal class Masi16_Load : IFormatLoader
 	{
+		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_PSM_ = Common.Magic4('P', 'S', 'M', (char)0xfe);
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

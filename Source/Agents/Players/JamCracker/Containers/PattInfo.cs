@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 	/// </summary>
 	internal class PattInfo
 	{
-		public ushort Size;
-		public NoteInfo[] Address;
+		public ushort Size { get; set; }
+		public NoteInfo[] Address { get; set; }
 	}
 }

@@ -10,6 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	/// </summary>
 	internal static class Constants
 	{
+		// ReSharper disable InconsistentNaming
 		/// <summary>
 		/// Max number of tracks OctaMED supports
 		/// </summary>
@@ -32,5 +33,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 		public const byte Note22k = 0x83;
 		public const byte Note44k = 0x84;
 		public const byte NoteNum = 0x84;
+		// ReSharper restore InconsistentNaming
 	}
 }

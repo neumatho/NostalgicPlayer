@@ -10,28 +10,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public byte WaveformNumber;					// For normal samples, this is the sample number
-		public bool SynthesisEnabled;
-		public ushort WaveformLength;				// For normal samples, this is the length before the loop (one shot)
-		public ushort RepeatLength;
-		public byte Volume;
-		public sbyte PortamentoSpeed;
-		public bool AdsrEnabled;
-		public byte AdsrTableNumber;
-		public ushort AdsrTableLength;
-		public byte ArpeggioStart;
-		public byte ArpeggioLength;
-		public byte ArpeggioRepeatLength;
-		public SynthesisEffect Effect;
-		public byte EffectArg1;
-		public byte EffectArg2;
-		public byte EffectArg3;
-		public byte VibratoDelay;
-		public byte VibratoSpeed;
-		public byte VibratoLevel;
-		public byte EnvelopeGeneratorCounterOffset;
-		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode;
-		public byte EnvelopeGeneratorCounterTableNumber;
-		public ushort EnvelopeGeneratorCounterTableLength;
+		public byte WaveformNumber { get; set; }			// For normal samples, this is the sample number
+		public bool SynthesisEnabled { get; set; }
+		public ushort WaveformLength { get; set; }			// For normal samples, this is the length before the loop (one shot)
+		public ushort RepeatLength { get; set; }
+		public byte Volume { get; set; }
+		public sbyte PortamentoSpeed { get; set; }
+		public bool AdsrEnabled { get; set; }
+		public byte AdsrTableNumber { get; set; }
+		public ushort AdsrTableLength { get; set; }
+		public byte ArpeggioStart { get; set; }
+		public byte ArpeggioLength { get; set; }
+		public byte ArpeggioRepeatLength { get; set; }
+		public SynthesisEffect Effect { get; set; }
+		public byte EffectArg1 { get; set; }
+		public byte EffectArg2 { get; set; }
+		public byte EffectArg3 { get; set; }
+		public byte VibratoDelay { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoLevel { get; set; }
+		public byte EnvelopeGeneratorCounterOffset { get; set; }
+		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode { get; set; }
+		public byte EnvelopeGeneratorCounterTableNumber { get; set; }
+		public ushort EnvelopeGeneratorCounterTableLength { get; set; }
 	}
 }

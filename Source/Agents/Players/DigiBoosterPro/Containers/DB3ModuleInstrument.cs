@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class DB3ModuleInstrument
 	{
-		public string Name;
-		public uint16_t Volume;					// 0 to 64 (including)
-		public int16_t Panning;					// -128 full left, +128 full right
-		public InstrumentType Type;
-		public uint16_t VolumeEnvelope;			// Index of volume envelope, 0xffff if none
-		public uint16_t PanningEnvelope;		// Index of volume envelope, 0xffff if none
+		public string Name { get; set; }
+		public uint16_t Volume { get; set; }			// 0 to 64 (including)
+		public int16_t Panning { get; set; }			// -128 full left, +128 full right
+		public InstrumentType Type { get; set; }
+		public uint16_t VolumeEnvelope { get; set; }	// Index of volume envelope, 0xffff if none
+		public uint16_t PanningEnvelope { get; set; }	// Index of volume envelope, 0xffff if none
 	}
 }

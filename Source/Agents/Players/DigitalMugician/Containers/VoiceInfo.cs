@@ -12,28 +12,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public ushort Track;
-		public short Transpose;
-		public ushort LastNote;
-		public ushort LastInstrument;
-		public Effect LastEffect;
-		public ushort LastEffectParam;
-		public ushort FineTune;
+		public ushort Track { get; set; }
+		public short Transpose { get; set; }
+		public ushort LastNote { get; set; }
+		public ushort LastInstrument { get; set; }
+		public Effect LastEffect { get; set; }
+		public ushort LastEffectParam { get; set; }
+		public ushort FineTune { get; set; }
 
-		public ushort NotePeriod;
+		public ushort NotePeriod { get; set; }
 
-		public ushort PitchBendEndNote;
-		public ushort PitchBendEndPeriod;
-		public short CurrentPitchBendPeriod;
+		public ushort PitchBendEndNote { get; set; }
+		public ushort PitchBendEndPeriod { get; set; }
+		public short CurrentPitchBendPeriod { get; set; }
 
-		public ushort PitchIndex;
-		public ushort ArpeggioIndex;
+		public ushort PitchIndex { get; set; }
+		public ushort ArpeggioIndex { get; set; }
 
-		public ushort VolumeIndex;
-		public ushort VolumeSpeedCounter;
+		public ushort VolumeIndex { get; set; }
+		public ushort VolumeSpeedCounter { get; set; }
 
-		public byte InstrumentDelay;
-		public byte InstrumentEffectSpeed;
+		public byte InstrumentDelay { get; set; }
+		public byte InstrumentEffectSpeed { get; set; }
 
 		/********************************************************************/
 		/// <summary>

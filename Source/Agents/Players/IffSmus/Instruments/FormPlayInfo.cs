@@ -12,15 +12,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 	/// </summary>
 	internal class FormPlayInfo : IDeepCloneable<FormPlayInfo>
 	{
-		public sbyte[] LoopSampleData;
-		public uint LoopStart;
-		public ushort LoopLengthInWords;
+		public sbyte[] LoopSampleData { get; set; }
+		public uint LoopStart { get; set; }
+		public ushort LoopLengthInWords { get; set; }
 
-		public ushort MappedNote;
-		public ushort VolumeMultiply;
+		public ushort MappedNote { get; set; }
+		public ushort VolumeMultiply { get; set; }
 
-		public byte Octave;
-		public byte Note;
+		public byte Octave { get; set; }
+		public byte Note { get; set; }
 
 		/********************************************************************/
 		/// <summary>

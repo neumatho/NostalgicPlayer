@@ -24,20 +24,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 	{
 		public class SkipInfo
 		{
-			public int DecrunchedSize;
-			public byte[] DataCrc;
+			public int DecrunchedSize { get; set; }
+			public byte[] DataCrc { get; set; }
 		}
 
 		public class FileEntry
 		{
-			public string FileName;
-			public int CrunchedSize;
-			public int DecrunchedSize;
-			public bool Merged;
-			public byte PackMode;
-			public long Position;
-			public SkipInfo[] DecrunchedBytesToSkip;
-			public byte[] DataCrc;
+			public string FileName { get; set; }
+			public int CrunchedSize { get; set; }
+			public int DecrunchedSize { get; set; }
+			public bool Merged { get; set; }
+			public byte PackMode { get; set; }
+			public long Position { get; set; }
+			public SkipInfo[] DecrunchedBytesToSkip { get; set; }
+			public byte[] DataCrc { get; set; }
 		}
 
 		private readonly string agentName;

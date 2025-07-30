@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20.Containers
 	/// </summary>
 	internal class Arpeggio
 	{
-		public byte Length;
-		public byte Repeat;
-		public sbyte[] Values = new sbyte[14];
+		public byte Length { get; set; }
+		public byte Repeat { get; set; }
+		public sbyte[] Values { get; } = new sbyte[14];
 	}
 }

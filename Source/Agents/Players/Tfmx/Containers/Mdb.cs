@@ -11,17 +11,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class Mdb : IDeepCloneable<Mdb>
 	{
-		public bool PlayerEnable;
-		public bool EndFlag;
-		public ushort SpeedCnt;
-		public ushort CiaSave;
-		public bool PlayPattFlag;
-		public sbyte MasterVol;
-		public sbyte FadeDest;
-		public sbyte FadeTime;
-		public sbyte FadeReset;
-		public sbyte FadeSlope;
-		public short TrackLoop;
+		public bool PlayerEnable { get; set; }
+		public bool EndFlag { get; set; }
+		public ushort SpeedCnt { get; set; }
+		public ushort CiaSave { get; set; }
+		public bool PlayPattFlag { get; set; }
+		public sbyte MasterVol { get; set; }
+		public sbyte FadeDest { get; set; }
+		public sbyte FadeTime { get; set; }
+		public sbyte FadeReset { get; set; }
+		public sbyte FadeSlope { get; set; }
+		public short TrackLoop { get; set; }
 
 		/********************************************************************/
 		/// <summary>

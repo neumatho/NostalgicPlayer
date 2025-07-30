@@ -19,12 +19,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 	{
 		protected class SampleInfo
 		{
-			public byte[] Name;
-			public ushort Length;
-			public ushort LoopStart;
-			public ushort LoopLength;
-			public byte Volume;
-			public byte FineTune;
+			public byte[] Name { get; set; }
+			public ushort Length { get; set; }
+			public ushort LoopStart { get; set; }
+			public ushort LoopLength { get; set; }
+			public byte Volume { get; set; }
+			public byte FineTune { get; set; }
 		}
 
 		#region Periods

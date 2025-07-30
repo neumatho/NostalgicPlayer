@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal struct DB3ModuleEnvelopePoint
 	{
-		public uint16_t Position;
-		public int16_t Value;
+		public uint16_t Position { get; set; }
+		public int16_t Value { get; set; }
 	}
 }

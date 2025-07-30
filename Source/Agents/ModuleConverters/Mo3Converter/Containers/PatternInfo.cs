@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class PatternInfo
 	{
-		public byte[] PositionList;
-		public ushort[,] Sequences;
-		public ushort[] RowLengths;
+		public byte[] PositionList { get; set; }
+		public ushort[,] Sequences { get; set; }
+		public ushort[] RowLengths { get; set; }
 	}
 }

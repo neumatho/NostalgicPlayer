@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 	/// </summary>
 	internal class VibratoInfo
 	{
-		public byte Speed;
-		public byte Delay;
-		public byte Sustain;
+		public byte Speed { get; set; }
+		public byte Delay { get; set; }
+		public byte Sustain { get; set; }
 	}
 }

@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class Sequence
 	{
-		public VoiceSeq[] VoiceSeq = new VoiceSeq[4];
-		public byte Speed;
+		public VoiceSeq[] VoiceSeq { get; set; } = new VoiceSeq[4];
+		public byte Speed { get; set; }
 	}
 }

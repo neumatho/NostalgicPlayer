@@ -24,14 +24,14 @@ namespace Polycode.NostalgicPlayer.Audius
 
 		private class DownloadWaitInfo
 		{
-			public ManualResetEvent WaitEvent;
-			public int WaitingCount;
+			public ManualResetEvent WaitEvent { get; set; }
+			public int WaitingCount { get; set; }
 		}
 
 		private class PictureCacheEntry
 		{
-			public Bitmap Picture;
-			public DateTime LastAccessed;
+			public Bitmap Picture { get; set; }
+			public DateTime LastAccessed { get; set; }
 		}
 
 		private readonly object downloadLock = new object();	// Cannot use Lock class here, because the way it is used

@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class Step
 	{
-		public byte Note;
-		public byte Ins;
-		public byte Eff;				// 4 bits eff, 4 bits value
+		public byte Note { get; set; }
+		public byte Ins { get; set; }
+		public byte Eff { get; set; }				// 4 bits eff, 4 bits value
 	}
 }

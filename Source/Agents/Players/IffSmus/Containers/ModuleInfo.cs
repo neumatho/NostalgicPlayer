@@ -10,18 +10,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class ModuleInfo
 	{
-		public byte GlobalVolume;
-		public ushort TempoIndex;
-		public ushort Transpose;
-		public ushort Tune;
+		public byte GlobalVolume { get; set; }
+		public ushort TempoIndex { get; set; }
+		public ushort Transpose { get; set; }
+		public ushort Tune { get; set; }
 
-		public ushort TimeSigNumerator;
-		public ushort TimeSigDenominator;
+		public ushort TimeSigNumerator { get; set; }
+		public ushort TimeSigDenominator { get; set; }
 
-		public ushort[] TrackVolumes;
-		public ulong[] TracksEnabled;
-		public Track[] Tracks;
+		public ushort[] TrackVolumes { get; set; }
+		public ulong[] TracksEnabled { get; set; }
+		public Track[] Tracks { get; set; }
 
-		public int[] InstrumentMapper;
+		public int[] InstrumentMapper { get; set; }
 	}
 }

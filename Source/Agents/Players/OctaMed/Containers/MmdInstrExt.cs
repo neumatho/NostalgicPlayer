@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	/// </summary>
 	internal class MmdInstrExt
 	{
-		public byte DefaultPitch;
-		public InstrFlag InstrFlags;
-		public ushort LongMidiPreset;
-		public byte OutputDevice;
-		public byte Reserved;
-		public uint LongRepeat;
-		public uint LongRepLen;
+		public byte DefaultPitch { get; set; }
+		public InstrFlag InstrFlags { get; set; }
+		public ushort LongMidiPreset { get; set; }
+		public byte OutputDevice { get; set; }
+		public byte Reserved { get; set; }
+		public uint LongRepeat { get; set; }
+		public uint LongRepLen { get; set; }
 	}
 }

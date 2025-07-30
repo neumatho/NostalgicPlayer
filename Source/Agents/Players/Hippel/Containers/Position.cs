@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class Position
 	{
-		public SinglePositionInfo[] PositionInfo;
+		public SinglePositionInfo[] PositionInfo { get; set; }
 	}
 }

@@ -7,12 +7,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 {
 	internal class Sample
 	{
-		public short SampleNumber;
-		public sbyte[] SampleData;
-		public uint Length;
-		public int LoopStart;
-		public ushort Volume;
-		public ushort FineTunePeriod;
-		public sbyte Transpose;
+		public short SampleNumber { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint Length { get; set; }
+		public int LoopStart { get; set; }
+		public ushort Volume { get; set; }
+		public ushort FineTunePeriod { get; set; }
+		public sbyte Transpose { get; set; }
 	}
 }

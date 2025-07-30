@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 	/// </summary>
 	internal class ArcLookup
 	{
-		public ushort Value;
-		public byte Length;
+		public ushort Value { get; set; }
+		public byte Length { get; set; }
 	}
 }

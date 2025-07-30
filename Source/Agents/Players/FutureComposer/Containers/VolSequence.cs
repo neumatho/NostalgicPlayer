@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class VolSequence
 	{
-		public byte Speed;
-		public byte FrqNumber;
-		public sbyte VibSpeed;
-		public sbyte VibDepth;
-		public byte VibDelay;
-		public byte[] Values = new byte[59];
+		public byte Speed { get; set; }
+		public byte FrqNumber { get; set; }
+		public sbyte VibSpeed { get; set; }
+		public sbyte VibDepth { get; set; }
+		public byte VibDelay { get; set; }
+		public byte[] Values { get; } = new byte[59];
 	}
 }

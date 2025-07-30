@@ -13,29 +13,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 	/// </summary>
 	internal class Instrument : IDeepCloneable<Instrument>
 	{
-		public short Number;
+		public short Number { get; set; }
 
-		public byte AttackStep;
-		public byte AttackDelay;
-		public byte DecayStep;
-		public byte DecayDelay;
-		public ushort Sustain;
-		public byte ReleaseStep;
-		public byte ReleaseDelay;
-		public byte Volume;
-		public byte VibratoWait;
-		public byte VibratoStep;
-		public byte VibratoLength;
-		public sbyte BendRate;
-		public byte Portamento;
-		public bool IsSample;
-		public byte TableDelay;
-		public byte[] Arpeggio = new byte[8];
-		public ushort SampleLength;
-		public ushort RepeatStart;
-		public ushort RepeatLength;
-		public byte[] Table;
-		public sbyte[] SampleData;
+		public byte AttackStep { get; set; }
+		public byte AttackDelay { get; set; }
+		public byte DecayStep { get; set; }
+		public byte DecayDelay { get; set; }
+		public ushort Sustain { get; set; }
+		public byte ReleaseStep { get; set; }
+		public byte ReleaseDelay { get; set; }
+		public byte Volume { get; set; }
+		public byte VibratoWait { get; set; }
+		public byte VibratoStep { get; set; }
+		public byte VibratoLength { get; set; }
+		public sbyte BendRate { get; set; }
+		public byte Portamento { get; set; }
+		public bool IsSample { get; set; }
+		public byte TableDelay { get; set; }
+		public byte[] Arpeggio { get; set; } = new byte[8];
+		public ushort SampleLength { get; set; }
+		public ushort RepeatStart { get; set; }
+		public ushort RepeatLength { get; set; }
+		public byte[] Table { get; set; }
+		public sbyte[] SampleData { get; set; }
 
 		/********************************************************************/
 		/// <summary>

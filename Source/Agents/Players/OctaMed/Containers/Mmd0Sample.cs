@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	/// </summary>
 	internal class Mmd0Sample
 	{
-		public ushort Rep;
-		public ushort RepLen;
-		public byte MidiCh;
-		public byte MidiPreset;
-		public byte Volume;
-		public sbyte STrans;
+		public ushort Rep { get; set; }
+		public ushort RepLen { get; set; }
+		public byte MidiCh { get; set; }
+		public byte MidiPreset { get; set; }
+		public byte Volume { get; set; }
+		public sbyte STrans { get; set; }
 	}
 }

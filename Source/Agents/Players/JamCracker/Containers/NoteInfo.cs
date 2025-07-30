@@ -10,13 +10,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 	/// </summary>
 	internal class NoteInfo
 	{
-		public byte Period;
-		public sbyte Instr;
-		public byte Speed;
-		public byte Arpeggio;
-		public byte Vibrato;
-		public byte Phase;
-		public byte Volume;
-		public byte Porta;
+		public byte Period { get; set; }
+		public sbyte Instr { get; set; }
+		public byte Speed { get; set; }
+		public byte Arpeggio { get; set; }
+		public byte Vibrato { get; set; }
+		public byte Phase { get; set; }
+		public byte Volume { get; set; }
+		public byte Porta { get; set; }
 	}
 }

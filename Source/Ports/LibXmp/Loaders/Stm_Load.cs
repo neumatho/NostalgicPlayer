@@ -27,18 +27,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Stm_Instrument_Header
 		private class Stm_Instrument_Header
 		{
-			public readonly uint8[] Name = new uint8[12];		// ASCIIZ instrument name
-			public uint8 Id;									// Id=0
-			public uint8 IDisk;									// Instrument disk
-			public uint16 Rsvd1;								// Reserved
-			public uint16 Length;								// Sample length
-			public uint16 LoopBeg;								// Loop begin
-			public uint16 LoopEnd;								// Loop end
-			public uint8 Volume;								// Playback volume
-			public uint8 Rsvd2;									// Reserved
-			public uint16 C2Spd;								// C4 speed
-			public uint32 Rsvd3;								// Reserved
-			public uint16 ParaLen;								// Length in paragraphs
+			public uint8[] Name { get; } = new uint8[12];		// ASCIIZ instrument name
+			public uint8 Id { get; set; }						// Id=0
+			public uint8 IDisk { get; set; }					// Instrument disk
+			public uint16 Rsvd1 { get; set; }					// Reserved
+			public uint16 Length { get; set; }					// Sample length
+			public uint16 LoopBeg { get; set; }					// Loop begin
+			public uint16 LoopEnd { get; set; }					// Loop end
+			public uint8 Volume { get; set; }					// Playback volume
+			public uint8 Rsvd2 { get; set; }					// Reserved
+			public uint16 C2Spd { get; set; }					// C4 speed
+			public uint32 Rsvd3 { get; set; }					// Reserved
+			public uint16 ParaLen { get; set; }					// Length in paragraphs
 		}
 		#endregion
 
@@ -48,42 +48,43 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		private class Stm_File_SubHeader_V1
 		{
-			public uint16 InsNum;								// Number of instruments
-			public uint16 OrdNum;								// Number of orders
-			public uint16 PatNum;								// Number of patterns
-			public uint16 SRate;								// Sample rate?
-			public uint8 Tempo;									// Playback tempo
-			public uint8 Channels;								// Number of channels
-			public uint16 PSize;								// Pattern size
-			public uint16 Rsvd2;								// Reserved
-			public uint16 Skip;									// Bytes to skip
+			public uint16 InsNum { get; set; }					// Number of instruments
+			public uint16 OrdNum { get; set; }					// Number of orders
+			public uint16 PatNum { get; set; }					// Number of patterns
+			public uint16 SRate { get; set; }					// Sample rate?
+			public uint8 Tempo { get; set; }					// Playback tempo
+			public uint8 Channels { get; set; }					// Number of channels
+			public uint16 PSize { get; set; }					// Pattern size
+			public uint16 Rsvd2 { get; set; }					// Reserved
+			public uint16 Skip { get; set; }					// Bytes to skip
 		}
 		#endregion
 
 		#region Stm_File_SubHeader_V2
 		private class Stm_File_SubHeader_V2
 		{
-			public uint8 Tempo;									// Playback tempo
-			public uint8 Patterns;								// Number of patterns
-			public uint8 GVol;									// Global volume
-			public readonly uint8[] Rsvd2 = new uint8[13];		// Reserved
+			public uint8 Tempo { get; set; }					// Playback tempo
+			public uint8 Patterns { get; set; }					// Number of patterns
+			public uint8 GVol { get; set; }						// Global volume
+			public uint8[] Rsvd2 { get; } = new uint8[13];		// Reserved
 		}
 		#endregion
 
 		#region Stm_File_Header
 		private class Stm_File_Header
 		{
-			public readonly uint8[] Name = new uint8[20];		// ASCIIZ song name
-			public readonly uint8[] Magic = new uint8[8];		// '!Scream!'
-			public uint8 Rsvd1;									// '\x1a'
-			public uint8 Type;									// 1=song, 2=module
-			public uint8 VerMaj;								// Major version number
-			public uint8 VerMin;								// Minor version number
+			public uint8[] Name { get; } = new uint8[20];		// ASCIIZ song name
+			public uint8[] Magic { get; } = new uint8[8];		// '!Scream!'
+			public uint8 Rsvd1 { get; set; }					// '\x1a'
+			public uint8 Type { get; set; }						// 1=song, 2=module
+			public uint8 VerMaj { get; set; }					// Major version number
+			public uint8 VerMin { get; set; }					// Minor version number
+			// ReSharper disable once InconsistentNaming
 			public (
 				Stm_File_SubHeader_V1 V1,
 				Stm_File_SubHeader_V2 V2
 			) Sub;
-			public readonly Stm_Instrument_Header[] Ins = ArrayHelper.InitializeArray<Stm_Instrument_Header>(32);
+			public Stm_Instrument_Header[] Ins { get; } = ArrayHelper.InitializeArray<Stm_Instrument_Header>(32);
 		}
 		#endregion
 

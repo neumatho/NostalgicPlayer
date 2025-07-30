@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class HvlPosition
 	{
-		public int[] Track;
-		public int[] Transpose;
+		public int[] Track { get; set; }
+		public int[] Transpose { get; set; }
 	}
 }

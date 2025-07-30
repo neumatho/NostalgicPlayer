@@ -274,8 +274,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				else
 					mod.Xxs[i].Len = f.Hio_Read16L();
 
-				c_int c2spd = f.Hio_Read16L();
-				lib.period.LibXmp_C2Spd_To_Note(c2spd, out mod.Xxi[i].Sub[0].Xpo, out mod.Xxi[i].Sub[0].Fin);
+				c_int c2Spd = f.Hio_Read16L();
+				lib.period.LibXmp_C2Spd_To_Note(c2Spd, out mod.Xxi[i].Sub[0].Xpo, out mod.Xxi[i].Sub[0].Fin);
 				mod.Xxi[i].Sub[0].Vol = f.Hio_Read8();
 
 				// Andre Timmermans <andre.timmermans@atos.net> says:

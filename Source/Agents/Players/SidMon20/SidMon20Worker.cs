@@ -35,8 +35,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 				Length = length;
 			}
 
-			public uint Offset;
-			public uint Length;
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+
+			public uint Offset
+			{
+				get;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public uint Length
+			{
+				get;
+			}
 		}
 		#endregion
 

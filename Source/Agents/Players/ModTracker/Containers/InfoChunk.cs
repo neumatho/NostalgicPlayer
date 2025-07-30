@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	/// </summary>
 	internal class InfoChunk
 	{
-		public ushort GlobalVolume;
-		public ushort DefaultBpm;
+		public ushort GlobalVolume { get; set; }
+		public ushort DefaultBpm { get; set; }
 	}
 }

@@ -12,11 +12,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort SongSpeed;
-		public ushort SongStep;
-		public ushort PatternCount;
-		public short CurrentPosition;
-		public byte CurrentPattern;
+		public ushort SongSpeed { get; set; }
+		public ushort SongStep { get; set; }
+		public ushort PatternCount { get; set; }
+		public short CurrentPosition { get; set; }
+		public byte CurrentPattern { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public sbyte[] Data;		// Sample data
-		public ushort Length;		// Length
-		public ushort LoopStart;	// Loop start offset
-		public ushort LoopLength;	// Loop length
-		public ushort Volume;		// The volume (0-64)
+		public sbyte[] Data { get; set; }		// Sample data
+		public ushort Length { get; set; }		// Length
+		public ushort LoopStart { get; set; }	// Loop start offset
+		public ushort LoopLength { get; set; }	// Loop length
+		public ushort Volume { get; set; }		// The volume (0-64)
 	}
 }

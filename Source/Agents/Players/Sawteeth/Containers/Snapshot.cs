@@ -13,9 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-		public Implementation.Player[] Players;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -25,6 +22,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Players = ArrayHelper.CloneObjectArray(players);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Implementation.Player[] Players
+		{
+			get;
 		}
 	}
 }

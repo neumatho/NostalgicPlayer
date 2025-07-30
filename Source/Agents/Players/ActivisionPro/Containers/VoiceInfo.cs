@@ -12,58 +12,58 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public byte SpeedCounter;
-		public byte SpeedCounter2;
-		public byte MaxSpeedCounter;
-		public byte TickCounter;
+		public byte SpeedCounter { get; set; }
+		public byte SpeedCounter2 { get; set; }
+		public byte MaxSpeedCounter { get; set; }
+		public byte TickCounter { get; set; }
 
-		public byte[] PositionList;
-		public sbyte PositionListPosition;
-		public bool PositionListLoopEnabled;
-		public byte PositionListLoopCount;
-		public sbyte PositionListLoopStart;
+		public byte[] PositionList { get; set; }
+		public sbyte PositionListPosition { get; set; }
+		public bool PositionListLoopEnabled { get; set; }
+		public byte PositionListLoopCount { get; set; }
+		public sbyte PositionListLoopStart { get; set; }
 
-		public byte TrackNumber;
-		public byte TrackPosition;
-		public byte LoopTrackCounter;
+		public byte TrackNumber { get; set; }
+		public byte TrackPosition { get; set; }
+		public byte LoopTrackCounter { get; set; }
 		
-		public byte Note;
-		public sbyte Transpose;
-		public short FineTune;
-		public byte NoteAndFlag;
-		public ushort Period;
+		public byte Note { get; set; }
+		public sbyte Transpose { get; set; }
+		public short FineTune { get; set; }
+		public byte NoteAndFlag { get; set; }
+		public ushort Period { get; set; }
 
-		public sbyte InstrumentNumber;
-		public Instrument Instrument;
+		public sbyte InstrumentNumber { get; set; }
+		public Instrument Instrument { get; set; }
 
-		public byte SampleNumber;
-		public sbyte[] SampleData;
-		public ushort SampleLength;
-		public ushort SampleLoopStart;
-		public ushort SampleLoopLength;
+		public byte SampleNumber { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public ushort SampleLength { get; set; }
+		public ushort SampleLoopStart { get; set; }
+		public ushort SampleLoopLength { get; set; }
 
-		public byte EnabledEffectsFlag;
-		public bool StopResetEffect;
-		public byte StopResetEffectDelay;
+		public byte EnabledEffectsFlag { get; set; }
+		public bool StopResetEffect { get; set; }
+		public byte StopResetEffectDelay { get; set; }
 
-		public Envelope Envelope;
-		public byte EnvelopePosition;
-		public sbyte EnvelopeWaitCounter;
-		public byte EnvelopeLoopCount;
+		public Envelope Envelope { get; set; }
+		public byte EnvelopePosition { get; set; }
+		public sbyte EnvelopeWaitCounter { get; set; }
+		public byte EnvelopeLoopCount { get; set; }
 
-		public bool Mute;
-		public ushort Volume;
-		public byte TrackVolume;
+		public bool Mute { get; set; }
+		public ushort Volume { get; set; }
+		public byte TrackVolume { get; set; }
 		
-		public byte PortamentoValue;
+		public byte PortamentoValue { get; set; }
 
-		public ushort VibratoSpeed;
-		public byte VibratoDelay;
-		public sbyte VibratoDepth;
-		public bool VibratoDirection;
-		public bool VibratoCountDirection;
-		public byte VibratoCounterMax;
-		public byte VibratoCounter;
+		public ushort VibratoSpeed { get; set; }
+		public byte VibratoDelay { get; set; }
+		public sbyte VibratoDepth { get; set; }
+		public bool VibratoDirection { get; set; }
+		public bool VibratoCountDirection { get; set; }
+		public byte VibratoCounterMax { get; set; }
+		public byte VibratoCounter { get; set; }
 
 		/********************************************************************/
 		/// <summary>

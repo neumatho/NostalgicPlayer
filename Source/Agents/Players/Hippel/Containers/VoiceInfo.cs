@@ -13,63 +13,63 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public byte[] EnvelopeTable;
-		public int EnvelopePosition;
-		public int OriginalEnvelopeNumber;
-		public int CurrentEnvelopeNumber;
+		public byte[] EnvelopeTable { get; set; }
+		public int EnvelopePosition { get; set; }
+		public int OriginalEnvelopeNumber { get; set; }
+		public int CurrentEnvelopeNumber { get; set; }
 
-		public byte[] FrequencyTable;
-		public int FrequencyPosition;
-		public int OriginalFrequencyNumber;
-		public int CurrentFrequencyNumber;
+		public byte[] FrequencyTable { get; set; }
+		public int FrequencyPosition { get; set; }
+		public int OriginalFrequencyNumber { get; set; }
+		public int CurrentFrequencyNumber { get; set; }
 
-		public uint NextPosition;
+		public uint NextPosition { get; set; }
 
-		public byte[] Track;
-		public uint TrackPosition;
-		public sbyte TrackTranspose;
-		public sbyte EnvelopeTranspose;
-		public byte CurrentTrackNumber;
+		public byte[] Track { get; set; }
+		public uint TrackPosition { get; set; }
+		public sbyte TrackTranspose { get; set; }
+		public sbyte EnvelopeTranspose { get; set; }
+		public byte CurrentTrackNumber { get; set; }
 
-		public byte Transpose;
-		public byte CurrentNote;
-		public byte CurrentInfo;
-		public byte PreviousInfo;
+		public byte Transpose { get; set; }
+		public byte CurrentNote { get; set; }
+		public byte CurrentInfo { get; set; }
+		public byte PreviousInfo { get; set; }
 
-		public byte Sample;
+		public byte Sample { get; set; }
 
-		public byte Tick;
+		public byte Tick { get; set; }
 
-		public sbyte CosoCounter;
-		public sbyte CosoSpeed;
+		public sbyte CosoCounter { get; set; }
+		public sbyte CosoSpeed { get; set; }
 
-		public byte Volume;
-		public byte EnvelopeCounter;
-		public byte EnvelopeSpeed;
-		public byte EnvelopeSustain;
+		public byte Volume { get; set; }
+		public byte EnvelopeCounter { get; set; }
+		public byte EnvelopeSpeed { get; set; }
+		public byte EnvelopeSustain { get; set; }
 
-		public byte VibratoFlag;
-		public byte VibratoSpeed;
-		public byte VibratoDelay;
-		public byte VibratoDepth;
-		public byte VibratoDelta;
+		public byte VibratoFlag { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoDelay { get; set; }
+		public byte VibratoDepth { get; set; }
+		public byte VibratoDelta { get; set; }
 
-		public uint PortaDelta;
+		public uint PortaDelta { get; set; }
 
-		public bool Slide;
-		public byte SlideSample;
-		public int SlideEndPosition;
-		public ushort SlideLoopPosition;
-		public ushort SlideLength;
-		public short SlideDelta;
-		public sbyte SlideCounter;
-		public byte SlideSpeed;
-		public bool SlideActive;
-		public bool SlideDone;
+		public bool Slide { get; set; }
+		public byte SlideSample { get; set; }
+		public int SlideEndPosition { get; set; }
+		public ushort SlideLoopPosition { get; set; }
+		public ushort SlideLength { get; set; }
+		public short SlideDelta { get; set; }
+		public sbyte SlideCounter { get; set; }
+		public byte SlideSpeed { get; set; }
+		public bool SlideActive { get; set; }
+		public bool SlideDone { get; set; }
 
-		public byte VolumeFade;
-		public byte VolumeVariationDepth;
-		public byte VolumeVariation;
+		public byte VolumeFade { get; set; }
+		public byte VolumeVariationDepth { get; set; }
+		public byte VolumeVariation { get; set; }
 
 		/********************************************************************/
 		/// <summary>

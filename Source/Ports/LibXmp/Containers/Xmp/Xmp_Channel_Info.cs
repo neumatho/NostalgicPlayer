@@ -13,51 +13,51 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Sample period (* 4096)
 		/// </summary>
-		public c_uint Period;
+		public c_uint Period { get; internal set; }
 
 		/// <summary>
 		/// Sample position
 		/// </summary>
-		public c_uint Position;
+		public c_uint Position { get; internal set; }
 
 		/// <summary>
 		/// Linear bend from base note
 		/// </summary>
-		public c_short PitchBend;
+		public c_short PitchBend { get; internal set; }
 
 		/// <summary>
 		/// Current base note number
 		/// </summary>
-		public byte Note;
+		public byte Note { get; internal set; }
 
 		/// <summary>
 		/// Current instrument number
 		/// </summary>
-		public byte Instrument;
+		public byte Instrument { get; internal set; }
 
 		/// <summary>
 		/// Current sample number
 		/// </summary>
-		public byte Sample;
+		public byte Sample { get; internal set; }
 
 		/// <summary>
 		/// Current volume
 		/// </summary>
-		public byte Volume;
+		public byte Volume { get; internal set; }
 
 		/// <summary>
 		/// Current stereo pan
 		/// </summary>
-		public byte Pan;
+		public byte Pan { get; internal set; }
 
 		/// <summary>
 		/// Reserved
 		/// </summary>
-		public byte Reserved;
+		public byte Reserved { get; internal set; }
 
 		/// <summary>
 		/// Current track event
 		/// </summary>
-		public Xmp_Event Event = new Xmp_Event();
+		public Xmp_Event Event { get; } = new Xmp_Event();
 	}
 }

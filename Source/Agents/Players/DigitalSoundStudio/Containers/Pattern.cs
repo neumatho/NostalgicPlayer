@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalSoundStudio.Containers
 	/// </summary>
 	internal class Pattern
 	{
-		public TrackLine[,] Tracks = new TrackLine[4, 64];
+		public TrackLine[,] Tracks { get; } = new TrackLine[4, 64];
 	}
 }

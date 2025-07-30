@@ -19,17 +19,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Implementation
 		/// </summary>
 		public class Waves
 		{
-			public readonly sbyte[] Sawtooths = new sbyte[0x04 + 0x08 + 0x10 + 0x20 + 0x40 + 0x80];
-			public readonly sbyte[] Triangles = new sbyte[0x04 + 0x08 + 0x10 + 0x20 + 0x40 + 0x80];
-			public readonly sbyte[] Squares = new sbyte[0x80 * 0x20];
-			public readonly sbyte[] WhiteNoise = new sbyte[0x280 * 3];
+			public sbyte[] Sawtooths { get; } = new sbyte[0x04 + 0x08 + 0x10 + 0x20 + 0x40 + 0x80];
+			public sbyte[] Triangles { get; } = new sbyte[0x04 + 0x08 + 0x10 + 0x20 + 0x40 + 0x80];
+			public sbyte[] Squares { get; } = new sbyte[0x80 * 0x20];
+			public sbyte[] WhiteNoise { get; } = new sbyte[0x280 * 3];
 		}
 
 		// 31 lowpasses, 1 normal, 31 highpasses
-		public readonly Waves[] filterSets = ArrayHelper.InitializeArray<Waves>(31 + 1 + 31);
+		public Waves[] FilterSets { get; } = ArrayHelper.InitializeArray<Waves>(31 + 1 + 31);
 
-		public readonly int[] PanningLeft = new int[256];
-		public readonly int[] PanningRight = new int[256];
+		public int[] PanningLeft { get; } = new int[256];
+		public int[] PanningRight { get; } = new int[256];
 
 		/********************************************************************/
 		/// <summary>
@@ -50,23 +50,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Implementation
 		private void Generate()
 		{
 			GeneratePanningTables();
-			GenerateSawtooth(filterSets[31].Sawtooths, Tables.OffsetTable[0], 0x04);
-			GenerateSawtooth(filterSets[31].Sawtooths, Tables.OffsetTable[1], 0x08);
-			GenerateSawtooth(filterSets[31].Sawtooths, Tables.OffsetTable[2], 0x10);
-			GenerateSawtooth(filterSets[31].Sawtooths, Tables.OffsetTable[3], 0x20);
-			GenerateSawtooth(filterSets[31].Sawtooths, Tables.OffsetTable[4], 0x40);
-			GenerateSawtooth(filterSets[31].Sawtooths, Tables.OffsetTable[5], 0x80);
+			GenerateSawtooth(FilterSets[31].Sawtooths, Tables.OffsetTable[0], 0x04);
+			GenerateSawtooth(FilterSets[31].Sawtooths, Tables.OffsetTable[1], 0x08);
+			GenerateSawtooth(FilterSets[31].Sawtooths, Tables.OffsetTable[2], 0x10);
+			GenerateSawtooth(FilterSets[31].Sawtooths, Tables.OffsetTable[3], 0x20);
+			GenerateSawtooth(FilterSets[31].Sawtooths, Tables.OffsetTable[4], 0x40);
+			GenerateSawtooth(FilterSets[31].Sawtooths, Tables.OffsetTable[5], 0x80);
 
-			GenerateTriangle(filterSets[31].Triangles, Tables.OffsetTable[0], 0x04);
-			GenerateTriangle(filterSets[31].Triangles, Tables.OffsetTable[1], 0x08);
-			GenerateTriangle(filterSets[31].Triangles, Tables.OffsetTable[2], 0x10);
-			GenerateTriangle(filterSets[31].Triangles, Tables.OffsetTable[3], 0x20);
-			GenerateTriangle(filterSets[31].Triangles, Tables.OffsetTable[4], 0x40);
-			GenerateTriangle(filterSets[31].Triangles, Tables.OffsetTable[5], 0x80);
+			GenerateTriangle(FilterSets[31].Triangles, Tables.OffsetTable[0], 0x04);
+			GenerateTriangle(FilterSets[31].Triangles, Tables.OffsetTable[1], 0x08);
+			GenerateTriangle(FilterSets[31].Triangles, Tables.OffsetTable[2], 0x10);
+			GenerateTriangle(FilterSets[31].Triangles, Tables.OffsetTable[3], 0x20);
+			GenerateTriangle(FilterSets[31].Triangles, Tables.OffsetTable[4], 0x40);
+			GenerateTriangle(FilterSets[31].Triangles, Tables.OffsetTable[5], 0x80);
 
-			GenerateSquare(filterSets[31].Squares);
+			GenerateSquare(FilterSets[31].Squares);
 
-			GenerateWhiteNoise(filterSets[31].WhiteNoise, 0x280 * 3);
+			GenerateWhiteNoise(FilterSets[31].WhiteNoise, 0x280 * 3);
 
 			GenerateFilterWaveforms();
 		}
@@ -230,29 +230,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Implementation
 		/********************************************************************/
 		private void GenerateFilterWaveforms()
 		{
-			Waves src = filterSets[31];
+			Waves src = FilterSets[31];
 			int filterTableOffset = 0;
 
 			for (int i = 0, freq = 25; i < 31; i++, freq += 9)
 			{
-				GenerateFilter(src.Sawtooths, Tables.OffsetTable[0], 0x04, freq, ref filterTableOffset, filterSets[i].Sawtooths, filterSets[i + 32].Sawtooths);
-				GenerateFilter(src.Sawtooths, Tables.OffsetTable[1], 0x08, freq, ref filterTableOffset, filterSets[i].Sawtooths, filterSets[i + 32].Sawtooths);
-				GenerateFilter(src.Sawtooths, Tables.OffsetTable[2], 0x10, freq, ref filterTableOffset, filterSets[i].Sawtooths, filterSets[i + 32].Sawtooths);
-				GenerateFilter(src.Sawtooths, Tables.OffsetTable[3], 0x20, freq, ref filterTableOffset, filterSets[i].Sawtooths, filterSets[i + 32].Sawtooths);
-				GenerateFilter(src.Sawtooths, Tables.OffsetTable[4], 0x40, freq, ref filterTableOffset, filterSets[i].Sawtooths, filterSets[i + 32].Sawtooths);
-				GenerateFilter(src.Sawtooths, Tables.OffsetTable[5], 0x80, freq, ref filterTableOffset, filterSets[i].Sawtooths, filterSets[i + 32].Sawtooths);
+				GenerateFilter(src.Sawtooths, Tables.OffsetTable[0], 0x04, freq, ref filterTableOffset, FilterSets[i].Sawtooths, FilterSets[i + 32].Sawtooths);
+				GenerateFilter(src.Sawtooths, Tables.OffsetTable[1], 0x08, freq, ref filterTableOffset, FilterSets[i].Sawtooths, FilterSets[i + 32].Sawtooths);
+				GenerateFilter(src.Sawtooths, Tables.OffsetTable[2], 0x10, freq, ref filterTableOffset, FilterSets[i].Sawtooths, FilterSets[i + 32].Sawtooths);
+				GenerateFilter(src.Sawtooths, Tables.OffsetTable[3], 0x20, freq, ref filterTableOffset, FilterSets[i].Sawtooths, FilterSets[i + 32].Sawtooths);
+				GenerateFilter(src.Sawtooths, Tables.OffsetTable[4], 0x40, freq, ref filterTableOffset, FilterSets[i].Sawtooths, FilterSets[i + 32].Sawtooths);
+				GenerateFilter(src.Sawtooths, Tables.OffsetTable[5], 0x80, freq, ref filterTableOffset, FilterSets[i].Sawtooths, FilterSets[i + 32].Sawtooths);
 
-				GenerateFilter(src.Triangles, Tables.OffsetTable[0], 0x04, freq, ref filterTableOffset, filterSets[i].Triangles, filterSets[i + 32].Triangles);
-				GenerateFilter(src.Triangles, Tables.OffsetTable[1], 0x08, freq, ref filterTableOffset, filterSets[i].Triangles, filterSets[i + 32].Triangles);
-				GenerateFilter(src.Triangles, Tables.OffsetTable[2], 0x10, freq, ref filterTableOffset, filterSets[i].Triangles, filterSets[i + 32].Triangles);
-				GenerateFilter(src.Triangles, Tables.OffsetTable[3], 0x20, freq, ref filterTableOffset, filterSets[i].Triangles, filterSets[i + 32].Triangles);
-				GenerateFilter(src.Triangles, Tables.OffsetTable[4], 0x40, freq, ref filterTableOffset, filterSets[i].Triangles, filterSets[i + 32].Triangles);
-				GenerateFilter(src.Triangles, Tables.OffsetTable[5], 0x80, freq, ref filterTableOffset, filterSets[i].Triangles, filterSets[i + 32].Triangles);
+				GenerateFilter(src.Triangles, Tables.OffsetTable[0], 0x04, freq, ref filterTableOffset, FilterSets[i].Triangles, FilterSets[i + 32].Triangles);
+				GenerateFilter(src.Triangles, Tables.OffsetTable[1], 0x08, freq, ref filterTableOffset, FilterSets[i].Triangles, FilterSets[i + 32].Triangles);
+				GenerateFilter(src.Triangles, Tables.OffsetTable[2], 0x10, freq, ref filterTableOffset, FilterSets[i].Triangles, FilterSets[i + 32].Triangles);
+				GenerateFilter(src.Triangles, Tables.OffsetTable[3], 0x20, freq, ref filterTableOffset, FilterSets[i].Triangles, FilterSets[i + 32].Triangles);
+				GenerateFilter(src.Triangles, Tables.OffsetTable[4], 0x40, freq, ref filterTableOffset, FilterSets[i].Triangles, FilterSets[i + 32].Triangles);
+				GenerateFilter(src.Triangles, Tables.OffsetTable[5], 0x80, freq, ref filterTableOffset, FilterSets[i].Triangles, FilterSets[i + 32].Triangles);
 
-				GenerateFilter(src.WhiteNoise, 0, 0x280 * 3, freq, ref filterTableOffset, filterSets[i].WhiteNoise, filterSets[i + 32].WhiteNoise);
+				GenerateFilter(src.WhiteNoise, 0, 0x280 * 3, freq, ref filterTableOffset, FilterSets[i].WhiteNoise, FilterSets[i + 32].WhiteNoise);
 
 				for (int j = 0; j < 32; j++)
-					GenerateFilter(src.Squares, j * 0x80, 0x80, freq, ref filterTableOffset, filterSets[i].Squares, filterSets[i + 32].Squares);
+					GenerateFilter(src.Squares, j * 0x80, 0x80, freq, ref filterTableOffset, FilterSets[i].Squares, FilterSets[i + 32].Squares);
 			}
 		}
 

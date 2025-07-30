@@ -13,11 +13,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort ReSpCnt;
-		public ushort RepSpd;
-		public ushort SpdTemp;
+		public ushort ReSpCnt { get; set; }
+		public ushort RepSpd { get; set; }
+		public ushort SpdTemp { get; set; }
 
-		public bool[] AudTemp;
+		public bool[] AudTemp { get; set; }
 
 		/********************************************************************/
 		/// <summary>

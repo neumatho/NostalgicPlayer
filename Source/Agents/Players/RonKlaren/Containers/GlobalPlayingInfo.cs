@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte GlobalVolume;
+		public byte GlobalVolume { get; set; }
 
-		public bool SetupNewSubSong;
-		public ushort SubSongNumber;
+		public bool SetupNewSubSong { get; set; }
+		public ushort SubSongNumber { get; set; }
 
 		/********************************************************************/
 		/// <summary>

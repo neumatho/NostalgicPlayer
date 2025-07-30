@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class Idb : IDeepCloneable<Idb>
 	{
-		public ushort[] Cue = new ushort[4];
+		public ushort[] Cue { get; set; } = new ushort[4];
 
 		/********************************************************************/
 		/// <summary>

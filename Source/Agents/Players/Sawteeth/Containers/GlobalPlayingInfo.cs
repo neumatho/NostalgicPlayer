@@ -12,8 +12,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public uint Pals;
-		public bool Looped;
+		public uint Pals { get; set; }
+		public bool Looped { get; set; }
 
 		/********************************************************************/
 		/// <summary>

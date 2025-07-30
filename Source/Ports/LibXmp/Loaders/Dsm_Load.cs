@@ -27,47 +27,47 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Dsm_Song
 		private class Dsm_Song
 		{
-			public readonly uint8[] SongName = new uint8[28];
-			public uint16 Version;
-			public uint16 Flags;
-			public uint32 Reserved2;
-			public uint16 NumOrd;
-			public uint16 NumSmp;
-			public uint16 NumPat;
-			public uint16 NumTrk;
-			public uint8 GlobalVol;
-			public uint8 MasterVol;
-			public uint8 Speed;
-			public uint8 Bpm;
-			public readonly uint8[] PanPos = new uint8[MaxChan];
-			public readonly uint8[] Orders = new uint8[MaxOrders];
+			public uint8[] SongName { get; } = new uint8[28];
+			public uint16 Version { get; set; }
+			public uint16 Flags { get; set; }
+			public uint32 Reserved2 { get; set; }
+			public uint16 NumOrd { get; set; }
+			public uint16 NumSmp { get; set; }
+			public uint16 NumPat { get; set; }
+			public uint16 NumTrk { get; set; }
+			public uint8 GlobalVol { get; set; }
+			public uint8 MasterVol { get; set; }
+			public uint8 Speed { get; set; }
+			public uint8 Bpm { get; set; }
+			public uint8[] PanPos { get; } = new uint8[MaxChan];
+			public uint8[] Orders { get; } = new uint8[MaxOrders];
 		}
 		#endregion
 
 		#region Dsm_Inst
 		private class Dsm_Inst
 		{
-			public readonly uint8[] FileName = new uint8[13];
-			public uint16 Flags;
-			public uint8 Volume;
-			public uint32 Length;
-			public uint32 LoopStart;
-			public uint32 LoopEnd;
-			public uint32 Reserved1;
-			public uint16 C2Spd;
-			public uint16 Period;
-			public readonly uint8[] SampleName = new uint8[28];
+			public uint8[] FileName { get; } = new uint8[13];
+			public uint16 Flags { get; set; }
+			public uint8 Volume { get; set; }
+			public uint32 Length { get; set; }
+			public uint32 LoopStart { get; set; }
+			public uint32 LoopEnd { get; set; }
+			public uint32 Reserved1 { get; set; }
+			public uint16 C2Spd { get; set; }
+			public uint16 Period { get; set; }
+			public uint8[] SampleName { get; } = new uint8[28];
 		}
 		#endregion
 
 		#region Dsm_Note
 		private class Dsm_Note
 		{
-			public uint8 Note;
-			public uint8 Ins;
-			public uint8 Vol;
-			public uint8 Cmd;
-			public uint8 Inf;
+			public uint8 Note { get; set; }
+			public uint8 Ins { get; set; }
+			public uint8 Vol { get; set; }
+			public uint8 Cmd { get; set; }
+			public uint8 Inf { get; set; }
 		}
 		#endregion
 

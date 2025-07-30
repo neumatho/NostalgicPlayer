@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 	/// </summary>
 	internal class VolumeInfo
 	{
-		public byte Speed;
-		public byte Level;
-		public byte Sustain;
+		public byte Speed { get; set; }
+		public byte Level { get; set; }
+		public byte Sustain { get; set; }
 	}
 }

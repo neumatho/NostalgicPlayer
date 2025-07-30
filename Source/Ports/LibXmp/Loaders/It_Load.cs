@@ -112,138 +112,139 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region It_File_Header
 		private class It_File_Header
 		{
-			public uint32 Magic;								// 'IMPM'
-			public readonly uint8[] Name = new uint8[26];		// ASCIIZ song name
-			public uint8 Hilite_Min;							// Pattern editor highlight
-			public uint8 Hilite_Maj;							// Pattern editor highlight
-			public uint16 OrdNum;								// Number of orders (must be even)
-			public uint16 InsNum;								// Number of instruments
-			public uint16 SmpNum;								// Number of samples
-			public uint16 PatNum;								// Number of patterns
-			public uint16 Cwt;									// Tracker ID and version
-			public uint16 Cmwt;									// Format version
-			public It_Flag Flags;								// Flags
-			public It_Special Special;							// More flags
-			public uint8 Gv;									// Global volume
-			public uint8 Mv;									// Master volume
-			public uint8 Is;									// Initial speed
-			public uint8 It;									// Initial tempo
-			public uint8 Sep;									// Panning separation
-			public uint8 Pwd;									// Pitch wheel depth
-			public uint16 MsgLen;								// Message length
-			public uint32 MsgOfs;								// Message offset
-			public uint32 Rsvd;									// Reserved
-			public readonly uint8[] ChPan = new uint8[64];		// Channel pan settings
-			public readonly uint8[] ChVol = new uint8[64];		// Channel volume settings
+			public uint32 Magic { get; set; }					// 'IMPM'
+			public uint8[] Name { get; } = new uint8[26];		// ASCIIZ song name
+			public uint8 Hilite_Min { get; set; }				// Pattern editor highlight
+			public uint8 Hilite_Maj { get; set; }				// Pattern editor highlight
+			public uint16 OrdNum { get; set; }					// Number of orders (must be even)
+			public uint16 InsNum { get; set; }					// Number of instruments
+			public uint16 SmpNum { get; set; }					// Number of samples
+			public uint16 PatNum { get; set; }					// Number of patterns
+			public uint16 Cwt { get; set; }						// Tracker ID and version
+			public uint16 Cmwt { get; set; }					// Format version
+			public It_Flag Flags { get; set; }					// Flags
+			public It_Special Special { get; set; }				// More flags
+			public uint8 Gv { get; set; }						// Global volume
+			public uint8 Mv { get; set; }						// Master volume
+			public uint8 Is { get; set; }						// Initial speed
+			public uint8 It { get; set; }						// Initial tempo
+			public uint8 Sep { get; set; }						// Panning separation
+			public uint8 Pwd { get; set; }						// Pitch wheel depth
+			public uint16 MsgLen { get; set; }					// Message length
+			public uint32 MsgOfs { get; set; }					// Message offset
+			public uint32 Rsvd { get; set; }					// Reserved
+			public uint8[] ChPan { get; } = new uint8[64];		// Channel pan settings
+			public uint8[] ChVol { get; } = new uint8[64];		// Channel volume settings
 		}
 		#endregion
 
 		#region It_Instrument1_Header
 		private class It_Instrument1_Header
 		{
-			public uint32 Magic;								// 'IMPI'
-			public readonly uint8[] DosName = new uint8[12];	// DOS file name
-			public uint8 Zero;									// Always zero
-			public It_Env_Flag Flags;							// Instrument flags
-			public uint8 Vls;									// Volume loop start
-			public uint8 Vle;									// Volume loop end
-			public uint8 Sls;									// Sustain loop start
-			public uint8 Sle;									// Sustain loop end
-			public uint16 Rsvd1;								// Reserved
-			public uint16 FadeOut;								// Fadeout (release)
-			public uint8 Nna;									// New note action
-			public uint8 Dnc;									// Duplicate note check
-			public uint16 TrkVers;								// Tracker version
-			public uint8 Nos;									// Number of samples
-			public uint8 Rsvd2;									// Reserved
-			public readonly uint8[] Name = new uint8[26];		// ASCIIZ instrument name
-			public readonly uint8[] Rsvd3 = new uint8[6];		// Reserved
-			public readonly uint8[] Keys = new uint8[240];
-			public readonly uint8[] EPoint = new uint8[200];
-			public readonly uint8[] ENode = new uint8[50];
+			public uint32 Magic { get; set; }					// 'IMPI'
+			public uint8[] DosName { get; } = new uint8[12];	// DOS file name
+			public uint8 Zero { get; set; }						// Always zero
+			public It_Env_Flag Flags { get; set; }				// Instrument flags
+			public uint8 Vls { get; set; }						// Volume loop start
+			public uint8 Vle { get; set; }						// Volume loop end
+			public uint8 Sls { get; set; }						// Sustain loop start
+			public uint8 Sle { get; set; }						// Sustain loop end
+			public uint16 Rsvd1 { get; set; }					// Reserved
+			public uint16 FadeOut { get; set; }					// Fadeout (release)
+			public uint8 Nna { get; set; }						// New note action
+			public uint8 Dnc { get; set; }						// Duplicate note check
+			public uint16 TrkVers { get; set; }					// Tracker version
+			public uint8 Nos { get; set; }						// Number of samples
+			public uint8 Rsvd2 { get; set; }					// Reserved
+			public uint8[] Name { get; } = new uint8[26];		// ASCIIZ instrument name
+			public uint8[] Rsvd3 { get; } = new uint8[6];		// Reserved
+			public uint8[] Keys { get; } = new uint8[240];
+			public uint8[] EPoint { get; } = new uint8[200];
+			public uint8[] ENode { get; } = new uint8[50];
 		}
 		#endregion
 
 		#region It_Instrument2_Header
 		private class It_Instrument2_Header
 		{
-			public uint32 Magic;								// 'IMPI'
-			public readonly uint8[] DosName = new uint8[12];	// DOS file name
-			public uint8 Zero;									// Always zero
-			public uint8 Nna;									// New note action
-			public uint8 Dct;									// Duplicate check type
-			public uint8 Dca;									// Duplicate check action
-			public uint16 FadeOut;
-			public uint8 Pps;									// Pitch-pan separation
-			public uint8 Ppc;									// Pitch-pan center
-			public uint8 Gbv;									// Global volume
-			public uint8 Dfp;									// Default pan
-			public uint8 Rv;									// Random volume variation
-			public uint8 Rp;									// Random pan variation
-			public uint16 TrkVers;								// Not used: Tracked version
-			public uint8 Nos;									// Not used: Number of samples
-			public uint8 Rsvd1;									// Reserved
-			public readonly uint8[] Name = new uint8[26];		// ASCIIZ instrument name
-			public uint8 Ifc;									// Initial filter cutoff
-			public uint8 Ifr;									// Initial filter resonance
-			public uint8 Mch;									// MIDI channel
-			public uint8 Mpr;									// MIDI program
-			public uint16 Mbnk;									// MIDI bank
-			public readonly uint8[] Keys = new uint8[240];
+			public uint32 Magic { get; set; }					// 'IMPI'
+			public uint8[] DosName { get; } = new uint8[12];	// DOS file name
+			public uint8 Zero { get; set; }						// Always zero
+			public uint8 Nna { get; set; }						// New note action
+			public uint8 Dct { get; set; }						// Duplicate check type
+			public uint8 Dca { get; set; }						// Duplicate check action
+			public uint16 FadeOut { get; set; }
+			public uint8 Pps { get; set; }						// Pitch-pan separation
+			public uint8 Ppc { get; set; }						// Pitch-pan center
+			public uint8 Gbv { get; set; }						// Global volume
+			public uint8 Dfp { get; set; }						// Default pan
+			public uint8 Rv { get; set; }						// Random volume variation
+			public uint8 Rp { get; set; }						// Random pan variation
+			public uint16 TrkVers { get; set; }					// Not used: Tracked version
+			public uint8 Nos { get; set; }						// Not used: Number of samples
+			public uint8 Rsvd1 { get; set; }					// Reserved
+			public uint8[] Name { get; } = new uint8[26];		// ASCIIZ instrument name
+			public uint8 Ifc { get; set; }						// Initial filter cutoff
+			public uint8 Ifr { get; set; }						// Initial filter resonance
+			public uint8 Mch { get; set; }						// MIDI channel
+			public uint8 Mpr { get; set; }						// MIDI program
+			public uint16 Mbnk { get; set; }					// MIDI bank
+			public uint8[] Keys { get; } = new uint8[240];
 		}
 		#endregion
 
 		#region It_Envelope_Node
 		private class It_Envelope_Node
 		{
-			public int8 Y;
-			public uint16 X;
+			public int8 Y { get; set; }
+			public uint16 X { get; set; }
 		}
 		#endregion
 
 		#region It_Envelope
 		private class It_Envelope
 		{
-			public It_Env_Flag Flg;								// Flags
-			public uint8 Num;									// Number of node points
-			public uint8 Lpb;									// Loop beginning
-			public uint8 Lpe;									// Loop end
-			public uint8 Slb;									// Sustain loop beginning
-			public uint8 Sle;									// Sustain loop end
-			public readonly It_Envelope_Node[] Node = ArrayHelper.InitializeArray<It_Envelope_Node>(25);
-			public uint8 Unused;
+			public It_Env_Flag Flg { get; set; }				// Flags
+			public uint8 Num { get; set; }						// Number of node points
+			public uint8 Lpb { get; set; }						// Loop beginning
+			public uint8 Lpe { get; set; }						// Loop end
+			public uint8 Slb { get; set; }						// Sustain loop beginning
+			public uint8 Sle { get; set; }						// Sustain loop end
+			public It_Envelope_Node[] Node { get; } = ArrayHelper.InitializeArray<It_Envelope_Node>(25);
+			public uint8 Unused { get; set; }
 		}
 		#endregion
 
 		#region It_Sample_Header
 		private class It_Sample_Header
 		{
-			public uint32 Magic;								// 'IMPS'
-			public readonly uint8[] DosName = new uint8[12];	// DOS file name
-			public uint8 Zero;									// Always zero
-			public uint8 Gvl;									// Global volume for instrument
-			public It_Smp_Flag Flags;							// Sample flags
-			public uint8 Vol;									// Volume
-			public readonly uint8[] Name = new uint8[26];		// ASCIIZ instrument name
-			public It_Cvt_Flag Convert;							// Sample flags
-			public uint8 Dfp;									// Default pan
-			public uint32 Length;								// Length
-			public uint32 LoopBeg;								// Loop begin
-			public uint32 LoopEnd;								// Loop end
-			public uint32 C5Spd;								// C 5 speed
-			public uint32 SLoopBeg;								// SusLoop begin
-			public uint32 SLoopEnd;								// SusLoop end
-			public uint32 Sample_Ptr;							// Sample pointer
-			public uint8 Vis;									// Vibrato speed
-			public uint8 Vid;									// Vibrato depth
-			public uint8 Vir;									// Vibrato rate
-			public uint8 Vit;									// Vibrato waveform
+			public uint32 Magic { get; set; }					// 'IMPS'
+			public uint8[] DosName { get; } = new uint8[12];	// DOS file name
+			public uint8 Zero { get; set; }						// Always zero
+			public uint8 Gvl { get; set; }						// Global volume for instrument
+			public It_Smp_Flag Flags { get; set; }				// Sample flags
+			public uint8 Vol { get; set; }						// Volume
+			public uint8[] Name { get; } = new uint8[26];		// ASCIIZ instrument name
+			public It_Cvt_Flag Convert { get; set; }			// Sample flags
+			public uint8 Dfp { get; set; }						// Default pan
+			public uint32 Length { get; set; }					// Length
+			public uint32 LoopBeg { get; set; }					// Loop begin
+			public uint32 LoopEnd { get; set; }					// Loop end
+			public uint32 C5Spd { get; set; }					// C 5 speed
+			public uint32 SLoopBeg { get; set; }				// SusLoop begin
+			public uint32 SLoopEnd { get; set; }				// SusLoop end
+			public uint32 Sample_Ptr { get; set; }				// Sample pointer
+			public uint8 Vis { get; set; }						// Vibrato speed
+			public uint8 Vid { get; set; }						// Vibrato depth
+			public uint8 Vir { get; set; }						// Vibrato rate
+			public uint8 Vit { get; set; }						// Vibrato waveform
 		}
 		#endregion
 
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 		#endregion
 
+		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_IMPM = Common.Magic4('I', 'M', 'P', 'M');
 		private static readonly uint32 Magic_IMPI = Common.Magic4('I', 'M', 'P', 'I');
 		private static readonly uint32 Magic_IMPS = Common.Magic4('I', 'M', 'P', 'S');
@@ -253,6 +254,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private const uint8 Fx_None = 0xff;
 		private const uint8 Fx_Xtnd = 0xfe;
 		private const c_int L_Channels = 64;
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

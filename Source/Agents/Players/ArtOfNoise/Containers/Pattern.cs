@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise.Containers
 	/// </summary>
 	internal class Pattern
 	{
-		public TrackLine[,] Tracks;
+		public TrackLine[,] Tracks { get; set; }
 	}
 }

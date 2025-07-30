@@ -24,12 +24,12 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 	{
 		public class FileEntry
 		{
-			public string FileName;
-			public int CrunchedSize;
-			public int DecrunchedSize;
-			public long Position;
-			public int Method;
-			public ushort? Crc;
+			public string FileName { get; set; }
+			public int CrunchedSize { get; set; }
+			public int DecrunchedSize { get; set; }
+			public long Position { get; set; }
+			public int Method { get; set; }
+			public ushort? Crc { get; set; }
 		}
 
 		private static readonly Dictionary<string, int> methods = new Dictionary<string, int>()

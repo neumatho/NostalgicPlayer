@@ -12,21 +12,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalSoundStudio.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte CurrentSongTempo;
-		public byte CurrentSongSpeed;
-		public byte SongSpeedCounter;
+		public byte CurrentSongTempo { get; set; }
+		public byte CurrentSongSpeed { get; set; }
+		public byte SongSpeedCounter { get; set; }
 
-		public ushort CurrentPosition;
-		public short CurrentRow;
-		public bool PositionJump;
-		public ushort NewPosition;
+		public ushort CurrentPosition { get; set; }
+		public short CurrentRow { get; set; }
+		public bool PositionJump { get; set; }
+		public ushort NewPosition { get; set; }
 
-		public bool SetLoopRow;
-		public short LoopRow;
+		public bool SetLoopRow { get; set; }
+		public short LoopRow { get; set; }
 
-		public ushort InverseMasterVolume;
-		public ushort NextRetrigTickNumber;
-		public ushort ArpeggioCounter;
+		public ushort InverseMasterVolume { get; set; }
+		public ushort NextRetrigTickNumber { get; set; }
+		public ushort ArpeggioCounter { get; set; }
 
 		/********************************************************************/
 		/// <summary>

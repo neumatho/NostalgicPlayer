@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler.Containers
 	/// </summary>
 	internal class SongInfo
 	{
-		public byte StartSpeed;
-		public ushort[] PositionLists = new ushort[4];
+		public byte StartSpeed { get; set; }
+		public ushort[] PositionLists { get; } = new ushort[4];
 	}
 }

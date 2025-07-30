@@ -12,23 +12,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public sbyte Transpose;
+		public sbyte Transpose { get; set; }
 
-		public ushort VolumeFadeSpeed;
+		public ushort VolumeFadeSpeed { get; set; }
 
-		public ushort GlobalVolume;
-		public byte GlobalVolumeFadeSpeed;
-		public byte GlobalVolumeFadeCounter;
+		public ushort GlobalVolume { get; set; }
+		public byte GlobalVolumeFadeSpeed { get; set; }
+		public byte GlobalVolumeFadeCounter { get; set; }
 
-		public ushort SquareChangePosition;
-		public bool SquareChangeDirection;
+		public ushort SquareChangePosition { get; set; }
+		public bool SquareChangeDirection { get; set; }
 
-		public byte ExtraCounter;
+		public byte ExtraCounter { get; set; }
 
-		public byte DelayCounterSpeed;
-		public ushort DelayCounter;
+		public byte DelayCounterSpeed { get; set; }
+		public ushort DelayCounter { get; set; }
 
-		public ushort Speed;
+		public ushort Speed { get; set; }
 
 		/********************************************************************/
 		/// <summary>

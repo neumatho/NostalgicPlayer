@@ -27,8 +27,29 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 				Name = name;
 			}
 
-			public uint32_t FourCC;
-			public string Name;
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public uint32_t FourCC
+			{
+				get;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public string Name
+			{
+				get;
+			}
 		}
 
 		private readonly uint32_t modeIndex;

@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 	/// </summary>
 	internal class PositionList
 	{
-		public uint[] TrackOffsets;
-		public ushort RestartPosition;
+		public uint[] TrackOffsets { get; set; }
+		public ushort RestartPosition { get; set; }
 	}
 }

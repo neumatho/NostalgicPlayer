@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	/// </summary>
 	internal class HmnSynthData
 	{
-		public byte PatternNumber;
-		public byte DataLoopStart;
-		public byte DataLoopEnd;
+		public byte PatternNumber { get; set; }
+		public byte DataLoopStart { get; set; }
+		public byte DataLoopEnd { get; set; }
 
-		public sbyte[] WaveData;
-		public byte[] Data;
-		public byte[] VolumeData;
+		public sbyte[] WaveData { get; set; }
+		public byte[] Data { get; set; }
+		public byte[] VolumeData { get; set; }
 	}
 }

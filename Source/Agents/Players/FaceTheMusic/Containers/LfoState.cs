@@ -12,14 +12,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class LfoState : IDeepCloneable<LfoState>
 	{
-		public LfoTarget Target;
-		public bool LoopModulation;
+		public LfoTarget Target { get; set; }
+		public bool LoopModulation { get; set; }
 
-		public sbyte[] ShapeTable;
-		public int ShapeTablePosition;
-		public ushort ModulationSpeed;
-		public ushort ModulationDepth;
-		public short ModulationValue;
+		public sbyte[] ShapeTable { get; set; }
+		public int ShapeTablePosition { get; set; }
+		public ushort ModulationSpeed { get; set; }
+		public ushort ModulationDepth { get; set; }
+		public short ModulationValue { get; set; }
 
 		/********************************************************************/
 		/// <summary>

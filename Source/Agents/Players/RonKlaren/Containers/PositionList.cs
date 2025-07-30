@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class PositionList
 	{
-		public Track[] Tracks;
+		public Track[] Tracks { get; set; }
 	}
 }

@@ -23,15 +23,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		public delegate c_int Close_Delegate(object priv);
 
 		/// <summary></summary>
-		public Read_Delegate Read_Func;
+		public Read_Delegate Read_Func { get; set; }
 
 		/// <summary></summary>
-		public Seek_Delegate Seek_Func;
+		public Seek_Delegate Seek_Func { get; set; }
 
 		/// <summary></summary>
-		public Tell_Delegate Tell_Func;
+		public Tell_Delegate Tell_Func { get; set; }
 
 		/// <summary></summary>
-		public Close_Delegate Close_Func;
+		public Close_Delegate Close_Func { get; set; }
 	}
 }

@@ -12,7 +12,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
 
 		/********************************************************************/
 		/// <summary>
@@ -22,6 +21,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank.Containers
 		public Snapshot(GlobalPlayingInfo playingInfo)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
 		}
 	}
 }

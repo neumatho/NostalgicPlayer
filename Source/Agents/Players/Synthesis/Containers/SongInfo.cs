@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis.Containers
 	/// </summary>
 	internal class SongInfo
 	{
-		public byte StartSpeed;
-		public byte RowsPerTrack;
-		public ushort FirstPosition;
-		public ushort LastPosition;
-		public ushort RestartPosition;
+		public byte StartSpeed { get; set; }
+		public byte RowsPerTrack { get; set; }
+		public ushort FirstPosition { get; set; }
+		public ushort LastPosition { get; set; }
+		public ushort RestartPosition { get; set; }
 	}
 }

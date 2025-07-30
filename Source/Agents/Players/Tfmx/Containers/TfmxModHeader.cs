@@ -10,15 +10,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class TfmxModHeader
 	{
-		public uint OffsetToSample;
-		public uint OffsetToInfo;
-		public uint Reserved;
+		public uint OffsetToSample { get; set; }
+		public uint OffsetToInfo { get; set; }
+		public uint Reserved { get; set; }
 
 		// This information is from the info structure
-		public int StartSong;
-		public string Author;
-		public string Game;
-		public byte Flag;
-		public string Title;
+		public int StartSong { get; set; }
+		public string Author { get; set; }
+		public string Game { get; set; }
+		public byte Flag { get; set; }
+		public string Title { get; set; }
 	}
 }

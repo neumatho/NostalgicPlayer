@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers
 	/// </summary>
 	internal class TrackLine
 	{
-		public ushort Period;
-		public byte SampleNumber;
-		public Effect Effect;
-		public byte EffectArg;
+		public ushort Period { get; set; }
+		public byte SampleNumber { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 	}
 }

@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte CurrentSpeed;
-		public byte SpeedCounter;
-		public sbyte CurrentPosition;
-		public byte CurrentRowNumber;
+		public byte CurrentSpeed { get; set; }
+		public byte SpeedCounter { get; set; }
+		public sbyte CurrentPosition { get; set; }
+		public byte CurrentRowNumber { get; set; }
 
 		/********************************************************************/
 		/// <summary>

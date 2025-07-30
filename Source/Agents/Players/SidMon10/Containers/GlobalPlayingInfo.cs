@@ -13,20 +13,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public uint NumberOfRows;
-		public uint Speed;
-		public uint SpeedCounter;
+		public uint NumberOfRows { get; set; }
+		public uint Speed { get; set; }
+		public uint SpeedCounter { get; set; }
 
-		public bool NewTrack;
-		public bool LoopSong;
+		public bool NewTrack { get; set; }
+		public bool LoopSong { get; set; }
 
-		public int CurrentRow;
-		public uint CurrentPosition;
+		public int CurrentRow { get; set; }
+		public uint CurrentPosition { get; set; }
 
-		public MixPlayingInfo Mix1PlayingInfo = new MixPlayingInfo();
-		public MixPlayingInfo Mix2PlayingInfo = new MixPlayingInfo();
+		public MixPlayingInfo Mix1PlayingInfo { get; set; } = new MixPlayingInfo();
+		public MixPlayingInfo Mix2PlayingInfo { get; set; } = new MixPlayingInfo();
 
-		public VoiceInfo[] VoiceInfo;
+		public VoiceInfo[] VoiceInfo { get; set; }
 
 		/********************************************************************/
 		/// <summary>

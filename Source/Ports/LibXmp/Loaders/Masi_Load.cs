@@ -59,21 +59,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Local_Data
 		private class Local_Data
 		{
-			public bool Sinaria;
-			public c_int Cur_Pat;
-			public c_int Cur_Ins;
-			public CPointer<uint8> PNam;
-			public CPointer<uint8> POrd;
+			public bool Sinaria { get; set; }
+			public c_int Cur_Pat { get; set; }
+			public c_int Cur_Ins { get; set; }
+			public ref CPointer<uint8> PNam => ref _PNam;
+			private CPointer<uint8> _PNam;
+			public ref CPointer<uint8> POrd => ref _POrd;
+			private CPointer<uint8> _POrd;
 		}
 		#endregion
 
 		#endregion
 
+		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_PSM = Common.Magic4('P', 'S', 'M', ' ');
 		private static readonly uint32 Magic_FILE = Common.Magic4('F', 'I', 'L', 'E');
 		private static readonly uint32 Magic_TITL = Common.Magic4('T', 'I', 'T', 'L');
 		private static readonly uint32 Magic_OPLH = Common.Magic4('O', 'P', 'L', 'H');
 		private static readonly uint32 Magic_PPAN = Common.Magic4('P', 'P', 'A', 'N');
+		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

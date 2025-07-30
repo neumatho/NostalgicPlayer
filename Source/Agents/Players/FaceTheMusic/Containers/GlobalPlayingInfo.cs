@@ -15,22 +15,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort StartRow;
-		public ushort EndRow;
+		public ushort StartRow { get; set; }
+		public ushort EndRow { get; set; }
 
-		public byte GlobalVolume;
+		public byte GlobalVolume { get; set; }
 
-		public ushort Speed;
+		public ushort Speed { get; set; }
 
-		public Stack<PatternLoopInfo> PatternLoopStack = new Stack<PatternLoopInfo>();
-		public ushort PatternLoopStopRow;
-		public ushort PatternLoopStartRow;
-		public bool DoPatternLoop;
+		public Stack<PatternLoopInfo> PatternLoopStack { get; set; } = new Stack<PatternLoopInfo>();
+		public ushort PatternLoopStopRow { get; set; }
+		public ushort PatternLoopStartRow { get; set; }
+		public bool DoPatternLoop { get; set; }
 
-		public ushort SpeedCounter;
-		public ushort CurrentRow;
+		public ushort SpeedCounter { get; set; }
+		public ushort CurrentRow { get; set; }
 
-		public short[] DetuneValues = new short[4];
+		public short[] DetuneValues { get; set; } = new short[4];
 
 		/********************************************************************/
 		/// <summary>

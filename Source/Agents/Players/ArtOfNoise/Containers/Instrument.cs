@@ -10,14 +10,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise.Containers
 	/// </summary>
 	internal abstract class Instrument
 	{
-		public string Name;
-		public byte Volume;
-		public byte FineTune;
-		public byte WaveForm;
+		public string Name { get; set; }
+		public byte Volume { get; set; }
+		public byte FineTune { get; set; }
+		public byte WaveForm { get; set; }
 
-		public byte EnvelopeStart;
-		public byte EnvelopeAdd;
-		public byte EnvelopeEnd;
-		public byte EnvelopeSub;
+		public byte EnvelopeStart { get; set; }
+		public byte EnvelopeAdd { get; set; }
+		public byte EnvelopeEnd { get; set; }
+		public byte EnvelopeSub { get; set; }
 	}
 }

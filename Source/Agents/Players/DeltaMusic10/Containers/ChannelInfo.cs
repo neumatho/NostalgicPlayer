@@ -12,34 +12,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 	/// </summary>
 	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public Instrument SoundData;
-		public ushort Period;
-		public byte[] SoundTable;
-		public byte SoundTableCounter;
-		public byte SoundTableDelay;
-		public Track[] Track;
-		public ushort TrackCounter;
-		public BlockLine[] Block;
-		public uint BlockCounter;
-		public byte VibratoWait;
-		public byte VibratoLength;
-		public byte VibratoPosition;
-		public byte VibratoCompare;
-		public ushort VibratoFrequency;
-		public byte FrequencyData;
-		public byte ActualVolume;
-		public byte AttackDelay;
-		public byte DecayDelay;
-		public ushort Sustain;
-		public byte ReleaseDelay;
-		public byte PlaySpeed;
-		public short BendRateFrequency;
-		public sbyte Transpose;
-		public byte Status;
-		public byte ArpeggioCounter;
-		public Effect EffectNumber;
-		public byte EffectData;
-		public bool RetriggerSound;
+		public Instrument SoundData { get; set; }
+		public ushort Period { get; set; }
+		public byte[] SoundTable { get; set; }
+		public byte SoundTableCounter { get; set; }
+		public byte SoundTableDelay { get; set; }
+		public Track[] Track { get; set; }
+		public ushort TrackCounter { get; set; }
+		public BlockLine[] Block { get; set; }
+		public uint BlockCounter { get; set; }
+		public byte VibratoWait { get; set; }
+		public byte VibratoLength { get; set; }
+		public byte VibratoPosition { get; set; }
+		public byte VibratoCompare { get; set; }
+		public ushort VibratoFrequency { get; set; }
+		public byte FrequencyData { get; set; }
+		public byte ActualVolume { get; set; }
+		public byte AttackDelay { get; set; }
+		public byte DecayDelay { get; set; }
+		public ushort Sustain { get; set; }
+		public byte ReleaseDelay { get; set; }
+		public byte PlaySpeed { get; set; }
+		public short BendRateFrequency { get; set; }
+		public sbyte Transpose { get; set; }
+		public byte Status { get; set; }
+		public byte ArpeggioCounter { get; set; }
+		public Effect EffectNumber { get; set; }
+		public byte EffectData { get; set; }
+		public bool RetriggerSound { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 	/// </summary>
 	internal class TrackInfo
 	{
-		public ushort LoopPosition;
-		public Track[] Track;
+		public ushort LoopPosition { get; set; }
+		public Track[] Track { get; set; }
 	}
 }

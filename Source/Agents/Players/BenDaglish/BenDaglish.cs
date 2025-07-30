@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish
 	/// </summary>
 	public class BenDaglish : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("CE362B0B-D910-4EAD-974E-A28D047EADDB");
+		private static readonly Guid agent1Id = Guid.Parse("CE362B0B-D910-4EAD-974E-A28D047EADDB");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_BD_NAME_AGENT1, Resources.IDS_BD_DESCRIPTION_AGENT1, Agent1Id)
+			new AgentSupportInfo(Resources.IDS_BD_NAME_AGENT1, Resources.IDS_BD_DESCRIPTION_AGENT1, agent1Id)
 		];
 
 

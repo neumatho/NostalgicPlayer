@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class Header
 	{
-		public ushort NumberOfFrequencies;
-		public ushort NumberOfEnvelopes;
-		public ushort NumberOfTracks;
-		public ushort NumberOfPositions;
-		public ushort BytesPerTrack;
-		public ushort NumberOfSubSongs;
-		public ushort NumberOfSamples;
+		public ushort NumberOfFrequencies { get; set; }
+		public ushort NumberOfEnvelopes { get; set; }
+		public ushort NumberOfTracks { get; set; }
+		public ushort NumberOfPositions { get; set; }
+		public ushort BytesPerTrack { get; set; }
+		public ushort NumberOfSubSongs { get; set; }
+		public ushort NumberOfSamples { get; set; }
 	}
 }

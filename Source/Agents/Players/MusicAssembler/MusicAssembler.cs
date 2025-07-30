@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 	/// </summary>
 	public class MusicAssembler : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("BC68CA87-B330-4A14-87A4-1D7AA5851095");
+		private static readonly Guid agent1Id = Guid.Parse("BC68CA87-B330-4A14-87A4-1D7AA5851095");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_MA_NAME_AGENT1, Resources.IDS_MA_DESCRIPTION_AGENT1, Agent1Id)
+			new AgentSupportInfo(Resources.IDS_MA_NAME_AGENT1, Resources.IDS_MA_DESCRIPTION_AGENT1, agent1Id)
 		];
 
 

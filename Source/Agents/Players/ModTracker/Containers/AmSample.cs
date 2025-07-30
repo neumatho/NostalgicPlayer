@@ -10,20 +10,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	/// </summary>
 	internal class AmSample
 	{
-		public ushort Mark;
-		public ushort StartAmp;
-		public ushort Attack1Level;
-		public ushort Attack1Speed;
-		public ushort Attack2Level;
-		public ushort Attack2Speed;
-		public ushort SustainLevel;
-		public ushort DecaySpeed;
-		public ushort SustainTime;
-		public ushort ReleaseSpeed;
-		public ushort Waveform;
-		public ushort PitchFall;
-		public short VibAmp;
-		public ushort VibSpeed;
-		public ushort baseFreq;
+		public ushort Mark { get; set; }
+		public ushort StartAmp { get; set; }
+		public ushort Attack1Level { get; set; }
+		public ushort Attack1Speed { get; set; }
+		public ushort Attack2Level { get; set; }
+		public ushort Attack2Speed { get; set; }
+		public ushort SustainLevel { get; set; }
+		public ushort DecaySpeed { get; set; }
+		public ushort SustainTime { get; set; }
+		public ushort ReleaseSpeed { get; set; }
+		public ushort Waveform { get; set; }
+		public ushort PitchFall { get; set; }
+		public short VibAmp { get; set; }
+		public ushort VibSpeed { get; set; }
+		public ushort BaseFreq { get; set; }
 	}
 }

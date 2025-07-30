@@ -19,9 +19,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 	{
 		private class TagPair
 		{
-			public T Tag;
-			public uint Value;
-			public bool TagChecked;
+			public T Tag { get; set; }
+			public uint Value { get; set; }
+			public bool TagChecked { get; set; }
 		}
 
 		private readonly ModuleStream stream;

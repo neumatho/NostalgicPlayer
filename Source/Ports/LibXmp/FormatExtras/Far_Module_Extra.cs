@@ -16,10 +16,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 	{
 		public class Far_Module_Extra_Info : IModuleExtraInfo
 		{
-			public c_int Coarse_Tempo;
-			public c_int Fine_Tempo;
-			public c_int Tempo_Mode;
-			public c_int Vib_Depth;			// Vibrato depth for all channels
+			public c_int Coarse_Tempo { get; set; }
+			public ref c_int Fine_Tempo => ref _Fine_Tempo;
+			private c_int _Fine_Tempo;
+			public c_int Tempo_Mode { get; set; }
+			public c_int Vib_Depth { get; set; }			// Vibrato depth for all channels
 		}
 
 		// The time factor needed to directly use FAR tempos is a little unintuitive.
@@ -43,10 +44,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 		// floor(1197255 / 32) / floor(1193182 / 32) ~= 1.003439
 		//
 		// This still isn't perfect, but it gets the playback rate fairly close
-		public static readonly c_int[] far_Tempos = new c_int[]
-		{
+		public static readonly c_int[] Far_Tempos =
+		[
 			256, 128, 64, 42, 32, 25, 21, 18, 16, 14, 12, 11, 10, 9, 9, 8
-		};
+		];
 
 		public const c_int Far_Old_Tempo_Shift = 2;		// Power of multiplier for old tempo mode
 		public const c_int Far_Gus_Channels = 17;
@@ -110,9 +111,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 			c_int speed, bpm;
 
 			// Compatibility for FAR's broken fine tempo "clamping"
-			if ((fine_Change < 0) && ((far_Tempos[coarse] + fine) <= 0))
+			if ((fine_Change < 0) && ((Far_Tempos[coarse] + fine) <= 0))
 				fine = 0;
-			else if ((fine_Change > 0) && ((far_Tempos[coarse] + fine) >= 100))
+			else if ((fine_Change > 0) && ((Far_Tempos[coarse] + fine) >= 100))
 				fine = 100;
 
 			if (mode == 1)
@@ -122,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 				// via changing fine tempo and then slowing coarse tempo.
 				// These result in very slow final tempos due to signed to
 				// unsigned conversion. Zero should just be ignored entirely
-				c_int tempo = far_Tempos[coarse] + fine;
+				c_int tempo = Far_Tempos[coarse] + fine;
 				if (tempo == 0)
 					return -1;
 
@@ -158,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 				// Old tempo mode in the original FAR replayer has 32 ticks,
 				// but ignores all except every 8th
 				speed = 4 << Far_Old_Tempo_Shift;
-				bpm = (far_Tempos[coarse] + fine * 2) << Far_Old_Tempo_Shift;
+				bpm = (Far_Tempos[coarse] + fine * 2) << Far_Old_Tempo_Shift;
 			}
 
 			if (bpm < Constants.Xmp_Min_Bpm)

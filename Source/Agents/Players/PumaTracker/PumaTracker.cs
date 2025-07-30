@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 	/// </summary>
 	public class PumaTracker : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("914741F8-625F-4E82-B925-AF85BB21E54E");
+		private static readonly Guid agent1Id = Guid.Parse("914741F8-625F-4E82-B925-AF85BB21E54E");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_PUMA_NAME_AGENT1, Resources.IDS_PUMA_DESCRIPTION_AGENT1, Agent1Id)
+			new AgentSupportInfo(Resources.IDS_PUMA_NAME_AGENT1, Resources.IDS_PUMA_DESCRIPTION_AGENT1, agent1Id)
 		];
 
 

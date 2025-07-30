@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal struct EchoArguments
 	{
-		public int EchoDelay;					// 0 to 255, 2 ms (tracker units)
-		public int EchoFeedback;				// 0 to 255
-		public int EchoMix;						// 0 dry, 255 wet
-		public int EchoCross;					// 0 to 255
+		public int EchoDelay { get; set; }				// 0 to 255, 2 ms (tracker units)
+		public int EchoFeedback { get; set; }			// 0 to 255
+		public int EchoMix { get; set; }				// 0 dry, 255 wet
+		public int EchoCross { get; set; }				// 0 to 255
 	}
 }

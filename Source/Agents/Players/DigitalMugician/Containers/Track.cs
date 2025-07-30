@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	/// </summary>
 	internal class Track
 	{
-		public TrackRow[] Rows = new TrackRow[64];
+		public TrackRow[] Rows { get; } = new TrackRow[64];
 	}
 }

@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class Envelope
 	{
-		public byte EnvelopeSpeed;
-		public byte FrequencyNumber;
-		public byte VibratoSpeed;
-		public byte VibratoDepth;
-		public byte VibratoDelay;
-		public byte[] EnvelopeTable;
+		public byte EnvelopeSpeed { get; set; }
+		public byte FrequencyNumber { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoDepth { get; set; }
+		public byte VibratoDelay { get; set; }
+		public byte[] EnvelopeTable { get; set; }
 	}
 }

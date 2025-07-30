@@ -13,16 +13,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Channel pan (0x80 is center)
 		/// </summary>
-		public c_int Pan;
+		public c_int Pan { get; internal set; }
 
 		/// <summary>
 		/// Channel volume
 		/// </summary>
-		public c_int Vol;
+		public c_int Vol { get; internal set; }
 
 		/// <summary>
 		/// Channel flags
 		/// </summary>
-		public Xmp_Channel_Flag Flg;
+		public Xmp_Channel_Flag Flg { get; internal set; }
 	}
 }

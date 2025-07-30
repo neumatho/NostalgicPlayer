@@ -12,28 +12,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers
 	/// </summary>
 	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public TrackLine TrackLine;
-		public uint Loop;
-		public uint LoopLength;
-		public ushort Period;
-		public ushort Volume;
-		public uint Length;
-		public uint Start;
-		public short NoteNr;
-		public ushort WantedPeriod;
-		public bool PortDirection;
-		public byte VibratoWave;
-		public byte GlissandoControl;
-		public byte VibratoCommand;
-		public ushort VibratoPosition;
-		public byte TremoloWave;
-		public byte TremoloCommand;
-		public ushort TremoloPosition;
-		public byte SampleOffset;
-		public byte Retrig;
-		public ushort PortSpeed;
-		public byte FineTune;
-		public sbyte[] SampleData;
+		public TrackLine TrackLine { get; set; }
+		public uint Loop { get; set; }
+		public uint LoopLength { get; set; }
+		public ushort Period { get; set; }
+		public ushort Volume { get; set; }
+		public uint Length { get; set; }
+		public uint Start { get; set; }
+		public short NoteNr { get; set; }
+		public ushort WantedPeriod { get; set; }
+		public bool PortDirection { get; set; }
+		public byte VibratoWave { get; set; }
+		public byte GlissandoControl { get; set; }
+		public byte VibratoCommand { get; set; }
+		public ushort VibratoPosition { get; set; }
+		public byte TremoloWave { get; set; }
+		public byte TremoloCommand { get; set; }
+		public ushort TremoloPosition { get; set; }
+		public byte SampleOffset { get; set; }
+		public byte Retrig { get; set; }
+		public ushort PortSpeed { get; set; }
+		public byte FineTune { get; set; }
+		public sbyte[] SampleData { get; set; }
 
 		/********************************************************************/
 		/// <summary>

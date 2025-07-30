@@ -12,16 +12,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class GlobalInfo
 	{
-		public int StartTime;
-		public int EndTime;
+		public int StartTime { get; set; }
+		public int EndTime { get; set; }
 
-		public ushort NewTempo;
-		public ushort Tune;
-		public ushort Volume;
+		public ushort NewTempo { get; set; }
+		public ushort Tune { get; set; }
+		public ushort Volume { get; set; }
 
-		public ulong[] TracksEnabled;
-		public List<Instrument> Instruments = new List<Instrument>();
-		public int[] TrackStartPositions;
-		public TrackInfo[] TracksInfo;
+		public ulong[] TracksEnabled { get; set; }
+		public List<Instrument> Instruments { get; } = new List<Instrument>();
+		public int[] TrackStartPositions { get; set; }
+		public TrackInfo[] TracksInfo { get; set; }
 	}
 }

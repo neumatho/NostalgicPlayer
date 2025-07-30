@@ -24,8 +24,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 	{
 		private class PeriodInfo
 		{
-			public ushort Period;
-			public ushort PreviousPeriod;
+			public ushort Period { get; set; }
+			public ushort PreviousPeriod { get; set; }
 		}
 
 		private SongInfo[] subSongs;

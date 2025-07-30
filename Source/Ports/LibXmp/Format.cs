@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// <summary>
 		/// List of all supported formats
 		/// </summary>
-		public static readonly Format_Loader[] format_Loaders = new Format_Loader[Num_Formats + 1]
+		public static readonly Format_Loader[] Format_Loaders = new Format_Loader[Num_Formats + 1]
 		{
 			Xm_Load.LibXmp_Loader_Xm,
 			Mod_Load.LibXmp_Loader_Fast,
@@ -96,9 +96,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				c_int count = 0;
 
-				for (c_int i = 0; format_Loaders[i] != null; i++)
+				for (c_int i = 0; Format_Loaders[i] != null; i++)
 				{
-					Format_Loader fl = format_Loaders[i];
+					Format_Loader fl = Format_Loaders[i];
 
 					if (fl.OnlyAvailableInTest && !LibXmp.UnitTestMode)
 						continue;

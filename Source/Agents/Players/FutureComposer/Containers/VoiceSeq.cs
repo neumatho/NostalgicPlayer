@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class VoiceSeq
 	{
-		public byte Pattern;
-		public sbyte Transpose;
-		public sbyte SoundTranspose;
+		public byte Pattern { get; set; }
+		public sbyte Transpose { get; set; }
+		public sbyte SoundTranspose { get; set; }
 	}
 }

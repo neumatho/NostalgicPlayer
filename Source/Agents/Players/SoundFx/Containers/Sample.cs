@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public sbyte[] SampleAddr;
-		public uint Length;
-		public ushort Volume;
-		public uint LoopStart;
-		public uint LoopLength;
+		public string Name { get; set; }
+		public sbyte[] SampleAddr { get; set; }
+		public uint Length { get; set; }
+		public ushort Volume { get; set; }
+		public uint LoopStart { get; set; }
+		public uint LoopLength { get; set; }
 	}
 }

@@ -10,24 +10,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish.Containers
 	/// </summary>
 	internal class Features
 	{
-		public int MasterVolumeFadeVersion;		// -1 = None
-		public bool SetDmaInSampleHandlers;
-		public bool EnableCounter;
-		public bool EnableSampleEffects;
-		public bool EnableFinalVolumeSlide;
-		public bool EnableVolumeFade;
-		public bool EnablePortamento;
-		public bool CheckForTicks;
-		public bool ExtraTickArg;
-		public bool Uses9xTrackEffects;
-		public bool UsesCxTrackEffects;
+		public int MasterVolumeFadeVersion { get; set; }		// -1 = None
+		public bool SetDmaInSampleHandlers { get; set; }
+		public bool EnableCounter { get; set; }
+		public bool EnableSampleEffects { get; set; }
+		public bool EnableFinalVolumeSlide { get; set; }
+		public bool EnableVolumeFade { get; set; }
+		public bool EnablePortamento { get; set; }
+		public bool CheckForTicks { get; set; }
+		public bool ExtraTickArg { get; set; }
+		public bool Uses9xTrackEffects { get; set; }
+		public bool UsesCxTrackEffects { get; set; }
 
-		public byte MaxTrackValue;
-		public bool EnableC0TrackLoop;
-		public bool EnableF0TrackLoop;
+		public byte MaxTrackValue { get; set; }
+		public bool EnableC0TrackLoop { get; set; }
+		public bool EnableF0TrackLoop { get; set; }
 
-		public byte MaxSampleMappingValue;
-		public int GetSampleMappingVersion;
-		public int SetSampleMappingVersion;
+		public byte MaxSampleMappingValue { get; set; }
+		public int GetSampleMappingVersion { get; set; }
+		public int SetSampleMappingVersion { get; set; }
 	}
 }

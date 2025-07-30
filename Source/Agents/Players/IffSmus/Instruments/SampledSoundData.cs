@@ -10,15 +10,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 	/// </summary>
 	internal class SampledSoundData
 	{
-		public ushort Volume;
+		public ushort Volume { get; set; }
 
-		public ushort[] EnvelopeLevels = new ushort[4];
-		public ushort[] EnvelopeRates = new ushort[4];
+		public ushort[] EnvelopeLevels { get; } = new ushort[4];
+		public ushort[] EnvelopeRates { get; } = new ushort[4];
 
-		public short VibratoDepth;
-		public ushort VibratoSpeed;
-		public ushort VibratoDelay;
+		public short VibratoDepth { get; set; }
+		public ushort VibratoSpeed { get; set; }
+		public ushort VibratoDelay { get; set; }
 
-		public SampledSoundSampleData SampleData;
+		public SampledSoundSampleData SampleData { get; set; }
 	}
 }

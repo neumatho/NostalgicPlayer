@@ -12,17 +12,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public NoteInfo[] Address;
+		public NoteInfo[] Address { get; set; }
 
-		public int AddressIndex;
+		public int AddressIndex { get; set; }
 
-		public ushort TmpDmacon;
+		public ushort TmpDmacon { get; set; }
 
-		public ushort SongPos;
-		public ushort NoteCnt;
+		public ushort SongPos { get; set; }
+		public ushort NoteCnt { get; set; }
 
-		public byte Wait;
-		public byte WaitCnt;
+		public byte Wait { get; set; }
+		public byte WaitCnt { get; set; }
 
 		/********************************************************************/
 		/// <summary>

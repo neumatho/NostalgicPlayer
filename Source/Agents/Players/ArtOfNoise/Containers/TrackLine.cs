@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise.Containers
 	/// </summary>
 	internal class TrackLine
 	{
-		public byte Instrument;
-		public byte Note;
-		public byte Arpeggio;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Instrument { get; set; }
+		public byte Note { get; set; }
+		public byte Arpeggio { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 	}
 }

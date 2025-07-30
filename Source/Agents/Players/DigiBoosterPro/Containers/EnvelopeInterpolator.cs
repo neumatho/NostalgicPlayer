@@ -12,16 +12,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class EnvelopeInterpolator : IDeepCloneable<EnvelopeInterpolator>
 	{
-		public uint16_t Index;					// Index to envelopes table, set in MSynth_Instrument(), -1 if no envelope
-		public uint16_t TickCounter;			// Ticks left in section
-		public uint16_t Section;				// Current section
-		public int16_t XDelta;					// Current section length in ticks
-		public int32_t YDelta;					// Current section value delta
-		public int32_t YStart;					// Value at section start
-		public int16_t PreviousValue;			// Previous returned value (used for sustains)
-		public uint16_t SustainA;				// Set by trigger, cleared to 0xffff with keyoff
-		public uint16_t SustainB;				// Set by trigger, cleared to 0xffff with keyoff
-		public uint16_t LoopEnd;				// Set by trigger, cleared to 0xffff with keyoff
+		public uint16_t Index { get; set; }				// Index to envelopes table, set in MSynth_Instrument(), -1 if no envelope
+		public uint16_t TickCounter { get; set; }		// Ticks left in section
+		public uint16_t Section { get; set; }			// Current section
+		public int16_t XDelta { get; set; }				// Current section length in ticks
+		public int32_t YDelta { get; set; }				// Current section value delta
+		public int32_t YStart { get; set; }				// Value at section start
+		public int16_t PreviousValue { get; set; }		// Previous returned value (used for sustains)
+		public uint16_t SustainA { get; set; }			// Set by trigger, cleared to 0xffff with keyoff
+		public uint16_t SustainB { get; set; }			// Set by trigger, cleared to 0xffff with keyoff
+		public uint16_t LoopEnd { get; set; }			// Set by trigger, cleared to 0xffff with keyoff
 
 		/********************************************************************/
 		/// <summary>

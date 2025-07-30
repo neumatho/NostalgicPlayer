@@ -11,35 +11,35 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 	internal class ArcData
 	{
 		// RLE90
-		public int Rle_In;
-		public int Rle_Out;
-		public bool In_Rle_Code;
-		public int Last_Byte;
+		public int Rle_In { get; set; }
+		public int Rle_Out { get; set; }
+		public bool In_Rle_Code { get; set; }
+		public int Last_Byte { get; set; }
 
 		// LZW and Huffman
-		public readonly uint[] Codes_Buffered = new uint[8];
-		public uint Buffered_Pos;
-		public uint Buffered_Width;
-		public uint Lzw_Bits_In;
-		public uint Lzw_In;
-		public uint Lzw_Out;
-		public bool Lzw_Eof;
-		public uint Max_Code;
-		public uint First_Code;
-		public uint Next_Code;
-		public uint Current_Width;
-		public uint Init_Width;
-		public uint Max_Width;
-		public uint Continue_Left;
-		public uint Continue_Code;
-		public uint Last_Code;
-		public bool KwKwK;
-		public uint Last_First_Value;
+		public uint[] Codes_Buffered { get; } = new uint[8];
+		public uint Buffered_Pos { get; set; }
+		public uint Buffered_Width { get; set; }
+		public uint Lzw_Bits_In { get; set; }
+		public uint Lzw_In { get; set; }
+		public uint Lzw_Out { get; set; }
+		public bool Lzw_Eof { get; set; }
+		public uint Max_Code { get; set; }
+		public uint First_Code { get; set; }
+		public uint Next_Code { get; set; }
+		public uint Current_Width { get; set; }
+		public uint Init_Width { get; set; }
+		public uint Max_Width { get; set; }
+		public uint Continue_Left { get; set; }
+		public uint Continue_Code { get; set; }
+		public uint Last_Code { get; set; }
+		public bool KwKwK { get; set; }
+		public uint Last_First_Value { get; set; }
 
-		public byte[] Window;
-		public ArcCode[] Tree;
-		public ArcLookup[] Huffman_Lookup;
-		public ArcHuffmanIndex[] Huffman_Tree;
-		public uint Num_Huffman;
+		public byte[] Window { get; set; }
+		public ArcCode[] Tree { get; set; }
+		public ArcLookup[] Huffman_Lookup { get; set; }
+		public ArcHuffmanIndex[] Huffman_Tree { get; set; }
+		public uint Num_Huffman { get; set; }
 	}
 }

@@ -12,9 +12,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator.Containers
 	/// </summary>
 	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public int Slide;
-		public ushort Period;
-		public ushort Volume;
+		public int Slide { get; set; }
+		public ushort Period { get; set; }
+		public ushort Volume { get; set; }
 
 		/********************************************************************/
 		/// <summary>

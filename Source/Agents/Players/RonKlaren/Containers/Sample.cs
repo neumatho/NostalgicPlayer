@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public int SampleNumber;
-		public ushort LengthInWords;
-		public ushort PhaseIndex;
+		public int SampleNumber { get; set; }
+		public ushort LengthInWords { get; set; }
+		public ushort PhaseIndex { get; set; }
 	}
 }

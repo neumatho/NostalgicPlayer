@@ -12,6 +12,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers
 	/// </summary>
 	internal class Track
 	{
-		public List<TrackRow> Rows;
+		public List<TrackRow> Rows { get; set; }
 	}
 }

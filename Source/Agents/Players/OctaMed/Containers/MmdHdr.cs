@@ -10,21 +10,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	/// </summary>
 	internal class MmdHdr
 	{
-		public uint Id;
-		public uint ModLen;
-		public uint SongOffs;
-		public ushort PSecNum;
-		public ushort PSeq;
-		public uint BlocksOffs;
-		public byte MmdFlags;
-		public uint SamplesOffs;
-		public uint ExpDataOffs;
-		public ushort PState;
-		public ushort PBlock;
-		public ushort PLine;
-		public ushort PSeqNum;
-		public short ActPlayLine;
-		public byte Counter;
-		public byte ExtraSongs;
+		public uint Id { get; set; }
+		public uint ModLen { get; set; }
+		public uint SongOffs { get; set; }
+		public ushort PSecNum { get; set; }
+		public ushort PSeq { get; set; }
+		public uint BlocksOffs { get; set; }
+		public byte MmdFlags { get; set; }
+		public uint SamplesOffs { get; set; }
+		public uint ExpDataOffs { get; set; }
+		public ushort PState { get; set; }
+		public ushort PBlock { get; set; }
+		public ushort PLine { get; set; }
+		public ushort PSeqNum { get; set; }
+		public short ActPlayLine { get; set; }
+		public byte Counter { get; set; }
+		public byte ExtraSongs { get; set; }
 	}
 }

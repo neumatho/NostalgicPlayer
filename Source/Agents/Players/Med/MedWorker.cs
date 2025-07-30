@@ -34,11 +34,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// </summary>
 		private struct PlaySampleInfo
 		{
-			public ushort Period;
-			public uint StartOffset;
-			public uint Length;
-			public uint LoopStart;
-			public uint LoopLength;
+			public ushort Period { get; set; }
+			public uint StartOffset { get; set; }
+			public uint Length { get; set; }
+			public uint LoopStart { get; set; }
+			public uint LoopLength { get; set; }
 		}
 		#endregion
 

@@ -25,12 +25,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			/// <summary>
 			/// The crunched or original file size
 			/// </summary>
-			public long CrunchedSize;
+			public long CrunchedSize { get; set; }
 
 			/// <summary>
 			/// The size after decrunching or original file size
 			/// </summary>
-			public long DecrunchedSize;
+			public long DecrunchedSize { get; set; }
 		}
 
 		private readonly string fileName;

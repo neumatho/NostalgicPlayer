@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block
 	/// </summary>
 	internal class MedNote
 	{
-		public NoteNum NoteNum;
-		public byte InstrNum;
+		public NoteNum NoteNum { get; set; }
+		public byte InstrNum { get; set; }
 	}
 }

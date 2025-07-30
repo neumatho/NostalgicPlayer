@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class BreakPoint
 	{
-		public uint Pal;
-		public uint Command;
+		public uint Pal { get; set; }
+		public uint Command { get; set; }
 	}
 }

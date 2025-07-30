@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Extra_Sample_Data
 	{
-		public c_double C5Spd;
-		public c_int Sus;
-		public c_int Sue;
+		public c_double C5Spd { get; set; }
+		public c_int Sus { get; set; }
+		public c_int Sue { get; set; }
 	}
 }

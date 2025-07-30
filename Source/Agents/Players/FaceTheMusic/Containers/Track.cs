@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class Track
 	{
-		public ushort DefaultSpacing;
-		public TrackLine[] Lines;
+		public ushort DefaultSpacing { get; set; }
+		public TrackLine[] Lines { get; set; }
 	}
 }

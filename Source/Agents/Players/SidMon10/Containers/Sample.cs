@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public int LoopStart;
-		public sbyte[] SampleData;
+		public string Name { get; set; }
+		public int LoopStart { get; set; }
+		public sbyte[] SampleData { get; set; }
 	}
 }

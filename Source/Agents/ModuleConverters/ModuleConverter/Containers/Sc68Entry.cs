@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Contain
 	/// </summary>
 	internal class Sc68Entry
 	{
-		public Sc68DataBlockInfo DataBlockInfo;
-		public string EntryName;
+		public Sc68DataBlockInfo DataBlockInfo { get; set; }
+		public string EntryName { get; set; }
 	}
 }

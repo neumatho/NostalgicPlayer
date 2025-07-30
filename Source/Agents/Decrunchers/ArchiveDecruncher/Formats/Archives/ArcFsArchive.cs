@@ -45,26 +45,26 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 
 		private class ArcFsHeader
 		{
-			public uint EntriesLength;
-			public uint DataOffset;
-			public uint MinReadVersion;
-			public uint MinWriteVersion;
-			public uint FormatVersion;
+			public uint EntriesLength { get; set; }
+			public uint DataOffset { get; set; }
+			public uint MinReadVersion { get; set; }
+			public uint MinWriteVersion { get; set; }
+			public uint FormatVersion { get; set; }
 		}
 
 		/// <summary></summary>
 		public class ArcFsEntry
 		{
-			public EntryMethod Method;
-			public string FileName;
-			public int DecrunchedSize;
-			public int CrunchedSize;
+			public EntryMethod Method { get; set; }
+			public string FileName { get; set; }
+			public int DecrunchedSize { get; set; }
+			public int CrunchedSize { get; set; }
 
-			public ushort Crc16;
-			public byte CrunchingBits;
-			public bool IsDirectory;
-			public uint ValueOffset;
-			public int CrunchedDataOffset;
+			public ushort Crc16 { get; set; }
+			public byte CrunchingBits { get; set; }
+			public bool IsDirectory { get; set; }
+			public uint ValueOffset { get; set; }
+			public int CrunchedDataOffset { get; set; }
 		}
 
 		private readonly string agentName;

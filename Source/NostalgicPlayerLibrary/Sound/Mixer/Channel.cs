@@ -20,17 +20,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			/// <summary>
 			/// Sample data
 			/// </summary>
-			public Array SampleData;
+			public Array SampleData { get; set; }
 
 			/// <summary>
 			/// Start offset or loop offset in the sample in samples, not bytes
 			/// </summary>
-			public uint Start;
+			public uint Start { get; set; }
 
 			/// <summary>
 			/// Length or loop length of the sample in samples, not bytes
 			/// </summary>
-			public uint Length;
+			public uint Length { get; set; }
 		}
 
 		protected class SampleInfo
@@ -38,18 +38,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			/// <summary>
 			/// Indicate what has been set/changed
 			/// </summary>
-			public ChannelSampleFlag Flags;
+			public ChannelSampleFlag Flags { get; set; }
 
 			/// <summary>
 			/// Start addresses of the sample
 			/// </summary>
-			public Sample Sample = new Sample();
-
+			public Sample Sample { get; } = new Sample();
 
 			/// <summary>
 			/// Start address of the loop/release sample
 			/// </summary>
-			public Sample Loop;
+			public Sample Loop { get; set; }
 		}
 
 		/// <summary>

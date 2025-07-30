@@ -10,24 +10,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class HvlSong
 	{
-		public string Name;
+		public string Name { get; set; }
 
-		public int Restart;
-		public int PositionNr;
-		public int TrackLength;
-		public int TrackNr;
-		public int InstrumentNr;
+		public int Restart { get; set; }
+		public int PositionNr { get; set; }
+		public int TrackLength { get; set; }
+		public int TrackNr { get; set; }
+		public int InstrumentNr { get; set; }
 
-		public int SpeedMultiplier;
-		public int Channels;
+		public int SpeedMultiplier { get; set; }
+		public int Channels { get; set; }
 
-		public int MixGain;
-		public int DefaultStereo;
-		public int DefaultPanningLeft;
-		public int DefaultPanningRight;
+		public int MixGain { get; set; }
+		public int DefaultStereo { get; set; }
+		public int DefaultPanningLeft { get; set; }
+		public int DefaultPanningRight { get; set; }
 
-		public HvlPosition[] Positions;
-		public HvlStep[][] Tracks;
-		public HvlInstrument[] Instruments;
+		public HvlPosition[] Positions { get; set; }
+		public HvlStep[][] Tracks { get; set; }
+		public HvlInstrument[] Instruments { get; set; }
 	}
 }

@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	/// </summary>
 	internal class TrackLine : IDeepCloneable<TrackLine>
 	{
-		public byte Note;		// The note to play
-		public byte Sample;		// The sample
-		public Effect Effect;	// The effect to use
-		public byte EffectArg;	// Effect argument
+		public byte Note { get; set; }		// The note to play
+		public byte Sample { get; set; }	// The sample
+		public Effect Effect { get; set; }	// The effect to use
+		public byte EffectArg { get; set; }	// Effect argument
 
 		/********************************************************************/
 		/// <summary>

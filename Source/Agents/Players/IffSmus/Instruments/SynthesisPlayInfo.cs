@@ -12,26 +12,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 	/// </summary>
 	internal class SynthesisPlayInfo : IDeepCloneable<SynthesisPlayInfo>
 	{
-		public ushort MappedNote;
+		public ushort MappedNote { get; set; }
 
-		public short FrequencyCounter;
-		public short FrequencySpeed;
+		public short FrequencyCounter { get; set; }
+		public short FrequencySpeed { get; set; }
 
-		public ushort SampleStartIndex;
-		public ushort PlayingOctave;
+		public ushort SampleStartIndex { get; set; }
+		public ushort PlayingOctave { get; set; }
 
-		public ushort EnvelopeIndex;
-		public int EnvelopeVolume;
+		public ushort EnvelopeIndex { get; set; }
+		public int EnvelopeVolume { get; set; }
 
-		public ushort LfoIndex;
-		public short LfoCounter;
-		public short LfoValue;
+		public ushort LfoIndex { get; set; }
+		public short LfoCounter { get; set; }
+		public short LfoValue { get; set; }
 
-		public short PhaseIndex;
-		public short PhaseDirection;
+		public short PhaseIndex { get; set; }
+		public short PhaseDirection { get; set; }
 
-		public byte Octave;
-		public byte Note;
+		public byte Octave { get; set; }
+		public byte Note { get; set; }
 
 		/********************************************************************/
 		/// <summary>

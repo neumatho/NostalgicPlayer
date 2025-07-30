@@ -13,37 +13,37 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public int ChannelNumber;
+		public int ChannelNumber { get; set; }
 
-		public Sample CurrentSample;
-		public short SampleNumber;
-		public sbyte[] SampleData;
-		public uint SampleStartOffset;
-		public uint SampleCalculateOffset;
-		public ushort SampleOneshotLength;
-		public uint SampleLoopStart;
-		public ushort SampleLoopLength;
-		public uint SampleTotalLength;
+		public Sample CurrentSample { get; set; }
+		public short SampleNumber { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint SampleStartOffset { get; set; }
+		public uint SampleCalculateOffset { get; set; }
+		public ushort SampleOneshotLength { get; set; }
+		public uint SampleLoopStart { get; set; }
+		public ushort SampleLoopLength { get; set; }
+		public uint SampleTotalLength { get; set; }
 
-		public ushort Volume;
-		public ushort NoteIndex;
-		public bool RetrigSample;
+		public ushort Volume { get; set; }
+		public ushort NoteIndex { get; set; }
+		public bool RetrigSample { get; set; }
 
-		public int DetuneIndex;
+		public int DetuneIndex { get; set; }
 
-		public Track Track;
-		public uint TrackPosition;
-		public short RowsLeftToSkip;
+		public Track Track { get; set; }
+		public uint TrackPosition { get; set; }
+		public short RowsLeftToSkip { get; set; }
 
-		public short PortamentoTicks;
-		public uint PortamentoNote;
-		public ushort PortamentoEndNote;
+		public short PortamentoTicks { get; set; }
+		public uint PortamentoNote { get; set; }
+		public ushort PortamentoEndNote { get; set; }
 
-		public uint VolumeDownVolume;
-		public ushort VolumeDownSpeed;
+		public uint VolumeDownVolume { get; set; }
+		public ushort VolumeDownSpeed { get; set; }
 
-		public SoundEffectState SoundEffectState;
-		public LfoState[] LfoStates = new LfoState[4];
+		public SoundEffectState SoundEffectState { get; set; }
+		public LfoState[] LfoStates { get; set; } = new LfoState[4];
 
 		/********************************************************************/
 		/// <summary>

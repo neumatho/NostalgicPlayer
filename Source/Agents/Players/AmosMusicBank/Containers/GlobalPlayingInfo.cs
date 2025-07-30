@@ -13,10 +13,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort MuCpt;
-		public ushort MuTempo;
+		public ushort MuCpt { get; set; }
+		public ushort MuTempo { get; set; }
 
-		public VoiceInfo[] VoiceInfo;
+		public VoiceInfo[] VoiceInfo { get; set; }
 
 		/********************************************************************/
 		/// <summary>

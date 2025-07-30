@@ -10,13 +10,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;			// The name of the sample
-		public uint Length;			// Length
-		public uint LoopStart;		// Loop start offset
-		public uint LoopLength;		// Loop length
-		public byte Volume;			// The volume (0-64)
-		public SampleControlFlag ControlByte;
-		public byte FineTune;		// Fine tune (0-15)
-		public sbyte[] Data;		// Sample data
+		public string Name { get; set; }			// The name of the sample
+		public uint Length { get; set; }			// Length
+		public uint LoopStart { get; set; }			// Loop start offset
+		public uint LoopLength { get; set; }		// Loop length
+		public byte Volume { get; set; }			// The volume (0-64)
+		public SampleControlFlag ControlByte { get; set; }
+		public byte FineTune { get; set; }			// Fine tune (0-15)
+		public sbyte[] Data { get; set; }			// Sample data
 	}
 }

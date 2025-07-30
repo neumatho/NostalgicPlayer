@@ -10,14 +10,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public ushort OneShotLength;
-		public ushort RepeatLength;
-		public sbyte SampleNumber;
-		public byte Volume;
-		public byte VibratoDelay;
-		public byte VibratoSpeed;
-		public byte VibratoLevel;
-		public byte PortamentoSpeed;
+		public string Name { get; set; }
+		public ushort OneShotLength { get; set; }
+		public ushort RepeatLength { get; set; }
+		public sbyte SampleNumber { get; set; }
+		public byte Volume { get; set; }
+		public byte VibratoDelay { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoLevel { get; set; }
+		public byte PortamentoSpeed { get; set; }
 	}
 }

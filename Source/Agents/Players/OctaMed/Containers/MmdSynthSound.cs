@@ -10,13 +10,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	/// </summary>
 	internal class MmdSynthSound
 	{
-		public byte Decay;			// Only used in separate instruments
-		public ushort Rpt;			// -""-
-		public ushort RptLen;		// -""-
-		public ushort VolTblLen;
-		public ushort WfTblLen;
-		public byte VolSpeed;
-		public byte WfSpeed;
-		public ushort NumWfs;		// Number of waveforms
+		public byte Decay { get; set; }			// Only used in separate instruments
+		public ushort Rpt { get; set; }			// -""-
+		public ushort RptLen { get; set; }		// -""-
+		public ushort VolTblLen { get; set; }
+		public ushort WfTblLen { get; set; }
+		public byte VolSpeed { get; set; }
+		public byte WfSpeed { get; set; }
+		public ushort NumWfs { get; set; }		// Number of waveforms
 	}
 }

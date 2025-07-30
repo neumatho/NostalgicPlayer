@@ -12,10 +12,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public ushort Timer;
-		public uint TrackPos;
-		public uint PosCounter;
-		public bool BreakFlag;
+		public ushort Timer { get; set; }
+		public uint TrackPos { get; set; }
+		public uint PosCounter { get; set; }
+		public bool BreakFlag { get; set; }
 
 		/********************************************************************/
 		/// <summary>

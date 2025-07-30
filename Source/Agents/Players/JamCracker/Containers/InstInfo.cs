@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 	/// </summary>
 	internal class InstInfo
 	{
-		public byte[] Name = new byte[32];
-		public byte Flags;
-		public uint Size;
-		public sbyte[] Address;
+		public byte[] Name { get; } = new byte[32];
+		public byte Flags { get; set; }
+		public uint Size { get; set; }
+		public sbyte[] Address { get; set; }
 	}
 }

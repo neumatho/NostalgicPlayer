@@ -13,18 +13,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class Instrument : IDeepCloneable<Instrument>
 	{
-		public int SampleNumber;
-		public int VibratoNumber;
-		public InstrumentType Type;
-		public byte PhaseSpeed;
-		public byte PhaseLengthInWords;
-		public byte VibratoSpeed;
-		public byte VibratoDepth;
-		public byte VibratoDelay;
-		public AdsrPoint[] Adsr = ArrayHelper.InitializeArray<AdsrPoint>(4);
-		public sbyte PhaseValue;
-		public bool PhaseDirection;
-		public byte PhasePosition;
+		public int SampleNumber { get; set; }
+		public int VibratoNumber { get; set; }
+		public InstrumentType Type { get; set; }
+		public byte PhaseSpeed { get; set; }
+		public byte PhaseLengthInWords { get; set; }
+		public byte VibratoSpeed { get; set; }
+		public byte VibratoDepth { get; set; }
+		public byte VibratoDelay { get; set; }
+		public AdsrPoint[] Adsr { get; set; } = ArrayHelper.InitializeArray<AdsrPoint>(4);
+		public sbyte PhaseValue { get; set; }
+		public bool PhaseDirection { get; set; }
+		public byte PhasePosition { get; set; }
 
 		/********************************************************************/
 		/// <summary>

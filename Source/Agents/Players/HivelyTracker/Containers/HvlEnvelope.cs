@@ -12,16 +12,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 	/// </summary>
 	internal class HvlEnvelope : IDeepCloneable<HvlEnvelope>
 	{
-		public int AFrames;
-		public int AVolume;
+		public int AFrames { get; set; }
+		public int AVolume { get; set; }
 
-		public int DFrames;
-		public int DVolume;
+		public int DFrames { get; set; }
+		public int DVolume { get; set; }
 
-		public int SFrames;
+		public int SFrames { get; set; }
 
-		public int RFrames;
-		public int RVolume;
+		public int RFrames { get; set; }
+		public int RVolume { get; set; }
 
 		/********************************************************************/
 		/// <summary>

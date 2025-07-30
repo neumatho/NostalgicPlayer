@@ -14,56 +14,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger.Containers
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
 		// Position information
-		public ushort StartTrackRow;
-		public sbyte SoundTranspose;
-		public sbyte NoteTranspose;
+		public ushort StartTrackRow { get; set; }
+		public sbyte SoundTranspose { get; set; }
+		public sbyte NoteTranspose { get; set; }
 
 		// Track row information
-		public byte Note;
-		public byte Instrument;
-		public bool DisableSoundTranspose;
-		public bool DisableNoteTranspose;
-		public byte Arpeggio;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Note { get; set; }
+		public byte Instrument { get; set; }
+		public bool DisableSoundTranspose { get; set; }
+		public bool DisableNoteTranspose { get; set; }
+		public byte Arpeggio { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 
-		public ushort TransposedNote;
-		public ushort PreviousTransposedNote;
+		public ushort TransposedNote { get; set; }
+		public ushort PreviousTransposedNote { get; set; }
 
-		public InstrumentType InstrumentType;
-		public Instrument InstrumentInfo;
-		public ushort TransposedInstrument;
+		public InstrumentType InstrumentType { get; set; }
+		public Instrument InstrumentInfo { get; set; }
+		public ushort TransposedInstrument { get; set; }
 
-		public ushort CurrentVolume;
-		public short VolumeSlideSpeed;
+		public ushort CurrentVolume { get; set; }
+		public short VolumeSlideSpeed { get; set; }
 
-		public ushort VibratoPosition;
-		public ushort VibratoDelay;
-		public ushort VibratoSpeed;
-		public ushort VibratoLevel;
+		public ushort VibratoPosition { get; set; }
+		public ushort VibratoDelay { get; set; }
+		public ushort VibratoSpeed { get; set; }
+		public ushort VibratoLevel { get; set; }
 
-		public ushort PortamentoSpeed;
-		public ushort PortamentoPeriod;
+		public ushort PortamentoSpeed { get; set; }
+		public ushort PortamentoPeriod { get; set; }
 
-		public ushort ArpeggioPosition;
+		public ushort ArpeggioPosition { get; set; }
 
-		public short SlideSpeed;
-		public short SlideValue;
+		public short SlideSpeed { get; set; }
+		public short SlideValue { get; set; }
 
-		public ushort AdsrPosition;
-		public ushort AdsrDelayCounter;
-		public ushort SustainDelayCounter;
+		public ushort AdsrPosition { get; set; }
+		public ushort AdsrDelayCounter { get; set; }
+		public ushort SustainDelayCounter { get; set; }
 
-		public ushort AmfPosition;
-		public ushort AmfDelayCounter;
+		public ushort AmfPosition { get; set; }
+		public ushort AmfDelayCounter { get; set; }
 
-		public ushort SynthEffectPosition;
-		public ushort SynthEffectWavePosition;
-		public ushort EffectDelayCounter;
+		public ushort SynthEffectPosition { get; set; }
+		public ushort SynthEffectWavePosition { get; set; }
+		public ushort EffectDelayCounter { get; set; }
 
-		public byte Flag;
+		public byte Flag { get; set; }
 
-		public sbyte[] WaveformBuffer = new sbyte[128];
+		public sbyte[] WaveformBuffer { get; set; } = new sbyte[128];
 
 		/********************************************************************/
 		/// <summary>

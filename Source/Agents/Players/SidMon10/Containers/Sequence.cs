@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 	/// </summary>
 	internal class Sequence
 	{
-		public uint TrackNumber;
-		public sbyte Transpose;
+		public uint TrackNumber { get; set; }
+		public sbyte Transpose { get; set; }
 	}
 }

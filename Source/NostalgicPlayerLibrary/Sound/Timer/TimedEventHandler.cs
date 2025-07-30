@@ -19,9 +19,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		#region EventItem
 		private readonly struct EventItem : IComparable<EventItem>
 		{
-			public readonly long ExecutionTime;
-			public readonly ITimedEvent TimedEvent;
-
 			/********************************************************************/
 			/// <summary>
 			/// Constructor
@@ -31,6 +28,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 			{
 				ExecutionTime = executionTime;
 				TimedEvent = timedEvent;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public long ExecutionTime
+			{
+				get;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public ITimedEvent TimedEvent
+			{
+				get;
 			}
 
 

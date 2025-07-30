@@ -38,18 +38,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				D = d;
 			}
 
-			public c_int S;
-			public c_int M;
-			public c_int D;
+			public c_int S { get; }
+			public c_int M { get; }
+			public c_int D { get; }
 		}
 		#endregion
 
 		#region Midi_Stream class
 		private class Midi_Stream
 		{
-			public CPointer<sbyte> Pos;
-			public c_int Buffer;
-			public c_int Param;
+			public ref CPointer<sbyte> Pos => ref _Pos;
+			private CPointer<sbyte> _Pos;
+			public c_int Buffer { get; set; }
+			public c_int Param { get; set; }
 		}
 		#endregion
 

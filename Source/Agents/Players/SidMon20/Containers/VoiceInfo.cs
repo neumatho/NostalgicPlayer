@@ -12,41 +12,41 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public Sequence[] SequenceList;
-		public sbyte[] SampleData;
-		public uint SampleLength;
-		public ushort SamplePeriod;
-		public short SampleVolume;
-		public EnvelopeState EnvelopeState;
-		public ushort SustainCounter;
-		public Instrument Instrument;
-		public sbyte[] LoopSample;
-		public uint LoopOffset;
-		public uint LoopLength;
-		public ushort OriginalNote;
+		public Sequence[] SequenceList { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint SampleLength { get; set; }
+		public ushort SamplePeriod { get; set; }
+		public short SampleVolume { get; set; }
+		public EnvelopeState EnvelopeState { get; set; }
+		public ushort SustainCounter { get; set; }
+		public Instrument Instrument { get; set; }
+		public sbyte[] LoopSample { get; set; }
+		public uint LoopOffset { get; set; }
+		public uint LoopLength { get; set; }
+		public ushort OriginalNote { get; set; }
 
-		public ushort WaveListDelay;
-		public short WaveListOffset;
-		public ushort ArpeggioDelay;
-		public short ArpeggioOffset;
-		public ushort VibratoDelay;
-		public short VibratoOffset;
+		public ushort WaveListDelay { get; set; }
+		public short WaveListOffset { get; set; }
+		public ushort ArpeggioDelay { get; set; }
+		public short ArpeggioOffset { get; set; }
+		public ushort VibratoDelay { get; set; }
+		public short VibratoOffset { get; set; }
 
-		public ushort CurrentNote;
-		public ushort CurrentInstrument;
-		public ushort CurrentEffect;
-		public ushort CurrentEffectArg;
+		public ushort CurrentNote { get; set; }
+		public ushort CurrentInstrument { get; set; }
+		public ushort CurrentEffect { get; set; }
+		public ushort CurrentEffectArg { get; set; }
 
-		public ushort PitchBendCounter;
-		public short InstrumentTranspose;
-		public short PitchBendValue;
-		public ushort NoteSlideNote;
-		public short NoteSlideSpeed;
-		public int TrackPosition;
-		public byte[] CurrentTrack;
-		public ushort EmptyNotesCounter;
-		public short NoteTranspose;
-		public ushort CurrentSample;
+		public ushort PitchBendCounter { get; set; }
+		public short InstrumentTranspose { get; set; }
+		public short PitchBendValue { get; set; }
+		public ushort NoteSlideNote { get; set; }
+		public short NoteSlideSpeed { get; set; }
+		public int TrackPosition { get; set; }
+		public byte[] CurrentTrack { get; set; }
+		public ushort EmptyNotesCounter { get; set; }
+		public short NoteTranspose { get; set; }
+		public ushort CurrentSample { get; set; }
 
 		/********************************************************************/
 		/// <summary>

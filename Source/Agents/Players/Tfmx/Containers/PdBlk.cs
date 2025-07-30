@@ -12,11 +12,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 	/// </summary>
 	internal class PdBlk : IDeepCloneable<PdBlk>
 	{
-		public ushort FirstPos;
-		public ushort LastPos;
-		public ushort CurrPos;
-		public ushort PreScale;
-		public Pdb[] p = ArrayHelper.InitializeArray<Pdb>(8);
+		public ushort FirstPos { get; set; }
+		public ushort LastPos { get; set; }
+		public ushort CurrPos { get; set; }
+		public ushort PreScale { get; set; }
+		public Pdb[] P { get; set; } = ArrayHelper.InitializeArray<Pdb>(8);
 
 		/********************************************************************/
 		/// <summary>
@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 		{
 			PdBlk clone = (PdBlk)MemberwiseClone();
 
-			clone.p = ArrayHelper.CloneObjectArray(p);
+			clone.P = ArrayHelper.CloneObjectArray(P);
 
 			return clone;
 		}

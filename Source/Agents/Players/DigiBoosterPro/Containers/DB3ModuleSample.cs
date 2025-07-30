@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class DB3ModuleSample
 	{
-		public int32_t Frames;
-		public int16_t[] Data16;
-		public int8_t[] Data8;
+		public int32_t Frames { get; set; }
+		public int16_t[] Data16 { get; set; }
+		public int8_t[] Data8 { get; set; }
 	}
 }

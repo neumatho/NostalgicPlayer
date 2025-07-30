@@ -12,47 +12,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public int ChannelNumber;
+		public int ChannelNumber { get; set; }
 
-		public PositionList PositionList;
-		public int TrackListPosition;
-		public byte[] TrackData;
-		public int TrackDataPosition;
-		public ushort TrackRepeatCounter;
-		public byte WaitCounter;
+		public PositionList PositionList { get; set; }
+		public int TrackListPosition { get; set; }
+		public byte[] TrackData { get; set; }
+		public int TrackDataPosition { get; set; }
+		public ushort TrackRepeatCounter { get; set; }
+		public byte WaitCounter { get; set; }
 
-		public Instrument Instrument;
-		public short InstrumentNumber;
+		public Instrument Instrument { get; set; }
+		public short InstrumentNumber { get; set; }
 
-		public sbyte[] ArpeggioValues;
-		public ushort ArpeggioPosition;
+		public sbyte[] ArpeggioValues { get; set; }
+		public ushort ArpeggioPosition { get; set; }
 
-		public byte CurrentNote;
-		public short Transpose;
-		public ushort Period;
+		public byte CurrentNote { get; set; }
+		public short Transpose { get; set; }
+		public ushort Period { get; set; }
 
-		public ushort PortamentoEndPeriod;
-		public byte PortamentoIncrement;
+		public ushort PortamentoEndPeriod { get; set; }
+		public byte PortamentoIncrement { get; set; }
 
-		public byte VibratoDelay;
-		public ushort VibratoPosition;
+		public byte VibratoDelay { get; set; }
+		public ushort VibratoPosition { get; set; }
 
-		public ushort AdsrState;
-		public byte AdsrSpeed;
-		public sbyte AdsrSpeedCounter;
-		public byte Volume;
+		public ushort AdsrState { get; set; }
+		public byte AdsrSpeed { get; set; }
+		public sbyte AdsrSpeedCounter { get; set; }
+		public byte Volume { get; set; }
 
-		public byte PhaseSpeedCounter;
+		public byte PhaseSpeedCounter { get; set; }
 
 		// These are used to hold the Amiga hardware registers.
 		// It is needed, because the original player first set
 		// the hardware registers at the next frame. This is
 		// needed to avoid some clicks in the sound
-		public bool SetHardware;
-		public short SampleNumber;
-		public sbyte[] SampleData;
-		public uint SampleLength;
-		public bool SetLoop;
+		public bool SetHardware { get; set; }
+		public short SampleNumber { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint SampleLength { get; set; }
+		public bool SetLoop { get; set; }
 
 		/********************************************************************/
 		/// <summary>

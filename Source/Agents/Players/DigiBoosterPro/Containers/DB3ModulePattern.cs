@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class DB3ModulePattern
 	{
-		public uint16_t NumberOfRows;
-		public DB3ModuleEntry[] Pattern;		// A table
+		public uint16_t NumberOfRows { get; set; }
+		public DB3ModuleEntry[] Pattern { get; set; }	// A table
 	}
 }

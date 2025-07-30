@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro.Containers
 	/// </summary>
 	internal class Envelope
 	{
-		public readonly EnvelopePoint[] Points = new EnvelopePoint[6];
+		public EnvelopePoint[] Points { get; } = new EnvelopePoint[6];
 	}
 }

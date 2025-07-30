@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish.Containers
 	/// </summary>
 	internal class SongInfo
 	{
-		public ushort[] PositionLists = new ushort[4];
+		public ushort[] PositionLists { get; } = new ushort[4];
 	}
 }

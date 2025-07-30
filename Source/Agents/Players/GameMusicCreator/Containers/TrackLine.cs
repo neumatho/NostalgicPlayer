@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator.Containers
 	/// </summary>
 	internal class TrackLine
 	{
-		public ushort Period;	// The note to play
-		public byte Sample;		// The sample
-		public Effect Effect;	// The effect to use
-		public byte EffectArg;	// Effect argument
+		public ushort Period { get; set; }		// The note to play
+		public byte Sample { get; set; }		// The sample
+		public Effect Effect { get; set; }		// The effect to use
+		public byte EffectArg { get; set; }		// Effect argument
 	}
 }

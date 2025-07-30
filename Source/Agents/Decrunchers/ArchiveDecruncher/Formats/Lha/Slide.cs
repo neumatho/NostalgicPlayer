@@ -12,9 +12,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 	{
 		private class DecodeOption
 		{
-			public Func<ushort> DecodeC;
-			public Func<ushort> DecodeP;
-			public Action DecodeStart;
+			public Func<ushort> DecodeC { get; set; }
+			public Func<ushort> DecodeP { get; set; }
+			public Action DecodeStart { get; set; }
 		}
 
 		private int origSize;

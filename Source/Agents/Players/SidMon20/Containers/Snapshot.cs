@@ -13,10 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-		public Instrument[] Instruments;
-		public SampleNegateInfo[] SampleNegateInfo;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -27,6 +23,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20.Containers
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Instruments = ArrayHelper.CloneObjectArray(instruments);
 			SampleNegateInfo = sampleNegateInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Instrument[] Instruments
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public SampleNegateInfo[] SampleNegateInfo
+		{
+			get;
 		}
 	}
 }

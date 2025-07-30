@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public string Name;
-		public IInstrumentFormat Format;
+		public string Name { get; set; }
+		public IInstrumentFormat Format { get; set; }
 	}
 }

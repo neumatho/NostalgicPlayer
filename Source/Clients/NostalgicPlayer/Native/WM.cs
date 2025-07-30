@@ -8,6 +8,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Native
 	/// <summary>
 	/// Different Windows messages
 	/// </summary>
+	// ReSharper disable InconsistentNaming
 	public enum WM : uint
 	{
 		/// <summary></summary>
@@ -16,4 +17,5 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Native
 		/// <summary></summary>
 		MOUSEWHEEL = 0x020A
 	}
+	// ReSharper restore InconsistentNaming
 }

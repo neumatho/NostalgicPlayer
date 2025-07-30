@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers
 	/// </summary>
 	internal class Pattern
 	{
-		public byte NumberOfRows;
-		public TrackLine[,] Tracks;
+		public byte NumberOfRows { get; set; }
+		public TrackLine[,] Tracks { get; set; }
 	}
 }

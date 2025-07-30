@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class DB3ModuleSampleInstrument : DB3ModuleInstrument
 	{
-		public uint32_t C3Frequency;
-		public uint16_t SampleNumber;
-		public int32_t LoopStart;
-		public int32_t LoopLength;
-		public InstrumentFlag Flags;
+		public uint32_t C3Frequency { get; set; }
+		public uint16_t SampleNumber { get; set; }
+		public int32_t LoopStart { get; set; }
+		public int32_t LoopLength { get; set; }
+		public InstrumentFlag Flags { get; set; }
 	}
 }

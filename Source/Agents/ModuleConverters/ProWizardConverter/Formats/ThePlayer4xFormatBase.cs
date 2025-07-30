@@ -17,14 +17,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// </summary>
 	internal abstract class ThePlayer4xFormatBase : ProWizardConverterWorker31SamplesBase
 	{
+		// ReSharper disable InconsistentNaming
 		private class P4xxChannel
 		{
-			public byte[] P4xPatternData = new byte[3];
-			public sbyte P4xInfo;
-			public ushort RepeatLines;
-			public long OldPosition = -1;
-			public byte[] ProPatternData = new byte[4];
+			public byte[] P4xPatternData { get; } = new byte[3];
+			public sbyte P4xInfo { get; set; }
+			public ushort RepeatLines { get; set; }
+			public long OldPosition { get; set; } = -1;
+			public byte[] ProPatternData { get; } = new byte[4];
 		}
+		// ReSharper restore InconsistentNaming
 
 		private byte numberOfSamples;
 		private byte numberOfPositions;

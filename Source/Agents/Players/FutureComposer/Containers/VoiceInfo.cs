@@ -12,36 +12,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
-		public sbyte PitchBendSpeed;
-		public byte PitchBendTime;
-		public ushort SongPos;
-		public sbyte CurNote;
-		public byte[] VolumeSeq;
-		public byte VolumeBendSpeed;
-		public byte VolumeBendTime;
-		public ushort VolumeSeqPos;
-		public sbyte SoundTranspose;
-		public byte VolumeCounter;
-		public byte VolumeSpeed;
-		public byte VolSusCounter;
-		public byte SusCounter;
-		public sbyte VibSpeed;
-		public sbyte VibDepth;
-		public sbyte VibValue;
-		public sbyte VibDelay;
-		public Pattern CurPattern;
-		public bool VolBendFlag;
-		public bool PortFlag;
-		public ushort PatternPos;
-		public bool PitchBendFlag;
-		public sbyte PattTranspose;
-		public sbyte Transpose;
-		public sbyte Volume;
-		public byte VibFlag;
-		public byte Portamento;
-		public ushort FrequencySeqStartOffset;
-		public ushort FrequencySeqPos;
-		public ushort Pitch;
+		public sbyte PitchBendSpeed { get; set; }
+		public byte PitchBendTime { get; set; }
+		public ushort SongPos { get; set; }
+		public sbyte CurNote { get; set; }
+		public byte[] VolumeSeq { get; set; }
+		public byte VolumeBendSpeed { get; set; }
+		public byte VolumeBendTime { get; set; }
+		public ushort VolumeSeqPos { get; set; }
+		public sbyte SoundTranspose { get; set; }
+		public byte VolumeCounter { get; set; }
+		public byte VolumeSpeed { get; set; }
+		public byte VolSusCounter { get; set; }
+		public byte SusCounter { get; set; }
+		public sbyte VibSpeed { get; set; }
+		public sbyte VibDepth { get; set; }
+		public sbyte VibValue { get; set; }
+		public sbyte VibDelay { get; set; }
+		public Pattern CurPattern { get; set; }
+		public bool VolBendFlag { get; set; }
+		public bool PortFlag { get; set; }
+		public ushort PatternPos { get; set; }
+		public bool PitchBendFlag { get; set; }
+		public sbyte PattTranspose { get; set; }
+		public sbyte Transpose { get; set; }
+		public sbyte Volume { get; set; }
+		public byte VibFlag { get; set; }
+		public byte Portamento { get; set; }
+		public ushort FrequencySeqStartOffset { get; set; }
+		public ushort FrequencySeqPos { get; set; }
+		public ushort Pitch { get; set; }
 
 		/********************************************************************/
 		/// <summary>

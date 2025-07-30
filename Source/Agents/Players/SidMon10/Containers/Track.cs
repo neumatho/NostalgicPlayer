@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10.Containers
 	/// </summary>
 	internal class Track
 	{
-		public TrackRow[] Rows;
+		public TrackRow[] Rows { get; set; }
 	}
 }

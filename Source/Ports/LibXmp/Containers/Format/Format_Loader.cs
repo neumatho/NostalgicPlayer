@@ -15,10 +15,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Format
 	{
 		public delegate IFormatLoader Create_Delegate(LibXmp libXmp, Xmp_Context ctx);
 
-		public Guid Id;
-		public string Name;
-		public string Description;
-		public Create_Delegate Create;
-		public bool OnlyAvailableInTest;
+		public Guid Id { get; set; }
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public Create_Delegate Create { get; set; }
+		public bool OnlyAvailableInTest { get; set; }
 	}
 }

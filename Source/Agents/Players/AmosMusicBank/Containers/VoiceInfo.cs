@@ -14,26 +14,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank.Containers
 	{
 		public delegate void EffectFunc(VoiceInfo voiceInfo, IChannel channel);
 
-		public int ChannelNumber;
+		public int ChannelNumber { get; set; }
 
-		public ushort[] VoiAdr;		// Track data
-		public int VoiAdrIndex;
-		public int VoiDeb;
-		public Sample VoiInst;
-		public short VoiInstNumber;
-		public int VoiPatDIndex;
-		public PositionList VoiPat;
-		public int VoiPatIndex;
-		public ushort VoiCpt;
-		public ushort VoiRep;
-		public ushort VoiNote;
-		public ushort VoiDVol;
-		public ushort VoiVol;
-		public EffectFunc VoiEffect;
-		public short VoiValue;
-		public ushort VoiPToTo;
-		public bool VoiPTone;
-		public sbyte VoiVib;
+		public ushort[] VoiAdr { get; set; }	// Track data
+		public int VoiAdrIndex { get; set; }
+		public int VoiDeb { get; set; }
+		public Sample VoiInst { get; set; }
+		public short VoiInstNumber { get; set; }
+		public int VoiPatDIndex { get; set; }
+		public PositionList VoiPat { get; set; }
+		public int VoiPatIndex { get; set; }
+		public ushort VoiCpt { get; set; }
+		public ushort VoiRep { get; set; }
+		public ushort VoiNote { get; set; }
+		public ushort VoiDVol { get; set; }
+		public ushort VoiVol { get; set; }
+		public EffectFunc VoiEffect { get; set; }
+		public short VoiValue { get; set; }
+		public ushort VoiPToTo { get; set; }
+		public bool VoiPTone { get; set; }
+		public sbyte VoiVib { get; set; }
 
 		/********************************************************************/
 		/// <summary>

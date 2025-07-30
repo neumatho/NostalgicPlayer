@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med.Containers
 	/// </summary>
 	internal class TrackLine
 	{
-		public byte Note;
-		public byte SampleNumber;
-		public Effect Effect;
-		public byte EffectArg;
+		public byte Note { get; set; }
+		public byte SampleNumber { get; set; }
+		public Effect Effect { get; set; }
+		public byte EffectArg { get; set; }
 	}
 }

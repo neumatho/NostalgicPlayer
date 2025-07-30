@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro.Containers
 	/// </summary>
 	internal class EnvelopePoint
 	{
-		public byte TicksToWait;
-		public sbyte VolumeIncrementValue;
-		public byte TimesToRepeat;
+		public byte TicksToWait { get; set; }
+		public sbyte VolumeIncrementValue { get; set; }
+		public byte TimesToRepeat { get; set; }
 	}
 }

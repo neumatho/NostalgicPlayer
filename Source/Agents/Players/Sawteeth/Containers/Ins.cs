@@ -10,31 +10,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers
 	/// </summary>
 	internal class Ins
 	{
-		public string Name;
+		public string Name { get; set; }
 
-		public InsStep[] Steps;
+		public InsStep[] Steps { get; set; }
 
 		// Filter - Amp
-		public TimeLev[] Amp;
-		public TimeLev[] Filter;
+		public TimeLev[] Amp { get; set; }
+		public TimeLev[] Filter { get; set; }
 
-		public byte AmpPoints;
-		public byte FilterPoints;
+		public byte AmpPoints { get; set; }
+		public byte FilterPoints { get; set; }
 
-		public byte FilterMode;
-		public byte ClipMode;
-		public byte Boost;
+		public byte FilterMode { get; set; }
+		public byte ClipMode { get; set; }
+		public byte Boost { get; set; }
 
-		public byte Sps;				// PAL-screen per step
-		public byte Res;				// Resonance
+		public byte Sps { get; set; }				// PAL-screen per step
+		public byte Res { get; set; }				// Resonance
 
-		public byte VibS;
-		public byte VibD;
+		public byte VibS { get; set; }
+		public byte VibD { get; set; }
 
-		public byte PwmS;
-		public byte PwmD;
+		public byte PwmS { get; set; }
+		public byte PwmD { get; set; }
 
-		public byte Loop;
-		public byte Len;
+		public byte Loop { get; set; }
+		public byte Len { get; set; }
 	}
 }

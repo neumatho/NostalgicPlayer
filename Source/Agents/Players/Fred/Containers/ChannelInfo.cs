@@ -13,43 +13,43 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 	/// </summary>
 	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public int ChanNum;
-		public sbyte[] PositionTable;
-		public byte[] TrackTable;
-		public ushort Position;
-		public ushort TrackPosition;
-		public ushort TrackDuration;
-		public byte TrackNote;
-		public ushort TrackPeriod;
-		public short TrackVolume;
-		public Instrument Instrument;
-		public VibFlags VibFlags;
-		public byte VibDelay;
-		public sbyte VibSpeed;
-		public sbyte VibAmpl;
-		public sbyte VibValue;
-		public bool PortRunning;
-		public ushort PortDelay;
-		public ushort PortLimit;
-		public byte PortTargetNote;
-		public ushort PortStartPeriod;
-		public short PeriodDiff;
-		public ushort PortCounter;
-		public ushort PortSpeed;
-		public EnvelopeState EnvState;
-		public byte SustainDelay;
-		public byte ArpPosition;
-		public byte ArpSpeed;
-		public bool PulseWay;
-		public byte PulsePosition;
-		public byte PulseDelay;
-		public byte PulseSpeed;
-		public byte PulseShot;
-		public bool BlendWay;
-		public ushort BlendPosition;
-		public byte BlendDelay;
-		public byte BlendShot;
-		public sbyte[] SynthSample;
+		public int ChanNum { get; set; }
+		public sbyte[] PositionTable { get; set; }
+		public byte[] TrackTable { get; set; }
+		public ushort Position { get; set; }
+		public ushort TrackPosition { get; set; }
+		public ushort TrackDuration { get; set; }
+		public byte TrackNote { get; set; }
+		public ushort TrackPeriod { get; set; }
+		public short TrackVolume { get; set; }
+		public Instrument Instrument { get; set; }
+		public VibFlags VibFlags { get; set; }
+		public byte VibDelay { get; set; }
+		public sbyte VibSpeed { get; set; }
+		public sbyte VibAmpl { get; set; }
+		public sbyte VibValue { get; set; }
+		public bool PortRunning { get; set; }
+		public ushort PortDelay { get; set; }
+		public ushort PortLimit { get; set; }
+		public byte PortTargetNote { get; set; }
+		public ushort PortStartPeriod { get; set; }
+		public short PeriodDiff { get; set; }
+		public ushort PortCounter { get; set; }
+		public ushort PortSpeed { get; set; }
+		public EnvelopeState EnvState { get; set; }
+		public byte SustainDelay { get; set; }
+		public byte ArpPosition { get; set; }
+		public byte ArpSpeed { get; set; }
+		public bool PulseWay { get; set; }
+		public byte PulsePosition { get; set; }
+		public byte PulseDelay { get; set; }
+		public byte PulseSpeed { get; set; }
+		public byte PulseShot { get; set; }
+		public bool BlendWay { get; set; }
+		public ushort BlendPosition { get; set; }
+		public byte BlendDelay { get; set; }
+		public byte BlendShot { get; set; }
+		public sbyte[] SynthSample { get; set; }
 
 		/********************************************************************/
 		/// <summary>

@@ -17,11 +17,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Test.Arc
 	{
 		private class ArcInfo
 		{
-			public byte Method;
-			public int CrunchedSize;
-			public int DecrunchedSize;
-			public byte[] CrunchedData;
-			public byte[] DecrunchedData;
+			public byte Method { get; set; }
+			public int CrunchedSize { get; set; }
+			public int DecrunchedSize { get; set; }
+			public byte[] CrunchedData { get; set; }
+			public byte[] DecrunchedData { get; set; }
 		}
 
 		/********************************************************************/

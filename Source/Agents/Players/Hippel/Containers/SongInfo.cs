@@ -10,8 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	/// </summary>
 	internal class SongInfo
 	{
-		public ushort StartPosition;
-		public ushort LastPosition;
-		public ushort StartSpeed;
+		public ushort StartPosition { get; set; }
+		public ushort LastPosition { get; set; }
+		public ushort StartSpeed { get; set; }
 	}
 }

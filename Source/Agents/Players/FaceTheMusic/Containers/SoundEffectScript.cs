@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// </summary>
 	internal class SoundEffectScript
 	{
-		public SoundEffectLine[] Script;
+		public SoundEffectLine[] Script { get; set; }
 	}
 }

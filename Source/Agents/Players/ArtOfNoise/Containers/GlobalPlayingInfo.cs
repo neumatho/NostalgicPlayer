@@ -13,26 +13,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise.Containers
 	/// </summary>
 	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
 	{
-		public byte Tempo;					// Tempo 32-255
-		public byte Speed;					// 0 = Off, 1-255
-		public byte FrameCnt;				// 0-speed
+		public byte Tempo { get; set; }					// Tempo 32-255
+		public byte Speed { get; set; }					// 0 = Off, 1-255
+		public byte FrameCnt { get; set; }				// 0-speed
 
-		public bool PatternBreak;
-		public byte PatCnt;
-		public sbyte PatDelayCnt;
+		public bool PatternBreak { get; set; }
+		public byte PatCnt { get; set; }
+		public sbyte PatDelayCnt { get; set; }
 
-		public bool LoopFlag;
-		public byte LoopPoint;
-		public byte LoopCnt;
+		public bool LoopFlag { get; set; }
+		public byte LoopPoint { get; set; }
+		public byte LoopCnt { get; set; }
 
-		public byte Position;				// Actual position while replaying
-		public byte NewPosition;
-		public byte CurrentPattern;
+		public byte Position { get; set; }				// Actual position while replaying
+		public byte NewPosition { get; set; }
+		public byte CurrentPattern { get; set; }
 
-		public bool NoiseAvoid;
-		public bool Oversize;				// Play samples > 128 kb
+		public bool NoiseAvoid { get; set; }
+		public bool Oversize { get; set; }				// Play samples > 128 kb
 
-		public byte[] Event;
+		public byte[] Event { get; set; }
 
 		/********************************************************************/
 		/// <summary>

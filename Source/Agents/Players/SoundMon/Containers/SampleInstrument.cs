@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 	/// </summary>
 	internal class SampleInstrument : Instrument
 	{
-		public string Name;					// Sample name
-		public ushort Length;				// Length of sample
-		public ushort LoopStart;			// Offset to loop start
-		public ushort LoopLength;			// Loop length
-		public sbyte[] Adr;					// Sample data
+		public string Name { get; set; }				// Sample name
+		public ushort Length { get; set; }				// Length of sample
+		public ushort LoopStart { get; set; }			// Offset to loop start
+		public ushort LoopLength { get; set; }			// Loop length
+		public sbyte[] Adr { get; set; }				// Sample data
 	}
 }

@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public SampleType Type;
-		public sbyte[] SampleData;
-		public uint LoopStart;
-		public uint LoopLength;
-		public byte Volume;
+		public string Name { get; set; }
+		public SampleType Type { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public uint LoopStart { get; set; }
+		public uint LoopLength { get; set; }
+		public byte Volume { get; set; }
 	}
 }

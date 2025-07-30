@@ -14,37 +14,37 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish.Containers
 	{
 		public delegate void HandleSample(VoicePlaybackInfo playbackInfo, IChannel channel, Sample sample);
 
-		public Sample PlayingSample;
-		public byte SamplePlayTicksCounter;
+		public Sample PlayingSample { get; set; }
+		public byte SamplePlayTicksCounter { get; set; }
 
-		public ushort NotePeriod;
-		public short FinalVolume;
+		public ushort NotePeriod { get; set; }
+		public short FinalVolume { get; set; }
 
-		public ushort FinalVolumeSlideSpeed;
-		public ushort FinalVolumeSlideSpeedCounter;
-		public short FinalVolumeSlideAddValue;
+		public ushort FinalVolumeSlideSpeed { get; set; }
+		public ushort FinalVolumeSlideSpeedCounter { get; set; }
+		public short FinalVolumeSlideAddValue { get; set; }
 
-		public ushort LoopDelayCounter;
+		public ushort LoopDelayCounter { get; set; }
 
-		public short PortamentoAddValue;
+		public short PortamentoAddValue { get; set; }
 
-		public short SamplePortamentoDuration;
-		public short SamplePortamentoAddValue;
+		public short SamplePortamentoDuration { get; set; }
+		public short SamplePortamentoAddValue { get; set; }
 
-		public ushort SampleVibratoDepth;
-		public short SampleVibratoAddValue;
+		public ushort SampleVibratoDepth { get; set; }
+		public short SampleVibratoAddValue { get; set; }
 
-		public short SamplePeriodAddValue;
+		public short SamplePeriodAddValue { get; set; }
 
-		public HandleSample HandleSampleCallback;
+		public HandleSample HandleSampleCallback { get; set; }
 
 		// These are used to hold the Amiga hardware registers.
 		// It is needed, because the original player sets the hardware
 		// registers but will first enable the DMA on the next frame/tick
-		public bool DmaEnabled;
-		public short SampleNumber;
-		public sbyte[] SampleData;
-		public ushort SampleLength;
+		public bool DmaEnabled { get; set; }
+		public short SampleNumber { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public ushort SampleLength { get; set; }
 
 		/********************************************************************/
 		/// <summary>

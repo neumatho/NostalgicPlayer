@@ -12,33 +12,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 	/// </summary>
 	internal class BpCurrent : IDeepCloneable<BpCurrent>
 	{
-		public bool Restart;
-		public bool UseDefaultVolume;
-		public bool SynthMode;
-		public int SynthOffset;
-		public ushort Period;
-		public byte Volume;
-		public byte Instrument;
-		public byte Note;
-		public byte ArpValue;
-		public sbyte AutoSlide;
-		public byte AutoArp;
-		public ushort EgPtr;
-		public ushort LfoPtr;
-		public ushort AdsrPtr;
-		public ushort ModPtr;
-		public byte EgCount;
-		public byte LfoCount;
-		public byte AdsrCount;
-		public byte ModCount;
-		public byte FxCount;
-		public byte OldEgValue;
-		public byte EgControl;
-		public byte LfoControl;
-		public byte AdsrControl;
-		public byte ModControl;
-		public byte FxControl;
-		public sbyte Vibrato;
+		public bool Restart { get; set; }
+		public bool UseDefaultVolume { get; set; }
+		public bool SynthMode { get; set; }
+		public int SynthOffset { get; set; }
+		public ushort Period { get; set; }
+		public byte Volume { get; set; }
+		public byte Instrument { get; set; }
+		public byte Note { get; set; }
+		public byte ArpValue { get; set; }
+		public sbyte AutoSlide { get; set; }
+		public byte AutoArp { get; set; }
+		public ushort EgPtr { get; set; }
+		public ushort LfoPtr { get; set; }
+		public ushort AdsrPtr { get; set; }
+		public ushort ModPtr { get; set; }
+		public byte EgCount { get; set; }
+		public byte LfoCount { get; set; }
+		public byte AdsrCount { get; set; }
+		public byte ModCount { get; set; }
+		public byte FxCount { get; set; }
+		public byte OldEgValue { get; set; }
+		public byte EgControl { get; set; }
+		public byte LfoControl { get; set; }
+		public byte AdsrControl { get; set; }
+		public byte ModControl { get; set; }
+		public byte FxControl { get; set; }
+		public sbyte Vibrato { get; set; }
 
 		/********************************************************************/
 		/// <summary>

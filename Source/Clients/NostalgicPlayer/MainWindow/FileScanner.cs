@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	{
 		private class QueueInfo
 		{
-			public List<ModuleListItem> Items;
+			public List<ModuleListItem> Items { get; set; }
 		}
 
 		private readonly ModuleListControl moduleListControl;

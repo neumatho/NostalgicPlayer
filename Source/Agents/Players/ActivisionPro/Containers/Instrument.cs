@@ -10,19 +10,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro.Containers
 	/// </summary>
 	internal class Instrument
 	{
-		public byte SampleNumber;
-		public byte EnvelopeNumber;
-		public byte Volume;
-		public byte EnabledEffectFlags;
-		public byte PortamentoAdd;
-		public short FineTune;
-		public byte StopResetEffectDelay;
-		public byte SampleNumber2;
-		public ushort SampleStartOffset;
-		public readonly sbyte[] ArpeggioTable = new sbyte[4];
-		public byte FixedOrTransposedNote;
-		public sbyte Transpose;
-		public byte VibratoNumber;
-		public byte VibratoDelay;
+		public byte SampleNumber { get; set; }
+		public byte EnvelopeNumber { get; set; }
+		public byte Volume { get; set; }
+		public byte EnabledEffectFlags { get; set; }
+		public byte PortamentoAdd { get; set; }
+		public short FineTune { get; set; }
+		public byte StopResetEffectDelay { get; set; }
+		public byte SampleNumber2 { get; set; }
+		public ushort SampleStartOffset { get; set; }
+		public sbyte[] ArpeggioTable { get; } = new sbyte[4];
+		public byte FixedOrTransposedNote { get; set; }
+		public sbyte Transpose { get; set; }
+		public byte VibratoNumber { get; set; }
+		public byte VibratoDelay { get; set; }
 	}
 }

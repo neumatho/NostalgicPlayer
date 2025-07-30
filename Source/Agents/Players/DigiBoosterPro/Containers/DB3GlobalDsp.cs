@@ -10,10 +10,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 	/// </summary>
 	internal class DB3GlobalDsp
 	{
-		public uint32_t[] EffectMask;			// One longword per track, bit 0 is for global echo
-		public uint8_t EchoDelay;				// 2 ms units
-		public uint8_t EchoFeedback;
-		public uint8_t EchoMix;
-		public uint8_t EchoCross;
+		public uint32_t[] EffectMask { get; set; }		// One longword per track, bit 0 is for global echo
+		public uint8_t EchoDelay { get; set; }			// 2 ms units
+		public uint8_t EchoFeedback { get; set; }
+		public uint8_t EchoMix { get; set; }
+		public uint8_t EchoCross { get; set; }
 	}
 }

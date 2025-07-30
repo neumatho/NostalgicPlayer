@@ -13,11 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 	/// </summary>
 	internal class Snapshot : ISnapshot
 	{
-		public GlobalPlayingInfo PlayingInfo;
-		public VoiceInfo[] Voices;
-		public Instrument[] Instruments;
-		public sbyte[][] SynthSamples;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -29,6 +24,54 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 			Voices = ArrayHelper.CloneObjectArray(voices);
 			Instruments = ArrayHelper.CloneObjectArray(instruments);
 			SynthSamples = ArrayHelper.CloneArray(synthSamples);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public GlobalPlayingInfo PlayingInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public VoiceInfo[] Voices
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Instrument[] Instruments
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public sbyte[][] SynthSamples
+		{
+			get;
 		}
 	}
 }

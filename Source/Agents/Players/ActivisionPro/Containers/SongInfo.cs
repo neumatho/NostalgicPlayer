@@ -10,8 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro.Containers
 	/// </summary>
 	internal class SongInfo
 	{
-//		public readonly Position[][] PositionLists = new Position[4][];
-		public readonly byte[][] PositionLists = new byte[4][];
-		public readonly sbyte[] SpeedVariation = new sbyte[8];
+		public byte[][] PositionLists { get; } = new byte[4][];
+		public sbyte[] SpeedVariation { get; } = new sbyte[8];
 	}
 }

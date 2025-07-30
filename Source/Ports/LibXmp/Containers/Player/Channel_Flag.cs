@@ -10,6 +10,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 	[Flags]
 	internal enum Channel_Flag : c_int
 	{
+		// ReSharper disable InconsistentNaming
 		None = 0,
 		Vol_Slide = 1 << 0,
 		Pan_Slide = 1 << 1,
@@ -40,5 +41,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 		Key_Off = 1 << 26,				// For IT release on envloop end
 		Tremor = 1 << 27,				// For XM tremor
 		Midi_Macro = 1 << 28			// IT midi macro
+		// ReSharper restore InconsistentNaming
 	}
 }

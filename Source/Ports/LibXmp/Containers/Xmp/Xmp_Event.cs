@@ -15,42 +15,46 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Note number (0 means no note)
 		/// </summary>
-		public byte Note;
+		public byte Note { get; internal set; }
 
 		/// <summary>
 		/// Patch number
 		/// </summary>
-		public byte Ins;
+		public byte Ins { get; internal set; }
 
 		/// <summary>
 		/// Volume (0 to basevol)
 		/// </summary>
-		public byte Vol;
+		public byte Vol { get; internal set; }
 
 		/// <summary>
 		/// Effect type
 		/// </summary>
-		public byte FxT;
+		public ref byte FxT => ref _FxT;
+		private byte _FxT;
 
 		/// <summary>
 		/// Effect parameter
 		/// </summary>
-		public byte FxP;
+		public ref byte FxP => ref _FxP;
+		private byte _FxP;
 
 		/// <summary>
 		/// Secondary effect type
 		/// </summary>
-		public byte F2T;
+		public ref byte F2T => ref _F2T;
+		private byte _F2T;
 
 		/// <summary>
 		/// Secondary effect parameter
 		/// </summary>
-		public byte F2P;
+		public ref byte F2P => ref _F2P;
+		private byte _F2P;
 
 		/// <summary>
 		/// Internal (reserved) flags
 		/// </summary>
-		public byte _Flag;
+		internal byte _Flag { get; set; }
 
 		/********************************************************************/
 		/// <summary>

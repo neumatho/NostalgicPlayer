@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20.Containers
 	/// </summary>
 	internal class Track
 	{
-		public byte[] TrackData;
+		public byte[] TrackData { get; set; }
 	}
 }

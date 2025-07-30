@@ -10,22 +10,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public short SampleNumber;
-		public sbyte[] SampleData;
-		public ushort Length;
-		public uint LoopOffset;
-		public ushort LoopLength;
+		public short SampleNumber { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public ushort Length { get; set; }
+		public uint LoopOffset { get; set; }
+		public ushort LoopLength { get; set; }
 
-		public ushort Volume;
-		public short VolumeFadeSpeed;
+		public ushort Volume { get; set; }
+		public short VolumeFadeSpeed { get; set; }
 
-		public short PortamentoDuration;
-		public short PortamentoAddValue;
+		public short PortamentoDuration { get; set; }
+		public short PortamentoAddValue { get; set; }
 
-		public ushort VibratoDepth;
-		public ushort VibratoAddValue;
+		public ushort VibratoDepth { get; set; }
+		public ushort VibratoAddValue { get; set; }
 
-		public short NoteTranspose;
-		public ushort FineTunePeriod;
+		public short NoteTranspose { get; set; }
+		public ushort FineTunePeriod { get; set; }
 	}
 }

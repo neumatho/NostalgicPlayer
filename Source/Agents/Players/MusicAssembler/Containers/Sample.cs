@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler.Containers
 	/// </summary>
 	internal class Sample
 	{
-		public string Name;
-		public sbyte[] SampleData;
-		public ushort Length;
-		public ushort LoopLength;
+		public string Name { get; set; }
+		public sbyte[] SampleData { get; set; }
+		public ushort Length { get; set; }
+		public ushort LoopLength { get; set; }
 	}
 }

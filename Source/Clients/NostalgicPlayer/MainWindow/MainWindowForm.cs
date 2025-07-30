@@ -51,8 +51,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	{
 		private class AgentEntry
 		{
-			public Guid TypeId;
-			public bool Enabled;
+			public Guid TypeId { get; set; }
+			public bool Enabled { get; set; }
 		}
 
 		private Manager agentManager;

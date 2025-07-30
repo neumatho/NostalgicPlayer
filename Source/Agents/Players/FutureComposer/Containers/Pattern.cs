@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class Pattern
 	{
-		public PatternRow[] PatternRows = new PatternRow[32];
+		public PatternRow[] PatternRows { get; } = new PatternRow[32];
 	}
 }
