@@ -207,6 +207,9 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | SKYT Packer | .skt / .skyt | ProWizard | ModTracker |
 | Sonic Arranger | .sa / .sonic | | Sonic Arranger |
 | Sonic Arranger (Final) | .sa / .sonic | Module Converter | Sonic Arranger |
+| Sound Control 3.x | .sc / sct | | Sound Control |
+| Sound Control 4.0 | .sc / sct | | Sound Control |
+| Sound Control 5.0 | .sc / sct | | Sound Control |
 | SoundFX 1.x | .sfx | Module Converter | SoundFX |
 | SoundFX 2.0 | .sfx / .sfx2 | | SoundFX |
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |

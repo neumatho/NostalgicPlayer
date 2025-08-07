@@ -1,0 +1,204 @@
+       0      10 Song name
+      10       4 Length of tracks (TL)
+      14       4 Length of samples (SL)
+      18       4 Length of position list (PLL)
+      1C       4 Length of instruments (IL) (only from 4.0)
+      20       2 Version?
+      22       2 Speed (only from 4.0)
+      24
+      40      TL Tracks
+   40+TL      SL Samples
+40+TL+SL     PLL Position list
+-----  From 4.0 -----
+40+TL+SL+PLL  IL Instruments
+
+Tracks:
+
+  0    200 Offsets to track information. Each offset is 2 bytes long, max 256 tracks
+ 40 TL-200 Track information
+
+
+Track information:
+
+  0 10 Track name
+ 10    Track data
+
+
+Samples:
+
+  0 400    Offsets to sample information and data for each sample. Each offset is 4 bytes long, max 256 samples
+400 SL-400 Sample information
+
+
+Sample information:
+
+  0 10 Sample name
+ 10  2 Length of sample data
+ 12  2 Loop start offset
+ 14  2 Loop end offset
+ 16
+ 2A  2 Note transpose
+ 2C
+ 3C  4 Length of sample data including sample information
+ 40    Sample data
+
+
+Position list information:
+
+Each position is C bytes long. 2 bytes per channel, 6 channels in total.
+
+  0 Track number
+  1 ? Only used in player to check for end of song
+
+
+Track data information:
+
+FF FF       = End of track data
+00 xx yy yy = Wait. xx is how many ticks to wait until reading next track command. yy is ignored
+nn xx yy zz = If zz is 80, then store note + sample number in list
+              nn = Note. First nible octave, second nible note. From 4.0, just a normal index into the period table
+              yy = Sample number or from 4.0, instrument number
+              zz = Volume
+
+
+Instruments:
+  0 200    Offsets to instrument information. Each offset is 2 bytes long, max 256 instruments
+200 IL-200 Instrument information
+
+
+Instrument information:
+  0 10 Name
+ 10  2 Length of sample commands (CL)
+ 12  1 Attack speed
+ 13  1 Attack increment
+ 14  1 Decay speed
+ 15  1 Decay decrement
+ 16  2 Decay value
+ 18  1 Release speed
+ 19  1 Release decrement
+ 1A
+ 30 CL Sample commands. Each command consist of 3 16-bit numbers. The command and always two arguments
+
+
+Commands:
+
+ 0     Stop
+ 1 x   Switch sample to x and update period to current note + new sample transpose
+ 2 x   Wait x ticks
+ 3 x   Change hardware sample address to current sample start address + x
+ 4 x   Switch sample to x and set hardware to sample start address
+ 5 x   Set hardware length to x (x is in bytes)
+ 6 x   Switch sample to x and set hardware to sample length
+ 7 x   Add x to period and set hardware
+ 8 x   Transpose current note with x and set new hardware period
+ 9 x   Add x to volume
+ A x y Start repeat from next command and change repeat value to y for repeat x
+ B x y Add y to repeat value. Repeat if value has not reached x
+ C x y Add y to repeat value x
+ D x y Set repeat value to y for x
+ E     Does nothing
+ F     Play current sample (setup hardware)
+10     Does nothing
+11     Does nothing
+12     Does nothing
+13     Does nothing
+14     Does nothing
+15     Does nothing
+16     Does nothing
+17     Does nothing
+18     Does nothing
+19     Does nothing
+1A     Does nothing
+1B     Does nothing
+1C     Does nothing
+1D     Does nothing
+1E     Does nothing
+1F     Does nothing
+
+
+
+Player 3.0 internal structures:
+
+17F58 10*2 Period table for oktav 1
+17F78 10*2 Period table for oktav 2
+17F98 10*2 Period table for oktav 3
+17FB8 10*2 Period table for oktav 4
+17FD8 10*2 Period table for oktav 5
+17FF8 10*2 Period table for oktav 6
+18018 10*2 Period table for oktav 7
+18038 10*2 Period table for oktav 8
+18058
+
+18358  6*4 Current position pointer to track data for each channel
+18370  4*2 Wait counter for each channel
+18378
+
+1837C    2 Speed counter 2
+1837E
+18380    2 Current song position * C
+18382
+18384    2 Speed counter
+18386
+
+18394    4 Pointer to track offsets
+18398    4 Pointer to track information
+1839C    4 Pointer to sample offsets
+183A0    4 Pointer to sample information
+183A4    4 Pointer to position list
+
+18800    2 Start position
+18804    2 End position
+
+
+Player 4.0 internal structures:
+
+  1C4      Period table
+
+ 8662    4 Pointer to sample information
+ 8666    4 Pointer to sample offsets
+ 866A    4 Pointer to track information
+ 866E    4 Pointer to track offsets
+ 8672    4 Pointer to instrument information
+ 8676    4 Pointer to instrument offsets
+ 867A    4 Pointer to position list
+
+
+ 8682    2 Start position
+ 8684    2 End position
+ 8686    2 Subsong
+ 8688    2 Speed
+ 868A    2 Speed counter
+
+ 8692    2 Playing disabled
+ 8694    2 Channel to skip. Is always -1
+ 8696    2 Current song position * C
+ 
+
+ 86A2  4*2 Voice6 data (transpose)
+
+ 86CE  6*4 Current position pointer to track data for each channel
+ 86E6  6*2 Wait counter for each channel
+ 86F2
+
+
+Voice struct
+
+ 0 4 Pointer to next sample command
+ 4 2 Wait counter
+ 6 2 Sample command number
+ 8 2 Sample number
+ A 2 Period
+ C 2 Transposed note
+ E 2 Sample transposed note
+10 2 Volume
+12 4 Pointer to sample data
+16 4 Pointer to sample info
+1A 2 Length of sample data
+1C 2 Play sample sub command position
+1E 2 Envelope part position
+20 2 Envelope counter
+22 2 Envelope volume
+24 2 Start envelope release
+26 4 Pointer to current repeat pointer (init to itself + 2A)
+2A   List af pointers to sample commands to repeat (so there can be made repeats inside other repeat)
+3A   List af repeat values
