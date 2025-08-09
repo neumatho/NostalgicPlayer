@@ -628,7 +628,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			if (result != Mpg123_Errors.Ok)
 				return result;
 
-			return mpg123Handle.Mpg123_Open_Handle(stream);
+			return mpg123Handle.Mpg123_Open_Handle64(stream);
 		}
 
 

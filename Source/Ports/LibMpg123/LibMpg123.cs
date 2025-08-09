@@ -368,12 +368,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		/// <summary>
 		/// Use an opaque handle as bitstream input. This works only with the
-		/// replaced I/O from mpg123_replace_reader_handle() or
-		/// mpg123_reader64()! mpg123_close() will call the cleanup callback
-		/// for your non-NULL handle (if you gave one)
+		/// replaced I/O from mpg123_reader64()!
+		/// mpg123_close() will call the cleanup callback for your non-NULL
+		/// handle (if you gave one)
 		/// </summary>
 		/********************************************************************/
-		public Mpg123_Errors Mpg123_Open_Handle(object ioHandle)
+		public Mpg123_Errors Mpg123_Open_Handle64(object ioHandle)
 		{
 			Mpg123_Handle mh = handle;
 
@@ -382,9 +382,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			Mpg123_Close();
 
-			c_int ret = readers.Int123_Open_Stream_Handle(mh, ioHandle);
-
-			return (Mpg123_Errors)ret;
+			return (Mpg123_Errors)readers.Int123_Open_Stream_Handle(mh, ioHandle);
 		}
 
 

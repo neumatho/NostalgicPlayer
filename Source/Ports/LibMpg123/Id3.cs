@@ -1014,7 +1014,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// memory, just grow strings
 		/// </summary>
 		/********************************************************************/
-		private void Store_Id3_Text(Mpg123_String sb, Span<c_uchar> source, size_t source_Size, Mpg123_Id3_Enc encoding, bool noTranslate)
+		private void Store_Id3_Text(Mpg123_String sb, Mpg123_Id3_Enc encoding, Span<c_uchar> source, size_t source_Size, bool noTranslate)
 		{
 			if (sb != null)	// Always overwrite, even with nothing
 				sb.Fill = 0;
@@ -1026,11 +1026,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (noTranslate)
 			{
 				// Future: Add a path for ID3 errors
-				if (lib.Mpg123_Grow_String(sb, source_Size) == 0)
+				if (lib.Mpg123_Grow_String(sb, source_Size + 1) == 0)
 					return;
 
-				source.Slice(0, (int)source_Size).CopyTo(sb.P);
-				sb.Fill = source_Size;
+				sb.P[0] = (c_uchar)encoding;
+				source.Slice(0, (int)source_Size).CopyTo(sb.P.AsSpan(1));
+				sb.Fill = source_Size + 1;
 
 				return;
 			}
@@ -1142,6 +1143,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		{
 			// Text encoding          $xx
 			// The text (encoded) ...
+			if (realSize < 1)
+				return;
+
 			Mpg123_Text t = Add_Text(fr, id);
 			if (t == null)
 				return;
@@ -1151,7 +1155,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			realSize--;
 
 			Array.Copy(id, 0, t.Id, 0, 4);
-			Store_Id3_Text(t.Text, realData, realSize, encoding, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
+			Store_Id3_Text(t.Text, encoding, realData, realSize, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
 		}
 
 
@@ -1287,10 +1291,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				lib.Mpg123_Init_String(description);
 
 				// Store the text, with desired encoding, but for comments always a local copy in UTF-8
-				Store_Id3_Text(description, descr, textOffset, encoding, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
+				Store_Id3_Text(description, encoding, descr, textOffset, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
 
 				if (tt == Frame_Types.Comment)
-					Store_Id3_Text(localCom.Description, descr, textOffset, encoding, false);
+					Store_Id3_Text(localCom.Description, encoding, descr, textOffset, false);
 
 				xcom = tt == Frame_Types.Uslt ? Add_Uslt(fr, id, lang, description) : Add_Comment(fr, lang, description);
 				if (xcom == null)
@@ -1308,7 +1312,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				lib.Mpg123_Move_String(description, ref xcom.Description);
 			}
 
-			Store_Id3_Text(xcom.Text, text, realSize - (textOffset + 4), encoding, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
+			Store_Id3_Text(xcom.Text, encoding, text, realSize - (textOffset + 4), (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
 
 			// Remember: I will probably decode the above (again) for rva comment checking. So no messing around, please
 			//
@@ -1326,7 +1330,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if ((rva_Mode > -1) && (fr.Rva.Level[rva_Mode] <= rva_Level))
 				{
 					// Only translate the contents in here where we really need them
-					Store_Id3_Text(localCom.Text, text, realSize - (textOffset + 4), encoding, false);
+					Store_Id3_Text(localCom.Text, encoding, text, realSize - (textOffset + 4), false);
 
 					if (localCom.Text.Fill > 0)
 					{
@@ -1374,7 +1378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				lib.Mpg123_Init_String(description);
 
 				// The outside storage gets reencoded to UTF-8 only if not requested otherwise
-				Store_Id3_Text(description, descr, textOffset, encoding, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
+				Store_Id3_Text(description, encoding, descr, textOffset, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
 
 				xex = Add_Extra(fr, description);
 				if (xex != null)
@@ -1390,10 +1394,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Init_Mpg123_Text(localEx);	// For our local copy
 
 			// Out local copy is always stored in UTF-8!
-			Store_Id3_Text(localEx.Description, descr, textOffset, encoding, false);
+			Store_Id3_Text(localEx.Description, encoding, descr, textOffset, false);
 
 			// At first, only store the outside copy of the payload. We may not need the local copy
-			Store_Id3_Text(xex.Text, text, realSize - (textOffset + 1), encoding, (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
+			Store_Id3_Text(xex.Text, encoding, text, realSize - (textOffset + 1), (fr.P.Flags & Mpg123_Param_Flags.Plain_Id3Text) != 0);
 
 			// Now check if we would like to interpret this extra info for RVA
 			if (localEx.Description.Fill > 0)
@@ -1427,7 +1431,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if ((rva_Mode > -1) && (fr.Rva.Level[rva_Mode] <= rva_Level))
 				{
 					// Now we need the translated copy of the data
-					Store_Id3_Text(localEx.Text, text, realSize - (textOffset + 1), encoding, false);
+					Store_Id3_Text(localEx.Text, encoding, text, realSize - (textOffset + 1), false);
 
 					if (localEx.Text.Fill > 0)
 					{

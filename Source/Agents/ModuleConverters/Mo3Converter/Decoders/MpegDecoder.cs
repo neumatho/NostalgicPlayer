@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 
 				using (MemoryStream ms = new MemoryStream(sampleInfo.Chunk, startIndex, sampleInfo.Chunk.Length - startIndex))
 				{
-					if (mpg123Handle.Mpg123_Open_Handle(ms) != Mpg123_Errors.Ok)
+					if (mpg123Handle.Mpg123_Open_Handle64(ms) != Mpg123_Errors.Ok)
 						return false;
 
 					if (mpg123Handle.Mpg123_Scan() != Mpg123_Errors.Ok)

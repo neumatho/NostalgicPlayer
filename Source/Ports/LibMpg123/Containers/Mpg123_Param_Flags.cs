@@ -100,7 +100,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		/// </summary>
 		Force_Seekable = 0x40000,
 		/// <summary>
-		/// Store raw ID3 data (even if skipping)
+		/// Store raw ID3 data (even if skipping).
+		/// Before mpg123 1.33.2 (libmpg123 API 49, patchlevel 4), this has to be combined with
+		/// MPG123_SKIP_ID3 to avoid getting corrupted data due to the ID3 parser inserting
+		/// encoding bytes for its own convenience
 		/// </summary>
 		Store_Raw_Id3 = 0x80000,
 		/// <summary>
