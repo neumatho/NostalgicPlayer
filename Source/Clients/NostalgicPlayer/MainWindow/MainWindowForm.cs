@@ -4588,10 +4588,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					{
 						using (FileStream fs = File.OpenRead(fileName))
 						{
-							loader = ListFactory.Create(fs);
+							loader = ListFactory.Create(fs, extension);
 							if (loader != null)
 							{
-								foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
+								foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
 									list.Add(ListItemConverter.Convert(info));
 							}
 						}
@@ -4784,16 +4784,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
+				string extension = Path.GetExtension(fileName);
+				if (!string.IsNullOrEmpty(extension))
+					extension = extension.Substring(1).ToLower();
+
 				using (FileStream fs = File.OpenRead(fileName))
 				{
-					IMultiFileLoader loader = ListFactory.Create(fs);
+					IMultiFileLoader loader = ListFactory.Create(fs, extension);
 					if (loader == null)
 						ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_FORMAT, fileName));
 					else
 					{
 						List<ModuleListItem> tempList = new List<ModuleListItem>();
 
-						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
+						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
 							tempList.Add(ListItemConverter.Convert(info));
 
 						int currentCount = moduleListControl.Items.Count;

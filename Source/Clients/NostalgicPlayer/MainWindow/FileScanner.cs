@@ -275,12 +275,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			try
 			{
+				string extension = Path.GetExtension(fileName);
+				if (!string.IsNullOrEmpty(extension))
+					extension = extension.Substring(1).ToLower();
+
 				using (FileStream fs = File.OpenRead(fileName))
 				{
-					IMultiFileLoader loader = ListFactory.Create(fs);
+					IMultiFileLoader loader = ListFactory.Create(fs, extension);
 					if (loader != null)
 					{
-						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
+						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
 							list.Add(ListItemConverter.Convert(info));
 					}
 				}

@@ -26,6 +26,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/// <summary>
 		/// Will load a list from the given file
 		/// </summary>
-		IEnumerable<MultiFileInfo> LoadList(string directory, Stream stream);
+		IEnumerable<MultiFileInfo> LoadList(string directory, Stream stream, string fileExtension);
 	}
 }

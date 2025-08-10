@@ -15,6 +15,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 	public static class ListFactory
 	{
 		private static readonly byte[] npmlSignature;
+		private static readonly byte[] m3uExtSignature;
 
 		/********************************************************************/
 		/// <summary>
@@ -24,6 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		static ListFactory()
 		{
 			npmlSignature = Encoding.UTF8.GetBytes("@*NpML*@");
+			m3uExtSignature = Encoding.UTF8.GetBytes("#EXTM3U");
 		}
 
 
@@ -35,7 +37,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/********************************************************************/
 		public static string[] GetExtensions()
 		{
-			return new NpmlList().FileExtensions;
+			return
+				new NpmlList().FileExtensions
+				.Concat(new M3UList().FileExtensions)
+				.ToArray();
 		}
 
 
@@ -46,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/// if anyone could be found
 		/// </summary>
 		/********************************************************************/
-		public static IMultiFileLoader Create(Stream stream)
+		public static IMultiFileLoader Create(Stream stream, string fileExtension)
 		{
 			byte[] buffer = new byte[16];
 
@@ -55,6 +60,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 
 			// Read the first line
 			int bytesRead = stream.Read(buffer, 0, 16);
+
+			if (bytesRead >= 7)
+			{
+				if (buffer.Take(7).SequenceEqual(m3uExtSignature))
+					return new M3UList();
+
+				if (new M3UList().FileExtensions.Contains(fileExtension))
+					return new M3UList();
+			}
+
 			if (bytesRead >= 11)
 			{
 				if (buffer.Skip(3).Take(8).SequenceEqual(npmlSignature))	// Skip BOM

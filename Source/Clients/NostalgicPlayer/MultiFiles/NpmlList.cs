@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/// Will load a list from the given file
 		/// </summary>
 		/********************************************************************/
-		public IEnumerable<MultiFileInfo> LoadList(string directory, Stream stream)
+		public IEnumerable<MultiFileInfo> LoadList(string directory, Stream stream, string fileExtension)
 		{
 			// Make sure the file position is at the beginning of the file
 			stream.Seek(0, SeekOrigin.Begin);
