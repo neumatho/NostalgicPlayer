@@ -1222,9 +1222,9 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="archfile">
+          <uap:FileTypeAssociation Name="musxfile">
             <uap:SupportedFileTypes>
-              <uap:FileType ContentType="audio/x-arch">.arch</uap:FileType>
+              <uap:FileType ContentType="audio/x-musx">.musx</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Archimedes Tracker</uap:DisplayName>
           </uap:FileTypeAssociation>
