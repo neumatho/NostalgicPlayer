@@ -564,7 +564,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///   Looks up a localized string similar to ¤L
         ///¤V¤R¤CVersion
         ///
-        ///¤B¤CA polycode production (nostalgicplayer.dk)
+        ///¤B¤CA Polycode Production (nostalgicplayer.dk)
         ///
         ///Credits:
         ///
@@ -584,10 +584,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤CAdam Hathcock
         ///¤CDave Gandy
         ///¤COzkan Sezer, Alice Rowan and Miodrag Vallat
+        ///¤CTucker Byars and Jeremy Yudkin
         ///¤CNicolas Franck (Gryzor)
-        ///¤CSylvain &quot;Asle&quot; Chipaux
-        ///¤CWilfred Bos
-        ///¤CJens-Christia [rest of string was truncated]&quot;;.
+        ///¤CSylvain &quot;Asle&quot; Chipa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {
