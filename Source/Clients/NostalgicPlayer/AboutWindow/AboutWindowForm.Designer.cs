@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "AboutWindowForm";
-			this.Palette = this.fontPalette;
+			this.LocalCustomPalette = this.fontPalette;
 			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
 			this.ResumeLayout(false);

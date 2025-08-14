@@ -47,7 +47,6 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
 			// 
@@ -57,7 +56,7 @@
 			// 
 			nameLabel.Location = new System.Drawing.Point(8, 8);
 			nameLabel.Name = "nameLabel";
-			nameLabel.Palette = fontPalette;
+			nameLabel.LocalCustomPalette = fontPalette;
 			nameLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(nameLabel, "IDS_OPENURL_NAME");
 			nameLabel.Size = new System.Drawing.Size(232, 16);
@@ -69,7 +68,7 @@
 			nameTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			nameTextBox.Location = new System.Drawing.Point(8, 24);
 			nameTextBox.Name = "nameTextBox";
-			nameTextBox.Palette = fontPalette;
+			nameTextBox.LocalCustomPalette = fontPalette;
 			nameTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(nameTextBox, null);
 			nameTextBox.Size = new System.Drawing.Size(342, 20);
@@ -113,7 +112,7 @@
 			urlTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			urlTextBox.Location = new System.Drawing.Point(8, 72);
 			urlTextBox.Name = "urlTextBox";
-			urlTextBox.Palette = fontPalette;
+			urlTextBox.LocalCustomPalette = fontPalette;
 			urlTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(urlTextBox, null);
 			urlTextBox.Size = new System.Drawing.Size(342, 20);
@@ -123,7 +122,7 @@
 			// 
 			urlLabel.Location = new System.Drawing.Point(8, 56);
 			urlLabel.Name = "urlLabel";
-			urlLabel.Palette = fontPalette;
+			urlLabel.LocalCustomPalette = fontPalette;
 			urlLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(urlLabel, "IDS_OPENURL_URL");
 			urlLabel.Size = new System.Drawing.Size(243, 16);
@@ -148,7 +147,7 @@
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "OpenUrlWindowForm";
-			Palette = fontPalette;
+			LocalCustomPalette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(this, null);
 			ShowInTaskbar = false;

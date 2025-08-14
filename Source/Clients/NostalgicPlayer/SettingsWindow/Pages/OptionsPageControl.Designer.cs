@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			generalGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			generalGroupBox.Location = new System.Drawing.Point(8, 4);
 			generalGroupBox.Name = "generalGroupBox";
-			generalGroupBox.Palette = fontPalette;
+			generalGroupBox.LocalCustomPalette = fontPalette;
 			generalGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -98,13 +98,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// addJumpCheckBox
 			// 
 			addJumpCheckBox.Location = new System.Drawing.Point(4, 5);
 			addJumpCheckBox.Name = "addJumpCheckBox";
-			addJumpCheckBox.Palette = fontPalette;
+			addJumpCheckBox.LocalCustomPalette = fontPalette;
 			addJumpCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(addJumpCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_ADDJUMP");
 			addJumpCheckBox.Size = new System.Drawing.Size(134, 16);
@@ -115,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			addToListCheckBox.Location = new System.Drawing.Point(4, 26);
 			addToListCheckBox.Name = "addToListCheckBox";
-			addToListCheckBox.Palette = fontPalette;
+			addToListCheckBox.LocalCustomPalette = fontPalette;
 			addToListCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(addToListCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_ADDTOLIST");
 			addToListCheckBox.Size = new System.Drawing.Size(122, 16);
@@ -126,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			rememberListCheckBox.Location = new System.Drawing.Point(4, 47);
 			rememberListCheckBox.Name = "rememberListCheckBox";
-			rememberListCheckBox.Palette = fontPalette;
+			rememberListCheckBox.LocalCustomPalette = fontPalette;
 			rememberListCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(rememberListCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLIST");
 			rememberListCheckBox.Size = new System.Drawing.Size(129, 16);
@@ -150,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			rememberModulePositionCheckBox.Location = new System.Drawing.Point(0, 21);
 			rememberModulePositionCheckBox.Name = "rememberModulePositionCheckBox";
-			rememberModulePositionCheckBox.Palette = fontPalette;
+			rememberModulePositionCheckBox.LocalCustomPalette = fontPalette;
 			rememberModulePositionCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(rememberModulePositionCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION");
 			rememberModulePositionCheckBox.Size = new System.Drawing.Size(157, 16);
@@ -161,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			rememberListPositionCheckBox.Location = new System.Drawing.Point(0, 0);
 			rememberListPositionCheckBox.Name = "rememberListPositionCheckBox";
-			rememberListPositionCheckBox.Palette = fontPalette;
+			rememberListPositionCheckBox.LocalCustomPalette = fontPalette;
 			rememberListPositionCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(rememberListPositionCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLISTPOSITION");
 			rememberListPositionCheckBox.Size = new System.Drawing.Size(154, 16);
@@ -173,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			tooltipsCheckBox.Location = new System.Drawing.Point(200, 5);
 			tooltipsCheckBox.Name = "tooltipsCheckBox";
-			tooltipsCheckBox.Palette = fontPalette;
+			tooltipsCheckBox.LocalCustomPalette = fontPalette;
 			tooltipsCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(tooltipsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS");
 			tooltipsCheckBox.Size = new System.Drawing.Size(96, 16);
@@ -184,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			showNameInTitleCheckBox.Location = new System.Drawing.Point(200, 26);
 			showNameInTitleCheckBox.Name = "showNameInTitleCheckBox";
-			showNameInTitleCheckBox.Palette = fontPalette;
+			showNameInTitleCheckBox.LocalCustomPalette = fontPalette;
 			showNameInTitleCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(showNameInTitleCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME");
 			showNameInTitleCheckBox.Size = new System.Drawing.Size(167, 16);
@@ -195,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			showListNumberCheckBox.Location = new System.Drawing.Point(4, 110);
 			showListNumberCheckBox.Name = "showListNumberCheckBox";
-			showListNumberCheckBox.Palette = fontPalette;
+			showListNumberCheckBox.LocalCustomPalette = fontPalette;
 			showListNumberCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(showListNumberCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER");
 			showListNumberCheckBox.Size = new System.Drawing.Size(142, 16);
@@ -206,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			showFullPathCheckBox.Location = new System.Drawing.Point(4, 131);
 			showFullPathCheckBox.Name = "showFullPathCheckBox";
-			showFullPathCheckBox.Palette = fontPalette;
+			showFullPathCheckBox.LocalCustomPalette = fontPalette;
 			showFullPathCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(showFullPathCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWFULLPATH");
 			showFullPathCheckBox.Size = new System.Drawing.Size(120, 16);
@@ -217,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			separateWindowsCheckBox.Location = new System.Drawing.Point(200, 47);
 			separateWindowsCheckBox.Name = "separateWindowsCheckBox";
-			separateWindowsCheckBox.Palette = fontPalette;
+			separateWindowsCheckBox.LocalCustomPalette = fontPalette;
 			separateWindowsCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(separateWindowsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SEPARATEWINDOWS");
 			separateWindowsCheckBox.Size = new System.Drawing.Size(169, 28);
@@ -240,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			showWindowsInTaskBarCheckBox.Location = new System.Drawing.Point(0, 0);
 			showWindowsInTaskBarCheckBox.Name = "showWindowsInTaskBarCheckBox";
-			showWindowsInTaskBarCheckBox.Palette = fontPalette;
+			showWindowsInTaskBarCheckBox.LocalCustomPalette = fontPalette;
 			showWindowsInTaskBarCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(showWindowsInTaskBarCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWWINDOWSINTASKBAR");
 			showWindowsInTaskBarCheckBox.Size = new System.Drawing.Size(163, 16);
@@ -251,7 +250,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			useDatabaseCheckBox.Location = new System.Drawing.Point(400, 5);
 			useDatabaseCheckBox.Name = "useDatabaseCheckBox";
-			useDatabaseCheckBox.Palette = fontPalette;
+			useDatabaseCheckBox.LocalCustomPalette = fontPalette;
 			useDatabaseCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(useDatabaseCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE");
 			useDatabaseCheckBox.Size = new System.Drawing.Size(169, 28);
@@ -262,7 +261,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			scanFilesCheckBox.Location = new System.Drawing.Point(400, 38);
 			scanFilesCheckBox.Name = "scanFilesCheckBox";
-			scanFilesCheckBox.Palette = fontPalette;
+			scanFilesCheckBox.LocalCustomPalette = fontPalette;
 			scanFilesCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(scanFilesCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES");
 			scanFilesCheckBox.Size = new System.Drawing.Size(104, 16);
