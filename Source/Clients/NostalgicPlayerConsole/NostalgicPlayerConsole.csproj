@@ -80,7 +80,7 @@
     <ProjectReference Include="..\..\Agents\SampleConverters\RiffWave\RiffWave.csproj" />
     <ProjectReference Include="..\..\Agents\Streamers\Mpeg\Mpeg.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
-    <ProjectReference Include="..\..\NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

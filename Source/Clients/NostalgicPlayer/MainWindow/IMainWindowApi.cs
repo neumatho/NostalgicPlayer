@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
+using Polycode.NostalgicPlayer.Library.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {

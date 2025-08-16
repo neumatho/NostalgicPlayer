@@ -21,7 +21,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 {

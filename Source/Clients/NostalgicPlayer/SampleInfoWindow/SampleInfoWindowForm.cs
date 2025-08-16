@@ -19,9 +19,9 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
+using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Library.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 {

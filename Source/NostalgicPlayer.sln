@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayer", "Clients\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayer.Kit", "NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj", "{A75C7796-6E7D-4ABE-A3E3-643D222862FE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayerLibrary", "NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj", "{39A8EA8E-EB91-438A-BAEF-872C477E7DB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayer.Library", "NostalgicPlayer.Library\NostalgicPlayer.Library.csproj", "{39A8EA8E-EB91-438A-BAEF-872C477E7DB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreAudio", "Agents\Output\CoreAudio\CoreAudio.csproj", "{8784649C-9865-451D-8080-69426E349894}"
 EndProject

@@ -17,7 +17,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 {

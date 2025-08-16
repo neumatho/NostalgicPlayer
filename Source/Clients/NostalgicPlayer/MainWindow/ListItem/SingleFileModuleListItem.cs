@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {

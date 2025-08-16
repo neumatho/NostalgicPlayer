@@ -14,8 +14,8 @@ using Polycode.NostalgicPlayer.Audius.Interfaces;
 using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {

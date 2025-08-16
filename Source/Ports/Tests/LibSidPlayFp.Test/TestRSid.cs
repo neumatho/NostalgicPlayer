@@ -8,7 +8,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test

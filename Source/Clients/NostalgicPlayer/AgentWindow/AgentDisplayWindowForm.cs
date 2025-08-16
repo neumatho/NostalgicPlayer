@@ -14,7 +14,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 {

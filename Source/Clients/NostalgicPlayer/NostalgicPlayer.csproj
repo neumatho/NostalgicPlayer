@@ -141,7 +141,7 @@
     <ProjectReference Include="..\..\Audius\Audius.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit.Gui\NostalgicPlayer.Kit.Gui.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
-    <ProjectReference Include="..\..\NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
   </ItemGroup>
 
   <ItemGroup>
