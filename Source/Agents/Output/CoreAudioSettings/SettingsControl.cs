@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using NAudio.CoreAudioApi;
-using Polycode.NostalgicPlayer.GuiKit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 {

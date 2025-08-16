@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutWindowForm));
 			this.pictureBox = new System.Windows.Forms.PictureBox();
 			this.pulseTimer = new System.Windows.Forms.Timer(this.components);
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -75,6 +75,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		#endregion
 		private System.Windows.Forms.PictureBox pictureBox;
 		private System.Windows.Forms.Timer pulseTimer;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

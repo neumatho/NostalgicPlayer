@@ -42,10 +42,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			mixerPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.MixerPageControl();
 			navigatorAgentsPage = new Krypton.Navigator.KryptonPage();
 			agentsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsPageControl();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			applyButton = new Krypton.Toolkit.KryptonButton();
-			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			cancelButton = new Krypton.Toolkit.KryptonButton();
 			okButton = new Krypton.Toolkit.KryptonButton();
 			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
@@ -307,7 +307,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private Krypton.Navigator.KryptonPage navigatorPathsPage;
 		private Krypton.Navigator.KryptonPage navigatorMixerPage;
 		private Krypton.Navigator.KryptonPage navigatorAgentsPage;
-		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
+		private Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonButton applyButton;
 		private Krypton.Toolkit.KryptonButton cancelButton;
 		private Krypton.Toolkit.KryptonButton okButton;
@@ -316,8 +316,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private Pages.AgentsPageControl agentsPageControl;
 		private Krypton.Navigator.KryptonPage navigatorOptionsPage;
 		private Pages.OptionsPageControl optionsPageControl;
-		private GuiKit.Components.FontPalette fontPalette;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 		private Krypton.Navigator.KryptonPage navigatorModulesPage;
 		private Pages.ModulesPageControl modulesPageControl;
 	}

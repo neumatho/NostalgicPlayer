@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Text;
-using Polycode.NostalgicPlayer.CKit;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers;
 

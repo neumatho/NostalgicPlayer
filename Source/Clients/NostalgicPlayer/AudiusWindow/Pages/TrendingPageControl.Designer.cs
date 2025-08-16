@@ -31,11 +31,11 @@
 			components = new System.ComponentModel.Container();
 			timePanel = new System.Windows.Forms.Panel();
 			timeAllRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			timeYearRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			timeMonthRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			timeWeekRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			typePanel = new System.Windows.Forms.Panel();
 			typeUndergroundRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			typePlaylistsRadioButton = new Krypton.Toolkit.KryptonRadioButton();
@@ -216,8 +216,8 @@
 
 		private System.Windows.Forms.Panel timePanel;
 		private Krypton.Toolkit.KryptonRadioButton timeWeekRadioButton;
-		private GuiKit.Designer.ControlResource controlResource;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Designer.ControlResource controlResource;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private Krypton.Toolkit.KryptonRadioButton timeMonthRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton timeYearRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton timeAllRadioButton;

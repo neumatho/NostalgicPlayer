@@ -6,7 +6,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Containers;
-using Polycode.NostalgicPlayer.GuiKit.Components;
+using Polycode.NostalgicPlayer.Kit.Gui.Components;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 {

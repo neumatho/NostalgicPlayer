@@ -17,13 +17,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\NostalgicPlayerCKit\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
     <Compile Include="..\LibOgg\LibOggTypes.cs" Link="LibOggTypes.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NostalgicPlayerCKit\NostalgicPlayerCKit.csproj" />
-    <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Kit.C\NostalgicPlayer.Kit.C.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
     <ProjectReference Include="..\LibOgg\LibOgg.csproj" />
   </ItemGroup>
 

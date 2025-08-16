@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.CKit;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt

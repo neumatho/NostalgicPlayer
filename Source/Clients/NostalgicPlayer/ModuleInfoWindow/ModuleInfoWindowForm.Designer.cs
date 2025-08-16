@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModuleInfoWindowForm));
 			moduleInfoInfoDataGridView = new ModuleInfoListControl();
-			fontPalette = new GuiKit.Components.FontPalette(components);
+			fontPalette = new Kit.Gui.Components.FontPalette(components);
 			infoGroup = new Krypton.Toolkit.KryptonGroup();
 			navigator = new Krypton.Navigator.KryptonNavigator();
 			navigatorInfoPage = new Krypton.Navigator.KryptonPage();
@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private Krypton.Toolkit.KryptonGroup commentGroup;
 		private Krypton.Navigator.KryptonPage navigatorLyricsPage;
 		private Krypton.Toolkit.KryptonGroup lyricsGroup;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private Krypton.Navigator.KryptonPage navigatorPicturePage;
 		private Krypton.Toolkit.KryptonGroup pictureGroup;
 		private System.Windows.Forms.PictureBox previousPictureButton;

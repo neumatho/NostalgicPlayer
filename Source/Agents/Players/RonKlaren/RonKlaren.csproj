@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.RonKlaren</RootNamespace>
-    <DocumentationFile>bin\RunKlaren.xml</DocumentationFile>
+    <DocumentationFile>bin\RonKlaren.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

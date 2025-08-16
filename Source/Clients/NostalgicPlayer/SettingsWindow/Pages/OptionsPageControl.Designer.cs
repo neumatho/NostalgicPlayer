@@ -30,9 +30,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			generalGroupBox = new Krypton.Toolkit.KryptonGroupBox();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			addJumpCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			addToListCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			rememberListCheckBox = new Krypton.Toolkit.KryptonCheckBox();
@@ -322,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		}
 
 		#endregion
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroupBox generalGroupBox;
 		private Krypton.Toolkit.KryptonCheckBox addJumpCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox addToListCheckBox;
@@ -338,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonCheckBox separateWindowsCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox showWindowsInTaskBarCheckBox;
 		private System.Windows.Forms.Panel windowPanel;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private System.Windows.Forms.Panel scanFilesPanel;
 		private Krypton.Toolkit.KryptonCheckBox extractPlayingTimeCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox removeUnknownCheckBox;

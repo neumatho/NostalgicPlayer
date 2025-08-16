@@ -4,10 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
-using System.Windows.Forms;
-using Polycode.NostalgicPlayer.GuiKit.Extensions;
+using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {

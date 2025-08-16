@@ -30,7 +30,7 @@
 		{
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AudiusWindowForm));
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			navigator = new Krypton.Navigator.KryptonNavigator();
 			navigatorTrendingPage = new Krypton.Navigator.KryptonPage();
 			trendingPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages.TrendingPageControl();
@@ -147,7 +147,7 @@
 
 		#endregion
 
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private Krypton.Navigator.KryptonNavigator navigator;
 		private Krypton.Navigator.KryptonPage navigatorTrendingPage;
 		private Pages.TrendingPageControl trendingPageControl;

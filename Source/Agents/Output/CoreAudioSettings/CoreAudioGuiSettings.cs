@@ -6,7 +6,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.GuiKit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent

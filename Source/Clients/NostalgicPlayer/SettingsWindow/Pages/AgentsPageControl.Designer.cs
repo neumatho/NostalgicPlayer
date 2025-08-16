@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.visualsListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.VisualsListUserControl();
 			this.navigatorDecrunchersPage = new Krypton.Navigator.KryptonPage();
 			this.decrunchersListUserControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.DecrunchersListUserControl();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorFormatsPage)).BeginInit();
 			this.navigatorFormatsPage.SuspendLayout();
@@ -252,6 +252,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.FormatsListUserControl formatsListControl;
 		private Krypton.Navigator.KryptonPage navigatorDecrunchersPage;
 		private AgentLists.DecrunchersListUserControl decrunchersListUserControl;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

@@ -6,8 +6,8 @@
 using System;
 using System.IO;
 using System.Text;
-using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;

@@ -13,8 +13,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
-using Polycode.NostalgicPlayer.GuiKit.Components;
-using Polycode.NostalgicPlayer.GuiKit.Extensions;
+using Polycode.NostalgicPlayer.Kit.Gui.Components;
+using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {

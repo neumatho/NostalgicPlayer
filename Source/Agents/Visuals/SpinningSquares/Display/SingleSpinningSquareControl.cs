@@ -6,8 +6,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Gui.Components;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 {

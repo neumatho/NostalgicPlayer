@@ -6,7 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.CKit;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private

@@ -29,19 +29,19 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			infoPanel = new Polycode.NostalgicPlayer.GuiKit.Controls.ImprovedPanel();
+			infoPanel = new Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedPanel();
 			closeButton = new Krypton.Toolkit.KryptonButton();
 			handleLabel = new Krypton.Toolkit.KryptonLabel();
-			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			nameLabel = new Krypton.Toolkit.KryptonLabel();
-			extraBigBoldFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			extraBigBoldFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			profilePictureBox = new System.Windows.Forms.PictureBox();
 			navigator = new Krypton.Navigator.KryptonNavigator();
 			navigatorTracksPage = new Krypton.Navigator.KryptonPage();
 			profileTracksPageControl = new ProfileTracksPageControl();
 			navigatorPlaylistsPage = new Krypton.Navigator.KryptonPage();
 			profilePlaylistsPageControl = new ProfilePlaylistsPageControl();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			infoPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)profilePictureBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
@@ -228,15 +228,15 @@
 
 		#endregion
 
-		private Polycode.NostalgicPlayer.GuiKit.Controls.ImprovedPanel infoPanel;
+		private Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedPanel infoPanel;
 		private System.Windows.Forms.PictureBox profilePictureBox;
-		private GuiKit.Components.FontPalette extraBigBoldFontPalette;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette extraBigBoldFontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 		private Krypton.Toolkit.KryptonLabel handleLabel;
 		private Krypton.Toolkit.KryptonLabel nameLabel;
 		private Krypton.Toolkit.KryptonButton closeButton;
 		private Krypton.Navigator.KryptonNavigator navigator;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private Krypton.Navigator.KryptonPage navigatorTracksPage;
 		private ProfileTracksPageControl profileTracksPageControl;
 		private Krypton.Navigator.KryptonPage navigatorPlaylistsPage;

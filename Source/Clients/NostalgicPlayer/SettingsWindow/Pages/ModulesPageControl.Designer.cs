@@ -29,8 +29,8 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			fontPalette = new GuiKit.Components.FontPalette(components);
-			controlResource = new GuiKit.Designer.ControlResource();
+			fontPalette = new Kit.Gui.Components.FontPalette(components);
+			controlResource = new Kit.Gui.Designer.ControlResource();
 			loadingGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			doubleBufferingCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			doubleBufferingPanel = new System.Windows.Forms.Panel();
@@ -371,8 +371,8 @@
 
 		#endregion
 
-		private GuiKit.Components.FontPalette fontPalette;
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroupBox loadingGroupBox;
 		private Krypton.Toolkit.KryptonCheckBox doubleBufferingCheckBox;
 		private System.Windows.Forms.Panel doubleBufferingPanel;

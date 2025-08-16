@@ -79,7 +79,7 @@
     <ProjectReference Include="..\..\Agents\SampleConverters\Iff8Svx\Iff8Svx.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\RiffWave\RiffWave.csproj" />
     <ProjectReference Include="..\..\Agents\Streamers\Mpeg\Mpeg.csproj" />
-    <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj" />
   </ItemGroup>
 

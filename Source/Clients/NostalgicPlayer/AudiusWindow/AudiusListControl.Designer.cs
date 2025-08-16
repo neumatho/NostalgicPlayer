@@ -29,10 +29,10 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			flowLayoutPanel = new Polycode.NostalgicPlayer.GuiKit.Controls.ImprovedFlowLayoutPanel();
+			flowLayoutPanel = new Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedFlowLayoutPanel();
 			controlGroup = new Krypton.Toolkit.KryptonGroup();
 			statusLabel = new Krypton.Toolkit.KryptonLabel();
-			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			((System.ComponentModel.ISupportInitialize)controlGroup).BeginInit();
 			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).BeginInit();
 			controlGroup.Panel.SuspendLayout();
@@ -99,9 +99,9 @@
 
 		#endregion
 
-		private GuiKit.Controls.ImprovedFlowLayoutPanel flowLayoutPanel;
+		private Kit.Gui.Controls.ImprovedFlowLayoutPanel flowLayoutPanel;
 		private Krypton.Toolkit.KryptonGroup controlGroup;
 		private Krypton.Toolkit.KryptonLabel statusLabel;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 	}
 }

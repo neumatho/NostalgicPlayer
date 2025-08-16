@@ -31,10 +31,10 @@
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FavoriteSongSystemForm));
 			favoriteDataGridView = new Krypton.Toolkit.KryptonDataGridView();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			addButton = new Krypton.Toolkit.KryptonButton();
-			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			removeButton = new Krypton.Toolkit.KryptonButton();
 			resetButton = new Krypton.Toolkit.KryptonButton();
 			favoriteGroup = new Krypton.Toolkit.KryptonGroup();
@@ -211,14 +211,14 @@
 		#endregion
 		private Krypton.Toolkit.KryptonDataGridView favoriteDataGridView;
 		private Krypton.Toolkit.KryptonButton addButton;
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonButton removeButton;
 		private Krypton.Toolkit.KryptonButton resetButton;
 		private Krypton.Toolkit.KryptonGroup favoriteGroup;
 		private Krypton.Toolkit.KryptonComboBox showComboBox;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox otherNumberTextBox;
 		private System.Windows.Forms.ToolTip toolTip;
-		private GuiKit.Components.FontPalette fontPalette;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 	}
 }

@@ -30,9 +30,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			this.ciaGroupBox = new Krypton.Toolkit.KryptonGroupBox();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			this.model8521RadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.model6526w4485RadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.model6526RadioButton = new Krypton.Toolkit.KryptonRadioButton();
@@ -523,7 +523,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		}
 
 		#endregion
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroupBox ciaGroupBox;
 		private Krypton.Toolkit.KryptonRadioButton model6526w4485RadioButton;
 		private Krypton.Toolkit.KryptonRadioButton model8521RadioButton;
@@ -555,6 +555,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		private Krypton.Toolkit.KryptonCheckBox digiboostCheckBox;
 		private Krypton.Toolkit.KryptonComboBox mixerComboBox;
 		private Krypton.Toolkit.KryptonLabel mixerLabel;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

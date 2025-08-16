@@ -32,7 +32,7 @@
 			playButton = new Krypton.Toolkit.KryptonButton();
 			addButton = new Krypton.Toolkit.KryptonButton();
 			durationLabel = new Krypton.Toolkit.KryptonLabel();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			titleLabel = new Krypton.Toolkit.KryptonLabel();
 			SuspendLayout();
 			// 
@@ -104,7 +104,7 @@
 		#endregion
 		private Krypton.Toolkit.KryptonButton playButton;
 		private Krypton.Toolkit.KryptonButton addButton;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private Krypton.Toolkit.KryptonLabel titleLabel;
 		private Krypton.Toolkit.KryptonLabel durationLabel;
 	}

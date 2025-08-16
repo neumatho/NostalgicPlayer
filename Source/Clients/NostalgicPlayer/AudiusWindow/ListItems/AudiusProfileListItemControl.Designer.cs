@@ -32,13 +32,13 @@
 			controlGroup = new Krypton.Toolkit.KryptonGroup();
 			handleLabel = new Krypton.Toolkit.KryptonLabel();
 			nameLabel = new Krypton.Toolkit.KryptonLabel();
-			bigBoldFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			bigBoldFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			positionLabel = new Krypton.Toolkit.KryptonLabel();
-			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			itemPictureBox = new System.Windows.Forms.PictureBox();
 			separatorGroup = new Krypton.Toolkit.KryptonGroup();
 			showInfoButton = new Krypton.Toolkit.KryptonButton();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			((System.ComponentModel.ISupportInitialize)controlGroup).BeginInit();
 			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).BeginInit();
 			controlGroup.Panel.SuspendLayout();
@@ -178,9 +178,9 @@
 		private Krypton.Toolkit.KryptonLabel positionLabel;
 		private Krypton.Toolkit.KryptonLabel nameLabel;
 		private Krypton.Toolkit.KryptonLabel handleLabel;
-		private GuiKit.Components.FontPalette bigFontPalette;
-		private GuiKit.Components.FontPalette bigBoldFontPalette;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette bigBoldFontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private Krypton.Toolkit.KryptonButton showInfoButton;
 		private Krypton.Toolkit.KryptonGroup separatorGroup;
 	}

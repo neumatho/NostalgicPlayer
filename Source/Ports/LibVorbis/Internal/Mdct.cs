@@ -8,7 +8,7 @@ global using Reg_Type = System.Single;
 
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.CKit;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 

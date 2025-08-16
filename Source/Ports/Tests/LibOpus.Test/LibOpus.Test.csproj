@@ -22,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\NostalgicPlayerCKit\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
     <Compile Include="..\..\LibOpus\LibOpusTypes.cs" Link="LibOpusTypes.cs" />
     <Compile Include="..\..\LibOpus\LibOpusTypesInternal.cs" Link="LibOpusTypesInternal.cs" />
   </ItemGroup>

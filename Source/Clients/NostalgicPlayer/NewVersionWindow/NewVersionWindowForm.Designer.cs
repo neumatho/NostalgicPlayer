@@ -31,9 +31,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewVersionWindowForm));
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			this.label = new Krypton.Toolkit.KryptonLabel();
-			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			this.kryptonButton1 = new Krypton.Toolkit.KryptonButton();
 			this.historyRichTextBox = new Krypton.Toolkit.KryptonRichTextBox();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
@@ -106,10 +106,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 		}
 
 		#endregion
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonLabel label;
 		private Krypton.Toolkit.KryptonButton kryptonButton1;
 		private Krypton.Toolkit.KryptonRichTextBox historyRichTextBox;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 	}
 }

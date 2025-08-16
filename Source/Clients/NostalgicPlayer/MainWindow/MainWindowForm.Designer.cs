@@ -34,8 +34,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowForm));
 			menuStrip = new System.Windows.Forms.MenuStrip();
 			infoLabel = new KryptonLabel();
-			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			infoGroup = new KryptonGroup();
 			moduleInfoButton = new KryptonButton();
 			masterVolumeTrackBar = new KryptonTrackBar();
@@ -564,8 +564,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private System.Windows.Forms.Timer neverEndingTimer;
 		private KryptonContextMenu addContextMenu;
 		private KryptonButton favoritesButton;
-		private GuiKit.Components.FontPalette fontPalette;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 		private ModuleListControl moduleListControl;
 	}
 }

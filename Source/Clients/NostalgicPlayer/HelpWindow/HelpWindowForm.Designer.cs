@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpWindowForm));
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			this.SuspendLayout();
 			// 
 			// HelpWindowForm
@@ -50,6 +50,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 
 		#endregion
 
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

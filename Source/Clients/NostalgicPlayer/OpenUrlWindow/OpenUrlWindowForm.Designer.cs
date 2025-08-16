@@ -30,8 +30,8 @@
 		{
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OpenUrlWindowForm));
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			nameLabel = new Krypton.Toolkit.KryptonLabel();
 			nameTextBox = new Krypton.Toolkit.KryptonTextBox();
 			cancelButton = new Krypton.Toolkit.KryptonButton();
@@ -160,8 +160,8 @@
 
 		#endregion
 
-		private GuiKit.Components.FontPalette fontPalette;
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonLabel nameLabel;
 		private Krypton.Toolkit.KryptonTextBox nameTextBox;
 		private Krypton.Toolkit.KryptonButton cancelButton;

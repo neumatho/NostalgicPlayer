@@ -30,15 +30,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			this.agentsDataGridView = new Krypton.Toolkit.KryptonDataGridView();
 			this.descriptionDataGridView = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.DescriptionListControl();
 			this.settingsButton = new Krypton.Toolkit.KryptonButton();
 			this.displayButton = new Krypton.Toolkit.KryptonButton();
 			this.agentsGroup = new Krypton.Toolkit.KryptonGroup();
 			this.descriptionGroup = new Krypton.Toolkit.KryptonGroup();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
-			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
+			this.bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.agentsDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.descriptionDataGridView)).BeginInit();
@@ -192,14 +192,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		}
 
 		#endregion
-		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
+		private Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonDataGridView agentsDataGridView;
 		private DescriptionListControl descriptionDataGridView;
 		private Krypton.Toolkit.KryptonButton settingsButton;
 		private Krypton.Toolkit.KryptonButton displayButton;
 		private Krypton.Toolkit.KryptonGroup agentsGroup;
 		private Krypton.Toolkit.KryptonGroup descriptionGroup;
-		private GuiKit.Components.FontPalette fontPalette;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 	}
 }

@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\NostalgicPlayerCKit\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
     <Compile Include="..\..\ReSidFp\ReSidFpTypes.cs" Link="ReSidFpTypes.cs" />
   </ItemGroup>
 

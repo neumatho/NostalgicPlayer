@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.GuiKit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 {

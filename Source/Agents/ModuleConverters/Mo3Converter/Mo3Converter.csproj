@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
     <ProjectReference Include="..\..\..\Ports\LibMpg123\LibMpg123.csproj" />
     <ProjectReference Include="..\..\..\Ports\LibVorbisFile\LibVorbisFile.csproj" />
   </ItemGroup>

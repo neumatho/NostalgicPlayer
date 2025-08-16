@@ -31,9 +31,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsControl));
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			this.pathLabel = new Krypton.Toolkit.KryptonLabel();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			this.pathTextBox = new Krypton.Toolkit.KryptonTextBox();
 			this.pathButton = new Krypton.Toolkit.KryptonButton();
 			this.eigthBitRadioButton = new Krypton.Toolkit.KryptonRadioButton();
@@ -331,7 +331,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		}
 
 		#endregion
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonLabel pathLabel;
 		private Krypton.Toolkit.KryptonTextBox pathTextBox;
 		private Krypton.Toolkit.KryptonButton pathButton;
@@ -351,6 +351,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		private Krypton.Toolkit.KryptonLabel frequencyValueLabel;
 		private Krypton.Toolkit.KryptonRadioButton thirtytwoRadioButton;
 		private System.Windows.Forms.Panel frequencyPanel;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

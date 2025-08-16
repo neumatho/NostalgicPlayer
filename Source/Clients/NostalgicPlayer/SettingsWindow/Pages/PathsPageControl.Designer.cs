@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PathsPageControl));
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			this.group = new Krypton.Toolkit.KryptonGroup();
 			this.startScanButton = new Krypton.Toolkit.KryptonButton();
 			this.startScanTextBox = new Krypton.Toolkit.KryptonTextBox();
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.listButton = new Krypton.Toolkit.KryptonButton();
 			this.listTextBox = new Krypton.Toolkit.KryptonTextBox();
 			this.listLabel = new Krypton.Toolkit.KryptonLabel();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.group)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.group.Panel)).BeginInit();
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		}
 
 		#endregion
-		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
+		private Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroup group;
 		private Krypton.Toolkit.KryptonLabel startScanLabel;
 		private Krypton.Toolkit.KryptonTextBox startScanTextBox;
@@ -210,6 +210,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonLabel listLabel;
 		private Krypton.Toolkit.KryptonTextBox listTextBox;
 		private Krypton.Toolkit.KryptonButton listButton;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

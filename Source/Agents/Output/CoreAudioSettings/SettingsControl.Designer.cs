@@ -31,8 +31,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		{
 			components = new System.ComponentModel.Container();
 			deviceLabel = new Krypton.Toolkit.KryptonLabel();
-			fontPalette = new GuiKit.Components.FontPalette(components);
-			controlResource = new GuiKit.Designer.ControlResource();
+			fontPalette = new Kit.Gui.Components.FontPalette(components);
+			controlResource = new Kit.Gui.Designer.ControlResource();
 			deviceComboBox = new Krypton.Toolkit.KryptonComboBox();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
 			((System.ComponentModel.ISupportInitialize)deviceComboBox).BeginInit();
@@ -92,8 +92,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 
 		#endregion
 		private Krypton.Toolkit.KryptonLabel deviceLabel;
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonComboBox deviceComboBox;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

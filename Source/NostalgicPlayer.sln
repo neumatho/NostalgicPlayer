@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Players", "Players", "{76C2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayer", "Clients\NostalgicPlayer\NostalgicPlayer.csproj", "{5805A6B4-6FFC-4BC0-9B44-91ADD71B6426}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayerKit", "NostalgicPlayerKit\NostalgicPlayerKit.csproj", "{A75C7796-6E7D-4ABE-A3E3-643D222862FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayer.Kit", "NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj", "{A75C7796-6E7D-4ABE-A3E3-643D222862FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayerLibrary", "NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj", "{39A8EA8E-EB91-438A-BAEF-872C477E7DB5}"
 EndProject
@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleConverters", "SampleC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiskSaver", "Agents\Output\DiskSaver\DiskSaver.csproj", "{DF5F2D7B-89F4-409A-B3E4-AD79E3337ECB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayerGuiKit", "NostalgicPlayerGuiKit\NostalgicPlayerGuiKit.csproj", "{B9C2ACE1-E952-4C1B-9E53-D80A7857411B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayer.Kit.Gui", "NostalgicPlayer.Kit.Gui\NostalgicPlayer.Kit.Gui.csproj", "{B9C2ACE1-E952-4C1B-9E53-D80A7857411B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RiffWave", "Agents\SampleConverters\RiffWave\RiffWave.csproj", "{53AD8FEB-9357-46AE-ABF9-6580CB608767}"
 EndProject
@@ -190,7 +190,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibVorbisFile", "Ports\LibV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibVorbis", "Ports\LibVorbis\LibVorbis.csproj", "{01471ED9-8505-4492-93B4-0E97FD995129}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayerCKit", "NostalgicPlayerCKit\NostalgicPlayerCKit.csproj", "{3C34B7FD-0415-421E-89B3-1EAFA3E0D9FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Kit.C", "NostalgicPlayer.Kit.C\NostalgicPlayer.Kit.C.csproj", "{3C34B7FD-0415-421E-89B3-1EAFA3E0D9FC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicAssembler", "Agents\Players\MusicAssembler\MusicAssembler.csproj", "{8CF82235-E51F-451D-A96A-CCF69398F414}"
 EndProject

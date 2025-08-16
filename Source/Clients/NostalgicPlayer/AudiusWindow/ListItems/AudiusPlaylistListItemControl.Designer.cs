@@ -30,7 +30,7 @@
 		{
 			audiusMusicListItemControl = new AudiusMusicListItemControl();
 			tracksGroup = new Krypton.Toolkit.KryptonGroup();
-			tracksFlowLayoutPanel = new Polycode.NostalgicPlayer.GuiKit.Controls.ImprovedFlowLayoutPanel();
+			tracksFlowLayoutPanel = new Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedFlowLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)tracksGroup).BeginInit();
 			((System.ComponentModel.ISupportInitialize)tracksGroup.Panel).BeginInit();
 			tracksGroup.Panel.SuspendLayout();
@@ -89,6 +89,6 @@
 
 		private AudiusMusicListItemControl audiusMusicListItemControl;
 		private Krypton.Toolkit.KryptonGroup tracksGroup;
-		private GuiKit.Controls.ImprovedFlowLayoutPanel tracksFlowLayoutPanel;
+		private Kit.Gui.Controls.ImprovedFlowLayoutPanel tracksFlowLayoutPanel;
 	}
 }

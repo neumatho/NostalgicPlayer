@@ -33,10 +33,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AgentSettingsWindowForm));
 			settingsGroup = new Krypton.Toolkit.KryptonGroup();
 			okButton = new Krypton.Toolkit.KryptonButton();
-			bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			cancelButton = new Krypton.Toolkit.KryptonButton();
 			applyButton = new Krypton.Toolkit.KryptonButton();
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			((System.ComponentModel.ISupportInitialize)settingsGroup).BeginInit();
 			((System.ComponentModel.ISupportInitialize)settingsGroup.Panel).BeginInit();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		private Krypton.Toolkit.KryptonButton okButton;
 		private Krypton.Toolkit.KryptonButton cancelButton;
 		private Krypton.Toolkit.KryptonButton applyButton;
-		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
-		private GuiKit.Components.FontPalette bigFontPalette;
+		private Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource controlResource;
+		private Kit.Gui.Components.FontPalette bigFontPalette;
 	}
 }

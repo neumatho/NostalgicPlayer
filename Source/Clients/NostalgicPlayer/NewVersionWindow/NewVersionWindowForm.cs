@@ -7,7 +7,7 @@ using System;
 using System.Net.Http;
 using System.Text;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.GuiKit.Components;
+using Polycode.NostalgicPlayer.Kit.Gui.Components;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 {

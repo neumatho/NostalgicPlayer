@@ -31,10 +31,10 @@
 			components = new System.ComponentModel.Container();
 			typePanel = new System.Windows.Forms.Panel();
 			typeProfilesRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			typePlaylistsRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			typeTracksRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			searchPanel = new System.Windows.Forms.Panel();
 			searchButton = new Krypton.Toolkit.KryptonButton();
 			searchTextBox = new Krypton.Toolkit.KryptonTextBox();
@@ -185,8 +185,8 @@
 		private Krypton.Toolkit.KryptonRadioButton typeProfilesRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton typePlaylistsRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton typeTracksRadioButton;
-		private GuiKit.Designer.ControlResource controlResource;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Designer.ControlResource controlResource;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private System.Windows.Forms.Panel searchPanel;
 		private Krypton.Toolkit.KryptonTextBox searchTextBox;
 		private Krypton.Toolkit.KryptonButton searchButton;

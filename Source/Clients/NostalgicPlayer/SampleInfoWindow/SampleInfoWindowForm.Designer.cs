@@ -35,17 +35,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			navigatorInstrumentPage = new Krypton.Navigator.KryptonPage();
 			instrumentGroup = new Krypton.Toolkit.KryptonGroup();
 			instrumentDataGridView = new Krypton.Toolkit.KryptonDataGridView();
-			monoFontPalette = new GuiKit.Components.FontPalette(components);
+			monoFontPalette = new Kit.Gui.Components.FontPalette(components);
 			navigatorSamplePage = new Krypton.Navigator.KryptonPage();
 			saveFormatLabel = new Krypton.Toolkit.KryptonLabel();
-			fontPalette = new GuiKit.Components.FontPalette(components);
+			fontPalette = new Kit.Gui.Components.FontPalette(components);
 			saveFormatComboBox = new Krypton.Toolkit.KryptonComboBox();
 			saveButton = new Krypton.Toolkit.KryptonButton();
 			polyphonyLabel = new Krypton.Toolkit.KryptonLabel();
 			sampleGroup = new Krypton.Toolkit.KryptonGroup();
 			sampleDataGridView = new SampleInfoSamplesListControl();
 			octaveLabel = new Krypton.Toolkit.KryptonLabel();
-			controlResource = new GuiKit.Designer.ControlResource();
+			controlResource = new Kit.Gui.Designer.ControlResource();
 			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
 			((System.ComponentModel.ISupportInitialize)navigatorInstrumentPage).BeginInit();
 			navigatorInstrumentPage.SuspendLayout();
@@ -337,10 +337,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		private Krypton.Toolkit.KryptonLabel octaveLabel;
 		private Krypton.Toolkit.KryptonLabel polyphonyLabel;
 		private Krypton.Toolkit.KryptonButton saveButton;
-		private GuiKit.Designer.ControlResource controlResource;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonComboBox saveFormatComboBox;
 		private Krypton.Toolkit.KryptonLabel saveFormatLabel;
-		private GuiKit.Components.FontPalette fontPalette;
-		private GuiKit.Components.FontPalette monoFontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette monoFontPalette;
 	}
 }

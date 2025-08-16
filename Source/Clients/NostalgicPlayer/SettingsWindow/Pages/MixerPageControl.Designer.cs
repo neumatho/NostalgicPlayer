@@ -30,9 +30,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			generalGroupBox = new Krypton.Toolkit.KryptonGroupBox();
-			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			stereoSeparationPercentLabel = new Krypton.Toolkit.KryptonLabel();
 			stereoSeparationTrackBar = new Krypton.Toolkit.KryptonTrackBar();
 			stereoSeparationLabel = new Krypton.Toolkit.KryptonLabel();
@@ -389,7 +389,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		}
 
 		#endregion
-		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
+		private Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroupBox generalGroupBox;
 		private Krypton.Toolkit.KryptonLabel stereoSeparationLabel;
 		private Krypton.Toolkit.KryptonTrackBar stereoSeparationTrackBar;
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonButton channels32_47Button;
 		private Krypton.Toolkit.KryptonButton channels48_63Button;
 		private Krypton.Toolkit.KryptonCheckBox swapSpeakersCheckBox;
-		private GuiKit.Components.FontPalette fontPalette;
+		private Kit.Gui.Components.FontPalette fontPalette;
 		private Krypton.Toolkit.KryptonLabel visualsLatencyLabel;
 		private Krypton.Toolkit.KryptonTrackBar visualsLatencyTrackBar;
 		private Krypton.Toolkit.KryptonLabel visualsLatencyMsLabel;
