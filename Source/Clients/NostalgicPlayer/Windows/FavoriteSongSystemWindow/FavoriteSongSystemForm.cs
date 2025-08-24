@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 	/// <summary>
 	/// This shows the favorite song system
 	/// </summary>
-	public partial class FavoriteSongSystemForm : WindowFormBase
+	public partial class FavoriteSongSystemForm : WindowFormBase2
 	{
 		private IMainWindowApi mainWindowApi;
 		private IModuleDatabase database;

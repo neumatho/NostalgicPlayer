@@ -145,6 +145,7 @@
     <ProjectReference Include="..\..\Agents\Visuals\SpectrumAnalyzer\SpectrumAnalyzer.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\SpinningSquares\SpinningSquares.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.External\NostalgicPlayer.External.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Controls\NostalgicPlayer.Controls.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit.Gui\NostalgicPlayer.Kit.Gui.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
@@ -153,6 +154,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Bases\WindowFormBase2.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

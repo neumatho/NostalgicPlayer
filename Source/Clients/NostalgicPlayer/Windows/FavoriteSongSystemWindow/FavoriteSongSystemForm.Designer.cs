@@ -181,7 +181,6 @@
 			// 
 			// FavoriteSongSystemForm
 			// 
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			ClientSize = new System.Drawing.Size(422, 225);
 			Controls.Add(otherNumberTextBox);
 			Controls.Add(showComboBox);
@@ -193,8 +192,6 @@
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(438, 264);
 			Name = "FavoriteSongSystemForm";
-			Palette = fontPalette;
-			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(this, null);
 			FormClosed += FavoriteSongSystemWindowForm_FormClosed;
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).EndInit();
