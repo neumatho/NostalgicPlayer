@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 	/// <summary>
 	/// Use the class as the base class for all windows
 	/// </summary>
-	public class WindowFormBase : KryptonForm
+	public class WindowFormBase : KryptonForm, IWindowForm
 	{
 		/// <summary>
 		/// Holds all the settings for the form itself
