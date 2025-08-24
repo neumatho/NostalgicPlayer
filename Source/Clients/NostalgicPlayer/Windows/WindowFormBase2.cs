@@ -5,17 +5,19 @@
 /******************************************************************************/
 using System.Drawing;
 using System.Windows.Forms;
-using Krypton.Toolkit;
+using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
-using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Controls.Forms;
+using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 {
 	/// <summary>
 	/// Use the class as the base class for all windows
 	/// </summary>
-	public class WindowFormBase : KryptonForm, IWindowForm
+	public class WindowFormBase2 : NostalgicForm, IWindowForm
 	{
 		/// <summary>
 		/// Holds all the settings for the form itself
@@ -31,39 +33,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// <summary>
 		/// Holds the interface to the main window API
 		/// </summary>
-		private IMainWindowApi mainWindowApi;
+		protected IMainWindowApi mainWindowApi;
 
+		private OptionSettings optionSettings;
 		private WindowSettings windowSettings;
-
-		/********************************************************************/
-		/// <summary>
-		/// Initialize the form
-		///
-		/// Called from FormCreatorService
-		/// </summary>
-		/********************************************************************/
-		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings)
-		{
-			// Remember the arguments
-			this.mainWindowApi = mainWindowApi;
-			allWindowSettings = settings;
-
-			// Set how the window should act in the task bar and task switcher.
-			// Only apply to child windows - the main window (where mainWindowApi.Form
-			// is not yet initialized) should always keep its default ShowInTaskbar = true
-			if (mainWindowApi.Form != null)
-			{
-				if (!optionSettings.SeparateWindows)
-				{
-					Owner = mainWindowApi.Form;
-					ShowInTaskbar = false;
-				}
-				else
-					ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
-			}
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>
@@ -90,12 +63,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 
 		/********************************************************************/
 		/// <summary>
+		/// Set option settings. Should only be used by the main window
+		/// </summary>
+		/********************************************************************/
+		protected void SetOptions(IMainWindowApi mainWindow, OptionSettings optSettings)
+		{
+			mainWindowApi = mainWindow;
+			optionSettings = optSettings;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this to initialize the window with basis settings
+		/// </summary>
+		/********************************************************************/
+		protected void InitializeWindow(IMainWindowApi mainWindow, OptionSettings optSettings)
+		{
+			SetOptions(mainWindow, optSettings);
+
+			// Set how the window should act in the task bar and task switcher
+			if (!optionSettings.SeparateWindows)
+			{
+				Owner = mainWindow.Form;
+				ShowInTaskbar = false;
+			}
+			else
+				ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Call this to load window settings
 		/// </summary>
 		/********************************************************************/
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
+			allWindowSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
 			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);
