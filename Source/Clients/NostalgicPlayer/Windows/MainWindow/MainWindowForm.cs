@@ -1405,7 +1405,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					aboutWindow.Close();
 
 				// Minimize all windows
-				foreach (WindowFormBase window in GetAllOpenedWindows())
+				foreach (IWindowForm window in GetAllOpenedWindows())
 				{
 					window.UpdateWindowSettings();
 					window.WindowState = FormWindowState.Minimized;
@@ -1414,7 +1414,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			else if (WindowState == FormWindowState.Normal)
 			{
 				// Open all windows
-				foreach (WindowFormBase window in GetAllOpenedWindows())
+				foreach (IWindowForm window in GetAllOpenedWindows())
 					window.WindowState = FormWindowState.Normal;
 			}
 		}
@@ -3569,7 +3569,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Get all opened windows
 		/// </summary>
 		/********************************************************************/
-		private IEnumerable<WindowFormBase> GetAllOpenedWindows()
+		private IEnumerable<IWindowForm> GetAllOpenedWindows()
 		{
 			if (IsHelpWindowOpen())
 				yield return helpWindow;
