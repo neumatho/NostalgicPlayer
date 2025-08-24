@@ -264,6 +264,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibOpenMpt.Test", "Ports\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Library.Test", "NostalgicPlayer.Library.Test\NostalgicPlayer.Library.Test.csproj", "{C72E3D15-DB73-436F-9301-92C91A65B993}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Controls", "NostalgicPlayer.Controls\NostalgicPlayer.Controls.csproj", "{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2075,6 +2077,22 @@ Global
 		{C72E3D15-DB73-436F-9301-92C91A65B993}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{C72E3D15-DB73-436F-9301-92C91A65B993}.Release|x64.ActiveCfg = Release|Any CPU
 		{C72E3D15-DB73-436F-9301-92C91A65B993}.Release|x86.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x64.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|ARM64.Build.0 = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x64.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x64.Build.0 = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
