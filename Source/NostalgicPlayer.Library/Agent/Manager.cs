@@ -345,7 +345,9 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 					// find the agent interfaces
 					foreach (string file in Directory.GetFiles(searchDirectory, "*.dll"))
 					{
-						if (!file.StartsWith("System.") && !file.StartsWith("Microsoft.") && !file.StartsWith("api-ms-"))
+						string fileName = Path.GetFileName(file);
+
+						if (!fileName.StartsWith("System.") && !fileName.StartsWith("Microsoft.") && !fileName.StartsWith("Krypton."))
 						{
 							try
 							{
