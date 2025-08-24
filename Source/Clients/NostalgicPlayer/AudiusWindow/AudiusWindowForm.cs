@@ -59,6 +59,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			}
 		}
 
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl => "audius.html";
+		#endregion
+
 		#region IAudiusWindowApi implementation
 		/********************************************************************/
 		/// <summary>
