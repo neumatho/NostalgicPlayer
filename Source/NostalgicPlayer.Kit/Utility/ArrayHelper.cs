@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Create an array of the type given and fill it will newly created
+		/// Create an array of the type given and fill it with newly created
 		/// objects of same type
 		/// </summary>
 		/********************************************************************/
