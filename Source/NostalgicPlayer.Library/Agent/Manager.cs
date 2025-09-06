@@ -81,6 +81,16 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 			public IAgentSettings Settings { get; set; }
 		}
 
+		private static readonly string[] prefixExcludeList =
+		[
+			"System.",
+			"Microsoft.",
+			"Krypton.",
+			"NAudio",
+			"NostalgicPlayer.",
+			"Lib"
+		];
+
 		private readonly Lock listLock = new Lock();
 		private readonly Dictionary<Guid, AgentLoadInfo> agentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
 		private readonly Dictionary<AgentType, List<AgentInfo>> agentsByAgentType = new Dictionary<AgentType, List<AgentInfo>>();
@@ -347,7 +357,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 					{
 						string fileName = Path.GetFileName(file);
 
-						if (!fileName.StartsWith("System.") && !fileName.StartsWith("Microsoft.") && !fileName.StartsWith("Krypton."))
+						if (!prefixExcludeList.Any(x => fileName.StartsWith(x)))
 						{
 							try
 							{
