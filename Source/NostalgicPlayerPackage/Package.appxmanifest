@@ -1350,6 +1350,14 @@
             <uap:DisplayName>Sound Control</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="astfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ast">.ast</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Actionamics</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

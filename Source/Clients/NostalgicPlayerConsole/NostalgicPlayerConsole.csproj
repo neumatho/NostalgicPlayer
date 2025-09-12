@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ProWizardConverter\ProWizardConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\Actionamics\Actionamics.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ActivisionPro\ActivisionPro.csproj" />
     <ProjectReference Include="..\..\Agents\Players\AmosMusicBank\AmosMusicBank.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ArtOfNoise\ArtOfNoise.csproj" />

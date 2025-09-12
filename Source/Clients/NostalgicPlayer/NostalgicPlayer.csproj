@@ -81,6 +81,7 @@
     <ProjectReference Include="..\..\Agents\Output\CoreAudioSettings\CoreAudioSettings.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
     <ProjectReference Include="..\..\Agents\Output\DiskSaver\DiskSaver.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\Actionamics\Actionamics.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ActivisionPro\ActivisionPro.csproj" />
     <ProjectReference Include="..\..\Agents\Players\AmosMusicBank\AmosMusicBank.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ArtOfNoise\ArtOfNoise.csproj" />
