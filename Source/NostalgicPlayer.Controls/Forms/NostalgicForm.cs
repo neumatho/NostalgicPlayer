@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -12,7 +13,9 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Containers.Events;
 using Polycode.NostalgicPlayer.Controls.Native;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Forms
 {
@@ -21,31 +24,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 	/// </summary>
 	public class NostalgicForm : Form
 	{
-		private Color ActivatedFormOuterColor = Color.FromArgb(144, 154, 166);
-		private Color ActivatedFormMiddleColor = Color.FromArgb(212, 230, 245);
-		private Color ActivatedFormInnerStartColor = Color.FromArgb(193, 212, 236);
-		private Color ActivatedFormInnerStopColor = Color.FromArgb(187, 206, 230);
-		private Color ActivatedWindowTitleColor = Color.FromArgb(30, 57, 91);
-
-		private Color DeactivatedFormOuterColor = Color.FromArgb(162, 173, 185);
-		private Color DeactivatedFormMiddleColor = Color.FromArgb(223, 235, 247);
-		private Color DeactivatedFormInnerStartColor = Color.FromArgb(223, 235, 247);
-		private Color DeactivatedFormInnerStopColor = Color.FromArgb(223, 235, 247);
-		private Color DeactivatedWindowTitleColor = Color.FromArgb(106, 128, 168);
-
-		private Color CloseCaptionButtonHoverStartColor = Color.FromArgb(255, 132, 130);
-		private Color CloseCaptionButtonHoverStopColor = Color.FromArgb(227, 97, 98);
-		private Color CloseCaptionButtonPressStartColor = Color.FromArgb(242, 119, 118);
-		private Color CloseCaptionButtonPressStopColor = Color.FromArgb(206, 85, 84);
-
-		private Color CaptionButtonHoverStartColor = Color.FromArgb(214, 234, 255);
-		private Color CaptionButtonHoverStopColor = Color.FromArgb(188, 207, 231);
-		private Color CaptionButtonPressStartColor = Color.FromArgb(187, 206, 230);
-		private Color CaptionButtonPressStopColor = Color.FromArgb(166, 182, 213);
-
-		private Color FormBackgroundColor = Color.FromArgb(240, 240, 240);
-
-		private Font TitleFont = new Font("Microsoft Sans", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
+		private IFormColors colors;
+		private IFonts fonts;
 
 		private enum CaptionButton
 		{
@@ -95,6 +75,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		protected override void Dispose(bool disposing)
 		{
+			CleanupTheme();
+
 			if (smallIcon != null)
 			{
 				smallIcon.Dispose();
@@ -113,6 +95,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
+			InitializeTheme();
+
 			base.OnHandleCreated(e);
 
 			isActive = ActiveForm == this;
@@ -291,6 +275,66 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		}
 		#endregion
 
+		#region Theme
+		/********************************************************************/
+		/// <summary>
+		/// Initialize form with the current theme
+		/// </summary>
+		/********************************************************************/
+		private void InitializeTheme()
+		{
+/*			IThemeManager themeManager = DependencyInjection.GetDefaultProvider().GetService<IThemeManager>();
+			themeManager.ThemeChanged += ThemeChanged;
+
+			SetupTheme(themeManager.CurrentTheme);*///XX
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup theme from the form
+		/// </summary>
+		/********************************************************************/
+		private void CleanupTheme()
+		{
+/*			IThemeManager themeManager = DependencyInjection.GetDefaultProvider().GetService<IThemeManager>();
+			themeManager.ThemeChanged -= ThemeChanged;*///XX
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will setup the theme for the form and all its controls
+		/// </summary>
+		/********************************************************************/
+		private void SetupTheme(ITheme theme)
+		{
+			colors = theme.FormColors;
+			fonts = theme.StandardFonts;
+
+			foreach (IThemeControl control in Controls.OfType<IThemeControl>())
+				control.SetTheme(theme);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes. Update all controls and redraw
+		/// itself
+		/// </summary>
+		/********************************************************************/
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			SetupTheme(e.NewTheme);
+
+			RefreshNonClientArea();
+			Refresh();
+		}
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -299,7 +343,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void SetFormProperties()
 		{
-			BackColor = FormBackgroundColor;
+			BackColor = colors.FormBackgroundColor;
 			AutoScaleMode = AutoScaleMode.None;
 		}
 
@@ -317,7 +361,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 			using (Graphics g = CreateGraphics())
 			{
-				Size size = TextRenderer.MeasureText(g, "Ag", TitleFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+				Size size = TextRenderer.MeasureText(g, "Ag", fonts.FormTitleFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
 
 				titleBarFontSize = size.Height;
 				titleBarHeight = titleBarFontSize + TitleBarPadding;
@@ -691,10 +735,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void DrawBorder(Graphics g, int windowWidth, int windowHeight, int innerBorderThickness)
 		{
-			Color outer = isActive ? ActivatedFormOuterColor : DeactivatedFormOuterColor;
-			Color middle = isActive ? ActivatedFormMiddleColor : DeactivatedFormMiddleColor;
-			Color innerStart = isActive ? ActivatedFormInnerStartColor : DeactivatedFormInnerStartColor;
-			Color innerStop = isActive ? ActivatedFormInnerStopColor : DeactivatedFormInnerStopColor;
+			Color outer = isActive ? colors.ActivatedFormOuterColor : colors.DeactivatedFormOuterColor;
+			Color middle = isActive ? colors.ActivatedFormMiddleColor : colors.DeactivatedFormMiddleColor;
+			Color innerStart = isActive ? colors.ActivatedFormInnerStartColor : colors.DeactivatedFormInnerStartColor;
+			Color innerStop = isActive ? colors.ActivatedFormInnerStopColor : colors.DeactivatedFormInnerStopColor;
 
 			using (Pen pen = new Pen(outer, 1))
 			{
@@ -808,8 +852,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void DrawTitleBarBackground(Graphics g, int windowWidth)
 		{
-			Color start = isActive ? ActivatedFormInnerStartColor : DeactivatedFormInnerStartColor;
-			Color stop = isActive ? ActivatedFormInnerStopColor : DeactivatedFormInnerStopColor;
+			Color start = isActive ? colors.ActivatedFormInnerStartColor : colors.DeactivatedFormInnerStartColor;
+			Color stop = isActive ? colors.ActivatedFormInnerStopColor : colors.DeactivatedFormInnerStopColor;
 
 			using (LinearGradientBrush brush = new LinearGradientBrush(new Rectangle(0, 0, windowWidth, FrameBorderThickness + titleBarHeight), start, stop, LinearGradientMode.Vertical))
 			{
@@ -854,7 +898,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			Rectangle rect = new Rectangle(left, FrameBorderThickness + ((titleBarHeight - titleBarFontSize) / 2), right - left, titleBarFontSize);
 
-			Color titleColor = isActive ? ActivatedWindowTitleColor : DeactivatedWindowTitleColor;
+			Color titleColor = isActive ? colors.ActivatedWindowTitleColor : colors.DeactivatedWindowTitleColor;
 
 			using (Brush brush = new SolidBrush(titleColor))
 			{
@@ -863,7 +907,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 					sf.LineAlignment = StringAlignment.Center;
 					sf.Trimming = StringTrimming.EllipsisCharacter;
 
-					g.DrawString(Text, TitleFont, brush, rect, sf);
+					g.DrawString(Text, fonts.FormTitleFont, brush, rect, sf);
 				}
 			}
 		}
@@ -1004,7 +1048,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			const float bw = 0.0722f;
 			const float alpha = 0.40f;	// Tweak to taste
 
-			var cm = new ColorMatrix(
+			ColorMatrix cm = new ColorMatrix(
 			[
 				[ rw, rw, rw, 0, 0 ],
 				[ gw, gw, gw, 0, 0 ],
@@ -1013,11 +1057,11 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				[  0,  0,  0, 0, 1 ]
 			]);
 
-			using (var ia = new ImageAttributes())
+			using (ImageAttributes ia = new ImageAttributes())
 			{
 				ia.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-				var dest = new Rectangle(imgX, imgY, bitmap.Width, bitmap.Height);
+				Rectangle dest = new Rectangle(imgX, imgY, bitmap.Width, bitmap.Height);
 				g.DrawImage(bitmap, dest, 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, ia);
 			}
 		}
@@ -1097,10 +1141,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			return new CaptionButtonColors
 			{
-				HoverStartColor = CloseCaptionButtonHoverStartColor,
-				HoverStopColor = CloseCaptionButtonHoverStopColor,
-				PressStartColor = CloseCaptionButtonPressStartColor,
-				PressStopColor = CloseCaptionButtonPressStopColor
+				HoverStartColor = colors.CloseCaptionButtonHoverStartColor,
+				HoverStopColor = colors.CloseCaptionButtonHoverStopColor,
+				PressStartColor = colors.CloseCaptionButtonPressStartColor,
+				PressStopColor = colors.CloseCaptionButtonPressStopColor
 			};
 		}
 
@@ -1115,10 +1159,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			return new CaptionButtonColors
 			{
-				HoverStartColor = CaptionButtonHoverStartColor,
-				HoverStopColor = CaptionButtonHoverStopColor,
-				PressStartColor = CaptionButtonPressStartColor,
-				PressStopColor = CaptionButtonPressStopColor
+				HoverStartColor = colors.CaptionButtonHoverStartColor,
+				HoverStopColor = colors.CaptionButtonHoverStopColor,
+				PressStartColor = colors.CaptionButtonPressStartColor,
+				PressStopColor = colors.CaptionButtonPressStopColor
 			};
 		}
 		#endregion
@@ -1204,7 +1248,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
 				{
 					PropertyDescriptorCollection props = base.GetProperties(attributes);
-					var kept = new System.Collections.Generic.List<PropertyDescriptor>(props.Count);
+					List<PropertyDescriptor> kept = new List<PropertyDescriptor>(props.Count);
 
 					foreach (PropertyDescriptor pd in props)
 					{
