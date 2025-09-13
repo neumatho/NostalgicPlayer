@@ -80,6 +80,11 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 			{
 				Console.WriteLine("Program failed with exception: " + ex);
 			}
+			finally
+			{
+				// Ensure DI root + singletons disposed
+				DependencyInjection.Dispose();
+			}
 		}
 
 
