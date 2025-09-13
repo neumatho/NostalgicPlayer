@@ -569,6 +569,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				c_int inPtr = 0;
 				OggPage[] og = new OggPage[5];
 
+				Assert.IsTrue(data.IsNotNull, "Unable to allocate required data buffer");
+
 				osEn.Reset();
 
 				for (c_int i = 0; pl[i] != -1; i++)
@@ -595,7 +597,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 					if (osEn.PageOut(out og[i]) == 0)
 						Assert.Fail("Too few pages output building sync tests");
 
-					CopyPage(og[i]);
+					if (CopyPage(og[i]) == -1)
+						Assert.Fail("Unable to copy page building sync tests");
 				}
 
 				// Test lost pages on pagein/packetout: no rollback
@@ -930,6 +933,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 
 			c_int byteSkipCount = 0;
 
+			Assert.IsTrue(data.IsNotNull, "Unable to allocate required data buffer");
+
 			osEn.Reset();
 			osDe.Reset();
 			oy.Reset();
@@ -1157,15 +1162,23 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void CopyPage(OggPage og)
+		private c_int CopyPage(OggPage og)
 		{
 			CPointer<byte> temp = Memory.Ogg_MAlloc<byte>((size_t)og.Page.HeaderLen);
+			if (temp.IsNull)
+				return -1;
+
 			CMemory.MemCpy(temp, og.Page.Header, og.Page.HeaderLen);
 			og.Page.Header = temp;
 
 			temp = Memory.Ogg_MAlloc<byte>((size_t)og.Page.BodyLen);
+			if (temp.IsNull)
+				return -1;
+
 			CMemory.MemCpy(temp, og.Page.Body, og.Page.BodyLen);
 			og.Page.Body = temp;
+
+			return 0;
 		}
 
 
@@ -1178,7 +1191,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 		private void FreePage(OggPage og)
 		{
 			Memory.Ogg_Free(og.Page.Header);
+			og.Page.Header.SetToNull();
+
 			Memory.Ogg_Free(og.Page.Body);
+			og.Page.Body.SetToNull();
 		}
 		#endregion
 	}

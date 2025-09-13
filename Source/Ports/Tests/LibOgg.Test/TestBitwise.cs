@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				if (r.Look(32) == -1)
 					Assert.Fail("Out of data. Failed");
 
-				if (r.Look(32) != large[i])
+				if ((c_ulong)r.Look(32) != large[i])
 					Assert.Fail("Read incorrect value");
 
 				r.Adv(32);
@@ -288,7 +288,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				if (rb.Look(32) == -1)
 					Assert.Fail("Out of data. Failed");
 
-				if (rb.Look(32) != large[i])
+				if ((c_ulong)rb.Look(32) != large[i])
 					Assert.Fail("Read incorrect value");
 
 				rb.Adv(32);
@@ -420,23 +420,23 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				if (r.Look(tBit) == -1)
 					Assert.Fail("Out of data");
 
-				if (r.Look(tBit) != (b[i] & Tables.Mask[tBit]))
+				if ((c_ulong)r.Look(tBit) != (b[i] & Tables.Mask[tBit]))
 					Assert.Fail("Looked at incorrect value");
 
 				if (tBit == 1)
 				{
-					if (r.Look1() != (b[i] & Tables.Mask[tBit]))
+					if ((c_ulong)r.Look1() != (b[i] & Tables.Mask[tBit]))
 						Assert.Fail("Looked at single bit incorrect value");
 				}
 
 				if (tBit == 1)
 				{
-					if (r.Read1() != (b[i] & Tables.Mask[tBit]))
+					if ((c_ulong)r.Read1() != (b[i] & Tables.Mask[tBit]))
 						Assert.Fail("Read incorrect single bit value");
 				}
 				else
 				{
-					if (r.Read(tBit) != (b[i] & Tables.Mask[tBit]))
+					if ((c_ulong)r.Read(tBit) != (b[i] & Tables.Mask[tBit]))
 						Assert.Fail("Read incorrect value");
 				}
 			}
@@ -475,23 +475,23 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				if (rb.Look(tBit) == -1)
 					Assert.Fail("Out of data");
 
-				if (rb.Look(tBit) != (b[i] & Tables.Mask[tBit]))
+				if ((c_ulong)rb.Look(tBit) != (b[i] & Tables.Mask[tBit]))
 					Assert.Fail("Looked at incorrect value");
 
 				if (tBit == 1)
 				{
-					if (rb.Look1() != (b[i] & Tables.Mask[tBit]))
+					if ((c_ulong)rb.Look1() != (b[i] & Tables.Mask[tBit]))
 						Assert.Fail("Looked at single bit incorrect value");
 				}
 
 				if (tBit == 1)
 				{
-					if (rb.Read1() != (b[i] & Tables.Mask[tBit]))
+					if ((c_ulong)rb.Read1() != (b[i] & Tables.Mask[tBit]))
 						Assert.Fail("Read incorrect single bit value");
 				}
 				else
 				{
-					if (rb.Read(tBit) != (b[i] & Tables.Mask[tBit]))
+					if ((c_ulong)rb.Read(tBit) != (b[i] & Tables.Mask[tBit]))
 						Assert.Fail("Read incorrect value");
 				}
 			}

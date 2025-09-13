@@ -27,6 +27,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			b = new OggPack_Buffer();
 
 			b.Ptr = b.Buffer = Memory.Ogg_MAlloc<byte>(Buffer_Increment);
+			if (b.Buffer.IsNull)
+				return;
+
 			b.Buffer[0] = 0x00;
 			b.Storage = Buffer_Increment;
 		}
