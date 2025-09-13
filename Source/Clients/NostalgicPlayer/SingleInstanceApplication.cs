@@ -4,8 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Linq;
+using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
@@ -35,7 +37,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		/********************************************************************/
 		protected override void OnCreateMainForm()
 		{
-			MainForm = new MainWindowForm();
+			SplashScreenForm splash = new SplashScreenForm();
+			splash.Show();
+			splash.Update();
+
+			// Create main form (heavy work happens here)
+			MainWindowForm form = new MainWindowForm();
+			MainForm = form;
+			form.InitializeForm(splash.UpdateProgress);
+
+			// Ensure UI refresh before closing splash
+			Application.DoEvents();
+			splash.Close();
+			splash.Dispose();
 
 			base.OnCreateMainForm();
 		}

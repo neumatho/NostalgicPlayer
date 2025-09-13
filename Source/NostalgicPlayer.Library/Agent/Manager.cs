@@ -67,6 +67,11 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 			ArchiveDecrunchers
 		}
 
+		/// <summary>
+		/// Callback used when loading agents to inform about the progress
+		/// </summary>
+		public delegate void LoadAgentProgress(int numberLoaded, int totalNumbers);
+
 		private class AgentLoadInfo
 		{
 			public AssemblyLoadContext LoadContext { get; set; }
@@ -106,13 +111,26 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/********************************************************************/
 		public void LoadAllAgents()
 		{
+			LoadAllAgents((x, y) => {});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will load all available agents into memory and call the callback
+		/// for each agent loaded
+		/// </summary>
+		/********************************************************************/
+		public void LoadAllAgents(LoadAgentProgress callback)
+		{
 			// Initialize the agent type dictionary
 			foreach (AgentType agentType in Enum.GetValues(typeof(AgentType)))
 				agentsByAgentType[agentType] = new List<AgentInfo>();
 
 			// First load all the agents
 			List<IAgent> agentsNotInitializedYet = new List<IAgent>();
-			LoadAllAgents(agentsNotInitializedYet);
+			LoadAllAgents(agentsNotInitializedYet, callback);
 
 			// Now check to see if any of the agents need to know which other
 			// agents that has been loaded
@@ -341,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/// Will load all available agents
 		/// </summary>
 		/********************************************************************/
-		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet)
+		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet, LoadAgentProgress callback)
 		{
 			// Build the search directory
 			string searchDirectory = Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)));
@@ -351,107 +369,119 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 				// Load the agents
 				lock (listLock)
 				{
+					// Find all the files to scan
+					string[] filesToScan = Directory.GetFiles(searchDirectory, "*.dll")
+						.Where(file =>
+						{
+							string fileName = Path.GetFileName(file);
+
+							return !prefixExcludeList.Any(x => fileName.StartsWith(x));
+						})
+						.ToArray();
+
 					// Try to load all library files in the search directory and
 					// find the agent interfaces
-					foreach (string file in Directory.GetFiles(searchDirectory, "*.dll"))
+					for (int i = 0; i < filesToScan.Length; i++)
 					{
-						string fileName = Path.GetFileName(file);
+						string file = filesToScan[i];
 
-						if (!prefixExcludeList.Any(x => fileName.StartsWith(x)))
+						try
 						{
-							try
+							// Load the assembly into memory in its own context
+							AssemblyLoadContext loadContext = new AssemblyLoadContext(null, true);
+							Assembly agentAssembly = loadContext.LoadFromAssemblyPath(file);
+
+							bool foundAnything = false;
+
+							// Find all agent implementations
+							Type type = agentAssembly.GetTypes().FirstOrDefault(t => typeof(IAgent).IsAssignableFrom(t));
+							if (type != null)
 							{
-								// Load the assembly into memory in its own context
-								AssemblyLoadContext loadContext = new AssemblyLoadContext(null, true);
-								Assembly agentAssembly = loadContext.LoadFromAssemblyPath(file);
-
-								bool foundAnything = false;
-
-								// Find all agent implementations
-								Type type = agentAssembly.GetTypes().FirstOrDefault(t => typeof(IAgent).IsAssignableFrom(t));
-								if (type != null)
+								try
 								{
-									try
+									IAgent agent = (IAgent)Activator.CreateInstance(type);
+
+									// Check the NostalgicPlayer version the agent is compiled against
+									if (agent.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
 									{
-										IAgent agent = (IAgent)Activator.CreateInstance(type);
+										Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
+										continue;
+									}
 
-										// Check the NostalgicPlayer version the agent is compiled against
-										if (agent.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
+									List<AgentInfo> typesInAgent = new List<AgentInfo>();
+
+									AgentSupportInfo[] supportInfo = agent.AgentInformation;
+									if (supportInfo != null)
+									{
+										foreach (AgentSupportInfo info in supportInfo)
 										{
-											Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
-											continue;
-										}
+											IAgentWorker worker = agent.CreateInstance(info.TypeId);
 
-										List<AgentInfo> typesInAgent = new List<AgentInfo>();
-
-										AgentSupportInfo[] supportInfo = agent.AgentInformation;
-										if (supportInfo != null)
-										{
-											foreach (AgentSupportInfo info in supportInfo)
+											// Find the type of agent and put it in the right list
+											AgentType? agentType = FindAgentType(worker);
+											if (agentType.HasValue)
 											{
-												IAgentWorker worker = agent.CreateInstance(info.TypeId);
+												List<AgentInfo> typesList = agentsByAgentType[agentType.Value];
 
-												// Find the type of agent and put it in the right list
-												AgentType? agentType = FindAgentType(worker);
-												if (agentType.HasValue)
-												{
-													List<AgentInfo> typesList = agentsByAgentType[agentType.Value];
-
-													AgentInfo agentInfo = BuildAgentInfo(agent, worker, info);
-													typesList.Add(agentInfo);
-													typesInAgent.Add(agentInfo);
-												}
+												AgentInfo agentInfo = BuildAgentInfo(agent, worker, info);
+												typesList.Add(agentInfo);
+												typesInAgent.Add(agentInfo);
 											}
 										}
-										else
-										{
-											// If null is returned, it means it is not possible to tell about the types yet. This is used
-											// e.g. by the sample player, because it need to know which sample converters are available first
-											agentsNotInitializedYet.Add(agent);
-										}
-
-										agentsByAgentId[agent.AgentId] = new AgentLoadInfo { LoadContext = loadContext, FileName = file, AgentInfo = typesInAgent.ToArray() };
-										foundAnything = true;
 									}
-									catch (Exception)
+									else
 									{
-										// If an exception is thrown, just ignore it and skip the file
+										// If null is returned, it means it is not possible to tell about the types yet. This is used
+										// e.g. by the sample player, because it need to know which sample converters are available first
+										agentsNotInitializedYet.Add(agent);
 									}
+
+									agentsByAgentId[agent.AgentId] = new AgentLoadInfo { LoadContext = loadContext, FileName = file, AgentInfo = typesInAgent.ToArray() };
+									foundAnything = true;
 								}
-
-								// Find all settings
-								foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgentSettings).IsAssignableFrom(t)))
+								catch (Exception)
 								{
-									try
-									{
-										IAgentSettings agentSettings = (IAgentSettings)Activator.CreateInstance(t);
-
-										// Check the NostalgicPlayer version the agent is compiled against
-										if (agentSettings.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
-										{
-											Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
-											continue;
-										}
-
-										settingAgents[agentSettings.SettingAgentId] = new AgentSettingsLoadInfo { LoadContext = loadContext, FileName = file, Settings = agentSettings };
-										foundAnything = true;
-									}
-									catch (Exception)
-									{
-										// If an exception is thrown, just ignore it and skip the file
-									}
-								}
-
-								if (!foundAnything)
-								{
-									// Unload the assembly again
-									loadContext.Unload();
+									// If an exception is thrown, just ignore it and skip the file
 								}
 							}
-							catch (Exception)
+
+							// Find all settings
+							foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgentSettings).IsAssignableFrom(t)))
 							{
-								// If an exception is thrown, just ignore it and skip the file
+								try
+								{
+									IAgentSettings agentSettings = (IAgentSettings)Activator.CreateInstance(t);
+
+									// Check the NostalgicPlayer version the agent is compiled against
+									if (agentSettings.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
+									{
+										Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
+										continue;
+									}
+
+									settingAgents[agentSettings.SettingAgentId] = new AgentSettingsLoadInfo { LoadContext = loadContext, FileName = file, Settings = agentSettings };
+									foundAnything = true;
+								}
+								catch (Exception)
+								{
+									// If an exception is thrown, just ignore it and skip the file
+								}
 							}
+
+							if (!foundAnything)
+							{
+								// Unload the assembly again
+								loadContext.Unload();
+							}
+						}
+						catch (Exception)
+						{
+							// If an exception is thrown, just ignore it and skip the file
+						}
+						finally
+						{
+							if (callback != null)
+								callback(i + 1, filesToScan.Length);
 						}
 					}
 				}

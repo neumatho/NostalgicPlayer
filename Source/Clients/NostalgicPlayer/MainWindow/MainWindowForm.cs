@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool allowPosSliderUpdate;
 
 		// Different helper classes
-		private readonly ModuleDatabase database;
+		private ModuleDatabase database;
 		private FileScanner fileScanner;
 
 		// Play samples from sample info window info
@@ -146,41 +146,48 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
 			openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
+		}
 
-			if (!DesignMode)
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form by loading agents, initialize controls etc.
+		/// </summary>
+		/********************************************************************/
+		public void InitializeForm(Manager.LoadAgentProgress loadProgress)
+		{
+			// Initialize and load settings
+			InitSettings();
+
+			// Load agents
+			LoadAgents(loadProgress);
+
+			// Initialize module handler
+			InitModuleHandler();
+
+			// Initialize main window
+			SetupControls();
+
+			// Initialize helper classes
+			database = new ModuleDatabase();
+
+			if ((new DateTime(optionSettings.LastCleanupTime).AddDays(7) < DateTime.Now))
 			{
-				// Initialize and load settings
-				InitSettings();
-
-				// Load agents
-				LoadAgents();
-
-				// Initialize module handler
-				InitModuleHandler();
-
-				// Initialize main window
-				SetupControls();
-
-				// Initialize helper classes
-				database = new ModuleDatabase();
-
-				if ((new DateTime(optionSettings.LastCleanupTime).AddDays(7) < DateTime.Now))
+				database.StartCleanup(() =>
 				{
-					database.StartCleanup(() =>
+					BeginInvoke(() =>
 					{
-						BeginInvoke(() =>
-						{
-							if (IsFavoriteSongSystemWindowOpen())
-								favoriteSongSystemWindow.RefreshWindow();
-						});
+						if (IsFavoriteSongSystemWindowOpen())
+							favoriteSongSystemWindow.RefreshWindow();
 					});
+				});
 
-					optionSettings.LastCleanupTime = DateTime.Now.Ticks;
-				}
-
-				fileScanner = new FileScanner(moduleListControl, optionSettings, agentManager, database, this);
-				fileScanner.Start();
+				optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 			}
+
+			fileScanner = new FileScanner(moduleListControl, optionSettings, agentManager, database, this);
+			fileScanner.Start();
 
 			SetupHandlers();
 		}
@@ -4032,10 +4039,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will load all available agents
 		/// </summary>
 		/********************************************************************/
-		private void LoadAgents()
+		private void LoadAgents(Manager.LoadAgentProgress loadProgress)
 		{
 			agentManager = new Manager();
-			agentManager.LoadAllAgents();
+			agentManager.LoadAllAgents(loadProgress);
 
 			// Fix agent settings
 			userSettings.RemoveSection("Players Agents");       // Not used anymore
