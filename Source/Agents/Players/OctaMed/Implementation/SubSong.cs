@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences;
 using Polycode.NostalgicPlayer.Kit;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {

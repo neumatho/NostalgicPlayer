@@ -9,9 +9,9 @@ using System.IO;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Synth;
 using Polycode.NostalgicPlayer.Kit;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {

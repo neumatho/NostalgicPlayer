@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 			{
 				byte[] checksum = md5.ComputeHash(buffer.Buffer, buffer.Offset, length);
 
-				string d = Helpers.ToHex(checksum);
+				string d = DataHelper.ToHex(checksum);
 				return string.CompareOrdinal(d, digest);
 			}
 		}
@@ -309,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 					using (MD5 md5 = MD5.Create())
 					{
 						byte[] checksum = md5.ComputeHash(GetEventBytes(xxt.Event, xxt.Rows));
-						string d = Helpers.ToHex(checksum);
+						string d = DataHelper.ToHex(checksum);
 						Assert.AreEqual(s.Substring(1).ToUpper(), d, "Track data");
 					}
 				}
@@ -345,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 						using (MD5 md5 = MD5.Create())
 						{
 							byte[] checksum = md5.ComputeHash(xxs.Data.Buffer, xxs.Data.Offset, len);
-							string d = Helpers.ToHex(checksum);
+							string d = DataHelper.ToHex(checksum);
 							Assert.AreEqual(s.Substring(0, 32).ToUpper(), d, "Sample data");
 						}
 					}

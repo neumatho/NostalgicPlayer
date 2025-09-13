@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			converterStream.WriteMark("SO31");
 
 			// Copy the delay value and pads
-			Helpers.CopyData(moduleStream, converterStream, 2 + 14);
+			StreamHelper.CopyData(moduleStream, converterStream, 2 + 14);
 
 			if (moduleStream.EndOfStream)
 			{
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			}
 
 			// Copy the first 15 samples information
-			Helpers.CopyData(moduleStream, converterStream, 30 * 15);
+			StreamHelper.CopyData(moduleStream, converterStream, 30 * 15);
 
 			if (moduleStream.EndOfStream)
 			{
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			maxPattern++;
 
 			// Copy the patterns
-			Helpers.CopyData(moduleStream, converterStream, maxPattern * 4 * 4 * 64);
+			StreamHelper.CopyData(moduleStream, converterStream, maxPattern * 4 * 4 * 64);
 
 			if (moduleStream.EndOfStream)
 			{

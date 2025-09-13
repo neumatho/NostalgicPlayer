@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Kit.C;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers

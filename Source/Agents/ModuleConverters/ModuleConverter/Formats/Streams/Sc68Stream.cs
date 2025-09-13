@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 				// Copy the module data
 				archiveStream.Seek(entry.DataBlockInfo.ModuleStartPosition, SeekOrigin.Begin);
-				Helpers.CopyData(archiveStream, writerStream, entry.DataBlockInfo.ModuleLength);
+				StreamHelper.CopyData(archiveStream, writerStream, entry.DataBlockInfo.ModuleLength);
 
 				// End mark
 				writerStream.WriteMark("SCEF");

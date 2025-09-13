@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras;
 

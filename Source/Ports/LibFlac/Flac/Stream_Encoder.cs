@@ -1266,7 +1266,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					encoder.Protected.Apodizations[encoder.Protected.Num_Apodizations++].Type = Flac__ApodizationFunction.Flattop;
 				else if ((n > 7) && specification.StartsWith("gauss("))
 				{
-					Flac__real stdDev = Helpers.ParseFloat(specification.Substring(6));
+					Flac__real stdDev = ParseHelper.ParseFloat(specification.Substring(6));
 					if ((stdDev > 0.0) && (stdDev <= 0.5))
 					{
 						encoder.Protected.Apodizations[encoder.Protected.Num_Apodizations].Parameters = new Flac__ApodizationParameter_Gauss { stdDev = stdDev };
@@ -1287,7 +1287,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					encoder.Protected.Apodizations[encoder.Protected.Num_Apodizations++].Type = Flac__ApodizationFunction.Triangle;
 				else if ((n > 7) && specification.StartsWith("tukey("))
 				{
-					Flac__real p = Helpers.ParseFloat(specification.Substring(6));
+					Flac__real p = ParseHelper.ParseFloat(specification.Substring(6));
 					if ((p >= 0.0) && (p <= 1.0))
 					{
 						encoder.Protected.Apodizations[encoder.Protected.Num_Apodizations].Parameters = new Flac__ApodizationParameter_Tukey { P = p };
@@ -1296,12 +1296,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 				else if ((n > 15) && specification.StartsWith("partial_tukey("))
 				{
-					Flac__int32 tukey_Parts = Helpers.ParseInt(specification.Substring(14));
+					Flac__int32 tukey_Parts = ParseHelper.ParseInt(specification.Substring(14));
 					int si_1 = specification.IndexOf('/');
-					Flac__real overlap = si_1 != -1 ? Math.Min(Helpers.ParseFloat(specification.Substring(si_1 + 1)), 0.99f) : 0.1f;
+					Flac__real overlap = si_1 != -1 ? Math.Min(ParseHelper.ParseFloat(specification.Substring(si_1 + 1)), 0.99f) : 0.1f;
 					Flac__real overlap_Units = 1.0f / (1.0f - overlap) - 1.0f;
 					int si_2 = (si_1 != -1 ? specification.Substring(si_1 + 1) : specification).IndexOf('/');
-					Flac__real tukey_P = si_2 != -1 ? Helpers.ParseFloat(specification.Substring(si_2 + 1)) : 0.2f;
+					Flac__real tukey_P = si_2 != -1 ? ParseHelper.ParseFloat(specification.Substring(si_2 + 1)) : 0.2f;
 
 					if (tukey_Parts <= 1)
 					{
@@ -1324,12 +1324,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 				else if ((n > 16) && specification.StartsWith("punchout_tukey("))
 				{
-					Flac__int32 tukey_Parts = Helpers.ParseInt(specification.Substring(15));
+					Flac__int32 tukey_Parts = ParseHelper.ParseInt(specification.Substring(15));
 					int si_1 = specification.IndexOf('/');
-					Flac__real overlap = si_1 != -1 ? Math.Min(Helpers.ParseFloat(specification.Substring(si_1 + 1)), 0.99f) : 0.2f;
+					Flac__real overlap = si_1 != -1 ? Math.Min(ParseHelper.ParseFloat(specification.Substring(si_1 + 1)), 0.99f) : 0.2f;
 					Flac__real overlap_Units = 1.0f / (1.0f - overlap) - 1.0f;
 					int si_2 = (si_1 != -1 ? specification.Substring(si_1 + 1) : specification).IndexOf('/');
-					Flac__real tukey_P = si_2 != -1 ? Helpers.ParseFloat(specification.Substring(si_2 + 1)) : 0.2f;
+					Flac__real tukey_P = si_2 != -1 ? ParseHelper.ParseFloat(specification.Substring(si_2 + 1)) : 0.2f;
 
 					if (tukey_Parts <= 1)
 					{
@@ -1352,12 +1352,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 				else if ((n > 17) && specification.StartsWith("subdivide_tukey("))
 				{
-					Flac__int32 parts = Helpers.ParseInt(specification.Substring(16));
+					Flac__int32 parts = ParseHelper.ParseInt(specification.Substring(16));
 
 					if (parts > 1)
 					{
 						int si_1 = specification.IndexOf('/');
-						Flac__real p = si_1 != -1 ? Helpers.ParseFloat(specification.Substring(si_1 + 1)) : 5e-1f;
+						Flac__real p = si_1 != -1 ? ParseHelper.ParseFloat(specification.Substring(si_1 + 1)) : 5e-1f;
 
 						if (p > 1)
 							p = 1;

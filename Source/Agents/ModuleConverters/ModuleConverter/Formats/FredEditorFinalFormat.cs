@@ -369,13 +369,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 					converterStream.Write_B_UINT16(repeatLen);
 					converterStream.Write_B_UINT16(length);
-					Helpers.CopyData(moduleStream, converterStream, 56);
+					StreamHelper.CopyData(moduleStream, converterStream, 56);
 				}
 				else
 				{
 					// Synth
 					moduleStream.Seek(-36, SeekOrigin.Current);
-					Helpers.CopyData(moduleStream, converterStream, 60);
+					StreamHelper.CopyData(moduleStream, converterStream, 60);
 				}
 
 				if (moduleStream.EndOfStream)

@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.Kit.Helpers
 {
 	/// <summary>
 	/// Implementation of loading of settings

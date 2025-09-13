@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				int toRead = (int)(bufferIndex - bufferStream.Length + count);
 
 				bufferStream.Seek(0, SeekOrigin.End);
-				Helpers.CopyData(wrapperStream, bufferStream, toRead);
+				StreamHelper.CopyData(wrapperStream, bufferStream, toRead);
 
 				if (bufferIndex >= bufferStream.Length)
 					return 0;

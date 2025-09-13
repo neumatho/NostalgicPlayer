@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			moduleStream.Seek(umxData.Ofs, SeekOrigin.Begin);
 
 			// We just copy the whole module into the output stream
-			Helpers.CopyData(moduleStream, converterStream, umxData.Size);
+			StreamHelper.CopyData(moduleStream, converterStream, umxData.Size);
 
 			return AgentResult.Ok;
 		}

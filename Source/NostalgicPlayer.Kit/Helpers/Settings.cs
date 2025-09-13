@@ -10,7 +10,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.Kit.Helpers
 {
 	/// <summary>
 	/// This class helps to read and write user settings

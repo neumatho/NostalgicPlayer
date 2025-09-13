@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings

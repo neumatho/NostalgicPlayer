@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 {

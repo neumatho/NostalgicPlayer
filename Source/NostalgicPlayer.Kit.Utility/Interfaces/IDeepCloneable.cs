@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Interfaces
+namespace Polycode.NostalgicPlayer.Kit.Utility.Interfaces
 {
 	/// <summary>
 	/// If you want to implement a deep clone method, you can derive from this interface

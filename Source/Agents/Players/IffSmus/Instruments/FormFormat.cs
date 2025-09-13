@@ -9,9 +9,9 @@ using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 {

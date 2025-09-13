@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Numerics;
 using Polycode.NostalgicPlayer.Kit.C;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal;
 

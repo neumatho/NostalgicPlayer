@@ -289,7 +289,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			converterStream.Write(waveLength, 0, 80);
 
 			// Copy the sequences
-			Helpers.CopyDataForceLength(moduleStream, converterStream, (int)seqLength);
+			StreamHelper.CopyDataForceLength(moduleStream, converterStream, (int)seqLength);
 
 			// Copy the patterns
 			newOffsetsAndLength[0] = (uint)converterStream.Position;
@@ -325,14 +325,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			newOffsetsAndLength[3] = offsetsAndLength[3];
 
 			moduleStream.Seek(offsetsAndLength[2], SeekOrigin.Begin);
-			Helpers.CopyDataForceLength(moduleStream, converterStream, (int)offsetsAndLength[3]);
+			StreamHelper.CopyDataForceLength(moduleStream, converterStream, (int)offsetsAndLength[3]);
 
 			// Copy the volume sequences
 			newOffsetsAndLength[4] = (uint)converterStream.Position;
 			newOffsetsAndLength[5] = offsetsAndLength[5];
 
 			moduleStream.Seek(offsetsAndLength[4], SeekOrigin.Begin);
-			Helpers.CopyDataForceLength(moduleStream, converterStream, (int)offsetsAndLength[5]);
+			StreamHelper.CopyDataForceLength(moduleStream, converterStream, (int)offsetsAndLength[5]);
 
 			if (moduleStream.EndOfStream)
 			{

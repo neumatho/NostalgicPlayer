@@ -18,11 +18,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
+    <PackageReference Include="Krypton.Toolkit" Version="85.24.10.288" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krypton.Toolkit" Version="85.24.10.288" />
+    <ProjectReference Include="..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

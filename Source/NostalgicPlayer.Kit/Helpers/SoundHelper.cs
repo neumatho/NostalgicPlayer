@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.Kit.Helpers
 {
 	/// <summary>
 	/// Different helper methods for sound handling

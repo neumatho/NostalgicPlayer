@@ -5,8 +5,8 @@
 /******************************************************************************/
 using System.Collections.Generic;
 using System.Linq;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 {

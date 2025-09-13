@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 {

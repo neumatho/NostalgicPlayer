@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			if (md5 == null)
 				return null;
 
-			string hash = Helpers.ToHex(md5);
+			string hash = DataHelper.ToHex(md5);
 
 			if (lookupList.TryGetValue(hash, out List<TimeSpan> lengths))
 				return lengths;

@@ -6,9 +6,9 @@
 using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibMpg123;
 using Polycode.NostalgicPlayer.Ports.LibMpg123.Containers;
 

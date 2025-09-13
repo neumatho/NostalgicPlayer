@@ -5,14 +5,13 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Polycode.NostalgicPlayer.Kit.Utility
 {
 	/// <summary>
-	/// Different helper methods
+	/// Stream helper methods
 	/// </summary>
-	public static class Helpers
+	public static class StreamHelper
 	{
 		/********************************************************************/
 		/// <summary>
@@ -79,61 +78,6 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 				length -= len;
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Convert a byte array to a hexadecimal string
-		/// </summary>
-		/********************************************************************/
-		public static string ToHex(byte[] data)
-		{
-			char[] result = new char[data.Length * 2];
-
-			for (int y = 0, x = 0; y < data.Length; y++)
-			{
-				byte b = (byte)(data[y] >> 4);
-				result[x++] = (char)(b > 9 ? b + 0x37 : b + 0x30);
-
-				b = (byte)(data[y] & 0x0f);
-				result[x++] = (char)(b > 9 ? b + 0x37 : b + 0x30);
-			}
-
-			return new string(result);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Parse an integer from a string and ignoring any trailing garbage
-		/// </summary>
-		/********************************************************************/
-		public static int ParseInt(string s)
-		{
-			Match match = Regex.Match(s, @"^\s*[\+\-0-9][0-9]*");
-			if (match.Success)
-				return int.Parse(match.Value);
-
-			return 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Parse a float from a string and ignoring any trailing garbage
-		/// </summary>
-		/********************************************************************/
-		public static float ParseFloat(string s)
-		{
-			Match match = Regex.Match(s, @"^\s*[\+\-0-9e]+");
-			if (match.Success)
-				return float.Parse(match.Value);
-
-			return 0;
 		}
 	}
 }

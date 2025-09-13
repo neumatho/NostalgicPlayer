@@ -7,7 +7,7 @@ using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.Kit.Helpers
 {
 	/// <summary>
 	/// Helper class to load IFF samples

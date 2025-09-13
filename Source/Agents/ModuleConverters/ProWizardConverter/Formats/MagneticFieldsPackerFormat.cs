@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 						if (sampleStream.Length - sampleStream.Position < (length - MaxNumberOfMissingBytes))
 							return false;
 
-						Helpers.CopyData(sampleStream, converterStream, length);
+						StreamHelper.CopyData(sampleStream, converterStream, length);
 					}
 				}
 			}

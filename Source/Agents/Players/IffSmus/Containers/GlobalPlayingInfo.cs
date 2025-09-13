@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers
 {

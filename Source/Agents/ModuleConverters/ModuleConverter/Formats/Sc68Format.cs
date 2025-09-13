@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// Just copy the whole module into the output stream
 			moduleStream.Seek(dataBlockInfo.DataStartPosition, SeekOrigin.Begin);
-			Helpers.CopyData(moduleStream, converterStream, dataBlockInfo.DataLength);
+			StreamHelper.CopyData(moduleStream, converterStream, dataBlockInfo.DataLength);
 
 			return AgentResult.Ok;
 		}

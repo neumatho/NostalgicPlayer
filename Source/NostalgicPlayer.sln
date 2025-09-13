@@ -214,6 +214,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundControl", "Agents\Play
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Actionamics", "Agents\Players\Actionamics\Actionamics.csproj", "{5CEC42B6-0418-4CD1-9EA2-C75545691A03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Kit.Utility", "NostalgicPlayer.Kit.Utility\NostalgicPlayer.Kit.Utility.csproj", "{A5079E21-9613-4B45-B7DC-773F5675104C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1691,6 +1693,22 @@ Global
 		{5CEC42B6-0418-4CD1-9EA2-C75545691A03}.Release|x64.Build.0 = Release|Any CPU
 		{5CEC42B6-0418-4CD1-9EA2-C75545691A03}.Release|x86.ActiveCfg = Release|Any CPU
 		{5CEC42B6-0418-4CD1-9EA2-C75545691A03}.Release|x86.Build.0 = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|x64.Build.0 = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Debug|x86.Build.0 = Debug|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|ARM64.Build.0 = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|x64.ActiveCfg = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|x64.Build.0 = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|x86.ActiveCfg = Release|Any CPU
+		{A5079E21-9613-4B45-B7DC-773F5675104C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

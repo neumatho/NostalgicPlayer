@@ -891,7 +891,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 					converterStream.Write_B_UINT16(0);
 
 					if (copy)
-						Helpers.CopyData(moduleStream, converterStream, (int)length);
+						StreamHelper.CopyData(moduleStream, converterStream, (int)length);
 					else
 					{
 						moduleStream.SetSampleDataInfo(sampleNumber, (int)length);
@@ -903,7 +903,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 					ushort length = moduleStream.Read_B_UINT16();
 					converterStream.Write_B_UINT16(length);
 
-					Helpers.CopyData(moduleStream, converterStream, length * 2);
+					StreamHelper.CopyData(moduleStream, converterStream, length * 2);
 				}
 
 				if (moduleStream.EndOfStream)

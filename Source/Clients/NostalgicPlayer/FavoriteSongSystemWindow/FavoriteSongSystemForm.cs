@@ -16,7 +16,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 {

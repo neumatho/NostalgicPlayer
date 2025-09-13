@@ -6,7 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.C;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {

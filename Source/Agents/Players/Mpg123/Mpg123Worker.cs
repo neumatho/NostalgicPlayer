@@ -14,8 +14,8 @@ using Polycode.NostalgicPlayer.Ports.LibMpg123.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibMpg123;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123

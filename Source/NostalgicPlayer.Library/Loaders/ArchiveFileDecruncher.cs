@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				if (entryStream.Length == 0)
 					entryStream.CopyTo(stream);
 				else
-					Helpers.CopyData(entryStream, stream, (int)entryStream.Length);
+					StreamHelper.CopyData(entryStream, stream, (int)entryStream.Length);
 
 				// The entry may be crunched, so decrunch it
 				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
