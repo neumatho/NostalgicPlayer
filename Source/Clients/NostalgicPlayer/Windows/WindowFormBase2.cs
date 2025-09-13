@@ -5,12 +5,11 @@
 /******************************************************************************/
 using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Controls.Forms;
-using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 {
@@ -103,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
-			allWindowSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);
