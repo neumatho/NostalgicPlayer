@@ -3,14 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Windows.Forms;
+using Krypton.Toolkit;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
 {
 	/// <summary>
 	/// Show a simple splash screen with a progress bar
 	/// </summary>
-	public partial class SplashScreenForm : Form
+	public partial class SplashScreenForm : KryptonForm
 	{
 		/********************************************************************/
 		/// <summary>
