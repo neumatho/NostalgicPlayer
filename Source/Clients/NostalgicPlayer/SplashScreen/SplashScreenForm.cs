@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Windows.Forms;
 using Krypton.Toolkit;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
@@ -36,6 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
 
 			// Force immediate repaint
 			progressBar.Refresh();
+			Application.DoEvents();
 		}
 	}
 }
