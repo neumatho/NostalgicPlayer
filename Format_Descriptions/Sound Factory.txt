@@ -1,0 +1,96 @@
+   0   4 Length of module
+   4  10 Number of voices used (bit 0-3) for each subsong. 0 means no subsong
+  14 100 Subsong information (10 subsongs)
+ 114     Opcodes
+
+
+Subsong information (16 bytes each):
+
+ 0 4 Offset to first opcode for voice 1
+ 4 4 Offset to first opcode for voice 2
+ 8 4 Offset to first opcode for voice 3
+ C 4 Offset to first opcode for voice 4
+
+
+Opcode data:
+
+Keep reading until a note is reached or the voice is made on pause/halt
+
+00-7F Note. Following 16-bit duration
+80-FF Opcodes
+
+
+Opcodes:
+
+80 xxxx           - Pause. xxxx is the duration
+81 xx             - Set volume to xx
+82 xx             - Set finetune to xx
+83 xx             - Set instrument to xx
+84 xx yyyy        - Define new instrument for xx. yyyy is the length of instrument data in words starting from the opcode position
+85                - Return from subroutine
+86 xxxxxxxx       - Jump to subroutine at offset xxxxxxxx relative from current offset
+87 xxxxxxxx       - Go to offset xxxxxxxx relative from current offset
+88 xx             - For loop. Iterate the next opcodes until Next opcode xx times
+89                - Next loop. Jump back to first opcode defined in previous For opcode unless number of times has occurred
+8A xx             - Begin to fade out with speed xx
+8B                - NOP. Does nothing
+8C                - Request. Increment a request value that can be retrieved from the outside
+8D                - Loop. Set voice to first opcode defined in subsong
+8E                - End. Mute voice and stop parsing
+8F xx             - Begin to fade in with speed xx
+90 aa dd ss rr    - Set ADSR to given values
+91                - One shot. Do not loop sample
+92                - Period
+93 aa bb cc dd ee - Vibrato. aa means on/off. Only the rest of the arguments are there if on. bb = wait, cc = speed, dd = step, ee = number of steps
+94 xx yy          - Arpeggio. xx means on/off. Only the rest of the arguments are there if on. yy = speed
+95 aa bb cc dd ee - Phasing. aa means on/off. Only the rest of the arguments are there if on. bb = start, cc = end, dd = speed, ee = step
+96 xx yy zz       - Portamento. xx means on/off. Only the rest of the arguments are there if on. yy = speed, zz = step
+97 aa bb cc dd    - Tremolo. aa means on/off. Only the rest of the arguments are there if on. bb = speed, cc = step, dd = range
+98 aa bb cc dd    - Filter. aa means on/off. Only the rest of the arguments are there if on. bb = frequency, cc = end, dd = speed
+99 xxxx           - Stop voice and pause. xxxx is the duration
+9A xx             - LED. xx = 00 -> off, else on
+9B xx             - Wait until request has reached xx
+9C xx             - Set transpose to xx
+
+
+Instrument information:
+
+ 0    2 Length of the sampling data in words (SL)
+ 2    2 Sampling period for C, if <>0
+ 4    1 Effect byte  Bit 0: 0 = Loop, 1 = One shot
+                     Bit 1: Vibrato
+                     Bit 2: Arpeggio
+                     Bit 3: Phasing
+                     Bit 4: Portamento
+                     Bit 5: 0 = Release on, 1 = Release off
+                     Bit 6: Tremolo
+                     Bit 7: Filter
+ 5    1 Tremolo speed
+ 6    1 Tremolo step
+ 7    1 Tremolo range
+ 8    2 Portamento step
+ A    1 Portamento speed
+ B    1 Arpeggio speed
+ C    1 Vibrato delay
+ D    1 Vibrato speed
+ E    1 Vibrato step
+ F    1 Vibrato amount
+10    1 Attack time
+11    1 Decay time
+12    1 Sustain level
+13    1 Release time
+14    1 Phasing start
+15    1 Phasing end
+16    1 Phasing speed
+17    1 Phasing step
+18    1 Number of waves
+19    1 Octave of possibly given sampling rate
+1A    1 Filter frequency
+1B    1 Filter end
+1C    1 Filter speed
+1D    1 Padding
+1E    2 If one-shot mode and both words <> 0, then
+20    2 Digitized ASR mode:
+          1.Word: offset of sustain phase in words
+          2.Word: offset of release phase likewise
+22 SL*2 Sample data

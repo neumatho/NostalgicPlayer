@@ -1358,6 +1358,14 @@
             <uap:DisplayName>Actionamics</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="psffile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-psf">.psf</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Sound Factory</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

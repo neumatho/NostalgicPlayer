@@ -213,6 +213,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Sound Control 5.0 | .sc / sct | | Sound Control |
 | SoundFX 1.x | .sfx | Module Converter | SoundFX |
 | SoundFX 2.0 | .sfx / .sfx2 | | SoundFX |
+| Sound Factory | .psf | | Sound Factory |
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |
 | SoundMon 2.2 | .bp / .bp3 | | SoundMon |
 | SoundTracker 2.2 | .mod | | ModTracker |

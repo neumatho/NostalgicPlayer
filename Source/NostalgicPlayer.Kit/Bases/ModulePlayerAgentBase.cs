@@ -327,7 +327,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected uint PeriodToFrequency(ushort period)
 		{
-			return 3546895U / period;
+			return period != 0 ? 3546895U / period : 0;
 		}
 		#endregion
 	}

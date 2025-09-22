@@ -306,6 +306,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Will return the current time
+		/// </summary>
+		/********************************************************************/
+		protected TimeSpan? GetCurrentTime()
+		{
+			if (positionTimes != null)
+				return new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond));
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will set the current time as the restart time
 		/// </summary>
 		/********************************************************************/
@@ -313,6 +328,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			if (positionTimes != null)
 				playerRestartTime = new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the given time as the restart time
+		/// </summary>
+		/********************************************************************/
+		protected void SetRestartTime(TimeSpan restartTime)
+		{
+			if (positionTimes != null)
+				playerRestartTime = restartTime;
 		}
 
 

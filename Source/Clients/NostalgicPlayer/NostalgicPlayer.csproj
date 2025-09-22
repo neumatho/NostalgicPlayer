@@ -122,6 +122,7 @@
     <ProjectReference Include="..\..\Agents\Players\SidPlay\SidPlay.csproj" />
     <ProjectReference Include="..\..\Agents\Players\SonicArranger\SonicArranger.csproj" />
     <ProjectReference Include="..\..\Agents\Players\SoundControl\SoundControl.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\SoundFactory\SoundFactory.csproj" />
     <ProjectReference Include="..\..\Agents\Players\SoundFx\SoundFx.csproj" />
     <ProjectReference Include="..\..\Agents\Players\SoundMon\SoundMon.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Synthesis\Synthesis.csproj" />
