@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -12,11 +13,10 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Controls.Containers.Events;
 using Polycode.NostalgicPlayer.Controls.Native;
+using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Controls.Forms
 {
@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void InitializeTheme()
 		{
-			IThemeManager themeManager = DependencyInjection.GetDefaultProvider().GetService<IThemeManager>();
+			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
 			themeManager.ThemeChanged += ThemeChanged;
 
 			SetupTheme(themeManager.CurrentTheme);
@@ -299,7 +299,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void CleanupTheme()
 		{
-			IThemeManager themeManager = DependencyInjection.GetDefaultProvider().GetService<IThemeManager>();
+			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
 			themeManager.ThemeChanged -= ThemeChanged;
 		}
 
@@ -315,8 +315,30 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			colors = theme.FormColors;
 			fonts = theme.StandardFonts;
 
-			foreach (IThemeControl control in Controls.OfType<IThemeControl>())
+			foreach (IThemeControl control in FindThemedControls(Controls))
 				control.SetTheme(theme);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return controls to set new theme on
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<IThemeControl> FindThemedControls(Control.ControlCollection controls)
+		{
+			List<IThemeControl> result = new List<IThemeControl>();
+
+			foreach (IThemeControl control in controls.OfType<IThemeControl>())
+			{
+				result.Add(control);
+
+				if (control is Control ctrl)
+					result.AddRange(FindThemedControls(ctrl.Controls));
+			}
+
+			return result;
 		}
 
 
@@ -933,20 +955,20 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 					DrawSingleCaptionButton(g, Resources.IDB_CAPTION_CLOSE, status, right, totalTitleBarHeight, GetCloseCaptionButtonColors());
 				}
 
-				CaptionButtonColors colors = GetCaptionButtonColors();
+				CaptionButtonColors captionColors = GetCaptionButtonColors();
 
 				status = GetMaximizeCaptionButtonStatus();
 				if (status != CaptionButtonStatus.Hidden)
 				{
 					right -= CaptionButtonWidth;
-					DrawSingleCaptionButton(g, WindowState == FormWindowState.Maximized ? Resources.IDB_CAPTION_NORMALIZE : Resources.IDB_CAPTION_MAXIMIZE, status, right, totalTitleBarHeight, colors);
+					DrawSingleCaptionButton(g, WindowState == FormWindowState.Maximized ? Resources.IDB_CAPTION_NORMALIZE : Resources.IDB_CAPTION_MAXIMIZE, status, right, totalTitleBarHeight, captionColors);
 				}
 
 				status = GetMinimizeCaptionButtonStatus();
 				if (status != CaptionButtonStatus.Hidden)
 				{
 					right -= CaptionButtonWidth;
-					DrawSingleCaptionButton(g, Resources.IDB_CAPTION_MINIMIZE, status, right, totalTitleBarHeight, colors);
+					DrawSingleCaptionButton(g, Resources.IDB_CAPTION_MINIMIZE, status, right, totalTitleBarHeight, captionColors);
 				}
 			}
 
@@ -960,7 +982,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/// Will draw a single caption button
 		/// </summary>
 		/********************************************************************/
-		private void DrawSingleCaptionButton(Graphics g, Bitmap bitmap, CaptionButtonStatus status, int x, int totalTitleBarHeight, CaptionButtonColors colors)
+		private void DrawSingleCaptionButton(Graphics g, Bitmap bitmap, CaptionButtonStatus status, int x, int totalTitleBarHeight, CaptionButtonColors captionColors)
 		{
 			switch (status)
 			{
@@ -982,14 +1004,14 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 				case CaptionButtonStatus.Hovered:
 				{
-					DrawCaptionButtonBackground(g, x, totalTitleBarHeight, colors.HoverStartColor, colors.HoverStopColor);
+					DrawCaptionButtonBackground(g, x, totalTitleBarHeight, captionColors.HoverStartColor, captionColors.HoverStopColor);
 					DrawCaptionButtonImage(g, bitmap, x, totalTitleBarHeight);
 					break;
 				}
 
 				case CaptionButtonStatus.Pressed:
 				{
-					DrawCaptionButtonBackground(g, x, totalTitleBarHeight, colors.PressStartColor, colors.PressStopColor);
+					DrawCaptionButtonBackground(g, x, totalTitleBarHeight, captionColors.PressStartColor, captionColors.PressStopColor);
 					DrawCaptionButtonImage(g, bitmap, x, totalTitleBarHeight);
 					break;
 				}
