@@ -12,7 +12,7 @@ If you want to try it out, you can install the player from Microsoft Store <a hr
 # License
 
 NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">MIT License</a>. Some parts of the player are 3rd party components which has been ported to C#. Their original licenses are the following:
-* Ancient decruncher (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/Ancient/LICENSE">BSD 2-Clause License</a>)
+* Ancient decruncher (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibAncient/LICENSE">BSD 2-Clause License</a>)
 * libFLAC (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibFlac/LICENSE">BSD License</a>)
 * libOgg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOgg/LICENSE">BSD License</a>)
 * libOpus (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpus/LICENSE">BSD License</a>)
@@ -22,7 +22,7 @@ NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/Nosta
 * libXmp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibXmp/LICENSE">MIT License</a>)
 * Parts of the MO3 converter based on OpenMPT (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/ModuleConverters/Mo3Converter/LICENSE">BSD-3-Clause License</a>)
 * Mpg123 (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibMpg123/LICENSE">GNU Lesser General Public License version 2.1</a>)
-* ReSIDfp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/ReSidFp/LICENSE">GNU General Public License version 2</a>)
+* ReSIDfp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibReSidFp/LICENSE">GNU General Public License version 2</a>)
 * SidPlayFp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibSidPlayFp/LICENSE">GNU General Public License version 2</a>)
 
 # Structure

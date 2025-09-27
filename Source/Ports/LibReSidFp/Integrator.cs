@@ -3,30 +3,34 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample;
-
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
+namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
-	public class TestResampler
+	internal abstract class Integrator
 	{
+		protected int vx;
+		protected int vc;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		protected Integrator()
+		{
+			vx = 0;
+			vc = 0;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
-		public void TestSoftClip()
-		{
-			Assert.IsTrue(Resampler.SoftClipImpl(0) == 0);
-			Assert.IsTrue(Resampler.SoftClipImpl(28000) == 28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MaxValue) <= 32767);
-			Assert.IsTrue(Resampler.SoftClipImpl(-28000) == -28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MinValue + 1) >= -32768);
-		}
+		public abstract int Solve(int vi);
 	}
 }

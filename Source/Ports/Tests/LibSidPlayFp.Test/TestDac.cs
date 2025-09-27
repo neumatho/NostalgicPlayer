@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Ports.ReSidFp;
-using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 {

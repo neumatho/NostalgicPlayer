@@ -3,30 +3,23 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample;
-
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
+namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 {
 	/// <summary>
-	/// 
+	/// Potentiometer representation.
+	///
+	/// This class will probably never be implemented in any real way
 	/// </summary>
-	[TestClass]
-	public class TestResampler
+	internal class Potentiometer
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Read paddle value. Not modeled
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
-		public void TestSoftClip()
+		public byte ReadPot()
 		{
-			Assert.IsTrue(Resampler.SoftClipImpl(0) == 0);
-			Assert.IsTrue(Resampler.SoftClipImpl(28000) == 28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MaxValue) <= 32767);
-			Assert.IsTrue(Resampler.SoftClipImpl(-28000) == -28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MinValue + 1) >= -32768);
+			return 0xff;
 		}
 	}
 }

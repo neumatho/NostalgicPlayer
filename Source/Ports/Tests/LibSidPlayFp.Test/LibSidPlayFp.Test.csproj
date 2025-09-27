@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
-    <Compile Include="..\..\ReSidFp\ReSidFpTypes.cs" Link="ReSidFpTypes.cs" />
+    <Compile Include="..\..\LibReSidFp\ReSidFpTypes.cs" Link="ReSidFpTypes.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,7 +48,7 @@
     <ProjectReference Include="..\..\..\Agents\Players\SidPlay\SidPlay.csproj" />
     <ProjectReference Include="..\..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
     <ProjectReference Include="..\..\LibSidPlayFp\LibSidPlayFp.csproj" />
-    <ProjectReference Include="..\..\ReSidFp\ReSidFp.csproj" />
+    <ProjectReference Include="..\..\LibReSidFp\LibReSidFp.csproj" />
   </ItemGroup>
 
 </Project>

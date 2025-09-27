@@ -3,30 +3,39 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample;
-
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
+namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Array
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
-	public class TestResampler
+	internal class Matrix<T>
 	{
+		private readonly T[][] data;
+		private readonly uint x, y;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public Matrix(uint x, uint y)
+		{
+			data = new T[x][];
+
+			for (uint i = 0; i < x; i++)
+				data[i] = new T[y];
+
+			this.x = x;
+			this.y = y;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
-		public void TestSoftClip()
-		{
-			Assert.IsTrue(Resampler.SoftClipImpl(0) == 0);
-			Assert.IsTrue(Resampler.SoftClipImpl(28000) == 28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MaxValue) <= 32767);
-			Assert.IsTrue(Resampler.SoftClipImpl(-28000) == -28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MinValue + 1) >= -32768);
-		}
+		public T[] this[uint a] => data[a];
 	}
 }

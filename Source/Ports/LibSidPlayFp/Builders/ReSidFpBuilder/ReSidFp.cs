@@ -5,9 +5,9 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
-using Polycode.NostalgicPlayer.Ports.ReSidFp;
-using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
-using Polycode.NostalgicPlayer.Ports.ReSidFp.Exceptions;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 {
@@ -81,19 +81,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 			{
 				case SidConfig.sid_cw_t.AVERAGE:
 				{
-					combinedWaveforms = Ports.ReSidFp.Containers.CombinedWaveforms.AVERAGE;
+					combinedWaveforms = LibReSidFp.Containers.CombinedWaveforms.AVERAGE;
 					break;
 				}
 
 				case SidConfig.sid_cw_t.WEAK:
 				{
-					combinedWaveforms = Ports.ReSidFp.Containers.CombinedWaveforms.WEAK;
+					combinedWaveforms = LibReSidFp.Containers.CombinedWaveforms.WEAK;
 					break;
 				}
 
 				case SidConfig.sid_cw_t.STRONG:
 				{
-					combinedWaveforms = Ports.ReSidFp.Containers.CombinedWaveforms.STRONG;
+					combinedWaveforms = LibReSidFp.Containers.CombinedWaveforms.STRONG;
 					break;
 				}
 

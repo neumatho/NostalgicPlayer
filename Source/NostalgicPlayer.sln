@@ -130,7 +130,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3EA2E21A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibFlac.Test", "Ports\Tests\LibFlac.Test\LibFlac.Test.csproj", "{25B0E9A4-AF68-4702-836D-9EE0E7683B15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReSidFp", "Ports\ReSidFp\ReSidFp.csproj", "{457DC6A9-AC20-4BDA-AE56-98B509F4A9EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibReSidFp", "Ports\LibReSidFp\LibReSidFp.csproj", "{457DC6A9-AC20-4BDA-AE56-98B509F4A9EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSidPlayFp", "Ports\LibSidPlayFp\LibSidPlayFp.csproj", "{143C3F62-8399-4EEA-9A44-82A32FBBB00E}"
 EndProject
