@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
-    <ProjectReference Include="..\..\..\Ports\Ancient\Ancient.csproj" />
+    <ProjectReference Include="..\..\..\Ports\LibAncient\LibAncient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

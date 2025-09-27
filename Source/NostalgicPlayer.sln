@@ -122,7 +122,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ports", "Ports", "{409138C0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpg123", "Ports\LibMpg123\LibMpg123.csproj", "{A5525C20-DF2C-4D07-9E37-DA755CEA1253}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ancient", "Ports\Ancient\Ancient.csproj", "{D0CA6CF9-8166-4519-BCD5-81A639C8E528}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibAncient", "Ports\LibAncient\LibAncient.csproj", "{D0CA6CF9-8166-4519-BCD5-81A639C8E528}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibFlac", "Ports\LibFlac\LibFlac.csproj", "{6DBC4992-7878-4C81-9EC2-0644FFB68A91}"
 EndProject
@@ -136,7 +136,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSidPlayFp", "Ports\LibSi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSidPlayFp.Test", "Ports\Tests\LibSidPlayFp.Test\LibSidPlayFp.Test.csproj", "{ACA89190-430C-4F68-8DA1-99FA65D6000A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ancient.Test", "Ports\Tests\Ancient.Test\Ancient.Test.csproj", "{960BA557-6C90-45D5-8FCB-D45E8C6449B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibAncient.Test", "Ports\Tests\LibAncient.Test\LibAncient.Test.csproj", "{960BA557-6C90-45D5-8FCB-D45E8C6449B0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibXmp", "Ports\LibXmp\LibXmp.csproj", "{C8792BA2-2711-4319-ACB5-3D2A2C10103E}"
 EndProject

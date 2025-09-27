@@ -9,8 +9,8 @@ using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Ports.Ancient;
-using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
+using Polycode.NostalgicPlayer.Ports.LibAncient;
+using Polycode.NostalgicPlayer.Ports.LibAncient.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 {

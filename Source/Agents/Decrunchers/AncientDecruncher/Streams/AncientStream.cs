@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
-using Polycode.NostalgicPlayer.Ports.Ancient;
-using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
+using Polycode.NostalgicPlayer.Ports.LibAncient;
+using Polycode.NostalgicPlayer.Ports.LibAncient.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Streams
 {

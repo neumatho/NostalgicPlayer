@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Ports.Ancient;
-using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
+using Polycode.NostalgicPlayer.Ports.LibAncient;
+using Polycode.NostalgicPlayer.Ports.LibAncient.Exceptions;
 
 // This is needed to uniquely identify this agent
 [assembly: Guid("AFDBEE3F-E5A6-4255-8A68-89D876BCE943")]
