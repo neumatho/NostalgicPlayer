@@ -25,8 +25,11 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 	/// </summary>
 	public class NostalgicForm : Form
 	{
-		private IFormColors colors;
-		private IFonts fonts;
+		private const int FrameCornerRadius = 8;
+		private const int FrameBorderThickness = 8;
+		private const int TitleBarPadding = 10;
+		private const int CaptionButtonWidth = 24;
+		private const int IconPosition = FrameBorderThickness + 3;
 
 		private enum CaptionButton
 		{
@@ -53,11 +56,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			public Color PressStopColor { get; init; }
 		}
 
-		private const int FrameCornerRadius = 8;
-		private const int FrameBorderThickness = 8;
-		private const int TitleBarPadding = 10;
-		private const int CaptionButtonWidth = 24;
-		private const int IconPosition = FrameBorderThickness + 3;
+		private IFormColors colors;
+		private IFonts fonts;
 
 		private int titleBarFontSize;
 		private int titleBarHeight;
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		private CaptionButton hoverButton = CaptionButton.None;
 		private CaptionButton pressButton = CaptionButton.None;
 
-		#region Overrides
+		#region Initialize
 		/********************************************************************/
 		/// <summary>
 		/// Dispose different stuff
@@ -108,9 +108,91 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			ApplyWindowRegion();
 			RefreshNonClientArea();
 		}
+		#endregion
+
+		#region Theme
+		/********************************************************************/
+		/// <summary>
+		/// Initialize form with the current theme
+		/// </summary>
+		/********************************************************************/
+		private void InitializeTheme()
+		{
+			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
+			themeManager.ThemeChanged += ThemeChanged;
+
+			SetupTheme(themeManager.CurrentTheme);
+		}
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup theme from the form
+		/// </summary>
+		/********************************************************************/
+		private void CleanupTheme()
+		{
+			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
+			themeManager.ThemeChanged -= ThemeChanged;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will setup the theme for the form and all its controls
+		/// </summary>
+		/********************************************************************/
+		private void SetupTheme(ITheme theme)
+		{
+			colors = theme.FormColors;
+			fonts = theme.StandardFonts;
+
+			foreach (IThemeControl control in FindThemedControls(Controls))
+				control.SetTheme(theme);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return controls to set new theme on
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<IThemeControl> FindThemedControls(Control.ControlCollection controls)
+		{
+			List<IThemeControl> result = new List<IThemeControl>();
+
+			foreach (IThemeControl control in controls.OfType<IThemeControl>())
+			{
+				result.Add(control);
+
+				if (control is Control ctrl)
+					result.AddRange(FindThemedControls(ctrl.Controls));
+			}
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes. Update all controls and redraw
+		/// itself
+		/// </summary>
+		/********************************************************************/
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			SetupTheme(e.NewTheme);
+
+			RefreshNonClientArea();
+			Refresh();
+		}
+		#endregion
+
+		#region Overrides
 		/********************************************************************/
 		/// <summary>
 		/// Make sure the form is rendered when resized
@@ -273,88 +355,6 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			}
 
 			base.WndProc(ref m);
-		}
-		#endregion
-
-		#region Theme
-		/********************************************************************/
-		/// <summary>
-		/// Initialize form with the current theme
-		/// </summary>
-		/********************************************************************/
-		private void InitializeTheme()
-		{
-			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
-			themeManager.ThemeChanged += ThemeChanged;
-
-			SetupTheme(themeManager.CurrentTheme);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup theme from the form
-		/// </summary>
-		/********************************************************************/
-		private void CleanupTheme()
-		{
-			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
-			themeManager.ThemeChanged -= ThemeChanged;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will setup the theme for the form and all its controls
-		/// </summary>
-		/********************************************************************/
-		private void SetupTheme(ITheme theme)
-		{
-			colors = theme.FormColors;
-			fonts = theme.StandardFonts;
-
-			foreach (IThemeControl control in FindThemedControls(Controls))
-				control.SetTheme(theme);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return controls to set new theme on
-		/// </summary>
-		/********************************************************************/
-		private IEnumerable<IThemeControl> FindThemedControls(Control.ControlCollection controls)
-		{
-			List<IThemeControl> result = new List<IThemeControl>();
-
-			foreach (IThemeControl control in controls.OfType<IThemeControl>())
-			{
-				result.Add(control);
-
-				if (control is Control ctrl)
-					result.AddRange(FindThemedControls(ctrl.Controls));
-			}
-
-			return result;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the theme changes. Update all controls and redraw
-		/// itself
-		/// </summary>
-		/********************************************************************/
-		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
-		{
-			SetupTheme(e.NewTheme);
-
-			RefreshNonClientArea();
-			Refresh();
 		}
 		#endregion
 
@@ -758,24 +758,24 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void DrawBorder(Graphics g, int windowWidth, int windowHeight, int innerBorderThickness)
 		{
-			Color outer = isActive ? colors.ActivatedFormOuterColor : colors.DeactivatedFormOuterColor;
-			Color middle = isActive ? colors.ActivatedFormMiddleColor : colors.DeactivatedFormMiddleColor;
-			Color innerStart = isActive ? colors.ActivatedFormInnerStartColor : colors.DeactivatedFormInnerStartColor;
-			Color innerStop = isActive ? colors.ActivatedFormInnerStopColor : colors.DeactivatedFormInnerStopColor;
+			Color outerColor = isActive ? colors.ActivatedFormOuterColor : colors.DeactivatedFormOuterColor;
+			Color middleColor = isActive ? colors.ActivatedFormMiddleColor : colors.DeactivatedFormMiddleColor;
+			Color innerStartColor = isActive ? colors.ActivatedFormInnerStartColor : colors.DeactivatedFormInnerStartColor;
+			Color innerStopColor = isActive ? colors.ActivatedFormInnerStopColor : colors.DeactivatedFormInnerStopColor;
 
-			using (Pen pen = new Pen(outer, 1))
+			using (Pen pen = new Pen(outerColor, 1))
 			{
 				g.DrawRectangle(pen, 0, 0, windowWidth, windowHeight);
 			}
 
-			using (Pen pen = new Pen(middle, 1))
+			using (Pen pen = new Pen(middleColor, 1))
 			{
 				g.DrawRectangle(pen, 1, 1, windowWidth - 2, windowHeight - 2);
 			}
 
-			using (Brush startBrush = new SolidBrush(innerStart))
+			using (Brush startBrush = new SolidBrush(innerStartColor))
 			{
-				using (Brush stopBrush = new SolidBrush(innerStop))
+				using (Brush stopBrush = new SolidBrush(innerStopColor))
 				{
 					g.FillRectangle(startBrush, 2, 2, windowWidth - 3, innerBorderThickness);
 					g.FillRectangle(stopBrush, windowWidth - FrameBorderThickness + 1, FrameBorderThickness, innerBorderThickness, windowHeight - FrameBorderThickness - 1);
@@ -785,7 +785,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			}
 
 			// Corner-only anti-aliased arcs to “dither” the rounded corners, leaving straight edges unchanged
-			DrawCornerOutlineArcs(g, windowWidth, windowHeight, outer, middle);
+			DrawCornerOutlineArcs(g, windowWidth, windowHeight, outerColor, middleColor);
 		}
 
 
@@ -875,10 +875,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void DrawTitleBarBackground(Graphics g, int windowWidth)
 		{
-			Color start = isActive ? colors.ActivatedFormInnerStartColor : colors.DeactivatedFormInnerStartColor;
-			Color stop = isActive ? colors.ActivatedFormInnerStopColor : colors.DeactivatedFormInnerStopColor;
+			Color startColor = isActive ? colors.ActivatedFormInnerStartColor : colors.DeactivatedFormInnerStartColor;
+			Color stopColor = isActive ? colors.ActivatedFormInnerStopColor : colors.DeactivatedFormInnerStopColor;
 
-			using (LinearGradientBrush brush = new LinearGradientBrush(new Rectangle(0, 0, windowWidth, FrameBorderThickness + titleBarHeight), start, stop, LinearGradientMode.Vertical))
+			using (LinearGradientBrush brush = new LinearGradientBrush(new Rectangle(0, 0, windowWidth, FrameBorderThickness + titleBarHeight), startColor, stopColor, LinearGradientMode.Vertical))
 			{
 				g.FillRectangle(brush, 2, FrameBorderThickness, windowWidth - 3, titleBarHeight);
 			}
