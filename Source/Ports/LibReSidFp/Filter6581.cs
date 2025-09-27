@@ -367,7 +367,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			// Scale the values accordingly
 			int filterGain = (int)(0.93 * (1 << 12));
 
-			return (vFilt * filterGain) >> 12;
+			// Scaling unsigned values adds a DC offset
+			int offset = 32767 * ((1 << 12) - filterGain);
+
+			return (vFilt * filterGain + offset) >> 12;
 		}
 
 

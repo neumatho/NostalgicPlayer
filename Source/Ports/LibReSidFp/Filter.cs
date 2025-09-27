@@ -222,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			int V2 = GetNormalizedVoice(voice2);
 
 			// Voice 3 is silenced by voice3off if it is not routed through the filter
-			int V3 = (filt3 || !voice3Off) ? GetNormalizedVoice(voice3) : 0;
+			int V3 = (filt3 || !voice3Off) ? GetNormalizedVoice(voice3) : GetSilentVoice(voice3);
 
 			int Vsum = 0;
 			int Vmix = 0;
@@ -339,6 +339,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		private int GetNormalizedVoice(Voice v)
 		{
 			return fmc.GetNormalizedVoice(v.Output(), v.Envelope().Output());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// If voice 3 is off we still need to clock the waveform generator
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int GetSilentVoice(Voice v)
+		{
+			v.Wave().Output();
+
+			return 0;
 		}
 
 
