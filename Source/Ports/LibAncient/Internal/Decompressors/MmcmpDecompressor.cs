@@ -39,11 +39,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private MmcmpDecompressor(Buffer packedData) : base(DecompressorType.Mmcmp)
+		private MmcmpDecompressor(Buffer packedData, bool exactSizeKnown) : base(DecompressorType.Mmcmp)
 		{
 			this.packedData = packedData;
 
-			if (!DetectHeader(this.packedData.ReadBe32(0)) || (packedData.ReadBe32(4) != Common.Common.FourCC("ONia")) || (packedData.ReadLe16(8) != 14) || (packedData.Size() < 24))
+			if (!DetectHeader(this.packedData.ReadBe32(0), 0) || (packedData.ReadBe32(4) != Common.Common.FourCC("ONia")) || (packedData.ReadLe16(8) != 14) || (packedData.Size() < 24))
 				throw new InvalidFormatException();
 
 			version = packedData.ReadLe16(10);
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool DetectHeader(uint32_t hdr)
+		public static bool DetectHeader(uint32_t hdr, uint32_t footer)
 		{
 			return hdr == Common.Common.FourCC("ziRC");
 		}
@@ -94,9 +94,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new static Decompressor Create(Buffer packedData)
+		public new static Decompressor Create(Buffer packedData, bool exactSizeKnown)
 		{
-			return new MmcmpDecompressor(packedData);
+			return new MmcmpDecompressor(packedData, exactSizeKnown);
 		}
 
 

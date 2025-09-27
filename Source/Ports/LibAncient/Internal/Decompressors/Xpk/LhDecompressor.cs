@@ -3,17 +3,19 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Ports.LibAncient.Common;
-using Polycode.NostalgicPlayer.Ports.LibAncient.Common.Buffers;
 using Polycode.NostalgicPlayer.Ports.LibAncient.Exceptions;
+using Buffer = Polycode.NostalgicPlayer.Ports.LibAncient.Common.Buffers.Buffer;
 
 namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 {
 	/// <summary>
 	/// XPK-LHLB decompressor
 	/// </summary>
-	internal class LhlbDecompressor : XpkDecompressor
+	internal class LhDecompressor : XpkDecompressor
 	{
 		private readonly Buffer packedData;
 
@@ -22,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private LhlbDecompressor(uint32_t hdr, Buffer packedData)
+		private LhDecompressor(uint32_t hdr, Buffer packedData)
 		{
 			this.packedData = packedData;
 
@@ -51,17 +53,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 		/********************************************************************/
 		public static XpkDecompressor Create(uint32_t hdr, Buffer packedData, ref State state)
 		{
-			return new LhlbDecompressor(hdr, packedData);
+			return new LhDecompressor(hdr, packedData);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Actual decompression
+		/// Actual decompression (lh.library decompress)
 		/// </summary>
 		/********************************************************************/
 		public override void DecompressImpl(Buffer rawData, List<Buffer> previousBuffers)
+		{
+			size_t length = DecompressLhLib(rawData, packedData);
+
+			if (length != rawData.Size())
+				rawData.GetData(length, rawData.Size() - length).Clear();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// lh.library decompress
+		/// </summary>
+		/********************************************************************/
+		public static size_t DecompressLhLib(Buffer rawData, Buffer packedData)
 		{
 			//
 			// If this code is changed, remember to change LhLibraryDecompressor as well
@@ -69,14 +86,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 			ForwardInputStream inputStream = new ForwardInputStream(packedData, 0, packedData.Size());
 			MsbBitReader bitReader = new MsbBitReader(inputStream);
 
-			uint32_t ReadBits(uint32_t count) => bitReader.ReadBits8(count);
-			uint32_t ReadBit() => bitReader.ReadBits8(1);
+			uint32_t ReadBits(uint32_t count) => bitReader.ReadBitsBe16(count);
+			uint32_t ReadBit() => bitReader.ReadBitsBe16(1U);
 
 			ForwardOutputStream outputStream = new ForwardOutputStream(rawData, 0, rawData.Size());
 
 			// Same logic as in Choloks pascal implementation
 			// Differences to LH1:
-			// - LHLB does not halve probabilities at 32k
+			// - LH does not halve probabilities at 32k
 			// - 314 vs. 317 sized Huffman entry
 			// - No end code
 			// - Different distance/count logic
@@ -99,9 +116,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 					uint32_t distance = vlcDecoder.Decode(ReadBits, ReadBits(4));
 					uint32_t count = code - 255;
 
-					outputStream.Copy(distance, count);
+					// Very interesting LH-bug on zero distance
+					if (distance != 0)
+						outputStream.Copy(distance, count);
+					else
+					{
+						for (uint32_t i = 0; i < count; i++)
+							outputStream.WriteByte(0);
+					}
 				}
 			}
+
+			return outputStream.GetOffset();
 		}
 	}
 }

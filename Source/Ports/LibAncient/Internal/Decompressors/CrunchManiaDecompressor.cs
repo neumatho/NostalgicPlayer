@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 			this.packedData = packedData;
 
 			uint32_t hdr = packedData.ReadBe32(0);
-			if (!DetectHeader(hdr) || (packedData.Size() < 20))
+			if (!DetectHeader(hdr, 0) || (packedData.Size() < 20))
 				throw new InvalidFormatException();
 
 			if ((hdr == 0x1805_1973) || (hdr == Common.Common.FourCC("CD\xb3\xb9")) || (hdr == Common.Common.FourCC("Iron")) || (hdr == Common.Common.FourCC("MSS!")))
@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool DetectHeader(uint32_t hdr)
+		public static bool DetectHeader(uint32_t hdr, uint32_t footer)
 		{
 			return hdr switch
 			{
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new static Decompressor Create(Buffer packedData)
+		public new static Decompressor Create(Buffer packedData, bool exactSizeKnown)
 		{
 			return new CrunchManiaDecompressor(packedData);
 		}

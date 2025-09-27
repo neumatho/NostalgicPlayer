@@ -23,10 +23,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DecompressorImpl(Stream crunchedDataStream)
+		public DecompressorImpl(Stream crunchedDataStream, bool exactSizeKnown)
 		{
 			buffer = new StreamBuffer(crunchedDataStream);
-			decompressor = Decompressor.Create(buffer);
+			decompressor = Decompressor.Create(buffer, exactSizeKnown);
 		}
 
 

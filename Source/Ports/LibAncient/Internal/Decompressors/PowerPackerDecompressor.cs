@@ -28,18 +28,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private PowerPackerDecompressor(Buffer packedData) : base(DecompressorType.PowerPacker)
+		private PowerPackerDecompressor(Buffer packedData, bool exactSizeKnown) : base(DecompressorType.PowerPacker)
 		{
 			this.packedData = packedData;
 
 			// Check the file size
-			if (packedData.Size() < 16)
+			if (!exactSizeKnown || (packedData.Size() < 16U))
 				throw new InvalidFormatException();
 
 			dataStart = packedData.Size() - 4;
 
 			uint32_t hdr = packedData.ReadBe32(0);
-			if (!DetectHeader(hdr))
+			if (!DetectHeader(hdr, 0))
 				throw new InvalidFormatException();
 
 			uint32_t mode = packedData.ReadBe32(4);
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool DetectHeader(uint32_t hdr)
+		public static bool DetectHeader(uint32_t hdr, uint32_t footer)
 		{
 			return (hdr == Common.Common.FourCC("PP20"))
 				|| (hdr == Common.Common.FourCC("CHFC"))	// Sky High Stuntman
@@ -86,9 +86,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new static Decompressor Create(Buffer packedData)
+		public new static Decompressor Create(Buffer packedData, bool exactSizeKnown)
 		{
-			return new PowerPackerDecompressor(packedData);
+			return new PowerPackerDecompressor(packedData, exactSizeKnown);
 		}
 
 

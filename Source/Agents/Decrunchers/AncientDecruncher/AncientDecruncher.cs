@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		{
 			try
 			{
-				Decompressor decompressor = new Decompressor(dataStream);
+				Decompressor decompressor = new Decompressor(dataStream, dataStream.CanSeek);
 				string agentName;
 				Guid typeId;
 

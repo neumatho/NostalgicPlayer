@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		[
 			new DecompressorPair { First = BlzwDecompressor.DetectHeaderXpk, Second = BlzwDecompressor.Create, Type = DecompressorType.Xpk_Blzw },
 			new DecompressorPair { First = BZip2Decompressor.DetectHeaderXpk, Second = BZip2Decompressor.Create, Type = DecompressorType.Xpk_Bzp2 },
-			new DecompressorPair { First = LhlbDecompressor.DetectHeaderXpk, Second = LhlbDecompressor.Create, Type = DecompressorType.Xpk_Lhlb },
+			new DecompressorPair { First = LhDecompressor.DetectHeaderXpk, Second = LhDecompressor.Create, Type = DecompressorType.Xpk_Lhlb },
 			new DecompressorPair { First = MashDecompressor.DetectHeaderXpk, Second = MashDecompressor.Create, Type = DecompressorType.Xpk_Mash },
 			new DecompressorPair { First = RakeDecompressor.DetectHeaderXpk, Second = RakeDecompressor.Create, Type = DecompressorType.Xpk_Rake },
 			new DecompressorPair { First = ShrXDecompressor.DetectHeaderXpk_Shri, Second = ShrXDecompressor.Create_Shri, Type = DecompressorType.Xpk_Shri },
@@ -62,11 +62,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		{
 			this.packedData = packedData;
 
-			if (packedData.Size() < 44)
+			if (packedData.Size() < 44U)
 				throw new InvalidFormatException();
 
 			uint32_t hdr = packedData.ReadBe32(0);
-			if (!DetectHeader(hdr))
+			if (!DetectHeader(hdr, 0))
 				throw new InvalidFormatException();
 
 			packedSize = packedData.ReadBe32(4);
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool DetectHeader(uint32_t hdr)
+		public static bool DetectHeader(uint32_t hdr, uint32_t footer)
 		{
 			return hdr == Common.Common.FourCC("XPKF");
 		}
@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new static Decompressor Create(Buffer packedData)
+		public new static Decompressor Create(Buffer packedData, bool exactSizeKnown)
 		{
 			return new XpkMain(packedData);
 		}
@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 				else
 				{
 					ReadDualValue(4, 4, out uint32_t tmp);
-					tmp = (uint32_t)((tmp + 3) & ~3);
+					tmp = OverflowCheck.Sum(tmp, 3U) & ~3U;
 
 					if (OverflowCheck.Sum(tmp, currentOffset, chunkHeaderLen) > this.packedSize)
 						throw new InvalidFormatException();

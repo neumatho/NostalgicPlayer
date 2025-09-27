@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 		{
 			uint32_t ret = 0;
 
-			if (count > 32)
+			if (count > 32U)
 				throw new DecompressionException();
 
 			while (count != 0)

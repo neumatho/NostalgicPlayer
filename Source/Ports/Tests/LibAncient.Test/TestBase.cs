@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 
 				try
 				{
-					decompressor = type.HasValue ? new Decompressor(packed, type.Value, (ulong)verify.Length) : new Decompressor(packed);
+					decompressor = type.HasValue ? new Decompressor(packed, type.Value, (ulong)verify.Length) : new Decompressor(packed, true);
 				}
 				catch (InvalidFormatException)
 				{

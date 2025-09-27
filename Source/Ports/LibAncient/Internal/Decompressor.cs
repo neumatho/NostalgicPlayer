@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Ports.LibAncient.Common.Buffers.Exceptions;
 using Polycode.NostalgicPlayer.Ports.LibAncient.Exceptions;
@@ -16,8 +18,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
     /// </summary>
 	internal abstract class Decompressor
 	{
-		private delegate bool CheckMethod(uint32_t hdr);
-		private delegate Decompressor CreateMethod(Buffer packedData);
+		private delegate bool CheckMethod(uint32_t hdr, uint32_t footer);
+		private delegate Decompressor CreateMethod(Buffer packedData, bool exactSizeKnown);
 		private delegate Decompressor CreateMethod2(Buffer packedData, size_t rawSize);
 
 		private struct DecompressorPair
@@ -60,16 +62,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
 		/// Main entry point
 		/// </summary>
 		/********************************************************************/
-		public static Decompressor Create(Buffer packedData)
+		public static Decompressor Create(Buffer packedData, bool exactSizeKnown)
 		{
 			try
 			{
 				uint32_t hdr = packedData.Size() >= 4 ? packedData.ReadBe32(0) : (uint32_t)packedData.ReadBe16(0) << 16;
+				uint32_t footer = exactSizeKnown && packedData.Size() >= 4 ? packedData.ReadBe32(packedData.Size() - 4) : 0;
 
 				foreach (DecompressorPair it in decompressors)
 				{
-					if (it.First(hdr))
-						return it.Second(packedData);
+					try
+					{
+						if (it.First(hdr, footer))
+							return it.Second(packedData, exactSizeKnown);
+					}
+					catch (Exception)
+					{
+						// Try next on list
+					}
 				}
 
 				throw new InvalidFormatException();
@@ -137,8 +147,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
 		/********************************************************************/
 		public static size_t GetMaxPackedSize()
 		{
-			// 1G should be enough for everyone (this is retro!)
-			return 0x4000_0000;
+			// 128M should be enough for everyone (this is retro!)
+			return 0x800_0000U;
 		}
 
 
@@ -150,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
 		/********************************************************************/
 		public static size_t GetMaxRawSize()
 		{
-			return 0x4000_0000;
+			return 0x800_0000U;
 		}
 
 

@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private StoneCrackerDecompressor(Buffer packedData) : base(DecompressorType.StoneCracker)
+		private StoneCrackerDecompressor(Buffer packedData, bool exactSizeKnown) : base(DecompressorType.StoneCracker)
 		{
 			this.packedData = packedData;
 
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool DetectHeader(uint32_t hdr)
+		public static bool DetectHeader(uint32_t hdr, uint32_t footer)
 		{
 			return DetectHeaderAndGeneration(hdr, out _);
 		}
@@ -81,9 +81,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new static Decompressor Create(Buffer packedData)
+		public new static Decompressor Create(Buffer packedData, bool exactSizeKnown)
 		{
-			return new StoneCrackerDecompressor(packedData);
+			return new StoneCrackerDecompressor(packedData, exactSizeKnown);
 		}
 
 
