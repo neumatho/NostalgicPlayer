@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DownMixer(SpeakerFlag playerSpeakers, SpeakerFlag outputSpeakers)
+		public DownMixer(SpeakerFlag playerSpeakers, SpeakerFlag outputSpeakers, bool disableCenterSpeaker)
 		{
 			playerSpeakerToChannelMap = BuildChannelMap(playerSpeakers);
 			outputSpeakerToChannelMap = BuildChannelMap(outputSpeakers);
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 			realOutputChannelsCount = outputSpeakerToChannelMap.Count;
 			outputChannelCountToUse = FindNumberOfOutputChannelsToUse(realOutputChannelsCount);
 			hasSubwoofer = playerSpeakerToChannelMap.ContainsKey(SpeakerFlag.LowFrequency) && outputSpeakerToChannelMap.ContainsKey(SpeakerFlag.LowFrequency);
-			channelFactors = FindChannelFactorDictionary();
+			channelFactors = FindChannelFactorDictionary(disableCenterSpeaker);
 			visualizerSpeakers = FindVisualizerSpeakers();
 
 			tempBuffers = outputSpeakerToChannelMap
@@ -286,9 +286,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 		/// setup and if not, build a default stereo mapping
 		/// </summary>
 		/********************************************************************/
-		private ChannelFactorDictionary FindChannelFactorDictionary()
+		private ChannelFactorDictionary FindChannelFactorDictionary(bool disableCenterSpeaker)
 		{
-			ChannelFactorDictionary factorDictionary = DownMixerTable.ChannelFactors[outputChannelCountToUse - 1];
+			ChannelFactorDictionary factorDictionary = disableCenterSpeaker ? DownMixerTable.ChannelFactorsNoCenter[outputChannelCountToUse - 1] : DownMixerTable.ChannelFactors[outputChannelCountToUse - 1];
 			SpeakerFlag[] outputSpeakers = outputSpeakerToChannelMap.Keys.Where(x => x != SpeakerFlag.LowFrequency).ToArray();
 
 			foreach (SpeakerFlag outputSpeaker in outputSpeakers)

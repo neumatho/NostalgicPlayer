@@ -124,7 +124,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				{
 					mixerInfo = new MixerInfo
 					{
-						SurroundMode = playerConfiguration.SurroundMode
+						SurroundMode = playerConfiguration.SurroundMode,
+						DisableCenterSpeaker = playerConfiguration.DisableCenterSpeaker
 					};
 
 					ChangeConfiguration(playerConfiguration.MixerConfiguration);
@@ -297,12 +298,19 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			currentVisualizer.SetOutputFormat(outputInformation);
 			amigaFilter = new AmigaFilter(mixerFrequency, outputChannelCount);
 
+			bool disableCenterSpeaker;
+
+			lock (mixerInfoLock)
+			{
+				disableCenterSpeaker = mixerInfo.DisableCenterSpeaker;
+			}
+
 			lock (currentPlayer)
 			{
 				if ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0)
 					currentPlayer.SetOutputFormat((uint)mixerFrequency, outputInformation.Channels);
 
-				downMixer = new DownMixer(currentPlayer.SpeakerFlags, outputInformation.AvailableSpeakers);
+				downMixer = new DownMixer(currentPlayer.SpeakerFlags, outputInformation.AvailableSpeakers, disableCenterSpeaker);
 			}
 
 			// Create pool of buffers needed for extra effects

@@ -81,7 +81,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 				{
 					mixerInfo = new MixerInfo
 					{
-						SurroundMode = playerConfiguration.SurroundMode
+						SurroundMode = playerConfiguration.SurroundMode,
+						DisableCenterSpeaker = playerConfiguration.DisableCenterSpeaker
 					};
 
 					ChangeConfiguration(playerConfiguration.MixerConfiguration);
@@ -184,9 +185,16 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 
 			currentVisualizer.SetOutputFormat(outputInformation);
 
+			bool disableCenterSpeaker;
+
+			lock (mixerInfoLock)
+			{
+				disableCenterSpeaker = mixerInfo.DisableCenterSpeaker;
+			}
+
 			lock (currentPlayer)
 			{
-				downMixer = new DownMixer(currentPlayer.SpeakerFlags, outputInformation.AvailableSpeakers);
+				downMixer = new DownMixer(currentPlayer.SpeakerFlags, outputInformation.AvailableSpeakers, disableCenterSpeaker);
 			}
 		}
 

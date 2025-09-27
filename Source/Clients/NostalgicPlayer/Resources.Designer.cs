@@ -2652,6 +2652,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable center speaker.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_DISABLECENTERSPEAKER {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_DISABLECENTERSPEAKER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Interpolation.
         /// </summary>
         internal static string IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION {

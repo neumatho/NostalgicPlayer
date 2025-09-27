@@ -295,7 +295,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					}
 
 					// Setup player settings
-					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, soundSettings.SurroundMode, mixerConfiguration);
+					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, soundSettings.SurroundMode, soundSettings.DisableCenterSpeaker, mixerConfiguration);
 
 					// Initialize the module
 					if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))

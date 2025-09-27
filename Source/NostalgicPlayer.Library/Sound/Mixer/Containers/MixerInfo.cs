@@ -36,6 +36,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers
 			SurroundMode = source.SurroundMode;
 			SwapSpeakers = source.SwapSpeakers;
 			EmulateFilter = source.EmulateFilter;
+			DisableCenterSpeaker = source.DisableCenterSpeaker;
 
 			Array.Copy(source.ChannelsEnabled, ChannelsEnabled, ChannelsEnabled.Length);
 		}
@@ -64,6 +65,19 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers
 		public bool EmulateFilter
 		{
 			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// If true, the output center speaker is ignored and the sound is
+		/// mixed into the front left and right speakers instead
+		/// </summary>
+		/********************************************************************/
+		public bool DisableCenterSpeaker
+		{
+			get; init;
 		}
 	}
 }

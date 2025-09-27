@@ -613,5 +613,585 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 			},
 			#endregion
 		];
+
+		/// <summary>
+		/// This table is the same as ChannelFactors, but without using the center speaker
+		/// </summary>
+		public static readonly ChannelFactorDictionary[] ChannelFactorsNoCenter =
+		[
+			#region 1 output channel
+			new()
+			{
+				{
+					SpeakerFlag.FrontCenter, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, Sqrt2 },
+						{ SpeakerFlag.FrontRight, Sqrt2 },
+						{ SpeakerFlag.FrontCenter, Full },
+						{ SpeakerFlag.SideLeft, Half },
+						{ SpeakerFlag.SideRight, Half },
+						{ SpeakerFlag.BackLeft, Half },
+						{ SpeakerFlag.BackRight, Half },
+						{ SpeakerFlag.BackCenter, Half },
+						{ SpeakerFlag.TopCenter, Full },
+						{ SpeakerFlag.TopFrontLeft, Half },
+						{ SpeakerFlag.TopFrontCenter, Sqrt2 },
+						{ SpeakerFlag.TopFrontRight, Half },
+						{ SpeakerFlag.TopBackLeft, _2Sqrt2 },
+						{ SpeakerFlag.TopBackRight, _2Sqrt2 }
+					}
+				}
+			},
+			#endregion
+
+			#region 2 output channels
+			new()
+			{
+				{
+					SpeakerFlag.FrontLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, Full },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, Sqrt2 },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, Sqrt4 },
+						{ SpeakerFlag.TopCenter, Sqrt2 },
+						{ SpeakerFlag.TopFrontLeft, Sqrt2 },
+						{ SpeakerFlag.TopFrontCenter, Half },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, Half },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, Full },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, Sqrt2 },
+						{ SpeakerFlag.BackCenter, Sqrt4 },
+						{ SpeakerFlag.TopCenter, Sqrt2 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, Half },
+						{ SpeakerFlag.TopFrontRight, Sqrt2 },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, Half }
+					}
+				}
+			},
+			#endregion
+
+			#region 3 output channels
+			new()
+			{
+				{
+					SpeakerFlag.FrontLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, Full },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, Sqrt2 },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt3 },
+						{ SpeakerFlag.TopFrontLeft, Sqrt2 },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, Half },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, Full },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, Sqrt2 },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt3 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, Sqrt2 },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, Half }
+					}
+				},
+				{
+					SpeakerFlag.FrontCenter, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt3 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, Sqrt2 },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				}
+			},
+			#endregion
+
+			#region 4 output channels
+			new()
+			{
+				{
+					SpeakerFlag.FrontLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, Full },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt4 },
+						{ SpeakerFlag.TopFrontLeft, Sqrt2 },
+						{ SpeakerFlag.TopFrontCenter, Half },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, Full },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt4 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, Half },
+						{ SpeakerFlag.TopFrontRight, Sqrt2 },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, Full },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt4 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, Sqrt2 },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, Full },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt4 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, Sqrt2 }
+					}
+				}
+			},
+			#endregion
+
+			#region 5 output channels
+			new()
+			{
+				{
+					SpeakerFlag.FrontLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, Full },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt5 },
+						{ SpeakerFlag.TopFrontLeft, Sqrt2 },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, Full },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt5 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, Sqrt2 },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontCenter, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt5 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, Sqrt2 },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, Full },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt5 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, Sqrt2 },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, Full },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt5 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, Sqrt2 }
+					}
+				}
+			},
+			#endregion
+
+			#region 6 output channels
+			new()
+			{
+				{
+					SpeakerFlag.FrontLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, Full },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt6 },
+						{ SpeakerFlag.TopFrontLeft, Sqrt2 },
+						{ SpeakerFlag.TopFrontCenter, Half },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, Full },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt6 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, Half },
+						{ SpeakerFlag.TopFrontRight, Sqrt2 },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.SideLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, Full },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt6 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.SideRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Full },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt6 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, Full },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt6 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, Sqrt2 },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, Full },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt6 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, Sqrt2 }
+					}
+				}
+			},
+			#endregion
+
+			#region 7 output channels
+			new()
+			{
+				{
+					SpeakerFlag.FrontLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, Full },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt7 },
+						{ SpeakerFlag.TopFrontLeft, Sqrt2 },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, Full },
+						{ SpeakerFlag.FrontCenter, Sqrt2 },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt7 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, Sqrt2 },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.FrontCenter, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt7 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, Sqrt2 },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.SideLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, Full },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt7 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.SideRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, Full },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, None },
+						{ SpeakerFlag.TopCenter, Sqrt7 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackLeft, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, Full },
+						{ SpeakerFlag.BackRight, None },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt7 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, Sqrt2 },
+						{ SpeakerFlag.TopBackRight, None }
+					}
+				},
+				{
+					SpeakerFlag.BackRight, new Dictionary<SpeakerFlag, float>
+					{
+						{ SpeakerFlag.FrontLeft, None },
+						{ SpeakerFlag.FrontRight, None },
+						{ SpeakerFlag.FrontCenter, None },
+						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.BackLeft, None },
+						{ SpeakerFlag.BackRight, Full },
+						{ SpeakerFlag.BackCenter, Sqrt2 },
+						{ SpeakerFlag.TopCenter, Sqrt7 },
+						{ SpeakerFlag.TopFrontLeft, None },
+						{ SpeakerFlag.TopFrontCenter, None },
+						{ SpeakerFlag.TopFrontRight, None },
+						{ SpeakerFlag.TopBackLeft, None },
+						{ SpeakerFlag.TopBackRight, Sqrt2 }
+					}
+				}
+			},
+			#endregion
+		];
 	}
 }

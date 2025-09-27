@@ -156,6 +156,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			originalAmigaFilter = amigaFilterCheckBox.Checked = soundSettings.AmigaFilter;
 
 			surroundModeComboBox.SelectedIndex = (int)soundSettings.SurroundMode;
+			disableCenterSpeakerCheckBox.Checked = soundSettings.DisableCenterSpeaker;
 
 			// Setup channels
 			doNotTrigChannelChanged = true;
@@ -200,6 +201,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			originalAmigaFilter = soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
 
 			soundSettings.SurroundMode = (SurroundMode)surroundModeComboBox.SelectedIndex;
+			soundSettings.DisableCenterSpeaker = disableCenterSpeakerCheckBox.Checked;
 
 			soundSettings.OutputAgent = ((AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag).TypeId;
 		}

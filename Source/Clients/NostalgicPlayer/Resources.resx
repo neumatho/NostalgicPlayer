@@ -1061,6 +1061,9 @@ what has changed since your previous version.</value>
   <data name="IDS_SETTINGS_MIXER_GENERAL_AMIGALED" xml:space="preserve">
     <value>Emulate Amiga LED filter</value>
   </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_DISABLECENTERSPEAKER" xml:space="preserve">
+    <value>Disable center speaker</value>
+  </data>
   <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION" xml:space="preserve">
     <value>Interpolation</value>
   </data>

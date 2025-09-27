@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/********************************************************************/
 		public SurroundMode SurroundMode
 		{
-			get; set;
+			get; init;
 		}
 
 

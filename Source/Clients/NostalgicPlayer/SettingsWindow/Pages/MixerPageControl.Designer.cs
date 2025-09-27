@@ -44,6 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			swapSpeakersCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			surroundModeLabel = new Krypton.Toolkit.KryptonLabel();
 			surroundModeComboBox = new Krypton.Toolkit.KryptonComboBox();
+			disableCenterSpeakerCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			outputGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			outputAgentSettingsButton = new Krypton.Toolkit.KryptonButton();
 			outputAgentComboBox = new Krypton.Toolkit.KryptonComboBox();
@@ -93,6 +94,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			generalGroupBox.Panel.Controls.Add(swapSpeakersCheckBox);
 			generalGroupBox.Panel.Controls.Add(surroundModeLabel);
 			generalGroupBox.Panel.Controls.Add(surroundModeComboBox);
+			generalGroupBox.Panel.Controls.Add(disableCenterSpeakerCheckBox);
 			controlResource.SetResourceKey(generalGroupBox, "IDS_SETTINGS_MIXER_GENERAL");
 			generalGroupBox.Size = new System.Drawing.Size(592, 135);
 			generalGroupBox.TabIndex = 0;
@@ -182,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			amigaFilterCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(amigaFilterCheckBox, "IDS_SETTINGS_MIXER_GENERAL_AMIGALED");
 			amigaFilterCheckBox.Size = new System.Drawing.Size(146, 16);
-			amigaFilterCheckBox.TabIndex = 9;
+			amigaFilterCheckBox.TabIndex = 11;
 			amigaFilterCheckBox.Values.Text = "Emulate Amiga LED filter";
 			amigaFilterCheckBox.CheckedChanged += AmigaFilterCheckBox_CheckedChanged;
 			// 
@@ -218,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			surroundModeLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(surroundModeLabel, "IDS_SETTINGS_MIXER_GENERAL_SURROUND");
 			surroundModeLabel.Size = new System.Drawing.Size(86, 16);
-			surroundModeLabel.TabIndex = 3;
+			surroundModeLabel.TabIndex = 8;
 			surroundModeLabel.Values.Text = "Surround mode";
 			// 
 			// surroundModeComboBox
@@ -232,7 +234,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			surroundModeComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(surroundModeComboBox, null);
 			surroundModeComboBox.Size = new System.Drawing.Size(120, 19);
-			surroundModeComboBox.TabIndex = 8;
+			surroundModeComboBox.TabIndex = 9;
+			// 
+			// disableCenterSpeakerCheckBox
+			// 
+			disableCenterSpeakerCheckBox.Location = new System.Drawing.Point(201, 91);
+			disableCenterSpeakerCheckBox.Name = "disableCenterSpeakerCheckBox";
+			disableCenterSpeakerCheckBox.Palette = fontPalette;
+			disableCenterSpeakerCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(disableCenterSpeakerCheckBox, "IDS_SETTINGS_MIXER_GENERAL_DISABLECENTERSPEAKER");
+			disableCenterSpeakerCheckBox.Size = new System.Drawing.Size(135, 16);
+			disableCenterSpeakerCheckBox.TabIndex = 10;
+			disableCenterSpeakerCheckBox.Values.Text = "Disable center speaker";
 			// 
 			// outputGroupBox
 			// 
@@ -412,5 +425,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonLabel visualsLatencyMsLabel;
 		private Krypton.Toolkit.KryptonComboBox surroundModeComboBox;
 		private Krypton.Toolkit.KryptonLabel surroundModeLabel;
+		private Krypton.Toolkit.KryptonCheckBox disableCenterSpeakerCheckBox;
 	}
 }

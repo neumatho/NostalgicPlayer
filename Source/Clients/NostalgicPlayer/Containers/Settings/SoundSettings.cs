@@ -129,6 +129,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Disable center speaker
+		/// </summary>
+		/********************************************************************/
+		public bool DisableCenterSpeaker
+		{
+			get => settings.GetBoolEntry("Sound", "DisableCenterSpeaker", false);
+
+			set => settings.SetBoolEntry("Sound", "DisableCenterSpeaker", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Emulate Amiga LED filter
 		/// </summary>
 		/********************************************************************/

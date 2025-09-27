@@ -19,11 +19,12 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PlayerConfiguration(IOutputAgent outputAgent, LoaderInfoBase loaderInfo, SurroundMode surroundMode, MixerConfiguration mixerConfiguration)
+		public PlayerConfiguration(IOutputAgent outputAgent, LoaderInfoBase loaderInfo, SurroundMode surroundMode, bool disableCenterSpeaker, MixerConfiguration mixerConfiguration)
 		{
 			OutputAgent = outputAgent;
 			LoaderInfo = loaderInfo;
 			SurroundMode = surroundMode;
+			DisableCenterSpeaker = disableCenterSpeaker;
 			MixerConfiguration = mixerConfiguration;
 		}
 
@@ -59,6 +60,19 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		/// </summary>
 		/********************************************************************/
 		public SurroundMode SurroundMode
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// If true, the output center speaker is ignored and the sound is
+		/// mixed into the front left and right speakers instead
+		/// </summary>
+		/********************************************************************/
+		public bool DisableCenterSpeaker
 		{
 			get;
 		}

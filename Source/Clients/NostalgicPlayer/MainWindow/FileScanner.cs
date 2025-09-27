@@ -372,7 +372,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							{
 								IPlayer player = loader.Player;
 
-								if (player.InitPlayer(new PlayerConfiguration(null, loader, SurroundMode.None, new MixerConfiguration()), out string _))
+								if (player.InitPlayer(new PlayerConfiguration(null, loader, SurroundMode.None, false, new MixerConfiguration()), out string _))
 								{
 									try
 									{
