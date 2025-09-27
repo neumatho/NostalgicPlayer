@@ -14,6 +14,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue
 		private StandardFonts standardFonts;
 
 		private static readonly Office2010BlueFormColors formColors = new Office2010BlueFormColors();
+		private static readonly Office2010BlueButtonColors buttonColors = new Office2010BlueButtonColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -64,5 +65,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue
 		/// </summary>
 		/********************************************************************/
 		public IFormColors FormColors => formColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by buttons
+		/// </summary>
+		/********************************************************************/
+		public IButtonColors ButtonColors => buttonColors;
 	}
 }
