@@ -226,13 +226,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				if (toCopy == 0)
 					break;
 
-				for (int i = 0; i < toCopy; i++)
+				for (int i = 0; i < toCopy; i++, echoPosition++, copied++)
 				{
-					dest[0][copied] += echoBuffer[0][echoPosition] >> echoDepth;
-					echoBuffer[0][echoPosition] = dest[0][copied];
+					long left = dest[0][copied];
+					long right = dest[1][copied];
 
-					dest[1][copied] += echoBuffer[1][echoPosition] >> echoDepth;
-					echoBuffer[1][echoPosition++] = dest[1][copied++];
+					long newLeft = left + (echoBuffer[0][echoPosition] >> echoDepth);
+					long newRight = right + (echoBuffer[1][echoPosition] >> echoDepth);
+
+					if (newLeft > int.MaxValue)
+						newLeft = int.MaxValue;
+					else if (newLeft < int.MinValue)
+						newLeft = int.MinValue;
+
+					if (newRight > int.MaxValue)
+						newRight = int.MaxValue;
+					else if (newRight < int.MinValue)
+						newRight = int.MinValue;
+
+					dest[0][copied] = (int)newLeft;
+					dest[1][copied] = (int)newRight;
+
+					echoBuffer[0][echoPosition] = (int)newLeft;
+					echoBuffer[1][echoPosition] = (int)newRight;
 				}
 			}
 		}
@@ -258,13 +274,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				if (toCopy == 0)
 					break;
 
-				for (int i = 0; i < toCopy; i++)
+				for (int i = 0; i < toCopy; i++, echoPosition++, copied++)
 				{
-					dest[0][copied] += echoBuffer[1][echoPosition] >> echoDepth;
-					dest[1][copied] += echoBuffer[0][echoPosition] >> echoDepth;
+					long left = dest[0][copied];
+					long right = dest[1][copied];
 
-					echoBuffer[0][echoPosition] = dest[0][copied];
-					echoBuffer[1][echoPosition++] = dest[1][copied++];
+					long newLeft = left + (echoBuffer[1][echoPosition] >> echoDepth);
+					long newRight = right + (echoBuffer[0][echoPosition] >> echoDepth);
+
+					if (newLeft > int.MaxValue)
+						newLeft = int.MaxValue;
+					else if (newLeft < int.MinValue)
+						newLeft = int.MinValue;
+
+					if (newRight > int.MaxValue)
+						newRight = int.MaxValue;
+					else if (newRight < int.MinValue)
+						newRight = int.MinValue;
+
+					dest[0][copied] = (int)newLeft;
+					dest[1][copied] = (int)newRight;
+
+					echoBuffer[0][echoPosition] = (int)newLeft;
+					echoBuffer[1][echoPosition] = (int)newRight;
 				}
 			}
 		}
