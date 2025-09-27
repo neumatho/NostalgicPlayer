@@ -32,7 +32,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FavoriteSongSystemForm));
 			favoriteDataGridView = new Krypton.Toolkit.KryptonDataGridView();
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			addButton = new Krypton.Toolkit.KryptonButton();
+			addButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			removeButton = new Krypton.Toolkit.KryptonButton();
@@ -91,12 +91,10 @@
 			addButton.Enabled = false;
 			addButton.Location = new System.Drawing.Point(8, 200);
 			addButton.Name = "addButton";
-			addButton.Palette = bigFontPalette;
-			addButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(addButton, "IDS_FAVORITE_BUTTON_ADD");
 			addButton.Size = new System.Drawing.Size(90, 21);
 			addButton.TabIndex = 1;
-			addButton.Values.Text = "Add";
+			addButton.Text = "Add";
 			addButton.Click += AddButton_Click;
 			// 
 			// bigFontPalette
@@ -207,7 +205,7 @@
 
 		#endregion
 		private Krypton.Toolkit.KryptonDataGridView favoriteDataGridView;
-		private Krypton.Toolkit.KryptonButton addButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicButton addButton;
 		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonButton removeButton;
 		private Krypton.Toolkit.KryptonButton resetButton;
