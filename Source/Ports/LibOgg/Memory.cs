@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<T> Ogg_MAllocObj<T>(size_t size) where T : new()
+		public static CPointer<T> Ogg_MAllocObj<T>(size_t size) where T : class, new()
 		{
 			return CMemory.MAllocObj<T>((int)size);
 		}
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<T> Ogg_CAllocObj<T>(size_t size) where T : new()
+		public static CPointer<T> Ogg_CAllocObj<T>(size_t size) where T : class, new()
 		{
 			return CMemory.CAllocObj<T>((int)size);
 		}
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<T> Ogg_ReallocObj<T>(CPointer<T> ptr, size_t newSize) where T : new()
+		public static CPointer<T> Ogg_ReallocObj<T>(CPointer<T> ptr, size_t newSize) where T : class, new()
 		{
 			return CMemory.ReallocObj(ptr, (int)newSize);
 		}

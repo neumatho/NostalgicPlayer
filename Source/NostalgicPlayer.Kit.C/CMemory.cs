@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<T> MAllocObj<T>(int size) where T : new()
+		public static CPointer<T> MAllocObj<T>(int size) where T : class, new()
 		{
 			return CAllocObj<T>(size);
 		}
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<T> CAllocObj<T>(int size) where T : new()
+		public static CPointer<T> CAllocObj<T>(int size) where T : class, new()
 		{
 			T[] array = ArrayHelper.InitializeArray<T>(size);
 
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<T> ReallocObj<T>(CPointer<T> ptr, int newSize) where T : new()
+		public static CPointer<T> ReallocObj<T>(CPointer<T> ptr, int newSize) where T : class, new()
 		{
 			if (ptr.IsNull)
 				return MAllocObj<T>(newSize);
