@@ -31,8 +31,7 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Designer
 			controls = new Dictionary<Control, string>();
 		}
 
-
-
+		#region Designer properties
 		/********************************************************************/
 		/// <summary>
 		/// Full namespace to the resource class
@@ -67,6 +66,7 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Designer
 		/// Sets the resource key
 		/// </summary>
 		/********************************************************************/
+		[DefaultValue(null)]
 		public void SetResourceKey(Control control, string key)
 		{
 			if (string.IsNullOrEmpty(key))
@@ -74,6 +74,31 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Designer
 			else
 				controls[control] = key;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test if the property should be serialized
+		/// </summary>
+		/********************************************************************/
+		public bool ShouldSerializeResourceKey(Control control)
+		{
+			return GetResourceKey(control) != null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Possibility to reset the property
+		/// </summary>
+		/********************************************************************/
+		public void ResetResourceKey(Control control)
+		{
+			SetResourceKey(control, null);
+		}
+		#endregion
 
 		#region IExtenderProvider implementation
 		/********************************************************************/
