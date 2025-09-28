@@ -14,8 +14,6 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 	/// </summary>
 	internal class StandardFonts : IFonts, IDisposable
 	{
-		private const float DefaultFontSize = 8.0f;
-
 		private Font regularFont;
 		private Font monospaceFont;
 
@@ -26,8 +24,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/********************************************************************/
 		public StandardFonts()
 		{
-			regularFont = new Font("Microsoft Sans", DefaultFontSize, FontStyle.Regular, GraphicsUnit.Point);
-			monospaceFont = new Font("Lucida Console", DefaultFontSize, FontStyle.Regular, GraphicsUnit.Point);
+			regularFont = new Font("Microsoft Sans", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
+			monospaceFont = new Font("Lucida Console", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
 		}
 
 
