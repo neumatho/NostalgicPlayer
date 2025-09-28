@@ -26,5 +26,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Switch to the new theme given
 		/// </summary>
 		public void SwitchTheme(ITheme newTheme);
+
+		/// <summary>
+		/// Refresh all controls
+		/// </summary>
+		public void RefreshControls();
 	}
 }
