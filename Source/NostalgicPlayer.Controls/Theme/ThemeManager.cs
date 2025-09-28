@@ -76,6 +76,18 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 
 			theme = newTheme;
 
+			RefreshControls();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Refresh all controls
+		/// </summary>
+		/********************************************************************/
+		public void RefreshControls()
+		{
 			if (ThemeChanged != null)
 				ThemeChanged(this, new ThemeChangedEventArgs(theme));
 		}
