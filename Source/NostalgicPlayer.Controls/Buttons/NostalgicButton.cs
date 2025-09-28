@@ -9,6 +9,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Components;
+using Polycode.NostalgicPlayer.Controls.Containers;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
@@ -17,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 	/// <summary>
 	/// Themed button with custom rendering
 	/// </summary>
-	public class NostalgicButton : Button, IThemeControl
+	public class NostalgicButton : Button, IThemeControl, IFontConfiguration
 	{
 		private const int CornerRadius = 3;
 
@@ -32,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		private IButtonColors colors;
 		private IFonts fonts;
 
+		private FontConfiguration fontConfiguration;
+
 		private bool isHovered;
 		private bool isPressed;			// True while mouse down or space-bar held
 		private bool spacePressed;		// Track if space currently holds the pressed state
@@ -45,6 +49,29 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		{
 			SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
 		}
+
+		#region Designer properties
+		/********************************************************************/
+		/// <summary>
+		/// Set the FontConfiguration component to use for this control
+		/// </summary>
+		/********************************************************************/
+		[Category("Appearance")]
+		[Description("Which font configuration to use if you want to change the default font.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(null)]
+		public FontConfiguration UseFont
+		{
+			get => fontConfiguration;
+
+			set
+			{
+				fontConfiguration = value;
+
+				Invalidate();
+			}
+		}
+		#endregion
 
 		#region Initialize
 		/********************************************************************/
@@ -71,8 +98,6 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		{
 			colors = theme.ButtonColors;
 			fonts = theme.StandardFonts;
-
-			Font = fonts.RegularFont;
 
 			Invalidate();
 		}
@@ -496,8 +521,13 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		private void DrawText(Graphics g, Rectangle rect, StateColors stateColors)
 		{
-			TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
-			TextRenderer.DrawText(g, Text, Font, rect, stateColors.TextColor, flags);
+			Font font = fontConfiguration?.Font ?? fonts.RegularFont;
+
+			int y = (rect.Height - font.Height) / 2 - 1;
+
+			TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
+			Rectangle drawRect = new Rectangle(rect.X, rect.Y + y, rect.Width, Font.Height);
+			TextRenderer.DrawText(g, Text, font, drawRect, stateColors.TextColor, flags);
 		}
 
 
