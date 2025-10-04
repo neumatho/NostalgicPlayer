@@ -32,11 +32,11 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FavoriteSongSystemForm));
 			favoriteDataGridView = new Krypton.Toolkit.KryptonDataGridView();
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			addButton = new Krypton.Toolkit.KryptonButton();
-			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			addButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
+			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
-			removeButton = new Krypton.Toolkit.KryptonButton();
-			resetButton = new Krypton.Toolkit.KryptonButton();
+			removeButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
+			resetButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			favoriteGroup = new Krypton.Toolkit.KryptonGroup();
 			showComboBox = new Krypton.Toolkit.KryptonComboBox();
 			otherNumberTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox();
@@ -91,21 +91,16 @@
 			addButton.Enabled = false;
 			addButton.Location = new System.Drawing.Point(8, 200);
 			addButton.Name = "addButton";
-			addButton.Palette = bigFontPalette;
-			addButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(addButton, "IDS_FAVORITE_BUTTON_ADD");
 			addButton.Size = new System.Drawing.Size(90, 21);
 			addButton.TabIndex = 1;
-			addButton.Values.Text = "Add";
+			addButton.Text = "Add";
+			addButton.UseFont = bigFontConfiguration;
 			addButton.Click += AddButton_Click;
 			// 
-			// bigFontPalette
+			// bigFontConfiguration
 			// 
-			bigFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			bigFontPalette.BaseFontSize = 9F;
-			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
+			bigFontConfiguration.FontSize = 1;
 			// 
 			// controlResource
 			// 
@@ -117,12 +112,11 @@
 			removeButton.Enabled = false;
 			removeButton.Location = new System.Drawing.Point(102, 200);
 			removeButton.Name = "removeButton";
-			removeButton.Palette = bigFontPalette;
-			removeButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(removeButton, "IDS_FAVORITE_BUTTON_REMOVE");
 			removeButton.Size = new System.Drawing.Size(90, 21);
 			removeButton.TabIndex = 2;
-			removeButton.Values.Text = "Remove";
+			removeButton.Text = "Remove";
+			removeButton.UseFont = bigFontConfiguration;
 			removeButton.Click += RemoveButton_Click;
 			// 
 			// resetButton
@@ -130,12 +124,11 @@
 			resetButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			resetButton.Location = new System.Drawing.Point(324, 200);
 			resetButton.Name = "resetButton";
-			resetButton.Palette = bigFontPalette;
-			resetButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(resetButton, "IDS_FAVORITE_BUTTON_RESET");
 			resetButton.Size = new System.Drawing.Size(90, 21);
 			resetButton.TabIndex = 5;
-			resetButton.Values.Text = "Reset";
+			resetButton.Text = "Reset";
+			resetButton.UseFont = bigFontConfiguration;
 			resetButton.Click += ResetButton_Click;
 			// 
 			// favoriteGroup
@@ -181,7 +174,6 @@
 			// 
 			// FavoriteSongSystemForm
 			// 
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			ClientSize = new System.Drawing.Size(422, 225);
 			Controls.Add(otherNumberTextBox);
 			Controls.Add(showComboBox);
@@ -193,8 +185,6 @@
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(438, 264);
 			Name = "FavoriteSongSystemForm";
-			Palette = fontPalette;
-			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(this, null);
 			FormClosed += FavoriteSongSystemWindowForm_FormClosed;
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).EndInit();
@@ -210,15 +200,15 @@
 
 		#endregion
 		private Krypton.Toolkit.KryptonDataGridView favoriteDataGridView;
-		private Krypton.Toolkit.KryptonButton addButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicButton addButton;
 		private Kit.Gui.Designer.ControlResource controlResource;
-		private Krypton.Toolkit.KryptonButton removeButton;
-		private Krypton.Toolkit.KryptonButton resetButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicButton removeButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicButton resetButton;
 		private Krypton.Toolkit.KryptonGroup favoriteGroup;
 		private Krypton.Toolkit.KryptonComboBox showComboBox;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox otherNumberTextBox;
 		private System.Windows.Forms.ToolTip toolTip;
 		private Kit.Gui.Components.FontPalette fontPalette;
-		private Kit.Gui.Components.FontPalette bigFontPalette;
+		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
 	}
 }
