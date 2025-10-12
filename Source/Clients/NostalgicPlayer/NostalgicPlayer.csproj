@@ -135,6 +135,7 @@
     <ProjectReference Include="..\..\Agents\SampleConverters\Raw\Raw.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\RiffWave\RiffWave.csproj" />
     <ProjectReference Include="..\..\Agents\Streamers\Mpeg\Mpeg.csproj" />
+    <ProjectReference Include="..\..\Agents\Visuals\ChannelLevelMeter\ChannelLevelMeter.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\LevelMeter\LevelMeter.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\Oscilloscope\Oscilloscope.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\Piano\Piano.csproj" />
