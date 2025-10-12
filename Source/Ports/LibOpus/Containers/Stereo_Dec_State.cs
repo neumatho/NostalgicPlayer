@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Stereo_Dec_State : IDeepCloneable<Stereo_Dec_State>
+	internal class Stereo_Dec_State : IClearable, IDeepCloneable<Stereo_Dec_State>
 	{
 		public readonly opus_int16[] pred_prev_Q13 = new opus_int16[2];
 		public readonly opus_int16[] sMid = new opus_int16[2];

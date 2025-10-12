@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// Struct for CNG
 	/// </summary>
-	internal class Silk_CNG_Struct : IDeepCloneable<Silk_CNG_Struct>
+	internal class Silk_CNG_Struct : IClearable, IDeepCloneable<Silk_CNG_Struct>
 	{
 		public CPointer<opus_int32> CNG_exc_buf_Q14 = new CPointer<opus_int32>(Constants.Max_Frame_Length);
 		public readonly opus_int16[] CNG_smth_NLSF_Q15 = new opus_int16[Constants.Max_Lpc_Order];

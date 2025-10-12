@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -11,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class VorbisInfoFloor0 : IVorbisInfoFloor
+	internal class VorbisInfoFloor0 : IVorbisInfoFloor, IClearable
 	{
 		public c_int order;
 		public c_long rate;

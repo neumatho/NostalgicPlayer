@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// Decoder state
 	/// </summary>
-	internal class OpusCustomDecoder : IDeepCloneable<OpusCustomDecoder>
+	internal class OpusCustomDecoder : IClearable, IDeepCloneable<OpusCustomDecoder>
 	{
 		public OpusCustomMode mode;
 		public c_int overlap;

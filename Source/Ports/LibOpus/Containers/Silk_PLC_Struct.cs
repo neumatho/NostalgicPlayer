@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// Struct for Packet Loss Concealment
 	/// </summary>
-	internal class Silk_PLC_Struct : IDeepCloneable<Silk_PLC_Struct>
+	internal class Silk_PLC_Struct : IClearable, IDeepCloneable<Silk_PLC_Struct>
 	{
 		/// <summary>
 		/// Pitch lag to use for voiced concealment

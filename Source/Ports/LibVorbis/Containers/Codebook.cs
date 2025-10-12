@@ -4,13 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Codebook
+	internal class Codebook : IClearable
 	{
 		/// <summary>
 		/// Codebook dimensions (elements per vector)

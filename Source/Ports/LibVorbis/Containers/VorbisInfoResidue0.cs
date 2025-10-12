@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -11,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// <summary>
 	/// Block-partitioned VQ coded straight residue
 	/// </summary>
-	internal class VorbisInfoResidue0 : IVorbisInfoResidue
+	internal class VorbisInfoResidue0 : IVorbisInfoResidue, IClearable
 	{
 		public c_long begin;
 		public c_long end;

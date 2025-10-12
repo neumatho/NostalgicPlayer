@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -11,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class VorbisLookFloor1 : IVorbisLookFloor
+	internal class VorbisLookFloor1 : IVorbisLookFloor, IClearable
 	{
 		public readonly c_int[] sorted_index = new c_int[Constants.Vif_Posit + 2];
 		public readonly c_int[] forward_index = new c_int[Constants.Vif_Posit + 2];

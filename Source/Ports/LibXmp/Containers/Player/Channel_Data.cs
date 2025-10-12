@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Channel_Data : IDeepCloneable<Channel_Data>
+	internal class Channel_Data : IClearable, IDeepCloneable<Channel_Data>
 	{
 		/// <summary>
 		/// Channel flags
@@ -345,34 +345,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 
 		/********************************************************************/
 		/// <summary>
-		/// Make a deep copy of the current object
-		/// </summary>
-		/********************************************************************/
-		public Channel_Data MakeDeepClone()
-		{
-			Channel_Data clone = (Channel_Data)MemberwiseClone();
-
-			clone.Arpeggio.Val = ArrayHelper.CloneArray(Arpeggio.Val);
-
-			clone.Vibrato.Lfo = Vibrato.Lfo.MakeDeepClone();
-			clone.Tremolo.Lfo = Tremolo.Lfo.MakeDeepClone();
-			clone.Panbrello.Lfo = Panbrello.Lfo.MakeDeepClone();
-			clone.InsVib.Lfo = InsVib.Lfo.MakeDeepClone();
-			clone.Delayed_Event = Delayed_Event.MakeDeepClone();
-
-			if (Extra != null)
-			{
-				clone.Extra = Extra.MakeDeepClone();
-				clone.Extra.SetChannel(clone);
-			}
-
-			return clone;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -507,6 +479,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			Info_Position = 0;
 			Info_FinalVol = 0;
 			Info_FinalPan = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Channel_Data MakeDeepClone()
+		{
+			Channel_Data clone = (Channel_Data)MemberwiseClone();
+
+			clone.Arpeggio.Val = ArrayHelper.CloneArray(Arpeggio.Val);
+
+			clone.Vibrato.Lfo = Vibrato.Lfo.MakeDeepClone();
+			clone.Tremolo.Lfo = Tremolo.Lfo.MakeDeepClone();
+			clone.Panbrello.Lfo = Panbrello.Lfo.MakeDeepClone();
+			clone.InsVib.Lfo = InsVib.Lfo.MakeDeepClone();
+			clone.Delayed_Event = Delayed_Event.MakeDeepClone();
+
+			if (Extra != null)
+			{
+				clone.Extra = Extra.MakeDeepClone();
+				clone.Extra.SetChannel(clone);
+			}
+
+			return clone;
 		}
 
 

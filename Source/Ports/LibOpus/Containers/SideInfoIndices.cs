@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class SideInfoIndices : IDeepCloneable<SideInfoIndices>
+	internal class SideInfoIndices : IClearable, IDeepCloneable<SideInfoIndices>
 	{
 		public readonly opus_int8[] GainsIndicies = new opus_int8[Constants.Max_Nb_Subfr];
 		public readonly opus_int8[] LTPIndex = new opus_int8[Constants.Max_Nb_Subfr];

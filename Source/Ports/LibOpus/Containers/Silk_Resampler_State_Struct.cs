@@ -13,9 +13,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Silk_Resampler_State_Struct : IDeepCloneable<Silk_Resampler_State_Struct>
+	internal class Silk_Resampler_State_Struct : IClearable, IDeepCloneable<Silk_Resampler_State_Struct>
 	{
-		public class SFirUnion : IDeepCloneable<SFirUnion>
+		public class SFirUnion : IClearable, IDeepCloneable<SFirUnion>
 		{
 			private readonly opus_int32[] data = new opus_int32[Constants.Silk_Resampler_Max_Fir_Order];
 

@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// Decoder super struct
 	/// </summary>
-	internal class Silk_Decoder : IDeepCloneable<Silk_Decoder>
+	internal class Silk_Decoder : IClearable, IDeepCloneable<Silk_Decoder>
 	{
 		public readonly Silk_Decoder_State[] channel_state = ArrayHelper.InitializeArray<Silk_Decoder_State>(Constants.Decoder_Num_Channels);
 		public Stereo_Dec_State sStereo = new Stereo_Dec_State();

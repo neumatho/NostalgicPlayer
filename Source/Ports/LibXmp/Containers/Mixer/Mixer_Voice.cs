@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Mixer_Voice : IDeepCloneable<Mixer_Voice>
+	internal class Mixer_Voice : IClearable, IDeepCloneable<Mixer_Voice>
 	{
 		/// <summary>
 		/// Channel number
@@ -146,18 +146,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Make a deep copy of the current object
-		/// </summary>
-		/********************************************************************/
-		public Mixer_Voice MakeDeepClone()
-		{
-			return (Mixer_Voice)MemberwiseClone();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -193,6 +181,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 			Filter.B1 = 0;
 			Filter.CutOff = 0;
 			Filter.Resonance = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Mixer_Voice MakeDeepClone()
+		{
+			return (Mixer_Voice)MemberwiseClone();
 		}
 	}
 }

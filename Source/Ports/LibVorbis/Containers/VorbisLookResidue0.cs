@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -10,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class VorbisLookResidue0 : IVorbisLookResidue
+	internal class VorbisLookResidue0 : IVorbisLookResidue, IClearable
 	{
 		public VorbisInfoResidue0 info;
 

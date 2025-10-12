@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
 	/// <summary>
@@ -17,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// tree. This is true of both VQ and huffman, but is mostly useful
 	/// with VQ
 	/// </summary>
-	internal class StaticCodebook
+	internal class StaticCodebook : IClearable
 	{
 		/// <summary>
 		/// Codebook dimensions (elements per vector)

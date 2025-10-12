@@ -226,5 +226,18 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 			return newArray;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear all elements of the given array
+		/// </summary>
+		/********************************************************************/
+		public static void ClearArray<T>(T[] array) where T : IClearable
+		{
+			for (int i = array.Length - 1; i >= 0; i--)
+				array[i].Clear();
+		}
 	}
 }

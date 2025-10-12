@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// Decoder state
 	/// </summary>
-	internal class Silk_Decoder_State : IDeepCloneable<Silk_Decoder_State>
+	internal class Silk_Decoder_State : IClearable, IDeepCloneable<Silk_Decoder_State>
 	{
 		public opus_int32 prev_gain_Q16;
 		public CPointer<opus_int32> exc_Q14 = new CPointer<opus_int32>(Constants.Max_Frame_Length);

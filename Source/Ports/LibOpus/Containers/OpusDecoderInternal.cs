@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class OpusDecoderInternal : IDeepCloneable<OpusDecoderInternal>
+	internal class OpusDecoderInternal : IClearable, IDeepCloneable<OpusDecoderInternal>
 	{
 		public CeltDecoder celt_dec;
 		public Silk_Decoder silk_dec;

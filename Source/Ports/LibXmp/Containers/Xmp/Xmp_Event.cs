@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 	/// <summary>
 	/// 
 	/// </summary>
-	public class Xmp_Event : IDeepCloneable<Xmp_Event>
+	public class Xmp_Event : IClearable, IDeepCloneable<Xmp_Event>
 	{
 		/// <summary>
 		/// Note number (0 means no note)
@@ -58,18 +58,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Make a deep copy of the current object
-		/// </summary>
-		/********************************************************************/
-		public Xmp_Event MakeDeepClone()
-		{
-			return (Xmp_Event)MemberwiseClone();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -83,6 +71,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 			F2T = 0;
 			F2P = 0;
 			_Flag = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Xmp_Event MakeDeepClone()
+		{
+			return (Xmp_Event)MemberwiseClone();
 		}
 
 

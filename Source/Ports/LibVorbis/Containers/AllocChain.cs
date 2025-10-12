@@ -4,13 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class AllocChain
+	public class AllocChain : IClearable
 	{
 		/// <summary></summary>
 		public CPointer<byte> ptr;

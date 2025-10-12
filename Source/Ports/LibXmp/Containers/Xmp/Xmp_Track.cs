@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class Xmp_Track
+	public class Xmp_Track : IClearable
 	{
 		/// <summary>
 		/// Number of rows

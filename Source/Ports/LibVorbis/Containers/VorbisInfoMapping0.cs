@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -11,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class VorbisInfoMapping0 : IVorbisInfoMapping
+	internal class VorbisInfoMapping0 : IVorbisInfoMapping, IClearable
 	{
 		public c_int submaps;									// <= 16
 		public readonly c_int[] chmuxlist = new c_int[256];		// Up to 256 channels in a Vorbis stream

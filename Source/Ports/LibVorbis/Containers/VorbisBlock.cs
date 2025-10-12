@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
@@ -15,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// bitstream, but is independent from other vorbis_blocks belonging to
 	/// that logical bitstream
 	/// </summary>
-	public class VorbisBlock
+	public class VorbisBlock : IClearable
 	{
 		// Necessary stream state for linking to the framing abstraction
 

@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// <summary>
 	/// Structure for controlling decoder operation and reading decoder status
 	/// </summary>
-	internal class Silk_DecControlStruct : IDeepCloneable<Silk_DecControlStruct>
+	internal class Silk_DecControlStruct : IClearable, IDeepCloneable<Silk_DecControlStruct>
 	{
 		/// <summary>
 		/// I: Number of channels; 1/2

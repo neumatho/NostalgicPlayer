@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
@@ -11,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// The comments are not part of vorbis_info so that vorbis_info can be
 	/// static storage
 	/// </summary>
-	public class VorbisComment
+	public class VorbisComment : IClearable
 	{
 		/// <summary>
 		/// Unlimited user comment fields. libvorbis writes 'libvorbis'

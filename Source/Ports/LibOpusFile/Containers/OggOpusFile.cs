@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus;
@@ -14,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class OggOpusFile
+	internal class OggOpusFile : IClearable
 	{
 		/// <summary>
 		/// The callbacks used to access the stream

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -11,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class VorbisInfoFloor1 : IVorbisInfoFloor
+	internal class VorbisInfoFloor1 : IVorbisInfoFloor, IClearable
 	{
 		public c_int partitions;													// 0 to 31
 		public readonly c_int[] partitionclass = new c_int[Constants.Vif_Parts];	// 0 to 15
