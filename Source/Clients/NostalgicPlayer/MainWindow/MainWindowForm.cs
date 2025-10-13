@@ -21,6 +21,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
@@ -3128,6 +3129,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			menuItem.Click += Menu_Window_Audius_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_MODLIBRARY);
+			menuItem.Click += Menu_Window_ModLibrary_Click;
+			windowMenuItem.DropDownItems.Add(menuItem);
+
 			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
 			agentSettingsSeparatorMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsSeparatorMenuItem);
@@ -3359,6 +3364,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				audiusWindow.Show();
 			}
 
+			if (mainWindowSettings.OpenModLibraryWindow)
+			{
+				modLibraryWindow = new ModLibraryWindowForm(this, optionSettings);
+				modLibraryWindow.Show();
+			}
+
 			foreach (Guid typeId in mainWindowSettings.OpenAgentWindows)
 			{
 				AgentInfo agentInfo = agentManager.GetAllAgents().FirstOrDefault(a => a.TypeId == typeId);
@@ -3478,6 +3489,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			audiusWindow = null;
 			mainWindowSettings.OpenAudiusWindow = openAgain;
+
+			// Close the Module Library window
+			openAgain = IsModLibraryWindowOpen();
+			if (openAgain)
+				modLibraryWindow.Close();
+
+			modLibraryWindow = null;
+			mainWindowSettings.OpenModLibraryWindow = openAgain;
 		}
 
 
@@ -3503,6 +3522,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsAudiusWindowOpen())
 				yield return audiusWindow;
+
+			if (IsModLibraryWindowOpen())
+				yield return modLibraryWindow;
 
 			if (IsSettingsWindowOpen())
 				yield return settingsWindow;
