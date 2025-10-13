@@ -118,6 +118,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				EnableInterpolation = sndSettings.Interpolation,
 				SwapSpeakers = sndSettings.SwapSpeakers,
 				EnableAmigaFilter = sndSettings.AmigaFilter,
+				EnableEqualizer = sndSettings.EnableEqualizer,
+				EqualizerBands = sndSettings.EqualizerBands,
 				ExtraChannels = mainWindow.ExtraChannelsImplementation
 			};
 

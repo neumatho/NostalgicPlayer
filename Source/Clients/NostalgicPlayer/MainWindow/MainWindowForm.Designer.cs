@@ -37,6 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			infoGroup = new KryptonGroup();
+			equalizerButton = new KryptonButton();
 			moduleInfoButton = new KryptonButton();
 			masterVolumeTrackBar = new KryptonTrackBar();
 			listButtonsGroup = new KryptonGroup();
@@ -136,23 +137,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// 
 			infoGroup.Panel.Controls.Add(infoLabel);
-			infoGroup.Size = new System.Drawing.Size(380, 24);
+			infoGroup.Size = new System.Drawing.Size(352, 24);
 			infoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
 			infoGroup.TabIndex = 1;
-			// 
+			//
 			// moduleInfoButton
-			// 
+			//
 			moduleInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-			moduleInfoButton.Location = new System.Drawing.Point(388, 28);
+			moduleInfoButton.Location = new System.Drawing.Point(360, 28);
 			moduleInfoButton.Name = "moduleInfoButton";
 			moduleInfoButton.Size = new System.Drawing.Size(24, 24);
 			moduleInfoButton.TabIndex = 2;
 			moduleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("moduleInfoButton.Values.Image");
 			moduleInfoButton.Values.Text = "";
+            //
+            // equalizerButton
+            //
+            equalizerButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            equalizerButton.Location = new System.Drawing.Point(388, 28);
+            equalizerButton.Name = "equalizerButton";
+            equalizerButton.Size = new System.Drawing.Size(24, 24);
+            equalizerButton.TabIndex = 3;
+            equalizerButton.Values.Image = (System.Drawing.Image)resources.GetObject("equalizerButton.Values.Image");
+            equalizerButton.Values.Text = "";
 			// 
-			// masterVolumeTrackBar
-			// 
-			masterVolumeTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            // masterVolumeTrackBar
+            // 
+            masterVolumeTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			masterVolumeTrackBar.Location = new System.Drawing.Point(4, 84);
 			masterVolumeTrackBar.Maximum = 256;
 			masterVolumeTrackBar.Name = "masterVolumeTrackBar";
@@ -492,6 +503,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			Controls.Add(listInfoGroup);
 			Controls.Add(listButtonsGroup);
 			Controls.Add(masterVolumeTrackBar);
+			Controls.Add(equalizerButton);
 			Controls.Add(moduleInfoButton);
 			Controls.Add(infoGroup);
 			Controls.Add(menuStrip);
@@ -528,6 +540,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private System.Windows.Forms.MenuStrip menuStrip;
 		private Krypton.Toolkit.KryptonLabel infoLabel;
 		private Krypton.Toolkit.KryptonGroup infoGroup;
+		private KryptonButton equalizerButton;
 		private KryptonButton moduleInfoButton;
 		private KryptonTrackBar masterVolumeTrackBar;
 		private KryptonGroup listButtonsGroup;

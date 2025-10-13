@@ -993,6 +993,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			infoGroup.Panel.Click += InfoGroup_Click;
 			infoLabel.Click += InfoGroup_Click;
 
+			equalizerButton.Click += EqualizerButton_Click;
 			moduleInfoButton.Click += ModuleInfoButton_Click;
 
 			// Module list
@@ -3128,6 +3129,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			menuItem.Click += Menu_Window_Audius_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
+            menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_EQUALIZER);
+            menuItem.Click += Menu_Window_Equalizer_Click;
+            windowMenuItem.DropDownItems.Add(menuItem);
+
 			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
 			agentSettingsSeparatorMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsSeparatorMenuItem);
@@ -3359,6 +3364,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				audiusWindow.Show();
 			}
 
+			OpenEqualizerWindow();
+
 			foreach (Guid typeId in mainWindowSettings.OpenAgentWindows)
 			{
 				AgentInfo agentInfo = agentManager.GetAllAgents().FirstOrDefault(a => a.TypeId == typeId);
@@ -3478,6 +3485,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			audiusWindow = null;
 			mainWindowSettings.OpenAudiusWindow = openAgain;
+
+			CloseEqualizerWindow();
 		}
 
 
@@ -3503,6 +3512,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsAudiusWindowOpen())
 				yield return audiusWindow;
+
+			foreach (WindowFormBase window in EnumerateEqualizerWindow())
+				yield return window;
 
 			if (IsSettingsWindowOpen())
 				yield return settingsWindow;

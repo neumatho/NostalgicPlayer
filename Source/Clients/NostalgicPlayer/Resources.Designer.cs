@@ -1875,7 +1875,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ResourceManager.GetString("IDS_MENU_WINDOW_AUDIUS", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Equalizer….
+        /// </summary>
+        internal static string IDS_MENU_WINDOW_EQUALIZER {
+            get {
+                return ResourceManager.GetString("IDS_MENU_WINDOW_EQUALIZER", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Settings….
         /// </summary>
