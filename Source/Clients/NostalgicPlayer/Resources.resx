@@ -805,11 +805,17 @@ Do you want to continue?</value>
   <data name="IDS_MENU_WINDOW_AUDIUS" xml:space="preserve">
     <value>Audius…</value>
   </data>
+  <data name="IDS_MENU_WINDOW_MODLIBRARY" xml:space="preserve">
+    <value>Module Library…</value>
+  </data>
   <data name="IDS_MENU_WINDOW_EQUALIZER" xml:space="preserve">
     <value>Equalizer…</value>
   </data>
   <data name="IDS_MENU_WINDOW_SETTINGS" xml:space="preserve">
     <value>Settings…</value>
+  </data>
+  <data name="IDS_MODLIBRARY_TITLE" xml:space="preserve">
+    <value>Module Library</value>
   </data>
   <data name="IDS_MODULE_INFO_COLUMN_DESCRIPTION" xml:space="preserve">
     <value>Description</value>

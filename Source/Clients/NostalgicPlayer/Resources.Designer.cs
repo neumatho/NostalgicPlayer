@@ -1887,6 +1887,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Module Library….
+        /// </summary>
+        internal static string IDS_MENU_WINDOW_MODLIBRARY {
+            get {
+                return ResourceManager.GetString("IDS_MENU_WINDOW_MODLIBRARY", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Equalizer….
         /// </summary>
         internal static string IDS_MENU_WINDOW_EQUALIZER {
@@ -1901,6 +1910,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MENU_WINDOW_SETTINGS {
             get {
                 return ResourceManager.GetString("IDS_MENU_WINDOW_SETTINGS", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Module Library.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_TITLE", resourceCulture);
             }
         }
         
