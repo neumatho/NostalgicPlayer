@@ -132,6 +132,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Open Equalizer window
+		/// </summary>
+		/********************************************************************/
+		public bool OpenEqualizerWindow
+		{
+			get => settings.GetBoolEntry("Window", "EqualizerOpenWindow");
+
+			set => settings.SetBoolEntry("Window", "EqualizerOpenWindow", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Open agent windows
 		/// </summary>
 		/********************************************************************/

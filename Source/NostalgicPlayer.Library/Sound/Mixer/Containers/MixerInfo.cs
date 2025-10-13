@@ -36,6 +36,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers
 			SurroundMode = source.SurroundMode;
 			SwapSpeakers = source.SwapSpeakers;
 			EmulateFilter = source.EmulateFilter;
+			EnableEqualizer = source.EnableEqualizer;
 			DisableCenterSpeaker = source.DisableCenterSpeaker;
 
 			Array.Copy(source.ChannelsEnabled, ChannelsEnabled, ChannelsEnabled.Length);
@@ -63,6 +64,18 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers
 		/// </summary>
 		/********************************************************************/
 		public bool EmulateFilter
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if equalizer is enabled
+		/// </summary>
+		/********************************************************************/
+		public bool EnableEqualizer
 		{
 			get; set;
 		}

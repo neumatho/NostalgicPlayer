@@ -46,6 +46,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		private DownMixer downMixer;
 		private Visualizer currentVisualizer;
 		private AmigaFilter amigaFilter;
+		private Equalizer equalizer;
+		private double[] pendingEqualizerBands;		// Equalizer bands to be applied when equalizer is created
 
 		private readonly Lock mixerInfoLock = new Lock();
 		private MixerInfo mixerInfo;			// The current mixer information
@@ -191,6 +193,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			// Deallocate Amiga filter
 			amigaFilter = null;
 
+			// Deallocate equalizer
+			equalizer = null;
+
 			// Deallocate channel objects
 			if (currentPlayer != null)
 			{
@@ -297,12 +302,20 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			currentMixer.SetOutputFormat(outputInformation);
 			currentVisualizer.SetOutputFormat(outputInformation);
 			amigaFilter = new AmigaFilter(mixerFrequency, outputChannelCount);
+			equalizer = new Equalizer(mixerFrequency, outputChannelCount);
 
 			bool disableCenterSpeaker;
 
 			lock (mixerInfoLock)
 			{
 				disableCenterSpeaker = mixerInfo.DisableCenterSpeaker;
+			}
+
+			// Apply pending equalizer settings after creation
+			if (pendingEqualizerBands != null)
+			{
+				equalizer.SetAllGains(pendingEqualizerBands);
+				pendingEqualizerBands = null;
 			}
 
 			lock (currentPlayer)
@@ -373,9 +386,16 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				mixerInfo.EnableInterpolation = mixerConfiguration.EnableInterpolation;
 				mixerInfo.SwapSpeakers = mixerConfiguration.SwapSpeakers;
 				mixerInfo.EmulateFilter = mixerConfiguration.EnableAmigaFilter;
+				mixerInfo.EnableEqualizer = mixerConfiguration.EnableEqualizer;
 
 				Array.Copy(mixerConfiguration.ChannelsEnabled, mixerInfo.ChannelsEnabled, mixerConfiguration.ChannelsEnabled.Length);
 			}
+
+			// Update equalizer settings
+			if (equalizer != null && mixerConfiguration.EqualizerBands != null)
+				equalizer.SetAllGains(mixerConfiguration.EqualizerBands);
+			else if (mixerConfiguration.EqualizerBands != null)
+				pendingEqualizerBands = mixerConfiguration.EqualizerBands;
 
 			lock (currentPlayer)
 			{
@@ -459,6 +479,10 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				// Add Amiga low-pass filter if enabled
 				if (currentMixerInfo.EmulateFilter && currentPlayer.AmigaFilter)
 					amigaFilter.Apply(outputBuffer, totalFramesProcessed);
+
+				// Add equalizer if enabled
+				if (currentMixerInfo.EnableEqualizer)
+					equalizer.Apply(outputBuffer, totalFramesProcessed);
 			}
 			else
 				outputBuffer.Slice(0, frameCount * outputChannelCount).Clear();

@@ -802,6 +802,9 @@ Do you want to continue?</value>
   <data name="IDS_MENU_WINDOW_AUDIUS" xml:space="preserve">
     <value>Audius…</value>
   </data>
+  <data name="IDS_MENU_WINDOW_EQUALIZER" xml:space="preserve">
+    <value>Equalizer…</value>
+  </data>
   <data name="IDS_MENU_WINDOW_SETTINGS" xml:space="preserve">
     <value>Settings…</value>
   </data>
@@ -1096,6 +1099,15 @@ what has changed since your previous version.</value>
   </data>
   <data name="IDS_SETTINGS_MIXER_OUPUT_SETTINGS" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_EQUALIZER" xml:space="preserve">
+    <value>Equalizer</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_EQUALIZER_ENABLE" xml:space="preserve">
+    <value>Use equalizer</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_EQUALIZER_FREQUENCY_BANDS" xml:space="preserve">
+    <value>Frequency Bands</value>
   </data>
   <data name="IDS_SETTINGS_MODULES_LOADING" xml:space="preserve">
     <value>Loading</value>
