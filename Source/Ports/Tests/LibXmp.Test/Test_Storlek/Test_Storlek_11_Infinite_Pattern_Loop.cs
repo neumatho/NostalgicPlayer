@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
-			Assert.IsTrue(info.Loop_Count > 0, "Loop not detected");
+			Assert.IsGreaterThan(0, info.Loop_Count, "Loop not detected");
 
 			opaque.Xmp_End_Player();
 			opaque.Xmp_Release_Module();

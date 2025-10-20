@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 
 			// Check if left-biased pan values are used
 			for (c_int i = 0; i < 8; i++)
-				Assert.IsTrue(values[8 + i] <= 128, "Pan not left-biased");
+				Assert.IsLessThanOrEqualTo(128, values[8 + i], "Pan not left-biased");
 
 			// Check if right pan values are used
 			for (c_int i = 0; i < 8; i++)
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 
 			// Check if right-biased pan values are used
 			for (c_int i = 0; i < 8; i++)
-				Assert.IsTrue(values[24 + i] >= 127, "Pan not right-biased");
+				Assert.IsGreaterThanOrEqualTo(127, values[24 + i], "Pan not right-biased");
 
 			// Check if center pan values are used
 			for (c_int i = 0; i < 16; i++)

@@ -6,6 +6,9 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+[assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Test
 {

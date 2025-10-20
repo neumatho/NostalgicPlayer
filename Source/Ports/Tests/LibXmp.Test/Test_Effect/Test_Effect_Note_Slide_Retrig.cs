@@ -88,15 +88,15 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 					opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
 					c_int voc = Map_Channel(p, 0);
-					Assert.IsTrue(voc >= 0, "Virtual map");
+					Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 					Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 					Assert.AreEqual(vals_NS_RT[i * 7 + j], Period(info), "Note slide error");
 
 					if (vals2_NS_RT[i * 7 + j])
-						Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+						Assert.AreEqual(0, vi.Pos0, "Sample position");
 					else
-						Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+						Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 				}
 			}
 

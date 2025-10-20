@@ -35,8 +35,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			state = (Xmp_State)ctx.Xmp_Get_Player(Xmp_Player.State);
 			Assert.AreEqual(Xmp_State.Loaded, state, "State error");
 
+			#pragma warning disable MSTEST0032
 			Assert.AreEqual(4000, Constants.Xmp_Min_SRate, "Min sample rate value");
 			Assert.AreEqual(49170, Constants.Xmp_Max_SRate, "Max sample rate value");
+			#pragma warning restore MSTEST0032
 
 			// Valid sampling rates
 			ret = ctx.Xmp_Start_Player(Constants.Xmp_Min_SRate, Xmp_Format.Default);

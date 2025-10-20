@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 					flag++;
 			}
 
-			Assert.IsTrue(flag < 30, "Random values error");
+			Assert.IsLessThan(30, flag, "Random values error");
 
 			opaque.Xmp_End_Player();
 			opaque.Xmp_Release_Module();

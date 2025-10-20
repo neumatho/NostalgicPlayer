@@ -44,13 +44,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 
 			c_int voc = Map_Channel(p, 0);
-			Assert.IsTrue(voc >= 0, "Virtual map");
+			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 			Assert.AreEqual(59, vi.Note, "Set note");
 			Assert.AreEqual(0, vi.Ins, "Set instrument");
 			Assert.AreEqual(43 * 16, vi.Vol, "Set volume");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			Assert.AreEqual(59, vi.Note, "Not same note");
 			Assert.AreEqual(0, vi.Ins, "Not same instrument");
 			Assert.AreEqual(43 * 16, vi.Vol, "Not new volume");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample reset");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample reset");
 
 			// Find virtual voice for channel 0
 			c_int i;
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			Assert.AreEqual(1, vi2.Ins, "Not new instrument");
 			Assert.AreEqual(49, vi2.Note, "Not new note");
 			Assert.AreEqual(33 * 16, vi2.Vol, "Not new instrument volume");
-			Assert.IsTrue(vi2.Pos0 == 0, "Sample didn't reset");
+			Assert.AreEqual(0, vi2.Pos0, "Sample didn't reset");
 
 			opaque.Xmp_Play_Frame();
 
@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			Assert.AreEqual(59, vi2.Note, "Not same note");
 			Assert.AreEqual(0, vi2.Ins, "Not same instrument");
 			Assert.AreEqual(22 * 16, vi2.Vol, "Not new volume");
-			Assert.IsTrue(vi2.Pos0 == 0, "Sample didn't reset");
+			Assert.AreEqual(0, vi2.Pos0, "Sample didn't reset");
 
 			// And also it should cut the sound playing in the virtual channel
 			Assert.AreEqual(-1, vi.Chn, "Didn't reset first channel");

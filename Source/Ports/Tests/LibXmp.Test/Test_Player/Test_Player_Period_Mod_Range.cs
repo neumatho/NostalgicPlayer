@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.IsTrue(Period(info) <= 907, "Bad lower limit");
+				Assert.IsLessThanOrEqualTo(907, Period(info), "Bad lower limit");
 			}
 
 			opaque.Xmp_Restart_Module();
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.IsTrue(Period(info) >= 108, "Bad upper limit");
+				Assert.IsGreaterThanOrEqualTo(108, Period(info), "Bad upper limit");
 			}
 
 			opaque.Xmp_Release_Module();

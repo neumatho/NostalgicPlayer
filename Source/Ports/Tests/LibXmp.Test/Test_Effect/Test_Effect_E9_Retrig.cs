@@ -40,53 +40,53 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			opaque.Xmp_Play_Frame();
 
 			c_int voc = Map_Channel(p, 0);
-			Assert.IsTrue(voc >= 0, "Virtual map");
+			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 0");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position frame 0");
+			Assert.AreEqual(0, vi.Pos0, "Sample position frame 0");
 
 			// Frame 1
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position frame 1");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position frame 1");
 
 			// Frame 2
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 2");
-			Assert.IsTrue(vi.Pos0 == 0, "Retrig frame 2");
+			Assert.AreEqual(0, vi.Pos0, "Retrig frame 2");
 
 			// Frame 3
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 3");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position frame 3");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position frame 3");
 
 			// Frame 4
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 4");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position frame 4");
+			Assert.AreEqual(0, vi.Pos0, "Sample position frame 4");
 
 			// Frame 5
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 5");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position frame 5");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position frame 5");
 
 			// Row 1 - without S3M quirk
 
 			// Frame 0
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(60, vi.Note, "Row 0 frame 0");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position frame 0");
+			Assert.AreEqual(0, vi.Pos0, "Sample position frame 0");
 
 			// Frame 1
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(60, vi.Note, "Row 0 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position frame 1");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position frame 1");
 
 			// Frame 2
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(60, vi.Note, "Row 0 frame 2");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position frame 2");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position frame 2");
 
 			// Row 2 - with S3M quirk
 			Set_Quirk(opaque, Quirk_Flag.S3MRtg, Read_Event.Mod);
@@ -94,17 +94,17 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			// Frame 0
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 0 frame 0");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position frame 0");
+			Assert.AreEqual(0, vi.Pos0, "Sample position frame 0");
 
 			// Frame 1
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 0 frame 1");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position frame 1");
+			Assert.AreEqual(0, vi.Pos0, "Sample position frame 1");
 
 			// Frame 2
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 0 frame 2");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position frame 2");
+			Assert.AreEqual(0, vi.Pos0, "Sample position frame 2");
 
 			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();

@@ -39,13 +39,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 
 			c_int voc = Map_Channel(p, 0);
-			Assert.IsTrue(voc >= 0, "Virtual map");
+			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 			Assert.AreEqual(59, vi.Note, "Set note");
 			Assert.AreEqual(0, vi.Ins, "Set instrument");
 			Assert.AreEqual(43, vi.Vol / 16, "Set volume");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			Assert.AreEqual(59, vi.Note, "Set note");
 			Assert.AreEqual(0, vi.Ins, "Set instrument");
 			Assert.AreEqual(21, vi.Vol / 16, "Envelope volume");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 

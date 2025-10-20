@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (double x = 0.0; x < 12.0; x += 0.01)
 			{
 				Spline.Point o = s.Evaluate(x);
-				Assert.IsTrue(o.x <= old);
+				Assert.IsLessThanOrEqualTo(old, o.x);
 
 				old = o.x;
 			}

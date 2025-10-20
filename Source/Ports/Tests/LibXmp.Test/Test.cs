@@ -6,7 +6,10 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
+
+[assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 {

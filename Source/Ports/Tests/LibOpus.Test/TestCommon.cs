@@ -6,6 +6,8 @@
 using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+[assembly: Parallelize(Scope = ExecutionScope.ClassLevel)]
+
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 {
 	/// <summary>

@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Module_Length
 
 			opaque.Xmp_End_Player();
 
-			Assert.IsTrue(time / 1000 - fi.Total_Time < 5, "Elapsed time");
+			Assert.IsLessThan(5, time / 1000 - fi.Total_Time, "Elapsed time");
 
 			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();

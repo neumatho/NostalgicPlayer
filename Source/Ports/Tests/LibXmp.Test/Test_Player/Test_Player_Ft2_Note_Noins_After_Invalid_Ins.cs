@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 
 			c_int voc = Map_Channel(p, 0);
-			Assert.IsTrue(voc >= 0, "Virtual map");
+			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 			Assert.AreEqual(59, vi.Note, "Set note");

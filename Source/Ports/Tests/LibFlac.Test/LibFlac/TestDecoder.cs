@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 
 				Console.WriteLine("Testing Flac__Stream_Decoder_Get_BlockSize()");
 				// Value could be anything since we're at the last block, so accept any reasonable answer
-				Assert.IsTrue(decoder.Flac__Stream_Decoder_Get_BlockSize() > 0);
+				Assert.IsGreaterThan(0U, decoder.Flac__Stream_Decoder_Get_BlockSize());
 
 				Console.WriteLine("Testing Flac__Stream_Decoder_Get_Channel_Assignment()");
 				decoder.Flac__Stream_Decoder_Get_Channel_Assignment();

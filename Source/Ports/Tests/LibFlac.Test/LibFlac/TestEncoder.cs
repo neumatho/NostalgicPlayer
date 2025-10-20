@@ -312,7 +312,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 				Assert.AreEqual(metaStreamInfo.Total_Samples, encoder.Flac__Stream_Encoder_Get_Total_Samples_Estimate());
 
 				Console.WriteLine("Testing Flac__Stream_Encoder_Get_Limit_Min_Bitrate()");
-				Assert.AreEqual(true, encoder.Flac__Stream_Encoder_Get_Limit_Min_Bitrate());
+				Assert.IsTrue(encoder.Flac__Stream_Encoder_Get_Limit_Min_Bitrate());
 
 				// Init the dummy sample buffer
 				Flac__int32[] samples = new Flac__int32[1024];

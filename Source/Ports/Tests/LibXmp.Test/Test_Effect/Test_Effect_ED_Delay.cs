@@ -45,104 +45,104 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			opaque.Xmp_Play_Frame();
 
 			c_int voc = Map_Channel(p, 0);
-			Assert.IsTrue(voc >= 0, "Virtual map");
+			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 0");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(59, vi.Note, "Row 0 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			// Row 1
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(60, vi.Note, "Row 1 frame 0");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(60, vi.Note, "Row 1 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			// Row 2: Delay this frame
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(60, vi.Note, "Row 2 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			// Note changes in frame 1
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 2 frame 1");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
 
 			// Row 3: Delay larger than speed
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 3 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 3 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			// Row 4: Nothing should happen
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 4 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 4 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			// Now test retrigs on delay effect
 
 			// Row 5: In standard mode
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 5 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 5 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			Set_Quirk(opaque, Quirk_Flag.RtDelay, Read_Event.Ft2);
 
 			// Row 6: In retrig mode
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 6 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 6 frame 1");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
 
 			// Row 7: Don't retrig
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 7 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 7 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			// Row 8: Invalid instrument is ignored
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 8 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 8 frame 1");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
 			// Row 9: Don't retrig
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 9 frame 0");
-			Assert.IsTrue(vi.Pos0 != 0, "Sample position");
-			Assert.IsTrue(vi.Vol != 0, "Voice volume");
+			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
+			Assert.AreNotEqual(0, vi.Vol, "Voice volume");
 
 			opaque.Xmp_Play_Frame();
 			// We cut the virtual voice on invalid instrument
 			Assert.AreEqual(0, vi.Note, "Row 9 frame 1");
-			Assert.IsTrue(vi.Pos0 == 0, "Sample position");
-			Assert.IsTrue(vi.Vol == 0, "Voice volume");
+			Assert.AreEqual(0, vi.Pos0, "Sample position");
+			Assert.AreEqual(0, vi.Vol, "Voice volume");
 
 			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();

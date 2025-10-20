@@ -11,6 +11,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.LibAncient;
 using Polycode.NostalgicPlayer.Ports.LibAncient.Exceptions;
 
+[assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]
+
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 {
 	/// <summary>

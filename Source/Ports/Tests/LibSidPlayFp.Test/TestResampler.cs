@@ -22,11 +22,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		[TestMethod]
 		public void TestSoftClip()
 		{
-			Assert.IsTrue(Resampler.SoftClipImpl(0) == 0);
-			Assert.IsTrue(Resampler.SoftClipImpl(28000) == 28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MaxValue) <= 32767);
-			Assert.IsTrue(Resampler.SoftClipImpl(-28000) == -28000);
-			Assert.IsTrue(Resampler.SoftClipImpl(int.MinValue + 1) >= -32768);
+			Assert.AreEqual(0, Resampler.SoftClipImpl(0));
+			Assert.AreEqual(28000, Resampler.SoftClipImpl(28000));
+			Assert.IsLessThanOrEqualTo(32767, Resampler.SoftClipImpl(int.MaxValue));
+			Assert.AreEqual(-28000, Resampler.SoftClipImpl(-28000));
+			Assert.IsGreaterThanOrEqualTo(-32768, Resampler.SoftClipImpl(int.MinValue + 1));
 		}
 	}
 }

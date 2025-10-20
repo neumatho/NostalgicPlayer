@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
 				c_int voc = Map_Channel(p, 0);
-				Assert.IsTrue(voc >= 0, "Virtual map");
+				Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 
 				Assert.AreEqual(vals_It_VCol[i], Period(info), "Portamento error");
 			}

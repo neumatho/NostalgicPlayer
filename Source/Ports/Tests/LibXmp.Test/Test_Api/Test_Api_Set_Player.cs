@@ -24,14 +24,16 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 
 			// Sample
+			#pragma warning disable MSTEST0037
 			c_int ret = opaque.Xmp_Get_Player(Xmp_Player.SmpCtl);
-			Assert.AreEqual(false, (((Xmp_SmpCtl_Flag)ret) & Xmp_SmpCtl_Flag.Skip) != 0, "Default sample ctl");
+			Assert.IsFalse((((Xmp_SmpCtl_Flag)ret) & Xmp_SmpCtl_Flag.Skip) != 0, "Default sample ctl");
 			ret = opaque.Xmp_Set_Player(Xmp_Player.SmpCtl, (c_int)Xmp_SmpCtl_Flag.Skip);
 			Assert.AreEqual(0, ret, "Error setting flags");
 			ret = opaque.Xmp_Get_Player(Xmp_Player.SmpCtl);
-			Assert.AreEqual(true, (((Xmp_SmpCtl_Flag)ret) & Xmp_SmpCtl_Flag.Skip) != 0, "Skip sample ctl");
+			Assert.IsTrue((((Xmp_SmpCtl_Flag)ret) & Xmp_SmpCtl_Flag.Skip) != 0, "Skip sample ctl");
 			ret = opaque.Xmp_Set_Player(Xmp_Player.SmpCtl, 0);
 			Assert.AreEqual(0, ret, "Error setting flags");
+			#pragma warning restore MSTEST0037
 
 			// Default pan
 			ret = opaque.Xmp_Get_Player(Xmp_Player.DefPan);
@@ -48,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 
 			// Invalid
 			ret = opaque.Xmp_Set_Player((Xmp_Player)(-2), 0);
-			Assert.IsTrue(ret < 0, "Error setting invalid parameter");
+			Assert.IsLessThan(0, ret, "Error setting invalid parameter");
 
 			// Mixer
 			ret = opaque.Xmp_Set_Player(Xmp_Player.Interp, (c_int)Xmp_Interp.Nearest);
@@ -62,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Assert.AreEqual((c_int)Xmp_Interp.Linear, ret, "Can't get XMP_INTERP_LINEAR");
 
 			ret = opaque.Xmp_Set_Player(Xmp_Player.Interp, -2);
-			Assert.IsTrue(ret < 0, "Error setting invalid interpolation");
+			Assert.IsLessThan(0, ret, "Error setting invalid interpolation");
 
 			ret = opaque.Xmp_Get_Player(Xmp_Player.Interp);
 			Assert.AreEqual((c_int)Xmp_Interp.Linear, ret, "Invalid interpolation value set");
@@ -95,9 +97,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Assert.AreEqual(50, ret, "Can't get XMP_PLAYER_MIX");
 
 			ret = opaque.Xmp_Set_Player(Xmp_Player.Mix, 101);
-			Assert.IsTrue(ret < 0, "Error setting invalid mix");
+			Assert.IsLessThan(0, ret, "Error setting invalid mix");
 			ret = opaque.Xmp_Set_Player(Xmp_Player.Mix, -101);
-			Assert.IsTrue(ret < 0, "Error setting invalid mix");
+			Assert.IsLessThan(0, ret, "Error setting invalid mix");
 
 			ret = opaque.Xmp_Get_Player(Xmp_Player.Mix);
 			Assert.AreEqual(50, ret, "Invalid mix values set");
@@ -124,9 +126,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Assert.AreEqual(2, ret, "Can't get XMP_PLAYER_AMP");
 
 			ret = opaque.Xmp_Set_Player(Xmp_Player.Amp, 101);
-			Assert.IsTrue(ret < 0, "Error setting invalid amp");
+			Assert.IsLessThan(0, ret, "Error setting invalid amp");
 			ret = opaque.Xmp_Set_Player(Xmp_Player.Amp, -1);
-			Assert.IsTrue(ret < 0, "Error setting invalid amp");
+			Assert.IsLessThan(0, ret, "Error setting invalid amp");
 
 			ret = opaque.Xmp_Get_Player(Xmp_Player.Amp);
 			Assert.AreEqual(2, ret, "Invalid amp values set");

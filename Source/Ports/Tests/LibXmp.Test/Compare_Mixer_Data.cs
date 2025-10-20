@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 						c_int pos0 = (c_int)csscanf.Results[9];
 
 						// Allow some error in values derived from floating point math
-						Assert.IsTrue(Math.Abs(fi.Time - time) <= 1, "Time mismatch");
+						Assert.IsLessThanOrEqualTo(1, Math.Abs(fi.Time - time), "Time mismatch");
 						Assert.AreEqual(row, fi.Row, "Row mismatch");
 						Assert.AreEqual(frame, fi.Frame, "Frame mismatch");
 						Assert.AreEqual(chan, i, "Channel mismatch");
@@ -150,7 +150,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 						if (((vi.Pos0 == vi.Start) && (pos0 == vi.End)) || ((vi.Pos0 == vi.End) && (pos0 == vi.Start)))
 							pos0 = vi.Pos0;
 
-						Assert.IsTrue(Math.Abs(vi.Pos0 - pos0) <= 1, "Position mismatch");
+						Assert.IsLessThanOrEqualTo(1, Math.Abs(vi.Pos0 - pos0), "Position mismatch");
 
 						if (num >= 11)
 						{

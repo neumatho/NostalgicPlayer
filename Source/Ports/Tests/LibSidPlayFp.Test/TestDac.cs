@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			double[] dac = new double[1 << DacBits];
 			BuildDac(dac, ChipModel.MOS6581);
 
-			Assert.IsTrue(dac[0] > 0);
+			Assert.IsGreaterThan(0, dac[0]);
 		}
 
 		#region Private methods
