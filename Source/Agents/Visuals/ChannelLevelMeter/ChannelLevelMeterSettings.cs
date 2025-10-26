@@ -50,7 +50,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 			set
 			{
 				settings.SetIntEntry("ChannelLevelMeter", "Orientation", (int)value);
-				settings.SaveSettings();
 			}
 		}
 	}
