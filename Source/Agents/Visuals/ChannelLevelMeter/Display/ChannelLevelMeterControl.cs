@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -89,21 +90,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 
 		/********************************************************************/
 		/// <summary>
-		/// Save current settings
-		/// </summary>
-		/********************************************************************/
-		private void SaveSettings()
-		{
-			if (settings != null)
-			{
-				settings.Orientation = currentOrientation;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will tell each channel to draw itself
 		/// </summary>
 		/********************************************************************/
@@ -174,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 		/// Is called when the context menu is opening
 		/// </summary>
 		/********************************************************************/
-		private void ContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		private void ContextMenu_Opening(object sender, CancelEventArgs e)
 		{
 			// Update checkmarks based on current orientation
 			horizontalItem.Checked = (currentOrientation == Orientation.Horizontal);
@@ -227,6 +213,22 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Save current settings
+		/// </summary>
+		/********************************************************************/
+		private void SaveSettings()
+		{
+			if (settings != null)
+			{
+				settings.Orientation = currentOrientation;
+				settings.Settings.SaveSettings();
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Create all the meters
