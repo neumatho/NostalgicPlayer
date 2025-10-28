@@ -3,64 +3,117 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	/// Represents a module service provider (e.g., ModLand, AMP Archive)
+	///     Represents a module service provider (e.g., ModLand, AMP Archive)
 	/// </summary>
 	internal class ModuleService
 	{
-		private List<ModEntry> onlineFiles = new List<ModEntry>();
-		private List<ModEntry> offlineFiles = new List<ModEntry>();
+		private readonly List<ModEntry> offlineFiles = new();
+		private readonly List<ModEntry> onlineFiles = new();
 
-		public string Id { get; set; }
-		public string DisplayName { get; set; }
-		public DateTime LastUpdate { get; set; }
-		public string RootPath { get; set; }
-		public bool IsLoaded { get; set; }
-
+		/********************************************************************/
 		/// <summary>
-		/// Get readonly access to online files
+		///     Display name of the service
 		/// </summary>
-		public IReadOnlyList<ModEntry> OnlineFiles => onlineFiles;
+		/********************************************************************/
+		public string DisplayName
+		{
+			get;
+			set;
+		}
 
+		/********************************************************************/
 		/// <summary>
-		/// Get readonly access to offline files
+		///     Folder name for storing service files (filesystem-safe name)
 		/// </summary>
+		/********************************************************************/
+		public required string FolderName
+		{
+			get;
+			init;
+		}
+
+		/********************************************************************/
+		/// <summary>
+		///     Service identifier
+		/// </summary>
+		/********************************************************************/
+		public string Id
+		{
+			get;
+			set;
+		}
+
+		/********************************************************************/
+		/// <summary>
+		///     Whether the service database is loaded
+		/// </summary>
+		/********************************************************************/
+		public bool IsLoaded
+		{
+			get;
+			set;
+		}
+
+		/********************************************************************/
+		/// <summary>
+		///     Last update timestamp
+		/// </summary>
+		/********************************************************************/
+		public DateTime LastUpdate
+		{
+			get;
+			set;
+		}
+
+		/********************************************************************/
+		/// <summary>
+		///     Get readonly access to offline files
+		/// </summary>
+		/********************************************************************/
 		public IReadOnlyList<ModEntry> OfflineFiles => offlineFiles;
 
-
+		/********************************************************************/
+		/// <summary>
+		///     Get readonly access to online files
+		/// </summary>
+		/********************************************************************/
+		public IReadOnlyList<ModEntry> OnlineFiles => onlineFiles;
 
 		/********************************************************************/
 		/// <summary>
-		/// Clear online files
+		///     Root path for this service
 		/// </summary>
 		/********************************************************************/
-		public void ClearOnlineFiles()
+		public string RootPath
 		{
-			onlineFiles.Clear();
+			get;
+			set;
 		}
 
 
-
 		/********************************************************************/
 		/// <summary>
-		/// Clear offline files
+		///     Add offline file - creates ModEntry from already sorted
+		///     data
 		/// </summary>
 		/********************************************************************/
-		public void ClearOfflineFiles()
+		public void AddOfflineFile(string nameWithPath, long size)
 		{
-			offlineFiles.Clear();
+			offlineFiles.Add(new ModEntry(nameWithPath, size));
 		}
 
 
-
 		/********************************************************************/
 		/// <summary>
-		/// Add online file - creates ModEntry from already sorted data
+		///     Add online file - creates ModEntry from already sorted
+		///     data
 		/// </summary>
 		/********************************************************************/
 		public void AddOnlineFile(string nameWithPath, long size)
@@ -69,15 +122,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+		/********************************************************************/
+		/// <summary>
+		///     Clear offline files
+		/// </summary>
+		/********************************************************************/
+		public void ClearOfflineFiles()
+		{
+			offlineFiles.Clear();
+		}
+
 
 		/********************************************************************/
 		/// <summary>
-		/// Add offline file - creates ModEntry from already sorted data
+		///     Clear online files
 		/// </summary>
 		/********************************************************************/
-		public void AddOfflineFile(string nameWithPath, long size)
+		public void ClearOnlineFiles()
 		{
-			offlineFiles.Add(new ModEntry(nameWithPath, size));
+			onlineFiles.Clear();
 		}
 	}
 }

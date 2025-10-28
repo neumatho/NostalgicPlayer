@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		public string SearchText
 		{
-			get => settings.GetStringEntry("ModLibrary", "SearchText", "");
+			get => settings.GetStringEntry("ModLibrary", "SearchText", string.Empty);
 			set
 			{
 				settings.SetStringEntry("ModLibrary", "SearchText", value);
@@ -126,6 +126,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			set
 			{
 				settings.SetIntEntry("ModLibrary", "FlatViewSortOrder", value);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Last path in online mode
+		/// </summary>
+		/********************************************************************/
+		public string LastOnlinePath
+		{
+			get => settings.GetStringEntry("ModLibrary", "LastOnlinePath", string.Empty);
+			set
+			{
+				settings.SetStringEntry("ModLibrary", "LastOnlinePath", value);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Last path in offline mode
+		/// </summary>
+		/********************************************************************/
+		public string LastOfflinePath
+		{
+			get => settings.GetStringEntry("ModLibrary", "LastOfflinePath", string.Empty);
+			set
+			{
+				settings.SetStringEntry("ModLibrary", "LastOfflinePath", value);
 			}
 		}
 	}

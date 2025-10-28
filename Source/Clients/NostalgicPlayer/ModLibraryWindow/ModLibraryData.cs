@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using System.Linq;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	/// Sort order for flat view
+	///     Sort order for flat view
 	/// </summary>
 	internal enum FlatViewSortOrder
 	{
@@ -19,137 +20,112 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 	}
 
 	/// <summary>
-	/// Manages module library data, services, and search functionality
+	///     Manages module library data, services, and search functionality
 	/// </summary>
 	internal class ModLibraryData
 	{
-		private List<ModuleService> services = new List<ModuleService>();
-		private FilteredTreeBuilder currentBuilder = null;
+		// Local files (service-independent)
+		private readonly List<ModEntry> localFiles = new();
+		private FilteredTreeBuilder currentBuilder;
 
 		// Current search results
-		private TreeNode currentTree = null;
-		private string searchFilter = "";
-
-		// Offline mode support
-		private bool isOfflineMode = false;
-
-		public event EventHandler DataLoaded;
-
+		private TreeNode currentTree;
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Get or set offline mode
+		///     Get or set local mode
 		/// </summary>
 		/********************************************************************/
 		public bool IsOfflineMode
 		{
-			get => isOfflineMode;
-			set => isOfflineMode = value;
+			get;
+			set;
 		}
 
 
-
 		/********************************************************************/
 		/// <summary>
-		/// Get all available services
+		///     Get readonly access to local files
 		/// </summary>
 		/********************************************************************/
-		public List<ModuleService> Services => services;
-
+		public IReadOnlyList<ModEntry> LocalFiles => localFiles;
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Get current search filter
+		///     Get current search filter
 		/// </summary>
 		/********************************************************************/
-		public string SearchFilter => searchFilter;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Add a service to the library
-		/// </summary>
-		/********************************************************************/
-		public void AddService(ModuleService service)
+		public string SearchFilter
 		{
-			services.Add(service);
+			get;
+			private set;
+		} = string.Empty;
+
+
+		/********************************************************************/
+		/// <summary>
+		///     Get all available services
+		/// </summary>
+		/********************************************************************/
+		public List<ModuleService> Services
+		{
+			get;
+		} = new();
+
+		/********************************************************************/
+		/// <summary>
+		///     Event fired when data loading is completed
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler DataLoaded;
+
+
+		/********************************************************************/
+		/// <summary>
+		///     Count files recursively in tree
+		/// </summary>
+		/********************************************************************/
+		private int CountFilesRecursive(TreeNode node)
+		{
+			int count = 0;
+
+			foreach (var child in node.Children)
+				if (!child.IsDirectory)
+					count++;
+				else
+					count += CountFilesRecursive(child);
+
+			return count;
 		}
 
 
-
 		/********************************************************************/
 		/// <summary>
-		/// Get service by ID
+		///     Check if node has any children (recursively)
 		/// </summary>
 		/********************************************************************/
-		public ModuleService GetService(string serviceId)
+		private bool HasChildren(TreeNode node)
 		{
-			return services.FirstOrDefault(s => s.Id == serviceId);
-		}
+			if (node.Children == null || node.Children.Count == 0) return false;
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Get service from full path
-		/// </summary>
-		/********************************************************************/
-		public ModuleService GetServiceFromPath(string path)
-		{
-			foreach (var service in services)
+			// Check if any child is a file
+			foreach (var child in node.Children)
 			{
-				if (path.StartsWith(service.RootPath))
-					return service;
-			}
-			return null;
-		}
+				if (!child.IsDirectory) return true;
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Get relative path without service prefix
-		/// </summary>
-		/********************************************************************/
-		public string GetRelativePathFromService(string fullPath, ModuleService service)
-		{
-			if (fullPath.StartsWith(service.RootPath))
-				return fullPath.Substring(service.RootPath.Length);
-			return "";
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Build tree with optional filter (empty filter shows all files)
-		/// </summary>
-		/********************************************************************/
-		public void BuildTree(string filter, SearchMode searchMode = SearchMode.FilenameAndPath, bool isFlatView = false)
-		{
-			searchFilter = filter.Trim();
-
-			// Cancel previous search if running
-			if (currentBuilder != null)
-			{
-				currentBuilder.Cancel();
-				currentBuilder = null;
+				// Recursively check subdirectories
+				if (HasChildren(child)) return true;
 			}
 
-			// Build tree (empty filter shows everything)
-			currentBuilder = new FilteredTreeBuilder(services, searchFilter, isOfflineMode, searchMode, isFlatView);
-			currentBuilder.Completed += OnSearchCompleted;
-			currentBuilder.Start();
+			return false;
 		}
-
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Called when search is completed
+		///     Called when search is completed
 		/// </summary>
 		/********************************************************************/
 		private void OnSearchCompleted(object sender, TreeBuildCompletedEventArgs e)
@@ -160,51 +136,173 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Clear builder reference
 			currentBuilder = null;
 
-			// Notify UI
+			// Notify UI (already on UI thread via FilteredTreeBuilder)
 			DataLoaded?.Invoke(this, EventArgs.Empty);
 		}
 
 
+		/********************************************************************/
+		/// <summary>
+		///     Add local file - creates ModEntry from already sorted data
+		/// </summary>
+		/********************************************************************/
+		public void AddLocalFile(string nameWithPath, long size)
+		{
+			localFiles.Add(new ModEntry(nameWithPath, size));
+		}
+
 
 		/********************************************************************/
 		/// <summary>
-		/// Get entries for a specific path with optional flat view sort order
+		///     Add a service to the library
+		/// </summary>
+		/********************************************************************/
+		public void AddService(ModuleService service)
+		{
+			Services.Add(service);
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		///     Build tree with optional filter (empty filter shows all files)
+		/// </summary>
+		/********************************************************************/
+		public void BuildTree(string filter, SearchMode searchMode = SearchMode.FilenameAndPath,
+			bool isFlatView = false)
+		{
+			SearchFilter = filter.Trim();
+
+			// Cancel previous search if running
+			if (currentBuilder != null)
+			{
+				currentBuilder.Cancel();
+				currentBuilder = null;
+			}
+
+			// Build tree (empty filter shows everything)
+			currentBuilder =
+				new FilteredTreeBuilder(Services, LocalFiles, SearchFilter, IsOfflineMode, searchMode, isFlatView);
+			currentBuilder.Completed += OnSearchCompleted;
+			currentBuilder.Start();
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		///     Clear local files
+		/// </summary>
+		/********************************************************************/
+		public void ClearLocalFiles()
+		{
+			localFiles.Clear();
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		///     Count total files in current filtered tree
+		/// </summary>
+		/********************************************************************/
+		public int CountTotalFilesInFilteredCache()
+		{
+			if (currentTree == null) return 0;
+
+			return CountFilesRecursive(currentTree);
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		///     Get display path for breadcrumb
+		/// </summary>
+		/********************************************************************/
+		public string GetDisplayPath(string path)
+		{
+			if (string.IsNullOrEmpty(path)) return "Root";
+
+			var service = GetServiceFromPath(path);
+			if (service != null)
+			{
+				string relativePath = GetRelativePathFromService(path, service);
+				if (string.IsNullOrEmpty(relativePath)) return service.DisplayName;
+
+				return $"{service.DisplayName}/{relativePath}";
+			}
+
+			return path;
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		///     Get entries for a specific path with optional flat view sort
+		///     order
 		/// </summary>
 		/********************************************************************/
 		public List<TreeNode> GetEntries(string currentPath, bool isFlatView, FlatViewSortOrder sortOrder)
 		{
-			TreeNode node = currentTree?.FindByPath(currentPath);
-			if (node == null)
-				return new List<TreeNode>();
+			var node = currentTree?.FindByPath(currentPath);
+			if (node == null) return new List<TreeNode>();
 
-			// Create a copy and sort
-			var sortedChildren = new List<TreeNode>(node.Children);
+			List<TreeNode> sortedChildren;
 
 			if (isFlatView)
 			{
-				// Flat view: Sort by name→path or path→name (all entries are files)
+				// Flat view: Show direct folders + all files recursively
+				sortedChildren = new List<TreeNode>();
+
+				// Add direct folders (not recursive)
+				foreach (var child in node.Children)
+				{
+					if (child.IsDirectory)
+						sortedChildren.Add(child);
+				}
+
+				// Add all files recursively
+				CollectFilesRecursive(node, sortedChildren);
+			}
+			else
+			{
+				// Hierarchical view: just use direct children
+				sortedChildren = new(node.Children);
+
+				// If at root with search filter in hierarchical view, filter out empty services
+				if (string.IsNullOrEmpty(currentPath) && !string.IsNullOrEmpty(SearchFilter))
+					sortedChildren = sortedChildren.Where(child => HasChildren(child)).ToList();
+			}
+
+			if (isFlatView)
+			{
+				// Flat view: Directories first, then files (with custom sort order for files)
 				sortedChildren.Sort((a, b) =>
 				{
+					// Directories always come before files
+					if (a.IsDirectory && !b.IsDirectory) return -1;
+					if (!a.IsDirectory && b.IsDirectory) return 1;
+
+					// Both directories: sort alphabetically by name
+					if (a.IsDirectory && b.IsDirectory)
+						return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+
+					// Both files: sort by selected order
 					if (sortOrder == FlatViewSortOrder.NameThenPath)
 					{
 						// Primary: Name, Secondary: Path
 						int nameCompare = string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
-						if (nameCompare != 0)
-							return nameCompare;
+						if (nameCompare != 0) return nameCompare;
 
 						// If names are equal, sort by full path
 						return string.Compare(a.FullPath, b.FullPath, StringComparison.OrdinalIgnoreCase);
 					}
-					else // PathThenName
-					{
-						// Primary: Path, Secondary: Name
-						int pathCompare = string.Compare(a.FullPath, b.FullPath, StringComparison.OrdinalIgnoreCase);
-						if (pathCompare != 0)
-							return pathCompare;
 
-						// If paths are equal, sort by name (shouldn't happen but just in case)
-						return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
-					}
+					// PathThenName
+					// Primary: Path, Secondary: Name
+					int pathCompare = string.Compare(a.FullPath, b.FullPath, StringComparison.OrdinalIgnoreCase);
+					if (pathCompare != 0) return pathCompare;
+
+					// If paths are equal, sort by name (shouldn't happen but just in case)
+					return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
 				});
 			}
 			else
@@ -213,10 +311,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				sortedChildren.Sort((a, b) =>
 				{
 					// Directories come before files
-					if (a.IsDirectory && !b.IsDirectory)
-						return -1;
-					if (!a.IsDirectory && b.IsDirectory)
-						return 1;
+					if (a.IsDirectory && !b.IsDirectory) return -1;
+
+					if (!a.IsDirectory && b.IsDirectory) return 1;
 
 					// Both are same type (both dirs or both files), sort alphabetically by name
 					return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
@@ -227,64 +324,59 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
-
 		/********************************************************************/
 		/// <summary>
-		/// Get display path for breadcrumb
+		///     Get relative path without service prefix
 		/// </summary>
 		/********************************************************************/
-		public string GetDisplayPath(string path)
+		public string GetRelativePathFromService(string fullPath, ModuleService service)
 		{
-			if (string.IsNullOrEmpty(path))
-				return "Root";
+			if (fullPath.StartsWith(service.RootPath)) return fullPath.Substring(service.RootPath.Length);
 
-			var service = GetServiceFromPath(path);
-			if (service != null)
-			{
-				string relativePath = GetRelativePathFromService(path, service);
-				if (string.IsNullOrEmpty(relativePath))
-					return service.DisplayName;
-				return $"{service.DisplayName}/{relativePath}";
-			}
-
-			return path;
+			return string.Empty;
 		}
 
 
-
 		/********************************************************************/
 		/// <summary>
-		/// Count total files in current filtered tree
+		///     Get service by ID
 		/// </summary>
 		/********************************************************************/
-		public int CountTotalFilesInFilteredCache()
+		public ModuleService GetService(string serviceId)
 		{
-			if (currentTree == null)
-				return 0;
-
-			return CountFilesRecursive(currentTree);
+			return Services.FirstOrDefault(s => s.Id == serviceId);
 		}
 
 
+		/********************************************************************/
+		/// <summary>
+		///     Get service from full path
+		/// </summary>
+		/********************************************************************/
+		public ModuleService GetServiceFromPath(string path)
+		{
+			foreach (var service in Services)
+				if (path.StartsWith(service.RootPath))
+					return service;
+
+			return null;
+		}
+
 
 		/********************************************************************/
 		/// <summary>
-		/// Count files recursively in tree
+		///     Collect all files recursively from a node
 		/// </summary>
 		/********************************************************************/
-		private int CountFilesRecursive(TreeNode node)
+		private void CollectFilesRecursive(TreeNode node, List<TreeNode> files)
 		{
-			int count = 0;
-
 			foreach (var child in node.Children)
 			{
 				if (!child.IsDirectory)
-					count++;
+					files.Add(child);
 				else
-					count += CountFilesRecursive(child);
+					CollectFilesRecursive(child, files);
 			}
-
-			return count;
 		}
 	}
 }

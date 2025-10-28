@@ -1250,6 +1250,9 @@ information</value>
   <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
     <value>List path</value>
   </data>
+  <data name="IDS_SETTINGS_PATHS_MODLIBRARYPATH" xml:space="preserve">
+    <value>Module Library</value>
+  </data>
   <data name="IDS_SETTINGS_PATHS_MODULEPATH" xml:space="preserve">
     <value>Module path</value>
   </data>
@@ -1391,5 +1394,315 @@ all the selected modules will be moved to the top of the list</value>
   </data>
   <data name="IDS_TIP_MAIN_VOLUME" xml:space="preserve">
     <value>Change the volume</value>
+  </data>
+  <data name="IDS_MODLIBRARY_SEARCH_LABEL" xml:space="preserve">
+    <value>🔍 Search:</value>
+  </data>
+  <data name="IDS_MODLIBRARY_PARENT_BUTTON" xml:space="preserve">
+    <value>⬆ Parent</value>
+  </data>
+  <data name="IDS_MODLIBRARY_FLATVIEW_CHECKBOX" xml:space="preserve">
+    <value>📋 Flat view (show all files recursively)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX" xml:space="preserve">
+    <value>▶ Play immediately (otherwise just add to playlist)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_UPDATE_DATABASE" xml:space="preserve">
+    <value>Update Database</value>
+  </data>
+  <data name="IDS_MODLIBRARY_CLEAR_DATABASE" xml:space="preserve">
+    <value>Clear Database</value>
+  </data>
+  <data name="IDS_MODLIBRARY_DELETE" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="IDS_MODLIBRARY_JUMP_TO_FOLDER" xml:space="preserve">
+    <value>Jump to folder</value>
+  </data>
+  <data name="IDS_MODLIBRARY_SEARCHMODE_FILENAME_AND_PATH" xml:space="preserve">
+    <value>Filename and path</value>
+  </data>
+  <data name="IDS_MODLIBRARY_SEARCHMODE_FILENAME_ONLY" xml:space="preserve">
+    <value>Filename only</value>
+  </data>
+  <data name="IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY" xml:space="preserve">
+    <value>Path only</value>
+  </data>
+  <data name="IDS_MODLIBRARY_TAB_ONLINE" xml:space="preserve">
+    <value>🌐 Online</value>
+  </data>
+  <data name="IDS_MODLIBRARY_TAB_OFFLINE" xml:space="preserve">
+    <value>💾 Local</value>
+  </data>
+  <data name="IDS_MODLIBRARY_COLUMN_NAME" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="IDS_MODLIBRARY_COLUMN_PATH" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="IDS_MODLIBRARY_COLUMN_SIZE" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DEFAULT" xml:space="preserve">
+    <value>Right-click on a service to update its database</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_SEARCHING" xml:space="preserve">
+    <value>Searching...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_BUILDING_FLAT_VIEW" xml:space="preserve">
+    <value>Building flat view...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_BUILDING_TREE_VIEW" xml:space="preserve">
+    <value>Building tree view...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_SWITCHING_LOCAL" xml:space="preserve">
+    <value>Switching to local mode...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_SWITCHING_ONLINE" xml:space="preserve">
+    <value>Switching to online mode...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_FOUND_FILES" xml:space="preserve">
+    <value>Found {0} file(s) matching "{1}"</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DATABASE_LOADED" xml:space="preserve">
+    <value>Database loaded: {0:yyyy-MM-dd} ({1:N0} files)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DB_CLEARED_SUCCESS" xml:space="preserve">
+    <value>Database cleared successfully</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_ERROR_CLEARING" xml:space="preserve">
+    <value>Error clearing database: {0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_UPDATING_FILE_LIST" xml:space="preserve">
+    <value>Updating file list...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_ITEM_DELETED_SUCCESS" xml:space="preserve">
+    <value>Item deleted successfully</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_ITEMS_DELETED_SUCCESS" xml:space="preserve">
+    <value>{0} items deleted successfully</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DELETED_WITH_ERRORS" xml:space="preserve">
+    <value>Deleted {0} item(s), {1} error(s)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_ERROR_DELETING" xml:space="preserve">
+    <value>Error deleting: {0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_DB" xml:space="preserve">
+    <value>Download Database</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_CLEAR_DB" xml:space="preserve">
+    <value>Clear Database</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_CLEAR_ERROR" xml:space="preserve">
+    <value>Clear Error</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_CONFIRM" xml:space="preserve">
+    <value>Delete Confirmation</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_ERRORS" xml:space="preserve">
+    <value>Delete Completed with Errors</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_ERROR" xml:space="preserve">
+    <value>Delete Error</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DATABASE_NOT_LOADED" xml:space="preserve">
+    <value>The {0} database is not loaded yet.
+
+Do you want to download it now?</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_CONFIRM_CLEAR_DB" xml:space="preserve">
+    <value>Are you sure you want to clear the database?
+
+This will delete the local database file and clear all data from memory.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_FAILED_CLEAR_DB" xml:space="preserve">
+    <value>Failed to clear database:
+
+{0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FOLDER" xml:space="preserve">
+    <value>Are you sure you want to delete the folder '{0}' and all its contents?
+
+This will permanently delete the files from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FILE" xml:space="preserve">
+    <value>Are you sure you want to delete the file '{0}'?
+
+This will permanently delete the file from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FILES_FOLDERS" xml:space="preserve">
+    <value>Are you sure you want to delete {0} file(s) and {1} folder(s)?
+
+This will permanently delete all selected items from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FOLDERS" xml:space="preserve">
+    <value>Are you sure you want to delete {0} folder(s) and all their contents?
+
+This will permanently delete all selected items from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FILES" xml:space="preserve">
+    <value>Are you sure you want to delete {0} file(s)?
+
+This will permanently delete all selected items from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_COMPLETED_ERRORS" xml:space="preserve">
+    <value>Deleted {0} item(s) successfully.
+
+{1} error(s) occurred. Last error:
+{2}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_FAILED_DELETE" xml:space="preserve">
+    <value>Failed to delete:
+
+{0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_BUILDING_TREE_STRUCTURE" xml:space="preserve">
+    <value>Building tree structure...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_RIGHT_CLICK_SERVICE" xml:space="preserve">
+    <value>Right-click on a service to update its database</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_SCANNING_LOCAL_FILES" xml:space="preserve">
+    <value>Scanning local files...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DB_FOUND_LOADING" xml:space="preserve">
+    <value>Database found ({0}, {1:N0} KB). Loading...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_LOADING_DATABASE" xml:space="preserve">
+    <value>Loading database...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DATABASE_OLD" xml:space="preserve">
+    <value>The ModLand database is {0} days old.
+
+Do you want to update it now?</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_UPDATE_DB" xml:space="preserve">
+    <value>Update Database</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_UPDATING_DATABASE" xml:space="preserve">
+    <value>Updating database...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOADING_ALLMODS" xml:space="preserve">
+    <value>Downloading allmods.zip...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_EXTRACTING_ALLMODS" xml:space="preserve">
+    <value>Extracting allmods.txt...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETE" xml:space="preserve">
+    <value>Download complete! Database: {0:N0} KB ({1})</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_PARSING_DATABASE" xml:space="preserve">
+    <value>Parsing database...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD" xml:space="preserve">
+    <value>Failed to download allmods.zip:
+
+{0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_ERROR" xml:space="preserve">
+    <value>Download Error</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOADING_FILE" xml:space="preserve">
+    <value>Downloading {0}...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOADING_SAMPLE" xml:space="preserve">
+    <value>Downloading sample file {0}...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOADED_FILE" xml:space="preserve">
+    <value>Downloaded {0} ({1:N0} bytes)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_PLAYING_CACHED" xml:space="preserve">
+    <value>Playing {0} (cached)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_ERROR_PREFIX" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD_MODULE" xml:space="preserve">
+    <value>Failed to download module:
+
+{0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_PLAYING_FILE" xml:space="preserve">
+    <value>Playing {0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_FILE_NOT_FOUND" xml:space="preserve">
+    <value>File not found: {0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_FILE_NOT_DOWNLOADED" xml:space="preserve">
+    <value>The file '{0}' has not been downloaded yet.
+
+Switch to Online mode to download it.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_FILE_NOT_FOUND" xml:space="preserve">
+    <value>File Not Found</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_FAILED_PLAY_MODULE" xml:space="preserve">
+    <value>Failed to play module:
+
+{0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_PLAY_ERROR" xml:space="preserve">
+    <value>Play Error</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FOLDER_CONFIRM" xml:space="preserve">
+    <value>Are you sure you want to delete the folder '{0}' and all its contents?
+
+This will permanently delete the files from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FILE_CONFIRM" xml:space="preserve">
+    <value>Are you sure you want to delete the file '{0}'?
+
+This will permanently delete the file from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_MULTIPLE_CONFIRM" xml:space="preserve">
+    <value>Are you sure you want to delete {0} file(s) and {1} folder(s)?
+
+This will permanently delete all selected items from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FOLDERS_CONFIRM" xml:space="preserve">
+    <value>Are you sure you want to delete {0} folder(s) and all their contents?
+
+This will permanently delete all selected items from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_FILES_CONFIRM" xml:space="preserve">
+    <value>Are you sure you want to delete {0} file(s)?
+
+This will permanently delete all selected items from your computer.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_CLEAR_DATABASE_CONFIRM" xml:space="preserve">
+    <value>Are you sure you want to clear the database?
+
+This will delete the local database file and clear all data from memory.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DELETE_COMPLETED_WITH_ERRORS" xml:space="preserve">
+    <value>Deleted {0} item(s) successfully.
+
+{1} error(s) occurred. Last error:
+{2}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_ERROR_CLEARING_DB" xml:space="preserve">
+    <value>Error clearing database: {0}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_SWITCHING_TO_LOCAL" xml:space="preserve">
+    <value>Switching to local mode...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_SWITCHING_TO_ONLINE" xml:space="preserve">
+    <value>Switching to online mode...</value>
+  </data>
+  <data name="IDS_MODLIBRARY_BREADCRUMB_FLAT_VIEW_SEARCH" xml:space="preserve">
+    <value>📋 Flat View - 🔍 "{0}" ({1} files)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_BREADCRUMB_FLAT_VIEW_ALL" xml:space="preserve">
+    <value>📋 Flat View - All Files ({0} files)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_HOME" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="IDS_MODLIBRARY_FOLDERS_FILES_COUNT" xml:space="preserve">
+    <value>{0} folders, {1} files</value>
+  </data>
+  <data name="IDS_MODLIBRARY_SEARCH_COUNT" xml:space="preserve">
+    <value>{0} folders, {1} files, {2} total files</value>
   </data>
 </root>

@@ -30,6 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
         {
             components = new System.ComponentModel.Container();
             fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+            controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
             serviceContextMenu = new Krypton.Toolkit.KryptonContextMenu();
             updateDatabaseMenuItem = new Krypton.Toolkit.KryptonContextMenuItems();
             updateDatabaseItem = new Krypton.Toolkit.KryptonContextMenuItem();
@@ -43,12 +44,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             searchLabel = new Krypton.Toolkit.KryptonLabel();
             searchPanel = new System.Windows.Forms.Panel();
             searchTextBox = new Krypton.Toolkit.KryptonTextBox();
+            searchButton = new Krypton.Toolkit.KryptonButton();
             searchModeComboBox = new Krypton.Toolkit.KryptonComboBox();
             modeTabControl = new System.Windows.Forms.TabControl();
             onlineTabPage = new System.Windows.Forms.TabPage();
             offlineTabPage = new System.Windows.Forms.TabPage();
             parentButton = new Krypton.Toolkit.KryptonButton();
-            breadcrumbLabel = new Krypton.Toolkit.KryptonLabel();
+            breadcrumbPanel = new System.Windows.Forms.FlowLayoutPanel();
             flatViewCheckBox = new Krypton.Toolkit.KryptonCheckBox();
             moduleListView = new System.Windows.Forms.ListView();
             columnName = new System.Windows.Forms.ColumnHeader();
@@ -65,12 +67,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             SuspendLayout();
             // 
             // fontPalette
-            // 
+            //
             fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
             fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
             fontPalette.ThemeName = "";
             fontPalette.UseKryptonFileDialogs = true;
-            // 
+            //
+            // controlResource
+            //
+            controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
+            //
             // serviceContextMenu
             // 
             serviceContextMenu.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { updateDatabaseMenuItem });
@@ -80,12 +86,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             updateDatabaseMenuItem.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { updateDatabaseItem, clearDatabaseItem });
             // 
             // updateDatabaseItem
-            // 
+            //
             updateDatabaseItem.Text = "Update Database";
             updateDatabaseItem.Click += UpdateDatabaseItem_Click;
             // 
             // clearDatabaseItem
-            // 
+            //
             clearDatabaseItem.Text = "Clear Database";
             clearDatabaseItem.Click += ClearDatabaseItem_Click;
             // 
@@ -98,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             offlineContextMenuItems.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { deleteItem });
             // 
             // deleteItem
-            // 
+            //
             deleteItem.Text = "Delete";
             deleteItem.Click += DeleteItem_Click;
             // 
@@ -111,21 +117,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             flatViewContextMenuItems.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { jumpToFolderItem });
             // 
             // jumpToFolderItem
-            // 
-            jumpToFolderItem.Text = "Jump to folder";
+            //
+            jumpToFolderItem.Text = "Jump to Folder";
             jumpToFolderItem.Click += JumpToFolderItem_Click;
             // 
             // searchLabel
-            // 
+            //
             searchLabel.Dock = System.Windows.Forms.DockStyle.Top;
             searchLabel.Location = new System.Drawing.Point(8, 8);
             searchLabel.Name = "searchLabel";
+            controlResource.SetResourceKey(searchLabel, "IDS_MODLIBRARY_SEARCH_LABEL");
             searchLabel.Size = new System.Drawing.Size(884, 29);
             searchLabel.TabIndex = 0;
             searchLabel.Values.Text = "🔍 Search:";
             // 
             // searchPanel
-            // 
+            //
+            searchPanel.Controls.Add(searchButton);
             searchPanel.Controls.Add(searchTextBox);
             searchPanel.Controls.Add(searchModeComboBox);
             searchPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -134,28 +142,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             searchPanel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 8);
             searchPanel.Size = new System.Drawing.Size(884, 31);
             searchPanel.TabIndex = 1;
-            // 
+            //
+            // searchButton
+            //
+            searchButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            searchButton.Location = new System.Drawing.Point(608, 1);
+            searchButton.Name = "searchButton";
+            searchButton.Size = new System.Drawing.Size(22, 22);
+            searchButton.TabIndex = 1;
+            searchButton.Values.Image = Resources.IDB_SEARCH;
+            searchButton.Values.Text = "";
+            searchButton.Click += SearchButton_Click;
+            //
             // searchTextBox
-            // 
-            searchTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            searchTextBox.Location = new System.Drawing.Point(0, 0);
+            //
+            searchTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            searchTextBox.Location = new System.Drawing.Point(0, 1);
             searchTextBox.Name = "searchTextBox";
-            searchTextBox.Size = new System.Drawing.Size(634, 31);
+            searchTextBox.Size = new System.Drawing.Size(604, 23);
             searchTextBox.TabIndex = 0;
             searchTextBox.TextChanged += SearchTextBox_TextChanged;
-            // 
+            //
             // searchModeComboBox
-            // 
-            searchModeComboBox.Dock = System.Windows.Forms.DockStyle.Right;
+            //
+            searchModeComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             searchModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             searchModeComboBox.DropDownWidth = 200;
             searchModeComboBox.IntegralHeight = false;
             searchModeComboBox.Items.AddRange(new object[] { "Filename and path", "Filename only", "Path only" });
-            searchModeComboBox.Location = new System.Drawing.Point(634, 0);
+            searchModeComboBox.Location = new System.Drawing.Point(634, 1);
             searchModeComboBox.Name = "searchModeComboBox";
-            searchModeComboBox.Size = new System.Drawing.Size(250, 30);
-            searchModeComboBox.TabIndex = 1;
-            searchModeComboBox.Text = "Filename and path";
+            searchModeComboBox.Size = new System.Drawing.Size(250, 21);
+            searchModeComboBox.TabIndex = 2;
             searchModeComboBox.SelectedIndexChanged += SearchModeComboBox_SelectedIndexChanged;
             // 
             // modeTabControl
@@ -172,53 +190,61 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             modeTabControl.SelectedIndexChanged += ModeTabControl_SelectedIndexChanged;
             // 
             // onlineTabPage
-            // 
+            //
             onlineTabPage.Location = new System.Drawing.Point(4, 38);
             onlineTabPage.Name = "onlineTabPage";
             onlineTabPage.Padding = new System.Windows.Forms.Padding(3);
+            controlResource.SetResourceKey(onlineTabPage, "IDS_MODLIBRARY_TAB_ONLINE");
             onlineTabPage.Size = new System.Drawing.Size(876, 0);
             onlineTabPage.TabIndex = 0;
             onlineTabPage.Text = "🌐 Online";
             onlineTabPage.UseVisualStyleBackColor = true;
             // 
             // offlineTabPage
-            // 
+            //
             offlineTabPage.Location = new System.Drawing.Point(4, 38);
             offlineTabPage.Name = "offlineTabPage";
             offlineTabPage.Padding = new System.Windows.Forms.Padding(3);
+            controlResource.SetResourceKey(offlineTabPage, "IDS_MODLIBRARY_TAB_OFFLINE");
             offlineTabPage.Size = new System.Drawing.Size(876, 0);
             offlineTabPage.TabIndex = 1;
             offlineTabPage.Text = "💾 Local";
             offlineTabPage.UseVisualStyleBackColor = true;
             // 
             // parentButton
-            // 
+            //
             parentButton.Dock = System.Windows.Forms.DockStyle.Top;
             parentButton.Enabled = false;
             parentButton.Location = new System.Drawing.Point(8, 68);
             parentButton.Name = "parentButton";
+            controlResource.SetResourceKey(parentButton, "IDS_MODLIBRARY_PARENT_BUTTON");
             parentButton.Size = new System.Drawing.Size(884, 33);
             parentButton.TabIndex = 3;
-            parentButton.Values.Text = "⬆ Parent";
+            parentButton.Values.Text = "⬆ Parent Folder";
             parentButton.Click += ParentButton_Click;
-            // 
-            // breadcrumbLabel
-            // 
-            breadcrumbLabel.Dock = System.Windows.Forms.DockStyle.Top;
-            breadcrumbLabel.Location = new System.Drawing.Point(8, 101);
-            breadcrumbLabel.Name = "breadcrumbLabel";
-            breadcrumbLabel.Size = new System.Drawing.Size(884, 2);
-            breadcrumbLabel.TabIndex = 2;
-            breadcrumbLabel.Values.Text = "";
-            // 
+            //
+            // breadcrumbPanel
+            //
+            breadcrumbPanel.AutoSize = true;
+            breadcrumbPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            breadcrumbPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            breadcrumbPanel.Location = new System.Drawing.Point(8, 101);
+            breadcrumbPanel.MinimumSize = new System.Drawing.Size(0, 35);
+            breadcrumbPanel.Name = "breadcrumbPanel";
+            breadcrumbPanel.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
+            breadcrumbPanel.Size = new System.Drawing.Size(884, 35);
+            breadcrumbPanel.TabIndex = 2;
+            breadcrumbPanel.WrapContents = false;
+            //
             // flatViewCheckBox
-            // 
+            //
             flatViewCheckBox.Dock = System.Windows.Forms.DockStyle.Top;
             flatViewCheckBox.Location = new System.Drawing.Point(8, 103);
             flatViewCheckBox.Name = "flatViewCheckBox";
+            controlResource.SetResourceKey(flatViewCheckBox, "IDS_MODLIBRARY_FLATVIEW_CHECKBOX");
             flatViewCheckBox.Size = new System.Drawing.Size(884, 29);
             flatViewCheckBox.TabIndex = 4;
-            flatViewCheckBox.Values.Text = "📋 Flat view (show all files without folder structure)";
+            flatViewCheckBox.Values.Text = "📋 Flat view (show all files recursively)";
             flatViewCheckBox.CheckedChanged += FlatViewCheckBox_CheckedChanged;
             // 
             // moduleListView
@@ -241,30 +267,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             moduleListView.MouseClick += ModuleListView_MouseClick;
             // 
             // columnName
-            // 
+            //
             columnName.Text = "Name";
             columnName.Width = 400;
             // 
             // columnPath
-            // 
+            //
             columnPath.Text = "Path";
             columnPath.Width = 0;
-            // 
+            //
             // columnSize
-            // 
+            //
             columnSize.Text = "Size";
+            columnSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             columnSize.Width = 100;
             // 
             // playImmediatelyCheckBox
-            // 
+            //
             playImmediatelyCheckBox.Checked = true;
             playImmediatelyCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             playImmediatelyCheckBox.Dock = System.Windows.Forms.DockStyle.Bottom;
             playImmediatelyCheckBox.Location = new System.Drawing.Point(8, 531);
             playImmediatelyCheckBox.Name = "playImmediatelyCheckBox";
+            controlResource.SetResourceKey(playImmediatelyCheckBox, "IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX");
             playImmediatelyCheckBox.Size = new System.Drawing.Size(884, 29);
             playImmediatelyCheckBox.TabIndex = 5;
-            playImmediatelyCheckBox.Values.Text = "▶ Play immediately (otherwise just add to playlist)";
+            playImmediatelyCheckBox.Values.Text = "▶ Play Immediately";
             playImmediatelyCheckBox.CheckedChanged += PlayImmediatelyCheckBox_CheckedChanged;
             // 
             // statusStrip
@@ -282,7 +310,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new System.Drawing.Size(884, 25);
             statusLabel.Spring = true;
-            statusLabel.Text = "Right-click on a service to update its database";
             statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // progressBar
@@ -292,12 +319,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
             progressBar.Visible = false;
             // 
             // ModLibraryWindowForm
-            // 
+            //
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             ClientSize = new System.Drawing.Size(900, 600);
             Controls.Add(moduleListView);
             Controls.Add(flatViewCheckBox);
-            Controls.Add(breadcrumbLabel);
+            Controls.Add(breadcrumbPanel);
             Controls.Add(parentButton);
             Controls.Add(searchPanel);
             Controls.Add(searchLabel);
@@ -325,6 +352,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
         #endregion
 
         private Kit.Gui.Components.FontPalette fontPalette;
+		private Kit.Gui.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonContextMenu serviceContextMenu;
 		private Krypton.Toolkit.KryptonContextMenuItems updateDatabaseMenuItem;
 		private Krypton.Toolkit.KryptonContextMenuItem updateDatabaseItem;
@@ -338,12 +366,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private Krypton.Toolkit.KryptonLabel searchLabel;
 		private System.Windows.Forms.Panel searchPanel;
 		private Krypton.Toolkit.KryptonTextBox searchTextBox;
+		private Krypton.Toolkit.KryptonButton searchButton;
 		private Krypton.Toolkit.KryptonComboBox searchModeComboBox;
 		private System.Windows.Forms.TabControl modeTabControl;
 		private System.Windows.Forms.TabPage onlineTabPage;
 		private System.Windows.Forms.TabPage offlineTabPage;
 		private Krypton.Toolkit.KryptonButton parentButton;
-		private Krypton.Toolkit.KryptonLabel breadcrumbLabel;
+		private System.Windows.Forms.FlowLayoutPanel breadcrumbPanel;
 		private System.Windows.Forms.ListView moduleListView;
 		private System.Windows.Forms.ColumnHeader columnName;
 		private System.Windows.Forms.ColumnHeader columnPath;
