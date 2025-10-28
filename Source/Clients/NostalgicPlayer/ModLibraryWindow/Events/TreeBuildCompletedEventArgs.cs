@@ -4,18 +4,28 @@
 /* information.                                                               */
 /******************************************************************************/
 
-using System.Windows.Forms;
+using System;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
     /// <summary>
-    ///     API for the Module Library window
+    ///     Event args for tree build completion
     /// </summary>
-    public interface IModLibraryWindowApi
+    internal class TreeBuildCompletedEventArgs : EventArgs
     {
+        /********************************************************************/
         /// <summary>
-        ///     Return the form of the Module Library window
+        ///     Constructor
         /// </summary>
-        Form Form { get; }
+        /********************************************************************/
+        public TreeBuildCompletedEventArgs(TreeNode tree)
+        {
+            ResultTree = tree;
+        }
+
+        /// <summary>
+        ///     The resulting tree structure
+        /// </summary>
+        public TreeNode ResultTree { get; }
     }
 }

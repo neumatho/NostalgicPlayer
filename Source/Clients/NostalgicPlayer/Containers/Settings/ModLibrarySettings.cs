@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		public string SearchText
 		{
-			get => settings.GetStringEntry("ModLibrary", "SearchText", "");
+			get => settings.GetStringEntry("ModLibrary", "SearchText", string.Empty);
 			set
 			{
 				settings.SetStringEntry("ModLibrary", "SearchText", value);
