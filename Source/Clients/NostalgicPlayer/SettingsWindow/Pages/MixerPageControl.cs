@@ -433,7 +433,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 				SwapSpeakers = soundSettings.SwapSpeakers,
 				EnableAmigaFilter = soundSettings.AmigaFilter,
 				EnableEqualizer = soundSettings.EnableEqualizer,
-				EqualizerBands = soundSettings.EqualizerBands
+				EqualizerBands = soundSettings.EqualizerBands,
+				EqualizerPreAmp = soundSettings.EqualizerPreAmp
 			};
 
 			Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);

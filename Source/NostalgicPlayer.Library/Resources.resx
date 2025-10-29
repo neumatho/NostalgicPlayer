@@ -174,4 +174,55 @@ Decruncher {1} returned the following error:
   <data name="IDS_ERR_TOO_MANY_REDIRECTS" xml:space="preserve">
     <value>Too many redirects occurred on stream {0}</value>
   </data>
+  <data name="IDS_EQUALIZER_PRESET_CUSTOM" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_FLAT" xml:space="preserve">
+    <value>Flat</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_ROCK" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_POP" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_CLASSICAL" xml:space="preserve">
+    <value>Classical</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_JAZZ" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_ELECTRONIC" xml:space="preserve">
+    <value>Electronic</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_DANCE" xml:space="preserve">
+    <value>Dance</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_HIPHOP" xml:space="preserve">
+    <value>Hip-Hop</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_METAL" xml:space="preserve">
+    <value>Metal</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_ACOUSTIC" xml:space="preserve">
+    <value>Acoustic</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_BASSBOOST" xml:space="preserve">
+    <value>Bass Boost</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_TREBLEBOOST" xml:space="preserve">
+    <value>Treble Boost</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_VOCALBOOST" xml:space="preserve">
+    <value>Vocal Boost</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_FULLBASS" xml:space="preserve">
+    <value>Full Bass</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_FULLTREBLE" xml:space="preserve">
+    <value>Full Treble</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRESET_SOFT" xml:space="preserve">
+    <value>Soft</value>
+  </data>
 </root>

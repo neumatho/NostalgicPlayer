@@ -133,18 +133,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			infoGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			infoGroup.Location = new System.Drawing.Point(4, 28);
 			infoGroup.Name = "infoGroup";
-			// 
-			// 
-			// 
+			//
+			//
+			//
 			infoGroup.Panel.Controls.Add(infoLabel);
-			infoGroup.Size = new System.Drawing.Size(352, 24);
+			infoGroup.Size = new System.Drawing.Size(380, 24);
 			infoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
 			infoGroup.TabIndex = 1;
 			//
 			// moduleInfoButton
 			//
 			moduleInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-			moduleInfoButton.Location = new System.Drawing.Point(360, 28);
+			moduleInfoButton.Location = new System.Drawing.Point(388, 28);
 			moduleInfoButton.Name = "moduleInfoButton";
 			moduleInfoButton.Size = new System.Drawing.Size(24, 24);
 			moduleInfoButton.TabIndex = 2;
@@ -153,13 +153,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
             //
             // equalizerButton
             //
-            equalizerButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            equalizerButton.Location = new System.Drawing.Point(388, 28);
+            equalizerButton.Location = new System.Drawing.Point(60, 4);
             equalizerButton.Name = "equalizerButton";
             equalizerButton.Size = new System.Drawing.Size(24, 24);
-            equalizerButton.TabIndex = 3;
-            equalizerButton.Values.Image = (System.Drawing.Image)resources.GetObject("equalizerButton.Values.Image");
-            equalizerButton.Values.Text = "";
+            equalizerButton.TabIndex = 2;
+            equalizerButton.Values.Image = Resources.IDB_EQUALIZER;
+            equalizerButton.Values.Text = string.Empty;
 			// 
             // masterVolumeTrackBar
             // 
@@ -417,15 +416,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// functionsGroup
 			// 
 			functionsGroup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			functionsGroup.Location = new System.Drawing.Point(322, 243);
+			functionsGroup.Location = new System.Drawing.Point(294, 243);
 			functionsGroup.Name = "functionsGroup";
 			// 
 			// 
 			// 
 			functionsGroup.Panel.Controls.Add(loopCheckButton);
 			functionsGroup.Panel.Controls.Add(favoritesButton);
+			functionsGroup.Panel.Controls.Add(equalizerButton);
 			functionsGroup.Panel.Controls.Add(sampleInfoButton);
-			functionsGroup.Size = new System.Drawing.Size(90, 34);
+			functionsGroup.Size = new System.Drawing.Size(118, 34);
 			functionsGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
 			functionsGroup.TabIndex = 10;
 			// 
@@ -448,11 +448,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			favoritesButton.Values.Text = "";
 			// 
 			// sampleInfoButton
-			// 
-			sampleInfoButton.Location = new System.Drawing.Point(60, 4);
+			//
+			sampleInfoButton.Location = new System.Drawing.Point(88, 4);
 			sampleInfoButton.Name = "sampleInfoButton";
 			sampleInfoButton.Size = new System.Drawing.Size(24, 24);
-			sampleInfoButton.TabIndex = 2;
+			sampleInfoButton.TabIndex = 3;
 			sampleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("sampleInfoButton.Values.Image");
 			sampleInfoButton.Values.Text = "";
 			// 
@@ -503,7 +503,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			Controls.Add(listInfoGroup);
 			Controls.Add(listButtonsGroup);
 			Controls.Add(masterVolumeTrackBar);
-			Controls.Add(equalizerButton);
 			Controls.Add(moduleInfoButton);
 			Controls.Add(infoGroup);
 			Controls.Add(menuStrip);

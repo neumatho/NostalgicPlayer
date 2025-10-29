@@ -172,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		/// <summary>
 		/// Equalizer band values in dB (-12 to +12 dB)
-		/// 10 bands: 60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000 Hz
+		/// 10 bands: 60, 170, 310, 600, 1k, 3k, 6k, 12k, 14k, 16k Hz
 		/// </summary>
 		/********************************************************************/
 		public double[] EqualizerBands
@@ -214,6 +214,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 					parts[i] = value[i].ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
 
 				settings.SetStringEntry("Sound", "EqualizerBands", string.Join(",", parts));
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Equalizer pre-amp gain in dB (-12 to +12 dB)
+		/// </summary>
+		/********************************************************************/
+		public double EqualizerPreAmp
+		{
+			get
+			{
+				string value = settings.GetStringEntry("Sound", "EqualizerPreAmp");
+				if (string.IsNullOrEmpty(value))
+					return 0.0; // Default: no attenuation/boost
+
+				if (!double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double result))
+					return 0.0;
+
+				return Math.Max(-12.0, Math.Min(12.0, result));
+			}
+
+			set
+			{
+				double clamped = Math.Max(-12.0, Math.Min(12.0, value));
+				settings.SetStringEntry("Sound", "EqualizerPreAmp", clamped.ToString("F1", System.Globalization.CultureInfo.InvariantCulture));
 			}
 		}
 	}

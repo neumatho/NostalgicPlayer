@@ -27,6 +27,9 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 			// Initialize equalizer with flat response (0 dB on all bands)
 			EqualizerBands = new double[10];
 			Array.Fill(EqualizerBands, 0.0);
+
+			// Initialize pre-amp with 0 dB (no attenuation/boost)
+			EqualizerPreAmp = 0.0;
 		}
 
 
@@ -106,13 +109,25 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		/********************************************************************/
 		/// <summary>
 		/// Equalizer band gains in dB (-12 to +12 dB)
-		/// 10 bands: 60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000 Hz
+		/// 10 bands: 60, 170, 310, 600, 1k, 3k, 6k, 12k, 14k, 16k Hz
 		/// </summary>
 		/********************************************************************/
 		public double[] EqualizerBands
 		{
 			get; set;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Equalizer pre-amp gain in dB (-12 to +12 dB)
+		/// </summary>
+		/********************************************************************/
+		public double EqualizerPreAmp
+		{
+			get; set;
+		} = 0.0;
 
 
 

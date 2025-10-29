@@ -11,6 +11,7 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
 using Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.Library.Sound.Timer.Events;
 
@@ -30,6 +31,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 
 		private DownMixer downMixer;
 		private Visualizer currentVisualizer;
+		private EqualizerFilter equalizer;
+		private double[] pendingEqualizerBands;		// Equalizer bands to be applied when equalizer is created
+		private double pendingEqualizerPreAmp;		// Equalizer pre-amp to be applied when equalizer is created
 
 		private int inputFrequency;
 		private int inputChannelCount;
@@ -113,6 +117,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 			currentVisualizer = null;
 
 			downMixer = null;
+			equalizer = null;
 
 			lock (mixerInfoLock)
 			{
@@ -196,6 +201,23 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 			{
 				downMixer = new DownMixer(currentPlayer.SpeakerFlags, outputInformation.AvailableSpeakers, disableCenterSpeaker);
 			}
+
+			// Create equalizer
+			equalizer = new EqualizerFilter(outputFrequency, outputChannelCount);
+
+			// Apply pending equalizer settings after creation
+			if (pendingEqualizerBands != null)
+			{
+				equalizer.SetAllGains(pendingEqualizerBands);
+				pendingEqualizerBands = null;
+			}
+
+			// Apply pending pre-amp gain
+			if (Math.Abs(pendingEqualizerPreAmp) > 0.01)
+			{
+				equalizer.SetPreAmpGain(pendingEqualizerPreAmp);
+				pendingEqualizerPreAmp = 0.0;
+			}
 		}
 
 
@@ -225,8 +247,21 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 				mixerInfo.EnableInterpolation = mixerConfiguration.EnableInterpolation;
 				mixerInfo.SwapSpeakers = mixerConfiguration.SwapSpeakers;
 				mixerInfo.EmulateFilter = mixerConfiguration.EnableAmigaFilter;
+				mixerInfo.EnableEqualizer = mixerConfiguration.EnableEqualizer;
 
 				Array.Copy(mixerConfiguration.ChannelsEnabled, mixerInfo.ChannelsEnabled, mixerConfiguration.ChannelsEnabled.Length);
+
+				// Update equalizer settings
+				if (equalizer != null && mixerConfiguration.EqualizerBands != null)
+				{
+					equalizer.SetAllGains(mixerConfiguration.EqualizerBands);
+					equalizer.SetPreAmpGain(mixerConfiguration.EqualizerPreAmp);
+				}
+				else if (mixerConfiguration.EqualizerBands != null)
+				{
+					pendingEqualizerBands = mixerConfiguration.EqualizerBands;
+					pendingEqualizerPreAmp = mixerConfiguration.EqualizerPreAmp;
+				}
 			}
 		}
 
@@ -258,6 +293,10 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 
 			// And then convert the resampled sample to the output format
 			downMixer.ConvertToOutputFormat(currentMixerInfo, resampleBuffer, outputBuffer, totalFramesProcessed);
+
+			// Apply equalizer if enabled
+			if (currentMixerInfo.EnableEqualizer)
+				equalizer.Apply(outputBuffer, totalFramesProcessed);
 
 			// Tell visual agents about the mixed data
 			currentVisualizer.TellAgentsAboutMixedData(outputBuffer, totalFramesProcessed, downMixer.GetVisualizersChannelMapping(currentMixerInfo), outputChannelCount);
