@@ -152,5 +152,69 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 			set => settings.SetBoolEntry("Sound", "AmigaFilter", value);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable equalizer
+		/// </summary>
+		/********************************************************************/
+		public bool EnableEqualizer
+		{
+			get => settings.GetBoolEntry("Sound", "EnableEqualizer", false);
+
+			set => settings.SetBoolEntry("Sound", "EnableEqualizer", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Equalizer band values in dB (-12 to +12 dB)
+		/// 10 bands: 60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000 Hz
+		/// </summary>
+		/********************************************************************/
+		public double[] EqualizerBands
+		{
+			get
+			{
+				string value = settings.GetStringEntry("Sound", "EqualizerBands");
+				if (string.IsNullOrEmpty(value))
+					return new double[10]; // Flat response (0 dB on all bands)
+
+				try
+				{
+					string[] parts = value.Split(',');
+					if (parts.Length != 10)
+						return new double[10];
+
+					double[] result = new double[10];
+					for (int i = 0; i < 10; i++)
+					{
+						if (!double.TryParse(parts[i], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out result[i]))
+							return new double[10];
+					}
+
+					return result;
+				}
+				catch
+				{
+					return new double[10];
+				}
+			}
+
+			set
+			{
+				if ((value == null) || (value.Length != 10))
+					return;
+
+				string[] parts = new string[10];
+				for (int i = 0; i < 10; i++)
+					parts[i] = value[i].ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
+
+				settings.SetStringEntry("Sound", "EqualizerBands", string.Join(",", parts));
+			}
+		}
 	}
 }

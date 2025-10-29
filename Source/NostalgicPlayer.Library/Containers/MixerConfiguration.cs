@@ -23,6 +23,10 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		{
 			ChannelsEnabled = new bool[IChannel.MaxNumberOfChannels];
 			Array.Fill(ChannelsEnabled, true);
+
+			// Initialize equalizer with flat response (0 dB on all bands)
+			EqualizerBands = new double[10];
+			Array.Fill(EqualizerBands, 0.0);
 		}
 
 
@@ -84,6 +88,31 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		{
 			get; set;
 		} = true;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if equalizer is enabled
+		/// </summary>
+		/********************************************************************/
+		public bool EnableEqualizer
+		{
+			get; set;
+		} = false;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Equalizer band gains in dB (-12 to +12 dB)
+		/// 10 bands: 60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000 Hz
+		/// </summary>
+		/********************************************************************/
+		public double[] EqualizerBands
+		{
+			get; set;
+		}
 
 
 
