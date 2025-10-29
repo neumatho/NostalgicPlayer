@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
+using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
 using Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.Library.Sound.Timer.Events;
 
@@ -46,8 +47,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		private DownMixer downMixer;
 		private Visualizer currentVisualizer;
 		private AmigaFilter amigaFilter;
-		private Equalizer equalizer;
+		private EqualizerFilter equalizer;
 		private double[] pendingEqualizerBands;		// Equalizer bands to be applied when equalizer is created
+		private double pendingEqualizerPreAmp;		// Equalizer pre-amp to be applied when equalizer is created
 
 		private readonly Lock mixerInfoLock = new Lock();
 		private MixerInfo mixerInfo;			// The current mixer information
@@ -302,7 +304,17 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			currentMixer.SetOutputFormat(outputInformation);
 			currentVisualizer.SetOutputFormat(outputInformation);
 			amigaFilter = new AmigaFilter(mixerFrequency, outputChannelCount);
-			equalizer = new Equalizer(mixerFrequency, outputChannelCount);
+
+			// Save current equalizer bands and pre-amp before creating new equalizer
+			double[] currentEqualizerBands = null;
+			double currentPreAmpGain = 0.0;
+			if (equalizer != null)
+			{
+				currentEqualizerBands = equalizer.GetGains();
+				currentPreAmpGain = equalizer.GetPreAmpGain();
+			}
+
+			equalizer = new EqualizerFilter(mixerFrequency, outputChannelCount);
 
 			bool disableCenterSpeaker;
 
@@ -311,11 +323,24 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				disableCenterSpeaker = mixerInfo.DisableCenterSpeaker;
 			}
 
-			// Apply pending equalizer settings after creation
+			// Apply equalizer settings after creation
 			if (pendingEqualizerBands != null)
 			{
 				equalizer.SetAllGains(pendingEqualizerBands);
 				pendingEqualizerBands = null;
+
+				// Apply pending pre-amp as well
+				equalizer.SetPreAmpGain(pendingEqualizerPreAmp);
+				pendingEqualizerPreAmp = 0.0;
+			}
+			else if (currentEqualizerBands != null)
+			{
+				// Re-apply current equalizer settings after output format change
+				equalizer.SetAllGains(currentEqualizerBands);
+
+				// Re-apply pre-amp gain
+				if (Math.Abs(currentPreAmpGain) > 0.01)
+					equalizer.SetPreAmpGain(currentPreAmpGain);
 			}
 
 			lock (currentPlayer)
@@ -389,13 +414,19 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				mixerInfo.EnableEqualizer = mixerConfiguration.EnableEqualizer;
 
 				Array.Copy(mixerConfiguration.ChannelsEnabled, mixerInfo.ChannelsEnabled, mixerConfiguration.ChannelsEnabled.Length);
-			}
 
-			// Update equalizer settings
-			if (equalizer != null && mixerConfiguration.EqualizerBands != null)
-				equalizer.SetAllGains(mixerConfiguration.EqualizerBands);
-			else if (mixerConfiguration.EqualizerBands != null)
-				pendingEqualizerBands = mixerConfiguration.EqualizerBands;
+				// Update equalizer settings
+				if (equalizer != null && mixerConfiguration.EqualizerBands != null)
+				{
+					equalizer.SetAllGains(mixerConfiguration.EqualizerBands);
+					equalizer.SetPreAmpGain(mixerConfiguration.EqualizerPreAmp);
+				}
+				else if (mixerConfiguration.EqualizerBands != null)
+				{
+					pendingEqualizerBands = mixerConfiguration.EqualizerBands;
+					pendingEqualizerPreAmp = mixerConfiguration.EqualizerPreAmp;
+				}
+			}
 
 			lock (currentPlayer)
 			{
@@ -466,7 +497,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			if (totalFramesProcessed > 0)
 			{
 				// Now convert the mixed data to real 32 bit samples
-				var buffersToConvert = mixerBufferMap.SelectMany(x => x).Union(mixingBuffers).Distinct();
+				IEnumerable<int[]> buffersToConvert = mixerBufferMap.SelectMany(x => x).Union(mixingBuffers).Distinct();
 				foreach (int[] buffer in buffersToConvert)
 					currentMixer.ConvertMixedData(buffer, totalFramesProcessed);
 

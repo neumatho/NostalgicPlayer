@@ -44,23 +44,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			//
 			// equalizerPanel
 			//
+			equalizerPanel.BackColor = System.Drawing.Color.White;
 			equalizerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			equalizerPanel.Location = new System.Drawing.Point(8, 8);
 			equalizerPanel.Name = "equalizerPanel";
-			equalizerPanel.Size = new System.Drawing.Size(429, 192);
+			equalizerPanel.Size = new System.Drawing.Size(487, 218);
 			equalizerPanel.TabIndex = 0;
 
 			//
 			// EqualizerWindowForm
 			//
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			ClientSize = new System.Drawing.Size(445, 192);
+			BackColor = System.Drawing.Color.White;
+			ClientSize = new System.Drawing.Size(503, 226);
 			Controls.Add(equalizerPanel);
 			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "EqualizerWindowForm";
-			Padding = new System.Windows.Forms.Padding(8);
+			Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
 			Palette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

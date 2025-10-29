@@ -159,7 +159,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_EQUALIZER {
+            get {
+                object obj = ResourceManager.GetObject("IDB_EQUALIZER", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
@@ -2767,7 +2777,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ResourceManager.GetString("IDS_SETTINGS_MIXER_OUPUT_SETTINGS", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Equalizer.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_EQUALIZER {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_EQUALIZER", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Use equalizer.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_EQUALIZER_ENABLE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_EQUALIZER_ENABLE", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Frequency Bands.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_EQUALIZER_FREQUENCY_BANDS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_EQUALIZER_FREQUENCY_BANDS", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Loading.
         /// </summary>
