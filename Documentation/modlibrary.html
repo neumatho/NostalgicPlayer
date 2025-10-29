@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>NostalgicPlayer manual</title>
+	<link rel="stylesheet" href="css/docstyles.css">
+</head>
+<body>
+<table class="bgtable">
+	<tr>
+		<td>
+			<table class="menutable">
+				<tr><th><div class="tableheader"><h2>Menu</h2></div></th></tr>
+				<tr><td><a href="features.html">Features</a></td></tr>
+				<tr><td><a href="howtouse.html"><b>How to use</b></a></td></tr>
+				<tr><td><a href="moduletypes.html">Module types</a></td></tr>
+				<tr><td><a href="requirements.html">Requirements</a></td></tr>
+				<tr><td><a href="thanks.html">Thanks</a></td></tr>
+			</table>
+		</td>
+		<td>
+			<table class="contenttable">
+				<tr><th><div class="tableheader"><h3>Module Library</h3></div></th></tr>
+				<tr><td>
+					<span>
+						<p>The Module Library window provides access to thousands of tracker modules from online archives. You can browse, search, download, and play modules directly from within NostalgicPlayer. Downloaded modules are cached locally for offline access, allowing you to build your own personal collection of favorite tracker music.</p>
+						<br>
+					</span>
+					<img src="images/modlibrary.png" alt="Module Library window"/>
+					<span>
+						<p>The Module Library has two modes: Online and Local. In Online mode, you browse the remote archive. In Local mode, you browse your locally cached modules. You can switch between modes using the tabs at the top of the window.</p>
+						<br>
+						<a><h3>Online Mode</h3></a>
+						<p>In Online mode, you have access to the complete Modland archive containing thousands of modules. The archive is organized hierarchically: first by format (like Protracker, FastTracker 2, ScreamTracker 3, etc.), then by composer/artist within each format.</p>
+						<p><b>Important:</b> The Modland archive contains modules in many different formats. Not all formats are currently supported by NostalgicPlayer. If you download a module that cannot be played, you'll receive an error message. Check the <a href="moduletypes.html">supported module types</a> page for a complete list of playable formats.</p>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td><b>Browse by Format</b></td>
+								<td>Navigate through the folder structure by double-clicking folders. First select the format you're interested in (e.g., "Protracker" for MOD files, "Scream Tracker 3" for S3M files), then browse composers within that format. Double-click a module to download and play it.</td>
+							</tr>
+							<tr>
+								<td><b>Search</b></td>
+								<td>Use the search box to search across the entire archive. The search looks in both folder names (formats, composers) and file names (module titles). For example, typing "purple" might find the composer "Purple Motion" folder as well as modules with "purple" in their filename. The search mode dropdown (Contains/Starts with/Ends with) controls how the search pattern is applied.</td>
+							</tr>
+							<tr>
+								<td><b>Flat View</b></td>
+								<td>Check the "Flat view" checkbox to display search results as a flat list instead of a tree structure. This is particularly useful when searching, as it shows all matching files in a single list with their full paths. In flat view, you can click on the Name or Path column headers to sort by filename or folder path. Click again to reverse the sort order.</td>
+							</tr>
+							<tr>
+								<td><b>Play Immediately</b></td>
+								<td>When this checkbox is checked, modules will start playing as soon as they finish downloading. Uncheck it if you want to download modules without playing them.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a><h3>Local Mode</h3></a>
+						<p>In Local mode, you can browse and manage your locally cached modules. All modules you've previously downloaded are available here, maintaining the exact same folder structure as the online archive (format → composer → modules).</p>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td><b>Browse Cache</b></td>
+								<td>Navigate through your cached modules using the same format/composer structure as online. The folder hierarchy is preserved, so if you downloaded modules from "Protracker/Jogeir Liljedahl/", they'll be in that same path offline. Double-click a module to play it instantly without downloading.</td>
+							</tr>
+							<tr>
+								<td><b>Delete Modules</b></td>
+								<td>Right-click on any cached module and select "Delete" to remove it from your local cache. This helps manage disk space by removing modules you no longer want to keep.</td>
+							</tr>
+							<tr>
+								<td><b>Search Cache</b></td>
+								<td>The search function works on your cached modules, making it easy to find modules in your personal collection.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a><h3>View Options</h3></a>
+						<p>The Module Library provides different ways to view and organize modules:</p>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td><b>Tree View</b></td>
+								<td>The default view showing modules organized in their folder hierarchy. Good for browsing by category or author.</td>
+							</tr>
+							<tr>
+								<td><b>Flat View</b></td>
+								<td>Shows modules as a flat list with columns for Name, Path, and Size. Ideal for search results as you can see all matches at once. Click on the Name or Path column headers to sort alphabetically by filename or folder path, click again to reverse the sort order.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a><h3>Cache Management</h3></a>
+						<p>Downloaded modules are stored in a local cache folder. This allows you to:</p>
+						<ul>
+							<li>Play modules locally without internet connection</li>
+							<li>Build a personal collection of favorite modules</li>
+							<li>Quickly access frequently played modules</li>
+							<li>Manage disk space by deleting unwanted modules</li>
+						</ul>
+						<p>The cache is persistent between NostalgicPlayer sessions, so your downloaded modules remain available until you explicitly delete them.</p>
+					</span>
+					<span>
+						<a><h3>Supported Archives</h3></a>
+						<p>Currently, the Module Library supports:</p>
+						<ul>
+							<li><b>Modland</b> - One of the largest module archives on the internet, containing thousands of modules in various formats</li>
+						</ul>
+						<p>More archives may be added in future updates.</p>
+					</span>
+					<span>
+						<a><h3>Understanding the Search Function</h3></a>
+						<p>The search works across the entire archive and supports wildcard patterns:</p>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td><b>Simple Search</b></td>
+								<td>Type "demo" - finds all folders and files containing "demo" anywhere in the name (internally adds wildcards: *demo*)</td>
+							</tr>
+							<tr>
+								<td><b>Composer/Folder Search</b></td>
+								<td>Type a composer name to find their folder and all their modules. The search includes folder names, so typing "Jogeir" will find the "Jogeir Liljedahl" folder</td>
+							</tr>
+							<tr>
+								<td><b>Starting Pattern</b></td>
+								<td>Type "demo*" - finds all files starting with "demo"</td>
+							</tr>
+							<tr>
+								<td><b>Ending Pattern</b></td>
+								<td>Type "*remix" - finds all files ending with "remix"</td>
+							</tr>
+							<tr>
+								<td><b>Search Modes</b></td>
+								<td>The dropdown affects automatic wildcards: "Contains" adds * on both sides, "Starts with" adds * at the end only, "Ends with" adds * at the beginning only</td>
+							</tr>
+						</table>
+						<p><b>Note:</b> To browse all modules of a specific format (like all S3M files), it's more efficient to navigate through the folder structure: open the "Scream Tracker 3" folder rather than searching for "*.s3m".</p>
+					</span>
+					<span>
+						<a><h3>Tips and Tricks</h3></a>
+						<ul>
+							<li>Use flat view when searching to see all results in a list format</li>
+							<li>Sort by name or path in flat view to organize your search results</li>
+							<li>Browse by format folders to explore all modules of a specific type (more efficient than searching)</li>
+							<li>Search for composer names to find all their work across different formats</li>
+							<li>Download modules while one is playing to build your collection</li>
+							<li>The local cache preserves the folder structure, making it easy to find modules you downloaded earlier</li>
+							<li>Regularly clean up your cache by deleting modules you no longer need</li>
+						</ul>
+					</span>
+				</td></tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
