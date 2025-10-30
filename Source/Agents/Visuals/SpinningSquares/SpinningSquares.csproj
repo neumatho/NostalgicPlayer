@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares</RootNamespace>
     <DocumentationFile>bin\SpinningSquares.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
