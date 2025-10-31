@@ -120,8 +120,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 			favoriteDataGridView.Rows.Clear();
 
 			// Define sorting method
-			var sortMethod1 = (KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.ListenCount;
-			var sortMethod2 = (KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.LastLoaded;
+			Func<KeyValuePair<string, ModuleDatabaseInfo>, int> sortMethod1 = (KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.ListenCount;
+			Func<KeyValuePair<string, ModuleDatabaseInfo>, DateTime> sortMethod2 = (KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.LastLoaded;
 
 			// Now add the items
 			IEnumerable<KeyValuePair<string, ModuleDatabaseInfo>> list = database.RetrieveAllInformation().Where(p => p.Value.ListenCount > 0);

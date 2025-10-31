@@ -889,7 +889,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Moving list items around
 					//
 					// Get the selected items and order them in reverse
-					var reversedSelectedItems = selectedItems.OrderByDescending(i => i.Key);
+					IOrderedEnumerable<KeyValuePair<int, ModuleListItem>> reversedSelectedItems = selectedItems.OrderByDescending(i => i.Key);
 
 					if (indexOfItemUnderMouseToDrop == -1)
 					{
