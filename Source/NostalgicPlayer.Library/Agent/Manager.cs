@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet, LoadAgentProgress callback)
 		{
 			// Build the search directory
-			string searchDirectory = Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)));
+			string searchDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 			if (Directory.Exists(searchDirectory))
 			{

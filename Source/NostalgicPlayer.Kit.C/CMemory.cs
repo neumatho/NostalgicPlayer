@@ -177,14 +177,14 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int MemCmp(CPointer<byte> ptr1, CPointer<byte> ptr2, int length)
+		public static int MemCmp<T>(CPointer<T> ptr1, CPointer<T> ptr2, int length) where T : struct, IComparable
 		{
 			for (int i = 0; i < length; i++)
 			{
-				if (ptr1[i] < ptr2[i])
+				if (ptr1[i].CompareTo(ptr2[i]) < 0)
 					return -1;
 
-				if (ptr1[i] > ptr2[i])
+				if (ptr1[i].CompareTo(ptr2[i]) > 0)
 					return 1;
 			}
 

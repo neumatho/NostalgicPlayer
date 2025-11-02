@@ -490,7 +490,15 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public override string ToString()
 		{
 			if (typeof(T) == typeof(char))
-				return (Buffer != null) && (Length > 1) ? new string(AsSpan().Slice(0, Length - 1).ToArray() as char[]) : string.Empty;
+			{
+				if (Buffer == null)
+					return string.Empty;
+
+				CPointer<char> ptr = new CPointer<char>(Buffer as char[], Offset);
+				c_int len = (c_int)CString.strlen(ptr);
+
+				return (len > 0) ? new string(ptr.AsSpan().Slice(0, len).ToArray()) : string.Empty;
+			}
 
 			return base.ToString();
 		}

@@ -53,6 +53,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<char> ToCharPointer(this string str)
 		{
+			if (str == null)
+				return new CPointer<char>();
+
 			char[] charsWithNull = new char[str.Length + 1];
 			str.CopyTo(0, charsWithNull, 0, str.Length);
 

@@ -1694,7 +1694,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			c_int channel_count = head.Channel_Count;
 
 			// Check to see if the current decoder is compatible with the current link
-			if ((_of.od != null) && (_of.od_stream_count == stream_count) && (_of.od_coupled_count == coupled_count) && (_of.od_channel_count == channel_count) && (CMemory.MemCmp(_of.od_mapping, head.Mapping, channel_count) == 0))
+			if ((_of.od != null) && (_of.od_stream_count == stream_count) && (_of.od_coupled_count == coupled_count) && (_of.od_channel_count == channel_count) && (CMemory.MemCmp<byte>(_of.od_mapping, head.Mapping, channel_count) == 0))
 				_of.od.Decoder_Ctl_Set(OpusControlSetRequest.Opus_Reset_State);
 			else
 			{
