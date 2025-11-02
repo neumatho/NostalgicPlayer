@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\NostalgicPlayer.Kit.C\NostalgicPlayer.Kit.C.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
   </ItemGroup>
 

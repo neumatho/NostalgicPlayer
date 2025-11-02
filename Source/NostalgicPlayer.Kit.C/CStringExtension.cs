@@ -42,5 +42,21 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 			return new CPointer<uint8_t>(bytesWithNull);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the string to a C pointer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<char> ToCharPointer(this string str)
+		{
+			char[] charsWithNull = new char[str.Length + 1];
+			str.CopyTo(0, charsWithNull, 0, str.Length);
+
+			return new CPointer<char>(charsWithNull);
+		}
 	}
 }

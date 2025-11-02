@@ -7,11 +7,13 @@ global using c_char = System.SByte;
 global using c_short = System.Int16;
 global using c_int = System.Int32;
 global using c_long = System.Int32;
+global using c_long_long = System.Int64;
 
 global using c_uchar = System.Byte;
 global using c_ushort = System.UInt16;
 global using c_uint = System.UInt32;
 global using c_ulong = System.UInt32;
+global using c_ulong_long = System.UInt64;
 
 global using c_float = System.Single;
 global using c_double = System.Double;
@@ -40,3 +42,10 @@ global using off_t = System.Int32;
 global using size_t = System.UInt64;
 global using ssize_t = System.Int64;
 global using ptrdiff_t = System.Int64;
+
+global using clock_t = System.Int64;
+global using time_t = System.Int64;
+
+global using pthread_t = System.Threading.Thread;
+global using pthread_mutex_t = System.Threading.Mutex;
+global using pthread_cond_t = Polycode.NostalgicPlayer.Kit.C.CThread.CondHandler;

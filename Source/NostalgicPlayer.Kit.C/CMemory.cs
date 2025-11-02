@@ -272,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			for (int i = 0; i < searchLength; i++)
 			{
 				if (ptr[i].Equals(ch))
-					return new CPointer<T>(ptr.Buffer, ptr.Offset + i);
+					return ptr + i;
 			}
 
 			return null;

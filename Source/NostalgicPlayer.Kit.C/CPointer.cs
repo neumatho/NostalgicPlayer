@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct CPointer<T> : IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IDeepCloneable<CPointer<T>>
+	public struct CPointer<T> : IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
 	{
 		/********************************************************************/
 		/// <summary>
@@ -478,6 +478,21 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static implicit operator CPointer<T>(T[] array)
 		{
 			return new CPointer<T>(array);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override string ToString()
+		{
+			if (typeof(T) == typeof(char))
+				return (Buffer != null) && (Length > 1) ? new string(AsSpan().Slice(0, Length - 1).ToArray() as char[]) : string.Empty;
+
+			return base.ToString();
 		}
 
 

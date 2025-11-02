@@ -1,7 +1,9 @@
-﻿using System;
-
-// Declare assembly as CLS compliant.
-//[assembly: System.CLSCompliant(true)]
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
+using System;
 
 namespace Polycode.NostalgicPlayer.Kit.C
 {
@@ -16,17 +18,8 @@ namespace Polycode.NostalgicPlayer.Kit.C
     /// </para>
     /// </remarks>
     /// <author email="robert.baron@videotron.ca">Robert Baron</author>
-    public sealed class CMath
+    public static partial class CMath
     {
-
-        /// <summary>
-        /// Constructor is declared <c>private</c> because all members are <c>static</c>.
-        /// </summary>
-        /// <remarks></remarks>
-        private CMath()
-        {
-        }
-
         #region "The values returned by 'ilogb' for 0, NaN, and infinity respectively."
 
         /// <summary>
