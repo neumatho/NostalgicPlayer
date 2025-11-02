@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			if (left > 0)
-				CMemory.MemSet<uint8>(pos, 0, (c_int)left);
+				CMemory.memset<uint8>(pos, 0, left);
 			else if ((flags & Lzw_Flag.SymQuirks) != 0)
 			{
 				// Digital Symphony - read final EOF code
@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			lzw.MaxLength = 1U << (int)lzw.Bits;
 			lzw.AllocLength = 1U << (int)maxBits;
 
-			lzw.Codes = CMemory.CAllocObj<Lzw_Code>((c_int)lzw.AllocLength);
+			lzw.Codes = CMemory.callocObj<Lzw_Code>(lzw.AllocLength);
 			if (lzw.Codes == null)
 				return null;
 
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private static void Lzw_Free(Lzw_Tree lzw)
 		{
-			CMemory.Free(lzw.Codes);
+			CMemory.free(lzw.Codes);
 			lzw.Codes.SetToNull();
 		}
 

@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 12) < 12)
 				return -1;
 
-			if ((CMemory.MemCmp(buf, "RIFF", 4) != 0) || (CMemory.MemCmp(buf + 8, "DSMF", 4) != 0))
+			if ((CMemory.memcmp(buf, "RIFF", 4) != 0) || (CMemory.memcmp(buf + 8, "DSMF", 4) != 0))
 				return -1;
 
 			return 0;
@@ -151,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Xmp_Module mod = m.Mod;
 
 			Dsm_Song mh = new Dsm_Song();
-			CPointer<Dsm_Note> dsmBuf = CMemory.MAllocObj<Dsm_Note>(MaxChan * 64);
+			CPointer<Dsm_Note> dsmBuf = CMemory.mallocObj<Dsm_Note>(MaxChan * 64);
 			if (dsmBuf.IsNull)
 				return -1;
 
@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Len = mh.NumOrd;
 			mod.Rst = 0;
 
-			CMemory.MemCpy<uint8>(mod.Xxo, mh.Orders, mod.Len);
+			CMemory.memcpy<uint8>(mod.Xxo, mh.Orders, (size_t)mod.Len);
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
 			m.Quirk |= Quirk_Flag.St3 | Quirk_Flag.ArpMem;
@@ -298,7 +298,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err:
-			CMemory.Free(dsmBuf);
+			CMemory.free(dsmBuf);
 			return -1;
 		}
 

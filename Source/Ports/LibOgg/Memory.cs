@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> Ogg_MAlloc<T>(size_t size) where T : struct
 		{
-			return CMemory.MAlloc<T>((int)size);
+			return CMemory.malloc<T>(size);
 		}
 
 
@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> Ogg_MAllocObj<T>(size_t size) where T : class, new()
 		{
-			return CMemory.MAllocObj<T>((int)size);
+			return CMemory.mallocObj<T>(size);
 		}
 
 
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> Ogg_CAlloc<T>(size_t size) where T : struct
 		{
-			return CMemory.CAlloc<T>((int)size);
+			return CMemory.calloc<T>(size);
 		}
 
 
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> Ogg_CAllocObj<T>(size_t size) where T : class, new()
 		{
-			return CMemory.CAllocObj<T>((int)size);
+			return CMemory.callocObj<T>(size);
 		}
 
 
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> Ogg_Realloc<T>(CPointer<T> ptr, size_t newSize) where T : struct
 		{
-			return CMemory.Realloc(ptr, (int)newSize);
+			return CMemory.realloc(ptr, newSize);
 		}
 
 
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> Ogg_ReallocObj<T>(CPointer<T> ptr, size_t newSize) where T : class, new()
 		{
-			return CMemory.ReallocObj(ptr, (int)newSize);
+			return CMemory.reallocObj(ptr, newSize);
 		}
 
 
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Ogg_Free<T>(CPointer<T> ptr)
 		{
-			CMemory.Free(ptr);
+			CMemory.free(ptr);
 		}
 	}
 }

@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			foreach (Iff_Info i in data.Iff_List)
 			{
-				if (id.IsNotNull && (CMemory.MemCmp(id, i.Id, (int)data.Id_Size) == 0))
+				if (id.IsNotNull && (CMemory.memcmp(id, i.Id, data.Id_Size) == 0))
 				{
 					if (size > Iff_Max_Chunk_Size)
 						return -1;
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((data.Flags & Iff_Quirk_Flag.Skip_Embedded) != 0)
 			{
 				// Embedded RIFF hack
-				if (CMemory.StrNCmp(id, "RIFF", 4) == 0)
+				if (CMemory.strncmp(id, "RIFF", 4) == 0)
 				{
 					f.Hio_Read32B();
 					f.Hio_Read32B();
@@ -227,7 +227,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			// PT 3.6 hack: this does not seem to ever apply to "PTDT".
 			// This broke several modules (city lights.pt36, acid phase.pt36)
-			if (((data.Flags & Iff_Quirk_Flag.Full_Chunk_Size) != 0) && (CMemory.MemCmp(id, "PTDT", 4) != 0))
+			if (((data.Flags & Iff_Quirk_Flag.Full_Chunk_Size) != 0) && (CMemory.memcmp(id, "PTDT", 4) != 0))
 			{
 				if (size < (data.Id_Size + 4))
 					return -1;

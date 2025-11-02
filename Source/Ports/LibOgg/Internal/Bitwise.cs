@@ -745,7 +745,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			else
 			{
 				// Aligned block copy
-				CMemory.MemMove(b.Ptr, source, (int)bytes);
+				CMemory.memmove(b.Ptr, source, (size_t)bytes);
 
 				b.Ptr += bytes;
 				b.EndByte += bytes;

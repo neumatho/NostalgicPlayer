@@ -422,18 +422,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if (mod.Ins != 0)
 			{
-				pp_Ins = CMemory.CAlloc<uint32>(mod.Ins);
+				pp_Ins = CMemory.calloc<uint32>((size_t)mod.Ins);
 				if (pp_Ins.IsNull)
 					goto Err;
 			}
 			else
 				pp_Ins = null;
 
-			pp_Smp = CMemory.CAlloc<uint32>(mod.Smp);
+			pp_Smp = CMemory.calloc<uint32>((size_t)mod.Smp);
 			if (pp_Smp.IsNull)
 				goto Err2;
 
-			pp_Pat = CMemory.CAlloc<uint32>(mod.Pat);
+			pp_Pat = CMemory.calloc<uint32>((size_t)mod.Pat);
 			if (pp_Pat.IsNull)
 				goto Err3;
 
@@ -546,7 +546,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// This buffer should be able to hold any pattern or sample block.
 			// Round up to a multiple of 4--the sample decompressor relies on
 			// this to simplify its code
-			patBuf = CMemory.MAlloc<uint8>(Temp_Buffer_Len);
+			patBuf = CMemory.malloc<uint8>(Temp_Buffer_Len);
 			if (patBuf.IsNull)
 				goto Err4;
 
@@ -687,10 +687,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					goto Err4;
 			}
 
-			CMemory.Free(patBuf);
-			CMemory.Free(pp_Pat);
-			CMemory.Free(pp_Smp);
-			CMemory.Free(pp_Ins);
+			CMemory.free(patBuf);
+			CMemory.free(pp_Pat);
+			CMemory.free(pp_Smp);
+			CMemory.free(pp_Ins);
 
 			// Song message
 			if (((ifh.Special & It_Special.Has_Msg) != 0) && (ifh.MsgLen > 0))
@@ -741,14 +741,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err4:
-			CMemory.Free(patBuf);
-			CMemory.Free(pp_Pat);
+			CMemory.free(patBuf);
+			CMemory.free(pp_Pat);
 
 			Err3:
-			CMemory.Free(pp_Smp);
+			CMemory.free(pp_Smp);
 
 			Err2:
-			CMemory.Free(pp_Ins);
+			CMemory.free(pp_Ins);
 
 			Err:
 			return -1;
@@ -1294,7 +1294,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (i1h.Magic != Magic_IMPI)
 				return -1;
 
-			CMemory.MemCpy(i1h.DosName, buf + 4, 12);
+			CMemory.memcpy(i1h.DosName, buf + 4, 12);
 			i1h.Zero = buf[16];
 			i1h.Flags = (It_Env_Flag)buf[17];
 			i1h.Vls = buf[18];
@@ -1307,7 +1307,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			i1h.TrkVers = DataIo.ReadMem16L(buf + 28);
 			i1h.Nos = buf[30];
 
-			CMemory.MemCpy(i1h.Name, buf + 32, 26);
+			CMemory.memcpy(i1h.Name, buf + 32, 26);
 			Fix_Name(i1h.Name, 26);
 
 			if (f.Hio_Read(i1h.Keys, 1, 240) != 240)
@@ -1430,7 +1430,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (i2h.Magic != Magic_IMPI)
 				return -1;
 
-			CMemory.MemCpy(i2h.DosName, buf + 4, 12);
+			CMemory.memcpy(i2h.DosName, buf + 4, 12);
 			i2h.Zero = buf[16];
 			i2h.Nna = buf[17];
 			i2h.Dct = buf[18];
@@ -1453,7 +1453,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			i2h.TrkVers = DataIo.ReadMem16L(buf + 28);
 			i2h.Nos = buf[30];
 
-			CMemory.MemCpy(i2h.Name, buf + 32, 26);
+			CMemory.memcpy(i2h.Name, buf + 32, 26);
 			Fix_Name(i2h.Name, 26);
 
 			i2h.Ifc = buf[58];
@@ -1612,7 +1612,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				channels = 2;
 			}
 
-			CPointer<uint8> decBuf = CMemory.CAlloc<byte>(bytes);
+			CPointer<uint8> decBuf = CMemory.calloc<byte>((size_t)bytes);
 			if (decBuf == null)
 				return null;
 
@@ -1673,13 +1673,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Xmp_Sample xxs = mod.Xxs[i];
 			Extra_Sample_Data xtra = m.Xtra[i];
 
-			CMemory.MemCpy(ish.DosName, buf + 4, 12);
+			CMemory.memcpy(ish.DosName, buf + 4, 12);
 			ish.Zero = buf[16];
 			ish.Gvl = buf[17];
 			ish.Flags = (It_Smp_Flag)buf[18];
 			ish.Vol = buf[19];
 
-			CMemory.MemCpy(ish.Name, buf + 20, 26);
+			CMemory.memcpy(ish.Name, buf + 20, 26);
 			Fix_Name(ish.Name, 26);
 
 			ish.Convert = (It_Cvt_Flag)buf[46];

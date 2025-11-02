@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Smp = mod.Ins;
 			mod.Spd = 6;
 			mod.Bpm = 125;
-			CMemory.MemCpy<uint8>(mod.Xxo, pfh.Order, 256);
+			CMemory.memcpy<uint8>(mod.Xxo, pfh.Order, 256);
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
 
@@ -304,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				f.Hio_Seek(start + 16 * pfh.PatSeg[i], SeekOrigin.Begin);
 				c_int r = 0;
 
-				CMemory.MemSet(chn_Ctrl, false, chn_Ctrl.Length);
+				CMemory.memset(chn_Ctrl, false, (size_t)chn_Ctrl.Length);
 
 				while (r < 64)
 				{
@@ -312,7 +312,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (b == 0)
 					{
 						r++;
-						CMemory.MemSet(chn_Ctrl, false, chn_Ctrl.Length);
+						CMemory.memset(chn_Ctrl, false, (size_t)chn_Ctrl.Length);
 						continue;
 					}
 
@@ -385,6 +385,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									@event.FxT = Effects.Fx_SetPan;
 									@event.FxP = (uint8)(Ports.LibXmp.Common.Lsn(@event.FxP) << 4);
 								}
+
 								break;
 							}
 

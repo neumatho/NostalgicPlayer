@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
 				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(101, s.Lpe, "Didn't fix invalid loop end");
-				Assert.AreEqual(0, CMemory.MemCmp(s.Data, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 202), "Sample data error");
+				Assert.AreEqual(0, CMemory.memcmp(s.Data, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 202), "Sample data error");
 				Assert.AreEqual(s.Data[0], s.Data[-2], "Sample prologue error");
 				Assert.AreEqual(s.Data[1], s.Data[-1], "Sample prologue error");
 				Assert.AreEqual(s.Data[200], s.Data[202], "Sample prologue error");
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
 				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
-				Assert.AreEqual(0, CMemory.MemCmp(s.Data, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 202), "Sample data error");
+				Assert.AreEqual(0, CMemory.memcmp(s.Data, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 202), "Sample data error");
 				Assert.AreEqual(s.Data[0], s.Data[-2], "Sample prologue error");
 				Assert.AreEqual(s.Data[1], s.Data[-1], "Sample prologue error");
 				Assert.AreEqual(s.Data[200], s.Data[202], "Sample prologue error");

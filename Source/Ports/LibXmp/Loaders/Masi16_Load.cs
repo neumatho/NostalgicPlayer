@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Seek((c_long)(start + p_Ord), SeekOrigin.Begin);
 			f.Hio_Read(mod.Xxo, 1, (size_t)mod.Len);
 
-			CMemory.MemSet<uint8>(buf, 0, mod.Chn);
+			CMemory.memset<uint8>(buf, 0, (size_t)mod.Chn);
 			f.Hio_Seek((c_long)(start + p_Chn), SeekOrigin.Begin);
 			f.Hio_Read(buf, 1, 16);
 
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (lib.common.LibXmp_Init_Instrument(m) < 0)
 				return -1;
 
-			CMemory.MemSet<uint32>(p_Smp, 0, p_Smp.Length);
+			CMemory.memset<uint32>(p_Smp, 0, (size_t)p_Smp.Length);
 
 			f.Hio_Seek((c_long)(start + p_Ins), SeekOrigin.Begin);
 

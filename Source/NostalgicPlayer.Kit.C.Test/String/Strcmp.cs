@@ -77,7 +77,7 @@ namespace NostalgicPlayer.Kit.C.Test.String
 			Fill(a, n, 'x');
 			a[n] = '\0';
 
-			CMemory.MemCpy(b, a, n + 1);
+			CMemory.memcpy(b, a, n + 1);
 			a[n - 1] = 'y';
 
 			Assert.IsGreaterThan(0, CString.strcmp(a, b));

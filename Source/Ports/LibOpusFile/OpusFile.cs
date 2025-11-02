@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			// Only proceed if we start with the magic OggS string.
 			// This is to prevent us spending a lot of time allocating memory and looking
 			// for Ogg pages in non-Ogg files
-			if (CMemory.MemCmp(_initial_data, "OggS", 4) != 0)
+			if (CMemory.memcmp(_initial_data, "OggS", 4) != 0)
 				return OpusFileError.NotFormat;
 
 			if (_initial_bytes > long.MaxValue)
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			if (data.IsNotNull)
 			{
-				CMemory.MemCpy(data, _initial_data, (int)_initial_bytes);
+				CMemory.memcpy(data, _initial_data, _initial_bytes);
 				oy.Wrote((c_long)_initial_bytes);
 
 				OggStream.Init(out OggStream os, -1);
@@ -1695,7 +1695,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			c_int channel_count = head.Channel_Count;
 
 			// Check to see if the current decoder is compatible with the current link
-			if ((_of.od != null) && (_of.od_stream_count == stream_count) && (_of.od_coupled_count == coupled_count) && (_of.od_channel_count == channel_count) && (CMemory.MemCmp<byte>(_of.od_mapping, head.Mapping, channel_count) == 0))
+			if ((_of.od != null) && (_of.od_stream_count == stream_count) && (_of.od_coupled_count == coupled_count) && (_of.od_channel_count == channel_count) && (CMemory.memcmp<byte>(_of.od_mapping, head.Mapping, (size_t)channel_count) == 0))
 				_of.od.Decoder_Ctl_Set(OpusControlSetRequest.Opus_Reset_State);
 			else
 			{
@@ -1707,7 +1707,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 				_of.od_coupled_count = coupled_count;
 				_of.od_channel_count = channel_count;
 
-				CMemory.MemCpy(_of.od_mapping, (CPointer<byte>)head.Mapping, channel_count);
+				CMemory.memcpy(_of.od_mapping, (CPointer<byte>)head.Mapping, (size_t)channel_count);
 			}
 
 			_of.ready_state = State.InitSet;
@@ -1929,7 +1929,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if (_initial_bytes > 0)
 			{
 				CPointer<byte> buffer = _of.oy.Buffer((c_long)_initial_bytes);
-				CMemory.MemCpy(buffer, _initial_data, (int)_initial_bytes);
+				CMemory.memcpy(buffer, _initial_data, _initial_bytes);
 				_of.oy.Wrote((c_long)_initial_bytes);
 			}
 
@@ -3466,7 +3466,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 						// bytes to copy were zero
 						if (nsamples > 0)
 						{
-							CMemory.MemCpy(_pcm, _of.od_buffer + nchannels * od_buffer_pos, nchannels * nsamples);
+							CMemory.memcpy(_pcm, _of.od_buffer + nchannels * od_buffer_pos, (size_t)(nchannels * nsamples));
 
 							od_buffer_pos += nsamples;
 							_of.od_buffer_pos = od_buffer_pos;
@@ -3547,7 +3547,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 								trimmed_duration -= od_buffer_pos;
 
 								if ((trimmed_duration > 0) && (od_buffer_pos > 0))
-									CMemory.MemMove(_pcm, _pcm + od_buffer_pos * nchannels, trimmed_duration * nchannels);
+									CMemory.memmove(_pcm, _pcm + od_buffer_pos * nchannels, (size_t)(trimmed_duration * nchannels));
 
 								// Update bitrate tracking based on the actual samples we used from
 								// what was decoded

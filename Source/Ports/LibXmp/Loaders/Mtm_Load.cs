@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if (CMemory.MemCmp(buf, "MTM", 3) != 0)
+			if (CMemory.memcmp(buf, "MTM", 3) != 0)
 				return -1;
 
 			if (buf[3] != 0x10)
@@ -346,6 +346,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					}
 				}
 			}
+
 			Probably_Dmp:
 
 			// Comments

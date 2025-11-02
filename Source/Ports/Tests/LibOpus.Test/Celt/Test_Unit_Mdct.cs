@@ -154,10 +154,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 
 			Mdct_Lookup cfg = mode.mdct;
 
-			CPointer<kiss_fft_scalar> _in = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
-			CPointer<kiss_fft_scalar> in_copy = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
-			CPointer<kiss_fft_scalar> _out = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
-			CPointer<opus_val16> window = CMemory.MAlloc<opus_val16>(nfft / 2);
+			CPointer<kiss_fft_scalar> _in = CMemory.malloc<kiss_fft_scalar>(buflen);
+			CPointer<kiss_fft_scalar> in_copy = CMemory.malloc<kiss_fft_scalar>(buflen);
+			CPointer<kiss_fft_scalar> _out = CMemory.malloc<kiss_fft_scalar>(buflen);
+			CPointer<opus_val16> window = CMemory.malloc<opus_val16>((size_t)nfft / 2);
 
 			for (c_int k = 0; k < nfft; ++k)
 				_in[k] = (RandomGenerator.GetRandomNumber() % 32768) - 16384;

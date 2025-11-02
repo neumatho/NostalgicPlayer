@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if (_len < 8)
 				return OpusFileError.NotFormat;
 
-			if (CMemory.MemCmp(_data, "OpusHead", 8) != 0)
+			if (CMemory.memcmp(_data, "OpusHead", 8) != 0)
 				return OpusFileError.NotFormat;
 
 			if (_len < 9)
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 				}
 
 				if (_head != null)
-					CMemory.MemCpy(_head.Mapping, _data + 21, head.Channel_Count);
+					CMemory.memcpy(_head.Mapping, _data + 21, (size_t)head.Channel_Count);
 			}
 			// General purpose players should not attempt to play back content with
 			// channel mapping family 255
@@ -266,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			CPointer<byte> ret = Memory.Ogg_MAlloc<byte>(size);
 			if (ret.IsNotNull)
 			{
-				CMemory.MemCpy(ret, _s, (int)_len);
+				CMemory.memcpy(ret, _s, _len);
 				ret[(uint)_len] = 0x00;
 			}
 
@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if (len < 8)
 				return (c_int)OpusFileError.NotFormat;
 
-			if (CMemory.MemCmp(_data, "OpusTags", 8) != 0)
+			if (CMemory.memcmp(_data, "OpusTags", 8) != 0)
 				return (c_int)OpusFileError.NotFormat;
 
 			if (len < 16)
@@ -388,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 					if (_tags.User_Comments[ncomments] == null)
 						return (c_int)OpusFileError.Fault;
 
-					CMemory.MemCpy(_tags.User_Comments[ncomments], _data, (int)len);
+					CMemory.memcpy(_tags.User_Comments[ncomments], _data, len);
 					_tags.Comment_Lengths[ncomments] = (c_int)len;
 				}
 			}
@@ -544,7 +544,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/********************************************************************/
 		private static bool Op_Is_Jpeg(CPointer<byte> _buf, size_t _buf_sz)
 		{
-			return (_buf_sz >= 3) && (CMemory.MemCmp(_buf, "\xFF\xD8\xFF", 3) == 0);
+			return (_buf_sz >= 3) && (CMemory.memcmp(_buf, "\xFF\xD8\xFF", 3) == 0);
 		}
 
 
@@ -600,6 +600,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 							_colors = 0;
 							_has_palette = 0;
 						}
+
 						break;
 					}
 
@@ -618,7 +619,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/********************************************************************/
 		private static bool Op_Is_Png(CPointer<byte> _buf, size_t _buf_sz)
 		{
-			return (_buf_sz >= 8) && (CMemory.MemCmp(_buf, "\x89PNG\x0D\x0A\x1A\x0A", 8) == 0);
+			return (_buf_sz >= 8) && (CMemory.memcmp(_buf, "\x89PNG\x0D\x0A\x1A\x0A", 8) == 0);
 		}
 
 
@@ -641,7 +642,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 					if (chunk_len > (_buf_sz - (offs + 12)))
 						break;
-					else if ((chunk_len == 13) && (CMemory.MemCmp(_buf + (uint)offs + 4, "IHDR", 4) == 0))
+					else if ((chunk_len == 13) && (CMemory.memcmp(_buf + (uint)offs + 4, "IHDR", 4) == 0))
 					{
 						_width = Op_Parse_UInt32BE(_buf + (uint)offs + 8);
 						_height = Op_Parse_UInt32BE(_buf + (uint)offs + 12);
@@ -670,7 +671,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 							break;
 						}
 					}
-					else if ((_has_palette > 0) && (CMemory.MemCmp(_buf + (uint)offs + 4, "PLTE", 4) == 0))
+					else if ((_has_palette > 0) && (CMemory.memcmp(_buf + (uint)offs + 4, "PLTE", 4) == 0))
 					{
 						_colors = chunk_len / 3;
 						break;
@@ -690,7 +691,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/********************************************************************/
 		private static bool Op_Is_Gif(CPointer<byte> _buf, size_t _buf_sz)
 		{
-			return (_buf_sz >= 6) && ((CMemory.MemCmp(_buf, "GIF87a", 6) == 0) || (CMemory.MemCmp(_buf, "GIF89a", 6) == 0));
+			return (_buf_sz >= 6) && ((CMemory.memcmp(_buf, "GIF87a", 6) == 0) || (CMemory.memcmp(_buf, "GIF89a", 6) == 0));
 		}
 
 
@@ -783,7 +784,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if (mime_type.IsNull)
 				return (c_int)OpusFileError.Fault;
 
-			CMemory.MemCpy(mime_type, _buf + (uint)i, (int)mime_type_length);
+			CMemory.memcpy(mime_type, _buf + (uint)i, mime_type_length);
 			mime_type[mime_type_length] = 0x00;
 			_pic.Mime_Type = mime_type;
 			i += mime_type_length;
@@ -799,7 +800,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if (description.IsNull)
 				return (c_int)OpusFileError.Fault;
 
-			CMemory.MemCpy(description, _buf + (uint)i, (int)description_length);
+			CMemory.memcpy(description, _buf + (uint)i, description_length);
 			description[description_length] = 0x00;
 			_pic.Description = description;
 			i += description_length;
@@ -835,7 +836,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			// Attempt to determine the image format
 			PictureFormat format = PictureFormat.Unknown;
 
-			if ((mime_type_length == 3) && (CMemory.StrCmp(mime_type, "-->") == 0))
+			if ((mime_type_length == 3) && (CMemory.strcmp(mime_type, "-->") == 0))
 			{
 				format = PictureFormat.Url;
 
@@ -918,7 +919,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			// Adjust _buf_sz instead of using data_length to capture the terminating NULL
 			// for URLs
 			_buf_sz -= i;
-			CMemory.MemMove(_buf, _buf + (uint)i, (int)_buf_sz);
+			CMemory.memmove(_buf, _buf + (uint)i, _buf_sz);
 
 			_buf = Memory.Ogg_Realloc(_buf, _buf_sz);
 			if ((_buf_sz > 0) && _buf.IsNull)
@@ -990,7 +991,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 				return (c_int)OpusFileError.NotFormat;
 
 			// Allocate an extra byte to allow appending a terminating NUL to URL data
-			CPointer<byte> buf = CMemory.MAlloc<byte>((int)buf_sz + 1);
+			CPointer<byte> buf = CMemory.malloc<byte>(buf_sz + 1);
 			if (buf.IsNull)
 				return (c_int)OpusFileError.Fault;
 

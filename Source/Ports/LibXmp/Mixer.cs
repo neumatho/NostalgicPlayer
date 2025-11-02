@@ -1203,8 +1203,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int start = ld.Start;
 				c_int end = ld.End;
 
-				CMemory.MemCpy(ld.Prologue, ld.SPtr + (start * 2 - prologue_Num * 2), prologue_Num * 2);
-				CMemory.MemCpy(ld.Epilogue, ld.SPtr + end * 2, epilogue_Num * 2);
+				CMemory.memcpy(ld.Prologue, ld.SPtr + (start * 2 - prologue_Num * 2), (size_t)prologue_Num * 2);
+				CMemory.memcpy(ld.Epilogue, ld.SPtr + end * 2, (size_t)epilogue_Num * 2);
 
 				if (!ld.First_Loop)
 				{
@@ -1223,8 +1223,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				CPointer<uint8> start = ld.SPtr + ld.Start;
 				CPointer<uint8> end = ld.SPtr + ld.End;
 
-				CMemory.MemCpy(ld.Prologue, start - prologue_Num, prologue_Num);
-				CMemory.MemCpy(ld.Epilogue, end, epilogue_Num);
+				CMemory.memcpy(ld.Prologue, start - prologue_Num, (size_t)prologue_Num);
+				CMemory.memcpy(ld.Epilogue, end, (size_t)epilogue_Num);
 
 				if (!ld.First_Loop)
 				{
@@ -1260,16 +1260,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int start = ld.Start;
 				c_int end = ld.End;
 
-				CMemory.MemCpy(ld.SPtr + (start - prologue_Num) * 2, ld.Prologue, prologue_Num * 2);
-				CMemory.MemCpy(ld.SPtr + end * 2, ld.Epilogue, epilogue_Num * 2);
+				CMemory.memcpy(ld.SPtr + (start - prologue_Num) * 2, ld.Prologue, (size_t)prologue_Num * 2);
+				CMemory.memcpy(ld.SPtr + end * 2, ld.Epilogue, (size_t)epilogue_Num * 2);
 			}
 			else
 			{
 				CPointer<uint8> start = ld.SPtr + ld.Start;
 				CPointer<uint8> end = ld.SPtr + ld.End;
 
-				CMemory.MemCpy(start - prologue_Num, ld.Prologue, prologue_Num);
-				CMemory.MemCpy(end, ld.Epilogue, epilogue_Num);
+				CMemory.memcpy(start - prologue_Num, ld.Prologue, (size_t)prologue_Num);
+				CMemory.memcpy(end, ld.Epilogue, (size_t)epilogue_Num);
 			}
 		}
 
@@ -1453,10 +1453,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((~s.Format & Xmp_Format.Mono) != 0)
 				byteLen *= 2;
 
-			CMemory.MemSet(s.Buf32, 0, byteLen);
+			CMemory.memset(s.Buf32, 0, (size_t)byteLen);
 
 			if (s.EnableSurround == Surround.RealChannels)
-				CMemory.MemSet(s.Buf32Rear, 0, byteLen);
+				CMemory.memset(s.Buf32Rear, 0, (size_t)byteLen);
 		}
 
 

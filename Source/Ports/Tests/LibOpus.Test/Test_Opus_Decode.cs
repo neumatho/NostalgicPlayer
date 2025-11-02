@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 			opus_uint32 dec_final_range1 = 2;
 			opus_uint32 dec_final_range2 = 2;
 
-			CPointer<byte> packet = CMemory.MAlloc<byte>(Max_Packet);
+			CPointer<byte> packet = CMemory.malloc<byte>(Max_Packet);
 
 			CPointer<c_short> outbuf_int = new CPointer<c_short>((Max_Frame_Samp + 16) * 2);
 
@@ -249,8 +249,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 
 			Assert.IsFalse(err1);
 
-			CMemory.Free(outbuf_int);
-			CMemory.Free(packet);
+			CMemory.free(outbuf_int);
+			CMemory.free(packet);
 		}
 		#endregion
 	}

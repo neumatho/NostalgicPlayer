@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (ffh.Tempo >= 16)
 				return -1;
 
-			CPointer<uint8> comment = CMemory.MAlloc<uint8>(ffh.TextLen + Comment_MaxLines + 1);
+			CPointer<uint8> comment = CMemory.malloc<uint8>((size_t)ffh.TextLen + Comment_MaxLines + 1);
 			if (comment.IsNotNull)
 			{
 				Far_Read_Text(comment, ffh.TextLen, f);
@@ -193,7 +193,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Chn = 16;
 			mod.Len = ffh2.SongLen;
 			mod.Rst = ffh2.Restart;
-			CMemory.MemCpy<byte>(mod.Xxo, ffh2.Order, mod.Len);
+			CMemory.memcpy<byte>(mod.Xxo, ffh2.Order, (size_t)mod.Len);
 
 			for (mod.Pat = i = 0; i < 256; i++)
 			{
@@ -234,7 +234,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			// Read and convert patterns
-			CPointer<uint8> patBuf = CMemory.MAlloc<uint8>(256 * 16 * 4);
+			CPointer<uint8> patBuf = CMemory.malloc<uint8>(256 * 16 * 4);
 			if (patBuf.IsNull)
 				return -1;
 
@@ -293,7 +293,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			CMemory.Free(patBuf);
+			CMemory.free(patBuf);
 
 			// Allocate tracks for any patterns referenced with a size of 0. These
 			// use the configured pattern break position, which is 64 by default
@@ -391,7 +391,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err:
-			CMemory.Free(patBuf);
+			CMemory.free(patBuf);
 			return -1;
 		}
 
@@ -444,6 +444,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -528,6 +529,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						@event.FxP = (byte)(((vol - 1) << 4) | param);
 						@event.Vol = 0;
 					}
+
 					break;
 				}
 

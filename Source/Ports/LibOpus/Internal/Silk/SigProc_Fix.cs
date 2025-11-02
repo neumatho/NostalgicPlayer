@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Silk_MemCpy<T>(CPointer<T> dest, CPointer<T> src, int size)
 		{
-			CMemory.MemCpy(dest, src, size);
+			CMemory.memcpy(dest, src, (size_t)size);
 		}
 
 
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Silk_MemSet<T>(CPointer<T> ptr, T value, int length)
 		{
-			CMemory.MemSet(ptr, value, length);
+			CMemory.memset(ptr, value, (size_t)length);
 		}
 
 
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Silk_MemMove<T>(CPointer<T> dest, CPointer<T> src, int size)
 		{
-			CMemory.MemMove(dest, src, size);
+			CMemory.memmove(dest, src, (size_t)size);
 		}
 
 

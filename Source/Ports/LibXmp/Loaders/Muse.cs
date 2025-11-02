@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(@in, 1, 8) != 8)
 				return -1;
 
-			if (CMemory.MemCmp(@in, "MUSE", 4) != 0)
+			if (CMemory.memcmp(@in, "MUSE", 4) != 0)
 				return -1;
 
 			uint32 r = DataIo.ReadMem32B(@in + 4);

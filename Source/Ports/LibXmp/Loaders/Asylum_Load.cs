@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 32) < 32)
 				return -1;
 
-			if (CMemory.MemCmp(buf, "ASYLUM Music Format V1.0\0\0\0\0\0\0\0\0", 32) != 0)
+			if (CMemory.memcmp(buf, "ASYLUM Music Format V1.0\0\0\0\0\0\0\0\0", 32) != 0)
 				return -1;
 
 			lib.common.LibXmp_Read_Title(f, out t, 0, encoder);

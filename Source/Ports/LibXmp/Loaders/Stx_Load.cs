@@ -145,14 +145,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 8) < 8)
 				return -1;
 
-			if ((CMemory.MemCmp(buf, "!Scream!", 8) != 0) && (CMemory.MemCmp(buf, "BMOD2STM", 8) != 0))
+			if ((CMemory.memcmp(buf, "!Scream!", 8) != 0) && (CMemory.memcmp(buf, "BMOD2STM", 8) != 0))
 				return -1;
 
 			f.Hio_Seek(start + 60, SeekOrigin.Begin);
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if (CMemory.MemCmp(buf, "SCRM", 4) != 0)
+			if (CMemory.memcmp(buf, "SCRM", 4) != 0)
 				return -1;
 
 			f.Hio_Seek(start + 0, SeekOrigin.Begin);
@@ -203,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			// BMOD2STM does not convert pitch
-			if (CMemory.StrNCmp(sfh.Magic, "BMOD2STM", 8) == 0)
+			if (CMemory.strncmp(sfh.Magic, "BMOD2STM", 8) == 0)
 				bmod2stm = true;
 
 			mod.Ins = sfh.InsNum;
@@ -230,11 +230,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			else
 				lib.common.LibXmp_Set_Type(m, string.Format("STM2STX 1.{0}", broken ? 0 : 1));
 
-			CPointer<uint16> pp_Pat = CMemory.CAlloc<uint16>(mod.Pat);
+			CPointer<uint16> pp_Pat = CMemory.calloc<uint16>((size_t)mod.Pat);
 			if (pp_Pat.IsNull)
 				goto Err;
 
-			CPointer<uint16> pp_Ins = CMemory.CAlloc<uint16>(mod.Ins);
+			CPointer<uint16> pp_Ins = CMemory.calloc<uint16>((size_t)mod.Ins);
 			if (pp_Ins.IsNull)
 				goto Err2;
 
@@ -403,8 +403,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			CMemory.Free(pp_Ins);
-			CMemory.Free(pp_Pat);
+			CMemory.free(pp_Ins);
+			CMemory.free(pp_Pat);
 
 			// Read samples
 			for (c_int i = 0; i < mod.Ins; i++)
@@ -419,9 +419,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err3:
-			CMemory.Free(pp_Ins);
+			CMemory.free(pp_Ins);
 			Err2:
-			CMemory.Free(pp_Pat);
+			CMemory.free(pp_Pat);
 			Err:
 			return -1;
 		}

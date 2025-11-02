@@ -176,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			else
 				lib.common.LibXmp_Set_Type(m, "Astroidea XMF");
 
-			CPointer<uint8> buf = CMemory.MAlloc<uint8>(Xmf_Sample_Array_Size);
+			CPointer<uint8> buf = CMemory.malloc<uint8>(Xmf_Sample_Array_Size);
 			if (buf.IsNull)
 				return -1;
 
@@ -277,7 +277,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			size_t pat_Sz = (size_t)mod.Chn * 6 * 64;
 			if (pat_Sz > Xmf_Sample_Array_Size)
 			{
-				pos = CMemory.Realloc(buf, (int)pat_Sz);
+				pos = CMemory.realloc(buf, pat_Sz);
 				if (pos.IsNull)
 					goto Err;
 
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			CMemory.Free(buf);
+			CMemory.free(buf);
 
 			// Sample data
 			//
@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err:
-			CMemory.Free(buf);
+			CMemory.free(buf);
 
 			return -1;
 		}

@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 14) < 14)
 				return -1;
 
-			if (CMemory.MemCmp(buf, "Liquid Module:", 14) != 0)
+			if (CMemory.memcmp(buf, "Liquid Module:", 14) != 0)
 				return -1;
 
 			lib.common.LibXmp_Read_Title(f, out t, 30, encoder);
@@ -288,7 +288,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			m.Quirk |= Quirk_Flag.InsVol;
 
 			mod.Name = encoder.GetString(lh.Name, 0, 30);
-			CMemory.MemCpy<uint8>(tracker_Name, lh.Tracker, 20);
+			CMemory.memcpy<uint8>(tracker_Name, lh.Tracker, 20);
 			tracker_Name[20] = 0;
 
 			for (i = 20; i >= 0; i--)

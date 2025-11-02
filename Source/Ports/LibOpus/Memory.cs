@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Opus_Copy<T>(CPointer<T> dst, CPointer<T> src, int n)
 		{
-			CMemory.MemCpy(dst, src, n);
+			CMemory.memcpy(dst, src, (size_t)n);
 		}
 
 
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Opus_Move<T>(CPointer<T> dst, CPointer<T> src, int n)
 		{
-			CMemory.MemMove(dst, src, n);
+			CMemory.memmove(dst, src, (size_t)n);
 		}
 
 
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Opus_Clear<T>(CPointer<T> dst, int n)
 		{
-			CMemory.MemSet(dst, default, n);
+			CMemory.memset(dst, default, (size_t)n);
 		}
     }
 }

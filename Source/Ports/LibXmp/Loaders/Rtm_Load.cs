@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if (CMemory.MemCmp(buf, "RTMM", 4) != 0)
+			if (CMemory.memcmp(buf, "RTMM", 4) != 0)
 				return -1;
 
 			if (f.Hio_Read8() != 0x20)
@@ -578,7 +578,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			f.Hio_Read(h.Id, 4, 1);
 
-			if (CMemory.MemCmp(id, h.Id, 4) != 0)
+			if (CMemory.memcmp(id, h.Id, 4) != 0)
 				return -1;
 
 			h.Rc = f.Hio_Read8();

@@ -323,7 +323,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// attempted to remap it to index 0 and subtract 1 from the index,
 			// breaking modules that directly reference the empty track in the
 			// order table (see "cosmos st.amf")
-			CPointer<c_int> trkMap = CMemory.CAlloc<c_int>(mod.Trk + 1);
+			CPointer<c_int> trkMap = CMemory.calloc<c_int>((size_t)mod.Trk + 1);
 			if (trkMap.IsNull)
 				return -1;
 
@@ -354,7 +354,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			mod.Trk = newTrk + 1;		// + empty track
-			CMemory.Free(trkMap);
+			CMemory.free(trkMap);
 
 			if (f.Hio_Error() != 0)
 				return -1;
@@ -459,6 +459,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_VolSlide;
 									fxP = (uint8)(-(int8)t3 & 0x0f);
 								}
+
 								break;
 							}
 
@@ -491,6 +492,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_Porta_Up;
 									fxP = (uint8)(-(int8)t3);
 								}
+
 								break;
 							}
 
@@ -544,6 +546,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_Tone_VSlide;
 									fxP = (uint8)(-(int8)t3 & 0x0f);
 								}
+
 								break;
 							}
 
@@ -559,6 +562,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_Vibra_VSlide;
 									fxP = (uint8)(-(int8)t3 & 0x0f);
 								}
+
 								break;
 							}
 
@@ -608,6 +612,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_Extended;
 									fxP = (uint8)((Effects.Ex_F_VSlide_Dn << 4) | (t3 & 0x0f));
 								}
+
 								break;
 							}
 
@@ -623,6 +628,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_Porta_Up;
 									fxP = (uint8)(0xf0 | (fxP & 0x0f));
 								}
+
 								break;
 							}
 
@@ -663,6 +669,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_Porta_Up;
 									fxP = (uint8)(0xe0 | (fxP & 0x0f));
 								}
+
 								break;
 							}
 
@@ -681,6 +688,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									fxT = Effects.Fx_SetPan;
 									fxP = (uint8)Math.Min(0xff, pan);
 								}
+
 								break;
 							}
 						}

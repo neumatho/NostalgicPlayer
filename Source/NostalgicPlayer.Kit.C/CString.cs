@@ -741,6 +741,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 						idx++;
 						continue;
 					}
+
 					break;
 				}
 

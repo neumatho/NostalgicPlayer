@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 				mod.Xxs[i].Lps = 0;
 				mod.Xxs[i].Lpe = 10000;
 				mod.Xxs[i].Flg = Xmp_Sample_Flag.Loop;
-				mod.Xxs[i].Data = CMemory.CAlloc<uint8>(11000);
+				mod.Xxs[i].Data = CMemory.calloc<uint8>(11000);
 				mod.Xxs[i].Data += 4;
 			}
 

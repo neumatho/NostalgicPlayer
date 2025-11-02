@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 
 			c_int ret = opaque.Xmp_Load_Module_From_Memory(buffer, size);
 			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load");
-			CMemory.Free(buffer);
+			CMemory.free(buffer);
 
 			// This input caused hangs in the IT loader due to missing EOF
 			// checks during the pattern scan and pattern loading loops

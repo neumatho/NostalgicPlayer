@@ -310,7 +310,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			mod.Trk = mod.Pat * mod.Chn;
 
-			CMemory.MemCpy<uint8>(mod.Xxo, ih.Pos, mod.Len);
+			CMemory.memcpy<uint8>(mod.Xxo, ih.Pos, (size_t)mod.Len);
 
 			for (i = 0; i < mod.Len; i++)
 			{
@@ -659,6 +659,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 

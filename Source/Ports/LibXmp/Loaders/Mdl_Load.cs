@@ -206,11 +206,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			m.C4Rate = Constants.C4_Ntsc_Rate;
 
 			data.V_EnvNum = data.P_EnvNum = data.F_EnvNum = 0;
-			data.S_Index = CMemory.CAlloc<c_int>(256);
-			data.I_Index = CMemory.CAlloc<c_int>(256);
-			data.V_Index = CMemory.MAlloc<c_int>(256);
-			data.P_Index = CMemory.MAlloc<c_int>(256);
-			data.F_Index = CMemory.MAlloc<c_int>(256);
+			data.S_Index = CMemory.calloc<c_int>(256);
+			data.I_Index = CMemory.calloc<c_int>(256);
+			data.V_Index = CMemory.malloc<c_int>(256);
+			data.P_Index = CMemory.malloc<c_int>(256);
+			data.F_Index = CMemory.malloc<c_int>(256);
 
 			if (data.S_Index.IsNull || data.I_Index.IsNull || data.V_Index.IsNull || data.P_Index.IsNull || data.F_Index.IsNull)
 			{
@@ -270,13 +270,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			Err:
-			CMemory.Free(data.F_Index);
-			CMemory.Free(data.P_Index);
-			CMemory.Free(data.V_Index);
-			CMemory.Free(data.I_Index);
-			CMemory.Free(data.S_Index);
+			CMemory.free(data.F_Index);
+			CMemory.free(data.P_Index);
+			CMemory.free(data.V_Index);
+			CMemory.free(data.I_Index);
+			CMemory.free(data.S_Index);
 
-			CMemory.Free(data.PackInfo);
+			CMemory.free(data.PackInfo);
 
 			m.Quirk |= Quirk_Flag.Ft2 | Quirk_Flag.KeyOff;
 			m.Read_Event_Type = Read_Event.Ft2;
@@ -1135,7 +1135,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (m.Xtra == null)
 				return -1;
 
-			data.PackInfo = CMemory.CAlloc<c_int>(mod.Smp);
+			data.PackInfo = CMemory.calloc<c_int>((size_t)mod.Smp);
 			if (data.PackInfo.IsNull)
 				return -1;
 
@@ -1211,7 +1211,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (lib.common.LibXmp_Init_Instrument(m) < 0)
 				return -1;
 
-			data.PackInfo = CMemory.CAlloc<c_int>(mod.Smp);
+			data.PackInfo = CMemory.calloc<c_int>((size_t)mod.Smp);
 			if (data.PackInfo.IsNull)
 				return -1;
 
@@ -1340,7 +1340,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if (len > smpBuf_Alloc)
 				{
-					CPointer<uint8> tmp = CMemory.Realloc(smpBuf, len);
+					CPointer<uint8> tmp = CMemory.realloc(smpBuf, (size_t)len);
 					if (tmp.IsNull)
 						goto Err2;
 
@@ -1374,7 +1374,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if ((len <= 0) || (len > Constants.Max_Sample_Size))		// Max compressed sample size
 								goto Err2;
 
-							buf = CMemory.MAlloc<uint8>(len + 4);
+							buf = CMemory.malloc<uint8>((size_t)len + 4);
 							if (buf.IsNull)
 								goto Err2;
 
@@ -1387,7 +1387,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (Unpack_Sample8(smpBuf, buf, len, xxs.Len) < 0)
 								goto Err3;
 
-							CMemory.Free(buf);
+							CMemory.free(buf);
 							left -= len + 4;
 							break;
 						}
@@ -1403,7 +1403,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if ((len <= 0) || (len > Constants.Max_Sample_Size))
 								goto Err2;
 
-							buf = CMemory.MAlloc<uint8>(len + 4);
+							buf = CMemory.malloc<uint8>((size_t)len + 4);
 							if (buf.IsNull)
 								goto Err2;
 
@@ -1416,7 +1416,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (Unpack_Sample16(smpBuf, buf, len, xxs.Len) < 0)
 								goto Err3;
 
-							CMemory.Free(buf);
+							CMemory.free(buf);
 							left -= len + 4;
 							break;
 						}
@@ -1431,15 +1431,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					goto Err2;
 			}
 
-			CMemory.Free(smpBuf);
+			CMemory.free(smpBuf);
 
 			return 0;
 
 			Err3:
-			CMemory.Free(buf);
+			CMemory.free(buf);
 
 			Err2:
-			CMemory.Free(smpBuf);
+			CMemory.free(smpBuf);
 
 			return -1;
 		}

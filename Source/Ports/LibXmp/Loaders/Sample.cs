@@ -201,7 +201,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			// Add guard bytes before the buffer for higher order interpolation
-			xxs.Data = CMemory.MAlloc<byte>(byteLen + extraLen + 4);
+			xxs.Data = CMemory.malloc<byte>((size_t)(byteLen + extraLen + 4));
 			if (xxs.Data.IsNull)
 				goto Err;
 
@@ -218,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// formats supporting stereo samples use non-interleaved stereo
 			if (((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0) && ((~flags & Sample_Flag.Interleaved) != 0))
 			{
-				tmp = CMemory.MAlloc<byte>(byteLen);
+				tmp = CMemory.malloc<byte>((size_t)byteLen);
 				if (tmp.IsNull)
 					goto Err2;
 
@@ -226,7 +226,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			if ((flags & Sample_Flag.NoLoad) != 0)
-				CMemory.MemCpy(dest, buffer, byteLen);
+				CMemory.memcpy(dest, buffer, (size_t)byteLen);
 			else
 			{
 				if ((flags & Sample_Flag.Adpcm) != 0)
@@ -246,7 +246,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				{
 					c_int x = (c_int)f.Hio_Read(dest, 1, (size_t)byteLen);
 					if (x != byteLen)
-						CMemory.MemSet<byte>(dest + x, 0, byteLen - x);
+						CMemory.memset<byte>(dest + x, 0, (size_t)(byteLen - x));
 				}
 			}
 
@@ -307,12 +307,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			for (c_int i = -1; i >= -4; i--)
 				xxs.Data[i] = xxs.Data[frameLen + i];
 
-			CMemory.Free(tmp);
+			CMemory.free(tmp);
 			return 0;
 
 			Err2:
 			LibXmp_Free_Sample(xxs);
-			CMemory.Free(tmp);
+			CMemory.free(tmp);
 
 			Err:
 			return -1;
@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			if (s.Data.IsNotNull)
 			{
-				CMemory.Free(s.Data - 4);
+				CMemory.free(s.Data - 4);
 				s.Data.SetToNull();
 			}
 		}

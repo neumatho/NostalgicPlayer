@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			mod.Len = i;
-			CMemory.MemCpy<uint8>(mod.Xxo, ffh.Order, mod.Len);
+			CMemory.memcpy<uint8>(mod.Xxo, ffh.Order, (size_t)mod.Len);
 
 			mod.Spd = 4;
 			mod.Bpm = 125;
@@ -427,6 +427,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 			}

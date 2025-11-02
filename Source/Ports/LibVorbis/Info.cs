@@ -420,7 +420,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 				byte[] buffer = new byte[6];
 				V_ReadString(opb, buffer, 6);
 
-				if (CMemory.MemCmp(buffer, "vorbis", 6) != 0)
+				if (CMemory.memcmp(buffer, "vorbis", 6) != 0)
 					return 0;	// Not vorbis
 
 				return 1;
@@ -453,7 +453,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 					c_int packtype = (c_int)opb.Read(8);
 					V_ReadString(opb, buffer, 6);
 
-					if (CMemory.MemCmp(buffer, "vorbis", 6) != 0)
+					if (CMemory.memcmp(buffer, "vorbis", 6) != 0)
 					{
 						// Not a vorbis header
 						return (c_int)VorbisError.NotVorbis;

@@ -1130,7 +1130,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			if (initial.IsNotNull)
 			{
 				CPointer<byte> buffer = vf.oy.Buffer(ibytes);
-				CMemory.MemCpy(buffer, initial, (c_int)ibytes);
+				CMemory.memcpy(buffer, initial, (size_t)ibytes);
 				vf.oy.Wrote(ibytes);
 			}
 
@@ -1163,7 +1163,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 				vf.serialnos[0] = vf.current_serialno = vf.os.State.SerialNo;
 				vf.serialnos[1] = serialno_list_size;
 
-				CMemory.MemCpy(vf.serialnos + 2, serialno_list, serialno_list_size);
+				CMemory.memcpy(vf.serialnos + 2, serialno_list, (size_t)serialno_list_size);
 
 				vf.offsets = Memory.Ogg_CAlloc<ogg_int64_t>(1);
 				vf.dataoffsets = Memory.Ogg_CAlloc<ogg_int64_t>(1);

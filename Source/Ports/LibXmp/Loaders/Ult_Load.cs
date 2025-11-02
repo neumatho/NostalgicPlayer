@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 15) < 15)
 				return -1;
 
-			if (CMemory.MemCmp(buf, "MAS_UTrack_V00", 14) != 0)
+			if (CMemory.memcmp(buf, "MAS_UTrack_V00", 14) != 0)
 				return -1;
 
 			if ((buf[14] < '1') || (buf[14] > '4'))

@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			ret = handle.LibXmp_Iff_Load(m, f, data);
 
 			handle.LibXmp_Iff_Release();
-			CMemory.Free(data.PatBuf);
+			CMemory.free(data.PatBuf);
 
 			if (ret < 0)
 				return -1;
@@ -943,7 +943,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if (data.PatBuf_Alloc < total_Size)
 			{
-				CPointer<uint8> tmp = CMemory.Realloc(data.PatBuf, (c_int)total_Size);
+				CPointer<uint8> tmp = CMemory.realloc(data.PatBuf, total_Size);
 				if (tmp.IsNull)
 					return -1;
 
@@ -1038,7 +1038,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((c_long)len > (f.Hio_Size() - f.Hio_Tell()))
 				return 0;
 
-			CPointer<uint8> comment = CMemory.MAlloc<uint8>((c_int)len + 1);
+			CPointer<uint8> comment = CMemory.malloc<uint8>(len + 1);
 			if (comment.IsNotNull)
 			{
 				if (skip_Byte != 0)

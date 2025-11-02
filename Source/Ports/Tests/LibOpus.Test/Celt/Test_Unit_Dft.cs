@@ -123,8 +123,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 
 			Kiss_Fft_State cfg = mode.mdct.kfft[id];
 
-			CPointer<Kiss_Fft_Cpx> _in = CMemory.MAlloc<Kiss_Fft_Cpx>((int)buflen);
-			CPointer<Kiss_Fft_Cpx> _out = CMemory.MAlloc<Kiss_Fft_Cpx>((int)buflen);
+			CPointer<Kiss_Fft_Cpx> _in = CMemory.malloc<Kiss_Fft_Cpx>(buflen);
+			CPointer<Kiss_Fft_Cpx> _out = CMemory.malloc<Kiss_Fft_Cpx>(buflen);
 
 			for (c_int k = 0; k < nfft; ++k)
 			{

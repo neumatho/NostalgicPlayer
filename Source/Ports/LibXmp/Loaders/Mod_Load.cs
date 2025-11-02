@@ -359,14 +359,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if ((CMemory.StrNCmp(buf + 2, "CH", 2) == 0) && char.IsDigit((char)buf[0]) && char.IsDigit((char)buf[1]))
+			if ((CMemory.strncmp(buf + 2, "CH", 2) == 0) && char.IsDigit((char)buf[0]) && char.IsDigit((char)buf[1]))
 			{
 				i = (buf[0] - '0') * 10 + buf[1] - '0';
 				if ((i > 0) && (i <= 32))
 					goto Found;
 			}
 
-			if ((CMemory.StrNCmp(buf + 1, "CHN", 3) == 0) && char.IsDigit((char)buf[0]))
+			if ((CMemory.strncmp(buf + 1, "CHN", 3) == 0) && char.IsDigit((char)buf[0]))
 			{
 				if ((buf[0] - '0') != 0)
 					goto Found;
@@ -374,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			for (i = 0; i < mod_Magic.Length; i++)
 			{
-				if (CMemory.MemCmp(buf, mod_Magic[i].Magic, 4) == 0)
+				if (CMemory.memcmp(buf, mod_Magic[i].Magic, 4) == 0)
 					break;
 			}
 
@@ -538,7 +538,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			mod.Len = mh.Len;
 
-			CMemory.MemCpy<byte>(mod.Xxo, mh.Order, 128);
+			CMemory.memcpy<byte>(mod.Xxo, mh.Order, 128);
 
 			if ((mh.Restart < 0x7f) && (mh.Restart != 0x78) && (mh.Restart < mod.Len))
 			{
@@ -599,7 +599,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			// Load and convert patterns
-			CPointer<uint8> patBuf = CMemory.MAlloc<uint8>(64 * 4 * mod.Chn);
+			CPointer<uint8> patBuf = CMemory.malloc<uint8>((size_t)(64 * 4 * mod.Chn));
 			if (patBuf.IsNull)
 				return -1;
 
@@ -607,13 +607,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				if (lib.common.LibXmp_Alloc_Pattern_Tracks(mod, i, 64) < 0)
 				{
-					CMemory.Free(patBuf);
+					CMemory.free(patBuf);
 					return -1;
 				}
 
 				if (f.Hio_Read(patBuf, (size_t)(64 * 4 * mod.Chn), 1) < 1)
 				{
-					CMemory.Free(patBuf);
+					CMemory.free(patBuf);
 					return -1;
 				}
 
@@ -680,7 +680,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			CMemory.Free(patBuf);
+			CMemory.free(patBuf);
 
 			// VBlank detection routine.
 			// Despite VBlank being dependent on the tracker used, VBlank detection
@@ -870,7 +870,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				uint8[] buf = new uint8[5];
 				c_int num = (c_int)f.Hio_Read(buf, 1, 5);
 
-				if ((num == 5) && (CMemory.MemCmp(buf, "ADPCM", 5) == 0))
+				if ((num == 5) && (CMemory.memcmp(buf, "ADPCM", 5) == 0))
 					flags |= Sample_Flag.Adpcm;
 				else
 					f.Hio_Seek(pos, SeekOrigin.Begin);
@@ -1292,11 +1292,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			CPointer<byte> magic = new CPointer<byte>(4);
 			f.Hio_Read(magic, 1, 4);
-			mkMark = CMemory.StrNCmp(magic, "M.K.", 4) == 0;
+			mkMark = CMemory.strncmp(magic, "M.K.", 4) == 0;
 
 			for (c_int i = 0; i < mod_Magic.Length; i++)
 			{
-				if (CMemory.StrNCmp(magic, mod_Magic[i].Magic, 4) == 0)
+				if (CMemory.strncmp(magic, mod_Magic[i].Magic, 4) == 0)
 				{
 					channels = mod_Magic[i].Ch;
 					trackerId = mod_Magic[i].Id;
@@ -1310,9 +1310,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if (channels == 0)
 			{
-				if ((CMemory.StrNCmp(magic + 2, "CH", 2) == 0) && char.IsDigit((char)magic[0]) && char.IsDigit((char)magic[1]))
+				if ((CMemory.strncmp(magic + 2, "CH", 2) == 0) && char.IsDigit((char)magic[0]) && char.IsDigit((char)magic[1]))
 					channels = (magic[0] - '0') * 10 + magic[1] - '0';
-				else if ((CMemory.StrNCmp(magic + 1, "CHN", 3) == 0) && char.IsDigit((char)magic[0]))
+				else if ((CMemory.strncmp(magic + 1, "CHN", 3) == 0) && char.IsDigit((char)magic[0]))
 					channels = magic[0] - '0';
 				else
 					return InternalFormat.NotRecognized;
@@ -1352,7 +1352,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				c_int num_Read = (c_int)f.Hio_Read(idBuffer, 1, 4);
 				f.Hio_Seek(pos, SeekOrigin.Begin);
 
-				if ((num_Read == 4) && (CMemory.MemCmp(idBuffer, "FLEX", 4) == 0))
+				if ((num_Read == 4) && (CMemory.memcmp(idBuffer, "FLEX", 4) == 0))
 				{
 					trackerId = InternalFormat.FlexTrax;
 					needs_Timing_Detection = false;
@@ -1376,7 +1376,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// Worst case if there are still issues with this, OpenMPT validates later
 			// patterns in potential WOW files (where sample data would be located in a
 			// regular M.K. MOD) to rule out false positives
-			if ((CMemory.StrNCmp(magic, "M.K.", 4) == 0) && maybe_Wow && ((0x43c + pat * 32 * 0x40 + smp_Size) == (fileSize & ~1)))
+			if ((CMemory.strncmp(magic, "M.K.", 4) == 0) && maybe_Wow && ((0x43c + pat * 32 * 0x40 + smp_Size) == (fileSize & ~1)))
 			{
 				channels = 8;
 				trackerId = InternalFormat.ModsGrave;
@@ -1389,7 +1389,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Skip_Test:
 			if ((trackerId is InternalFormat.ProTracker or InternalFormat.NoiseTracker or InternalFormat.Probably_NoiseTracker or InternalFormat.SoundTracker or InternalFormat.Unknown) || mkMark)
 			{
-				CPointer<uint8> patBuf = CMemory.MAlloc<uint8>(64 * 4 * channels);
+				CPointer<uint8> patBuf = CMemory.malloc<uint8>((size_t)(64 * 4 * channels));
 				out_Of_Range = false;
 				bool sameRow_Fxx = false;
 

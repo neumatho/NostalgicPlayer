@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load");
 
 			opaque.Xmp_Free_Context();
-			CMemory.Free(buffer);
+			CMemory.free(buffer);
 		}
 	}
 }

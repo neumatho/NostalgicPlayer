@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (tracks_Size > max_Sample_Size)
 				max_Sample_Size = tracks_Size;
 
-			CPointer<uint8> buf = CMemory.MAlloc<uint8>(max_Sample_Size);
+			CPointer<uint8> buf = CMemory.malloc<uint8>((size_t)max_Sample_Size);
 			if (buf.IsNull)
 				return -1;
 
@@ -417,7 +417,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				a = f.Hio_Read8();      // Packing
 
-				CPointer<uint8> comment = CMemory.MAlloc<uint8>(infoLen + 1);
+				CPointer<uint8> comment = CMemory.malloc<uint8>((size_t)infoLen + 1);
 				if (comment.IsNotNull)
 				{
 					comment[infoLen] = 0;
@@ -432,7 +432,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					if (ret < 0)
 					{
-						CMemory.Free(comment);
+						CMemory.free(comment);
 						comment.SetToNull();
 					}
 					else
@@ -446,12 +446,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			m.Quirk = Quirk_Flag.VibAll | Quirk_Flag.KeyOff | Quirk_Flag.InvLoop;
 			m.Module_Flags = Xmp_Module_Flags.Uses_Tracks;
 
-			CMemory.Free(buf);
+			CMemory.free(buf);
 
 			return 0;
 
 			Err:
-			CMemory.Free(buf);
+			CMemory.free(buf);
 
 			return -1;
 		}
@@ -483,6 +483,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						e.F2T = Effects.Fx_VolSlide_Up;
 						e.F2P = (byte)(parm >> 8);
 					}
+
 					break;
 				}
 
@@ -617,6 +618,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						// Ignore
 						e.FxT = 0;
 					}
+
 					break;
 				}
 
@@ -645,6 +647,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						e.F2T = vol_Effect;
 						e.F2P = (byte)(parm >> 8);
 					}
+
 					break;
 				}
 
@@ -692,6 +695,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						e.F2T = Effects.Fx_VolSlide_Dn;
 						e.F2P = (byte)(parm >> 8);
 					}
+
 					break;
 				}
 
@@ -711,6 +715,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						e.F2T = Effects.Fx_VolSlide_Dn;
 						e.F2P = (byte)(parm >> 8);
 					}
+
 					break;
 				}
 
@@ -730,6 +735,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						e.F2T = Effects.Fx_VolSlide_Dn;
 						e.F2P = (byte)(parm >> 8);
 					}
+
 					break;
 				}
 
@@ -798,6 +804,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						else
 							e.FxT = 0;
 					}
+
 					break;
 				}
 

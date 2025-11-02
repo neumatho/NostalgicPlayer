@@ -43,8 +43,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 		/********************************************************************/
 		private void Test_Overflow()
 		{
-			CPointer<byte> _in = CMemory.MAlloc<byte>(PacketSize);
-			CPointer<opus_int16> _out = CMemory.MAlloc<opus_int16>(FrameSize * Channels);
+			CPointer<byte> _in = CMemory.malloc<byte>(PacketSize);
+			CPointer<opus_int16> _out = CMemory.malloc<opus_int16>(FrameSize * Channels);
 
 			Console.Write("  Checking for padding overflow...");
 
@@ -56,15 +56,15 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 
 			_in[0] = 0xff;
 			_in[1] = 0x41;
-			CMemory.MemSet<byte>(_in + 2, 0xff, PacketSize - 3);
+			CMemory.memset<byte>(_in + 2, 0xff, PacketSize - 3);
 			_in[PacketSize - 1] = 0x0b;
 
 			OpusDecoder decoder = OpusDecoder.Create(48000, Channels, out _);
 			c_int result = decoder.Decode(_in, PacketSize, _out, FrameSize, false);
 			decoder.Destroy();
 
-			CMemory.Free(_in);
-			CMemory.Free(_out);
+			CMemory.free(_in);
+			CMemory.free(_out);
 
 			if ((OpusError)result != OpusError.Invalid_Packet)
 			{

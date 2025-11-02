@@ -26,18 +26,21 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		public void Test_Laplace()
 		{
 			c_int[] val = new c_int[10000], decay = new c_int[10000];
-			CPointer<byte> ptr = CMemory.MAlloc<byte>(Data_Size);
+			CPointer<byte> ptr = CMemory.malloc<byte>(Data_Size);
 
 			EntEnc.Ec_Enc_Init(out Ec_Enc enc, ptr, Data_Size);
 
-			val[0] = 3; decay[0] = 6000;
-			val[1] = 0; decay[1] = 5800;
-			val[2] = -1; decay[2] = 5600;
+			val[0] = 3;
+			decay[0] = 6000;
+			val[1] = 0;
+			decay[1] = 5800;
+			val[2] = -1;
+			decay[2] = 5600;
 
 			for (c_int i = 3; i < 10000; i++)
 			{
-				val[i] = RandomGenerator.GetRandomNumber() % 15 - 7;
-				decay[i] = RandomGenerator.GetRandomNumber() % 11000 + 5000;
+				val[i] = (RandomGenerator.GetRandomNumber() % 15) - 7;
+				decay[i] = (RandomGenerator.GetRandomNumber() % 11000) + 5000;
 			}
 
 			for (c_int i = 0; i < 10000; i++)

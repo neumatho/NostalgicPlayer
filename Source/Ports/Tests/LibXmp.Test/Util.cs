@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 					return;
 				}
 
-				CPointer<byte> buffer = CMemory.MAlloc<byte>((c_int)size);
+				CPointer<byte> buffer = CMemory.malloc<byte>((size_t)size);
 				if (buffer.IsNull)
 				{
 					f.Hio_Close();

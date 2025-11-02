@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (c_int i = 0; i < mod.Len; i++)
 			{
 				pat = mod.Xxo[i];
-				CMemory.MemSet<uint8>(m.Scan_Cnt[i], 0, pat >= mod.Pat ? 1 : mod.Xxp[pat].Rows != 0 ? mod.Xxp[pat].Rows : 1);
+				CMemory.memset<uint8>(m.Scan_Cnt[i], 0, (size_t)(pat >= mod.Pat ? 1 : mod.Xxp[pat].Rows != 0 ? mod.Xxp[pat].Rows : 1));
 			}
 
 			// Use temporary flow control so the scan can borrow the player's
@@ -291,6 +291,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						continue;
 					}
+
 					break;
 				}
 
@@ -304,6 +305,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						ord = mod.Len;
 						continue;
 					}
+
 					continue;
 				}
 

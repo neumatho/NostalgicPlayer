@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 			c_double entropy = 0;
 
 			// Testing encoding of raw bit values
-			CPointer<byte> ptr = CMemory.MAlloc<byte>(Data_Size);
+			CPointer<byte> ptr = CMemory.malloc<byte>(Data_Size);
 
 			EntEnc.Ec_Enc_Init(out Ec_Enc enc, ptr, Data_Size);
 
@@ -142,8 +142,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 				c_int ft = RandomGenerator.GetRandomNumber() / ((Rand_Max >> (RandomGenerator.GetRandomNumber() % 11)) + 1) + 10;
 				c_int sz = RandomGenerator.GetRandomNumber() / ((Rand_Max >> (RandomGenerator.GetRandomNumber() % 9)) + 1);
 
-				CPointer<c_uint> data = CMemory.MAlloc<c_uint>(sz);
-				CPointer<c_uint> tell = CMemory.MAlloc<c_uint>(sz + 1);
+				CPointer<c_uint> data = CMemory.malloc<c_uint>((size_t)sz);
+				CPointer<c_uint> tell = CMemory.malloc<c_uint>((size_t)sz + 1);
 
 				EntEnc.Ec_Enc_Init(out enc, ptr, Data_Size2);
 
@@ -198,10 +198,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 			{
 				c_int sz = RandomGenerator.GetRandomNumber() / ((Rand_Max >> (RandomGenerator.GetRandomNumber() % 9)) + 1);
 
-				CPointer<c_uint> logp1 = CMemory.MAlloc<c_uint>(sz);
-				CPointer<c_uint> data = CMemory.MAlloc<c_uint>(sz);
-				CPointer<c_uint> tell = CMemory.MAlloc<c_uint>(sz + 1);
-				CPointer<c_uint> enc_method = CMemory.MAlloc<c_uint>(sz);
+				CPointer<c_uint> logp1 = CMemory.malloc<c_uint>((size_t)sz);
+				CPointer<c_uint> data = CMemory.malloc<c_uint>((size_t)sz);
+				CPointer<c_uint> tell = CMemory.malloc<c_uint>((size_t)sz + 1);
+				CPointer<c_uint> enc_method = CMemory.malloc<c_uint>((size_t)sz);
 
 				EntEnc.Ec_Enc_Init(out enc, ptr, Data_Size2);
 

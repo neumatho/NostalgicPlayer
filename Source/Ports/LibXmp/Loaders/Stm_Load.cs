@@ -197,7 +197,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if (CMemory.MemCmp(buf, "SCRM", 4) == 0)	// We don't want STX files
+			if (CMemory.memcmp(buf, "SCRM", 4) == 0)	// We don't want STX files
 				return -1;
 
 			f.Hio_Seek(start + 0, SeekOrigin.Begin);
@@ -310,9 +310,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			lib.common.LibXmp_Copy_Adjust(out mod.Name, sfh.Name, 20, encoder);
 
-			if ((sfh.Magic[0] == 0) || (CMemory.StrNCmp(sfh.Magic, "PCSTV", 5) == 0) || (CMemory.StrNCmp(sfh.Magic, "!Scream!", 8) == 0))
+			if ((sfh.Magic[0] == 0) || (CMemory.strncmp(sfh.Magic, "PCSTV", 5) == 0) || (CMemory.strncmp(sfh.Magic, "!Scream!", 8) == 0))
 				lib.common.LibXmp_Set_Type(m, string.Format("Scream Tracker {0}.{1:D2}", sfh.VerMaj, sfh.VerMin));
-			else if (CMemory.StrNCmp(sfh.Magic, "SWavePro", 8) == 0)
+			else if (CMemory.strncmp(sfh.Magic, "SWavePro", 8) == 0)
 				lib.common.LibXmp_Set_Type(m, string.Format("SoundWave Pro {0}.{1:D2}", sfh.VerMaj, sfh.VerMin));
 			else
 				lib.common.LibXmp_Copy_Adjust(out mod.Type, sfh.Magic, 8, encoder);

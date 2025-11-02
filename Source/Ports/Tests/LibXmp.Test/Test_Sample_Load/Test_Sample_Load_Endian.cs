@@ -40,9 +40,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 			Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad | Sample_Flag.BigEnd, xxs, MemoryMarshal.Cast<int8, uint8>(conv_R0).ToArray());
 
 			if (Is_Big_Endian())
-				Assert.AreEqual(0, CMemory.MemCmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R0).ToArray(), 10), "Invalid conversion from big-endian");
+				Assert.AreEqual(0, CMemory.memcmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R0).ToArray(), 10), "Invalid conversion from big-endian");
 			else
-				Assert.AreEqual(0, CMemory.MemCmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R1).ToArray(), 10), "Invalid conversion from big-endian");
+				Assert.AreEqual(0, CMemory.memcmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R1).ToArray(), 10), "Invalid conversion from big-endian");
 
 			Sample.LibXmp_Free_Sample(xxs);
 
@@ -50,9 +50,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 			Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad, xxs, MemoryMarshal.Cast<int8, uint8>(conv_R0).ToArray());
 
 			if (Is_Big_Endian())
-				Assert.AreEqual(0, CMemory.MemCmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R1).ToArray(), 10), "Invalid conversion from little-endian");
+				Assert.AreEqual(0, CMemory.memcmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R1).ToArray(), 10), "Invalid conversion from little-endian");
 			else
-				Assert.AreEqual(0, CMemory.MemCmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R0).ToArray(), 10), "Invalid conversion from little-endian");
+				Assert.AreEqual(0, CMemory.memcmp(xxs.Data, MemoryMarshal.Cast<int8, uint8>(conv_R0).ToArray(), 10), "Invalid conversion from little-endian");
 
 			Sample.LibXmp_Free_Sample(xxs);
 		}

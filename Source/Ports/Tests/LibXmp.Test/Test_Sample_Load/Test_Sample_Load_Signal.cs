@@ -41,12 +41,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 
 			xxs.Len = 10;
 			Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad | Sample_Flag.Uns, xxs, MemoryMarshal.Cast<int8, uint8>(buffer0).ToArray());
-			Assert.AreEqual(0, CMemory.MemCmp(xxs.Data, conv_R0, 10), "Invalid 8-bit conversion");
+			Assert.AreEqual(0, CMemory.memcmp(xxs.Data, conv_R0, 10), "Invalid 8-bit conversion");
 			Sample.LibXmp_Free_Sample(xxs);
 
 			xxs.Flg = Xmp_Sample_Flag._16Bit;
 			Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad | Sample_Flag.Uns, xxs, buffer1);
-			Assert.AreEqual(0, CMemory.MemCmp(xxs.Data, MemoryMarshal.Cast<uint16, uint8>(conv_R1).ToArray(), 20), "Invalid 16-bit conversion");
+			Assert.AreEqual(0, CMemory.memcmp(xxs.Data, MemoryMarshal.Cast<uint16, uint8>(conv_R1).ToArray(), 20), "Invalid 16-bit conversion");
 			Sample.LibXmp_Free_Sample(xxs);
 		}
 	}

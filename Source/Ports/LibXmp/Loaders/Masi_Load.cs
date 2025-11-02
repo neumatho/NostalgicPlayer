@@ -206,11 +206,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			mod.Trk = mod.Pat * mod.Chn;
 
-			data.PNam = CMemory.MAlloc<uint8>(mod.Pat * 8);     // Pattern names
+			data.PNam = CMemory.malloc<uint8>((size_t)mod.Pat * 8);     // Pattern names
 			if (data.PNam.IsNull)
 				goto Err;
 
-			data.POrd = CMemory.MAlloc<uint8>(Constants.Xmp_Max_Mod_Length * 8);
+			data.POrd = CMemory.malloc<uint8>(Constants.Xmp_Max_Mod_Length * 8);
 			if (data.POrd.IsNull)
 				goto Err2;
 
@@ -257,7 +257,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				for (j = 0; j < mod.Pat; j++)
 				{
-					if (CMemory.MemCmp(data.POrd + i * 8, data.PNam + j * 8, data.Sinaria ? 8 : 4) == 0)
+					if (CMemory.memcmp(data.POrd + (i * 8), data.PNam + (j * 8), data.Sinaria ? 8U : 4U) == 0)
 					{
 						mod.Xxo[i] = (byte)j;
 						break;
@@ -268,15 +268,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					break;
 			}
 
-			CMemory.Free(data.POrd);
-			CMemory.Free(data.PNam);
+			CMemory.free(data.POrd);
+			CMemory.free(data.PNam);
 
 			return 0;
 
 			Err3:
-			CMemory.Free(data.POrd);
+			CMemory.free(data.POrd);
 			Err2:
-			CMemory.Free(data.PNam);
+			CMemory.free(data.PNam);
 			Err:
 			return -1;
 		}

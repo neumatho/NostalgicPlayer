@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 96) != 96)
 				goto Err;
 
-			CMemory.MemCpy(sfh.Name, buf, 28);		// Song name
+			CMemory.memcpy(sfh.Name, buf, 28);		// Song name
 			sfh.Type = buf[30];											// File type
 			sfh.OrdNum = DataIo.ReadMem16L(buf + 32);					// Number of orders (must be even)
 			sfh.InsNum = DataIo.ReadMem16L(buf + 34);					// Number of instruments
@@ -290,20 +290,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			sfh.Mv = buf[51];											// Master volume
 			sfh.Uc = buf[52];											// Ultra click removal
 			sfh.Dp = buf[53];											// Default pan positions if 0xfc
-			CMemory.MemCpy(sfh.Rsvd2, buf + 54, 8);	// Reserved
+			CMemory.memcpy(sfh.Rsvd2, buf + 54, 8);	// Reserved
 			sfh.Special = DataIo.ReadMem16L(buf + 62);				// Ptr to special custom data
-			CMemory.MemCpy(sfh.ChSet, buf + 64, 32);// Channel settings
+			CMemory.memcpy(sfh.ChSet, buf + 64, 32);// Channel settings
 
 			if (sfh.Magic != Magic_SCRM)
 				goto Err;
 
 			lib.common.LibXmp_Copy_Adjust(out mod.Name, sfh.Name, 28, encoder);
 
-			pp_Ins = CMemory.CAlloc<uint16>(sfh.InsNum);
+			pp_Ins = CMemory.calloc<uint16>(sfh.InsNum);
 			if (pp_Ins.IsNull)
 				goto Err;
 
-			pp_Pat = CMemory.CAlloc<uint16>(sfh.PatNum);
+			pp_Pat = CMemory.calloc<uint16>(sfh.PatNum);
 			if (pp_Pat.IsNull)
 				goto Err2;
 
@@ -461,6 +461,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if (sfh.Version < 0x1303)
 							m.Flow_Mode = FlowMode_Flag.Mode_ST3_301;
 					}
+
 					break;
 				}
 
@@ -473,6 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						tracker_Name = string.Format("Imago Orpheus {0}.{1:x2}", (sfh.Version & 0x0f00) >> 8, sfh.Version & 0xff);
 						m.Flow_Mode = FlowMode_Flag.Mode_Orpheus;
 					}
+
 					break;
 				}
 
@@ -639,12 +641,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				{
 					// OPL2 FM instrument
 
-					CMemory.MemCpy(sah.DosName, buf + 1, 12);// DOS file name
-					CMemory.MemCpy(sah.Reg, buf + 16, 12);	// Adlib registers
+					CMemory.memcpy(sah.DosName, buf + 1, 12);// DOS file name
+					CMemory.memcpy(sah.Reg, buf + 16, 12);	// Adlib registers
 					sah.Vol = buf[28];
 					sah.Dsk = buf[29];
 					sah.C2Spd = DataIo.ReadMem16L(buf + 32);			// C4 speed
-					CMemory.MemCpy(sah.Name, buf + 48, 28);	// Instrument name
+					CMemory.memcpy(sah.Name, buf + 48, 28);	// Instrument name
 					sah.Magic = DataIo.ReadMem32B(buf + 76);			// 'SCRI'
 
 					if (sah.Magic != Magic_SCRI)
@@ -668,7 +670,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					continue;
 				}
 
-				CMemory.MemCpy(sih.DosName, buf + 1, 12);	// DOS file name
+				CMemory.memcpy(sih.DosName, buf + 1, 12);	// DOS file name
 				sih.MemSeg_Hi = buf[13];								// High byte of sample pointer
 				sih.MemSeg = DataIo.ReadMem16L(buf + 14);				// Pointer to sample data
 				sih.Length = DataIo.ReadMem32L(buf + 16);				// Length
@@ -682,7 +684,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				sih.Pack = buf[30];										// Packing type
 				sih.Flags = (S3M_Samp_Flag)buf[31];						// Loop/stereo/16 bit flags
 				sih.C2Spd = DataIo.ReadMem16L(buf + 32);				// C4 speed
-				CMemory.MemCpy(sih.Name, buf + 48, 28);// Instrument name
+				CMemory.memcpy(sih.Name, buf + 48, 28);// Instrument name
 				sih.Magic = DataIo.ReadMem32B(buf + 76);				// 'SCRS'
 
 				if ((buf[0] == 1) && (sih.Magic != Magic_SCRS))
@@ -728,8 +730,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (modPlugin)
 				lib.common.LibXmp_Set_Type(m, "MOD Plugin packed S3M");
 
-			CMemory.Free(pp_Pat);
-			CMemory.Free(pp_Ins);
+			CMemory.free(pp_Pat);
+			CMemory.free(pp_Ins);
 
 			m.Quirk |= Quirk_Flag.St3 | Quirk_Flag.ArpMem;
 			m.Read_Event_Type = Read_Event.St3;
@@ -737,9 +739,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err3:
-			CMemory.Free(pp_Pat);
+			CMemory.free(pp_Pat);
 			Err2:
-			CMemory.Free(pp_Ins);
+			CMemory.free(pp_Ins);
 			Err:
 			return -1;
 		}
@@ -839,6 +841,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -865,6 +868,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						e.FxP = (byte)pan;
 					}
+
 					break;
 				}
 

@@ -69,14 +69,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if ((ptrdiff_t)should_Read > can_Read)
 			{
-				CMemory.MemCpy(buf, m.Start + m.Pos, (int)can_Read);
+				CMemory.memcpy(buf, m.Start + m.Pos, (size_t)can_Read);
 				m.Pos += can_Read;
 
 				return (size_t)can_Read / size;
 			}
 			else
 			{
-				CMemory.MemCpy(buf, m.Start + m.Pos, (int)should_Read);
+				CMemory.memcpy(buf, m.Start + m.Pos, should_Read);
 				m.Pos += (ptrdiff_t)should_Read;
 
 				return num;
