@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		{
 			while ((_boundary <= 0) || (_of.offset < _boundary))
 			{
-				c_int more = _of.oy.PageSeek(out _og);
+				c_int more = (c_int)_of.oy.PageSeek(out _og);
 
 				// Skipped (-more) bytes
 				if (more < 0)
@@ -652,6 +652,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 							// Otherwise, keep looking
 						}
+
 						break;
 					}
 
@@ -973,7 +974,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 					break;
 				}
 
-				_durations[op_count] = Op_Get_Packet_Duration(_of.op[op_count].Packet, _of.op[op_count].Bytes);
+				_durations[op_count] = Op_Get_Packet_Duration(_of.op[op_count].Packet, (c_int)_of.op[op_count].Bytes);
 				if (_durations[op_count] > 0)
 				{
 					// With at most 255 packets on a page, this can't overflow
@@ -2881,7 +2882,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 								// For very small files (with all of the data in a single page,
 								// generally 1 second or less), we can loop them continuously
 								// without seeking at all
-								Op_Granpos_Add(out ogg_int64_t prev_page_gp, _of.op[0].GranulePos, -Op_Get_Packet_Duration(_of.op[0].Packet, _of.op[0].Bytes));
+								Op_Granpos_Add(out ogg_int64_t prev_page_gp, _of.op[0].GranulePos, -Op_Get_Packet_Duration(_of.op[0].Packet, (c_int)_of.op[0].Bytes));
 
 								if (Op_Granpos_Cmp(prev_page_gp, _target_gp) <= 0)
 								{
@@ -3054,6 +3055,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 									buffering = false;
 								}
 							}
+
 							continue;
 						}
 
@@ -3414,7 +3416,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			// If the application didn't want to handle decoding, do it ourselves
 			if (ret == Constants.Op_Dec_Use_Default)
-				ret = _of.od.Decode_Float(_op.Packet, _op.Bytes, _pcm, _nsamples, false);
+				ret = _of.od.Decode_Float(_op.Packet, (c_int)_op.Bytes, _pcm, _nsamples, false);
 
 			// If the application returned a positive value other than 0 or
 			// OP_DEC_USE_DEFAULT, fail
@@ -3484,7 +3486,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 						_of.op_pos = op_pos;
 
 						opus_int32 cur_discard_count = _of.cur_discard_count;
-						c_int duration = Op_Get_Packet_Duration(pop.Packet, pop.Bytes);
+						c_int duration = Op_Get_Packet_Duration(pop.Packet, (c_int)pop.Bytes);
 						c_int trimmed_duration = duration;
 
 						// Perform end-trimming

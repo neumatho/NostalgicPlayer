@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 	{
 		private readonly Cursor oldCursor;
 
-		private static Lock myLock = new Lock();
+		private static readonly Lock myLock = new Lock();
 		private static int counter = 0;
 
 		/********************************************************************/

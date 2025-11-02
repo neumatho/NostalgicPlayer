@@ -216,13 +216,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					if (fr.PInfo != null)
 					{
-						fr.PInfo.SfBits[gr, 0] = part2Bits;
+						fr.PInfo.SfBits[gr, 0] = (c_int)part2Bits;
 
 						for (c_int i = 0; i < 39; ++i)
 							fr.PInfo.Sfb_S[gr, 0, i] = scaleFacs[0][i];
 					}
 
-					if (III_Dequantize_Sample(fr, hybridIn0, scaleFacs[0], gr_Info, sFreq, part2Bits) != 0)
+					if (III_Dequantize_Sample(fr, hybridIn0, scaleFacs[0], gr_Info, sFreq, (c_int)part2Bits) != 0)
 						return clip;
 
 					if (fr.Bits_Avail < 0)
@@ -245,13 +245,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					if (fr.PInfo != null)
 					{
-						fr.PInfo.SfBits[gr, 1] = part2Bits;
+						fr.PInfo.SfBits[gr, 1] = (c_int)part2Bits;
 
 						for (c_int i = 0; i < 39; ++i)
 							fr.PInfo.Sfb_S[gr, 1, i] = scaleFacs[1][i];
 					}
 
-					if (III_Dequantize_Sample(fr, hybridIn1, scaleFacs[1], gr_Info, sFreq, part2Bits) != 0)
+					if (III_Dequantize_Sample(fr, hybridIn1, scaleFacs[1], gr_Info, sFreq, (c_int)part2Bits) != 0)
 						return clip;
 
 					if (fr.Bits_Avail < 0)
@@ -386,15 +386,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			{
 				Span<Real> in_ = inBuf.Span;
 
-				in_[17] += in_[16]; in_[16] += in_[15]; in_[15] += in_[14];
-				in_[14] += in_[13]; in_[13] += in_[12]; in_[12] += in_[11];
-				in_[11] += in_[10]; in_[10] += in_[9];  in_[9]  += in_[8];
-				in_[8]  += in_[7];  in_[7]  += in_[6];  in_[6]  += in_[5];
-				in_[5]  += in_[4];  in_[4]  += in_[3];  in_[3]  += in_[2];
-				in_[2]  += in_[1];  in_[1]  += in_[0];
+				in_[17] += in_[16];
+				in_[16] += in_[15];
+				in_[15] += in_[14];
+				in_[14] += in_[13];
+				in_[13] += in_[12];
+				in_[12] += in_[11];
+				in_[11] += in_[10];
+				in_[10] += in_[9];
+				in_[9]  += in_[8];
+				in_[8]  += in_[7];
+				in_[7]  += in_[6];
+				in_[6]  += in_[5];
+				in_[5]  += in_[4];
+				in_[4]  += in_[3];
+				in_[3]  += in_[2];
+				in_[2]  += in_[1];
+				in_[1]  += in_[0];
 
-				in_[17] += in_[15]; in_[15] += in_[13]; in_[13] += in_[11]; in_[11] += in_[9];
-				in_[9]  += in_[7];  in_[7]  += in_[5];  in_[5]  += in_[3];  in_[3]  += in_[1];
+				in_[17] += in_[15];
+				in_[15] += in_[13];
+				in_[13] += in_[11];
+				in_[11] += in_[9];
+				in_[9]  += in_[7];
+				in_[7]  += in_[5];
+				in_[5]  += in_[3];
+				in_[3]  += in_[1];
 
 				{
 					Real t3;
@@ -413,6 +430,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						tmp[1] -= t2;
 						tmp[7] += t2;
 					}
+
 					{
 						Real t0 = Helpers.Real_Mul(L3Tabs.Cos9[0], (in_[4] + in_[8]));
 						Real t1 = Helpers.Real_Mul(L3Tabs.Cos9[1], (in_[8] - in_[16]));
@@ -423,6 +441,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						tmp[3] = tmp[5] = t3 - t1 + t2;
 					}
 				}
+
 				{
 					Real t1 = Helpers.Real_Mul(L3Tabs.Cos18[0], (in_[2] + in_[10]));
 					Real t2 = Helpers.Real_Mul(L3Tabs.Cos18[1], (in_[10] - in_[14]));

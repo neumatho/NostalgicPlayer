@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// The do this before decoding the separate channels, so there is
 			// only one common ntom value
 			c_int ntm = (c_int)fr.Int123_NToM_Val[0];
-			ntm += (c_int)(fr.Spf * fr.NToM_Step);
+			ntm += (c_int)((c_ulong)fr.Spf * fr.NToM_Step);
 
 			return ntm / Constant.NToM_Mul;
 		}
@@ -97,14 +97,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		public int64_t Int123_NToM_FrmOuts(Mpg123_Handle fr, int64_t frame)
 		{
 			int64_t sOff = 0;
-			int64_t ntm = Int123_NToM_Val(fr, 0);
+			int64_t ntm = (int64_t)Int123_NToM_Val(fr, 0);
 
 			if (frame <= 0)
 				return 0;
 
 			for (int64_t f = 0; f < frame; ++f)
 			{
-				ntm += fr.Spf * fr.NToM_Step;
+				ntm += (int64_t)((c_ulong)fr.Spf * fr.NToM_Step);
 				sOff += ntm / Constant.NToM_Mul;
 				ntm -= (ntm / Constant.NToM_Mul) * Constant.NToM_Mul;
 			}
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		public int64_t Int123_NToM_Ins2Outs(Mpg123_Handle fr, int64_t ins)
 		{
 			int64_t sOff = 0;
-			int64_t ntm = Int123_NToM_Val(fr, 0);
+			int64_t ntm = (int64_t)Int123_NToM_Val(fr, 0);
 
 			{
 				int64_t block = fr.Spf;
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				do
 				{
 					int64_t nowBlock = ins > block ? block : ins;
-					ntm += nowBlock * fr.NToM_Step;
+					ntm += (int64_t)((c_ulong)nowBlock * fr.NToM_Step);
 					sOff += ntm / Constant.NToM_Mul;
 					ntm -= (ntm / Constant.NToM_Mul) * Constant.NToM_Mul;
 					ins -= nowBlock;
@@ -154,14 +154,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		public int64_t Int123_NToM_FrameOff(Mpg123_Handle fr, int64_t sOff)
 		{
 			int64_t iOff = 0;	// Frames or samples
-			int64_t ntm = Int123_NToM_Val(fr, 0);
+			int64_t ntm = (int64_t)Int123_NToM_Val(fr, 0);
 
 			if (sOff <= 0)
 				return 0;
 
 			for (iOff = 0; true; ++iOff)
 			{
-				ntm += fr.Spf * fr.NToM_Step;
+				ntm += (int64_t)((c_ulong)fr.Spf * fr.NToM_Step);
 
 				if ((ntm / Constant.NToM_Mul) > sOff)
 					break;

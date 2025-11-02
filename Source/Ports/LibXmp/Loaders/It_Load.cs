@@ -676,6 +676,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						mod.Xxp[i].Index[j] = tNum;
 					}
+
 					continue;
 				}
 
@@ -860,6 +861,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 								e.FxT = Effects.Fx_Reverse;
 								e.FxP = (byte)(l - 0xe);
 							}
+
 							break;
 						}
 
@@ -912,6 +914,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -1205,6 +1208,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						else if (ifh.Cwt < 0x210)
 							m.Flow_Mode = FlowMode_Flag.Mode_IT_200;
 					}
+
 					break;
 				}
 
@@ -1260,6 +1264,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 			}
@@ -1798,7 +1803,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						return 0;
 
 					if ((file_Len > 0) && (left < min_Size))
-						Force_Sample_Length(xxs, xtra, left << 3);
+						Force_Sample_Length(xxs, xtra, (c_int)(left << 3));
 
 					Hio s = f.GetSampleHio(i, samples);
 

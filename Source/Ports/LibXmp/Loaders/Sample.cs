@@ -147,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (bound > remaining)
 					{
 						over = bound - remaining;
-						byteLen = (remaining - 16) << 1;
+						byteLen = (c_int)((remaining - 16) << 1);
 					}
 				}
 				else
@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (byteLen > remaining)
 					{
 						over = byteLen - remaining;
-						byteLen = remaining;
+						byteLen = (c_int)remaining;
 					}
 				}
 

@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			if (exp < -63)
 				exp = -63;
 
-			return (c_float)CMath.ldexp(mant, exp);
+			return (c_float)CMath.ldexp(mant, (c_int)exp);
 		}
 
 
@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 					// above for leaves
 
 					// Update ourself
-					if ((length < 32) && ((entry >> length) != 0))
+					if ((length < 32) && ((entry >> (c_int)length) != 0))
 					{
 						// Error condition; the lengths must specify an overpopulated tree
 						Memory.Ogg_Free(r);
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				for (i = 1; i < 33; i++)
 				{
-					if ((marker[i] & (0xffffffffUL >> (32 - i))) != 0)
+					if ((marker[i] & (0xffffffffUL >> (c_int)(32 - i))) != 0)
 					{
 						Memory.Ogg_Free(r);
 
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				for (c_long j = 0; j < l[i]; j++)
 				{
 					temp <<= 1;
-					temp |= (r[count] >> j) & 1;
+					temp |= (r[count] >> (c_int)j) & 1;
 				}
 
 				if (sparsecount != 0)
@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 						// we'll have 'left over' entries; left over entries use zeroed
 						// values (and are wasted). So don't generate codebooks like
 						// that
-						c_int quantvals = Book_Maptype1_Quantvals(b);
+						c_int quantvals = (c_int)Book_Maptype1_Quantvals(b);
 
 						for (c_long j = 0; j < b.entries; j++)
 						{
@@ -295,7 +295,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 								for (c_long k = 0; k < b.dim; k++)
 								{
-									c_int index = (j / indexdiv) % quantvals;
+									c_int index = (c_int)((j / indexdiv) % quantvals);
 									c_float val = b.quantlist[index];
 									val = Math.Abs(val) * delta + mindel + last;
 
@@ -313,6 +313,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 								count++;
 							}
 						}
+
 						break;
 					}
 
@@ -341,6 +342,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 								count++;
 							}
 						}
+
 						break;
 					}
 				}

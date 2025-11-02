@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private c_int Iff_Process(Module_Data m, CPointer<uint8> id, c_long size, Hio f, object parm)
 		{
-			c_int pos = f.Hio_Tell();
+			c_int pos = (c_int)f.Hio_Tell();
 
 			foreach (Iff_Info i in data.Iff_List)
 			{
@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (size > Iff_Max_Chunk_Size)
 						return -1;
 
-					if (i.Loader(m, size, f, parm) < 0)
+					if (i.Loader(m, (c_int)size, f, parm) < 0)
 						return -1;
 
 					break;

@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			m.FileName = null;
 			m.BaseName = null;
 			m.DirName = null;
-			m.Size = h.Hio_Size();
+			m.Size = (c_int)h.Hio_Size();
 
 			c_int ret = Load_Module(h);
 
@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			m.FileName = null;
 			m.BaseName = null;
 			m.DirName = null;
-			m.Size = h.Hio_Size();
+			m.Size = (c_int)h.Hio_Size();
 
 			c_int ret = Load_Module(h);
 
@@ -210,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			m.FileName = null;
 			m.BaseName = null;
 			m.DirName = null;
-			m.Size = h.Hio_Size();
+			m.Size = (c_int)h.Hio_Size();
 
 			c_int ret = Load_Module(h);
 

@@ -353,6 +353,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if (@event.FxP > 0)
 							@event.FxP--;
 					}
+
 					break;
 				}
 
@@ -385,6 +386,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if ((@event.FxP == 0) || (@event.FxP == 0x20))
 							@event.FxP = 1;
 					}
+
 					break;
 				}
 
@@ -452,6 +454,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 

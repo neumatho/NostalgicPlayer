@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				f.Hio_Read32B();		// Skip size
 				f.Hio_Read32B();		// Skip AM
 
-				c_int offset = f.Hio_Tell();
+				c_int offset = (c_int)f.Hio_Tell();
 
 				mod.Smp = mod.Ins = 0;
 

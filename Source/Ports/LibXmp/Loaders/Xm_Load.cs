@@ -1393,7 +1393,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			VorbisInfo info = vorbisFile.Ov_Info(-1);
 			ch = info.channels;
-			rate = info.rate;
+			rate = (c_int)info.rate;
 
 			if (ch != 1)
 			{
@@ -1411,7 +1411,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			while (todo > 0)
 			{
-				int done = vorbisFile.Ov_Read_Float(out CPointer<c_float>[] buffer, (c_int)todo, out _);
+				int done = (c_int)vorbisFile.Ov_Read_Float(out CPointer<c_float>[] buffer, (c_int)todo, out _);
 				if (done == (int)VorbisError.Hole)
 					continue;
 

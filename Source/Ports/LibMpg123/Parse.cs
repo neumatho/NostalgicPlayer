@@ -435,7 +435,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if (part2)
 				{
 					fr.WordPointer = fr.BsBuf;
-					fr.WordPointerIndex = fr.BsBufIndex + fr.Hdr.SSize - backStep;
+					fr.WordPointerIndex = (int)(fr.BsBufIndex + fr.Hdr.SSize - backStep);
 
 					if (backStep != 0)
 						Array.Copy(fr.BsBufOld, fr.BsBufOldIndex + fr.FSizeOld - backStep, fr.WordPointer, fr.WordPointerIndex, backStep);
@@ -623,7 +623,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if ((fr.P.Flags & Mpg123_Param_Flags.Ignore_StreamLength) == 0)
 				{
 					// Check for endless stream, but: TRACK_MAX_FRAMES sensible at all?
-					fr.Track_Frames = long_Tmp > Track_Max_Frames ? 0 : long_Tmp;
+					fr.Track_Frames = long_Tmp > Track_Max_Frames ? 0 : (int64_t)long_Tmp;
 				}
 			}
 
@@ -641,7 +641,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					// ignoring leading ID3v2 data. Trailing tags (ID3v1) seem to be
 					// included, though
 					if (fr.RDat.FileLen < 1)
-						fr.RDat.FileLen = long_Tmp + fr.Audio_Start;	// Overflow?
+						fr.RDat.FileLen = (int64_t)long_Tmp + fr.Audio_Start;	// Overflow?
 				}
 			}
 
@@ -880,7 +880,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					return 1;
 				}
 				else
-					fr.HalfPhase = fr.P.HalfSpeed - 1;
+					fr.HalfPhase = (c_int)(fr.P.HalfSpeed - 1);
 			}
 
 			return 0;
@@ -1017,8 +1017,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						c_long fs = tabSel_123[fh.Lsf, 0, fh.BitRate_Index] * 12000;
 						fs /= freqs[fh.Sampling_Frequency];
 						fs = ((fs + fh.Padding) << 2) - 4;
-						fh.FrameSize = fs;
+						fh.FrameSize = (c_int)fs;
 					}
+
 					break;
 				}
 
@@ -1029,8 +1030,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						c_long fs = tabSel_123[fh.Lsf, 1, fh.BitRate_Index] * 144000;
 						fs /= freqs[fh.Sampling_Frequency];
 						fs += fh.Padding - 4;
-						fh.FrameSize = fs;
+						fh.FrameSize = (c_int)fs;
 					}
+
 					break;
 				}
 
@@ -1049,7 +1051,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						c_long fs = tabSel_123[fh.Lsf, 2, fh.BitRate_Index] * 144000;
 						fs /= freqs[fh.Sampling_Frequency] << fh.Lsf;
 						fs += fh.Padding - 4;
-						fh.FrameSize = fs;
+						fh.FrameSize = (c_int)fs;
 					}
 
 					if (fh.FrameSize < fh.SSize)
@@ -1218,7 +1220,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_ulong val = ((c_ulong)apeBuf[11] << 24) | ((c_ulong)apeBuf[10] << 16) | ((c_ulong)apeBuf[9] << 8) | apeBuf[8];
 
 			// If encountering EOF here, things are just at an end
-			ret = (c_int)fr.Rd.Skip_Bytes(fr, val);
+			ret = (c_int)fr.Rd.Skip_Bytes(fr, (int64_t)val);
 			if (ret < 0)
 				return ret;
 

@@ -65,11 +65,11 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 				return false;
 			}
 
-			mpg123Handle.Mpg123_Rates(out int[] supportedRates, out ulong number);
+			mpg123Handle.Mpg123_Rates(out long[] supportedRates, out ulong number);
 			if (number > 0)
 			{
 				// Set the output format to 32-bit on every rate
-				foreach (int rate in supportedRates)
+				foreach (long rate in supportedRates)
 				{
 					result = mpg123Handle.Mpg123_Format(rate, Mpg123_ChannelCount.Mono | Mpg123_ChannelCount.Stereo, Mpg123_Enc_Enum.Enc_Signed_32);
 					if (result != Mpg123_Errors.Ok)
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 		/// Return the frequency the sample is stored with
 		/// </summary>
 		/********************************************************************/
-		public override int Frequency => frameInfo.Rate;
+		public override int Frequency => (int)frameInfo.Rate;
 
 
 
@@ -270,6 +270,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -331,6 +332,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 							break;
 						}
 					}
+
 					break;
 				}
 

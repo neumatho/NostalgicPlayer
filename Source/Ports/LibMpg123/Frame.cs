@@ -738,7 +738,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			fr.Icy.Interval = 0;
 			fr.Icy.Next = 0;
 			fr.HalfPhase = 0;		// Here or indeed only on first-time init?
-			fr.Hdr.FreeFormat_FrameSize = fr.P.FreeFormat_FrameSize;
+			fr.Hdr.FreeFormat_FrameSize = (c_int)fr.P.FreeFormat_FrameSize;
 			fr.Enc_Delay = -1;
 			fr.Enc_Padding = -1;
 

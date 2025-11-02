@@ -758,6 +758,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						mh.Err = Mpg123_Errors.No_Seek_From_End;
 						return (int64_t)Mpg123_Errors.Err;
 					}
+
 					break;
 				}
 
@@ -1303,7 +1304,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			{
 				case Mpg123_Parms.Verbose:
 				{
-					mp.Verbose = val;
+					mp.Verbose = (c_int)val;
 					break;
 				}
 
@@ -1351,7 +1352,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					if ((val < 0) || (val > 2))
 						ret = Mpg123_Errors.Bad_Rate;
 					else
-						mp.Down_Sample = val;
+						mp.Down_Sample = (c_int)val;
 
 					break;
 				}
@@ -1593,8 +1594,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					if (parse.Int123_Frame_Freq(mh) > mh.Af.Rate)
 					{
-						mh.Down_Sample_SbLimit = Constant.SBLimit * mh.Af.Rate;
-						mh.Down_Sample_SbLimit /= parse.Int123_Frame_Freq(mh);
+						mh.Down_Sample_SbLimit = (c_int)(Constant.SBLimit * mh.Af.Rate);
+						mh.Down_Sample_SbLimit = (c_int)(mh.Down_Sample_SbLimit / parse.Int123_Frame_Freq(mh));
 
 						if (mh.Down_Sample_SbLimit < 1)
 							mh.Down_Sample_SbLimit = 1;

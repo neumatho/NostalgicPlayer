@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		/********************************************************************/
 		internal static CPointer<T> Vorbis_Block_Alloc<T>(VorbisBlock vb, c_long items)
 		{
-			return new CPointer<T>(items);
+			return new CPointer<T>((c_int)items);
 		}
 
 
@@ -248,8 +248,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			b.transform[0][0] = new MdctLookup();
 			b.transform[1][0] = new MdctLookup();
 
-			Mdct.Mdct_Init((MdctLookup)b.transform[0][0], ci.blocksizes[0] >> hs);
-			Mdct.Mdct_Init((MdctLookup)b.transform[1][0], ci.blocksizes[1] >> hs);
+			Mdct.Mdct_Init((MdctLookup)b.transform[0][0], (c_int)ci.blocksizes[0] >> hs);
+			Mdct.Mdct_Init((MdctLookup)b.transform[1][0], (c_int)ci.blocksizes[1] >> hs);
 
 			// Vorbis I uses only window type 0.
 			// Note that the correct computation below is technically:
@@ -286,7 +286,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 			// Initialize the storage vectors. blocksize[1] is small for encode,
 			// but the correct size for decode
-			v.pcm_storage = ci.blocksizes[1];
+			v.pcm_storage = (c_int)ci.blocksizes[1];
 			v.pcm = new CPointer<c_float>[vi.channels];
 			v.pcmret = new CPointer<c_float>[vi.channels];
 
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			// All vector indexes
 			v.centerW = ci.blocksizes[1] / 2;
 
-			v.pcm_current = v.centerW;
+			v.pcm_current = (c_int)v.centerW;
 
 			// Initialize all the backend lookups
 			b.flr = new IVorbisLookFloor[ci.floors];
@@ -431,7 +431,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			c_int hs = ci.halfrate_flag;
 
 			v.centerW = ci.blocksizes[1] >> (hs + 1);
-			v.pcm_current = v.centerW >> hs;
+			v.pcm_current = (c_int)v.centerW >> hs;
 
 			v.pcm_returned = -1;
 			v.granulepos = -1;
@@ -499,9 +499,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 			if (vb.pcm != null)	// No pcm to process if vorbis_synthesis_trackonly was called on block
 			{
-				c_int n = ci.blocksizes[v.W] >> (hs + 1);
-				c_int n0 = ci.blocksizes[0] >> (hs + 1);
-				c_int n1 = ci.blocksizes[1] >> (hs + 1);
+				c_int n = (c_int)ci.blocksizes[v.W] >> (hs + 1);
+				c_int n0 = (c_int)ci.blocksizes[0] >> (hs + 1);
+				c_int n1 = (c_int)ci.blocksizes[1] >> (hs + 1);
 
 				c_int thisCenter;
 				c_int prevCenter;
@@ -605,7 +605,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 				else
 				{
 					v.pcm_returned = prevCenter;
-					v.pcm_current = prevCenter + ((ci.blocksizes[v.lW] / 4 + ci.blocksizes[v.W] / 4) >> hs);
+					v.pcm_current = (c_int)(prevCenter + ((ci.blocksizes[v.lW] / 4 + ci.blocksizes[v.W] / 4) >> hs));
 				}
 			}
 
@@ -659,12 +659,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 							if (extra > ((v.pcm_current - v.pcm_returned) << hs))
 								extra = (v.pcm_current - v.pcm_returned) << hs;
 
-							v.pcm_current -= extra >> hs;
+							v.pcm_current = (c_int)(v.pcm_current - (extra >> hs));
 						}
 						else
 						{
 							// Trim the beginning
-							v.pcm_returned += extra >> hs;
+							v.pcm_returned = (c_int)(v.pcm_returned + (extra >> hs));
 
 							if (v.pcm_returned > v.pcm_current)
 								v.pcm_returned = v.pcm_current;
@@ -674,7 +674,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 			else
 			{
-				v.granulepos += ci.blocksizes[v.lW] / 4 + ci.blocksizes[v.W] / 4;
+				v.granulepos += (ci.blocksizes[v.lW] / 4) + (ci.blocksizes[v.W] / 4);
 
 				if ((v.granulepos != -1) && (v.granulepos != vb.granulepos))
 				{
@@ -701,7 +701,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 								if (extra < 0)
 									extra = 0;
 
-								v.pcm_current -= extra >> hs;
+								v.pcm_current = (c_int)(v.pcm_current - (extra >> hs));
 							}
 							// else {Shouldn't happen *unless* the bitstream is out of
 							// spec. Either way, believe the bitstream }

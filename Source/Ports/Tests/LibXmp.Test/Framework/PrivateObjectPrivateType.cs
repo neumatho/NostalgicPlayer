@@ -17,7 +17,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         // bind everything
         private const BindingFlags BindToEveryThing = BindingFlags.Default | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
 
-        private static BindingFlags constructorFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.CreateInstance | BindingFlags.NonPublic;
+        private static readonly BindingFlags constructorFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.CreateInstance | BindingFlags.NonPublic;
 
         private object target;     // automatically initialized to null
         private Type originalType; // automatically initialized to null
@@ -49,8 +49,8 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                 temp = new PrivateObject(next);
             }
 
-            this.target = temp.target;
-            this.originalType = temp.originalType;
+            target = temp.target;
+            originalType = temp.originalType;
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                 o = Activator.CreateInstance(type, constructorFlags, null, args, null);
             }
 
-            this.ConstructFrom(o);
+            ConstructFrom(o);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="obj">object to wrap</param>
         public PrivateObject(object obj)
         {
-            this.ConstructFrom(obj);
+            ConstructFrom(obj);
         }
 
         /// <summary>
@@ -148,8 +148,8 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="type">PrivateType object</param>
         public PrivateObject(object obj, PrivateType type)
         {
-            this.target = obj;
-            this.originalType = type.ReferencedType;
+            target = obj;
+            originalType = type.ReferencedType;
         }
 
         /// <summary>
@@ -159,13 +159,13 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             get
             {
-                return this.target;
+                return target;
             }
 
             set
             {
-                this.target = value;
-                this.originalType = value.GetType();
+                target = value;
+                originalType = value.GetType();
             }
         }
 
@@ -176,7 +176,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             get
             {
-                return this.originalType;
+                return originalType;
             }
         }
 
@@ -184,14 +184,14 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             get
             {
-                if (this.methodCache == null)
+                if (methodCache == null)
                 {
-                    this.BuildGenericMethodCacheForType(this.originalType);
+                    BuildGenericMethodCacheForType(originalType);
                 }
 
-                Debug.Assert(this.methodCache != null, "Invalid method cache for type.");
+                Debug.Assert(methodCache != null, "Invalid method cache for type.");
 
-                return this.methodCache;
+                return methodCache;
             }
         }
 
@@ -201,8 +201,8 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>int representing hashcode of the target object</returns>
         public override int GetHashCode()
         {
-            Debug.Assert(this.target != null, "target should not be null.");
-            return this.target.GetHashCode();
+            Debug.Assert(target != null, "target should not be null.");
+            return target.GetHashCode();
         }
 
         /// <summary>
@@ -214,10 +214,10 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             if (this != obj)
             {
-                Debug.Assert(this.target != null, "target should not be null.");
+                Debug.Assert(target != null, "target should not be null.");
                 if (typeof(PrivateObject) == obj?.GetType())
                 {
-                    return this.target.Equals(((PrivateObject)obj).target);
+                    return target.Equals(((PrivateObject)obj).target);
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, params object[] args)
         {
-            return this.Invoke(name, null, args, CultureInfo.InvariantCulture);
+            return Invoke(name, null, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, Type[] parameterTypes, object[] args)
         {
-            return this.Invoke(name, parameterTypes, args, CultureInfo.InvariantCulture);
+            return Invoke(name, parameterTypes, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, Type[] parameterTypes, object[] args, Type[] typeArguments)
         {
-            return this.Invoke(name, BindToEveryThing, parameterTypes, args, CultureInfo.InvariantCulture, typeArguments);
+            return Invoke(name, BindToEveryThing, parameterTypes, args, CultureInfo.InvariantCulture, typeArguments);
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, object[] args, CultureInfo culture)
         {
-            return this.Invoke(name, null, args, culture);
+            return Invoke(name, null, args, culture);
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, Type[] parameterTypes, object[] args, CultureInfo culture)
         {
-            return this.Invoke(name, BindToEveryThing, parameterTypes, args, culture);
+            return Invoke(name, BindToEveryThing, parameterTypes, args, culture);
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, BindingFlags bindingFlags, params object[] args)
         {
-            return this.Invoke(name, bindingFlags, null, args, CultureInfo.InvariantCulture);
+            return Invoke(name, bindingFlags, null, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -311,7 +311,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, BindingFlags bindingFlags, Type[] parameterTypes, object[] args)
         {
-            return this.Invoke(name, bindingFlags, parameterTypes, args, CultureInfo.InvariantCulture);
+            return Invoke(name, bindingFlags, parameterTypes, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, BindingFlags bindingFlags, object[] args, CultureInfo culture)
         {
-            return this.Invoke(name, bindingFlags, null, args, culture);
+            return Invoke(name, bindingFlags, null, args, culture);
         }
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of method call</returns>
         public object Invoke(string name, BindingFlags bindingFlags, Type[] parameterTypes, object[] args, CultureInfo culture)
         {
-            return this.Invoke(name, bindingFlags, parameterTypes, args, culture, null);
+            return Invoke(name, bindingFlags, parameterTypes, args, culture, null);
         }
 
         /// <summary>
@@ -358,7 +358,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                 bindingFlags |= BindToEveryThing | BindingFlags.Instance;
 
                 // Fix up the parameter types
-                MethodInfo member = this.originalType.GetMethod(name, bindingFlags, null, parameterTypes, null);
+                MethodInfo member = originalType.GetMethod(name, bindingFlags, null, parameterTypes, null);
 
                 // If the method was not found and type arguments were provided for generic paramaters,
                 // attempt to look up a generic method.
@@ -369,7 +369,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
 
                     // Look in the method cache to see if there is a generic method
                     // on the incoming type that contains the correct signature.
-                    member = this.GetGenericMethodFromCache(name, parameterTypes, typeArguments, bindingFlags, null);
+                    member = GetGenericMethodFromCache(name, parameterTypes, typeArguments, bindingFlags, null);
                 }
 
                 if (member == null)
@@ -383,11 +383,11 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                     if (member.IsGenericMethodDefinition)
                     {
                         MethodInfo constructed = member.MakeGenericMethod(typeArguments);
-                        return constructed.Invoke(this.target, bindingFlags, null, args, culture);
+                        return constructed.Invoke(target, bindingFlags, null, args, culture);
                     }
                     else
                     {
-                        return member.Invoke(this.target, bindingFlags, null, args, culture);
+                        return member.Invoke(target, bindingFlags, null, args, culture);
                     }
                 }
                 catch (TargetInvocationException e)
@@ -403,7 +403,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
             else
             {
-                return this.InvokeHelper(name, bindingFlags | BindingFlags.InvokeMethod, args, culture);
+                return InvokeHelper(name, bindingFlags | BindingFlags.InvokeMethod, args, culture);
             }
         }
 
@@ -415,7 +415,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>An arrya of elements.</returns>
         public object GetArrayElement(string name, params int[] indices)
         {
-            return this.GetArrayElement(name, BindToEveryThing, indices);
+            return GetArrayElement(name, BindToEveryThing, indices);
         }
 
         /// <summary>
@@ -426,7 +426,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="indices">the indices of array</param>
         public void SetArrayElement(string name, object value, params int[] indices)
         {
-            this.SetArrayElement(name, BindToEveryThing, value, indices);
+            SetArrayElement(name, BindToEveryThing, value, indices);
         }
 
         /// <summary>
@@ -438,7 +438,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>An arrya of elements.</returns>
         public object GetArrayElement(string name, BindingFlags bindingFlags, params int[] indices)
         {
-            Array arr = (Array)this.InvokeHelper(name, BindingFlags.GetField | bindingFlags, null, CultureInfo.InvariantCulture);
+            Array arr = (Array)InvokeHelper(name, BindingFlags.GetField | bindingFlags, null, CultureInfo.InvariantCulture);
             return arr.GetValue(indices);
         }
 
@@ -451,7 +451,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="indices">the indices of array</param>
         public void SetArrayElement(string name, BindingFlags bindingFlags, object value, params int[] indices)
         {
-            Array arr = (Array)this.InvokeHelper(name, BindingFlags.GetField | bindingFlags, null, CultureInfo.InvariantCulture);
+            Array arr = (Array)InvokeHelper(name, BindingFlags.GetField | bindingFlags, null, CultureInfo.InvariantCulture);
             arr.SetValue(value, indices);
         }
 
@@ -462,7 +462,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The field.</returns>
         public object GetField(string name)
         {
-            return this.GetField(name, BindToEveryThing);
+            return GetField(name, BindToEveryThing);
         }
 
         /// <summary>
@@ -472,7 +472,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">value to set</param>
         public void SetField(string name, object value)
         {
-            this.SetField(name, BindToEveryThing, value);
+            SetField(name, BindToEveryThing, value);
         }
 
         /// <summary>
@@ -483,7 +483,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The field.</returns>
         public object GetField(string name, BindingFlags bindingFlags)
         {
-            return this.InvokeHelper(name, BindingFlags.GetField | bindingFlags, null, CultureInfo.InvariantCulture);
+            return InvokeHelper(name, BindingFlags.GetField | bindingFlags, null, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -494,7 +494,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">value to set</param>
         public void SetField(string name, BindingFlags bindingFlags, object value)
         {
-            this.InvokeHelper(name, BindingFlags.SetField | bindingFlags, new object[] { value }, CultureInfo.InvariantCulture);
+            InvokeHelper(name, BindingFlags.SetField | bindingFlags, new object[] { value }, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -504,7 +504,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The field or property.</returns>
         public object GetFieldOrProperty(string name)
         {
-            return this.GetFieldOrProperty(name, BindToEveryThing);
+            return GetFieldOrProperty(name, BindToEveryThing);
         }
 
         /// <summary>
@@ -514,7 +514,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">value to set</param>
         public void SetFieldOrProperty(string name, object value)
         {
-            this.SetFieldOrProperty(name, BindToEveryThing, value);
+            SetFieldOrProperty(name, BindToEveryThing, value);
         }
 
         /// <summary>
@@ -525,7 +525,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The field or property.</returns>
         public object GetFieldOrProperty(string name, BindingFlags bindingFlags)
         {
-            return this.InvokeHelper(name, BindingFlags.GetField | BindingFlags.GetProperty | bindingFlags, null, CultureInfo.InvariantCulture);
+            return InvokeHelper(name, BindingFlags.GetField | BindingFlags.GetProperty | bindingFlags, null, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -536,7 +536,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">value to set</param>
         public void SetFieldOrProperty(string name, BindingFlags bindingFlags, object value)
         {
-            this.InvokeHelper(name, BindingFlags.SetField | BindingFlags.SetProperty | bindingFlags, new object[] { value }, CultureInfo.InvariantCulture);
+            InvokeHelper(name, BindingFlags.SetField | BindingFlags.SetProperty | bindingFlags, new object[] { value }, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -547,7 +547,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The property.</returns>
         public object GetProperty(string name, params object[] args)
         {
-            return this.GetProperty(name, null, args);
+            return GetProperty(name, null, args);
         }
 
         /// <summary>
@@ -559,7 +559,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The property.</returns>
         public object GetProperty(string name, Type[] parameterTypes, object[] args)
         {
-            return this.GetProperty(name, BindToEveryThing, parameterTypes, args);
+            return GetProperty(name, BindToEveryThing, parameterTypes, args);
         }
 
         /// <summary>
@@ -570,7 +570,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="args">Arguments to pass to the member to invoke.</param>
         public void SetProperty(string name, object value, params object[] args)
         {
-            this.SetProperty(name, null, value, args);
+            SetProperty(name, null, value, args);
         }
 
         /// <summary>
@@ -582,7 +582,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="args">Arguments to pass to the member to invoke.</param>
         public void SetProperty(string name, Type[] parameterTypes, object value, object[] args)
         {
-            this.SetProperty(name, BindToEveryThing, value, parameterTypes, args);
+            SetProperty(name, BindToEveryThing, value, parameterTypes, args);
         }
 
         /// <summary>
@@ -594,7 +594,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The property.</returns>
         public object GetProperty(string name, BindingFlags bindingFlags, params object[] args)
         {
-            return this.GetProperty(name, bindingFlags, null, args);
+            return GetProperty(name, bindingFlags, null, args);
         }
 
         /// <summary>
@@ -609,18 +609,18 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             if (parameterTypes != null)
             {
-                PropertyInfo pi = this.originalType.GetProperty(name, bindingFlags, null, null, parameterTypes, null);
+                PropertyInfo pi = originalType.GetProperty(name, bindingFlags, null, null, parameterTypes, null);
                 if (pi == null)
                 {
                     throw new ArgumentException(
                         string.Format(CultureInfo.CurrentCulture, "The member specified ({0}) could not be found. You might need to regenerate your private accessor, or the member may be private and defined on a base class. If the latter is true, you need to pass the type that defines the member into PrivateObject's constructor.", name));
                 }
 
-                return pi.GetValue(this.target, args);
+                return pi.GetValue(target, args);
             }
             else
             {
-                return this.InvokeHelper(name, bindingFlags | BindingFlags.GetProperty, args, null);
+                return InvokeHelper(name, bindingFlags | BindingFlags.GetProperty, args, null);
             }
         }
 
@@ -633,7 +633,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="args">Arguments to pass to the member to invoke.</param>
         public void SetProperty(string name, BindingFlags bindingFlags, object value, params object[] args)
         {
-            this.SetProperty(name, bindingFlags, value, null, args);
+            SetProperty(name, bindingFlags, value, null, args);
         }
 
         /// <summary>
@@ -648,21 +648,21 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             if (parameterTypes != null)
             {
-                PropertyInfo pi = this.originalType.GetProperty(name, bindingFlags, null, null, parameterTypes, null);
+                PropertyInfo pi = originalType.GetProperty(name, bindingFlags, null, null, parameterTypes, null);
                 if (pi == null)
                 {
                     throw new ArgumentException(
                         string.Format(CultureInfo.CurrentCulture, "The member specified ({0}) could not be found. You might need to regenerate your private accessor, or the member may be private and defined on a base class. If the latter is true, you need to pass the type that defines the member into PrivateObject's constructor.", name));
                 }
 
-                pi.SetValue(this.target, value, args);
+                pi.SetValue(target, value, args);
             }
             else
             {
                 object[] pass = new object[(args?.Length ?? 0) + 1];
                 pass[0] = value;
                 args?.CopyTo(pass, 1);
-                this.InvokeHelper(name, bindingFlags | BindingFlags.SetProperty, pass, null);
+                InvokeHelper(name, bindingFlags | BindingFlags.SetProperty, pass, null);
             }
         }
 
@@ -697,12 +697,12 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of the invocation</returns>
         private object InvokeHelper(string name, BindingFlags bindingFlags, object[] args, CultureInfo culture)
         {
-            Debug.Assert(this.target != null, "Internal Error: Null reference is returned for internal object");
+            Debug.Assert(target != null, "Internal Error: Null reference is returned for internal object");
 
             // Invoke the actual Method
             try
             {
-                return this.originalType.InvokeMember(name, bindingFlags, null, this.target, args, culture);
+                return originalType.InvokeMember(name, bindingFlags, null, target, args, culture);
             }
             catch (TargetInvocationException e)
             {
@@ -718,14 +718,14 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
 
         private void ConstructFrom(object obj)
         {
-            this.target = obj;
-            this.originalType = obj.GetType();
+            target = obj;
+            originalType = obj.GetType();
         }
 
         private void BuildGenericMethodCacheForType(Type t)
         {
             Debug.Assert(t != null, "type should not be null.");
-            this.methodCache = new Dictionary<string, LinkedList<MethodInfo>>();
+            methodCache = new Dictionary<string, LinkedList<MethodInfo>>();
 
             MethodInfo[] members = t.GetMethods(BindToEveryThing);
             LinkedList<MethodInfo> listByName; // automatically initialized to null
@@ -734,10 +734,10 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             {
                 if (member.IsGenericMethod || member.IsGenericMethodDefinition)
                 {
-                    if (!this.GenericMethodCache.TryGetValue(member.Name, out listByName))
+                    if (!GenericMethodCache.TryGetValue(member.Name, out listByName))
                     {
                         listByName = new LinkedList<MethodInfo>();
-                        this.GenericMethodCache.Add(member.Name, listByName);
+                        GenericMethodCache.Add(member.Name, listByName);
                     }
 
                     Debug.Assert(listByName != null, "list should not be null.");
@@ -762,7 +762,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             Debug.Assert(typeArguments != null, "Invalid type arguments array.");
 
             // Build a preliminary list of method candidates that contain roughly the same signature.
-            var methodCandidates = this.GetMethodCandidates(methodName, parameterTypes, typeArguments, bindingFlags, modifiers);
+            LinkedList<MethodInfo> methodCandidates = GetMethodCandidates(methodName, parameterTypes, typeArguments, bindingFlags, modifiers);
 
             // Search of ambiguous methods (methods with the same signature).
             MethodInfo[] finalCandidates = new MethodInfo[methodCandidates.Count];
@@ -797,7 +797,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             LinkedList<MethodInfo> methodCandidates = new LinkedList<MethodInfo>();
             LinkedList<MethodInfo> methods = null;
 
-            if (!this.GenericMethodCache.TryGetValue(methodName, out methods))
+            if (!GenericMethodCache.TryGetValue(methodName, out methods))
             {
                 return methodCandidates;
             }
@@ -818,7 +818,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
 
                 // Since we can't just get the correct MethodInfo from Reflection,
                 // we will just match the number of parameters, their order, and their type
-                var methodCandidate = candidate;
+                MethodInfo methodCandidate = candidate;
                 candidateParams = methodCandidate.GetParameters();
 
                 if (candidateParams.Length != parameterTypes.Length)
@@ -885,7 +885,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <summary>
         /// The wrapped type.
         /// </summary>
-        private Type type;
+        private readonly Type type;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrivateType"/> class that contains the private type.
@@ -896,7 +896,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             Assembly asm = Assembly.Load(assemblyName);
 
-            this.type = asm.GetType(typeName, true);
+            type = asm.GetType(typeName, true);
         }
 
         /// <summary>
@@ -917,7 +917,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <summary>
         /// Gets the referenced type
         /// </summary>
-        public Type ReferencedType => this.type;
+        public Type ReferencedType => type;
 
         /// <summary>
         /// Invokes static member
@@ -927,7 +927,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, params object[] args)
         {
-            return this.InvokeStatic(name, null, args, CultureInfo.InvariantCulture);
+            return InvokeStatic(name, null, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -939,7 +939,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, Type[] parameterTypes, object[] args)
         {
-            return this.InvokeStatic(name, parameterTypes, args, CultureInfo.InvariantCulture);
+            return InvokeStatic(name, parameterTypes, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -952,7 +952,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, Type[] parameterTypes, object[] args, Type[] typeArguments)
         {
-            return this.InvokeStatic(name, BindToEveryThing, parameterTypes, args, CultureInfo.InvariantCulture, typeArguments);
+            return InvokeStatic(name, BindToEveryThing, parameterTypes, args, CultureInfo.InvariantCulture, typeArguments);
         }
 
         /// <summary>
@@ -964,7 +964,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, object[] args, CultureInfo culture)
         {
-            return this.InvokeStatic(name, null, args, culture);
+            return InvokeStatic(name, null, args, culture);
         }
 
         /// <summary>
@@ -977,7 +977,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, Type[] parameterTypes, object[] args, CultureInfo culture)
         {
-            return this.InvokeStatic(name, BindingFlags.InvokeMethod, parameterTypes, args, culture);
+            return InvokeStatic(name, BindingFlags.InvokeMethod, parameterTypes, args, culture);
         }
 
         /// <summary>
@@ -989,7 +989,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, BindingFlags bindingFlags, params object[] args)
         {
-            return this.InvokeStatic(name, bindingFlags, null, args, CultureInfo.InvariantCulture);
+            return InvokeStatic(name, bindingFlags, null, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -1002,7 +1002,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, BindingFlags bindingFlags, Type[] parameterTypes, object[] args)
         {
-            return this.InvokeStatic(name, bindingFlags, parameterTypes, args, CultureInfo.InvariantCulture);
+            return InvokeStatic(name, bindingFlags, parameterTypes, args, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -1015,7 +1015,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, BindingFlags bindingFlags, object[] args, CultureInfo culture)
         {
-            return this.InvokeStatic(name, bindingFlags, null, args, culture);
+            return InvokeStatic(name, bindingFlags, null, args, culture);
         }
 
         /// <summary>
@@ -1029,7 +1029,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>Result of invocation</returns>
         public object InvokeStatic(string name, BindingFlags bindingFlags, Type[] parameterTypes, object[] args, CultureInfo culture)
         {
-            return this.InvokeStatic(name, bindingFlags, parameterTypes, args, culture, null);
+            return InvokeStatic(name, bindingFlags, parameterTypes, args, culture, null);
         }
 
         /// <summary>
@@ -1046,7 +1046,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             if (parameterTypes != null)
             {
-                MethodInfo member = this.type.GetMethod(name, bindingFlags | BindToEveryThing | BindingFlags.Static, null, parameterTypes, null);
+                MethodInfo member = type.GetMethod(name, bindingFlags | BindToEveryThing | BindingFlags.Static, null, parameterTypes, null);
                 if (member == null)
                 {
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The member specified ({0}) could not be found. You might need to regenerate your private accessor, or the member may be private and defined on a base class. If the latter is true, you need to pass the type that defines the member into PrivateObject's constructor.", name));
@@ -1077,7 +1077,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
             else
             {
-                return this.InvokeHelperStatic(name, bindingFlags | BindingFlags.InvokeMethod, args, culture);
+                return InvokeHelperStatic(name, bindingFlags | BindingFlags.InvokeMethod, args, culture);
             }
         }
 
@@ -1092,7 +1092,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>element at the specified location</returns>
         public object GetStaticArrayElement(string name, params int[] indices)
         {
-            return this.GetStaticArrayElement(name, BindToEveryThing, indices);
+            return GetStaticArrayElement(name, BindToEveryThing, indices);
         }
 
         /// <summary>
@@ -1106,7 +1106,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// </param>
         public void SetStaticArrayElement(string name, object value, params int[] indices)
         {
-            this.SetStaticArrayElement(name, BindToEveryThing, value, indices);
+            SetStaticArrayElement(name, BindToEveryThing, value, indices);
         }
 
         /// <summary>
@@ -1121,7 +1121,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>element at the spcified location</returns>
         public object GetStaticArrayElement(string name, BindingFlags bindingFlags, params int[] indices)
         {
-            Array arr = (Array)this.InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.GetProperty | bindingFlags, null, CultureInfo.InvariantCulture);
+            Array arr = (Array)InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.GetProperty | bindingFlags, null, CultureInfo.InvariantCulture);
             return arr.GetValue(indices);
         }
 
@@ -1137,7 +1137,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// </param>
         public void SetStaticArrayElement(string name, BindingFlags bindingFlags, object value, params int[] indices)
         {
-            Array arr = (Array)this.InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Static | bindingFlags, null, CultureInfo.InvariantCulture);
+            Array arr = (Array)InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Static | bindingFlags, null, CultureInfo.InvariantCulture);
             arr.SetValue(value, indices);
         }
 
@@ -1148,7 +1148,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The static field.</returns>
         public object GetStaticField(string name)
         {
-            return this.GetStaticField(name, BindToEveryThing);
+            return GetStaticField(name, BindToEveryThing);
         }
 
         /// <summary>
@@ -1158,7 +1158,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">Arguement to the invocation</param>
         public void SetStaticField(string name, object value)
         {
-            this.SetStaticField(name, BindToEveryThing, value);
+            SetStaticField(name, BindToEveryThing, value);
         }
 
         /// <summary>
@@ -1169,7 +1169,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The static field.</returns>
         public object GetStaticField(string name, BindingFlags bindingFlags)
         {
-            return this.InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.Static | bindingFlags, null, CultureInfo.InvariantCulture);
+            return InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.Static | bindingFlags, null, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -1180,7 +1180,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">Arguement to the invocation</param>
         public void SetStaticField(string name, BindingFlags bindingFlags, object value)
         {
-            this.InvokeHelperStatic(name, BindingFlags.SetField | bindingFlags | BindingFlags.Static, new[] { value }, CultureInfo.InvariantCulture);
+            InvokeHelperStatic(name, BindingFlags.SetField | bindingFlags | BindingFlags.Static, new[] { value }, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -1190,7 +1190,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The static field or property.</returns>
         public object GetStaticFieldOrProperty(string name)
         {
-            return this.GetStaticFieldOrProperty(name, BindToEveryThing);
+            return GetStaticFieldOrProperty(name, BindToEveryThing);
         }
 
         /// <summary>
@@ -1200,7 +1200,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">Value to be set to field or property</param>
         public void SetStaticFieldOrProperty(string name, object value)
         {
-            this.SetStaticFieldOrProperty(name, BindToEveryThing, value);
+            SetStaticFieldOrProperty(name, BindToEveryThing, value);
         }
 
         /// <summary>
@@ -1211,7 +1211,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The static field or property.</returns>
         public object GetStaticFieldOrProperty(string name, BindingFlags bindingFlags)
         {
-            return this.InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Static | bindingFlags, null, CultureInfo.InvariantCulture);
+            return InvokeHelperStatic(name, BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Static | bindingFlags, null, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -1222,7 +1222,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="value">Value to be set to field or property</param>
         public void SetStaticFieldOrProperty(string name, BindingFlags bindingFlags, object value)
         {
-            this.InvokeHelperStatic(name, BindingFlags.SetField | BindingFlags.SetProperty | bindingFlags | BindingFlags.Static, new[] { value }, CultureInfo.InvariantCulture);
+            InvokeHelperStatic(name, BindingFlags.SetField | BindingFlags.SetProperty | bindingFlags | BindingFlags.Static, new[] { value }, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -1233,7 +1233,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The static property.</returns>
         public object GetStaticProperty(string name, params object[] args)
         {
-            return this.GetStaticProperty(name, BindToEveryThing, args);
+            return GetStaticProperty(name, BindToEveryThing, args);
         }
 
         /// <summary>
@@ -1244,7 +1244,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="args">Arguments to pass to the member to invoke.</param>
         public void SetStaticProperty(string name, object value, params object[] args)
         {
-            this.SetStaticProperty(name, BindToEveryThing, value, null, args);
+            SetStaticProperty(name, BindToEveryThing, value, null, args);
         }
 
         /// <summary>
@@ -1256,7 +1256,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="args">Arguments to pass to the member to invoke.</param>
         public void SetStaticProperty(string name, object value, Type[] parameterTypes, object[] args)
         {
-            this.SetStaticProperty(name, BindingFlags.SetProperty, value, parameterTypes, args);
+            SetStaticProperty(name, BindingFlags.SetProperty, value, parameterTypes, args);
         }
 
         /// <summary>
@@ -1268,7 +1268,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <returns>The static property.</returns>
         public object GetStaticProperty(string name, BindingFlags bindingFlags, params object[] args)
         {
-            return this.GetStaticProperty(name, BindingFlags.GetProperty | BindingFlags.Static | bindingFlags, null, args);
+            return GetStaticProperty(name, BindingFlags.GetProperty | BindingFlags.Static | bindingFlags, null, args);
         }
 
         /// <summary>
@@ -1283,7 +1283,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             if (parameterTypes != null)
             {
-                PropertyInfo pi = this.type.GetProperty(name, bindingFlags | BindingFlags.Static, null, null, parameterTypes, null);
+                PropertyInfo pi = type.GetProperty(name, bindingFlags | BindingFlags.Static, null, null, parameterTypes, null);
                 if (pi == null)
                 {
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The member specified ({0}) could not be found. You might need to regenerate your private accessor, or the member may be private and defined on a base class. If the latter is true, you need to pass the type that defines the member into PrivateObject's constructor.", name));
@@ -1293,7 +1293,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
             }
             else
             {
-                return this.InvokeHelperStatic(name, bindingFlags | BindingFlags.GetProperty, args, null);
+                return InvokeHelperStatic(name, bindingFlags | BindingFlags.GetProperty, args, null);
             }
         }
 
@@ -1306,7 +1306,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         /// <param name="args">Optional index values for indexed properties. The indexes of indexed properties are zero-based. This value should be null for non-indexed properties. </param>
         public void SetStaticProperty(string name, BindingFlags bindingFlags, object value, params object[] args)
         {
-            this.SetStaticProperty(name, bindingFlags, value, null, args);
+            SetStaticProperty(name, bindingFlags, value, null, args);
         }
 
         /// <summary>
@@ -1321,7 +1321,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             if (parameterTypes != null)
             {
-                PropertyInfo pi = this.type.GetProperty(name, bindingFlags | BindingFlags.Static, null, null, parameterTypes, null);
+                PropertyInfo pi = type.GetProperty(name, bindingFlags | BindingFlags.Static, null, null, parameterTypes, null);
                 if (pi == null)
                 {
                     throw new ArgumentException(
@@ -1335,7 +1335,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
                 object[] pass = new object[(args?.Length ?? 0) + 1];
                 pass[0] = value;
                 args?.CopyTo(pass, 1);
-                this.InvokeHelperStatic(name, bindingFlags | BindingFlags.SetProperty, pass, null);
+                InvokeHelperStatic(name, bindingFlags | BindingFlags.SetProperty, pass, null);
             }
         }
 
@@ -1351,7 +1351,7 @@ namespace Microsoft.VisualStudio.TestTools.UnitTesting
         {
             try
             {
-                return this.type.InvokeMember(name, bindingFlags | BindToEveryThing | BindingFlags.Static, null, null, args, culture);
+                return type.InvokeMember(name, bindingFlags | BindToEveryThing | BindingFlags.Static, null, null, args, culture);
             }
             catch (TargetInvocationException e)
             {

@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Read_Mem
 			Hio h = Hio.Hio_Open_Const_Mem(mem, 100);
 			Assert.IsNotNull(h, "hio_open");
 
-			c_int x = h.Hio_Size();
+			c_int x = (c_int)h.Hio_Size();
 			Assert.AreEqual(100, x, "hio_size");
 
 			x = h.Hio_Read8();
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Read_Mem
 			x = (int)h.Hio_Read32B();
 			Assert.AreEqual(0x10111213, x, "hio_read32b");
 
-			x = h.Hio_Tell();
+			x = (c_int)h.Hio_Tell();
 			Assert.AreEqual(0x14, x, "hio_fseek");
 
 			x = h.Hio_Seek(2, SeekOrigin.Begin);
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Read_Mem
 			x = h.Hio_Seek(20, SeekOrigin.Current);
 			Assert.AreEqual(0, x, "hio_seek");
 
-			x = h.Hio_Tell();
+			x = (c_int)h.Hio_Tell();
 			Assert.AreEqual(100, x, "hio_seek");
 
 			x = h.Hio_Close();

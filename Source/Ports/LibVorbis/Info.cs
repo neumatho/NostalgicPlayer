@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		{
 			CodecSetupInfo ci = vi.codec_setup as CodecSetupInfo;
 
-			return ci != null ? ci.blocksizes[zo] : -1;
+			return ci != null ? (c_int)ci.blocksizes[zo] : -1;
 		}
 
 
@@ -171,24 +171,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			if (ci == null)
 				return (c_int)VorbisError.Fault;
 
-			vi.version = opb.Read(32);
+			vi.version = (c_int)opb.Read(32);
 			if (vi.version != 0)
 				return (c_int)VorbisError.Version;
 
-			vi.channels = opb.Read(8);
+			vi.channels = (c_int)opb.Read(8);
 			vi.rate = opb.Read(32);
 
 			vi.bitrate_upper = opb.Read(32);
 			vi.bitrate_nominal = opb.Read(32);
 			vi.bitrate_lower = opb.Read(32);
 
-			c_int bs = opb.Read(4);
+			c_int bs = (c_int)opb.Read(4);
 			if (bs < 0)
 				goto Err_Out;
 
 			ci.blocksizes[0] = 1 << bs;
 
-			bs = opb.Read(4);
+			bs = (c_int)opb.Read(4);
 			if (bs < 0)
 				goto Err_Out;
 
@@ -229,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		/********************************************************************/
 		private static c_int Vorbis_Unpack_Comment(VorbisComment vc, OggPack opb)
 		{
-			c_int vendorlen = opb.Read(32);
+			c_int vendorlen = (c_int)opb.Read(32);
 			if (vendorlen < 0)
 				goto Err_Out;
 
@@ -239,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			vc.vendor = Memory.Ogg_CAlloc<byte>((size_t)vendorlen + 1);
 			V_ReadString(opb, vc.vendor, vendorlen);
 
-			c_int i = opb.Read(32);
+			c_int i = (c_int)opb.Read(32);
 			if (i < 0)
 				goto Err_Out;
 
@@ -252,7 +252,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 			for (i = 0; i < vc.comments; i++)
 			{
-				c_int len = opb.Read(32);
+				c_int len = (c_int)opb.Read(32);
 				if (len < 0)
 					goto Err_Out;
 
@@ -288,7 +288,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			CodecSetupInfo ci = (CodecSetupInfo)vi.codec_setup;
 
 			// Codebooks
-			ci.books = opb.Read(8) + 1;
+			ci.books = (c_int)opb.Read(8) + 1;
 			if (ci.books <= 0)
 				goto Err_Out;
 
@@ -301,26 +301,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 			// Time backend settings; hooks are unused
 			{
-				c_int times = opb.Read(6) + 1;
+				c_int times = (c_int)opb.Read(6) + 1;
 				if (times <= 0)
 					goto Err_Out;
 
 				for (c_int i = 0; i < times; i++)
 				{
-					c_int test = opb.Read(16);
+					c_int test = (c_int)opb.Read(16);
 					if ((test < 0) || (test >= Constants.Vi_TimeB))
 						goto Err_Out;
 				}
 			}
 
 			// Floor backend settings
-			ci.floors = opb.Read(6) + 1;
+			ci.floors = (c_int)opb.Read(6) + 1;
 			if (ci.floors <= 0)
 				goto Err_Out;
 
 			for (c_int i = 0; i < ci.floors; i++)
 			{
-				ci.floor_type[i] = opb.Read(16);
+				ci.floor_type[i] = (c_int)opb.Read(16);
 				if ((ci.floor_type[i] < 0) || (ci.floor_type[i] >= Constants.Vi_FloorB))
 					goto Err_Out;
 
@@ -330,13 +330,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 
 			// Residue backend settings
-			ci.residues = opb.Read(6) + 1;
+			ci.residues = (c_int)opb.Read(6) + 1;
 			if (ci.residues <= 0)
 				goto Err_Out;
 
 			for (c_int i = 0; i < ci.residues; i++)
 			{
-				ci.residue_type[i] = opb.Read(16);
+				ci.residue_type[i] = (c_int)opb.Read(16);
 				if ((ci.residue_type[i] < 0) || (ci.residue_type[i] >= Constants.Vi_ResB))
 					goto Err_Out;
 
@@ -346,13 +346,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 
 			// Map backend settings
-			ci.maps = opb.Read(6) + 1;
+			ci.maps = (c_int)opb.Read(6) + 1;
 			if (ci.maps <= 0)
 				goto Err_Out;
 
 			for (c_int i = 0; i < ci.maps; i++)
 			{
-				ci.map_type[i] = opb.Read(16);
+				ci.map_type[i] = (c_int)opb.Read(16);
 				if ((ci.map_type[i] < 0) || (ci.map_type[i] >= Constants.Vi_MapB))
 					goto Err_Out;
 
@@ -362,17 +362,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 
 			// Mode settings
-			ci.modes = opb.Read(6) + 1;
+			ci.modes = (c_int)opb.Read(6) + 1;
 			if (ci.modes <= 0)
 				goto Err_Out;
 
 			for (c_int i = 0; i < ci.modes; i++)
 			{
 				ci.mode_param[i] = new VorbisInfoMode();
-				ci.mode_param[i].blockflag = opb.Read(1);
-				ci.mode_param[i].windowtype = opb.Read(16);
-				ci.mode_param[i].transformtype = opb.Read(16);
-				ci.mode_param[i].mapping = opb.Read(8);
+				ci.mode_param[i].blockflag = (c_int)opb.Read(1);
+				ci.mode_param[i].windowtype = (c_int)opb.Read(16);
+				ci.mode_param[i].transformtype = (c_int)opb.Read(16);
+				ci.mode_param[i].mapping = (c_int)opb.Read(8);
 
 				if (ci.mode_param[i].windowtype >= Constants.Vi_WindowB)
 					goto Err_Out;
@@ -409,7 +409,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		{
 			if (op != null)
 			{
-				OggPack.ReadInit(out OggPack opb, op.Packet, op.Bytes);
+				OggPack.ReadInit(out OggPack opb, op.Packet, (c_int)op.Bytes);
 
 				if (!op.Bos)
 					return 0;	// Not the initial packet
@@ -443,14 +443,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		{
 			if (op != null)
 			{
-				OggPack.ReadInit(out OggPack opb, op.Packet, op.Bytes);
+				OggPack.ReadInit(out OggPack opb, op.Packet, (c_int)op.Bytes);
 
 				// Which of the three types of header is this?
 				// Also verify header-ness, vorbis
 				{
 					byte[] buffer = new byte[6];
 
-					c_int packtype = opb.Read(8);
+					c_int packtype = (c_int)opb.Read(8);
 					V_ReadString(opb, buffer, 6);
 
 					if (CMemory.MemCmp(buffer, "vorbis", 6) != 0)

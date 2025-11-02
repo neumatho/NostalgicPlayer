@@ -383,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				c_int row = 0;
 				c_int channel = 0;
-				c_int count = f.Hio_Tell();
+				c_int count = (c_int)f.Hio_Tell();
 
 				// Packed pattern data is stored full Track after full Track from the left to
 				// the right (all Intervals in Track and then going Track right). You should
@@ -787,6 +787,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 

@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			data.Cur_Pat = 0;
 			data.Cur_Ins = 0;
 
-			c_int offset = f.Hio_Tell();
+			c_int offset = (c_int)f.Hio_Tell();
 
 			Iff handle = Iff.LibXmp_Iff_New();
 			if (handle == null)
@@ -990,6 +990,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 								break;
 							}
 						}
+
 						break;
 					}
 

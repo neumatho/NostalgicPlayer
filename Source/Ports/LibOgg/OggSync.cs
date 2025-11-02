@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 			c_long ret = Framing.Ogg_Sync_PageOut(state, out Ogg_Page p);
 			og = p == null ? null : new OggPage(p);
 
-			return ret;
+			return (c_int)ret;
 		}
 
 

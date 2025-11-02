@@ -66,11 +66,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			VorbisInfoFloor1 info = new VorbisInfoFloor1();
 
 			// Read partitions
-			info.partitions = opb.Read(5);		// Only 0 to 31 legal
+			info.partitions = (c_int)opb.Read(5);		// Only 0 to 31 legal
 
 			for (c_int j = 0; j < info.partitions; j++)
 			{
-				info.partitionclass[j] = opb.Read(4);	// Only 0 to 15 legal
+				info.partitionclass[j] = (c_int)opb.Read(4);	// Only 0 to 15 legal
 
 				if (info.partitionclass[j] < 0)
 					goto ErrOut;
@@ -82,21 +82,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			// Read partition classes
 			for (c_int j = 0; j < (maxclass + 1); j++)
 			{
-				info.class_dim[j] = opb.Read(3) + 1;	// 1 to 8
-				info.class_subs[j] = opb.Read(2);		// 0,1,2,3 bits
+				info.class_dim[j] = (c_int)opb.Read(3) + 1;	// 1 to 8
+				info.class_subs[j] = (c_int)opb.Read(2);		// 0,1,2,3 bits
 
 				if (info.class_subs[j] < 0)
 					goto ErrOut;
 
 				if (info.class_subs[j] != 0)
-					info.class_book[j] = opb.Read(8);
+					info.class_book[j] = (c_int)opb.Read(8);
 
 				if ((info.class_book[j] < 0) || (info.class_book[j] >= ci.books))
 					goto ErrOut;
 
 				for (c_int k = 0; k < (1 << info.class_subs[j]); k++)
 				{
-					info.class_subbook[j, k] = opb.Read(8) - 1;
+					info.class_subbook[j, k] = (c_int)opb.Read(8) - 1;
 
 					if ((info.class_subbook[j, k] < -1) || (info.class_subbook[j, k] >= ci.books))
 						goto ErrOut;
@@ -104,8 +104,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			}
 
 			// Read the post list
-			info.mult = opb.Read(2) + 1;		// Only 1,2,3,4 legal now
-			c_int rangebits = opb.Read(4);
+			info.mult = (c_int)opb.Read(2) + 1;		// Only 1,2,3,4 legal now
+			c_int rangebits = (c_int)opb.Read(4);
 			if (rangebits < 0)
 				goto ErrOut;
 
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 				for (; k < count; k++)
 				{
-					c_int t = info.postlist[k + 2] = opb.Read(rangebits);
+					c_int t = info.postlist[k + 2] = (c_int)opb.Read(rangebits);
 					if ((t < 0) || (t >= (1 << rangebits)))
 						goto ErrOut;
 				}
@@ -350,8 +350,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				CPointer<byte> retBuffer = Block.Vorbis_Block_Alloc<byte>(vb, look.posts * sizeof(c_int));
 				Span<c_int> fit_value = MemoryMarshal.Cast<byte, c_int>(retBuffer.AsSpan());
 
-				fit_value[0] = vb.opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)look.quant_q - 1));
-				fit_value[1] = vb.opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)look.quant_q - 1));
+				fit_value[0] = (c_int)vb.opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)look.quant_q - 1));
+				fit_value[1] = (c_int)vb.opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)look.quant_q - 1));
 
 				// Partition by partition
 				for (c_int i = 0, j = 2; i < info.partitions; i++)
@@ -365,7 +365,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 					// Decode the partition's first stage cascade value
 					if (csubbits != 0)
 					{
-						cval = CodebookImpl.Vorbis_Book_Decode(books[info.class_book[@class]], vb.opb);
+						cval = (c_int)CodebookImpl.Vorbis_Book_Decode(books[info.class_book[@class]], vb.opb);
 
 						if (cval == -1)
 							goto Eop;
@@ -378,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 						if (book >= 0)
 						{
-							fit_value[j + k] = CodebookImpl.Vorbis_Book_Decode(books[book], vb.opb);
+							fit_value[j + k] = (c_int)CodebookImpl.Vorbis_Book_Decode(books[book], vb.opb);
 							if (fit_value[j + k] == -1)
 								goto Eop;
 						}
@@ -443,7 +443,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			VorbisInfoFloor1 info = look.vi;
 
 			CodecSetupInfo ci = (CodecSetupInfo)vb.vd.vi.codec_setup;
-			c_int n = ci.blocksizes[vb.W] / 2;
+			c_int n = (c_int)(ci.blocksizes[vb.W] / 2);
 
 			if (memo.IsNotNull)
 			{

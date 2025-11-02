@@ -1096,6 +1096,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									id = InternalFormat.NoiseTracker;
 									// or Octalyser
 								}
+
 								break;
 							}
 
@@ -1343,7 +1344,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				uint8[] idBuffer = new uint8[4];
 
-				c_int pos = f.Hio_Tell();
+				c_int pos = (c_int)f.Hio_Tell();
 				if (pos < 0)
 					return InternalFormat.NotRecognized;
 

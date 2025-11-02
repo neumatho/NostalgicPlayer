@@ -610,10 +610,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 
 					for (c_int i = 0; i < 5; i++)
 					{
-						CMemory.MemCpy(oy.Buffer(og[i].Page.HeaderLen), og[i].Page.Header, og[i].Page.HeaderLen);
+						CMemory.MemCpy(oy.Buffer(og[i].Page.HeaderLen), og[i].Page.Header, (c_int)og[i].Page.HeaderLen);
 						oy.Wrote(og[i].Page.HeaderLen);
 
-						CMemory.MemCpy(oy.Buffer(og[i].Page.BodyLen), og[i].Page.Body, og[i].Page.BodyLen);
+						CMemory.MemCpy(oy.Buffer(og[i].Page.BodyLen), og[i].Page.Body, (c_int)og[i].Page.BodyLen);
 						oy.Wrote(og[i].Page.BodyLen);
 					}
 
@@ -675,10 +675,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 
 					for (c_int i = 0; i < 5; i++)
 					{
-						CMemory.MemCpy(oy.Buffer(og[i].Page.HeaderLen), og[i].Page.Header, og[i].Page.HeaderLen);
+						CMemory.MemCpy(oy.Buffer(og[i].Page.HeaderLen), og[i].Page.Header, (c_int)og[i].Page.HeaderLen);
 						oy.Wrote(og[i].Page.HeaderLen);
 
-						CMemory.MemCpy(oy.Buffer(og[i].Page.BodyLen), og[i].Page.Body, og[i].Page.BodyLen);
+						CMemory.MemCpy(oy.Buffer(og[i].Page.BodyLen), og[i].Page.Body, (c_int)og[i].Page.BodyLen);
 						oy.Wrote(og[i].Page.BodyLen);
 					}
 
@@ -775,7 +775,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 						Assert.Fail("Error");
 
 					// Test fractional page inputs: incomplete body
-					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header + 28, og[1].Page.HeaderLen - 28);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header + 28, (c_int)(og[1].Page.HeaderLen - 28));
 					oy.Wrote(og[1].Page.HeaderLen - 28);
 
 					if (oy.PageOut(out ogDe) > 0)
@@ -787,7 +787,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 					if (oy.PageOut(out ogDe) > 0)
 						Assert.Fail("Error");
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body + 1000, og[1].Page.BodyLen - 1000);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body + 1000, (c_int)(og[1].Page.BodyLen - 1000));
 					oy.Wrote(og[1].Page.BodyLen - 1000);
 
 					if (oy.PageOut(out ogDe) <= 0)
@@ -800,10 +800,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 
 					oy.Reset();
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header, og[1].Page.HeaderLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header, (c_int)og[1].Page.HeaderLen);
 					oy.Wrote(og[1].Page.HeaderLen);
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, og[1].Page.BodyLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, (c_int)og[1].Page.BodyLen);
 					oy.Wrote(og[1].Page.BodyLen);
 
 					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header, 20);
@@ -815,10 +815,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 					if (oy.PageOut(out ogDe) > 0)
 						Assert.Fail("Error");
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header + 20, og[1].Page.HeaderLen - 20);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header + 20, (c_int)(og[1].Page.HeaderLen - 20));
 					oy.Wrote(og[1].Page.HeaderLen - 20);
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, og[1].Page.BodyLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, (c_int)og[1].Page.BodyLen);
 					oy.Wrote(og[1].Page.BodyLen);
 
 					if (oy.PageOut(out ogDe) <= 0)
@@ -832,13 +832,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 					oy.Reset();
 
 					// Garbage
-					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, og[1].Page.BodyLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, (c_int)og[1].Page.BodyLen);
 					oy.Wrote(og[1].Page.BodyLen);
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header, og[1].Page.HeaderLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header, (c_int)og[1].Page.HeaderLen);
 					oy.Wrote(og[1].Page.HeaderLen);
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, og[1].Page.BodyLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, (c_int)og[1].Page.BodyLen);
 					oy.Wrote(og[1].Page.BodyLen);
 
 					CMemory.MemCpy(oy.Buffer(og[2].Page.HeaderLen), og[2].Page.Header, 20);
@@ -853,10 +853,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 					if (oy.PageOut(out ogDe) > 0)
 						Assert.Fail("Error");
 
-					CMemory.MemCpy(oy.Buffer(og[2].Page.HeaderLen), og[2].Page.Header + 20, og[2].Page.HeaderLen - 20);
+					CMemory.MemCpy(oy.Buffer(og[2].Page.HeaderLen), og[2].Page.Header + 20, (c_int)(og[2].Page.HeaderLen - 20));
 					oy.Wrote(og[2].Page.HeaderLen - 20);
 
-					CMemory.MemCpy(oy.Buffer(og[2].Page.BodyLen), og[2].Page.Body, og[2].Page.BodyLen);
+					CMemory.MemCpy(oy.Buffer(og[2].Page.BodyLen), og[2].Page.Body, (c_int)og[2].Page.BodyLen);
 					oy.Wrote(og[2].Page.BodyLen);
 
 					if (oy.PageOut(out ogDe) <= 0)
@@ -869,28 +869,28 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 
 					oy.Reset();
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header, og[1].Page.HeaderLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.HeaderLen), og[1].Page.Header, (c_int)og[1].Page.HeaderLen);
 					oy.Wrote(og[1].Page.HeaderLen);
 
-					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, og[1].Page.BodyLen);
+					CMemory.MemCpy(oy.Buffer(og[1].Page.BodyLen), og[1].Page.Body, (c_int)og[1].Page.BodyLen);
 					oy.Wrote(og[1].Page.BodyLen);
 
-					CMemory.MemCpy(oy.Buffer(og[2].Page.HeaderLen), og[2].Page.Header, og[2].Page.HeaderLen);
+					CMemory.MemCpy(oy.Buffer(og[2].Page.HeaderLen), og[2].Page.Header, (c_int)og[2].Page.HeaderLen);
 					oy.Wrote(og[2].Page.HeaderLen);
 
-					CMemory.MemCpy(oy.Buffer(og[2].Page.HeaderLen), og[2].Page.Header, og[2].Page.HeaderLen);
+					CMemory.MemCpy(oy.Buffer(og[2].Page.HeaderLen), og[2].Page.Header, (c_int)og[2].Page.HeaderLen);
 					oy.Wrote(og[2].Page.HeaderLen);
 
 					if (oy.PageOut(out OggPage ogDe) <= 0)
 						Assert.Fail("Error");
 
-					CMemory.MemCpy(oy.Buffer(og[2].Page.BodyLen), og[2].Page.Body, og[2].Page.BodyLen - 5);
+					CMemory.MemCpy(oy.Buffer(og[2].Page.BodyLen), og[2].Page.Body, (c_int)(og[2].Page.BodyLen - 5));
 					oy.Wrote(og[2].Page.BodyLen - 5);
 
-					CMemory.MemCpy(oy.Buffer(og[3].Page.HeaderLen), og[3].Page.Header, og[3].Page.HeaderLen);
+					CMemory.MemCpy(oy.Buffer(og[3].Page.HeaderLen), og[3].Page.Header, (c_int)og[3].Page.HeaderLen);
 					oy.Wrote(og[3].Page.HeaderLen);
 
-					CMemory.MemCpy(oy.Buffer(og[3].Page.BodyLen), og[3].Page.Body, og[3].Page.BodyLen);
+					CMemory.MemCpy(oy.Buffer(og[3].Page.BodyLen), og[3].Page.Body, (c_int)og[3].Page.BodyLen);
 					oy.Wrote(og[3].Page.BodyLen);
 
 					if (oy.PageOut(out ogDe) > 0)
@@ -994,7 +994,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 							CPointer<byte> buf = oy.Buffer(og.Page.HeaderLen + og.Page.BodyLen);
 							CPointer<byte> next = buf;
 
-							byteSkipCount += og.Page.HeaderLen;
+							byteSkipCount += (c_int)og.Page.HeaderLen;
 
 							if (byteSkipCount > byteSkip)
 							{
@@ -1003,7 +1003,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 								byteSkipCount = byteSkip;
 							}
 
-							byteSkipCount += og.Page.BodyLen;
+							byteSkipCount += (c_int)og.Page.BodyLen;
 
 							if (byteSkipCount > byteSkip)
 							{
@@ -1043,7 +1043,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 									ComparePacket(opDe, opDe2);
 
 									// Verify the packet
-									if (CMemory.MemCmp(data + depacket, opDe.Packet, opDe.Bytes) != 0)
+									if (CMemory.MemCmp(data + depacket, opDe.Packet, (c_int)opDe.Bytes) != 0)
 										Assert.Fail("Packet data mismatch in decode");
 
 									// Check bos flag
@@ -1168,14 +1168,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			if (temp.IsNull)
 				return -1;
 
-			CMemory.MemCpy(temp, og.Page.Header, og.Page.HeaderLen);
+			CMemory.MemCpy(temp, og.Page.Header, (c_int)og.Page.HeaderLen);
 			og.Page.Header = temp;
 
 			temp = Memory.Ogg_MAlloc<byte>((size_t)og.Page.BodyLen);
 			if (temp.IsNull)
 				return -1;
 
-			CMemory.MemCpy(temp, og.Page.Body, og.Page.BodyLen);
+			CMemory.MemCpy(temp, og.Page.Body, (c_int)og.Page.BodyLen);
 			og.Page.Body = temp;
 
 			return 0;

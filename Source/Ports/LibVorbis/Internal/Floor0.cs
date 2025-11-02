@@ -67,12 +67,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			CodecSetupInfo ci = (CodecSetupInfo)vi.codec_setup;
 
 			VorbisInfoFloor0 info = new VorbisInfoFloor0();
-			info.order = opb.Read(8);
+			info.order = (c_int)(opb.Read(8));
 			info.rate = opb.Read(16);
 			info.barkmap = opb.Read(16);
-			info.ampbits = opb.Read(6);
-			info.ampdB = opb.Read(8);
-			info.numbooks = opb.Read(4) + 1;
+			info.ampbits = (c_int)(opb.Read(6));
+			info.ampdB = (c_int)(opb.Read(8));
+			info.numbooks = (c_int)(opb.Read(4)) + 1;
 
 			if (info.order < 1)
 				goto ErrOut;
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			for (c_int j = 0; j < info.numbooks; j++)
 			{
-				info.books[j] = opb.Read(8);
+				info.books[j] = (c_int)(opb.Read(8));
 
 				if ((info.books[j] < 0) || (info.books[j] >= ci.books))
 					goto ErrOut;
@@ -130,8 +130,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				CodecSetupInfo ci = (CodecSetupInfo)vi.codec_setup;
 				VorbisInfoFloor0 info = (VorbisInfoFloor0)infoX;
 
-				c_int W = vb.W;
-				c_int n = ci.blocksizes[W] / 2;
+				c_int W = (c_int)vb.W;
+				c_int n = (c_int)(ci.blocksizes[W] / 2);
 
 				// we choose a scaling constant so that:
 				//   floor(bark(rate/2-1)*C)=mapped-1
@@ -175,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			VorbisLookFloor0 look = new VorbisLookFloor0();
 
 			look.m = info.order;
-			look.ln = info.barkmap;
+			look.ln = (c_int)info.barkmap;
 			look.vi = info;
 
 			look.linearmap = new c_int[2][];
@@ -195,13 +195,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			VorbisLookFloor0 look = (VorbisLookFloor0)i;
 			VorbisInfoFloor0 info = look.vi;
 
-			c_int ampraw = vb.opb.Read(info.ampbits);
+			c_int ampraw = (c_int)vb.opb.Read(info.ampbits);
 
 			if (ampraw > 0)	// Also handles the -1 out of data case
 			{
 				c_long maxval = (1 << info.ampbits) - 1;
 				c_float amp = (c_float)ampraw / maxval * info.ampdB;
-				c_int booknum = vb.opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)info.numbooks));
+				c_int booknum = (c_int)vb.opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)info.numbooks));
 
 				if ((booknum != -1) && (booknum < info.numbooks))	// Be paranoid
 				{

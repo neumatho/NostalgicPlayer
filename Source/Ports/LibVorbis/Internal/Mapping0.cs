@@ -43,34 +43,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			if (vi.channels <= 0)
 				goto ErrOut;
 
-			c_int b = opb.Read(1);
+			c_int b = (c_int)opb.Read(1);
 			if (b < 0)
 				goto ErrOut;
 
 			if (b != 0)
 			{
-				info.submaps = opb.Read(4) + 1;
+				info.submaps = (c_int)opb.Read(4) + 1;
 				if (info.submaps <= 0)
 					goto ErrOut;
 			}
 			else
 				info.submaps = 1;
 
-			b = opb.Read(1);
+			b = (c_int)opb.Read(1);
 			if (b < 0)
 				goto ErrOut;
 
 			if (b != 0)
 			{
-				info.coupling_steps = opb.Read(8) + 1;
+				info.coupling_steps = (c_int)opb.Read(8) + 1;
 				if (info.coupling_steps <= 0)
 					goto ErrOut;
 
 				for (c_int i = 0; i < info.coupling_steps; i++)
 				{
 					// vi->channels > 0 is enforced in the caller
-					c_int testM = info.coupling_mag[i] = opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)vi.channels - 1));
-					c_int testA = info.coupling_ang[i] = opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)vi.channels - 1));
+					c_int testM = info.coupling_mag[i] = (c_int)opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)vi.channels - 1));
+					c_int testA = info.coupling_ang[i] = (c_int)opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)vi.channels - 1));
 
 					if ((testM < 0) || (testA < 0) || (testM == testA) || (testM >= vi.channels) || (testA >= vi.channels))
 						goto ErrOut;
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				for (c_int i = 0; i < vi.channels; i++)
 				{
-					info.chmuxlist[i] = opb.Read(4);
+					info.chmuxlist[i] = (c_int)opb.Read(4);
 
 					if ((info.chmuxlist[i] >= info.submaps) || (info.chmuxlist[i] < 0))
 						goto ErrOut;
@@ -95,12 +95,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				opb.Read(8);    // time submap unused
 
-				info.floorsubmap[i] = opb.Read(8);
+				info.floorsubmap[i] = (c_int)opb.Read(8);
 
 				if ((info.floorsubmap[i] >= ci.floors) || (info.floorsubmap[i] < 0))
 					goto ErrOut;
 
-				info.residuesubmap[i] = opb.Read(8);
+				info.residuesubmap[i] = (c_int)opb.Read(8);
 
 				if ((info.residuesubmap[i] >= ci.residues) || (info.residuesubmap[i] < 0))
 					goto ErrOut;
@@ -129,7 +129,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			PrivateState b = (PrivateState)vd.backend_state;
 			VorbisInfoMapping0 info = (VorbisInfoMapping0)l;
 
-			c_long n = vb.pcmend = ci.blocksizes[vb.W];
+			c_long n = ci.blocksizes[vb.W];
+			vb.pcmend = (c_int)n;
 
 			CPointer<c_float>[] pcmbundle = new CPointer<c_float>[vi.channels];
 			bool[] zerobundle = new bool[vi.channels];
@@ -148,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				else
 					nonzero[i] = false;
 
-				vb.pcm[i].Clear(n / 2);
+				vb.pcm[i].Clear((c_int)(n / 2));
 			}
 
 			// Channel coupling can 'dirty' the nonzero listing

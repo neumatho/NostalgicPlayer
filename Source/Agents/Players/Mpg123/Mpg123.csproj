@@ -9,7 +9,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Plays audio mpeg files with layer 1/2/3 using Mpg123 library</Description>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

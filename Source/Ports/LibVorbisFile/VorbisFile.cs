@@ -571,7 +571,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			OggPage og = null;
 			ogg_int64_t accumulated = 0;
 			c_long lastblock = -1;
-			c_int serialno = vf.os.State.SerialNo;
+			c_int serialno = (c_int)vf.os.State.SerialNo;
 
 			while (true)
 			{
@@ -640,7 +640,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			OggPage og = null;
 			ogg_int64_t ret;
 
-			c_int serialno = vf.os.State.SerialNo;
+			c_int serialno = (c_int)vf.os.State.SerialNo;
 
 			// Invariants:
 			// We have the headers and serialnos for the link beginning at 'begin'
@@ -662,7 +662,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 					searched = Get_Prev_Page_Serial(searched, currentno_list, currentnos, ref endserial, ref endgran);
 				}
 
-				vf.links = m + 1;
+				vf.links = (c_int)(m + 1);
 
 				if (vf.offsets.IsNotNull)
 					Memory.Ogg_Free(vf.offsets);
@@ -682,7 +682,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 
 				vf.offsets[m + 1] = end;
 				vf.offsets[m] = begin;
-				vf.pcmlengths[m * 2 + 1] = endgran < 0 ? 0 : endgran;
+				vf.pcmlengths[(m * 2) + 1] = endgran < 0 ? 0 : endgran;
 			}
 			else
 			{
@@ -744,7 +744,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 				if (ret != 0)
 					return (c_int)ret;
 
-				serialno = vf.os.State.SerialNo;
+				serialno = (c_int)vf.os.State.SerialNo;
 				dataoffset = vf.offset;
 
 				// This will consume a page, however the next bisection always
@@ -823,8 +823,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			ogg_int64_t dataoffset = vf.dataoffsets[0];
 			ogg_int64_t endgran = -1;
 
-			c_int endserial = vf.os.State.SerialNo;
-			c_int serialno = vf.os.State.SerialNo;
+			c_int endserial = (c_int)vf.os.State.SerialNo;
+			c_int serialno = (c_int)vf.os.State.SerialNo;
 
 			// We're partially open and have a first link header state in
 			// storage in vf
@@ -848,12 +848,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			// Get the offset of the last page of the physical bitstream, or, if
 			// we're lucky the last vorbis page of this link as most OggVorbis
 			// files will contain a single logical bitstream
-			ogg_int64_t end = Get_Prev_Page_Serial(vf.end, vf.serialnos + 2, vf.serialnos[1], ref endserial, ref endgran);
+			ogg_int64_t end = Get_Prev_Page_Serial(vf.end, vf.serialnos + 2, (c_int)vf.serialnos[1], ref endserial, ref endgran);
 			if (end < 0)
 				return (c_int)end;
 
 			// Now determine bitstream structure recursively
-			if (Bisect_Forward_Serialno(0, dataoffset, end, endgran, endserial, vf.serialnos + 2, vf.serialnos[1], 0) < 0)
+			if (Bisect_Forward_Serialno(0, dataoffset, end, endgran, endserial, vf.serialnos + 2, (c_int)vf.serialnos[1], 0) < 0)
 				return (c_int)VorbisError.Read;
 
 			vf.offsets[0] = 0;
@@ -1031,12 +1031,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 										Info.Vorbis_Info_Clear(vf.vi[0]);
 										Info.Vorbis_Comment_Clear(vf.vc[0]);
 									}
+
 									break;
 								}
 								else
 									continue;	// Possibility #2
 							}
 						}
+
 						break;
 					}
 				}
@@ -1076,7 +1078,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 							vf.current_serialno = serialno;
 							vf.current_link = link;
 
-							vf.os.Reset_SerialNo(vf.current_serialno);
+							vf.os.Reset_SerialNo((c_int)vf.current_serialno);
 							vf.ready_state = State.StreamSet;
 						}
 						else
@@ -1128,7 +1130,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			if (initial.IsNotNull)
 			{
 				CPointer<byte> buffer = vf.oy.Buffer(ibytes);
-				CMemory.MemCpy(buffer, initial, ibytes);
+				CMemory.MemCpy(buffer, initial, (c_int)ibytes);
 				vf.oy.Wrote(ibytes);
 			}
 
@@ -1454,7 +1456,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			// let _fetch_and_process_packet deal with a potential bitstream
 			// boundary
 			vf.pcm_offset = -1;
-			vf.os.Reset_SerialNo(vf.current_serialno);
+			vf.os.Reset_SerialNo((c_int)vf.current_serialno);
 			Block.Vorbis_Synthesis_Restart(vf.vd);
 
 			if (Seek_Helper(pos) != 0)
@@ -1488,7 +1490,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 				bool firstflag = false;
 				ogg_int64_t pagepos = -1;
 
-				OggStream.Init(out work_os, vf.current_serialno);	// Get the memory ready
+				OggStream.Init(out work_os, (c_int)vf.current_serialno);	// Get the memory ready
 				work_os.Reset();	// Eliminate the spurious OV_HOLE
 									// return from not necessarily
 									// starting from the beginning
@@ -1504,7 +1506,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 						{
 							if (vf.vi[vf.current_link].codec_setup != null)
 							{
-								thisblock = Synthesis.Vorbis_Packet_Blocksize(vf.vi[vf.current_link], op);
+								thisblock = (c_int)Synthesis.Vorbis_Packet_Blocksize(vf.vi[vf.current_link], op);
 
 								if (thisblock < 0)
 								{
@@ -1606,8 +1608,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 						vf.current_link = link;
 						vf.current_serialno = serialno;
 
-						vf.os.Reset_SerialNo(serialno);
-						work_os.Reset_SerialNo(serialno);
+						vf.os.Reset_SerialNo((c_int)serialno);
+						work_os.Reset_SerialNo((c_int)serialno);
 
 						vf.ready_state = State.StreamSet;
 						firstflag = pagepos <= vf.dataoffsets[link];
@@ -1851,7 +1853,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 						else
 							Block.Vorbis_Synthesis_Restart(vf.vd);
 
-						vf.os.Reset_SerialNo(vf.current_serialno);
+						vf.os.Reset_SerialNo((c_int)vf.current_serialno);
 						vf.os.PageIn(og);
 					}
 					else
@@ -1886,7 +1888,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 					else
 						Block.Vorbis_Synthesis_Restart(vf.vd);
 
-					vf.os.Reset_SerialNo(vf.current_serialno);
+					vf.os.Reset_SerialNo((c_int)vf.current_serialno);
 					vf.os.PageIn(og1);
 
 					// Pull out all but last packet; the one with granulepos
@@ -1989,7 +1991,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 				ret1 = vf.os.PacketPeek(out Ogg_Packet op);
 				if (ret1 > 0)
 				{
-					thisblock = Synthesis.Vorbis_Packet_Blocksize(vf.vi[vf.current_link], op);
+					thisblock = (c_int)Synthesis.Vorbis_Packet_Blocksize(vf.vi[vf.current_link], op);
 					if (thisblock < 0)
 					{
 						vf.os.PacketOut(out _);
@@ -2053,7 +2055,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 
 						vf.ready_state = State.StreamSet;
 						vf.current_serialno = og.SerialNo();
-						vf.os.Reset_SerialNo(serialno);
+						vf.os.Reset_SerialNo((c_int)serialno);
 
 						ret1 = Make_Decode_Ready();
 						if (ret1 != 0)
@@ -2084,7 +2086,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 					if (samples > target)
 						samples = (c_long)target;
 
-					Block.Vorbis_Synthesis_Read(vf.vd, samples);
+					Block.Vorbis_Synthesis_Read(vf.vd, (c_int)samples);
 					vf.pcm_offset += samples << hs;
 
 					if (samples < target)
@@ -2252,7 +2254,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 						if (samples > length)
 							samples = length;
 
-						Block.Vorbis_Synthesis_Read(vf.vd, samples);
+						Block.Vorbis_Synthesis_Read(vf.vd, (c_int)samples);
 
 						vf.pcm_offset += samples << hs;
 

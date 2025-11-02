@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 			// First things first. Make sure decode is ready
 			Block.Vorbis_Block_Ripcord(vb);
-			OggPack.ReadInit(out opb, op.Packet, op.Bytes);
+			OggPack.ReadInit(out opb, op.Packet, (c_int)op.Bytes);
 			vb.opb = opb;
 
 			// Check the packet type
@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 
 			// Read our mode and pre/post windowsize
-			c_int mode = opb.Read(b.modebits);
+			c_int mode = (c_int)opb.Read(b.modebits);
 			if (mode == -1)
 				return (c_int)VorbisError.BadPacket;
 
@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			vb.eofflag = op.Eos;
 
 			// Alloc pcm passback storage
-			vb.pcmend = ci.blocksizes[vb.W];
+			vb.pcmend = (c_int)ci.blocksizes[vb.W];
 			vb.pcm = new CPointer<c_float>[vi.channels];
 
 			for (c_int i = 0; i < vi.channels; i++)
@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 			// First things first. Make sure decode is ready
 			Block.Vorbis_Block_Ripcord(vb);
-			OggPack.ReadInit(out OggPack opb, op.Packet, op.Bytes);
+			OggPack.ReadInit(out OggPack opb, op.Packet, (c_int)op.Bytes);
 			vb.opb = opb;
 
 			// Check the packet type
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 
 			// Read our mode and pre/post windowsize
-			c_int mode = opb.Read(b.modebits);
+			c_int mode = (c_int)opb.Read(b.modebits);
 			if (mode == -1)
 				return (c_int)VorbisError.BadPacket;
 
@@ -172,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 				return (c_long)VorbisError.Fault;
 			}
 
-			OggPack.ReadInit(out OggPack opb, op.Packet, op.Bytes);
+			OggPack.ReadInit(out OggPack opb, op.Packet, (c_int)op.Bytes);
 
 			// Check the packet type
 			if (opb.Read(1) != 0)
@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 
 			// Read our mode and pre/post windowsize
-			c_int mode = opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)ci.modes - 1));
+			c_int mode = (c_int)opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)ci.modes - 1));
 			if ((mode == -1) || (ci.mode_param[mode] == null))
 				return (c_long)VorbisError.BadPacket;
 

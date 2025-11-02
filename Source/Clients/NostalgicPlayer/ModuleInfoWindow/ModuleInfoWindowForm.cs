@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private int pictureIndex;
 		private int nextPictureIndex;
 
-		private Lock animationLock;
+		private readonly Lock animationLock;
 		private bool animationRunning;
 		private bool pictureFading;
 		private double easePosition;
@@ -532,6 +532,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 							row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.Source);
 							moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
 						}
+
 						firstCustomLine++;
 
 						showingFileName = true;

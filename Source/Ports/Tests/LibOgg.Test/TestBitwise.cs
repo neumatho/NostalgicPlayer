@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			CPointer<byte> buffer = o.GetBuffer();
 			c_long bytes = o.Bytes();
 
-			OggPack.ReadInit(out r, buffer, bytes);
+			OggPack.ReadInit(out r, buffer, (c_int)bytes);
 
 			for (c_long i = 0; i < Test2Size; i++)
 			{
@@ -219,13 +219,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < 71; i++)
 			{
 				for (c_long j = 0; j < 5; j++)
-					CopyTest(j * 8, i);
+					CopyTest((c_int)j * 8, (c_int)i);
 			}
 
 			for (c_long i = Bitwise.Buffer_Increment * 8 - 71; i < Bitwise.Buffer_Increment * 8 + 71; i++)
 			{
 				for (c_long j = 0; j < 5; j++)
-					CopyTest(j * 8, i);
+					CopyTest((c_int)j * 8, (c_int)i);
 			}
 
 			Console.WriteLine("Testing unaligned writecopies");
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				for (c_long j = 1; j < 40; j++)
 				{
 					if ((j & 0x7) != 0)
-						CopyTest(j, i);
+						CopyTest((c_int)j, (c_int)i);
 				}
 			}
 
@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				for (c_long j = 1; j < 40; j++)
 				{
 					if ((j & 0x7) != 0)
-						CopyTest(j, i);
+						CopyTest((c_int)j, (c_int)i);
 				}
 			}
 		}
@@ -281,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			CPointer<byte> buffer = ob.GetBuffer();
 			c_long bytes = ob.Bytes();
 
-			OggPackB.ReadInit(out rb, buffer, bytes);
+			OggPackB.ReadInit(out rb, buffer, (c_int)bytes);
 
 			for (c_long i = 0; i < Test2Size; i++)
 			{
@@ -340,13 +340,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < 71; i++)
 			{
 				for (c_long j = 0; j < 5; j++)
-					CopyTestB(j * 8, i);
+					CopyTestB((c_int)j * 8, (c_int)i);
 			}
 
 			for (c_long i = Bitwise.Buffer_Increment * 8 - 71; i < Bitwise.Buffer_Increment * 8 + 71; i++)
 			{
 				for (c_long j = 0; j < 5; j++)
-					CopyTestB(j * 8, i);
+					CopyTestB((c_int)j * 8, (c_int)i);
 			}
 
 			Console.WriteLine("Testing unaligned writecopies");
@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				for (c_long j = 1; j < 40; j++)
 				{
 					if ((j & 0x7) != 0)
-						CopyTestB(j, i);
+						CopyTestB((c_int)j, (c_int)i);
 				}
 			}
 
@@ -365,7 +365,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 				for (c_long j = 1; j < 40; j++)
 				{
 					if ((j & 0x7) != 0)
-						CopyTestB(j, i);
+						CopyTestB((c_int)j, (c_int)i);
 				}
 			}
 		}
@@ -402,7 +402,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			o.Reset();
 
 			for (c_long i = 0; i < vals; i++)
-				o.Write(b[i], bits != 0 ? bits : ILog(b[i]));
+				o.Write(b[i], bits != 0 ? bits : ILog((c_uint)b[i]));
 
 			CPointer<byte> buffer = o.GetBuffer();
 			c_long bytes = o.Bytes();
@@ -411,11 +411,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < bytes; i++)
 				Assert.AreEqual(comp[i], buffer[i], $"Wrote incorrect value af position ${i}");
 
-			OggPack.ReadInit(out r, buffer, bytes);
+			OggPack.ReadInit(out r, buffer, (c_int)bytes);
 
 			for (c_long i = 0; i < vals; i++)
 			{
-				c_int tBit = bits != 0 ? bits : ILog(b[i]);
+				c_int tBit = bits != 0 ? bits : ILog((c_uint)b[i]);
 
 				if (r.Look(tBit) == -1)
 					Assert.Fail("Out of data");
@@ -457,7 +457,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			ob.Reset();
 
 			for (c_long i = 0; i < vals; i++)
-				ob.Write(b[i], bits != 0 ? bits : ILog(b[i]));
+				ob.Write(b[i], bits != 0 ? bits : ILog((c_uint)b[i]));
 
 			CPointer<byte> buffer = ob.GetBuffer();
 			c_long bytes = ob.Bytes();
@@ -466,11 +466,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < bytes; i++)
 				Assert.AreEqual(comp[i], buffer[i], $"Wrote incorrect value af position ${i}");
 
-			OggPackB.ReadInit(out rb, buffer, bytes);
+			OggPackB.ReadInit(out rb, buffer, (c_int)bytes);
 
 			for (c_long i = 0; i < vals; i++)
 			{
-				c_int tBit = bits != 0 ? bits : ILog(b[i]);
+				c_int tBit = bits != 0 ? bits : ILog((c_uint)b[i]);
 
 				if (rb.Look(tBit) == -1)
 					Assert.Fail("Out of data");
@@ -526,19 +526,19 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			c_long destBytes = destWrite.Bytes();
 			Assert.AreEqual((prefill + 7) / 8, destBytes, "Wrong number of bytes after prefill");
 
-			OggPack.ReadInit(out OggPack sourceRead, source, sourceBytes);
-			OggPack.ReadInit(out OggPack destRead, dest, destBytes);
+			OggPack.ReadInit(out OggPack sourceRead, source, (c_int)sourceBytes);
+			OggPack.ReadInit(out OggPack destRead, dest, (c_int)destBytes);
 
 			for (c_int i = 0; i < prefill; i += 8)
 			{
-				c_int s = sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
-				c_int d = destRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int s = (c_int)sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int d = (c_int)destRead.Read(prefill - i < 8 ? prefill - i : 8);
 				Assert.AreEqual(s, d, $"Prefill={prefill} mismatch! byte {i / 8}");
 			}
 
 			if (prefill < destBytes)
 			{
-				if (destRead.Read(destBytes - prefill) != 0)
+				if (destRead.Read((c_int)(destBytes - prefill)) != 0)
 					Assert.Fail($"Prefill={prefill} mismatch! Trailing bits not zero");
 			}
 
@@ -550,28 +550,28 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			destBytes = destWrite.Bytes();
 			Assert.AreEqual((copy + prefill + 7) / 8, destBytes, "Wrong number of bytes after prefill+copy");
 
-			OggPack.ReadInit(out sourceRead, source, sourceBytes);
-			OggPack.ReadInit(out destRead, dest, destBytes);
+			OggPack.ReadInit(out sourceRead, source, (c_int)sourceBytes);
+			OggPack.ReadInit(out destRead, dest, (c_int)destBytes);
 
 			for (c_int i = 0; i < prefill; i += 8)
 			{
-				c_int s = sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
-				c_int d = destRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int s = (c_int)sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int d = (c_int)destRead.Read(prefill - i < 8 ? prefill - i : 8);
 				Assert.AreEqual(s, d, $"Prefill={prefill} mismatch! byte {i / 8}");
 			}
 
-			OggPack.ReadInit(out sourceRead, source, sourceBytes);
+			OggPack.ReadInit(out sourceRead, source, (c_int)sourceBytes);
 
 			for (c_int i = 0; i < copy; i += 8)
 			{
-				c_int s = sourceRead.Read(copy - i < 8 ? copy - i : 8);
-				c_int d = destRead.Read(copy - i < 8 ? copy - i : 8);
+				c_int s = (c_int)sourceRead.Read(copy - i < 8 ? copy - i : 8);
+				c_int d = (c_int)destRead.Read(copy - i < 8 ? copy - i : 8);
 				Assert.AreEqual(s, d, $"Prefill={prefill} copy={copy} mismatch! byte {i / 8}");
 			}
 
 			if ((copy + prefill) < destBytes)
 			{
-				if (destRead.Read(destBytes - copy - prefill) != 0)
+				if (destRead.Read((c_int)(destBytes - copy - prefill)) != 0)
 					Assert.Fail($"Prefill={prefill} copy={copy} mismatch! Trailing bits not zero");
 			}
 
@@ -605,19 +605,19 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			c_long destBytes = destWrite.Bytes();
 			Assert.AreEqual((prefill + 7) / 8, destBytes, "Wrong number of bytes after prefill");
 
-			OggPackB.ReadInit(out OggPackB sourceRead, source, sourceBytes);
-			OggPackB.ReadInit(out OggPackB destRead, dest, destBytes);
+			OggPackB.ReadInit(out OggPackB sourceRead, source, (c_int)sourceBytes);
+			OggPackB.ReadInit(out OggPackB destRead, dest, (c_int)destBytes);
 
 			for (c_int i = 0; i < prefill; i += 8)
 			{
-				c_int s = sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
-				c_int d = destRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int s = (c_int)sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int d = (c_int)destRead.Read(prefill - i < 8 ? prefill - i : 8);
 				Assert.AreEqual(s, d, $"Prefill={prefill} mismatch! byte {i / 8}");
 			}
 
 			if (prefill < destBytes)
 			{
-				if (destRead.Read(destBytes - prefill) != 0)
+				if (destRead.Read((c_int)(destBytes - prefill)) != 0)
 					Assert.Fail($"Prefill={prefill} mismatch! Trailing bits not zero");
 			}
 
@@ -629,28 +629,28 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			destBytes = destWrite.Bytes();
 			Assert.AreEqual((copy + prefill + 7) / 8, destBytes, "Wrong number of bytes after prefill+copy");
 
-			OggPackB.ReadInit(out sourceRead, source, sourceBytes);
-			OggPackB.ReadInit(out destRead, dest, destBytes);
+			OggPackB.ReadInit(out sourceRead, source, (c_int)sourceBytes);
+			OggPackB.ReadInit(out destRead, dest, (c_int)destBytes);
 
 			for (c_int i = 0; i < prefill; i += 8)
 			{
-				c_int s = sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
-				c_int d = destRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int s = (c_int)sourceRead.Read(prefill - i < 8 ? prefill - i : 8);
+				c_int d = (c_int)destRead.Read(prefill - i < 8 ? prefill - i : 8);
 				Assert.AreEqual(s, d, $"Prefill={prefill} mismatch! byte {i / 8}");
 			}
 
-			OggPackB.ReadInit(out sourceRead, source, sourceBytes);
+			OggPackB.ReadInit(out sourceRead, source, (c_int)sourceBytes);
 
 			for (c_int i = 0; i < copy; i += 8)
 			{
-				c_int s = sourceRead.Read(copy - i < 8 ? copy - i : 8);
-				c_int d = destRead.Read(copy - i < 8 ? copy - i : 8);
+				c_int s = (c_int)sourceRead.Read(copy - i < 8 ? copy - i : 8);
+				c_int d = (c_int)destRead.Read(copy - i < 8 ? copy - i : 8);
 				Assert.AreEqual(s, d, $"Prefill={prefill} copy={copy} mismatch! byte {i / 8}");
 			}
 
 			if ((copy + prefill) < destBytes)
 			{
-				if (destRead.Read(destBytes - copy - prefill) != 0)
+				if (destRead.Read((c_int)(destBytes - copy - prefill)) != 0)
 					Assert.Fail($"Prefill={prefill} copy={copy} mismatch! Trailing bits not zero");
 			}
 

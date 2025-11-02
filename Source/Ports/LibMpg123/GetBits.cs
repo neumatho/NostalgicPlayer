@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				fr.BitIndex &= 7;
 			}
 
-			return rVal;
+			return (c_uint)rVal;
 		}
 
 
@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			fr.WordPointerIndex += fr.BitIndex >> 3;
 			fr.BitIndex &= 7;
 
-			return fr.UlTmp;
+			return (c_uint)fr.UlTmp;
 		}
 
 

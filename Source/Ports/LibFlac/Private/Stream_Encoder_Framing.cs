@@ -150,6 +150,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 						if (!bw.Flac__BitWriter_Write_Raw_UInt32(metaSeekTable.Points[i].Frame_Samples, Constants.Flac__Stream_Metadata_SeekPoint_Frame_Samples_Len))
 							return false;
 					}
+
 					break;
 				}
 
@@ -185,6 +186,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 						if (!bw.Flac__BitWriter_Write_Byte_Block(metaVorbisComment.Comments[i].Entry, metaVorbisComment.Comments[i].Length))
 							return false;
 					}
+
 					break;
 				}
 
@@ -250,6 +252,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 								return false;
 						}
 					}
+
 					break;
 				}
 
@@ -730,7 +733,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				case Flac__EntropyCodingMethodType.Partitioned_Rice:
 				case Flac__EntropyCodingMethodType.Partitioned_Rice2:
 				{
-					var data = (Flac__EntropyCodingMethod_PartitionedRice)subFrame.Entropy_Coding_Method.Data;
+					Flac__EntropyCodingMethod_PartitionedRice data = (Flac__EntropyCodingMethod_PartitionedRice)subFrame.Entropy_Coding_Method.Data;
 
 					if (!Add_Residual_Partitioned_Rice(bw, subFrame.Residual, residual_Samples, subFrame.Order, data.Contents.Parameters, data.Contents.Raw_Bits, data.Order, subFrame.Entropy_Coding_Method.Type == Flac__EntropyCodingMethodType.Partitioned_Rice2))
 						return false;
@@ -792,7 +795,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				case Flac__EntropyCodingMethodType.Partitioned_Rice:
 				case Flac__EntropyCodingMethodType.Partitioned_Rice2:
 				{
-					var data = (Flac__EntropyCodingMethod_PartitionedRice)subFrame.Entropy_Coding_Method.Data;
+					Flac__EntropyCodingMethod_PartitionedRice data = (Flac__EntropyCodingMethod_PartitionedRice)subFrame.Entropy_Coding_Method.Data;
 
 					if (!Add_Residual_Partitioned_Rice(bw, subFrame.Residual, residual_Samples, subFrame.Order, data.Contents.Parameters, data.Contents.Raw_Bits, data.Order, subFrame.Entropy_Coding_Method.Type == Flac__EntropyCodingMethodType.Partitioned_Rice2))
 						return false;

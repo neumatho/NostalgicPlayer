@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 					if (mpg123Handle.Mpg123_Scan() != Mpg123_Errors.Ok)
 						return false;
 
-					if (mpg123Handle.Mpg123_GetFormat(out int rate, out Mpg123_ChannelCount channels, out Mpg123_Enc_Enum encoding) != Mpg123_Errors.Ok)
+					if (mpg123Handle.Mpg123_GetFormat(out long rate, out Mpg123_ChannelCount channels, out Mpg123_Enc_Enum encoding) != Mpg123_Errors.Ok)
 						return false;
 
 					if (((channels != Mpg123_ChannelCount.Mono) && (channels != Mpg123_ChannelCount.Stereo)) || ((encoding & (Mpg123_Enc_Enum.Enc_16 | Mpg123_Enc_Enum.Enc_Signed)) != (Mpg123_Enc_Enum.Enc_16 | Mpg123_Enc_Enum.Enc_Signed)))

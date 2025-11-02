@@ -404,6 +404,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -968,6 +969,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 								ev[0].F2P = f.Hio_Read8();
 								len--;
 							}
+
 							break;
 						}
 					}
@@ -1283,7 +1285,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			CPointer<uint8> smpBuf = null, buf;
 			c_int smpBuf_Alloc = -1;
 
-			c_int left = f.Hio_Size() - f.Hio_Tell();
+			c_int left = (c_int)(f.Hio_Size() - f.Hio_Tell());
 
 			// Sanity check
 			if (data.Has_Sa || !data.Has_Is || data.PackInfo.IsNull)

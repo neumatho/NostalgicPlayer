@@ -84,6 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 							s.lengthlist[i] = (byte)(num + 1);
 						}
 					}
+
 					break;
 				}
 
@@ -102,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 						if (num == -1)
 							goto Eofout;
 
-						if ((length > 32) || (num > (s.entries - i)) || ((num > 0) && (((num - 1) >> (length - 1)) > 1)))
+						if ((length > 32) || (num > (s.entries - i)) || ((num > 0) && (((num - 1) >> (c_int)(length - 1)) > 1)))
 							goto Errout;
 
 						if (length > 32)
@@ -113,6 +114,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 						length++;
 					}
+
 					break;
 				}
 
@@ -124,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			}
 
 			// Do we have a mapping to unpack?
-			s.maptype = opb.Read(4);
+			s.maptype = (c_int)opb.Read(4);
 
 			switch (s.maptype)
 			{
@@ -139,8 +141,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				{
 					s.q_min = opb.Read(32);
 					s.q_delta = opb.Read(32);
-					s.q_quant = opb.Read(4) + 1;
-					s.q_sequencep = opb.Read(1);
+					s.q_quant = (c_int)opb.Read(4) + 1;
+					s.q_sequencep = (c_int)opb.Read(1);
 
 					if (s.q_sequencep == -1)
 						goto Eofout;
@@ -152,13 +154,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 						{
 							case 1:
 							{
-								quantvals = (s.dim == 0 ? 0 : Sharedbook.Book_Maptype1_Quantvals(s));
+								quantvals = (s.dim == 0 ? 0 : (c_int)Sharedbook.Book_Maptype1_Quantvals(s));
 								break;
 							}
 
 							case 2:
 							{
-								quantvals = s.entries * s.dim;
+								quantvals = (c_int)(s.entries * s.dim);
 								break;
 							}
 						}
@@ -175,6 +177,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 						if ((quantvals != 0) && (s.quantlist[quantvals - 1] == -1))
 							goto Eofout;
 					}
+
 					break;
 				}
 
@@ -337,7 +340,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		{
 			if (book.used_entries > 0)
 			{
-				c_int step = n / book.dim;
+				c_int step = (c_int)(n / book.dim);
 				c_long[] entry = new c_long[step];
 				CPointer<c_float>[] t = new CPointer<c_float>[step];
 
@@ -375,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				for (c_int i = 0; i < n;)
 				{
-					c_int entry = Decode_Packed_Entry_Number(book, b);
+					c_int entry = (c_int)Decode_Packed_Entry_Number(book, b);
 
 					if (entry == -1)
 						return -1;
@@ -405,7 +408,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				for (c_int i = 0; i < n;)
 				{
-					c_int entry = Decode_Packed_Entry_Number(book, b);
+					c_int entry = (c_int)Decode_Packed_Entry_Number(book, b);
 
 					if (entry == -1)
 						return -1;
@@ -438,7 +441,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			if (book.used_entries > 0)
 			{
-				c_int m = (offset + n) / ch;
+				c_int m = (c_int)((offset + n) / ch);
 
 				for (c_long i = offset / ch; i < m;)
 				{

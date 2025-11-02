@@ -9,7 +9,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the Mpg123 library created by Thomas Orgis</Description>
-    <Version>1.33.2</Version>
+    <Version>1.33.2-1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

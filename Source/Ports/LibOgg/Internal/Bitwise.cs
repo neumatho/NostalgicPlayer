@@ -218,7 +218,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			b.Ptr = b.Buffer;
 			b.Buffer[0] = 0;
-			b.EndBit = b.EndByte = 0;
+			b.EndBit = 0;
+			b.EndByte = 0;
 		}
 
 
@@ -319,18 +320,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Ptr[1] << (8 - b.EndBit));
+				ret |= (c_ulong)b.Ptr[1] << (8 - b.EndBit);
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Ptr[2] << (16 - b.EndBit));
+					ret |= (c_ulong)b.Ptr[2] << (16 - b.EndBit);
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Ptr[3] << (24 - b.EndBit));
+						ret |= (c_ulong)b.Ptr[3] << (24 - b.EndBit);
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Ptr[4] << (32 - b.EndBit));
+							ret |= (c_ulong)b.Ptr[4] << (32 - b.EndBit);
 					}
 				}
 			}
@@ -371,18 +372,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Ptr[1] << (16 + b.EndBit));
+				ret |= (c_ulong)b.Ptr[1] << (16 + b.EndBit);
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Ptr[2] << (8 + b.EndBit));
+					ret |= (c_ulong)b.Ptr[2] << (8 + b.EndBit);
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Ptr[3] << b.EndBit);
+						ret |= (c_ulong)b.Ptr[3] << b.EndBit;
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Ptr[4] >> (8 - b.EndBit));
+							ret |= (c_ulong)b.Ptr[4] >> (8 - b.EndBit);
 					}
 				}
 			}
@@ -489,18 +490,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Ptr[1] << (8 - b.EndBit));
+				ret |= (c_ulong)b.Ptr[1] << (8 - b.EndBit);
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Ptr[2] << (16 - b.EndBit));
+					ret |= (c_ulong)b.Ptr[2] << (16 - b.EndBit);
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Ptr[3] << (24 - b.EndBit));
+						ret |= (c_ulong)b.Ptr[3] << (24 - b.EndBit);
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Ptr[4] << (32 - b.EndBit));
+							ret |= (c_ulong)b.Ptr[4] << (32 - b.EndBit);
 					}
 				}
 			}
@@ -554,23 +555,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Ptr[1] << (16 + b.EndBit));
+				ret |= (c_ulong)b.Ptr[1] << (16 + b.EndBit);
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Ptr[2] << (8 + b.EndBit));
+					ret |= (c_ulong)b.Ptr[2] << (8 + b.EndBit);
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Ptr[3] << b.EndBit);
+						ret |= (c_ulong)b.Ptr[3] << b.EndBit;
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Ptr[4] >> (8 - b.EndBit));
+							ret |= (c_ulong)b.Ptr[4] >> (8 - b.EndBit);
 					}
 				}
 			}
 
-			ret = ((ret & 0xffffffff) >> (m >> 1)) >> ((m + 1) >> 1);
+			ret = ((ret & 0xffffffff) >> (int)(m >> 1)) >> (int)((m + 1) >> 1);
 
 			b.Ptr += bits / 8;
 			b.EndByte += bits / 8;
@@ -744,7 +745,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			else
 			{
 				// Aligned block copy
-				CMemory.MemMove(b.Ptr, source, bytes);
+				CMemory.MemMove(b.Ptr, source, (int)bytes);
 
 				b.Ptr += bytes;
 				b.EndByte += bytes;
@@ -755,9 +756,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (bits != 0)
 			{
 				if (msb)
-					w(b, (c_ulong)(ptr[bytes] >> (8 - bits)), bits);
+					w(b, (c_ulong)(ptr[bytes] >> (int)(8 - bits)), (c_int)bits);
 				else
-					w(b, ptr[bytes], bits);
+					w(b, ptr[bytes], (c_int)bits);
 			}
 
 			return;

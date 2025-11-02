@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 
 			while (todo > 0)
 			{
-				int done = vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, (int)todo, out _);
+				long done = vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, (int)todo, out _);
 				if (done == (int)VorbisError.Hole)
 					continue;
 

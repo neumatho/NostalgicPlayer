@@ -147,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			// Test total module length
 			c_int samples_Start = 0x1103 + num_Channels + num_Patterns * num_Channels * 64 * 6;
-			c_int length = f.Hio_Size();
+			c_int length = (c_int)f.Hio_Size();
 
 			if ((length < samples_Start) || (((size_t)(length - samples_Start)) < samples_Length))
 				return -1;
@@ -506,6 +506,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 

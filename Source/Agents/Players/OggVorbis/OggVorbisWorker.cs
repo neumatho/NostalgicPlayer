@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			// Get player data
 			VorbisInfo info = vorbisFile.Ov_Info(0);
 
-			frequency = info.rate;
+			frequency = (int)info.rate;
 			channels = info.channels;
 
 			if (channels > 8)
@@ -147,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 			List<PictureInfo> collectedPictures = new List<PictureInfo>();
 
-			foreach (var tag in ParseTags(comment))
+			foreach ((string tagName, string tagValue) tag in ParseTags(comment))
 			{
 				switch (tag.tagName)
 				{
@@ -248,7 +248,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			errorMessage = string.Empty;
 
 			VorbisInfo info = vorbisFile.Ov_Info(0);
-			bitRate = info.bitrate_nominal / 1000;
+			bitRate = (int)(info.bitrate_nominal / 1000);
 
 			return true;
 		}
@@ -276,7 +276,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			}
 
 			// Has the bit rate changed
-			int newBitRate = vorbisFile.Ov_Bitrate_Instant();
+			int newBitRate = (int)vorbisFile.Ov_Bitrate_Instant();
 			if (newBitRate > 0)
 			{
 				newBitRate /= 1000;
@@ -697,7 +697,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 			while (countInFrames > 0)
 			{
-				int done = vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, countInFrames, out _);
+				int done = (int)vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, countInFrames, out _);
 				if (done == (int)VorbisError.Hole)
 					continue;
 

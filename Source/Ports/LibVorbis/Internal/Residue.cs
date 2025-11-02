@@ -99,9 +99,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			info.begin = opb.Read(24);
 			info.end = opb.Read(24);
-			info.grouping = opb.Read(24) + 1;
-			info.partitions = opb.Read(6) + 1;
-			info.groupbook = opb.Read(8);
+			info.grouping = (c_int)opb.Read(24) + 1;
+			info.partitions = (c_int)opb.Read(6) + 1;
+			info.groupbook = (c_int)opb.Read(8);
 
 			// Check for premature EOP
 			if (info.groupbook < 0)
@@ -109,15 +109,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			for (c_int j = 0; j < info.partitions; j++)
 			{
-				c_int cascade = opb.Read(3);
-				c_int cflag = opb.Read(1);
+				c_int cascade = (c_int)opb.Read(3);
+				c_int cflag = (c_int)opb.Read(1);
 
 				if (cflag < 0)
 					goto ErrOut;
 
 				if (cflag != 0)
 				{
-					c_int c = opb.Read(5);
+					c_int c = (c_int)opb.Read(5);
 					if (c < 0)
 						goto ErrOut;
 
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			for (c_int j = 0; j < acc; j++)
 			{
-				c_int book = opb.Read(8);
+				c_int book = (c_int)opb.Read(8);
 				if (book < 0)
 					goto ErrOut;
 
@@ -158,8 +158,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			// accident. These files should continue to be playable, but don't
 			// allow an exploit
 			{
-				c_int entries = ci.book_param[info.groupbook].entries;
-				c_int dim = ci.book_param[info.groupbook].dim;
+				c_int entries = (c_int)ci.book_param[info.groupbook].entries;
+				c_int dim = (c_int)ci.book_param[info.groupbook].dim;
 				c_int partvals = 1;
 
 				if (dim < 1)
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			look.parts = info.partitions;
 			look.fullbooks = ci.fullbooks;
 			look.phrasebook = ci.fullbooks[info.groupbook];
-			c_int dim = look.phrasebook.dim;
+			c_int dim = (c_int)look.phrasebook.dim;
 
 			look.partbooks = new Codebook[look.parts][];
 
@@ -250,7 +250,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 					val -= deco * mult;
 					mult /= look.parts;
 
-					look.decodemap[j][k] = deco;
+					look.decodemap[j][k] = (c_int)deco;
 				}
 			}
 
@@ -272,10 +272,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			// Move all this setup out later
 			c_int samples_per_partition = info.grouping;
-			c_int partitions_per_word = look.phrasebook.dim;
+			c_int partitions_per_word = (c_int)look.phrasebook.dim;
 			c_int max = vb.pcmend >> 1;
-			c_int end = info.end < max ? info.end : max;
-			c_int n = end - info.begin;
+			c_int end = info.end < max ? (c_int)info.end : max;
+			c_int n = (c_int)(end - info.begin);
 
 			if (n > 0)
 			{
@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 							// Fetch the partition word for each channel
 							for (c_long j = 0; j < ch; j++)
 							{
-								c_int temp = CodebookImpl.Vorbis_Book_Decode(look.phrasebook, vb.opb);
+								c_int temp = (c_int)CodebookImpl.Vorbis_Book_Decode(look.phrasebook, vb.opb);
 
 								if ((temp == -1) || (temp >= info.partvals))
 									goto EopBreak;
@@ -316,7 +316,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 							{
 								c_long offset = info.begin + i * samples_per_partition;
 
-								if ((info.secondstages[partword[j][l][k]] & (1 << s)) != 0)
+								if ((info.secondstages[partword[j][l][k]] & (1 << (c_int)s)) != 0)
 								{
 									Codebook stagebook = look.partbooks[partword[j][l][k]][s];
 
@@ -397,10 +397,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			// Move all this setup out later
 			c_int samples_per_partition = info.grouping;
-			c_int partitions_per_word = look.phrasebook.dim;
+			c_int partitions_per_word = (c_int)look.phrasebook.dim;
 			c_int max = (vb.pcmend * ch) >> 1;
-			c_int end = info.end < max ? info.end : max;
-			c_int n = end - info.begin;
+			c_int end = info.end < max ? (c_int)info.end : max;
+			c_int n = (c_int)(end - info.begin);
 
 			if (n > 0)
 			{
@@ -427,7 +427,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 						if (s == 0)
 						{
 							// Fetch the partition word for each channel
-							c_int temp = CodebookImpl.Vorbis_Book_Decode(look.phrasebook, vb.opb);
+							c_int temp = (c_int)CodebookImpl.Vorbis_Book_Decode(look.phrasebook, vb.opb);
 
 							if ((temp == -1) || (temp >= info.partvals))
 								goto EopBreak;
@@ -441,7 +441,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 						// Now we decode residual values for the partitions
 						for (c_long k = 0; (k < partitions_per_word) && (i < partvals); k++, i++)
 						{
-							if ((info.secondstages[partword[l][k]] & (1 << s)) != 0)
+							if ((info.secondstages[partword[l][k]] & (1 << (c_int)s)) != 0)
 							{
 								Codebook stagebook = look.partbooks[partword[l][k]][s];
 

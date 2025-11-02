@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				os.BodyFill -= os.BodyReturned;
 
 				if (os.BodyFill != 0)
-					CMemory.MemMove(os.BodyData, os.BodyData + os.BodyReturned, os.BodyFill);
+					CMemory.MemMove(os.BodyData, os.BodyData + os.BodyReturned, (c_int)os.BodyFill);
 
 				os.BodyReturned = 0;
 			}
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				os.GranuleVals[os.LacingFill + i] = os.GranulePos;
 			}
 
-			os.LacingVals[os.LacingFill + i] = bytes % 255;
+			os.LacingVals[os.LacingFill + i] = (c_int)(bytes % 255);
 			os.GranulePos = os.GranuleVals[os.LacingFill + i] = granulePos;
 
 			// Flag the first segment as the beginning of the packet
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					os.BodyFill -= br;
 
 					if (os.BodyFill != 0)
-						CMemory.MemMove(os.BodyData, os.BodyData + br, os.BodyFill);
+						CMemory.MemMove(os.BodyData, os.BodyData + br, (c_int)os.BodyFill);
 
 					os.BodyReturned = 0;
 				}
@@ -259,8 +259,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					// Segment table
 					if ((os.LacingFill - lr) != 0)
 					{
-						CMemory.MemMove(os.LacingVals, os.LacingVals + lr, os.LacingFill - lr);
-						CMemory.MemMove(os.GranuleVals, os.GranuleVals + lr, os.LacingFill - lr);
+						CMemory.MemMove(os.LacingVals, os.LacingVals + lr,	(c_int)(os.LacingFill - lr));
+						CMemory.MemMove(os.GranuleVals, os.GranuleVals + lr, (c_int)(os.LacingFill - lr));
 					}
 
 					os.LacingFill -= lr;
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (pageNo != os.PageNo)
 			{
 				// Unroll previous partial packet (if any)
-				for (c_int i = os.LacingPacket; i < os.LacingFill; i++)
+				for (c_int i = (c_int)os.LacingPacket; i < os.LacingFill; i++)
 					os.BodyFill -= os.LacingVals[i] & 0xff;
 
 				os.LacingFill = os.LacingPacket;
@@ -324,7 +324,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (Os_Body_Expand(os, bodySize) != 0)
 					return -1;
 
-				CMemory.MemCpy(os.BodyData + os.BodyFill, body, bodySize);
+				CMemory.MemCpy(os.BodyData + os.BodyFill, body, (c_int)bodySize);
 				os.BodyFill += bodySize;
 			}
 
@@ -344,7 +344,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					}
 
 					if (val < 255)
-						saved = os.LacingFill;
+						saved = (c_int)os.LacingFill;
 
 					os.LacingFill++;
 					segPtr++;
@@ -554,7 +554,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				}
 
 				oy.Data = ret;
-				oy.Storage = newSize;
+				oy.Storage = (c_int)newSize;
 			}
 
 			// Expose a segment at least as large as requested at the fill mark
@@ -576,7 +576,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if ((oy.Fill + bytes) > oy.Storage)
 				return -1;
 
-			oy.Fill += bytes;
+			oy.Fill += (c_int)bytes;
 
 			return 0;
 		}
@@ -667,7 +667,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			}
 
 			oy.Unsynced = false;
-			oy.Returned += (bytes = oy.HeaderBytes + oy.BodyBytes);
+			oy.Returned += (c_int)(bytes = oy.HeaderBytes + oy.BodyBytes);
 			oy.HeaderBytes = 0;
 			oy.BodyBytes = 0;
 
@@ -678,7 +678,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			oy.BodyBytes = 0;
 
 			// Search for possible capture
-			CPointer<byte> next = CMemory.MemChr(page + 1, (byte)'O', bytes - 1);
+			CPointer<byte> next = CMemory.MemChr(page + 1, (byte)'O', (c_int)(bytes - 1));
 			if (next.IsNull)
 				next = oy.Data + oy.Fill;
 
@@ -917,8 +917,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				og.Header[24] = 0;
 				og.Header[25] = 0;
 
-				crcReg = Os_Update_Crc(crcReg, og.Header, og.HeaderLen);
-				crcReg = Os_Update_Crc(crcReg, og.Body, og.BodyLen);
+				crcReg = Os_Update_Crc(crcReg, og.Header, (c_int)og.HeaderLen);
+				crcReg = Os_Update_Crc(crcReg, og.Body, (c_int)og.BodyLen);
 
 				og.Header[22] = (byte)(crcReg & 0xff);
 				og.Header[23] = (byte)((crcReg >> 8) & 0xff);
@@ -1063,7 +1063,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (Ogg_Stream_Check(os) != 0)
 				return 0;
 
-			c_int maxVals = os.LacingFill > 255 ? 255 : os.LacingFill;
+			c_int maxVals = os.LacingFill > 255 ? 255 : (c_int)os.LacingFill;
 			if (maxVals == 0)
 				return 0;
 
@@ -1202,8 +1202,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// Advance the lacing data and set the body_returned pointer
 			os.LacingFill -= vals;
 
-			CMemory.MemMove(os.LacingVals, os.LacingVals + vals, os.LacingFill);
-			CMemory.MemMove(os.GranuleVals, os.GranuleVals + vals, os.LacingFill);
+			CMemory.MemMove(os.LacingVals, os.LacingVals + vals, (c_int)os.LacingFill);
+			CMemory.MemMove(os.GranuleVals, os.GranuleVals + vals, (c_int)os.LacingFill);
 
 			os.BodyReturned += bytes;
 
@@ -1228,7 +1228,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// out of sync markers)
 			op = null;
 
-			c_int ptr = os.LacingReturned;
+			c_int ptr = (c_int)os.LacingReturned;
 
 			if (os.LacingPacket <= ptr)
 				return 0;
