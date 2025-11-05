@@ -660,9 +660,6 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public static c_int snprintf(CPointer<char> s, size_t n, CPointer<char> format, params object[] args)
 		{
-			if (s.IsNull)
-				return 0;
-
 			c_int maxLen = format.Length;	// Includes terminating '\0'
 			c_int idx = 0;
 			c_int argIndex = 0;
@@ -820,7 +817,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				object argVal = null;
 
 				if ((spec != 'n') && (spec != '%'))
-				argVal = argIndex < args.Length ? args[argIndex++] : null;
+					argVal = argIndex < args.Length ? args[argIndex++] : null;
 
 				string formattedPart;
 
@@ -931,7 +928,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			string result = sb.ToString();
 			int totalLen = result.Length;
 
-			if (n > 0)
+			if ((n > 0) && s.IsNotNull)
 			{
 				int toCopy = (int)Math.Min((ulong)totalLen, (n - 1));
 				for (int i = 0; i < toCopy; i++)
