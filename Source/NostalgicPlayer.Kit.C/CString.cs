@@ -115,6 +115,57 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Finds the first occurrence of the string s2 in the string s1.
+		/// The process of matching does not include the terminating
+		/// null-characters(‘\0’), but function stops there
+		/// </summary>
+		/********************************************************************/
+		public static CPointer<char> strstr(CPointer<char> s1, string s2)
+		{
+			return strstr(s1, s2.ToCharPointer());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Finds the first occurrence of the string s2 in the string s1.
+		/// The process of matching does not include the terminating
+		/// null-characters(‘\0’), but function stops there
+		/// </summary>
+		/********************************************************************/
+		public static CPointer<char> strstr(CPointer<char> s1, CPointer<char> s2)
+		{
+			if (s1.IsNull || s2.IsNull)
+				throw new ArgumentNullException(s1.IsNull ? nameof(s1) : nameof(s2));
+
+			c_int s1Len = (c_int)strlen(s1);
+			c_int s2Len = (c_int)strlen(s2);
+
+			if (s2Len == 0)
+				return s1;
+
+			for (c_int i = 0; i <= (s1Len - s2Len); i++)
+			{
+				c_int j;
+
+				for (j = 0; j < s2Len; j++)
+				{
+					if (s1[i + j] != s2[j])
+						break;
+				}
+
+				if (j == s2Len)
+					return s1 + i;
+			}
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Compare two strings lexicographically
 		/// </summary>
 		/********************************************************************/
@@ -1023,7 +1074,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			// Base detection + 0x/0X
 			c_int b = @base;
 
-			if (((b == 0) || (b == 16)) && (str[i + 1] != '\0') && (str[i] == '0') && ((str[i + 1] == 'x') || (str[i + 1] == 'X')))
+			if (((b == 0) || (b == 16)) && (str[i] != '\0') && (str[i + 1] != '\0') && (str[i] == '0') && ((str[i + 1] == 'x') || (str[i + 1] == 'X')))
 			{
 				b = 16;
 				i += 2;

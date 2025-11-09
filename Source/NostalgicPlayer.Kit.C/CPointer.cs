@@ -394,7 +394,10 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int operator - (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
-			if (ptr1.Buffer != ptr2.Buffer)
+			if (ptr1.IsNull && ptr2.IsNotNull)
+				return -0x12345678;
+
+			if (ptr1.IsNotNull && ptr2.IsNotNull && (ptr1.Buffer != ptr2.Buffer))
 				throw new ArgumentException("Both pointers need to use the same buffer");
 
 			return ptr1.Offset - ptr2.Offset;
