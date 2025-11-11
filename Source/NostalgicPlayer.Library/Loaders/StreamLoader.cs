@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				return false;
 			}
 
-			var mimeType = responseMessage.Content.Headers.ContentType?.MediaType;
+			string mimeType = responseMessage.Content.Headers.ContentType?.MediaType;
 
 			bool result = FindStreamer(mimeType, out errorMessage);
 			if (!result)
