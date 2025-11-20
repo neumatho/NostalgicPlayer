@@ -279,6 +279,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 
 			// Save the settings to disk
 			userSettings.SaveSettings();
+
+			// Update main window UI based on changed settings
+			mainWindowApi?.EnableUserInterfaceSettings();
 		}
 
 

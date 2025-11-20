@@ -65,5 +65,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 			set => settings.SetStringEntry("Path", "List", value);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// ModLibrary base path for storing downloaded modules
+		/// </summary>
+		/********************************************************************/
+		public string ModLibrary
+		{
+			get => settings.GetStringEntry("Path", "ModLibrary");
+
+			set => settings.SetStringEntry("Path", "ModLibrary", value);
+		}
 	}
 }

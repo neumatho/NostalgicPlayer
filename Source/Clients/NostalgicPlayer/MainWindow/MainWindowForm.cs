@@ -21,6 +21,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
@@ -810,6 +811,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 					if (IsFavoriteSongSystemWindowOpen())
 						favoriteSongSystemWindow.Close();
+				}
+
+				// Reload ModLibrary if open and path changed
+				if (IsModLibraryWindowOpen())
+				{
+					modLibraryWindow.ReloadChanges();
 				}
 			}
 		}
@@ -3128,6 +3135,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			menuItem.Click += Menu_Window_Audius_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_MODLIBRARY);
+			menuItem.Click += Menu_Window_ModLibrary_Click;
+			windowMenuItem.DropDownItems.Add(menuItem);
+
 			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
 			agentSettingsSeparatorMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsSeparatorMenuItem);
@@ -3359,6 +3370,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				audiusWindow.Show();
 			}
 
+			if (mainWindowSettings.OpenModLibraryWindow)
+			{
+				modLibraryWindow = new ModLibraryWindowForm(this, optionSettings);
+				modLibraryWindow.Show();
+			}
+
 			foreach (Guid typeId in mainWindowSettings.OpenAgentWindows)
 			{
 				AgentInfo agentInfo = agentManager.GetAllAgents().FirstOrDefault(a => a.TypeId == typeId);
@@ -3478,6 +3495,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			audiusWindow = null;
 			mainWindowSettings.OpenAudiusWindow = openAgain;
+
+			// Close the Module Library window
+			openAgain = IsModLibraryWindowOpen();
+			if (openAgain)
+				modLibraryWindow.Close();
+
+			modLibraryWindow = null;
+			mainWindowSettings.OpenModLibraryWindow = openAgain;
 		}
 
 
@@ -3503,6 +3528,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsAudiusWindowOpen())
 				yield return audiusWindow;
+
+			if (IsModLibraryWindowOpen())
+				yield return modLibraryWindow;
 
 			if (IsSettingsWindowOpen())
 				yield return settingsWindow;
@@ -5345,6 +5373,107 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				// Ignore any kind of exception
 			}
+		}
+		#endregion
+
+		#region Module Library
+		private ModLibraryWindowForm modLibraryWindow = null;
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected the Module Library menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_ModLibrary_Click(object sender, EventArgs e)
+		{
+			if (IsModLibraryWindowOpen())
+			{
+				if (modLibraryWindow.WindowState == FormWindowState.Minimized)
+					modLibraryWindow.WindowState = FormWindowState.Normal;
+
+				modLibraryWindow.Activate();
+			}
+			else
+			{
+				modLibraryWindow = new ModLibraryWindowForm(this, optionSettings);
+				modLibraryWindow.Disposed += (o, args) => { modLibraryWindow = null; };
+				modLibraryWindow.Show();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find a module in the module list by file path
+		/// </summary>
+		/********************************************************************/
+		public ModuleListItem FindModuleInList(string filePath)
+		{
+			if (string.IsNullOrEmpty(filePath))
+				return null;
+
+			foreach (ModuleListItem item in moduleListControl.Items)
+			{
+				if (string.Equals(item.ListItem.Source, filePath, StringComparison.OrdinalIgnoreCase))
+					return item;
+			}
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Select and play the given module list item
+		/// </summary>
+		/********************************************************************/
+		public void SelectAndPlayModule(ModuleListItem listItem)
+		{
+			if (listItem == null)
+				return;
+
+			int index = moduleListControl.Items.IndexOf(listItem);
+			if (index != -1)
+			{
+				moduleListControl.SelectedIndex = index;
+				moduleListControl.Focus();
+				LoadAndPlayModule(listItem);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add files to module list from ModLibrary with play
+		/// immediately option
+		/// </summary>
+		/********************************************************************/
+		public void AddFilesToModuleList(string[] files, bool playImmediately)
+		{
+			AddFilesToList(files, -1, false);
+
+			if (playImmediately && (files.Length > 0))
+			{
+				// Find and play the first added module
+				ModuleListItem item = FindModuleInList(files[0]);
+				if (item != null)
+					SelectAndPlayModule(item);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check to see if Module Library window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsModLibraryWindowOpen()
+		{
+			return (modLibraryWindow != null) && !modLibraryWindow.IsDisposed;
 		}
 		#endregion
 
