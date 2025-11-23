@@ -545,6 +545,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 							if (!string.IsNullOrEmpty(errorMessage))
 								ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, playerName, errorMessage), listItem);
 
+							outputAgent = null;
+
 							return false;
 						}
 					}
@@ -945,6 +947,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						{
 							if (showError && !string.IsNullOrEmpty(errorMessage))
 								mainWindowApi.ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
+
+							outputAgent = null;
 
 							return false;
 						}

@@ -245,6 +245,17 @@ namespace Polycode.NostalgicPlayer.Library.Players
 				}
 				catch (Exception ex)
 				{
+					try
+					{
+						outputAgent.Shutdown();
+					}
+					catch(Exception)
+					{
+						// Ignore
+					}
+
+					outputAgent = null;
+
 					errorMessage = ex.Message;
 					return false;
 				}
@@ -268,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 				{
 					// Stop the mixer
 					if (stopOutputAgent)
-						outputAgent.Stop();
+						outputAgent?.Stop();
 
 					soundStream.Stop();
 
