@@ -926,9 +926,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				}
 				else if ((samplePlayer = player as ISamplePlayer) != null)
 				{
-					if ((startPos != -1) && samplePlayer.StaticModuleInformation.CanChangePosition)
-						samplePlayer.SetSongPosition(startPos);
-
 					// Subscribe to event notifications
 					samplePlayer.PositionChanged += Player_PositionChanged;
 				}
