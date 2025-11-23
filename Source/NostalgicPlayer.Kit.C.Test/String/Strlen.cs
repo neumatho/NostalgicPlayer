@@ -21,7 +21,7 @@ namespace NostalgicPlayer.Kit.C.Test.String
 		[TestMethod]
 		public void Test_Basic()
 		{
-			Assert.AreEqual(0U, CString.strlen(string.Empty.ToCharPointer()));
+			Assert.AreEqual(0U, CString.strlen(CString.Empty));
 			Assert.AreEqual(1U, CString.strlen("a".ToCharPointer()));
 			Assert.AreEqual(5U, CString.strlen("hello".ToCharPointer()));
 			Assert.AreEqual(10U, CString.strlen("1234567890".ToCharPointer()));

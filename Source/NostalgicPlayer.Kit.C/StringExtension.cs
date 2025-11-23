@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// <summary>
 	/// Extension methods for strings
 	/// </summary>
-	public static class CStringExtension
+	public static class StringExtension
 	{
 		/********************************************************************/
 		/// <summary>
@@ -60,6 +60,24 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			str.CopyTo(0, charsWithNull, 0, str.Length);
 
 			return new CPointer<char>(charsWithNull);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the string to a C pointer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<char> ToCharPointer(this char chr)
+		{
+			CPointer<char> str = new CPointer<char>(2);
+
+			str[0] = chr;
+			str[1] = '\0';
+
+			return str;
 		}
 	}
 }

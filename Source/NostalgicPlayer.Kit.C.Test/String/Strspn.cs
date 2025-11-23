@@ -21,8 +21,8 @@ namespace NostalgicPlayer.Kit.C.Test.String
 		[TestMethod]
 		public void Test_Basic()
 		{
-			Assert.AreEqual(0U, CString.strspn(string.Empty.ToCharPointer(), string.Empty), "empty s, empty accept");
-			Assert.AreEqual(0U, CString.strspn(string.Empty.ToCharPointer(), "abc"), "empty s");
+			Assert.AreEqual(0U, CString.strspn(CString.Empty, string.Empty), "empty s, empty accept");
+			Assert.AreEqual(0U, CString.strspn(CString.Empty, "abc"), "empty s");
 			Assert.AreEqual(0U, CString.strspn("abc".ToCharPointer(), string.Empty), "empty accept");
 
 			Assert.AreEqual(4U, CString.strspn("aaaa".ToCharPointer(), "a"), "all same char");

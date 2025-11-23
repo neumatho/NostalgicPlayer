@@ -74,7 +74,7 @@ namespace NostalgicPlayer.Kit.C.Test.String
 			CPointer<char> s = "abc".ToCharPointer();
 			Assert.AreEqual(s + 3, CString.strchr(s, '\0'));
 
-			s = string.Empty.ToCharPointer();
+			s = CString.Empty;
 			Assert.AreEqual(s, CString.strchr(s, '\0'));
 		}
 
@@ -104,7 +104,7 @@ namespace NostalgicPlayer.Kit.C.Test.String
 		[TestMethod]
 		public void Test_Empty_String()
 		{
-			CPointer<char> s = string.Empty.ToCharPointer();
+			CPointer<char> s = CString.Empty;
 
 			CPointer<char> p = CString.strchr(s, 'A');
 			Assert.IsTrue(p.IsNull);

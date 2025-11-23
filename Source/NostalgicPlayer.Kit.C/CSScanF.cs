@@ -335,7 +335,8 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			}
 
 			// Return number of fields successfully parsed
-			return count;
+//			return count;
+			return Results.Count;
 		}
 
 		/// <summary>
@@ -526,10 +527,17 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			{
 				if (!spec.NoResult)
 				{
-					if (spec.Type == Types.Decimal)
-						AddSigned(input.Extract(start, input.Position), spec.Modifier, radix);
-					else
-						AddUnsigned(input.Extract(start, input.Position), spec.Modifier, radix);
+					try
+					{
+						if (spec.Type == Types.Decimal)
+							AddSigned(input.Extract(start, input.Position), spec.Modifier, radix);
+						else
+							AddUnsigned(input.Extract(start, input.Position), spec.Modifier, radix);
+					}
+					catch (Exception)
+					{
+						return false;
+					}
 				}
 				return true;
 			}

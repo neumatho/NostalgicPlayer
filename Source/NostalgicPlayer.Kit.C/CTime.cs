@@ -27,6 +27,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// supplied tm buffer and returns it
 		/// </summary>
 		/********************************************************************/
+		public static tm gmtime(time_t timer)
+		{
+			return gmtime_r(timer, out _);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Thread-safe conversion from time_t (seconds since
+		/// 1970-01-01 00:00:00 UTC) to broken down UTC time. Fills the
+		/// supplied tm buffer and returns it
+		/// </summary>
+		/********************************************************************/
 		public static tm gmtime_r(time_t timer, out tm buf)
 		{
 			// Convert to UTC DateTimeOffset. This matches POSIX gmtime semantics

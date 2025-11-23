@@ -17,6 +17,11 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// </summary>
 	public static class CString
 	{
+		/// <summary>
+		/// Holds an empty string
+		/// </summary>
+		public static readonly CPointer<char> Empty = string.Empty.ToCharPointer();
+
 		/********************************************************************/
 		/// <summary>
 		/// Calculates the length of a given string
@@ -951,7 +956,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 						if (argVal is IntPtr ip)
 							formattedPart = "0x" + ip.ToInt64().ToString("x", inv);
 						else
-							formattedPart = "0x" + Convert.ToInt64(argVal ?? 0, inv).ToString("x", inv);
+							formattedPart = "[" + argVal.GetType().Name + "]";
 
 						formattedPart = ApplyWidth(formattedPart, width, leftAlign, zeroPad ? '0' : ' ', 2);
 						break;
@@ -1147,7 +1152,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		{
 			long lVal = value == null ? 0 : Convert.ToInt64(value, CultureInfo.InvariantCulture);
 			bool neg = signed && lVal < 0;
-			ulong absVal = neg ? (ulong)(-lVal) : (ulong)lVal;
+			ulong absVal = (ulong)Math.Abs(lVal);
 			string digits = absVal.ToString("D", CultureInfo.InvariantCulture);
 
 			if (precision.HasValue)

@@ -21,8 +21,8 @@ namespace NostalgicPlayer.Kit.C.Test.String
 		[TestMethod]
 		public void Test_Equal_And_Basic_Order()
 		{
-			Assert.AreEqual(0, CString.strcmp(string.Empty.ToCharPointer(), string.Empty));
-			Assert.IsLessThan(0, CString.strcmp(string.Empty.ToCharPointer(), "a"));
+			Assert.AreEqual(0, CString.strcmp(CString.Empty, string.Empty));
+			Assert.IsLessThan(0, CString.strcmp(CString.Empty, "a"));
 			Assert.IsGreaterThan(0, CString.strcmp("a".ToCharPointer(), string.Empty));
 			Assert.AreEqual(0, CString.strcmp("same".ToCharPointer(), "same"));
 			Assert.IsLessThan(0, CString.strcmp("abc".ToCharPointer(), "abd"));

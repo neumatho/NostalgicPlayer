@@ -47,11 +47,11 @@ namespace NostalgicPlayer.Kit.C.Test.String
 
 			Assert.IsTrue(CString.strstr(s, "gh").IsNull);
 			Assert.IsTrue(CString.strstr(s, "abcdefg").IsNull);
-			Assert.IsTrue(CString.strstr(string.Empty.ToCharPointer(), "a").IsNull);
+			Assert.IsTrue(CString.strstr(CString.Empty, "a").IsNull);
 
 			Assert.AreEqual(s, CString.strstr(s, string.Empty));
 
-			s = string.Empty.ToCharPointer();
+			s = CString.Empty;
 			Assert.AreEqual(s, CString.strstr(s, string.Empty));
 		}
 
@@ -116,7 +116,7 @@ namespace NostalgicPlayer.Kit.C.Test.String
 			Assert.AreEqual(s, CString.strstr(s, string.Empty));
 			Assert.AreEqual(s + 2, CString.strstr(s + 2, string.Empty));
 
-			s = string.Empty.ToCharPointer();
+			s = CString.Empty;
 			Assert.AreEqual(s, CString.strstr(s, string.Empty));
 		}
 	}

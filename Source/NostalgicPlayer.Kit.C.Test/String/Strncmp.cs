@@ -22,7 +22,7 @@ namespace NostalgicPlayer.Kit.C.Test.String
 		public void Test_N_Zero()
 		{
 			Assert.AreEqual(0, CString.strncmp("a".ToCharPointer(), "b", 0));
-			Assert.AreEqual(0, CString.strncmp(string.Empty.ToCharPointer(), string.Empty, 0));
+			Assert.AreEqual(0, CString.strncmp(CString.Empty, string.Empty, 0));
 			Assert.AreEqual(0, CString.strncmp("abc".ToCharPointer(), string.Empty, 0));
 		}
 

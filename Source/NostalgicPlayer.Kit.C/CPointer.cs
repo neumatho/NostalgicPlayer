@@ -524,7 +524,10 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override bool Equals(object obj) => throw new NotSupportedException();
+		public override bool Equals(object obj)
+		{
+			throw new NotSupportedException();
+		}
 
 
 
@@ -533,7 +536,10 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// This method is not supported as spans cannot be boxed.
 		/// </summary>
 		/********************************************************************/
-		public override int GetHashCode() => throw new NotSupportedException();
+		public override int GetHashCode()
+		{
+			throw new NotSupportedException();
+		}
 
 		#region IEquatable implementation
 		/********************************************************************/
