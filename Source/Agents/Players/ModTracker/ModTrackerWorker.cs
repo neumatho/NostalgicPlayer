@@ -3039,7 +3039,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				modChan.StartOffset = offset * 2U;
 			}
 			else
-				modChan.Length = 0;
+				modChan.Length = 1;
 		}
 
 
