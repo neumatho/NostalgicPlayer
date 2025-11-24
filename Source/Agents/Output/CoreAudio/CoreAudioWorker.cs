@@ -601,7 +601,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				using (EventWaitHandle settingsChangedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, "NostalgicPlayer_CoreAudio"))
 				{
 					bool stillPlaying = true;
-					WaitHandle[] waitArray = { shutdownEvent, streamSwitchEvent, audioSamplesReadyEvent, flushBufferEvent, settingsChangedEvent };
+					WaitHandle[] waitArray = [ shutdownEvent, streamSwitchEvent, audioSamplesReadyEvent, flushBufferEvent, settingsChangedEvent ];
 
 					while (stillPlaying)
 					{
