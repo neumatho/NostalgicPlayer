@@ -12,12 +12,12 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 // This is needed to uniquely identify this agent
 [assembly: Guid("C8565D11-58EE-4E77-B58D-9919787D9AB9")]
 
-namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
+namespace Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer
 {
 	/// <summary>
 	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	public class Mpeg : AgentBase
+	public class MpegStreamer : AgentBase
 	{
 		internal static readonly Guid Agent1Id = Guid.Parse("3DC54EF4-0E34-40AE-9B8C-C3AB188D7DE8");
 
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new MpegWorker();
+			return new MpegStreamerWorker();
 		}
 		#endregion
 	}

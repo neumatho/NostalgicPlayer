@@ -186,7 +186,7 @@ MPEG streams are audio streams using a lossy compression algorithm. The most com
     <value>Yes</value>
   </data>
   <data name="IDS_MPG_NAME_AGENT1" xml:space="preserve">
-    <value>MPEG</value>
+    <value>MPEG Streamer</value>
   </data>
   <data name="IDS_NAME" xml:space="preserve">
     <value>MPEG Streamer</value>

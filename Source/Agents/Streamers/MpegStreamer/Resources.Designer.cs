@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg {
+namespace Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Streamer.Mpeg.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MPEG.
+        ///   Looks up a localized string similar to MPEG Streamer.
         /// </summary>
         internal static string IDS_MPG_NAME_AGENT1 {
             get {

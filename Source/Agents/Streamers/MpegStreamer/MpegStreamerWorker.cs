@@ -12,12 +12,12 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibMpg123;
 using Polycode.NostalgicPlayer.Ports.LibMpg123.Containers;
 
-namespace Polycode.NostalgicPlayer.Agent.Streamer.Mpeg
+namespace Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer
 {
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class MpegWorker : StreamerWithDurationAgentBase
+	internal class MpegStreamerWorker : StreamerWithDurationAgentBase
 	{
 		private int oldBitRate;
 

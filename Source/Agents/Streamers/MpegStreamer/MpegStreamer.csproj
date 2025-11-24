@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.Streamer.Mpeg</RootNamespace>
-    <DocumentationFile>bin\Mpeg.xml</DocumentationFile>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer</RootNamespace>
+    <DocumentationFile>bin\MpegStreamer.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>

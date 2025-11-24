@@ -204,7 +204,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RonKlaren", "Agents\Players
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchiveDecruncher.Test", "Agents\Decrunchers\ArchiveDecruncher.Test\ArchiveDecruncher.Test.csproj", "{CF79E7F3-390A-4B2F-A126-6BCBEC2A8FCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpeg", "Agents\Streamers\Mpeg\Mpeg.csproj", "{B70F3E8E-2AAB-4257-91C8-041735955EA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MpegStreamer", "Agents\Streamers\MpegStreamer\MpegStreamer.csproj", "{B70F3E8E-2AAB-4257-91C8-041735955EA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Streamers", "Streamers", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
