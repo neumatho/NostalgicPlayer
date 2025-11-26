@@ -4428,7 +4428,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						ModuleSettings.ModuleListEndAction listEnd = moduleSettings.ModuleListEnd;
 						int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
 
-						if (newPos >= (songLength - earlyLoad))
+						if ((songLength > 0) && (newPos >= (songLength - earlyLoad)))
 						{
 							// Check to see if we have to load the module
 							int curPlay = moduleListControl.Items.IndexOf(playItem);
