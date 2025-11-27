@@ -150,7 +150,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Hook up search popup events
 			searchPopupControl.ItemSelected += SearchPopup_ItemSelected;
-			searchPopupControl.SearchTextChanged += SearchPopup_SearchTextChanged;
 			searchPopupControl.SearchCancelled += SearchPopup_SearchCancelled;
 			searchPopupControl.Leave += SearchPopupControl_Leave;
 		}
@@ -4923,67 +4922,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Apply list number setting
 			searchPopupControl.EnableListNumber(optionSettings.ShowListNumber);
 
-			// Set initial search text (also sets focus)
+			// Set data source
+			searchPopupControl.SetDataSource(moduleListControl.Items);
+
+			// Set initial search text (also sets focus and starts search)
 			searchPopupControl.SetInitialText(initialText);
-
-			// Perform initial filter
-			FilterModules();
 		}
 
 
 
-		/********************************************************************/
-		/// <summary>
-		/// Filter modules based on search text
-		/// </summary>
-		/********************************************************************/
-		private void FilterModules()
-		{
-			if (!searchPopupControl.Visible)
-				return;
-
-			string searchText = searchPopupControl.SearchText;
-			if (string.IsNullOrEmpty(searchText))
-			{
-				searchPopupControl.UpdateResults(new ModuleListItem[0]);
-				return;
-			}
-
-			// Check if user entered wildcards
-			bool hasWildcards = searchText.Contains('*') || searchText.Contains('?');
-			string pattern;
-
-			if (hasWildcards)
-			{
-				// Convert wildcard pattern to regex
-				pattern = "^" + System.Text.RegularExpressions.Regex.Escape(searchText).Replace("\\*", ".*").Replace("\\?", ".") + "$";
-			}
-			else
-			{
-				// Auto-add wildcards: *text*
-				pattern = System.Text.RegularExpressions.Regex.Escape(searchText);
-			}
-
-			// Filter module list
-			List<ModuleListItem> filteredModules = new List<ModuleListItem>();
-			System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
-			foreach (ModuleListItem item in moduleListControl.Items)
-			{
-				if (hasWildcards)
-				{
-					if (regex.IsMatch(item.ListItem.DisplayName))
-						filteredModules.Add(item);
-				}
-				else
-				{
-					if (item.ListItem.DisplayName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-						filteredModules.Add(item);
-				}
-			}
-
-			searchPopupControl.UpdateResults(filteredModules.ToArray());
-		}
 
 
 
@@ -5008,18 +4955,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				StopAndFreeModule();
 				LoadAndPlayModule(index);
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when search text changes
-		/// </summary>
-		/********************************************************************/
-		private void SearchPopup_SearchTextChanged(object sender, EventArgs e)
-		{
-			FilterModules();
 		}
 
 

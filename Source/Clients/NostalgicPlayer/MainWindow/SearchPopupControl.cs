@@ -5,7 +5,10 @@
 /******************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -14,6 +17,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	/// </summary>
 	public partial class SearchPopupControl : UserControl
 	{
+		private readonly Timer debounceTimer;
+		private IEnumerable<ModuleListItem> dataSource;
+		private CancellationTokenSource searchCancellationTokenSource;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -23,6 +30,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			InitializeComponent();
 
+			// Setup debounce timer
+			debounceTimer = new Timer();
+			debounceTimer.Interval = 200; // 200ms delay
+			debounceTimer.Tick += DebounceTimer_Tick;
+
 			searchTextBox.TextChanged += SearchTextBox_TextChanged;
 			searchTextBox.KeyDown += SearchTextBox_KeyDown;
 			resultsListControl.KeyPress += ResultsListControl_KeyPress;
@@ -30,13 +42,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			resultsListControl.MouseDoubleClick += ResultsListControl_MouseDoubleClick;
 		}
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Get current search text
-		/// </summary>
-		/********************************************************************/
-		public string SearchText => searchTextBox.Text;
 
 		/********************************************************************/
 		/// <summary>
@@ -52,53 +57,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public event EventHandler SearchCancelled;
 
-		/********************************************************************/
-		/// <summary>
-		/// Raised when search text changes
-		/// </summary>
-		/********************************************************************/
-		public event EventHandler SearchTextChanged;
 
 		/********************************************************************/
 		/// <summary>
-		/// Raised when result count changes
+		/// Set the data source for searching
 		/// </summary>
 		/********************************************************************/
-		public event EventHandler<int> ResultCountChanged;
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set initial search text
-		/// </summary>
-		/********************************************************************/
-		public void SetInitialText(string text)
+		public void SetDataSource(IEnumerable<ModuleListItem> items)
 		{
-			searchTextBox.Text = text;
-			searchTextBox.SelectionStart = text.Length;
-			searchTextBox.Focus();
+			dataSource = items;
 		}
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Update the search results
+		/// Set initial search text and start searching
 		/// </summary>
 		/********************************************************************/
-		public void UpdateResults(ModuleListItem[] items)
+		public void SetInitialText(string text)
 		{
+			// Clear old results
 			resultsListControl.Items.Clear();
 
-			foreach (var item in items)
-				resultsListControl.Items.Add(item);
-
-			if (resultsListControl.Items.Count > 0)
-			{
-				resultsListControl.SelectedIndex = 0;
-				resultsListControl.SetLastItemSelected(0);
-			}
-
-			ResultCountChanged?.Invoke(this, items.Length);
+			searchTextBox.Text = text;
+			searchTextBox.SelectionStart = text.Length;
+			searchTextBox.Focus();
 		}
 
 
@@ -121,10 +104,77 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void SearchTextBox_TextChanged(object sender, EventArgs e)
 		{
+			// Stop and restart the debounce timer
+			debounceTimer.Stop();
+
 			if (string.IsNullOrEmpty(searchTextBox.Text))
 				SearchCancelled?.Invoke(this, EventArgs.Empty);
 			else
-				SearchTextChanged?.Invoke(this, EventArgs.Empty);
+				debounceTimer.Start();
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when debounce timer ticks
+		/// </summary>
+		/********************************************************************/
+		private void DebounceTimer_Tick(object sender, EventArgs e)
+		{
+			debounceTimer.Stop();
+
+			// Cancel any previous search
+			if (searchCancellationTokenSource != null)
+			{
+				searchCancellationTokenSource.Cancel();
+				searchCancellationTokenSource = null;
+			}
+
+			// Start new search
+			searchCancellationTokenSource = new CancellationTokenSource();
+			PerformSearchAsync(searchCancellationTokenSource);
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Perform the search asynchronously
+		/// </summary>
+		/********************************************************************/
+		private async void PerformSearchAsync(CancellationTokenSource cts)
+		{
+			if (dataSource == null)
+				return;
+
+			string searchText = searchTextBox.Text;
+
+			try
+			{
+				// Perform search in background
+				var results = await ModuleSearchHelper.SearchAsync(dataSource, searchText, cts.Token);
+
+				// Synchronize and update UI if not cancelled
+				if (searchCancellationTokenSource == cts && !cts.Token.IsCancellationRequested)
+				{
+					resultsListControl.Items.Clear();
+
+					foreach (var item in results)
+						resultsListControl.Items.Add(item);
+
+					if (resultsListControl.Items.Count > 0)
+					{
+						resultsListControl.SelectedIndex = 0;
+						resultsListControl.SetLastItemSelected(0);
+					}
+
+					// Clear reference
+					searchCancellationTokenSource = null;
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				// Expected when search is cancelled
+			}
 		}
 
 
