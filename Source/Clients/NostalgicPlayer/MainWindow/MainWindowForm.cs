@@ -123,6 +123,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private FavoriteSongSystemForm favoriteSongSystemWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
 		private AudiusWindowForm audiusWindow = null;
+		private SearchPopupForm searchPopupForm = null;
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
@@ -1728,6 +1729,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Load and play the selected module
 					LoadAndPlayModule(moduleListControl.SelectedItem);
 				}
+			}
+			// Open search popup for alphanumeric characters and wildcards
+			else if (char.IsLetterOrDigit(e.KeyChar) || e.KeyChar == '*' || e.KeyChar == '?')
+			{
+				OpenSearchPopup(e.KeyChar.ToString());
+				e.Handled = true;
 			}
 		}
 
@@ -4890,6 +4897,126 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			foreach (ModuleListItem listItem in moduleListControl.Items)
 				yield return ListItemConverter.Convert(listItem);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Open the search popup
+		/// </summary>
+		/********************************************************************/
+		private void OpenSearchPopup(string initialText)
+		{
+			if (searchPopupForm == null || searchPopupForm.IsDisposed)
+			{
+				searchPopupForm = new SearchPopupForm();
+				searchPopupForm.ItemSelected += SearchPopup_ItemSelected;
+				searchPopupForm.SearchTextChanged += SearchPopup_SearchTextChanged;
+			}
+
+			// Apply list number setting
+			searchPopupForm.EnableListNumber(optionSettings.ShowListNumber);
+
+			// Set initial search text
+			searchPopupForm.SetInitialText(initialText);
+
+			// Position and size the popup to match the module list
+			System.Drawing.Point location = moduleListControl.PointToScreen(new System.Drawing.Point(0, 0));
+			System.Drawing.Size size = moduleListControl.Size;
+			searchPopupForm.ShowAt(location, size);
+
+			// Perform initial filter
+			FilterModules();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Filter modules based on search text
+		/// </summary>
+		/********************************************************************/
+		private void FilterModules()
+		{
+			if (searchPopupForm == null || searchPopupForm.IsDisposed)
+				return;
+
+			string searchText = searchPopupForm.SearchText;
+			if (string.IsNullOrEmpty(searchText))
+			{
+				searchPopupForm.UpdateResults(new ModuleListItem[0]);
+				return;
+			}
+
+			// Check if user entered wildcards
+			bool hasWildcards = searchText.Contains('*') || searchText.Contains('?');
+			string pattern;
+
+			if (hasWildcards)
+			{
+				// Convert wildcard pattern to regex
+				pattern = "^" + System.Text.RegularExpressions.Regex.Escape(searchText).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+			}
+			else
+			{
+				// Auto-add wildcards: *text*
+				pattern = System.Text.RegularExpressions.Regex.Escape(searchText);
+			}
+
+			// Filter module list
+			List<ModuleListItem> filteredModules = new List<ModuleListItem>();
+			System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+			foreach (ModuleListItem item in moduleListControl.Items)
+			{
+				if (hasWildcards)
+				{
+					if (regex.IsMatch(item.ListItem.DisplayName))
+						filteredModules.Add(item);
+				}
+				else
+				{
+					if (item.ListItem.DisplayName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+						filteredModules.Add(item);
+				}
+			}
+
+			searchPopupForm.UpdateResults(filteredModules.ToArray());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when user selects an item in search popup
+		/// </summary>
+		/********************************************************************/
+		private void SearchPopup_ItemSelected(object sender, ModuleListItem selectedItem)
+		{
+			if (selectedItem == null)
+				return;
+
+			// Find the selected module in the main list
+			int index = moduleListControl.Items.IndexOf(selectedItem);
+			if (index >= 0)
+			{
+				// Found the module, play it
+				StopAndFreeModule();
+				LoadAndPlayModule(index);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when search text changes
+		/// </summary>
+		/********************************************************************/
+		private void SearchPopup_SearchTextChanged(object sender, EventArgs e)
+		{
+			FilterModules();
 		}
 		#endregion
 
