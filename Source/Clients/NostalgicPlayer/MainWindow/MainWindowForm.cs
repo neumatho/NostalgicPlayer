@@ -124,8 +124,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private SampleInfoWindowForm sampleInfoWindow = null;
 		private AudiusWindowForm audiusWindow = null;
 
-		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
-		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
+		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new();
+		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays = new();
 
 		/********************************************************************/
 		/// <summary>
@@ -144,9 +144,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			allowPosSliderUpdate = true;
 
 			randomList = new List<int>();
-
-			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
-			openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
 
 			// Hook up search popup events
 			searchPopupControl.ItemSelected += SearchPopup_ItemSelected;
@@ -197,7 +194,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			SetupHandlers();
 		}
-
 
 
 		/********************************************************************/
