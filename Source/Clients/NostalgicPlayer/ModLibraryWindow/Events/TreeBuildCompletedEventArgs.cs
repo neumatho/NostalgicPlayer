@@ -9,13 +9,13 @@ using System;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     Event args for tree build completion
+	/// Event args for tree build completion
 	/// </summary>
 	internal class TreeBuildCompletedEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		public TreeBuildCompletedEventArgs(TreeNode tree)
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     The resulting tree structure
+		/// The resulting tree structure
 		/// </summary>
 		/********************************************************************/
 		public TreeNode ResultTree

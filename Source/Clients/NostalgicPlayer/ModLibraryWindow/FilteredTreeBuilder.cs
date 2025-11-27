@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     Search mode for filtering files
+	/// Search mode for filtering files
 	/// </summary>
 	internal enum SearchMode
 	{
@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 	}
 
 	/// <summary>
-	///     Builds filtered tree in background with cancellation support
+	/// Builds filtered tree in background with cancellation support
 	/// </summary>
 	internal class FilteredTreeBuilder
 	{
@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		public FilteredTreeBuilder(List<ModuleService> services, IReadOnlyList<ModEntry> localFiles, string filter,
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Event fired when tree building is completed
+		/// Event fired when tree building is completed
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler<TreeBuildCompletedEventArgs> Completed;
@@ -68,8 +68,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add file and parent directories to filtered tree using entry's
-		///     PathParts
+		/// Add file and parent directories to filtered tree using entry's
+		/// PathParts
 		/// </summary>
 		/********************************************************************/
 		private void AddFileToFilteredTree(TreeNode serviceNode, ModuleService service, ModEntry entry)
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add file to local tree (without service)
+		/// Add file to local tree (without service)
 		/// </summary>
 		/********************************************************************/
 		private void AddFileToLocalTree(TreeNode rootNode, ModEntry entry)
@@ -184,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add all matched files for flat view
+		/// Add all matched files for flat view
 		/// </summary>
 		/********************************************************************/
 		private void AddFlatViewFiles(TreeNode root, List<(ModEntry entry, ModuleService service)> allMatchedFiles)
@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Build filtered tree from services
+		/// Build filtered tree from services
 		/// </summary>
 		/********************************************************************/
 		private void BuildTree()
@@ -242,7 +242,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Build tree for offline mode (local files)
+		/// Build tree for offline mode (local files)
 		/// </summary>
 		/********************************************************************/
 		private List<(ModEntry entry, ModuleService service)> BuildTreeOfflineMode(TreeNode root, bool showAll,
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Build tree for online mode (service files)
+		/// Build tree for online mode (service files)
 		/// </summary>
 		/********************************************************************/
 		private List<(ModEntry entry, ModuleService service)> BuildTreeOnlineMode(TreeNode root, bool showAll,
@@ -332,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Convert wildcard pattern to regex pattern
+		/// Convert wildcard pattern to regex pattern
 		/// </summary>
 		/********************************************************************/
 		private Regex ConvertWildcardToRegex(string pattern)
@@ -359,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Notify completion and fire event
+		/// Notify completion and fire event
 		/// </summary>
 		/********************************************************************/
 		private void NotifyCompletion(TreeNode root)
@@ -377,7 +377,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Process files for a specific service
+		/// Process files for a specific service
 		/// </summary>
 		/********************************************************************/
 		private List<(ModEntry entry, ModuleService service)> ProcessServiceFiles(TreeNode serviceNode,
@@ -424,7 +424,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Cancel the build task
+		/// Cancel the build task
 		/// </summary>
 		/********************************************************************/
 		public void Cancel()
@@ -436,7 +436,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Start building the tree in background
+		/// Start building the tree in background
 		/// </summary>
 		/********************************************************************/
 		public void Start()

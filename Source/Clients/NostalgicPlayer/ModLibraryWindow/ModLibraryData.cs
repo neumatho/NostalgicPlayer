@@ -11,7 +11,7 @@ using System.Linq;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     Sort order for flat view
+	/// Sort order for flat view
 	/// </summary>
 	internal enum FlatViewSortOrder
 	{
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 	}
 
 	/// <summary>
-	///     Manages module library data, services, and search functionality
+	/// Manages module library data, services, and search functionality
 	/// </summary>
 	internal class ModLibraryData
 	{
@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get or set local mode
+		/// Get or set local mode
 		/// </summary>
 		/********************************************************************/
 		public bool IsOfflineMode
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get readonly access to local files
+		/// Get readonly access to local files
 		/// </summary>
 		/********************************************************************/
 		public IReadOnlyList<ModEntry> LocalFiles => localFiles;
@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get current search filter
+		/// Get current search filter
 		/// </summary>
 		/********************************************************************/
 		public string SearchFilter
@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get all available services
+		/// Get all available services
 		/// </summary>
 		/********************************************************************/
 		public List<ModuleService> Services
@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Event fired when data loading is completed
+		/// Event fired when data loading is completed
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler DataLoaded;
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Count files recursively in tree
+		/// Count files recursively in tree
 		/// </summary>
 		/********************************************************************/
 		private int CountFilesRecursive(TreeNode node)
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Check if node has any children (recursively)
+		/// Check if node has any children (recursively)
 		/// </summary>
 		/********************************************************************/
 		private bool HasChildren(TreeNode node)
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Called when search is completed
+		/// Called when search is completed
 		/// </summary>
 		/********************************************************************/
 		private void OnSearchCompleted(object sender, TreeBuildCompletedEventArgs e)
@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add local file - creates ModEntry from already sorted data
+		/// Add local file - creates ModEntry from already sorted data
 		/// </summary>
 		/********************************************************************/
 		public void AddLocalFile(string nameWithPath, long size)
@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add a service to the library
+		/// Add a service to the library
 		/// </summary>
 		/********************************************************************/
 		public void AddService(ModuleService service)
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Build tree with optional filter (empty filter shows all files)
+		/// Build tree with optional filter (empty filter shows all files)
 		/// </summary>
 		/********************************************************************/
 		public void BuildTree(string filter, SearchMode searchMode = SearchMode.FilenameAndPath,
@@ -190,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Clear local files
+		/// Clear local files
 		/// </summary>
 		/********************************************************************/
 		public void ClearLocalFiles()
@@ -201,7 +201,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Count total files in current filtered tree
+		/// Count total files in current filtered tree
 		/// </summary>
 		/********************************************************************/
 		public int CountTotalFilesInFilteredCache()
@@ -214,7 +214,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get display path for breadcrumb
+		/// Get display path for breadcrumb
 		/// </summary>
 		/********************************************************************/
 		public string GetDisplayPath(string path)
@@ -236,8 +236,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get entries for a specific path with optional flat view sort
-		///     order
+		/// Get entries for a specific path with optional flat view sort
+		/// order
 		/// </summary>
 		/********************************************************************/
 		public List<TreeNode> GetEntries(string currentPath, bool isFlatView, FlatViewSortOrder sortOrder)
@@ -254,10 +254,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 				// Add direct folders (not recursive)
 				foreach (var child in node.Children)
-				{
 					if (child.IsDirectory)
 						sortedChildren.Add(child);
-				}
 
 				// Add all files recursively
 				CollectFilesRecursive(node, sortedChildren);
@@ -265,7 +263,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			else
 			{
 				// Hierarchical view: just use direct children
-				sortedChildren = new(node.Children);
+				sortedChildren = new List<TreeNode>(node.Children);
 
 				// If at root with search filter in hierarchical view, filter out empty services
 				if (string.IsNullOrEmpty(currentPath) && !string.IsNullOrEmpty(SearchFilter))
@@ -273,7 +271,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			}
 
 			if (isFlatView)
-			{
 				// Flat view: Directories first, then files (with custom sort order for files)
 				sortedChildren.Sort((a, b) =>
 				{
@@ -304,9 +301,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					// If paths are equal, sort by name (shouldn't happen but just in case)
 					return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
 				});
-			}
 			else
-			{
 				// Hierarchical view: directories first, then files (both alphabetically by name)
 				sortedChildren.Sort((a, b) =>
 				{
@@ -318,7 +313,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					// Both are same type (both dirs or both files), sort alphabetically by name
 					return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
 				});
-			}
 
 			return sortedChildren;
 		}
@@ -326,7 +320,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get relative path without service prefix
+		/// Get relative path without service prefix
 		/// </summary>
 		/********************************************************************/
 		public string GetRelativePathFromService(string fullPath, ModuleService service)
@@ -339,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get service by ID
+		/// Get service by ID
 		/// </summary>
 		/********************************************************************/
 		public ModuleService GetService(string serviceId)
@@ -350,7 +344,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get service from full path
+		/// Get service from full path
 		/// </summary>
 		/********************************************************************/
 		public ModuleService GetServiceFromPath(string path)
@@ -365,18 +359,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Collect all files recursively from a node
+		/// Collect all files recursively from a node
 		/// </summary>
 		/********************************************************************/
 		private void CollectFilesRecursive(TreeNode node, List<TreeNode> files)
 		{
 			foreach (var child in node.Children)
-			{
 				if (!child.IsDirectory)
 					files.Add(child);
 				else
 					CollectFilesRecursive(child, files);
-			}
 		}
 	}
 }

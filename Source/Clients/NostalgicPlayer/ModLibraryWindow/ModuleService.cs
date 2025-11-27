@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     Represents a module service provider (e.g., ModLand, AMP Archive)
+	/// Represents a module service provider (e.g., ModLand, AMP Archive)
 	/// </summary>
 	internal class ModuleService
 	{
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Display name of the service
+		/// Display name of the service
 		/// </summary>
 		/********************************************************************/
 		public string DisplayName
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Folder name for storing service files (filesystem-safe name)
+		/// Folder name for storing service files (filesystem-safe name)
 		/// </summary>
 		/********************************************************************/
 		public required string FolderName
@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Service identifier
+		/// Service identifier
 		/// </summary>
 		/********************************************************************/
 		public string Id
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Whether the service database is loaded
+		/// Whether the service database is loaded
 		/// </summary>
 		/********************************************************************/
 		public bool IsLoaded
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Last update timestamp
+		/// Last update timestamp
 		/// </summary>
 		/********************************************************************/
 		public DateTime LastUpdate
@@ -74,21 +74,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get readonly access to offline files
+		/// Get readonly access to offline files
 		/// </summary>
 		/********************************************************************/
 		public IReadOnlyList<ModEntry> OfflineFiles => offlineFiles;
 
 		/********************************************************************/
 		/// <summary>
-		///     Get readonly access to online files
+		/// Get readonly access to online files
 		/// </summary>
 		/********************************************************************/
 		public IReadOnlyList<ModEntry> OnlineFiles => onlineFiles;
 
 		/********************************************************************/
 		/// <summary>
-		///     Root path for this service
+		/// Root path for this service
 		/// </summary>
 		/********************************************************************/
 		public string RootPath
@@ -100,8 +100,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add offline file - creates ModEntry from already sorted
-		///     data
+		/// Add offline file - creates ModEntry from already sorted
+		/// data
 		/// </summary>
 		/********************************************************************/
 		public void AddOfflineFile(string nameWithPath, long size)
@@ -112,8 +112,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add online file - creates ModEntry from already sorted
-		///     data
+		/// Add online file - creates ModEntry from already sorted
+		/// data
 		/// </summary>
 		/********************************************************************/
 		public void AddOnlineFile(string nameWithPath, long size)
@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Clear offline files
+		/// Clear offline files
 		/// </summary>
 		/********************************************************************/
 		public void ClearOfflineFiles()
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Clear online files
+		/// Clear online files
 		/// </summary>
 		/********************************************************************/
 		public void ClearOnlineFiles()

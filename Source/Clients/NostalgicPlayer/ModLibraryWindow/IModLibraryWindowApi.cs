@@ -9,13 +9,13 @@ using System.Windows.Forms;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     API for the Module Library window
+	/// API for the Module Library window
 	/// </summary>
 	public interface IModLibraryWindowApi
 	{
 		/********************************************************************/
 		/// <summary>
-		///     Return the form of the Module Library window
+		/// Return the form of the Module Library window
 		/// </summary>
 		/********************************************************************/
 		Form Form

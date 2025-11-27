@@ -23,7 +23,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     This shows the Module Library window
+	/// This shows the Module Library window
 	/// </summary>
 	public partial class ModLibraryWindowForm : WindowFormBase, IModLibraryWindowApi
 	{
@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		public ModLibraryWindowForm(IMainWindowApi mainWindow, OptionSettings optionSettings)
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Return the URL to the help page
+		/// Return the URL to the help page
 		/// </summary>
 		/********************************************************************/
 		protected override string HelpUrl => "modlibrary.html";
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Return the form of the Module Library window
+		/// Return the form of the Module Library window
 		/// </summary>
 		/********************************************************************/
 		public Form Form => this;
@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Reload if path has changed
+		/// Reload if path has changed
 		/// </summary>
 		/********************************************************************/
 		public void ReloadChanges()
@@ -191,7 +191,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when the form is shown for the first time
+		/// Is called when the form is shown for the first time
 		/// </summary>
 		/********************************************************************/
 		private void ModLibraryForm_Shown(object sender, EventArgs e)
@@ -201,7 +201,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when the form is closed
+		/// Is called when the form is closed
 		/// </summary>
 		/********************************************************************/
 		private void ModLibraryForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -219,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when the parent button is clicked
+		/// Is called when the parent button is clicked
 		/// </summary>
 		/********************************************************************/
 		private void ParentButton_Click(object sender, EventArgs e)
@@ -292,7 +292,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when virtual list needs an item
+		/// Is called when virtual list needs an item
 		/// </summary>
 		/********************************************************************/
 		private void ModuleListView_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -353,7 +353,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when a list item is double-clicked
+		/// Is called when a list item is double-clicked
 		/// </summary>
 		/********************************************************************/
 		private async void ModuleListView_DoubleClick(object sender, EventArgs e)
@@ -403,8 +403,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when the list view is right-clicked (for context
-		///     menu)
+		/// Is called when the list view is right-clicked (for context
+		/// menu)
 		/// </summary>
 		/********************************************************************/
 		private void ModuleListView_MouseClick(object sender, MouseEventArgs e)
@@ -438,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when a key is pressed in the list view
+		/// Is called when a key is pressed in the list view
 		/// </summary>
 		/********************************************************************/
 		private void ModuleListView_KeyPress(object sender, KeyPressEventArgs e)
@@ -467,7 +467,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when a key is pressed down in the list view
+		/// Is called when a key is pressed down in the list view
 		/// </summary>
 		/********************************************************************/
 		private async void ModuleListView_KeyDown(object sender, KeyEventArgs e)
@@ -484,7 +484,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 						if (entry.IsDirectory)
 						{
-
 							// Check if this is a service root that's not loaded (only in online mode)
 							if (entry.FullPath.EndsWith("://") && !data.IsOfflineMode)
 							{
@@ -540,7 +539,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when search text changes
+		/// Is called when search text changes
 		/// </summary>
 		/********************************************************************/
 		private void SearchTextBox_TextChanged(object sender, EventArgs e)
@@ -553,7 +552,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when search button is clicked
+		/// Is called when search button is clicked
 		/// </summary>
 		/********************************************************************/
 		private void SearchButton_Click(object sender, EventArgs e)
@@ -565,7 +564,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when "Update Database" context menu item is clicked
+		/// Is called when "Update Database" context menu item is clicked
 		/// </summary>
 		/********************************************************************/
 		private async void UpdateDatabaseItem_Click(object sender, EventArgs e)
@@ -577,7 +576,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when "Clear Database" context menu item is clicked
+		/// Is called when "Clear Database" context menu item is clicked
 		/// </summary>
 		/********************************************************************/
 		private void ClearDatabaseItem_Click(object sender, EventArgs e)
@@ -625,8 +624,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when debounce timer ticks (100ms after last
-		///     keystroke)
+		/// Is called when debounce timer ticks (100ms after last
+		/// keystroke)
 		/// </summary>
 		/********************************************************************/
 		private void SearchDebounceTimer_Tick(object sender, EventArgs e)
@@ -651,7 +650,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when search mode combobox selection changes
+		/// Is called when search mode combobox selection changes
 		/// </summary>
 		/********************************************************************/
 		private void SearchModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -672,7 +671,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when flat view checkbox is toggled
+		/// Is called when flat view checkbox is toggled
 		/// </summary>
 		/********************************************************************/
 		private void FlatViewCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -693,7 +692,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when play immediately checkbox is toggled
+		/// Is called when play immediately checkbox is toggled
 		/// </summary>
 		/********************************************************************/
 		private void PlayImmediatelyCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -705,7 +704,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when the mode tab control selection changes
+		/// Is called when the mode tab control selection changes
 		/// </summary>
 		/********************************************************************/
 		private void ModeTabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -742,7 +741,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Called when search/data operation is completed
+		/// Called when search/data operation is completed
 		/// </summary>
 		/********************************************************************/
 		private void OnDataLoaded(object sender, EventArgs e)
@@ -783,7 +782,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when "Delete" context menu item is clicked
+		/// Is called when "Delete" context menu item is clicked
 		/// </summary>
 		/********************************************************************/
 		private void DeleteItem_Click(object sender, EventArgs e)
@@ -903,7 +902,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when "Jump to folder" context menu item is clicked
+		/// Is called when "Jump to folder" context menu item is clicked
 		/// </summary>
 		/********************************************************************/
 		private void JumpToFolderItem_Click(object sender, EventArgs e)
@@ -941,7 +940,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get the current ModLibrary path from settings
+		/// Get the current ModLibrary path from settings
 		/// </summary>
 		/********************************************************************/
 		private string GetCurrentModLibraryPath()
@@ -955,7 +954,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Update the window title, showing custom path if configured
+		/// Update the window title, showing custom path if configured
 		/// </summary>
 		/********************************************************************/
 		private void UpdateWindowTitle()
@@ -971,8 +970,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get the configured ModLibrary modules path, or fallback to
-		///     default
+		/// Get the configured ModLibrary modules path, or fallback to
+		/// default
 		/// </summary>
 		/********************************************************************/
 		private string GetModLibraryModulesPath()
@@ -988,7 +987,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Check if a file should be included (filters out smpl.* files)
+		/// Check if a file should be included (filters out smpl.* files)
 		/// </summary>
 		/********************************************************************/
 		private bool ShouldIncludeFile(string nameWithPath)
@@ -1001,7 +1000,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get local file path for a tree entry
+		/// Get local file path for a tree entry
 		/// </summary>
 		/********************************************************************/
 		private string GetLocalPathForEntry(TreeNode entry)
@@ -1012,7 +1011,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get local file path for local mode
+		/// Get local file path for local mode
 		/// </summary>
 		/********************************************************************/
 		private string GetLocalPathForLocalMode(TreeNode entry)
@@ -1025,7 +1024,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get local file path for online mode
+		/// Get local file path for online mode
 		/// </summary>
 		/********************************************************************/
 		private string GetLocalPathForOnlineMode(TreeNode entry)
@@ -1045,7 +1044,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Initialize cache directory for downloaded files
+		/// Initialize cache directory for downloaded files
 		/// </summary>
 		/********************************************************************/
 		private void InitializeCacheDirectory()
@@ -1057,7 +1056,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Initialize available services
+		/// Initialize available services
 		/// </summary>
 		/********************************************************************/
 		private void InitializeServices()
@@ -1079,7 +1078,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Check if we already have a downloaded database
+		/// Check if we already have a downloaded database
 		/// </summary>
 		/********************************************************************/
 		private async void CheckExistingDatabase()
@@ -1138,7 +1137,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Download ModLand database
+		/// Download ModLand database
 		/// </summary>
 		/********************************************************************/
 		private async Task DownloadModLandDatabase()
@@ -1218,7 +1217,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Parse ModLand allmods.txt and create ModEntry objects
+		/// Parse ModLand allmods.txt and create ModEntry objects
 		/// </summary>
 		/********************************************************************/
 		private void ParseModLandDatabase(ModuleService service, string allmodsTxtPath)
@@ -1256,8 +1255,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Show status message in ListView (e.g., "Loading...",
-		///     "Searching...")
+		/// Show status message in ListView (e.g., "Loading...",
+		/// "Searching...")
 		/// </summary>
 		/********************************************************************/
 		private void ShowListViewStatus(string message)
@@ -1282,7 +1281,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Rebuild tree with current search filter
+		/// Rebuild tree with current search filter
 		/// </summary>
 		/********************************************************************/
 		private void RebuildTree()
@@ -1294,7 +1293,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Load current directory into ListView
+		/// Load current directory into ListView
 		/// </summary>
 		/********************************************************************/
 		private void LoadCurrentDirectory(string itemToSelect = null)
@@ -1323,7 +1322,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Update breadcrumb label and parent button state
+		/// Update breadcrumb label and parent button state
 		/// </summary>
 		/********************************************************************/
 		private void UpdateBreadcrumbAndParentButton()
@@ -1389,7 +1388,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Build clickable breadcrumb path
+		/// Build clickable breadcrumb path
 		/// </summary>
 		/********************************************************************/
 		private void BuildClickableBreadcrumb(int folderCount, int fileCount)
@@ -1463,7 +1462,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add breadcrumb for search mode
+		/// Add breadcrumb for search mode
 		/// </summary>
 		/********************************************************************/
 		private void AddBreadcrumbSearchPath(int folderCount, int fileCount, int totalFiles)
@@ -1499,7 +1498,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Build clickable path parts (without counts at end)
+		/// Build clickable path parts (without counts at end)
 		/// </summary>
 		/********************************************************************/
 		private void BuildClickablePath(string path)
@@ -1544,7 +1543,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add a clickable breadcrumb link
+		/// Add a clickable breadcrumb link
 		/// </summary>
 		/********************************************************************/
 		private void AddBreadcrumbLink(string text, string path)
@@ -1557,7 +1556,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add a non-clickable breadcrumb label
+		/// Add a non-clickable breadcrumb label
 		/// </summary>
 		/********************************************************************/
 		private void AddBreadcrumbLabel(string text)
@@ -1569,7 +1568,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add a breadcrumb separator
+		/// Add a breadcrumb separator
 		/// </summary>
 		/********************************************************************/
 		private void AddBreadcrumbSeparator(string text = " > ")
@@ -1587,7 +1586,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Handle breadcrumb link click
+		/// Handle breadcrumb link click
 		/// </summary>
 		/********************************************************************/
 		private void BreadcrumbLink_Clicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -1621,7 +1620,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Select an item in the list view
+		/// Select an item in the list view
 		/// </summary>
 		/********************************************************************/
 		private void SelectItemInList(string itemToSelect)
@@ -1653,7 +1652,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Update column headers with sort indicators
+		/// Update column headers with sort indicators
 		/// </summary>
 		/********************************************************************/
 		private void UpdateColumnHeaders()
@@ -1684,7 +1683,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Handle column header clicks to change sort order
+		/// Handle column header clicks to change sort order
 		/// </summary>
 		/********************************************************************/
 		private void ModuleListView_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -1708,7 +1707,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Download module from service and add to playlist
+		/// Download module from service and add to playlist
 		/// </summary>
 		/********************************************************************/
 		private async Task DownloadAndPlayModule(TreeNode entry)
@@ -1810,7 +1809,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Play module if it exists locally (local mode)
+		/// Play module if it exists locally (local mode)
 		/// </summary>
 		/********************************************************************/
 		private void PlayModuleIfExists(TreeNode entry)
@@ -1861,7 +1860,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Scan local files for a service
+		/// Scan local files for a service
 		/// </summary>
 		/********************************************************************/
 		private void ScanLocalFiles()
@@ -1905,7 +1904,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Add a downloaded file to the local files list
+		/// Add a downloaded file to the local files list
 		/// </summary>
 		/********************************************************************/
 		private void AddFileToLocalCache(ModuleService service, string nameWithPath, long fileSize)
@@ -1922,7 +1921,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Format file size in KB, MB, GB like Windows Explorer
+		/// Format file size in KB, MB, GB like Windows Explorer
 		/// </summary>
 		/********************************************************************/
 		private string FormatFileSize(long bytes)
@@ -1939,7 +1938,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Count files recursively in a tree node
+		/// Count files recursively in a tree node
 		/// </summary>
 		/********************************************************************/
 		private int CountFilesInTree(TreeNode node)

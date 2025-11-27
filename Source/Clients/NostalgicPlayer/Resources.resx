@@ -1396,16 +1396,16 @@ all the selected modules will be moved to the top of the list</value>
     <value>Change the volume</value>
   </data>
   <data name="IDS_MODLIBRARY_SEARCH_LABEL" xml:space="preserve">
-    <value>🔍 Search:</value>
+    <value>Search:</value>
   </data>
   <data name="IDS_MODLIBRARY_PARENT_BUTTON" xml:space="preserve">
     <value>⬆ Parent</value>
   </data>
   <data name="IDS_MODLIBRARY_FLATVIEW_CHECKBOX" xml:space="preserve">
-    <value>📋 Flat view (show all files recursively)</value>
+    <value>Flat view (show all files recursively)</value>
   </data>
   <data name="IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX" xml:space="preserve">
-    <value>▶ Play immediately (otherwise just add to playlist)</value>
+    <value>Play immediately (otherwise just add to playlist)</value>
   </data>
   <data name="IDS_MODLIBRARY_UPDATE_DATABASE" xml:space="preserve">
     <value>Update Database</value>

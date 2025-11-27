@@ -264,6 +264,7 @@ resharper_enforce_line_ending_style = true
 resharper_keep_existing_initializer_arrangement = false
 resharper_space_within_single_line_array_initializer_braces = false
 resharper_use_indent_from_vs = false
+resharper_xmldoc_indent_text = ZeroIndent
 
 # ReSharper inspection severities
 resharper_arrange_type_member_modifiers_highlighting = hint

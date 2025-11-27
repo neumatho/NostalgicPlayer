@@ -9,13 +9,13 @@ using System.Collections.Generic;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     Represents a node in the module library tree structure
+	/// Represents a node in the module library tree structure
 	/// </summary>
 	internal class TreeNode
 	{
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		public TreeNode()
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Child nodes
+		/// Child nodes
 		/// </summary>
 		/********************************************************************/
 		public List<TreeNode> Children
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Full path from root
+		/// Full path from root
 		/// </summary>
 		/********************************************************************/
 		public string FullPath
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Whether this is a directory node
+		/// Whether this is a directory node
 		/// </summary>
 		/********************************************************************/
 		public bool IsDirectory
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Name of the node (file or directory name)
+		/// Name of the node (file or directory name)
 		/// </summary>
 		/********************************************************************/
 		public string Name
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Service identifier this node belongs to
+		/// Service identifier this node belongs to
 		/// </summary>
 		/********************************************************************/
 		public string ServiceId
@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Size in bytes (for files only)
+		/// Size in bytes (for files only)
 		/// </summary>
 		/********************************************************************/
 		public long Size
@@ -92,8 +92,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Find a node by its full path by navigating through the
-		///     tree
+		/// Find a node by its full path by navigating through the
+		/// tree
 		/// </summary>
 		/********************************************************************/
 		public TreeNode FindByPath(string path)

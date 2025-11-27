@@ -10,7 +10,7 @@ using System.Linq;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
 	/// <summary>
-	///     Represents a module file entry (not directories - only files!)
+	/// Represents a module file entry (not directories - only files!)
 	/// </summary>
 	internal class ModEntry
 	{
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Constructor - parses path once and stores components
+		/// Constructor - parses path once and stores components
 		/// </summary>
 		/********************************************************************/
 		public ModEntry(string nameWithPath, long size)
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     File size in bytes
+		/// File size in bytes
 		/// </summary>
 		/********************************************************************/
 		public long Size
@@ -62,21 +62,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Full path (all directory parts concatenated)
+		/// Full path (all directory parts concatenated)
 		/// </summary>
 		/********************************************************************/
 		public string FullPath => pathParts.Count > 0 ? string.Join("/", pathParts) : string.Empty;
 
 		/********************************************************************/
 		/// <summary>
-		///     Full name (full path + file name)
+		/// Full name (full path + file name)
 		/// </summary>
 		/********************************************************************/
 		public string FullName => string.IsNullOrEmpty(FullPath) ? Name : FullPath + "/" + Name;
 
 		/********************************************************************/
 		/// <summary>
-		///     File or directory name only
+		/// File or directory name only
 		/// </summary>
 		/********************************************************************/
 		public string Name
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Path parts as array for tree building
+		/// Path parts as array for tree building
 		/// </summary>
 		/********************************************************************/
 		public IReadOnlyList<string> PathParts => pathParts.AsReadOnly();
