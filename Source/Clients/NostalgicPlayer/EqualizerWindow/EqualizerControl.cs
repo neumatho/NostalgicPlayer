@@ -1,13 +1,19 @@
-using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
+/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 {
 	/// <summary>
-	///     Equalizer control for the Mixer settings page
+	/// Equalizer control for the Mixer settings page
 	/// </summary>
 	public partial class EqualizerControl : UserControl
 	{
@@ -15,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		public EqualizerControl()
@@ -27,9 +33,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			BuildPresetContextMenu();
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Get whether equalizer is enabled
+		/// Get whether equalizer is enabled
 		/// </summary>
 		/********************************************************************/
 		[Browsable(false)]
@@ -37,6 +45,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		public bool IsEqualizerEnabled
 		{
 			get => enableEqualizerCheckBox.Checked;
+
 			set
 			{
 				suppressEvents = true;
@@ -52,9 +61,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Get/Set pre-amp gain in dB
+		/// Get/Set pre-amp gain in dB
 		/// </summary>
 		/********************************************************************/
 		[Browsable(false)]
@@ -62,6 +73,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		public double PreAmpGain
 		{
 			get => preAmpTrackBar.Value / 10.0; // Convert from tenths of dB to dB
+
 			set
 			{
 				suppressEvents = true;
@@ -80,36 +92,46 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Event fired when equalizer settings change
+		/// Event fired when equalizer settings change
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler EqualizerChanged;
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Get current equalizer band values in dB
+		/// Get current equalizer band values in dB
 		/// </summary>
 		/********************************************************************/
 		public double[] GetBandValues()
 		{
 			double[] values = new double[10];
-			for (int i = 0; i < 10; i++) values[i] = GetTrackBar(i).Value / 10.0; // Convert from tenths of dB to dB
+
+			for (int i = 0; i < 10; i++)
+				values[i] = GetTrackBar(i).Value / 10.0; // Convert from tenths of dB to dB
 
 			return values;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Set equalizer band values
+		/// Set equalizer band values
 		/// </summary>
 		/********************************************************************/
 		public void SetBandValues(double[] values)
 		{
-			if (values == null || values.Length != 10) return;
+			if (values == null || values.Length != 10)
+				return;
 
 			suppressEvents = true;
+
 			try
 			{
 				for (int i = 0; i < 10; i++)
@@ -133,14 +155,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		}
 
 		#region Private methods
-
 		/********************************************************************/
 		/// <summary>
-		///     Get track bar for a specific band
+		/// Get track bar for a specific band
 		/// </summary>
 		/********************************************************************/
-		private KryptonTrackBar GetTrackBar(int index) =>
-			index switch
+		private KryptonTrackBar GetTrackBar(int index)
+		{
+			return index switch
 			{
 				0 => band0TrackBar,
 				1 => band1TrackBar,
@@ -154,10 +176,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 				9 => band9TrackBar,
 				_ => throw new ArgumentOutOfRangeException(nameof(index), index, "Band index must be between 0 and 9")
 			};
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
-		///     Set track bar value for a specific band
+		/// Set track bar value for a specific band
 		/// </summary>
 		/********************************************************************/
 		private void SetTrackBarValue(int index, int value)
@@ -199,9 +224,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Set value label text for a specific band
+		/// Set value label text for a specific band
 		/// </summary>
 		/********************************************************************/
 		private void SetValueLabelText(int index, string text)
@@ -243,9 +270,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Build the preset context menu with all available presets
+		/// Build the preset context menu with all available presets
 		/// </summary>
 		/********************************************************************/
 		private void BuildPresetContextMenu()
@@ -269,17 +298,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			UpdatePresetCheckmarks();
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Handle preset context menu opening - update checkmarks
+		/// Handle preset context menu opening - update checkmarks
 		/// </summary>
 		/********************************************************************/
-		private void PresetContextMenu_Opening(object sender, CancelEventArgs e) => UpdatePresetCheckmarks();
+		private void PresetContextMenu_Opening(object sender, CancelEventArgs e)
+		{
+			UpdatePresetCheckmarks();
+		}
+
 
 
 		/********************************************************************/
 		/// <summary>
-		///     Handle preset menu item click
+		/// Handle preset menu item click
 		/// </summary>
 		/********************************************************************/
 		private void PresetMenuItem_Click(object sender, EventArgs e)
@@ -298,9 +333,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Update checkmarks in preset menu to show current preset
+		/// Update checkmarks in preset menu to show current preset
 		/// </summary>
 		/********************************************************************/
 		private void UpdatePresetCheckmarks()
@@ -310,25 +347,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 
 			// Update context menu checkmarks
 			if (presetContextMenu.Items.Count > 0 && presetContextMenu.Items[0] is KryptonContextMenuItems menuItems)
+			{
 				foreach (KryptonContextMenuItemBase menuItem in menuItems.Items)
+				{
 					if (menuItem is KryptonContextMenuItem item && item.Tag is EqualizerPreset preset)
 						item.Checked = preset == matchingPreset;
+				}
+			}
 
 			// Update combo box selection
 			UpdatePresetComboBox(matchingPreset);
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Update preset combo box to show current preset
+		/// Update preset combo box to show current preset
 		/// </summary>
 		/********************************************************************/
 		private void UpdatePresetComboBox(EqualizerPreset preset)
 		{
 			suppressEvents = true;
+
 			try
 			{
 				presetComboBox.BeginUpdate();
+
 				try
 				{
 					presetComboBox.Items.Clear();
@@ -338,7 +383,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 					{
 						int index = presetComboBox.Items.Add(p.GetDisplayName());
 
-						if (p == preset) presetComboBox.SelectedIndex = index;
+						if (p == preset)
+							presetComboBox.SelectedIndex = index;
 					}
 				}
 				finally
@@ -352,14 +398,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Handle preset combo box selection changed
+		/// Handle preset combo box selection changed
 		/// </summary>
 		/********************************************************************/
 		private void PresetComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (suppressEvents) return;
+			if (suppressEvents)
+				return;
 
 			EqualizerPreset[] allPresets = EqualizerPresets.GetAllPresets();
 			int selectedIndex = presetComboBox.SelectedIndex;
@@ -369,7 +418,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 				EqualizerPreset preset = allPresets[selectedIndex];
 
 				// Skip if Custom is selected (Custom has no predefined values)
-				if (preset == EqualizerPreset.Custom) return;
+				if (preset == EqualizerPreset.Custom)
+					return;
 
 				double[] presetValues = EqualizerPresets.GetPreset(preset);
 				if (presetValues != null)
@@ -380,26 +430,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Enable equalizer checkbox changed
+		/// Enable equalizer checkbox changed
 		/// </summary>
 		/********************************************************************/
 		private void EnableEqualizerCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateControlStates();
 
-			if (!suppressEvents) EqualizerChanged?.Invoke(this, EventArgs.Empty);
+			if (!suppressEvents)
+				EqualizerChanged?.Invoke(this, EventArgs.Empty);
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
-		///     Update enabled state of controls
+		/// Update enabled state of controls
 		/// </summary>
 		/********************************************************************/
 		private void UpdateControlStates()
 		{
 			controlsPanel.SuspendLayout();
+
 			try
 			{
 				controlsPanel.Enabled = enableEqualizerCheckBox.Checked;
@@ -410,14 +466,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Band track bar value changed
+		/// Band track bar value changed
 		/// </summary>
 		/********************************************************************/
 		private void BandTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			if (suppressEvents) return;
+			if (suppressEvents)
+				return;
 
 			// Update the value label for the changed trackbar
 			if (sender is KryptonTrackBar trackBar && trackBar.Tag is int bandIndex)
@@ -428,19 +487,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
-		///     PreAmp track bar value changed
+		/// PreAmp track bar value changed
 		/// </summary>
 		/********************************************************************/
 		private void PreAmpTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			if (suppressEvents) return;
+			if (suppressEvents)
+				return;
 
 			preAmpValueLabel.Text = (preAmpTrackBar.Value / 10.0).ToString("F1");
 			EqualizerChanged?.Invoke(this, EventArgs.Empty);
 		}
-
 		#endregion
 	}
 }

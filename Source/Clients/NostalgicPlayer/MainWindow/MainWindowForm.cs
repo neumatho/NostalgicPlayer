@@ -123,6 +123,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private FavoriteSongSystemForm favoriteSongSystemWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
 		private AudiusWindowForm audiusWindow = null;
+		private EqualizerWindowForm equalizerWindow = null;
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
@@ -5360,8 +5361,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#endregion
 
 		#region Equalizer
-		private EqualizerWindowForm equalizerWindow = null;
-
 		/********************************************************************/
 		/// <summary>
 		/// User selected the Equalizer menu item
@@ -5384,6 +5383,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Event handler for the equalizer button click
@@ -5394,6 +5395,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Call the same method as the menu item
 			Menu_Window_Equalizer_Click(sender, e);
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -5408,6 +5411,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				equalizerWindow.Show();
 			}
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -5424,6 +5429,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			mainWindowSettings.OpenEqualizerWindow = openAgain;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Enumerate Equalizer window if open
@@ -5434,6 +5441,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (IsEqualizerWindowOpen())
 				yield return equalizerWindow;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>

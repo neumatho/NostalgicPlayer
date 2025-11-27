@@ -3,19 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
+using System;
+using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Library.Containers;
-using System;
-using System.Windows.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 {
 	/// <summary>
-	///     Equalizer window form
+	/// Equalizer window form
 	/// </summary>
 	public partial class EqualizerWindowForm : WindowFormBase
 	{
@@ -27,11 +26,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public EqualizerWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optSettings,
-			SoundSettings soundSettings)
+		public EqualizerWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optSettings, SoundSettings soundSettings)
 		{
 			InitializeComponent();
 
@@ -57,10 +55,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		}
 
 		#region Private methods
-
 		/********************************************************************/
 		/// <summary>
-		///     Load equalizer settings from SoundSettings
+		/// Load equalizer settings from SoundSettings
 		/// </summary>
 		/********************************************************************/
 		private void LoadEqualizerSettings()
@@ -70,9 +67,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			equalizerControl.PreAmpGain = soundSettings.EqualizerPreAmp;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Equalizer control values changed - apply to mixer in real-time
+		/// Equalizer control values changed - apply to mixer in real-time
 		/// </summary>
 		/********************************************************************/
 		private void EqualizerControl_EqualizerChanged(object sender, EventArgs e)
@@ -86,15 +85,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			ApplyEqualizerToMixer();
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Apply equalizer settings to the mixer (uses current control
-		///     values, not saved settings)
+		/// Apply equalizer settings to the mixer (uses current control
+		/// values, not saved settings)
 		/// </summary>
 		/********************************************************************/
 		private void ApplyEqualizerToMixer()
 		{
-			if (moduleHandler == null) return;
+			if (moduleHandler == null)
+				return;
 
 			MixerConfiguration configuration = new()
 			{
@@ -110,24 +112,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 
 			// Copy current channel configuration
 			if (moduleHandler.IsModuleLoaded)
-				Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled,
-					configuration.ChannelsEnabled.Length);
+				Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);
 
 			moduleHandler.ChangeMixerSettings(configuration);
 		}
 
-		/********************************************************************/
-		/// <summary>
-		///     Form is being shown
-		/// </summary>
-		/********************************************************************/
-		private void EqualizerWindowForm_Shown(object sender, EventArgs e) =>
-			// Refresh settings when window is shown
-			LoadEqualizerSettings();
+
 
 		/********************************************************************/
 		/// <summary>
-		///     Form is being closed - save equalizer settings
+		/// Form is being shown
+		/// </summary>
+		/********************************************************************/
+		private void EqualizerWindowForm_Shown(object sender, EventArgs e)
+		{
+			// Refresh settings when window is shown
+			LoadEqualizerSettings();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Form is being closed - save equalizer settings
 		/// </summary>
 		/********************************************************************/
 		private void EqualizerWindowForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -137,7 +144,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			soundSettings.EqualizerBands = equalizerControl.GetBandValues();
 			soundSettings.EqualizerPreAmp = equalizerControl.PreAmpGain;
 		}
-
 		#endregion
 	}
 }

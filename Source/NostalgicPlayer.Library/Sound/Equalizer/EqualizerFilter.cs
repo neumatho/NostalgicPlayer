@@ -1,22 +1,84 @@
-using Polycode.NostalgicPlayer.Kit.Utility;
+/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 {
 	/// <summary>
-	///     10-band graphic equalizer (Winamp-style)
-	///     Frequency bands: 60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000 Hz
-	///     Gain range: -12 dB to +12 dB per band (UI), internally scaled
-	///     to ±6 dB for cleaner sound
+	/// 10-band graphic equalizer (Winamp-style)
+	/// Frequency bands: 60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000 Hz
+	/// Gain range: -12 dB to +12 dB per band (UI), internally scaled
+	/// to ±6 dB for cleaner sound
 	/// </summary>
 	internal class EqualizerFilter
 	{
+		#region BiquadCoefficients class
+		// Biquad filter coefficients for each band
+		private class BiquadCoefficients
+		{
+			public long A1
+			{
+				get; set;
+			}
+
+			public long A2
+			{
+				get; set;
+			}
+
+			public long B0
+			{
+				get; set;
+			}
+
+			public long B1
+			{
+				get; set;
+			}
+
+			public long B2
+			{
+				get; set;
+			}
+		}
+		#endregion
+
+		#region FilterState class
+		// Filter state for each band and channel
+		private class FilterState
+		{
+			public long X1
+			{
+				get; set;
+			}
+
+			public long X2
+			{
+				get; set;
+			}
+
+			public long Y1
+			{
+				get; set;
+			}
+
+			public long Y2
+			{
+				get; set;
+			}
+		}
+		#endregion
+
 		private const int BandCount = 10;
 		private const int Scale = 24;
 		private const long ScaleFactor = 1L << Scale;
 
 		// 10 frequency bands (Hz)
-		private static readonly double[] Frequencies = {60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000};
+		private static readonly double[] Frequencies = [ 60, 170, 310, 600, 1000, 3000, 6000, 12000, 14000, 16000 ];
 
 		private readonly BiquadCoefficients[][] coefficients; // [band][channel]
 		private readonly FilterState[][][] filterStates; // [band][channel][state]
@@ -27,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		public EqualizerFilter(int sampleRate, int outputChannelCount)
@@ -61,9 +123,11 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 			UpdateCoefficients();
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Update biquad filter coefficients based on current gains
+		/// Update biquad filter coefficients based on current gains
 		/// </summary>
 		/********************************************************************/
 		private void UpdateCoefficients()
@@ -71,24 +135,30 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 			for (int band = 0; band < BandCount; band++)
 			{
 				double frequency = Frequencies[band];
+
 				// Apply 0.5 scaling here when converting to linear gain for cleaner sound
-			double gainDb = gains[band] * 0.5;
+				double gainDb = gains[band] * 0.5;
 				double gain = Math.Pow(10.0, gainDb / 20.0); // Convert dB to linear gain
 
 				// Calculate Q factor (bandwidth) - use wider bandwidth for high
 				// frequencies to reduce harshness
 				// Lower Q = wider bandwidth = smoother response
 				double q;
+
 				if (frequency >= 12000)
+				{
 					// Very wide for ultra-high frequencies (12kHz, 14kHz, 16kHz)
 					q = 0.7;
+				}
 				else if (frequency >= 6000)
 					q = 0.85; // Wide for high frequencies (6kHz)
 				else if (frequency >= 3000)
 					q = 1.0; // Standard for mid-high (3kHz)
 				else
+				{
 					// Slightly narrow for bass/mid (60Hz-1kHz) for more precision
 					q = 1.2;
+				}
 
 				// Calculate intermediate values
 				double omega = 2.0 * Math.PI * frequency / sampleRate;
@@ -118,9 +188,11 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Apply equalizer to audio buffer
+		/// Apply equalizer to audio buffer
 		/// </summary>
 		/********************************************************************/
 		public void Apply(Span<int> buffer, int framesTodo)
@@ -180,23 +252,35 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 			}
 		}
 
-		/********************************************************************/
-		/// <summary>
-		///     Get current band gains
-		/// </summary>
-		/********************************************************************/
-		public double[] GetGains() => (double[])gains.Clone();
+
 
 		/********************************************************************/
 		/// <summary>
-		///     Get current pre-amp gain
+		/// Get current band gains
 		/// </summary>
 		/********************************************************************/
-		public double GetPreAmpGain() => preAmpGain;
+		public double[] GetGains()
+		{
+			return (double[])gains.Clone();
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
-		///     Set pre-amp gain
+		/// Get current pre-amp gain
+		/// </summary>
+		/********************************************************************/
+		public double GetPreAmpGain()
+		{
+			return preAmpGain;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set pre-amp gain
 		/// </summary>
 		/// <param name="gainDb">Gain in dB (-12.0 to +12.0)</param>
 		/********************************************************************/
@@ -206,123 +290,75 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 			preAmpGain = Math.Max(-12.0, Math.Min(12.0, gainDb));
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Reset equalizer to flat response
+		/// Reset equalizer to flat response
 		/// </summary>
 		/********************************************************************/
 		public void Reset()
 		{
-			for (int i = 0; i < BandCount; i++) gains[i] = 0.0;
+			for (int i = 0; i < BandCount; i++)
+				gains[i] = 0.0;
+
 			preAmpGain = 0.0;
 
 			UpdateCoefficients();
 
 			// Clear filter states
 			for (int band = 0; band < BandCount; band++)
-			for (int ch = 0; ch < outputChannelCount; ch++)
 			{
-				filterStates[band][ch][0].X1 = 0;
-				filterStates[band][ch][0].X2 = 0;
-				filterStates[band][ch][0].Y1 = 0;
-				filterStates[band][ch][0].Y2 = 0;
+				for (int ch = 0; ch < outputChannelCount; ch++)
+				{
+					filterStates[band][ch][0].X1 = 0;
+					filterStates[band][ch][0].X2 = 0;
+					filterStates[band][ch][0].Y1 = 0;
+					filterStates[band][ch][0].Y2 = 0;
+				}
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Set all band gains at once
+		/// Set all band gains at once
 		/// </summary>
 		/********************************************************************/
 		public void SetAllGains(double[] bandGains)
 		{
-			if (bandGains == null || bandGains.Length != BandCount) return;
+			if (bandGains == null || bandGains.Length != BandCount)
+				return;
 
 			for (int i = 0; i < BandCount; i++)
+			{
 				// Clamp to ±12 dB, then scale by 0.5 for cleaner sound
 				gains[i] = Math.Max(-12.0, Math.Min(12.0, bandGains[i]));
+			}
 
 			UpdateCoefficients();
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
-		///     Set gain for a specific band
+		/// Set gain for a specific band
 		/// </summary>
 		/// <param name="band">Band index (0-9)</param>
 		/// <param name="gainDb">Gain in dB (-12.0 to +12.0)</param>
 		/********************************************************************/
 		public void SetBandGain(int band, double gainDb)
 		{
-			if (band < 0 || band >= BandCount) return;
+			if (band < 0 || band >= BandCount)
+				return;
 
 			// Clamp to ±12 dB, then scale by 0.5 for cleaner sound
 			gainDb = Math.Max(-12.0, Math.Min(12.0, gainDb));
 			gains[band] = gainDb;
 
 			UpdateCoefficients();
-		}
-
-		// Biquad filter coefficients for each band
-		private class BiquadCoefficients
-		{
-			public long A1
-			{
-				get;
-				set;
-			}
-
-			public long A2
-			{
-				get;
-				set;
-			}
-
-			public long B0
-			{
-				get;
-				set;
-			}
-
-			public long B1
-			{
-				get;
-				set;
-			}
-
-			public long B2
-			{
-				get;
-				set;
-			}
-		}
-
-		// Filter state for each band and channel
-		private class FilterState
-		{
-			public long X1
-			{
-				get;
-				set;
-			}
-
-			public long X2
-			{
-				get;
-				set;
-			}
-
-			public long Y1
-			{
-				get;
-				set;
-			}
-
-			public long Y2
-			{
-				get;
-				set;
-			}
 		}
 	}
 }
