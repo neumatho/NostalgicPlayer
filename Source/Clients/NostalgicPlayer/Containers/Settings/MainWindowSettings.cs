@@ -146,6 +146,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Mute status
+		/// </summary>
+		/********************************************************************/
+		public bool Mute
+		{
+			get => settings.GetBoolEntry("General", "Mute", false);
+
+			set => settings.SetBoolEntry("General", "Mute", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Loop song status
+		/// </summary>
+		/********************************************************************/
+		public bool LoopSong
+		{
+			get => settings.GetBoolEntry("General", "LoopSong", false);
+
+			set => settings.SetBoolEntry("General", "LoopSong", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Open agent windows
 		/// </summary>
 		/********************************************************************/

@@ -133,8 +133,8 @@
 			earlyLoadLabel.Values.Text = "Early load";
 			// 
 			// doubleBufferingTrackBar
-			// 
-			doubleBufferingTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
+			//
+			doubleBufferingTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			doubleBufferingTrackBar.Location = new System.Drawing.Point(0, 0);
 			doubleBufferingTrackBar.Maximum = 8;
 			doubleBufferingTrackBar.Name = "doubleBufferingTrackBar";
