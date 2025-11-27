@@ -582,6 +582,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the last item selected for keyboard navigation
+		/// </summary>
+		/********************************************************************/
+		public void SetLastItemSelected(int index)
+		{
+			moduleListItemsControl.SetLastItemSelected(index);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return information about the last drag'n'drop that has been made
 		/// </summary>
 		/********************************************************************/
