@@ -6,6 +6,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
+		private System.Windows.Forms.ToolStripButton cancelDownloadButton = null;
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -47,6 +48,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			flatViewContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			flatViewContextMenuItems = new Krypton.Toolkit.KryptonContextMenuItems();
 			jumpToFolderItem = new Krypton.Toolkit.KryptonContextMenuItem();
+			batchDownloadContextMenu = new Krypton.Toolkit.KryptonContextMenu();
+			batchDownloadContextMenuItems = new Krypton.Toolkit.KryptonContextMenuItems();
+			downloadSelectedItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			searchPanel = new System.Windows.Forms.Panel();
 			searchButton = new Krypton.Toolkit.KryptonButton();
 			searchTextBox = new Krypton.Toolkit.KryptonTextBox();
@@ -58,6 +62,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			columnPath = new System.Windows.Forms.ColumnHeader();
 			columnSize = new System.Windows.Forms.ColumnHeader();
 			statusStrip = new System.Windows.Forms.StatusStrip();
+			cancelDownloadButton = new System.Windows.Forms.ToolStripButton();
 			statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			progressBar = new System.Windows.Forms.ToolStripProgressBar();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
@@ -186,10 +191,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			flatViewContextMenuItems.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { jumpToFolderItem });
 			// 
 			// jumpToFolderItem
-			// 
+			//
 			jumpToFolderItem.Text = "Jump to Folder";
 			jumpToFolderItem.Click += JumpToFolderItem_Click;
-			// 
+			//
+			// batchDownloadContextMenu
+			//
+			batchDownloadContextMenu.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { batchDownloadContextMenuItems });
+			//
+			// batchDownloadContextMenuItems
+			//
+			batchDownloadContextMenuItems.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { downloadSelectedItem });
+			//
+			// downloadSelectedItem
+			//
+			downloadSelectedItem.Text = "Download Selected";
+			downloadSelectedItem.Click += DownloadSelectedItem_Click;
+			//
 			// searchPanel
 			// 
 			searchPanel.Controls.Add(searchButton);
@@ -297,24 +315,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			columnSize.Width = 100;
 			// 
 			// statusStrip
-			// 
-			statusStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
-			statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { statusLabel, progressBar });
+			//
+			statusStrip.ImageScalingSize = new System.Drawing.Size(16, 16);
+			statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { cancelDownloadButton, statusLabel, progressBar });
 			statusStrip.Location = new System.Drawing.Point(8, 578);
 			statusStrip.Name = "statusStrip";
-			statusStrip.Padding = new System.Windows.Forms.Padding(0, 3, 0, 5);
+			statusStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 0);
 			statusStrip.Size = new System.Drawing.Size(884, 22);
 			statusStrip.TabIndex = 8;
-			// 
+			//
+			// cancelDownloadButton
+			//
+			cancelDownloadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			cancelDownloadButton.Name = "cancelDownloadButton";
+			cancelDownloadButton.Size = new System.Drawing.Size(50, 19);
+			cancelDownloadButton.Text = "Cancel";
+			cancelDownloadButton.Visible = false;
+			cancelDownloadButton.Click += CancelDownloadButton_Click;
+			//
 			// statusLabel
-			// 
+			//
 			statusLabel.Name = "statusLabel";
 			statusLabel.Size = new System.Drawing.Size(0, 0);
 			statusLabel.Spring = true;
 			statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
+			//
 			// progressBar
-			// 
+			//
 			progressBar.Name = "progressBar";
 			progressBar.Size = new System.Drawing.Size(200, 24);
 			progressBar.Visible = false;
@@ -365,6 +392,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private Krypton.Toolkit.KryptonContextMenu flatViewContextMenu;
 		private Krypton.Toolkit.KryptonContextMenuItems flatViewContextMenuItems;
 		private Krypton.Toolkit.KryptonContextMenuItem jumpToFolderItem;
+		private Krypton.Toolkit.KryptonContextMenu batchDownloadContextMenu;
+		private Krypton.Toolkit.KryptonContextMenuItems batchDownloadContextMenuItems;
+		private Krypton.Toolkit.KryptonContextMenuItem downloadSelectedItem;
 		private Krypton.Toolkit.KryptonLabel searchLabel;
 		private System.Windows.Forms.Panel searchPanel;
 		private Krypton.Toolkit.KryptonTextBox searchTextBox;

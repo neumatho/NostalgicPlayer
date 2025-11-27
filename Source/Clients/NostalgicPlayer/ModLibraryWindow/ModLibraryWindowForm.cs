@@ -11,6 +11,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
@@ -28,9 +30,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 	public partial class ModLibraryWindowForm : WindowFormBase, IModLibraryWindowApi
 	{
 		private const string AllmodsZipUrl = "https://modland.com/allmods.zip";
-		private const string ModlandModulesUrl = "https://modland.com/pub/modules/";
 
 		private readonly ModLibraryData data = new();
+
+		// Download queue and services
+		private readonly DownloadQueueManager downloadQueueManager = new();
+		private ModLibraryDownloadService downloadService;
+		private ModLibraryPlaylistIntegration playlistIntegration;
 
 		private readonly IMainWindowApi mainWindow;
 		private readonly Timer searchDebounceTimer;
@@ -63,6 +69,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			clearDatabaseItem.Text = Resources.IDS_MODLIBRARY_CLEAR_DATABASE;
 			deleteItem.Text = Resources.IDS_MODLIBRARY_DELETE;
 			jumpToFolderItem.Text = Resources.IDS_MODLIBRARY_JUMP_TO_FOLDER;
+			downloadSelectedItem.Text = Resources.IDS_MODLIBRARY_DOWNLOAD_SELECTED;
+			cancelDownloadButton.Text = Resources.IDS_MODLIBRARY_CANCEL;
 
 			// Set column headers (ColumnHeader cannot use ControlResource)
 			columnName.Text = Resources.IDS_MODLIBRARY_COLUMN_NAME;
@@ -97,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				InitializeServices();
 
 				// Initialize search timer for keyboard quick search
-				searchTimer = new Timer();
+				searchTimer = new System.Windows.Forms.Timer();
 				searchTimer.Interval = 1000; // 1 second timeout
 				searchTimer.Tick += (s, ev) =>
 				{
@@ -106,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				};
 
 				// Initialize debounce timer for search textbox
-				searchDebounceTimer = new Timer();
+				searchDebounceTimer = new System.Windows.Forms.Timer();
 				searchDebounceTimer.Interval = 100; // 100ms debounce
 				searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
 
@@ -128,6 +136,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 				// Hook up data loaded event
 				data.DataLoaded += OnDataLoaded;
+
+				// Hook up download queue events
+				downloadQueueManager.ProgressChanged += DownloadQueue_ProgressChanged;
+				downloadQueueManager.DownloadCompleted += DownloadQueue_DownloadCompleted;
+				downloadQueueManager.QueueCompleted += DownloadQueue_QueueCompleted;
 			}
 		}
 
@@ -185,7 +198,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		private void ModLibraryWindowForm_Disposed(object sender, EventArgs e)
 		{
-			// Cleanup if needed
+			// Cancel any running downloads to prevent crashes on shutdown
+			downloadQueueManager.Cancel();
 		}
 
 
@@ -395,8 +409,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				if (data.IsOfflineMode)
 					PlayModuleIfExists(entry);
 				else
-					// Online mode: Download and play module
-					await DownloadAndPlayModule(entry);
+				{
+					// Online mode: Add to download queue
+					downloadQueueManager.EnqueueFiles(new[] { entry }, playImmediatelyCheckBox.Checked);
+
+					// Start processing if not already running
+					if (!downloadQueueManager.IsProcessing)
+						await StartDownloadQueueProcessing();
+				}
 			}
 		}
 
@@ -423,13 +443,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					}
 					else
 					{
-						// Online mode: Check if in flat view
-						if (flatViewCheckBox.Checked && !entry.IsDirectory)
+						// Online mode: Check if multiple items are selected
+						if (moduleListView.SelectedIndices.Count > 1)
+							// Show batch download menu for multiple selections
+							batchDownloadContextMenu.Show(moduleListView.PointToScreen(e.Location));
+						else if (flatViewCheckBox.Checked && !entry.IsDirectory)
 							// Flat view: Show "Jump to folder" context menu for files
 							flatViewContextMenu.Show(moduleListView.PointToScreen(e.Location));
 						else if (entry.IsDirectory && entry.FullPath.EndsWith("://"))
 							// Show service context menu only for service nodes at root
 							serviceContextMenu.Show(moduleListView.PointToScreen(e.Location));
+						else if (entry.IsDirectory)
+							// Show batch download menu for directories (to download recursively)
+							batchDownloadContextMenu.Show(moduleListView.PointToScreen(e.Location));
 					}
 				}
 			}
@@ -519,8 +545,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 							if (data.IsOfflineMode)
 								PlayModuleIfExists(entry);
 							else
-								// Online mode: Download and play module
-								await DownloadAndPlayModule(entry);
+							{
+								// Online mode: Add to download queue
+								downloadQueueManager.EnqueueFiles(new[] { entry }, playImmediatelyCheckBox.Checked);
+
+								// Start processing if not already running
+								if (!downloadQueueManager.IsProcessing)
+									await StartDownloadQueueProcessing();
+							}
 						}
 					}
 				}
@@ -934,6 +966,164 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			LoadCurrentDirectory();
 		}
 
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when "Download Selected" context menu item is clicked
+		/// </summary>
+		/********************************************************************/
+		private async void DownloadSelectedItem_Click(object sender, EventArgs e)
+		{
+			if (moduleListView.SelectedIndices.Count == 0) return;
+
+			// Collect selected entries
+			List<TreeNode> selectedEntries = new();
+			foreach (int index in moduleListView.SelectedIndices)
+				if (index >= 0 && index < currentEntries.Count)
+					selectedEntries.Add(currentEntries[index]);
+
+			// Separate files and directories
+			List<TreeNode> files = selectedEntries.Where(entry => !entry.IsDirectory).ToList();
+			List<TreeNode> directories = selectedEntries.Where(entry => entry.IsDirectory).ToList();
+
+			// Enqueue files
+			if (files.Any())
+				downloadQueueManager.EnqueueFiles(files, playImmediatelyCheckBox.Checked);
+
+			// Enqueue directories recursively
+			foreach (var directory in directories)
+				downloadQueueManager.EnqueueDirectory(directory, data, playImmediatelyCheckBox.Checked && !files.Any());
+
+			// Start processing if not already running
+			if (!downloadQueueManager.IsProcessing)
+				await StartDownloadQueueProcessing();
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the Cancel download button is clicked
+		/// </summary>
+		/********************************************************************/
+		private void CancelDownloadButton_Click(object sender, EventArgs e)
+		{
+			downloadQueueManager.Cancel();
+			cancelDownloadButton.Visible = false;
+			progressBar.Visible = false;
+			statusLabel.Text = Resources.IDS_MODLIBRARY_STATUS_DOWNLOAD_CANCELLED;
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when download progress changes
+		/// </summary>
+		/********************************************************************/
+		private void DownloadQueue_ProgressChanged(object sender, DownloadProgressEventArgs e)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(() => DownloadQueue_ProgressChanged(sender, e));
+				return;
+			}
+
+			// Update status label
+			string relativePath = data.GetRelativePathFromService(e.CurrentEntry.FullPath,
+				data.GetService(e.CurrentEntry.ServiceId));
+			statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_DOWNLOADING_BATCH,
+				e.RemainingCount, relativePath);
+
+			// Update progress bar (show indeterminate style since count is dynamic)
+			progressBar.Visible = true;
+			progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+
+			// Show cancel button
+			cancelDownloadButton.Visible = true;
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a single download completes
+		/// </summary>
+		/********************************************************************/
+		private void DownloadQueue_DownloadCompleted(object sender, DownloadCompletedEventArgs e)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(() => DownloadQueue_DownloadCompleted(sender, e));
+				return;
+			}
+
+			if (e.Success)
+			{
+				// Add to playlist
+				playlistIntegration.AddToPlaylist(e.LocalPath, e.ShouldPlayImmediately);
+			}
+			else
+			{
+				// Show error
+				statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_ERROR_PREFIX, e.ErrorMessage);
+			}
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the entire download queue completes
+		/// </summary>
+		/********************************************************************/
+		private void DownloadQueue_QueueCompleted(object sender, EventArgs e)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(() => DownloadQueue_QueueCompleted(sender, e));
+				return;
+			}
+
+			// Hide progress UI
+			cancelDownloadButton.Visible = false;
+			progressBar.Visible = false;
+			progressBar.Style = System.Windows.Forms.ProgressBarStyle.Blocks;
+
+			// Show completion summary
+			int successCount = downloadQueueManager.SuccessCount;
+			int failureCount = downloadQueueManager.FailureCount;
+
+			if (failureCount > 0)
+				statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_WITH_ERRORS,
+					successCount, failureCount);
+			else
+				statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_SUCCESS,
+					successCount);
+		}
+
+		#endregion
+
+		#region Private download methods
+
+		/********************************************************************/
+		/// <summary>
+		/// Start processing the download queue
+		/// </summary>
+		/********************************************************************/
+		private async Task StartDownloadQueueProcessing()
+		{
+			await downloadQueueManager.ProcessQueueAsync(DownloadModuleFileAsync);
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Download a single module file (used by download queue)
+		/// </summary>
+		/********************************************************************/
+		private async Task<string> DownloadModuleFileAsync(TreeNode entry, bool playImmediately,
+			CancellationToken cancellationToken)
+		{
+			return await downloadService.DownloadModuleAsync(entry, cancellationToken);
+		}
+
 		#endregion
 
 		#region Private methods
@@ -1073,6 +1263,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				RootPath = "modland://",
 				IsLoaded = false
 			});
+
+			// Initialize helper services
+			downloadService = new ModLibraryDownloadService(data, GetModLibraryModulesPath());
+			playlistIntegration = new ModLibraryPlaylistIntegration(mainWindow);
 		}
 
 
@@ -1705,107 +1899,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
-		/********************************************************************/
-		/// <summary>
-		/// Download module from service and add to playlist
-		/// </summary>
-		/********************************************************************/
-		private async Task DownloadAndPlayModule(TreeNode entry)
-		{
-			try
-			{
-				var service = data.GetService(entry.ServiceId);
-				if (service == null) return;
-
-				// Get relative path without service prefix
-				string relativePath = data.GetRelativePathFromService(entry.FullPath, service);
-
-				// Build local file path (Modules are now in Modules/<Service>/ folder)
-				string modulesBasePath = GetModLibraryModulesPath();
-				string localPath = Path.Combine(modulesBasePath, service.FolderName,
-					relativePath.Replace('/', Path.DirectorySeparatorChar));
-				string localDirectory = Path.GetDirectoryName(localPath);
-
-				// Check if already downloaded
-				if (!File.Exists(localPath))
-				{
-					statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_DOWNLOADING_FILE, entry.Name);
-
-					// Create directory if needed
-					Directory.CreateDirectory(localDirectory);
-
-					// Download from service (currently only ModLand supported)
-					if (service.Id == "modland")
-						using (HttpClient client = new())
-						{
-							// URL-encode the path to handle special characters like #, spaces, etc.
-							string encodedPath = string.Join("/", relativePath.Split('/').Select(Uri.EscapeDataString));
-							string downloadUrl = ModlandModulesUrl + encodedPath;
-							byte[] fileBytes = await client.GetByteArrayAsync(downloadUrl);
-							await File.WriteAllBytesAsync(localPath, fileBytes);
-
-							// Check if this is an mdat.* file - if so, download the matching smpl.* file
-							if (entry.Name.StartsWith("mdat.", StringComparison.OrdinalIgnoreCase))
-							{
-								string smplFileName = "smpl" + entry.Name.Substring(4); // Replace "mdat" with "smpl"
-								string smplRelativePath = relativePath.Substring(0, relativePath.LastIndexOf('/') + 1) +
-								                          smplFileName;
-								string smplLocalPath = Path.Combine(localDirectory, smplFileName);
-								// URL-encode the smpl path too
-								string smplEncodedPath = string.Join("/",
-									smplRelativePath.Split('/').Select(Uri.EscapeDataString));
-								string smplDownloadUrl = ModlandModulesUrl + smplEncodedPath;
-
-								try
-								{
-									statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_DOWNLOADING_SAMPLE,
-										smplFileName);
-									byte[] smplBytes = await client.GetByteArrayAsync(smplDownloadUrl);
-									await File.WriteAllBytesAsync(smplLocalPath, smplBytes);
-
-									// Add smpl file to LocalFilesCache
-									AddFileToLocalCache(service, smplRelativePath, smplBytes.Length);
-								}
-								catch
-								{
-									// Sample file might not exist - that's ok
-								}
-							}
-						}
-
-					statusLabel.Text =
-						string.Format(Resources.IDS_MODLIBRARY_STATUS_DOWNLOADED_FILE, entry.Name, entry.Size);
-
-					// Add downloaded file to LocalFilesCache
-					AddFileToLocalCache(service, relativePath, entry.Size);
-				}
-				else
-					statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_PLAYING_CACHED, entry.Name);
-
-				// Add to playlist using the main window API
-				if (mainWindow.Form is MainWindowForm mainWindowForm)
-					mainWindowForm.Invoke((Action)(() =>
-					{
-						// Check if module already exists in playlist
-						var existingItem = mainWindowForm.FindModuleInList(localPath);
-						if (existingItem != null)
-						{
-							// Module already in list - select and play it
-							if (playImmediatelyCheckBox.Checked) mainWindowForm.SelectAndPlayModule(existingItem);
-						}
-						else
-							// Add the file to the list and optionally play it immediately
-							mainWindowForm.AddFilesToModuleList(new[] {localPath}, playImmediatelyCheckBox.Checked);
-					}));
-			}
-			catch (Exception ex)
-			{
-				statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_ERROR_PREFIX, ex.Message);
-				MessageBox.Show(string.Format(Resources.IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD_MODULE, ex.Message),
-					Resources.IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-
 
 		/********************************************************************/
 		/// <summary>
@@ -1901,22 +1994,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			foreach (var entry in entries) data.AddLocalFile(entry.nameWithPath, entry.size);
 		}
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Add a downloaded file to the local files list
-		/// </summary>
-		/********************************************************************/
-		private void AddFileToLocalCache(ModuleService service, string nameWithPath, long fileSize)
-		{
-			// Build full path including service folder name
-			string fullPath = $"{service.FolderName}/{nameWithPath}";
-
-			// Check if file already exists in local files
-			if (!data.LocalFiles.Any(e => e.FullName == fullPath))
-				// Add to local files list
-				data.AddLocalFile(fullPath, fileSize);
-		}
 
 
 		/********************************************************************/

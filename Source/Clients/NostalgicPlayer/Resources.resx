@@ -1577,6 +1577,18 @@ This will permanently delete all selected items from your computer.</value>
 
 Do you want to update it now?</value>
   </data>
+  <data name="IDS_MODLIBRARY_CANCEL" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="IDS_MODLIBRARY_DOWNLOAD_SELECTED" xml:space="preserve">
+    <value>Download Selected</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOADING_BATCH" xml:space="preserve">
+    <value>({0} remaining) Downloading: {1}</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_CANCELLED" xml:space="preserve">
+    <value>Download cancelled</value>
+  </data>
   <data name="IDS_MODLIBRARY_MSGBOX_TITLE_UPDATE_DB" xml:space="preserve">
     <value>Update Database</value>
   </data>
@@ -1704,5 +1716,11 @@ This will delete the local database file and clear all data from memory.</value>
   </data>
   <data name="IDS_MODLIBRARY_SEARCH_COUNT" xml:space="preserve">
     <value>{0} folders, {1} files, {2} total files</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_SUCCESS" xml:space="preserve">
+    <value>Download completed: {0} successful</value>
+  </data>
+  <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_WITH_ERRORS" xml:space="preserve">
+    <value>Download completed: {0} successful, {1} failed</value>
   </data>
 </root>

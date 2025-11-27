@@ -1932,6 +1932,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CANCEL {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CANCEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Clear Database ähnelt.
         /// </summary>
         internal static string IDS_MODLIBRARY_CLEAR_DATABASE {
@@ -1973,6 +1982,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_DELETE {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_DELETE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download Selected ähnelt.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_DOWNLOAD_SELECTED {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_SELECTED", resourceCulture);
             }
         }
         
@@ -2482,11 +2500,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download cancelled ähnelt.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_CANCELLED {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOAD_CANCELLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Download complete! Database: {0:N0} KB ({1}) ähnelt.
         /// </summary>
         internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETE {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download completed: {0} successful ähnelt.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_SUCCESS {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_SUCCESS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download completed: {0} successful, {1} failed ähnelt.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_WITH_ERRORS {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_WITH_ERRORS", resourceCulture);
             }
         }
         
@@ -2505,6 +2550,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_STATUS_DOWNLOADING_ALLMODS {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOADING_ALLMODS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Downloading: {0} ({1} remaining in queue) ähnelt.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_STATUS_DOWNLOADING_BATCH {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOADING_BATCH", resourceCulture);
             }
         }
         
