@@ -2955,6 +2955,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Set the master volume
 			masterVolumeTrackBar.Value = mainWindowSettings.MasterVolume;
 
+			// Set the mute status
+			muteCheckButton.Checked = mainWindowSettings.Mute;
+
+			// Set the loop song status
+			loopCheckButton.Checked = mainWindowSettings.LoopSong;
+
 			// Initialize base class
 			SetOptions(this, optionSettings);
 		}
@@ -3413,6 +3419,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Remember settings from main window
 			mainWindowSettings.Time = timeFormat;
 			mainWindowSettings.MasterVolume = masterVolumeTrackBar.Value;
+			mainWindowSettings.Mute = muteCheckButton.Checked;
+			mainWindowSettings.LoopSong = loopCheckButton.Checked;
 
 			// Close agent settings windows
 			lock (openAgentSettings)
@@ -4197,6 +4205,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			moduleHandler = new ModuleHandler();
 			moduleHandler.Initialize(this, agentManager, soundSettings, masterVolumeTrackBar.Value);
+			moduleHandler.SetMuteStatus(muteCheckButton.Checked);
 		}
 
 
