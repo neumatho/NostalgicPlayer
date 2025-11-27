@@ -119,8 +119,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			stereoSeparationPercentLabel.Values.Text = "100%";
 			// 
 			// stereoSeparationTrackBar
-			// 
-			stereoSeparationTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
+			//
+			stereoSeparationTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			stereoSeparationTrackBar.Location = new System.Drawing.Point(106, 0);
 			stereoSeparationTrackBar.Maximum = 100;
 			stereoSeparationTrackBar.Name = "stereoSeparationTrackBar";
@@ -153,8 +153,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			visualsLatencyLabel.Values.Text = "Visuals latency";
 			// 
 			// visualsLatencyTrackBar
-			// 
-			visualsLatencyTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
+			//
+			visualsLatencyTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			visualsLatencyTrackBar.Location = new System.Drawing.Point(106, 35);
 			visualsLatencyTrackBar.Maximum = 49;
 			visualsLatencyTrackBar.Name = "visualsLatencyTrackBar";
