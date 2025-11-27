@@ -147,6 +147,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
 			openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
+
+			// Hook up search popup events
+			searchPopupControl.ItemSelected += SearchPopup_ItemSelected;
+			searchPopupControl.SearchTextChanged += SearchPopup_SearchTextChanged;
+			searchPopupControl.SearchCancelled += SearchPopup_SearchCancelled;
+			searchPopupControl.Leave += SearchPopupControl_Leave;
 		}
 
 
@@ -1061,6 +1067,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
+			// If search popup is visible, don't process shortcuts
+			if (searchPopupControl.Visible)
+				return base.ProcessCmdKey(ref msg, keyData);
+
 			// Check for different keyboard shortcuts
 			Keys modifiers = keyData & Keys.Modifiers;
 			Keys key = keyData & Keys.KeyCode;
@@ -1717,6 +1727,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleListControl_KeyPress(object sender, KeyPressEventArgs e)
 		{
+			// If search popup is visible, don't process
+			if (searchPopupControl.Visible)
+				return;
+
 			// Enter - Load the selected module
 			if (e.KeyChar == '\r')
 			{
@@ -1728,6 +1742,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Load and play the selected module
 					LoadAndPlayModule(moduleListControl.SelectedItem);
 				}
+			}
+			// Open search popup for alphanumeric characters and wildcards
+			else if (char.IsLetterOrDigit(e.KeyChar) || e.KeyChar == '*' || e.KeyChar == '?')
+			{
+				OpenSearchPopup(e.KeyChar.ToString());
+				e.Handled = true;
 			}
 		}
 
@@ -4881,6 +4901,155 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			foreach (ModuleListItem listItem in moduleListControl.Items)
 				yield return ListItemConverter.Convert(listItem);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Open the search popup
+		/// </summary>
+		/********************************************************************/
+		private void OpenSearchPopup(string initialText)
+		{
+			// Position and size the popup to match the module list
+			searchPopupControl.Location = moduleListControl.Location;
+			searchPopupControl.Size = moduleListControl.Size;
+
+			// Show the popup and bring to front
+			searchPopupControl.Visible = true;
+			searchPopupControl.BringToFront();
+
+			// Apply list number setting
+			searchPopupControl.EnableListNumber(optionSettings.ShowListNumber);
+
+			// Set initial search text (also sets focus)
+			searchPopupControl.SetInitialText(initialText);
+
+			// Perform initial filter
+			FilterModules();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Filter modules based on search text
+		/// </summary>
+		/********************************************************************/
+		private void FilterModules()
+		{
+			if (!searchPopupControl.Visible)
+				return;
+
+			string searchText = searchPopupControl.SearchText;
+			if (string.IsNullOrEmpty(searchText))
+			{
+				searchPopupControl.UpdateResults(new ModuleListItem[0]);
+				return;
+			}
+
+			// Check if user entered wildcards
+			bool hasWildcards = searchText.Contains('*') || searchText.Contains('?');
+			string pattern;
+
+			if (hasWildcards)
+			{
+				// Convert wildcard pattern to regex
+				pattern = "^" + System.Text.RegularExpressions.Regex.Escape(searchText).Replace("\\*", ".*").Replace("\\?", ".") + "$";
+			}
+			else
+			{
+				// Auto-add wildcards: *text*
+				pattern = System.Text.RegularExpressions.Regex.Escape(searchText);
+			}
+
+			// Filter module list
+			List<ModuleListItem> filteredModules = new List<ModuleListItem>();
+			System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+			foreach (ModuleListItem item in moduleListControl.Items)
+			{
+				if (hasWildcards)
+				{
+					if (regex.IsMatch(item.ListItem.DisplayName))
+						filteredModules.Add(item);
+				}
+				else
+				{
+					if (item.ListItem.DisplayName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+						filteredModules.Add(item);
+				}
+			}
+
+			searchPopupControl.UpdateResults(filteredModules.ToArray());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when user selects an item in search popup
+		/// </summary>
+		/********************************************************************/
+		private void SearchPopup_ItemSelected(object sender, ModuleListItem selectedItem)
+		{
+			if (selectedItem == null)
+				return;
+
+			// Hide the popup
+			searchPopupControl.Visible = false;
+
+			// Find the selected module in the main list
+			int index = moduleListControl.Items.IndexOf(selectedItem);
+			if (index >= 0)
+			{
+				// Found the module, play it
+				StopAndFreeModule();
+				LoadAndPlayModule(index);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when search text changes
+		/// </summary>
+		/********************************************************************/
+		private void SearchPopup_SearchTextChanged(object sender, EventArgs e)
+		{
+			FilterModules();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when search is cancelled
+		/// </summary>
+		/********************************************************************/
+		private void SearchPopup_SearchCancelled(object sender, EventArgs e)
+		{
+			searchPopupControl.Visible = false;
+			moduleListControl.Focus();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when search popup loses focus
+		/// </summary>
+		/********************************************************************/
+		private void SearchPopupControl_Leave(object sender, EventArgs e)
+		{
+			// Close the popup when focus leaves
+			if (searchPopupControl.Visible)
+			{
+				searchPopupControl.Visible = false;
+				moduleListControl.Focus();
+			}
 		}
 		#endregion
 

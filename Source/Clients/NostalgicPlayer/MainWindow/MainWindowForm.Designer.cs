@@ -75,6 +75,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			neverEndingTimer = new System.Windows.Forms.Timer(components);
 			addContextMenu = new KryptonContextMenu();
 			moduleListControl = new ModuleListControl();
+			searchPopupControl = new SearchPopupControl();
 			((System.ComponentModel.ISupportInitialize)infoGroup).BeginInit();
 			((System.ComponentModel.ISupportInitialize)infoGroup.Panel).BeginInit();
 			infoGroup.Panel.SuspendLayout();
@@ -484,17 +485,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			addContextMenu.Palette = fontPalette;
 			// 
 			// moduleListControl
-			// 
+			//
 			moduleListControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			moduleListControl.Location = new System.Drawing.Point(35, 56);
 			moduleListControl.Name = "moduleListControl";
 			moduleListControl.Size = new System.Drawing.Size(377, 116);
 			moduleListControl.TabIndex = 5;
-			// 
+			//
+			// searchPopupControl
+			//
+			searchPopupControl.Location = new System.Drawing.Point(35, 56);
+			searchPopupControl.Name = "searchPopupControl";
+			searchPopupControl.Size = new System.Drawing.Size(377, 116);
+			searchPopupControl.TabIndex = 100;
+			searchPopupControl.Visible = false;
+			//
 			// MainWindowForm
-			// 
+			//
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			ClientSize = new System.Drawing.Size(416, 281);
+			Controls.Add(searchPopupControl);
 			Controls.Add(moduleListControl);
 			Controls.Add(muteCheckButton);
 			Controls.Add(functionsGroup);
@@ -579,6 +589,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private Kit.Gui.Components.FontPalette fontPalette;
 		private Kit.Gui.Components.FontPalette bigFontPalette;
 		private ModuleListControl moduleListControl;
+		private SearchPopupControl searchPopupControl;
 	}
 }
 
