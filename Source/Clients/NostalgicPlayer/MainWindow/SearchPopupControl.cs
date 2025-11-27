@@ -10,13 +10,13 @@ using System.Windows.Forms;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
 	/// <summary>
-	///     Search popup control for filtering module list
+	/// Search popup control for filtering module list
 	/// </summary>
 	public partial class SearchPopupControl : UserControl
 	{
 		/********************************************************************/
 		/// <summary>
-		///     Constructor
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		public SearchPopupControl()
@@ -33,35 +33,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Get current search text
+		/// Get current search text
 		/// </summary>
 		/********************************************************************/
 		public string SearchText => searchTextBox.Text;
 
 		/********************************************************************/
 		/// <summary>
-		///     Raised when user selects an item
+		/// Raised when user selects an item
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler<ModuleListItem> ItemSelected;
 
 		/********************************************************************/
 		/// <summary>
-		///     Raised when user cancels the search
+		/// Raised when user cancels the search
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler SearchCancelled;
 
 		/********************************************************************/
 		/// <summary>
-		///     Raised when search text changes
+		/// Raised when search text changes
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler SearchTextChanged;
 
 		/********************************************************************/
 		/// <summary>
-		///     Raised when result count changes
+		/// Raised when result count changes
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler<int> ResultCountChanged;
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Set initial search text
+		/// Set initial search text
 		/// </summary>
 		/********************************************************************/
 		public void SetInitialText(string text)
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Update the search results
+		/// Update the search results
 		/// </summary>
 		/********************************************************************/
 		public void UpdateResults(ModuleListItem[] items)
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Enable/disable list number viewing
+		/// Enable/disable list number viewing
 		/// </summary>
 		/********************************************************************/
 		public void EnableListNumber(bool enable)
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when search text changes
+		/// Is called when search text changes
 		/// </summary>
 		/********************************************************************/
 		private void SearchTextBox_TextChanged(object sender, EventArgs e)
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when user presses key in search box
+		/// Is called when user presses key in search box
 		/// </summary>
 		/********************************************************************/
 		private void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when user presses key in results list
+		/// Is called when user presses key in results list
 		/// </summary>
 		/********************************************************************/
 		private void ResultsListControl_KeyPress(object sender, KeyPressEventArgs e)
@@ -204,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when user presses key down in results list
+		/// Is called when user presses key down in results list
 		/// </summary>
 		/********************************************************************/
 		private void ResultsListControl_KeyDown(object sender, KeyEventArgs e)
@@ -220,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		///     Is called when user double-clicks an item
+		/// Is called when user double-clicks an item
 		/// </summary>
 		/********************************************************************/
 		private void ResultsListControl_MouseDoubleClick(object sender, MouseEventArgs e)
