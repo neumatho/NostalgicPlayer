@@ -164,7 +164,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Check to see if there are any module loaded at the moment
 				if (moduleHandler.IsModuleLoaded)
 				{
-					if ((firstCustomLine + line) < moduleInfoInfoDataGridView.RowCount)
+					if (line < 0)
+					{
+						if (line == ModuleInfoChanged.ModuleNameChanged)
+						{
+							moduleInfoInfoDataGridView.Rows[0].Cells[1].Value = newValue;
+							moduleInfoInfoDataGridView.InvalidateRow(0);
+						}
+						else if (line == ModuleInfoChanged.AuthorChanged)
+						{
+							moduleInfoInfoDataGridView.Rows[1].Cells[1].Value = newValue;
+							moduleInfoInfoDataGridView.InvalidateRow(1);
+						}
+					}
+					else if ((firstCustomLine + line) < moduleInfoInfoDataGridView.RowCount)
 					{
 						moduleInfoInfoDataGridView.Rows[firstCustomLine + line].Cells[1].Value = newValue;
 						moduleInfoInfoDataGridView.InvalidateRow(firstCustomLine + line);

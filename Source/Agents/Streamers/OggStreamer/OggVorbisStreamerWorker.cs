@@ -5,77 +5,66 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using Polycode.NostalgicPlayer.Agent.Player.OggVorbis.Containers;
+using Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibVorbis;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbisFile;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
+namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 {
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class OggVorbisWorker : SamplePlayerWithDurationAgentBase
+	internal class OggVorbisStreamerWorker : StreamerAgentBase
 	{
 		private VorbisFile vorbisFile;
 
 		private int channels;
 		private int frequency;
 
-		private string songName;
-		private string artist;
-		private string trackNum;
-		private string album;
-		private string genre;
-		private string organization;
-		private string copyright;
-		private string descrip;
-		private string vendor;
-		private PictureInfo[] pictures;
+		private TagInformation currentTagInfo;
 		private int bitRate;
 
+		private const int InfoTrackNumberLine = 0;
+		private const int InfoAlbumLine = 1;
+		private const int InfoGenreLine = 2;
+		private const int InfoOrganizationLine = 3;
+		private const int InfoCopyrightLine = 4;
+		private const int InfoDescriptionLine = 5;
+		private const int InfoVendorLine = 6;
 		private const int InfoBitRateLine = 7;
 
 		#region Identify
 		/********************************************************************/
 		/// <summary>
-		/// Returns the file extensions that identify this player
+		/// Return an array of mime types that this agent can handle
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => [ "ogg", "oga" ];
+		public override string[] PlayableMimeTypes => [ "application/ogg" ];
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Test the file to see if it could be identified
+		/// Try to identify the format
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(PlayerFileInfo fileInfo)
+		public override AgentResult Identify(StreamingStream streamingStream)
 		{
-			 ModuleStream moduleStream = fileInfo.ModuleStream;
+			byte[] buffer = new byte[4];
 
-			// Check the module size
-			if (moduleStream.Length < 36)
+			streamingStream.ReadExactly(buffer, 0, 4);
+
+			if ((buffer[0] != 'O') || (buffer[1] != 'g') || (buffer[2] != 'g') || (buffer[3] != 'S'))
 				return AgentResult.Unknown;
 
-			moduleStream.Seek(0, SeekOrigin.Begin);
-
-			// Check the mark
-			string mark = moduleStream.ReadMark();
-			if (mark != "OggS")
-				return AgentResult.Unknown;
-
-			moduleStream.Seek(0, SeekOrigin.Begin);
-
-			if (VorbisFile.Ov_Test(moduleStream, true, out VorbisFile testVorbisFile, null, 0) == VorbisError.Ok)
+			if (VorbisFile.Ov_Test(streamingStream, true, out VorbisFile testVorbisFile, buffer, buffer.Length) == VorbisError.Ok)
 			{
 				testVorbisFile.Ov_Clear();
 
@@ -86,33 +75,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		}
 		#endregion
 
-		#region Loading
-		/********************************************************************/
-		/// <summary>
-		/// Will load the header information from the file
-		/// </summary>
-		/********************************************************************/
-		public override AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			return AgentResult.Ok;
-		}
-		#endregion
-
 		#region Initialization and cleanup
 		/********************************************************************/
 		/// <summary>
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
+		public override bool InitPlayer(StreamingStream streamingStream, IMetadata metadata, out string errorMessage)
 		{
-			if (!base.InitPlayer(moduleStream, out errorMessage))
+			if (!base.InitPlayer(streamingStream, metadata, out errorMessage))
 				return false;
 
 			// Get a handle, which is used on all other calls
-			VorbisError result = VorbisFile.Ov_Open(moduleStream, true, out vorbisFile, null, 0);
+			VorbisError result = VorbisFile.Ov_Open(streamingStream, true, out vorbisFile, null, 0);
 			if (result != VorbisError.Ok)
 			{
 				errorMessage = GetErrorString(result);
@@ -125,92 +100,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			frequency = (int)info.rate;
 			channels = info.channels;
 
-			if (channels > 8)
+			if (channels > 2)
 			{
 				errorMessage = string.Format(Resources.IDS_OGG_ERR_ILLEGAL_CHANNELS, channels);
 				return false;
 			}
 
 			// Get meta data
-			VorbisComment comment = vorbisFile.Ov_Comment(0);
-
-			vendor = Encoding.UTF8.GetString(comment.vendor.Buffer, comment.vendor.Offset, comment.vendor.Length - 1);
-			if (string.IsNullOrEmpty(vendor))
-				vendor = Resources.IDS_OGG_INFO_UNKNOWN;
-
-			trackNum = Resources.IDS_OGG_INFO_UNKNOWN;
-			album = Resources.IDS_OGG_INFO_UNKNOWN;
-			genre = Resources.IDS_OGG_INFO_UNKNOWN;
-			organization = Resources.IDS_OGG_INFO_UNKNOWN;
-			copyright = Resources.IDS_OGG_INFO_UNKNOWN;
-			descrip = Resources.IDS_OGG_INFO_NONE;
-
-			List<PictureInfo> collectedPictures = new List<PictureInfo>();
-
-			foreach ((string tagName, string tagValue) tag in ParseTags(comment))
-			{
-				switch (tag.tagName)
-				{
-					case "TITLE":
-					{
-						songName = tag.tagValue;
-						break;
-					}
-
-					case "ARTIST":
-					{
-						artist = tag.tagValue;
-						break;
-					}
-
-					case "TRACKNUMBER":
-					{
-						trackNum = tag.tagValue;
-						break;
-					}
-
-					case "ALBUM":
-					{
-						album = tag.tagValue;
-						break;
-					}
-
-					case "GENRE":
-					{
-						genre = tag.tagValue;
-						break;
-					}
-
-					case "ORGANIZATION":
-					{
-						organization = tag.tagValue;
-						break;
-					}
-
-					case "COPYRIGHT":
-					{
-						copyright = tag.tagValue;
-						break;
-					}
-
-					case "DESCRIPTION":
-					{
-						descrip = tag.tagValue;
-						break;
-					}
-
-					case "METADATA_BLOCK_PICTURE":
-					{
-						PictureInfo pictureInfo = ParsePicture(tag.tagValue);
-						if (pictureInfo != null)
-							collectedPictures.Add(pictureInfo);
-
-						break;
-					}
-				}
-			}
-
-			pictures = collectedPictures.Count > 0 ? collectedPictures.ToArray() : null;
+			currentTagInfo = RetrieveTagInfo();
 
 			return true;
 		}
@@ -287,6 +184,38 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				}
 			}
 
+			// Has the meta information changed
+			TagInformation tagInfo = RetrieveTagInfo();
+
+			if (tagInfo.SongName != currentTagInfo.SongName)
+				OnModuleInfoChanged(ModuleInfoChanged.ModuleNameChanged, tagInfo.SongName);
+
+			if (tagInfo.Artist != currentTagInfo.Artist)
+				OnModuleInfoChanged(ModuleInfoChanged.AuthorChanged, tagInfo.Artist);
+
+			if (tagInfo.TrackNum != currentTagInfo.TrackNum)
+				OnModuleInfoChanged(InfoTrackNumberLine, tagInfo.TrackNum);
+
+			if (tagInfo.Album != currentTagInfo.Album)
+				OnModuleInfoChanged(InfoAlbumLine, tagInfo.Album);
+
+			if (tagInfo.Genre != currentTagInfo.Genre)
+				OnModuleInfoChanged(InfoGenreLine, tagInfo.Genre);
+
+			if (tagInfo.Organization != currentTagInfo.Organization)
+				OnModuleInfoChanged(InfoOrganizationLine, tagInfo.Organization);
+
+			if (tagInfo.Copyright != currentTagInfo.Copyright)
+				OnModuleInfoChanged(InfoCopyrightLine, tagInfo.Copyright);
+
+			if (tagInfo.Description != currentTagInfo.Description)
+				OnModuleInfoChanged(InfoDescriptionLine, tagInfo.Description);
+
+			if (tagInfo.Vendor != currentTagInfo.Vendor)
+				OnModuleInfoChanged(InfoVendorLine, tagInfo.Vendor);
+
+			currentTagInfo = tagInfo;
+
 			return filledInFrames;
 		}
 		#endregion
@@ -297,7 +226,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/// Return the title
 		/// </summary>
 		/********************************************************************/
-		public override string Title => songName;
+		public override string Title => currentTagInfo.SongName;
 
 
 
@@ -306,28 +235,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/// Return the name of the author
 		/// </summary>
 		/********************************************************************/
-		public override string Author => artist;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return all pictures available
-		/// </summary>
-		/********************************************************************/
-		public override PictureInfo[] Pictures => pictures;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return which speakers the player uses.
-		/// 
-		/// Note that the outputBuffer in LoadDataBlock match the defined
-		/// order in SpeakerFlag enum
-		/// </summary>
-		/********************************************************************/
-		public override SpeakerFlag SpeakerFlags => Tables.ChannelToSpeaker[channels - 1];
+		public override string Author => currentTagInfo.Artist;
 
 
 
@@ -364,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				case 0:
 				{
 					description = Resources.IDS_OGG_INFODESCLINE0;
-					value = trackNum;
+					value = currentTagInfo.TrackNum;
 					break;
 				}
 
@@ -372,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				case 1:
 				{
 					description = Resources.IDS_OGG_INFODESCLINE1;
-					value = album;
+					value = currentTagInfo.Album;
 					break;
 				}
 
@@ -380,7 +288,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				case 2:
 				{
 					description = Resources.IDS_OGG_INFODESCLINE2;
-					value = genre;
+					value = currentTagInfo.Genre;
 					break;
 				}
 
@@ -388,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				case 3:
 				{
 					description = Resources.IDS_OGG_INFODESCLINE3;
-					value = organization;
+					value = currentTagInfo.Organization;
 					break;
 				}
 
@@ -396,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				case 4:
 				{
 					description = Resources.IDS_OGG_INFODESCLINE4;
-					value = copyright;
+					value = currentTagInfo.Copyright;
 					break;
 				}
 
@@ -404,7 +312,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				case 5:
 				{
 					description = Resources.IDS_OGG_INFODESCLINE5;
-					value = descrip;
+					value = currentTagInfo.Description;
 					break;
 				}
 
@@ -412,7 +320,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				case 6:
 				{
 					description = Resources.IDS_OGG_INFODESCLINE6;
-					value = vendor;
+					value = currentTagInfo.Vendor;
 					break;
 				}
 
@@ -442,32 +350,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			}
 
 			return true;
-		}
-		#endregion
-
-		#region Duration calculation
-		/********************************************************************/
-		/// <summary>
-		/// Return the total time of the sample
-		/// </summary>
-		/********************************************************************/
-		protected override TimeSpan GetTotalDuration()
-		{
-			double totalTime = vorbisFile.Ov_Time_Total(-1);
-
-			return TimeSpan.FromSeconds(totalTime);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set the position in the playing sample to the time given
-		/// </summary>
-		/********************************************************************/
-		protected override void SetPosition(TimeSpan time)
-		{
-			vorbisFile.Ov_Time_Seek(time.TotalSeconds);
 		}
 		#endregion
 
@@ -526,59 +408,83 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 		/********************************************************************/
 		/// <summary>
-		/// Parse a Vorbis picture metadata block
+		/// Retrieve and parse all tags
 		/// </summary>
 		/********************************************************************/
-		private PictureInfo ParsePicture(string pictureValue)
+		private TagInformation RetrieveTagInfo()
 		{
-			try
+			VorbisComment comment = vorbisFile.Ov_Comment(0);
+
+			string vendor = Encoding.UTF8.GetString(comment.vendor.Buffer, comment.vendor.Offset, comment.vendor.Length - 1);
+			if (string.IsNullOrEmpty(vendor))
+				vendor = Resources.IDS_OGG_INFO_UNKNOWN;
+
+			TagInformation tagInfo = new TagInformation
 			{
-				using (ReaderStream rs = new ReaderStream(new MemoryStream(Convert.FromBase64String(pictureValue))))
+				Vendor = vendor,
+				TrackNum = Resources.IDS_OGG_INFO_UNKNOWN,
+				Album = Resources.IDS_OGG_INFO_UNKNOWN,
+				Genre = Resources.IDS_OGG_INFO_UNKNOWN,
+				Organization = Resources.IDS_OGG_INFO_UNKNOWN,
+				Copyright = Resources.IDS_OGG_INFO_UNKNOWN,
+				Description = Resources.IDS_OGG_INFO_NONE
+			};
+
+			foreach ((string tagName, string tagValue) tag in ParseTags(comment))
+			{
+				switch (tag.tagName)
 				{
-					PictureType pictureType = (PictureType)rs.Read_B_INT32();
+					case "TITLE":
+					{
+						tagInfo.SongName = tag.tagValue;
+						break;
+					}
 
-					int length = rs.Read_B_INT32();
-					byte[] bytes = new byte[length];
+					case "ARTIST":
+					{
+						tagInfo.Artist = tag.tagValue;
+						break;
+					}
 
-					if (rs.Read(bytes, 0, length) != length)
-						return null;
+					case "TRACKNUMBER":
+					{
+						tagInfo.TrackNum = tag.tagValue;
+						break;
+					}
 
-					string mimeType = Encoding.Latin1.GetString(bytes);
-					if (mimeType == "-->")	// URL, we do not support that
-						return null;
+					case "ALBUM":
+					{
+						tagInfo.Album = tag.tagValue;
+						break;
+					}
 
-					length = rs.Read_B_INT32();
-					bytes = new byte[length];
+					case "GENRE":
+					{
+						tagInfo.Genre = tag.tagValue;
+						break;
+					}
 
-					if (rs.Read(bytes, 0, length) != length)
-						return null;
+					case "ORGANIZATION":
+					{
+						tagInfo.Organization = tag.tagValue;
+						break;
+					}
 
-					string description = Encoding.UTF8.GetString(bytes);
+					case "COPYRIGHT":
+					{
+						tagInfo.Copyright = tag.tagValue;
+						break;
+					}
 
-					// Skip width, height, color depth and number of colors
-					rs.Seek(4 * 4, SeekOrigin.Current);
-
-					// Get the picture data
-					length = rs.Read_B_INT32();
-					bytes = new byte[length];
-
-					if (rs.Read(bytes, 0, length) != length)
-						return null;
-
-					string type = GetTypeDescription(pictureType);
-
-					if (string.IsNullOrEmpty(description))
-						description = type;
-					else
-						description = $"{type}: {description}";
-
-					return new PictureInfo(bytes, description);
+					case "DESCRIPTION":
+					{
+						tagInfo.Description = tag.tagValue;
+						break;
+					}
 				}
 			}
-			catch (Exception)
-			{
-				return null;
-			}
+
+			return tagInfo;
 		}
 
 
@@ -607,84 +513,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 		/********************************************************************/
 		/// <summary>
-		/// Find the picture type string
-		/// </summary>
-		/********************************************************************/
-		private string GetTypeDescription(PictureType type)
-		{
-			switch (type)
-			{
-				case PictureType.Other:
-					return Resources.IDS_OGG_PICTURE_TYPE_OTHER;
-
-				case PictureType.File_Icon_Standard:
-					return Resources.IDS_OGG_PICTURE_TYPE_FILE_ICON_STANDARD;
-
-				case PictureType.File_Icon:
-					return Resources.IDS_OGG_PICTURE_TYPE_FILE_ICON;
-
-				case PictureType.Front_Cover:
-					return Resources.IDS_OGG_PICTURE_TYPE_FRONT_COVER;
-
-				case PictureType.Back_Cover:
-					return Resources.IDS_OGG_PICTURE_TYPE_BACK_COVER;
-
-				case PictureType.Leaflet_Page:
-					return Resources.IDS_OGG_PICTURE_TYPE_LEAFLET_PAGE;
-
-				case PictureType.Media:
-					return Resources.IDS_OGG_PICTURE_TYPE_MEDIA;
-
-				case PictureType.Lead_Artist:
-					return Resources.IDS_OGG_PICTURE_TYPE_LEAD_ARTIST;
-
-				case PictureType.Artist:
-					return Resources.IDS_OGG_PICTURE_TYPE_ARTIST;
-
-				case PictureType.Conductor:
-					return Resources.IDS_OGG_PICTURE_TYPE_CONDUCTOR;
-
-				case PictureType.Band:
-					return Resources.IDS_OGG_PICTURE_TYPE_BAND;
-
-				case PictureType.Composer:
-					return Resources.IDS_OGG_PICTURE_TYPE_COMPOSER;
-
-				case PictureType.Lyricist:
-					return Resources.IDS_OGG_PICTURE_TYPE_LYRICIST;
-
-				case PictureType.Recording_Location:
-					return Resources.IDS_OGG_PICTURE_TYPE_RECORDING_LOCATION;
-
-				case PictureType.During_Recoding:
-					return Resources.IDS_OGG_PICTURE_TYPE_DURING_RECORDING;
-
-				case PictureType.During_Performance:
-					return Resources.IDS_OGG_PICTURE_TYPE_DURING_PERFORMANCE;
-
-				case PictureType.Video_Screen_Capture:
-					return Resources.IDS_OGG_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE;
-
-				case PictureType.Fish:
-					return Resources.IDS_OGG_PICTURE_TYPE_FISH;
-
-				case PictureType.Illustration:
-					return Resources.IDS_OGG_PICTURE_TYPE_ILLUSTRATION;
-
-				case PictureType.Band_LogoType:
-					return Resources.IDS_OGG_PICTURE_TYPE_BAND_LOGO;
-
-				case PictureType.Publisher_LogoType:
-					return Resources.IDS_OGG_PICTURE_TYPE_PUBLISHER_LOGO;
-			}
-
-			return string.Empty;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Read next block of data
 		/// </summary>
 		/********************************************************************/
@@ -703,12 +531,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 					break;
 
 				// Convert the floats into 32-bit integers
-				int[] channelMapping = Tables.InputToOutput[channels - 1];
-
 				for (int i = 0; i < channels; i++)
 				{
 					CPointer<float> inBuffer = buffer[i];
-					int[] outBuffer = outputBuffer[channelMapping[i]];
+					int[] outBuffer = outputBuffer[i];
 
 					for (int j = 0; j < done; j++)
 						outBuffer[offset + j] = Math.Clamp((int)(inBuffer[j] * 0x8000000), -0x8000000, 0x7ffffff) << 4;

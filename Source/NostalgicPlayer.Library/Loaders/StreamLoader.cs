@@ -114,6 +114,8 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 			string mimeType = responseMessage.Content.Headers.ContentType?.MediaType;
 
+			Stream = new StreamingStream(responseMessage.Content.ReadAsStream(), GetSeeker());
+
 			bool result = FindStreamer(mimeType, out errorMessage);
 			if (!result)
 			{
@@ -326,23 +328,29 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 						}
 					}
 
+					Stream.RecordMode = true;
+
 					foreach ((IStreamerAgent streamer, AgentInfo agentInfo) agent in agents)
 					{
 						AgentInfo agentInfo = agent.agentInfo;
-						IStreamerAgent streamer = null;
 
 						// Check the mime type
 						if (agent.streamer.PlayableMimeTypes.Any(x => x.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase)))
-							streamer = agent.streamer;
-
-						if (streamer != null)
 						{
-							// We found the right streamer
-							PlayerAgentInfo = agentInfo;
-							streamerAgent = streamer;
+							if (agent.streamer.Identify(Stream) == AgentResult.Ok)
+							{
+								// We found the right streamer
+								PlayerAgentInfo = agentInfo;
+								streamerAgent = agent.streamer;
 
-							return true;
+								Stream.Rewind();
+								Stream.RecordMode = false;
+
+								return true;
+							}
 						}
+
+						Stream.Flush();
 					}
 
 					// No streamer was found
@@ -379,8 +387,6 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				format = PlayerAgentInfo.TypeName;
 				formatDescription = PlayerAgentInfo.TypeDescription;
 			}
-
-			Stream = new StreamingStream(responseMessage.Content.ReadAsStream(), GetSeeker());
 
 			Player = new StreamingPlayer(agentManager);
 		}

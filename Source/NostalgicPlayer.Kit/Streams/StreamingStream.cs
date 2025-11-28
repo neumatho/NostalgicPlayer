@@ -23,6 +23,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		private long currentPosition;
 
+		private bool recordMode;
+		private MemoryStream bufferStream;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -34,6 +37,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			seeker = streamSeek;
 
 			currentPosition = 0;
+
+			recordMode = false;
+			bufferStream = null;
 		}
 
 
@@ -47,7 +53,43 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			base.Dispose(disposing);
 
+			bufferStream?.Dispose();
 			wrapperStream.Dispose();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable or disable record mode. If record mode is on, then all
+		/// data read from the stream is stored in memory
+		/// </summary>
+		/********************************************************************/
+		public bool RecordMode
+		{
+			get => recordMode;
+
+			set
+			{
+				if ((value != recordMode) && value && (bufferStream == null))
+					bufferStream = new MemoryStream();
+
+				recordMode = value;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will rewind the record buffer to the start. Should only be used,
+		/// when record mode is about to be disabled
+		/// </summary>
+		/********************************************************************/
+		public void Rewind()
+		{
+			if (bufferStream != null)
+				bufferStream.Position = 0;
 		}
 
 		#region Stream implementation
@@ -106,6 +148,11 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 				wrapperStream = seeker.SetPosition(value);
 				currentPosition = value;
+
+				bufferStream?.Dispose();
+				bufferStream = null;
+
+				recordMode = false;
 			}
 		}
 
@@ -147,6 +194,29 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				if (wrapperStream == null)
 					return 0;
 
+				int readFromBuffer = 0;
+
+				if (!recordMode && (bufferStream != null))
+				{
+					int toRead = Math.Min(count, (int)(bufferStream.Length - bufferStream.Position));
+
+					bufferStream.ReadExactly(buffer, offset, toRead);
+
+					offset += toRead;
+					count -= toRead;
+
+					if (bufferStream.Position == bufferStream.Length)
+					{
+						bufferStream.Dispose();
+						bufferStream = null;
+					}
+
+					if (count == 0)
+						return toRead;
+
+					readFromBuffer = toRead;
+				}
+
 				int bytesRead = Task.Run(() =>
 				{
 					using (CancellationTokenSource cancellationToken = new CancellationTokenSource(StreamingTimeout))
@@ -157,7 +227,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 				currentPosition += bytesRead;
 
-				return bytesRead;
+				if (recordMode && (bufferStream != null))
+					bufferStream.Write(buffer, offset, bytesRead);
+
+				return readFromBuffer + bytesRead;
 			}
 			catch(AggregateException ex)
 			{
@@ -189,7 +262,11 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override void Flush()
 		{
-			throw new NotSupportedException("Flush not supported");
+			if (bufferStream != null)
+			{
+				bufferStream.Dispose();
+				bufferStream = new MemoryStream();
+			}
 		}
 		#endregion
 	}

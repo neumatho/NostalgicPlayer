@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -22,6 +23,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Return some flags telling what the player supports
 		/// </summary>
 		StreamerSupportFlag SupportFlags { get; }
+
+		/// <summary>
+		/// Try to identify the format
+		/// </summary>
+		AgentResult Identify(StreamingStream streamingStream);
 
 		/// <summary>
 		/// Initializes the player

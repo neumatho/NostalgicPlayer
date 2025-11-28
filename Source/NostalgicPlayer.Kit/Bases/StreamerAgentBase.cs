@@ -54,6 +54,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Try to identify the format
+		/// </summary>
+		/********************************************************************/
+		public virtual AgentResult Identify(StreamingStream streamingStream)
+		{
+			return AgentResult.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/

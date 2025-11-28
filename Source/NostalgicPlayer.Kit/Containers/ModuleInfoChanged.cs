@@ -10,6 +10,16 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 	/// </summary>
 	public class ModuleInfoChanged
 	{
+		/// <summary>
+		/// Use this if module name has changed
+		/// </summary>
+		public const int ModuleNameChanged = -1;
+
+		/// <summary>
+		/// Use this if author has changed
+		/// </summary>
+		public const int AuthorChanged = -2;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
