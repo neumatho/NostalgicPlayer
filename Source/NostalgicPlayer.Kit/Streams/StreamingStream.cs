@@ -194,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				if (wrapperStream == null)
 					return 0;
 
-				int readFromBuffer = 0;
+				int totalRead = 0;
 
 				if ((bufferStream != null) && (bufferStream.Position < bufferStream.Length))
 				{
@@ -214,23 +214,36 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 					if (count == 0)
 						return toRead;
 
-					readFromBuffer = toRead;
+					totalRead = toRead;
 				}
 
-				int bytesRead = Task.Run(() =>
+				while (count > 0)
 				{
-					using (CancellationTokenSource cancellationToken = new CancellationTokenSource(StreamingTimeout))
+					int currentOffset = offset;
+					int currentCount = count;
+
+					int bytesRead = Task.Run(() =>
 					{
-						return wrapperStream.ReadAsync(buffer, offset, count, cancellationToken.Token);
-					}
-				}).Result;
+						using (CancellationTokenSource cancellationToken = new CancellationTokenSource(StreamingTimeout))
+						{
+							return wrapperStream.ReadAsync(buffer, currentOffset, currentCount, cancellationToken.Token);
+						}
+					}).Result;
 
-				currentPosition += bytesRead;
+					if (bytesRead == 0)
+						break;
 
-				if (recordMode && (bufferStream != null))
-					bufferStream.Write(buffer, offset, bytesRead);
+					currentPosition += bytesRead;
 
-				return readFromBuffer + bytesRead;
+					if (recordMode && (bufferStream != null))
+						bufferStream.Write(buffer, offset, bytesRead);
+
+					offset += bytesRead;
+					count -= bytesRead;
+					totalRead += bytesRead;
+				}
+
+				return totalRead;
 			}
 			catch(AggregateException ex)
 			{

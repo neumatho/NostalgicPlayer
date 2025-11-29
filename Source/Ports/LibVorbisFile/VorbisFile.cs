@@ -1098,7 +1098,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 
 				// The buffered page is the data we want, and we're ready for it;
 				// add it to the stream state
-				vf.os.PageIn(og);
+				if (vf.seekable || (vf.ready_state == State.InitSet))	// TNE: Added to fix a bug when streaming
+					vf.os.PageIn(og);
 			}
 		}
 
