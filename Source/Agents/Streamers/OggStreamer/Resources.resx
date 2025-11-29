@@ -118,6 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_DESCRIPTION" xml:space="preserve">
+    <value>Based on code by Xiph.Org Foundation.
+NostalgicPlayer agent by Thomas Neumann.
+
+This player can play audio Ogg Vorbis and Opus streams.</value>
+  </data>
+  <data name="IDS_NAME" xml:space="preserve">
+    <value>Ogg Streamer</value>
+  </data>
+  <data name="IDS_OGG_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Based on libVorbis by Xiph.Org Foundation.
 NostalgicPlayer agent by Thomas Neumann.
 
@@ -125,14 +134,13 @@ This player can play audio Ogg Vorbis streams.
 
 Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format for mid to high quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable bitrates from 16 to 128 kbps/channel. This places Vorbis in the same competitive class as audio representations such as MPEG-4 (AAC), and similar to, but higher performance than MPEG-1/2 audio layer 3, MPEG-4 audio (TwinVQ), WMA and PAC.</value>
   </data>
-  <data name="IDS_NAME" xml:space="preserve">
-    <value>Ogg Vorbis Streamer</value>
-  </data>
-  <data name="IDS_OGG_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>Based on libVorbis by Xiph.Org Foundation.
+  <data name="IDS_OGG_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>Based on libOpus by Xiph.Org Foundation.
 NostalgicPlayer agent by Thomas Neumann.
 
-This player can play audio Ogg Vorbis streams.</value>
+This player can play Opus streams.
+
+Opus is the successor of OggVorbis, MP3 and other lossless audio compression algorithms. It is good to encode both speech and music, because it implements two different algorithms.</value>
   </data>
   <data name="IDS_OGG_ERR_BAD_HEADER" xml:space="preserve">
     <value>A required header packet was not properly formatted, contained illegal values, or was missing altogether</value>
@@ -142,6 +150,9 @@ This player can play audio Ogg Vorbis streams.</value>
   </data>
   <data name="IDS_OGG_ERR_BAD_PACKET" xml:space="preserve">
     <value>An audio packet failed to decode properly</value>
+  </data>
+  <data name="IDS_OGG_ERR_BAD_TIMESTAMP" xml:space="preserve">
+    <value>The first or last granule position of a link failed basic validity checks</value>
   </data>
   <data name="IDS_OGG_ERR_FAULT" xml:space="preserve">
     <value>Internal library error was encountered</value>
@@ -211,5 +222,8 @@ This player can play audio Ogg Vorbis streams.</value>
   </data>
   <data name="IDS_OGG_NAME_AGENT1" xml:space="preserve">
     <value>Ogg Vorbis Streamer</value>
+  </data>
+  <data name="IDS_OGG_NAME_AGENT2" xml:space="preserve">
+    <value>Opus Streamer</value>
   </data>
 </root>

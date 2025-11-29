@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 							}
 						}
 
-						Stream.Flush();
+						Stream.Rewind();
 					}
 
 					// No streamer was found

@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer
 	/// </summary>
 	public class MpegStreamer : AgentBase
 	{
-		internal static readonly Guid Agent1Id = Guid.Parse("3DC54EF4-0E34-40AE-9B8C-C3AB188D7DE8");
+		private static readonly Guid agent1Id = Guid.Parse("3DC54EF4-0E34-40AE-9B8C-C3AB188D7DE8");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_MPG_NAME_AGENT1, Resources.IDS_MPG_DESCRIPTION_AGENT1, Agent1Id),
+			new AgentSupportInfo(Resources.IDS_MPG_NAME_AGENT1, Resources.IDS_MPG_DESCRIPTION_AGENT1, agent1Id),
 		];
 
 

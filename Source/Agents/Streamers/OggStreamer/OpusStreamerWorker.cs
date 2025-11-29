@@ -7,22 +7,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer.Containers;
-using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Ports.LibVorbis;
-using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
-using Polycode.NostalgicPlayer.Ports.LibVorbisFile;
+using Polycode.NostalgicPlayer.Ports.LibOpusFile;
+using Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers;
 
 namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 {
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class OggVorbisStreamerWorker : StreamerBase
+	internal class OpusStreamerWorker : StreamerBase
 	{
-		private VorbisFile vorbisFile;
+		private OpusFile opusFile;
+
+		private float[] inputBuffer;
 
 		#region Identify
 		/********************************************************************/
@@ -41,19 +41,13 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		/********************************************************************/
 		public override AgentResult Identify(StreamingStream streamingStream)
 		{
-			byte[] buffer = new byte[4];
+			// Load first block of data to check on
+			byte[] buf = new byte[256];
 
-			streamingStream.ReadExactly(buffer, 0, 4);
+			streamingStream.ReadExactly(buf, 0, buf.Length);
 
-			if ((buffer[0] != 'O') || (buffer[1] != 'g') || (buffer[2] != 'g') || (buffer[3] != 'S'))
-				return AgentResult.Unknown;
-
-			if (VorbisFile.Ov_Test(streamingStream, true, out VorbisFile testVorbisFile, buffer, buffer.Length) == VorbisError.Ok)
-			{
-				testVorbisFile.Ov_Clear();
-
+			if (OpusFile.Op_Test(null, buf, (ulong)buf.Length) == 0)
 				return AgentResult.Ok;
-			}
 
 			return AgentResult.Unknown;
 		}
@@ -71,24 +65,26 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 				return false;
 
 			// Get a handle, which is used on all other calls
-			VorbisError result = VorbisFile.Ov_Open(streamingStream, true, out vorbisFile, null, 0);
-			if (result != VorbisError.Ok)
+			opusFile = OpusFile.Op_Open_Stream(streamingStream, true, out OpusFileError error);
+			if (error != OpusFileError.Ok)
 			{
-				errorMessage = GetErrorString(result);
+				errorMessage = GetErrorString(error);
 				return false;
 			}
 
 			// Get player data
-			VorbisInfo info = vorbisFile.Ov_Info(0);
-
-			frequency = (int)info.rate;
-			channels = info.channels;
-
+			channels = opusFile.Op_Channel_Count(0);
 			if (channels > 2)
 			{
 				errorMessage = string.Format(Resources.IDS_OGG_ERR_ILLEGAL_CHANNELS, channels);
 				return false;
 			}
+
+			// Allocate buffers
+			inputBuffer = new float[channels * (120 * 48000 / 1000 * 2)];		// 120 * 2 = 240 ms per channel at 48 kHz
+
+			// Opus always use 48 kHz
+			frequency = 48000;
 
 			// Get meta data
 			TagInformation tagInfo = RetrieveTagInfo();
@@ -106,10 +102,12 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		/********************************************************************/
 		public override void CleanupPlayer()
 		{
-			if (vorbisFile != null)
+			inputBuffer = null;
+
+			if (opusFile != null)
 			{
-				vorbisFile.Ov_Clear();
-				vorbisFile = null;
+				opusFile.Op_Free();
+				opusFile = null;
 			}
 
 			base.CleanupPlayer();
@@ -138,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 			}
 
 			// Has the bit rate changed
-			int newBitRate = (int)vorbisFile.Ov_Bitrate_Instant();
+			int newBitRate = opusFile.Op_Bitrate_Instant();
 			UpdateBitRate(newBitRate);
 
 			// Has the meta information changed
@@ -155,45 +153,45 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		/// Helper method to get the string of an error
 		/// </summary>
 		/********************************************************************/
-		private string GetErrorString(VorbisError error)
+		private string GetErrorString(OpusFileError error)
 		{
 			switch (error)
 			{
-				case VorbisError.Hole:
+				case OpusFileError.Hole:
 					return Resources.IDS_OGG_ERR_HOLE;
 
-				case VorbisError.Read:
+				case OpusFileError.Read:
 					return Resources.IDS_OGG_ERR_READ;
 
-				case VorbisError.Fault:
+				case OpusFileError.Fault:
 					return Resources.IDS_OGG_ERR_FAULT;
 
-				case VorbisError.Impl:
+				case OpusFileError.Impl:
 					return Resources.IDS_OGG_ERR_IMPL;
 
-				case VorbisError.Inval:
+				case OpusFileError.Inval:
 					return Resources.IDS_OGG_ERR_INVAL;
 
-				case VorbisError.NotVorbis:
+				case OpusFileError.NotFormat:
 					return Resources.IDS_OGG_ERR_NOT_FORMAT;
 
-				case VorbisError.BadHeader:
+				case OpusFileError.BadHeader:
 					return Resources.IDS_OGG_ERR_BAD_HEADER;
 
-				case VorbisError.Version:
+				case OpusFileError.Version:
 					return Resources.IDS_OGG_ERR_VERSION;
 
-				case VorbisError.NotAudio:
-					return Resources.IDS_OGG_ERR_NOT_AUDIO;
-
-				case VorbisError.BadPacket:
+				case OpusFileError.BadPacket:
 					return Resources.IDS_OGG_ERR_BAD_PACKET;
 
-				case VorbisError.BadLink:
+				case OpusFileError.BadLink:
 					return Resources.IDS_OGG_ERR_BAD_LINK;
 
-				case VorbisError.NoSeek:
+				case OpusFileError.NoSeek:
 					return Resources.IDS_OGG_ERR_NO_SEEK;
+
+				case OpusFileError.BadTimestamp:
+					return Resources.IDS_OGG_ERR_BAD_TIMESTAMP;
 
 				default:
 					return Resources.IDS_OGG_ERR_UNKNOWN;
@@ -209,9 +207,9 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		/********************************************************************/
 		private TagInformation RetrieveTagInfo()
 		{
-			VorbisComment comment = vorbisFile.Ov_Comment(0);
+			OpusTags tags = opusFile.Op_Tags(0);
 
-			string vendor = Encoding.UTF8.GetString(comment.vendor.Buffer, comment.vendor.Offset, comment.vendor.Length - 1);
+			string vendor = Encoding.UTF8.GetString(tags.Vendor.Buffer, tags.Vendor.Offset, tags.Vendor.Length - 1);
 			if (string.IsNullOrEmpty(vendor))
 				vendor = Resources.IDS_OGG_INFO_UNKNOWN;
 
@@ -226,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 				Description = Resources.IDS_OGG_INFO_NONE
 			};
 
-			foreach ((string tagName, string tagValue) tag in ParseTags(comment))
+			foreach (var tag in ParseTags(tags))
 			{
 				switch (tag.tagName)
 				{
@@ -290,14 +288,14 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		/// Convert the tags to something that is easier to read
 		/// </summary>
 		/********************************************************************/
-		private IEnumerable<(string tagName, string tagValue)> ParseTags(VorbisComment comment)
+		private IEnumerable<(string tagName, string tagValue)> ParseTags(OpusTags tags)
 		{
 			Encoding encoder = Encoding.UTF8;
 
-			for (int i = 0; i < comment.comments; i++)
+			for (int i = 0; i < tags.Comments; i++)
 			{
-				int length = comment.comment_lengths[i];
-				string tag = encoder.GetString(comment.user_comments[i].Buffer, comment.user_comments[i].Offset, length);
+				int length = tags.Comment_Lengths[i];
+				string tag = encoder.GetString(tags.User_Comments[i].Buffer, tags.User_Comments[i].Offset, length);
 
 				int index = tag.IndexOf('=');
 				if (index > 0)
@@ -319,8 +317,9 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 
 			while (countInFrames > 0)
 			{
-				int done = (int)vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, countInFrames, out _);
-				if (done == (int)VorbisError.Hole)
+				int todoInFrames = Math.Min(countInFrames, inputBuffer.Length);
+				int done = opusFile.Op_Read_Float(inputBuffer, todoInFrames, out _);
+				if (done == (int)OpusFileError.Hole)
 					continue;
 
 				if (done <= 0)
@@ -329,11 +328,10 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 				// Convert the floats into 32-bit integers
 				for (int i = 0; i < channels; i++)
 				{
-					CPointer<float> inBuffer = buffer[i];
 					int[] outBuffer = outputBuffer[i];
 
-					for (int j = 0; j < done; j++)
-						outBuffer[offset + j] = Math.Clamp((int)(inBuffer[j] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
+					for (int j = 0, inOffset = i; j < done; j++, inOffset += channels)
+						outBuffer[offset + j] = Math.Clamp((int)(inputBuffer[inOffset] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
 				}
 
 				offset += done;

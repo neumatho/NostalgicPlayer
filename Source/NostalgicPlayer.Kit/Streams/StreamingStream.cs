@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 				int readFromBuffer = 0;
 
-				if (!recordMode && (bufferStream != null))
+				if ((bufferStream != null) && (bufferStream.Position < bufferStream.Length))
 				{
 					int toRead = Math.Min(count, (int)(bufferStream.Length - bufferStream.Position));
 
@@ -205,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 					offset += toRead;
 					count -= toRead;
 
-					if (bufferStream.Position == bufferStream.Length)
+					if (!recordMode && (bufferStream.Position == bufferStream.Length))
 					{
 						bufferStream.Dispose();
 						bufferStream = null;
@@ -262,11 +262,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override void Flush()
 		{
-			if (bufferStream != null)
-			{
-				bufferStream.Dispose();
-				bufferStream = new MemoryStream();
-			}
+			throw new NotSupportedException("Flush not supported");
 		}
 		#endregion
 	}

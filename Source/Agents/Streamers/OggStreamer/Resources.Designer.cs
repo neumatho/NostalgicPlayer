@@ -61,12 +61,10 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Based on libVorbis by Xiph.Org Foundation.
+        ///   Looks up a localized string similar to Based on code by Xiph.Org Foundation.
         ///NostalgicPlayer agent by Thomas Neumann.
         ///
-        ///This player can play audio Ogg Vorbis streams.
-        ///
-        ///Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format for mid to high quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable bitrates from 16 to 128 kbps/channel. This places Vorbis in the same competitive class as audio representations such as MPEG-4 (AAC), and similar to, but higher perfo [rest of string was truncated]&quot;;.
+        ///This player can play audio Ogg Vorbis and Opus streams..
         /// </summary>
         internal static string IDS_DESCRIPTION {
             get {
@@ -75,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ogg Vorbis Streamer.
+        ///   Looks up a localized string similar to Ogg Streamer.
         /// </summary>
         internal static string IDS_NAME {
             get {
@@ -87,11 +85,27 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer {
         ///   Looks up a localized string similar to Based on libVorbis by Xiph.Org Foundation.
         ///NostalgicPlayer agent by Thomas Neumann.
         ///
-        ///This player can play audio Ogg Vorbis streams..
+        ///This player can play audio Ogg Vorbis streams.
+        ///
+        ///Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format for mid to high quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable bitrates from 16 to 128 kbps/channel. This places Vorbis in the same competitive class as audio representations such as MPEG-4 (AAC), and similar to, but higher perfo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_OGG_DESCRIPTION_AGENT1 {
             get {
                 return ResourceManager.GetString("IDS_OGG_DESCRIPTION_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Based on libOpus by Xiph.Org Foundation.
+        ///NostalgicPlayer agent by Thomas Neumann.
+        ///
+        ///This player can play Opus streams.
+        ///
+        ///Opus is the successor of OggVorbis, MP3 and other lossless audio compression algorithms. It is good to encode both speech and music, because it implements two different algorithms..
+        /// </summary>
+        internal static string IDS_OGG_DESCRIPTION_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_OGG_DESCRIPTION_AGENT2", resourceCulture);
             }
         }
         
@@ -119,6 +133,15 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer {
         internal static string IDS_OGG_ERR_BAD_PACKET {
             get {
                 return ResourceManager.GetString("IDS_OGG_ERR_BAD_PACKET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The first or last granule position of a link failed basic validity checks.
+        /// </summary>
+        internal static string IDS_OGG_ERR_BAD_TIMESTAMP {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_BAD_TIMESTAMP", resourceCulture);
             }
         }
         
@@ -326,6 +349,15 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer {
         internal static string IDS_OGG_NAME_AGENT1 {
             get {
                 return ResourceManager.GetString("IDS_OGG_NAME_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opus Streamer.
+        /// </summary>
+        internal static string IDS_OGG_NAME_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_OGG_NAME_AGENT2", resourceCulture);
             }
         }
     }

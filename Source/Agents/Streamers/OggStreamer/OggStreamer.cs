@@ -19,7 +19,8 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 	/// </summary>
 	public class OggStreamer : AgentBase
 	{
-		internal static readonly Guid Agent1Id = Guid.Parse("9F71A133-3B6B-4F55-92F5-A379FC70C769");
+		private static readonly Guid agent1Id = Guid.Parse("9F71A133-3B6B-4F55-92F5-A379FC70C769");
+		private static readonly Guid agent2Id = Guid.Parse("9295EFFE-A7C2-48E9-9D36-D895B9B4F642");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -47,7 +48,8 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		/********************************************************************/
 		public override AgentSupportInfo[] AgentInformation =>
 		[
-			new AgentSupportInfo(Resources.IDS_OGG_NAME_AGENT1, Resources.IDS_OGG_DESCRIPTION_AGENT1, Agent1Id),
+			new AgentSupportInfo(Resources.IDS_OGG_NAME_AGENT1, Resources.IDS_OGG_DESCRIPTION_AGENT1, agent1Id),
+			new AgentSupportInfo(Resources.IDS_OGG_NAME_AGENT2, Resources.IDS_OGG_DESCRIPTION_AGENT2, agent2Id)
 		];
 
 
@@ -59,7 +61,13 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new OggVorbisStreamerWorker();
+			if (typeId == agent1Id)
+				return new OggVorbisStreamerWorker();
+
+			if (typeId == agent2Id)
+				return new OpusStreamerWorker();
+
+			return null;
 		}
 		#endregion
 	}

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
+    <ProjectReference Include="..\..\..\Ports\LibOpusFile\LibOpusFile.csproj" />
     <ProjectReference Include="..\..\..\Ports\LibVorbisFile\LibVorbisFile.csproj" />
   </ItemGroup>
 
