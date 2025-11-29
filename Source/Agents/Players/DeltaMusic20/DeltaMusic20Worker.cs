@@ -31,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 		private sbyte[][] waveforms;
 
+		private sbyte startSpeed;
+
 		private GlobalPlayingInfo playingInfo;
 		private ChannelInfo[] channels;
 
@@ -118,6 +120,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 			try
 			{
 				ModuleStream moduleStream = fileInfo.ModuleStream;
+
+				// Read start speed
+				moduleStream.Seek(0xbbb, SeekOrigin.Begin);
+
+				startSpeed = moduleStream.Read_INT8();
 
 				// Read arpeggios
 				moduleStream.Seek(0xbca, SeekOrigin.Begin);
@@ -567,7 +574,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 			playingInfo = new GlobalPlayingInfo
 			{
 				GlobalVolume = 63,
-				PlaySpeed = 6,
+				PlaySpeed = startSpeed,
 				Tick = 1
 			};
 
