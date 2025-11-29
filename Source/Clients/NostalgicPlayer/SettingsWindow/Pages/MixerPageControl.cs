@@ -425,17 +425,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void SetMixerSettings()
 		{
-			MixerConfiguration configuration = new MixerConfiguration
-			{
-				StereoSeparator = soundSettings.StereoSeparation,
-				VisualsLatency = soundSettings.VisualsLatency * 20,
-				EnableInterpolation = soundSettings.Interpolation,
-				SwapSpeakers = soundSettings.SwapSpeakers,
-				EnableAmigaFilter = soundSettings.AmigaFilter,
-				EnableEqualizer = soundSettings.EnableEqualizer,
-				EqualizerBands = soundSettings.EqualizerBands,
-				EqualizerPreAmp = soundSettings.EqualizerPreAmp
-			};
+			MixerConfiguration configuration = MixerConfigurationFactory.Create(soundSettings);
 
 			Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);
 

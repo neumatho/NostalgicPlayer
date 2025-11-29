@@ -98,17 +98,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			if (moduleHandler == null)
 				return;
 
-			MixerConfiguration configuration = new()
-			{
-				StereoSeparator = soundSettings.StereoSeparation,
-				VisualsLatency = soundSettings.VisualsLatency * 20,
-				EnableInterpolation = soundSettings.Interpolation,
-				SwapSpeakers = soundSettings.SwapSpeakers,
-				EnableAmigaFilter = soundSettings.AmigaFilter,
-				EnableEqualizer = equalizerControl.IsEqualizerEnabled,
-				EqualizerBands = equalizerControl.GetBandValues(),
-				EqualizerPreAmp = soundSettings.EqualizerPreAmp
-			};
+			MixerConfiguration configuration = MixerConfigurationFactory.Create(soundSettings);
+			configuration.EnableEqualizer = equalizerControl.IsEqualizerEnabled;
+			configuration.EqualizerBands = equalizerControl.GetBandValues();
 
 			// Copy current channel configuration
 			if (moduleHandler.IsModuleLoaded)

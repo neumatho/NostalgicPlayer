@@ -111,18 +111,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 			currentMasterVolume = startVolume;
 
-			mixerConfiguration = new MixerConfiguration
-			{
-				StereoSeparator = sndSettings.StereoSeparation,
-				VisualsLatency = sndSettings.VisualsLatency * 20,
-				EnableInterpolation = sndSettings.Interpolation,
-				SwapSpeakers = sndSettings.SwapSpeakers,
-				EnableAmigaFilter = sndSettings.AmigaFilter,
-				EnableEqualizer = sndSettings.EnableEqualizer,
-				EqualizerBands = sndSettings.EqualizerBands,
-				EqualizerPreAmp = sndSettings.EqualizerPreAmp,
-				ExtraChannels = mainWindow.ExtraChannelsImplementation
-			};
+			mixerConfiguration = MixerConfigurationFactory.Create(sndSettings);
+			mixerConfiguration.ExtraChannels = mainWindow.ExtraChannelsImplementation;
 
 			// Initialize the loader
 			loadedFiles = new List<ModuleItem>();
