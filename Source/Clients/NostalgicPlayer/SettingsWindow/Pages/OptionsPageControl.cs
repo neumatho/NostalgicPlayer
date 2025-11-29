@@ -125,7 +125,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			optionSettings.RemoveUnknownModules = removeUnknownCheckBox.Checked;
 			optionSettings.ExtractPlayingTime = extractPlayingTimeCheckBox.Checked;
 
-			mainWindowApi.EnableUserInterfaceSettings();
 		}
 
 
