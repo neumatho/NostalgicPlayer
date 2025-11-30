@@ -124,8 +124,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private SampleInfoWindowForm sampleInfoWindow = null;
 		private AudiusWindowForm audiusWindow = null;
 
-		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new();
-		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays = new();
+		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
+		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
 
 		/********************************************************************/
 		/// <summary>
@@ -145,10 +145,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			randomList = new List<int>();
 
-			// Hook up search popup events
-			searchPopupControl.ItemSelected += SearchPopup_ItemSelected;
-			searchPopupControl.SearchCancelled += SearchPopup_SearchCancelled;
-			searchPopupControl.Leave += SearchPopupControl_Leave;
+			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
+			openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
 		}
 
 
@@ -1004,6 +1002,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moduleListControl.KeyPress += ModuleListControl_KeyPress;
 			moduleListControl.DragDrop += ModuleListControl_DragDrop;
 
+			// Search popup
+			searchPopupControl.ItemSelected += SearchPopup_ItemSelected;
+			searchPopupControl.SearchCancelled += SearchPopup_SearchCancelled;
+			searchPopupControl.Leave += SearchPopupControl_Leave;
+
 			// Volume
 			muteCheckButton.CheckedChanged += MuteCheckButton_CheckedChanged;
 			masterVolumeTrackBar.ValueChanged += MasterVolumeTrackBar_ValueChanged;
@@ -1738,8 +1741,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					LoadAndPlayModule(moduleListControl.SelectedItem);
 				}
 			}
-			// Open search popup for alphanumeric characters and wildcards
-			else if (char.IsLetterOrDigit(e.KeyChar) || e.KeyChar == '*' || e.KeyChar == '?')
+			// Open search popup for letters and wildcards (digits are used for sub-song selection)
+			else if (char.IsLetter(e.KeyChar) || e.KeyChar == '*' || e.KeyChar == '?')
 			{
 				OpenSearchPopup(e.KeyChar.ToString());
 				e.Handled = true;
