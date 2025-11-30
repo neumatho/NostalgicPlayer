@@ -64,6 +64,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			startScanTextBox.Text = pathSettings.StartScan;
 			moduleTextBox.Text = pathSettings.Modules;
 			listTextBox.Text = pathSettings.ModuleList;
+			modLibraryTextBox.Text = pathSettings.ModLibrary;
 		}
 
 
@@ -90,6 +91,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			pathSettings.StartScan = startScanTextBox.Text;
 			pathSettings.Modules = moduleTextBox.Text;
 			pathSettings.ModuleList = listTextBox.Text;
+			pathSettings.ModLibrary = modLibraryTextBox.Text;
 		}
 
 
@@ -165,6 +167,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			string newDirectory = SelectDirectory(listTextBox.Text);
 			if (!string.IsNullOrEmpty(newDirectory))
 				listTextBox.Text = newDirectory;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicked the module library button
+		/// </summary>
+		/********************************************************************/
+		private void ModLibraryButton_Click(object sender, EventArgs e)
+		{
+			string newDirectory = SelectDirectory(modLibraryTextBox.Text);
+			if (!string.IsNullOrEmpty(newDirectory))
+				modLibraryTextBox.Text = newDirectory;
 		}
 		#endregion
 

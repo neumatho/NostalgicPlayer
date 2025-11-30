@@ -42,6 +42,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.listButton = new Krypton.Toolkit.KryptonButton();
 			this.listTextBox = new Krypton.Toolkit.KryptonTextBox();
 			this.listLabel = new Krypton.Toolkit.KryptonLabel();
+			this.modLibraryButton = new Krypton.Toolkit.KryptonButton();
+			this.modLibraryTextBox = new Krypton.Toolkit.KryptonTextBox();
+			this.modLibraryLabel = new Krypton.Toolkit.KryptonLabel();
 			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.group)).BeginInit();
@@ -72,6 +75,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.group.Panel.Controls.Add(this.listButton);
 			this.group.Panel.Controls.Add(this.listTextBox);
 			this.group.Panel.Controls.Add(this.listLabel);
+			this.group.Panel.Controls.Add(this.modLibraryButton);
+			this.group.Panel.Controls.Add(this.modLibraryTextBox);
+			this.group.Panel.Controls.Add(this.modLibraryLabel);
 			this.controlResource.SetResourceKey(this.group, null);
 			this.group.Size = new System.Drawing.Size(592, 340);
 			this.group.TabIndex = 0;
@@ -171,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.listTextBox.TabIndex = 7;
 			// 
 			// listLabel
-			// 
+			//
 			this.listLabel.Location = new System.Drawing.Point(4, 104);
 			this.listLabel.Name = "listLabel";
 			this.listLabel.Palette = this.fontPalette;
@@ -180,7 +186,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.listLabel.Size = new System.Drawing.Size(52, 16);
 			this.listLabel.TabIndex = 6;
 			this.listLabel.Values.Text = "List path";
-			// 
+			//
+			// modLibraryButton
+			//
+			this.modLibraryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.modLibraryButton.Location = new System.Drawing.Point(556, 133);
+			this.modLibraryButton.Name = "modLibraryButton";
+			this.controlResource.SetResourceKey(this.modLibraryButton, null);
+			this.modLibraryButton.Size = new System.Drawing.Size(22, 22);
+			this.modLibraryButton.TabIndex = 11;
+			this.modLibraryButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("listButton.Values.Image")));
+			this.modLibraryButton.Values.Text = "";
+			this.modLibraryButton.Click += new System.EventHandler(this.ModLibraryButton_Click);
+			//
+			// modLibraryTextBox
+			//
+			this.modLibraryTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.modLibraryTextBox.Location = new System.Drawing.Point(100, 134);
+			this.modLibraryTextBox.Name = "modLibraryTextBox";
+			this.modLibraryTextBox.Palette = this.fontPalette;
+			this.modLibraryTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.controlResource.SetResourceKey(this.modLibraryTextBox, null);
+			this.modLibraryTextBox.Size = new System.Drawing.Size(454, 20);
+			this.modLibraryTextBox.TabIndex = 10;
+			//
+			// modLibraryLabel
+			//
+			this.modLibraryLabel.Location = new System.Drawing.Point(4, 136);
+			this.modLibraryLabel.Name = "modLibraryLabel";
+			this.modLibraryLabel.Palette = this.fontPalette;
+			this.modLibraryLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.controlResource.SetResourceKey(this.modLibraryLabel, "IDS_SETTINGS_PATHS_MODLIBRARYPATH");
+			this.modLibraryLabel.Size = new System.Drawing.Size(86, 16);
+			this.modLibraryLabel.TabIndex = 9;
+			this.modLibraryLabel.Values.Text = "Module Library";
+			//
 			// PathsPageControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -210,6 +251,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonLabel listLabel;
 		private Krypton.Toolkit.KryptonTextBox listTextBox;
 		private Krypton.Toolkit.KryptonButton listButton;
+		private Krypton.Toolkit.KryptonLabel modLibraryLabel;
+		private Krypton.Toolkit.KryptonTextBox modLibraryTextBox;
+		private Krypton.Toolkit.KryptonButton modLibraryButton;
 		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }
