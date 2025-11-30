@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -605,7 +606,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 			/// </summary>
 			/********************************************************************/
 			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
-				=> new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
+			{
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
+			}
 
 			/// <summary>
 			/// 
@@ -628,7 +631,10 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public override PropertyDescriptorCollection GetProperties() => GetProperties(null);
+				public override PropertyDescriptorCollection GetProperties()
+				{
+					return GetProperties(null);
+				}
 
 
 
@@ -640,7 +646,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 				public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
 				{
 					PropertyDescriptorCollection props = base.GetProperties(attributes);
-					var kept = new System.Collections.Generic.List<PropertyDescriptor>(props.Count);
+					List<PropertyDescriptor> kept = new List<PropertyDescriptor>(props.Count);
 
 					foreach (PropertyDescriptor pd in props)
 					{
