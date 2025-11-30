@@ -325,23 +325,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				int lastSlash = entry.FullPath.LastIndexOf('/');
 				string pathOnly = lastSlash >= 0 ? entry.FullPath.Substring(0, lastSlash) : string.Empty;
 
-				// In online mode, try to replace service root with display name
-				if (!data.IsOfflineMode)
+				// Remove current path prefix to show only relative path
+				if (!string.IsNullOrEmpty(currentPath) && pathOnly.StartsWith(currentPath))
 				{
-					var service = data.GetServiceFromPath(entry.FullPath);
-					if (service != null)
-					{
-						string relativePath = data.GetRelativePathFromService(entry.FullPath, service);
-						// Remove filename from relative path
-						int relativeLastSlash = relativePath.LastIndexOf('/');
-						string relativePathOnly = relativeLastSlash >= 0
-							? relativePath.Substring(0, relativeLastSlash)
-							: string.Empty;
-						// Add service name before path
-						pathOnly = string.IsNullOrEmpty(relativePathOnly)
-							? service.DisplayName
-							: $"{service.DisplayName}/{relativePathOnly}";
-					}
+					pathOnly = pathOnly.Substring(currentPath.Length);
+					if (pathOnly.StartsWith("/"))
+						pathOnly = pathOnly.Substring(1);
 				}
 
 				item.SubItems.Add(pathOnly);
@@ -354,7 +343,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			{
 				// For directories, show file count recursively from tree
 				int fileCount = CountFilesInTree(entry);
-				item.SubItems.Add(fileCount > 0 ? $"{fileCount:N0} files" : string.Empty);
+				item.SubItems.Add(fileCount > 0 ? string.Format(Resources.IDS_MODLIBRARY_FILE_COUNT, fileCount) : string.Empty);
 			}
 			else
 				// For files, show size in KB, MB, etc.
@@ -1535,7 +1524,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				// If search is active, show search indicator
 				if (!string.IsNullOrEmpty(data.SearchFilter)) AddBreadcrumbLabel($"🔍 \"{data.SearchFilter}\" - ");
 
-				AddBreadcrumbLink("Home", string.Empty);
+				AddBreadcrumbLink(Resources.IDS_MODLIBRARY_HOME, string.Empty);
 
 				// Add counts in gray
 				AddBreadcrumbSeparator("•");
@@ -1554,7 +1543,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					int totalFiles = data.CountTotalFilesInFilteredCache();
 					Label totalLabel = new()
 					{
-						Text = $", {totalFiles} total files",
+						Text = ", " + string.Format(Resources.IDS_MODLIBRARY_TOTAL_FILES_COUNT, totalFiles),
 						AutoSize = true,
 						Margin = new Padding(0, 5, 0, 0),
 						ForeColor = SystemColors.GrayText
@@ -1588,7 +1577,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private void BuildClickableBreadcrumb(int folderCount, int fileCount)
 		{
 			// Add "Home" link
-			AddBreadcrumbLink("Home", string.Empty);
+			AddBreadcrumbLink(Resources.IDS_MODLIBRARY_HOME, string.Empty);
 			AddBreadcrumbSeparator();
 
 			// Check if path is a service root (ends with "://")
@@ -1666,11 +1655,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			// Add clickable path if not at root
 			if (string.IsNullOrEmpty(currentPath))
-				AddBreadcrumbLink("Home", string.Empty);
+				AddBreadcrumbLink(Resources.IDS_MODLIBRARY_HOME, string.Empty);
 			else
 			{
 				// Add "Home" link
-				AddBreadcrumbLink("Home", string.Empty);
+				AddBreadcrumbLink(Resources.IDS_MODLIBRARY_HOME, string.Empty);
 				AddBreadcrumbSeparator();
 
 				// Add path parts
@@ -1702,7 +1691,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			{
 				var service = data.GetServiceFromPath(path);
 				string serviceName = service?.DisplayName ?? path.Substring(0, path.Length - 3);
-				AddBreadcrumbLabel(serviceName);
+				AddBreadcrumbLink(serviceName, path);
 				return;
 			}
 

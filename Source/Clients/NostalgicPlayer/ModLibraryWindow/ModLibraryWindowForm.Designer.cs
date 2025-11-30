@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// 
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
+			fontPalette.ThemeName = string.Empty;
 			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
@@ -228,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			searchButton.Size = new System.Drawing.Size(22, 22);
 			searchButton.TabIndex = 1;
 			searchButton.Values.Image = Resources.IDB_SEARCH;
-			searchButton.Values.Text = "";
+			searchButton.Values.Text = string.Empty;
 			searchButton.Click += SearchButton_Click;
 			// 
 			// searchTextBox

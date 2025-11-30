@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -147,11 +146,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					}
 
 					// Fire progress event
-					ProgressChanged?.Invoke(this,
-						new DownloadProgressEventArgs
-						{
-							RemainingCount = remainingCount, CurrentEntry = item.Entry
-						});
+					ProgressChanged?.Invoke(this, new DownloadProgressEventArgs(remainingCount, item.Entry));
 
 					// Download file
 					try
@@ -163,13 +158,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 						// Fire completed event
 						DownloadCompleted?.Invoke(this,
-							new DownloadCompletedEventArgs
-							{
-								Entry = item.Entry,
-								LocalPath = localPath,
-								ShouldPlayImmediately = item.ShouldPlayImmediately,
-								Success = true
-							});
+							new DownloadCompletedEventArgs(item.Entry, localPath, item.ShouldPlayImmediately, true));
 					}
 					catch (Exception ex)
 					{
@@ -177,14 +166,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 						// Fire completed event with error
 						DownloadCompleted?.Invoke(this,
-							new DownloadCompletedEventArgs
-							{
-								Entry = item.Entry,
-								LocalPath = null,
-								ShouldPlayImmediately = item.ShouldPlayImmediately,
-								Success = false,
-								ErrorMessage = ex.Message
-							});
+							new DownloadCompletedEventArgs(item.Entry, null, item.ShouldPlayImmediately, false, ex.Message));
 					}
 				}
 			}
@@ -214,62 +196,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				queue.Clear();
 				queuedPaths.Clear();
 			}
-		}
-	}
-
-
-	/// <summary>
-	/// Event args for download progress
-	/// </summary>
-	internal class DownloadProgressEventArgs : EventArgs
-	{
-		public int RemainingCount
-		{
-			get;
-			init;
-		}
-
-		public TreeNode CurrentEntry
-		{
-			get;
-			init;
-		}
-	}
-
-
-	/// <summary>
-	/// Event args for download completion
-	/// </summary>
-	internal class DownloadCompletedEventArgs : EventArgs
-	{
-		public TreeNode Entry
-		{
-			get;
-			init;
-		}
-
-		public string LocalPath
-		{
-			get;
-			init;
-		}
-
-		public bool ShouldPlayImmediately
-		{
-			get;
-			init;
-		}
-
-		public bool Success
-		{
-			get;
-			init;
-		}
-
-		public string ErrorMessage
-		{
-			get;
-			init;
 		}
 	}
 }

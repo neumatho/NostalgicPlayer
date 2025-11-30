@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System.Windows.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
