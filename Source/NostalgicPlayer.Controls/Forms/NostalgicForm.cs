@@ -227,6 +227,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 						m.Result = IntPtr.Zero;
 						return;
 					}
+
 					break;
 				}
 
@@ -303,6 +304,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 						hoverButton = button;
 						DrawCustomNonClient();
 					}
+
 					return;
 				}
 
@@ -350,6 +352,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 						m.Result = IntPtr.Zero;
 						return;
 					}
+
 					break;
 				}
 			}
@@ -642,6 +645,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 							WindowState = FormWindowState.Minimized;
 							handled = true;
 						}
+
 						break;
 					}
 
@@ -652,6 +656,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 							WindowState = WindowState == FormWindowState.Maximized ? FormWindowState.Normal : FormWindowState.Maximized;
 							handled = true;
 						}
+
 						break;
 					}
 
@@ -1071,7 +1076,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			const float bw = 0.0722f;
 			const float alpha = 0.40f;	// Tweak to taste
 
-			var cm = new ColorMatrix(
+			ColorMatrix cm = new ColorMatrix(
 			[
 				[ rw, rw, rw, 0, 0 ],
 				[ gw, gw, gw, 0, 0 ],
@@ -1080,11 +1085,11 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				[  0,  0,  0, 0, 1 ]
 			]);
 
-			using (var ia = new ImageAttributes())
+			using (ImageAttributes ia = new ImageAttributes())
 			{
 				ia.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-				var dest = new Rectangle(imgX, imgY, bitmap.Width, bitmap.Height);
+				Rectangle dest = new Rectangle(imgX, imgY, bitmap.Width, bitmap.Height);
 				g.DrawImage(bitmap, dest, 0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, ia);
 			}
 		}
@@ -1236,7 +1241,9 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			/// </summary>
 			/********************************************************************/
 			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
-				=> new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
+			{
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
+			}
 
 			/// <summary>
 			/// 
@@ -1259,7 +1266,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public override PropertyDescriptorCollection GetProperties() => GetProperties(null);
+				public override PropertyDescriptorCollection GetProperties()
+				{
+					return GetProperties(null);
+				}
 
 
 
@@ -1271,7 +1281,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
 				{
 					PropertyDescriptorCollection props = base.GetProperties(attributes);
-					var kept = new System.Collections.Generic.List<PropertyDescriptor>(props.Count);
+					List<PropertyDescriptor> kept = new List<PropertyDescriptor>(props.Count);
 
 					foreach (PropertyDescriptor pd in props)
 					{
