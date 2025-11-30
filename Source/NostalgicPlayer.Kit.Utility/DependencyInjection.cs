@@ -18,8 +18,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// </summary>
 	public static class DependencyInjection
 	{
-		private static IServiceProvider serviceProvider;			// Used to create new scopes
-		private static IServiceProvider defaultServiceProvider;		// Is the default scope services
+		private static IHost host;								// Root host (service provider owner)
+		private static IServiceScope defaultScope;				// Default scope
+		private static IServiceProvider serviceProvider;		// Root provider shortcut
+		private static IServiceProvider defaultServiceProvider;	// Scope provider shortcut (backwards compatibility)
 
 		/********************************************************************/
 		/// <summary>
@@ -28,15 +30,16 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public static void Build(RegisterServiceHandler handler)
 		{
-			if (serviceProvider != null)
+			if (host != null)
 				throw new Exception("Has already been initialized once");
 
 			// Register and build all the services
-			IHost host = Host.CreateDefaultBuilder().ConfigureServices((_, services) => handler(services)).Build();
+			host = Host.CreateDefaultBuilder().ConfigureServices((_, services) => handler(services)).Build();
 			serviceProvider = host.Services;
 
-			// Create the default service provider, which is used by the agents
-			defaultServiceProvider = CreateScope();
+			// Create the default service scope
+			defaultScope = serviceProvider.CreateScope();
+			defaultServiceProvider = defaultScope.ServiceProvider;
 		}
 
 
@@ -63,7 +66,36 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public static IServiceProvider GetDefaultProvider()
 		{
+			if (defaultServiceProvider == null)
+				throw new Exception("Has not been built yet");
+
 			return defaultServiceProvider;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Dispose host and default scope so singletons get disposed.
+		/// 
+		/// Call this at application shutdown
+		/// </summary>
+		/********************************************************************/
+		public static void Dispose()
+		{
+			// Ignore if not built
+			if (host == null)
+				return;
+
+			// Dispose the default scope first (scoped + transient disposables)
+			defaultScope?.Dispose();
+			defaultScope = null;
+			defaultServiceProvider = null;
+
+			// Dispose root host (singleton disposables)
+			host.Dispose();
+			host = null;
+			serviceProvider = null;
 		}
 	}
 }
