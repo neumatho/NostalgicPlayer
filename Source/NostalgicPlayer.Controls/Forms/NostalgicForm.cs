@@ -227,6 +227,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 						m.Result = IntPtr.Zero;
 						return;
 					}
+
 					break;
 				}
 
@@ -303,6 +304,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 						hoverButton = button;
 						DrawCustomNonClient();
 					}
+
 					return;
 				}
 
@@ -350,6 +352,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 						m.Result = IntPtr.Zero;
 						return;
 					}
+
 					break;
 				}
 			}
@@ -642,6 +645,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 							WindowState = FormWindowState.Minimized;
 							handled = true;
 						}
+
 						break;
 					}
 
@@ -652,6 +656,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 							WindowState = WindowState == FormWindowState.Maximized ? FormWindowState.Normal : FormWindowState.Maximized;
 							handled = true;
 						}
+
 						break;
 					}
 
@@ -1236,7 +1241,9 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			/// </summary>
 			/********************************************************************/
 			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
-				=> new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
+			{
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
+			}
 
 			/// <summary>
 			/// 
@@ -1259,7 +1266,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public override PropertyDescriptorCollection GetProperties() => GetProperties(null);
+				public override PropertyDescriptorCollection GetProperties()
+				{
+					return GetProperties(null);
+				}
 
 
 
