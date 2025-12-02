@@ -408,7 +408,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			lock (mixerInfoLock)
 			{
 				mixerInfo.StereoSeparator = mixerConfiguration.StereoSeparator;
-				mixerInfo.EnableInterpolation = mixerConfiguration.EnableInterpolation;
+				mixerInfo.InterpolationMode = mixerConfiguration.InterpolationMode;
 				mixerInfo.SwapSpeakers = mixerConfiguration.SwapSpeakers;
 				mixerInfo.EmulateFilter = mixerConfiguration.EnableAmigaFilter;
 				mixerInfo.EnableEqualizer = mixerConfiguration.EnableEqualizer;

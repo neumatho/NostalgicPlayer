@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private int originalStereoSeparation;
 		private int originalVisualsLatency;
-		private bool originalInterpolation;
+		private InterpolationMode originalInterpolationMode;
 		private bool originalSwapSpeakers;
 		private bool originalAmigaFilter;
 
@@ -51,6 +51,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			InitializeComponent();
 
 			// Add items to the combo controls
+			interpolationModeComboBox.Items.AddRange(
+			[
+				Resources.IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_NONE,
+				Resources.IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_ALWAYS,
+				Resources.IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_SAMPLES
+			]);
+
 			surroundModeComboBox.Items.AddRange(
 			[
 				Resources.IDS_SETTINGS_MIXER_GENERAL_SURROUND_NONE,
@@ -151,10 +158,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// Setup the rest of the settings
 			originalStereoSeparation = stereoSeparationTrackBar.Value = soundSettings.StereoSeparation;
 			originalVisualsLatency = visualsLatencyTrackBar.Value = soundSettings.VisualsLatency;
-			originalInterpolation = interpolationCheckBox.Checked = soundSettings.Interpolation;
+			originalInterpolationMode = soundSettings.InterpolationMode;
 			originalSwapSpeakers = swapSpeakersCheckBox.Checked = soundSettings.SwapSpeakers;
 			originalAmigaFilter = amigaFilterCheckBox.Checked = soundSettings.AmigaFilter;
 
+			interpolationModeComboBox.SelectedIndex = (int)soundSettings.InterpolationMode;
 			surroundModeComboBox.SelectedIndex = (int)soundSettings.SurroundMode;
 			disableCenterSpeakerCheckBox.Checked = soundSettings.DisableCenterSpeaker;
 
@@ -196,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			originalStereoSeparation = soundSettings.StereoSeparation = stereoSeparationTrackBar.Value;
 			originalVisualsLatency = soundSettings.VisualsLatency = visualsLatencyTrackBar.Value;
-			originalInterpolation = soundSettings.Interpolation = interpolationCheckBox.Checked;
+			originalInterpolationMode = soundSettings.InterpolationMode = (InterpolationMode)interpolationModeComboBox.SelectedIndex;
 			originalSwapSpeakers = soundSettings.SwapSpeakers = swapSpeakersCheckBox.Checked;
 			originalAmigaFilter = soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
 
@@ -228,7 +236,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			soundSettings.StereoSeparation = originalStereoSeparation;
 			soundSettings.VisualsLatency = originalVisualsLatency;
-			soundSettings.Interpolation = originalInterpolation;
+			soundSettings.InterpolationMode = originalInterpolationMode;
 			soundSettings.SwapSpeakers = originalSwapSpeakers;
 			soundSettings.AmigaFilter = originalAmigaFilter;
 
@@ -281,12 +289,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the user change the interpolation
+		/// Is called when the user change interpolation mode
 		/// </summary>
 		/********************************************************************/
-		private void InterpolationCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void InterpolationMode_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			soundSettings.Interpolation = interpolationCheckBox.Checked;
+			soundSettings.InterpolationMode = (InterpolationMode)interpolationModeComboBox.SelectedIndex;
 
 			SetMixerSettings();
 		}

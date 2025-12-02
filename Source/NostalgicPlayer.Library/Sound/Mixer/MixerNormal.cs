@@ -421,7 +421,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		private long MixSample(MixerInfo currentMixerInfo, VoiceInfo vnf, Array sampleData, uint sampleStartOffset, int sampleStep, int volume, int oldVolume, ref int rampVolume, int[] mixingBuffer, int offsetInFrames, int todoInFrames)
 		{
 			// Check to see if we need to make interpolation on the mixing
-			if (currentMixerInfo.EnableInterpolation)
+			if (currentMixerInfo.InterpolationMode == InterpolationMode.Always)
 			{
 				if ((vnf.SampleInfo.Flags & SampleFlag._16Bits) != 0)
 				{

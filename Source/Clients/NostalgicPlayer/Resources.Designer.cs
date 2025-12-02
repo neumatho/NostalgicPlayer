@@ -3635,11 +3635,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Interpolation.
+        ///   Looks up a localized string similar to Interpolation mode.
         /// </summary>
         internal static string IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_ALWAYS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_ALWAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_NONE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_NONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only samples.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_SAMPLES {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_SAMPLES", resourceCulture);
             }
         }
         

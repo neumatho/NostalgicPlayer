@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 
@@ -63,10 +64,10 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		/// Indicate if interpolation is enabled
 		/// </summary>
 		/********************************************************************/
-		public bool EnableInterpolation
+		public InterpolationMode InterpolationMode
 		{
 			get; set;
-		} = false;
+		} = InterpolationMode.None;
 
 
 

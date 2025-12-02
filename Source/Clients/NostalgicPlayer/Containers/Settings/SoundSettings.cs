@@ -87,14 +87,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Interpolation
+		/// Which interpolation mode to use
 		/// </summary>
 		/********************************************************************/
-		public bool Interpolation
+		public InterpolationMode InterpolationMode
 		{
-			get => settings.GetBoolEntry("Sound", "Interpolation", false);
+			get => settings.GetEnumEntry( "Sound", "InterpolationMode", InterpolationMode.None);
 
-			set => settings.SetBoolEntry("Sound", "Interpolation", value);
+			set => settings.SetEnumEntry("Sound", "InterpolationMode", value);
 		}
 
 

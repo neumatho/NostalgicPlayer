@@ -3013,6 +3013,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				version++;
 			}
 
+			if (version == 3)
+			{
+				ConvertSettingsToVersion4();
+				version++;
+			}
+
 			userSettings.SetIntEntry("General", "Version", version);
 		}
 
@@ -3065,6 +3071,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			userSettings.SetEnumEntry("Sound", "SurroundMode", boolValue ? SurroundMode.DolbyProLogic : SurroundMode.None);
 
 			userSettings.RemoveEntry("Sound", "Surround");
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will convert the settings from version 3 to version 4
+		/// </summary>
+		/********************************************************************/
+		private void ConvertSettingsToVersion4()
+		{
+			bool boolValue = userSettings.GetBoolEntry("Sound", "Interpolation");
+			userSettings.SetEnumEntry("Sound", "InterpolationMode", boolValue ? InterpolationMode.Always : InterpolationMode.None);
+
+			userSettings.RemoveEntry("Sound", "Interpolation");
 		}
 
 

@@ -1080,7 +1080,7 @@ what has changed since your previous version.</value>
     <value>Disable center speaker</value>
   </data>
   <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION" xml:space="preserve">
-    <value>Interpolation</value>
+    <value>Interpolation mode</value>
   </data>
   <data name="IDS_SETTINGS_MIXER_GENERAL_STEREOSEPARATION" xml:space="preserve">
     <value>Stereo separation</value>
@@ -1728,5 +1728,14 @@ This will delete the local database file and clear all data from memory.</value>
   </data>
   <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_WITH_ERRORS" xml:space="preserve">
     <value>Download completed: {0} successful, {1} failed</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_ALWAYS" xml:space="preserve">
+    <value>Always</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_NONE" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_SAMPLES" xml:space="preserve">
+    <value>Only samples</value>
   </data>
 </root>

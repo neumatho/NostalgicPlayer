@@ -40,7 +40,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			visualsLatencyTrackBar = new Krypton.Toolkit.KryptonTrackBar();
 			visualsLatencyMsLabel = new Krypton.Toolkit.KryptonLabel();
 			amigaFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
-			interpolationCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			interpolationModeLabel = new Krypton.Toolkit.KryptonLabel();
+			interpolationModeComboBox = new Krypton.Toolkit.KryptonComboBox();
 			swapSpeakersCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			surroundModeLabel = new Krypton.Toolkit.KryptonLabel();
 			surroundModeComboBox = new Krypton.Toolkit.KryptonComboBox();
@@ -58,6 +59,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			((System.ComponentModel.ISupportInitialize)generalGroupBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)generalGroupBox.Panel).BeginInit();
 			generalGroupBox.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)interpolationModeComboBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)surroundModeComboBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)outputGroupBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)outputGroupBox.Panel).BeginInit();
@@ -90,7 +92,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			generalGroupBox.Panel.Controls.Add(visualsLatencyTrackBar);
 			generalGroupBox.Panel.Controls.Add(visualsLatencyMsLabel);
 			generalGroupBox.Panel.Controls.Add(amigaFilterCheckBox);
-			generalGroupBox.Panel.Controls.Add(interpolationCheckBox);
+			generalGroupBox.Panel.Controls.Add(interpolationModeLabel);
+			generalGroupBox.Panel.Controls.Add(interpolationModeComboBox);
 			generalGroupBox.Panel.Controls.Add(swapSpeakersCheckBox);
 			generalGroupBox.Panel.Controls.Add(surroundModeLabel);
 			generalGroupBox.Panel.Controls.Add(surroundModeComboBox);
@@ -113,18 +116,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			stereoSeparationPercentLabel.Name = "stereoSeparationPercentLabel";
 			stereoSeparationPercentLabel.Palette = fontPalette;
 			stereoSeparationPercentLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(stereoSeparationPercentLabel, null);
 			stereoSeparationPercentLabel.Size = new System.Drawing.Size(38, 16);
 			stereoSeparationPercentLabel.TabIndex = 2;
 			stereoSeparationPercentLabel.Values.Text = "100%";
 			// 
 			// stereoSeparationTrackBar
-			//
+			// 
 			stereoSeparationTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			stereoSeparationTrackBar.Location = new System.Drawing.Point(106, 0);
 			stereoSeparationTrackBar.Maximum = 100;
 			stereoSeparationTrackBar.Name = "stereoSeparationTrackBar";
-			controlResource.SetResourceKey(stereoSeparationTrackBar, null);
 			stereoSeparationTrackBar.Size = new System.Drawing.Size(434, 27);
 			stereoSeparationTrackBar.TabIndex = 1;
 			stereoSeparationTrackBar.TickFrequency = 10;
@@ -153,12 +154,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			visualsLatencyLabel.Values.Text = "Visuals latency";
 			// 
 			// visualsLatencyTrackBar
-			//
+			// 
 			visualsLatencyTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			visualsLatencyTrackBar.Location = new System.Drawing.Point(106, 35);
 			visualsLatencyTrackBar.Maximum = 49;
 			visualsLatencyTrackBar.Name = "visualsLatencyTrackBar";
-			controlResource.SetResourceKey(visualsLatencyTrackBar, null);
 			visualsLatencyTrackBar.Size = new System.Drawing.Size(434, 27);
 			visualsLatencyTrackBar.TabIndex = 4;
 			visualsLatencyTrackBar.TickFrequency = 2;
@@ -170,7 +170,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			visualsLatencyMsLabel.Name = "visualsLatencyMsLabel";
 			visualsLatencyMsLabel.Palette = fontPalette;
 			visualsLatencyMsLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(visualsLatencyMsLabel, null);
 			visualsLatencyMsLabel.Size = new System.Drawing.Size(34, 16);
 			visualsLatencyMsLabel.TabIndex = 5;
 			visualsLatencyMsLabel.Values.Text = "0 ms";
@@ -184,21 +183,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			amigaFilterCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(amigaFilterCheckBox, "IDS_SETTINGS_MIXER_GENERAL_AMIGALED");
 			amigaFilterCheckBox.Size = new System.Drawing.Size(146, 16);
-			amigaFilterCheckBox.TabIndex = 11;
+			amigaFilterCheckBox.TabIndex = 12;
 			amigaFilterCheckBox.Values.Text = "Emulate Amiga LED filter";
 			amigaFilterCheckBox.CheckedChanged += AmigaFilterCheckBox_CheckedChanged;
 			// 
-			// interpolationCheckBox
+			// interpolationModeLabel
 			// 
-			interpolationCheckBox.Location = new System.Drawing.Point(4, 70);
-			interpolationCheckBox.Name = "interpolationCheckBox";
-			interpolationCheckBox.Palette = fontPalette;
-			interpolationCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(interpolationCheckBox, "IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION");
-			interpolationCheckBox.Size = new System.Drawing.Size(84, 16);
-			interpolationCheckBox.TabIndex = 6;
-			interpolationCheckBox.Values.Text = "Interpolation";
-			interpolationCheckBox.CheckedChanged += InterpolationCheckBox_CheckedChanged;
+			interpolationModeLabel.Location = new System.Drawing.Point(0, 70);
+			interpolationModeLabel.Name = "interpolationModeLabel";
+			interpolationModeLabel.Palette = fontPalette;
+			interpolationModeLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(interpolationModeLabel, "IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION");
+			interpolationModeLabel.Size = new System.Drawing.Size(101, 16);
+			interpolationModeLabel.TabIndex = 6;
+			interpolationModeLabel.Values.Text = "Interpolation mode";
+			// 
+			// interpolationModeComboBox
+			// 
+			interpolationModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			interpolationModeComboBox.DropDownWidth = 120;
+			interpolationModeComboBox.IntegralHeight = false;
+			interpolationModeComboBox.Location = new System.Drawing.Point(106, 69);
+			interpolationModeComboBox.Name = "interpolationModeComboBox";
+			interpolationModeComboBox.Palette = fontPalette;
+			interpolationModeComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			interpolationModeComboBox.Size = new System.Drawing.Size(112, 19);
+			interpolationModeComboBox.TabIndex = 7;
+			interpolationModeComboBox.SelectedIndexChanged += InterpolationMode_SelectedIndexChanged;
 			// 
 			// swapSpeakersCheckBox
 			// 
@@ -208,19 +219,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			swapSpeakersCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(swapSpeakersCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS");
 			swapSpeakersCheckBox.Size = new System.Drawing.Size(161, 16);
-			swapSpeakersCheckBox.TabIndex = 7;
+			swapSpeakersCheckBox.TabIndex = 8;
 			swapSpeakersCheckBox.Values.Text = "Swap left and right speakers";
 			swapSpeakersCheckBox.CheckedChanged += SwapSpeakersCheckBox_CheckedChanged;
 			// 
 			// surroundModeLabel
 			// 
-			surroundModeLabel.Location = new System.Drawing.Point(197, 70);
+			surroundModeLabel.Location = new System.Drawing.Point(226, 70);
 			surroundModeLabel.Name = "surroundModeLabel";
 			surroundModeLabel.Palette = fontPalette;
 			surroundModeLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(surroundModeLabel, "IDS_SETTINGS_MIXER_GENERAL_SURROUND");
 			surroundModeLabel.Size = new System.Drawing.Size(86, 16);
-			surroundModeLabel.TabIndex = 8;
+			surroundModeLabel.TabIndex = 9;
 			surroundModeLabel.Values.Text = "Surround mode";
 			// 
 			// surroundModeComboBox
@@ -228,23 +239,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			surroundModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			surroundModeComboBox.DropDownWidth = 120;
 			surroundModeComboBox.IntegralHeight = false;
-			surroundModeComboBox.Location = new System.Drawing.Point(288, 69);
+			surroundModeComboBox.Location = new System.Drawing.Point(317, 69);
 			surroundModeComboBox.Name = "surroundModeComboBox";
 			surroundModeComboBox.Palette = fontPalette;
 			surroundModeComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(surroundModeComboBox, null);
-			surroundModeComboBox.Size = new System.Drawing.Size(120, 19);
-			surroundModeComboBox.TabIndex = 9;
+			surroundModeComboBox.Size = new System.Drawing.Size(112, 19);
+			surroundModeComboBox.TabIndex = 10;
 			// 
 			// disableCenterSpeakerCheckBox
 			// 
-			disableCenterSpeakerCheckBox.Location = new System.Drawing.Point(201, 91);
+			disableCenterSpeakerCheckBox.Location = new System.Drawing.Point(230, 91);
 			disableCenterSpeakerCheckBox.Name = "disableCenterSpeakerCheckBox";
 			disableCenterSpeakerCheckBox.Palette = fontPalette;
 			disableCenterSpeakerCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(disableCenterSpeakerCheckBox, "IDS_SETTINGS_MIXER_GENERAL_DISABLECENTERSPEAKER");
 			disableCenterSpeakerCheckBox.Size = new System.Drawing.Size(135, 16);
-			disableCenterSpeakerCheckBox.TabIndex = 10;
+			disableCenterSpeakerCheckBox.TabIndex = 11;
 			disableCenterSpeakerCheckBox.Values.Text = "Disable center speaker";
 			// 
 			// outputGroupBox
@@ -269,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// outputAgentSettingsButton
 			// 
 			outputAgentSettingsButton.Enabled = false;
-			outputAgentSettingsButton.Location = new System.Drawing.Point(230, 0);
+			outputAgentSettingsButton.Location = new System.Drawing.Point(222, 0);
 			outputAgentSettingsButton.Name = "outputAgentSettingsButton";
 			outputAgentSettingsButton.Palette = fontPalette;
 			outputAgentSettingsButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
@@ -288,8 +298,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputAgentComboBox.Name = "outputAgentComboBox";
 			outputAgentComboBox.Palette = fontPalette;
 			outputAgentComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(outputAgentComboBox, null);
-			outputAgentComboBox.Size = new System.Drawing.Size(120, 19);
+			outputAgentComboBox.Size = new System.Drawing.Size(112, 19);
 			outputAgentComboBox.Sorted = true;
 			outputAgentComboBox.TabIndex = 1;
 			outputAgentComboBox.SelectedIndexChanged += OutputAgentComboBox_SelectedIndexChanged;
@@ -381,13 +390,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			Controls.Add(outputGroupBox);
 			Controls.Add(generalGroupBox);
 			Name = "MixerPageControl";
-			controlResource.SetResourceKey(this, null);
 			Size = new System.Drawing.Size(608, 356);
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
 			((System.ComponentModel.ISupportInitialize)generalGroupBox.Panel).EndInit();
 			generalGroupBox.Panel.ResumeLayout(false);
 			generalGroupBox.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)generalGroupBox).EndInit();
+			((System.ComponentModel.ISupportInitialize)interpolationModeComboBox).EndInit();
 			((System.ComponentModel.ISupportInitialize)surroundModeComboBox).EndInit();
 			((System.ComponentModel.ISupportInitialize)outputGroupBox.Panel).EndInit();
 			outputGroupBox.Panel.ResumeLayout(false);
@@ -407,7 +416,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonLabel stereoSeparationLabel;
 		private Krypton.Toolkit.KryptonTrackBar stereoSeparationTrackBar;
 		private Krypton.Toolkit.KryptonLabel stereoSeparationPercentLabel;
-		private Krypton.Toolkit.KryptonCheckBox interpolationCheckBox;
+		private Krypton.Toolkit.KryptonComboBox interpolationModeComboBox;
 		private Krypton.Toolkit.KryptonCheckBox amigaFilterCheckBox;
 		private Krypton.Toolkit.KryptonGroupBox outputGroupBox;
 		private Krypton.Toolkit.KryptonLabel outputAgentLabel;
@@ -426,5 +435,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonComboBox surroundModeComboBox;
 		private Krypton.Toolkit.KryptonLabel surroundModeLabel;
 		private Krypton.Toolkit.KryptonCheckBox disableCenterSpeakerCheckBox;
+		private Krypton.Toolkit.KryptonLabel interpolationModeLabel;
 	}
 }

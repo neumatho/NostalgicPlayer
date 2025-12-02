@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Indicate if interpolation is enabled
 		/// </summary>
 		/********************************************************************/
-		public bool EnableInterpolation
+		public InterpolationMode InterpolationMode
 		{
 			get; set;
 		}

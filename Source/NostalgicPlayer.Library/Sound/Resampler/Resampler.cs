@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 
 			lock (mixerInfoLock)
 			{
-				mixerInfo.EnableInterpolation = mixerConfiguration.EnableInterpolation;
+				mixerInfo.InterpolationMode = mixerConfiguration.InterpolationMode;
 				mixerInfo.SwapSpeakers = mixerConfiguration.SwapSpeakers;
 				mixerInfo.EmulateFilter = mixerConfiguration.EnableAmigaFilter;
 				mixerInfo.EnableEqualizer = mixerConfiguration.EnableEqualizer;
@@ -360,12 +360,12 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 					dataSize = framesRead == 0 ? 0 : (framesRead << FracBits) - 1;
 				}
 
-				int todoInFrames = Math.Min((dataSize - currentIndex) / increment + 1, Math.Min(framesRead, countInFrames));
+				int todoInFrames = Math.Min(((dataSize - currentIndex) / increment) + 1, Math.Min(framesRead, countInFrames));
 				if (todoInFrames > 0)
 				{
 					int newCurrent = currentIndex;
 
-					if (currentMixerInfo.EnableInterpolation)
+					if ((currentMixerInfo.InterpolationMode == InterpolationMode.Always) || (currentMixerInfo.InterpolationMode == InterpolationMode.OnlySamples))
 					{
 						for (int i = 0; i < resampleBuffer.Length; i++)
 						{

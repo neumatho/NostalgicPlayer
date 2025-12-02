@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			{
 				StereoSeparator = soundSettings.StereoSeparation,
 				VisualsLatency = soundSettings.VisualsLatency * 20,
-				EnableInterpolation = soundSettings.Interpolation,
+				InterpolationMode = soundSettings.InterpolationMode,
 				SwapSpeakers = soundSettings.SwapSpeakers,
 				EnableAmigaFilter = soundSettings.AmigaFilter,
 				EnableEqualizer = soundSettings.EnableEqualizer,
