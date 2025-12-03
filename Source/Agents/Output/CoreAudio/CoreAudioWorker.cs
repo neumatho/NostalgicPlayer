@@ -33,6 +33,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private enum PlaybackState
 		{
 			/// <summary>
+			/// Not initialized yet
+			/// </summary>
+			Uninitialized,
+			/// <summary>
 			/// Just initialized
 			/// </summary>
 			Initialized,
@@ -86,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private AutoResetEvent flushBufferEvent;
 
 		private Lock playingLock;
-		private volatile PlaybackState playbackState;
+		private volatile PlaybackState playbackState = PlaybackState.Uninitialized;
 		private bool inStreamSwitch;
 
 		private CoreAudioSettings settings;
@@ -498,6 +502,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					endpoint.Dispose();
 					endpoint = null;
 
+					playbackState = PlaybackState.Uninitialized;
+
 					// Step 3: Wait for the default device to change.
 					//
 					// There is a race between the session disconnect arriving and the new default device
@@ -543,8 +549,11 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 				return true;
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				string errorMessage = string.Format(Resources.IDS_ERR_INITIALIZE, ex.HResult.ToString("X8"), ex.Message);
+				OnPlayerFailed(errorMessage);
+
 				return false;
 			}
 			finally

@@ -1677,12 +1677,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			BeginInvoke(() =>
 			{
 				ModuleListItem listItem = playItem;
-				string playerName = moduleHandler.StaticModuleInformation.PlayerAgentInfo.AgentName;
+				if (listItem != null)
+				{
+					string playerName = moduleHandler.StaticModuleInformation.PlayerAgentInfo.AgentName;
 
-				StopAndFreeModule();
-				moduleHandler.CloseOutputAgent();
+					StopAndFreeModule();
+					moduleHandler.CloseOutputAgent();
 
-				ShowErrorMessage(string.Format(Resources.IDS_ERR_PLAYER_FAILED, playerName, e.ErrorMessage), listItem);
+					ShowErrorMessage(string.Format(Resources.IDS_ERR_PLAYER_FAILED, playerName, e.ErrorMessage), listItem);
+				}
+				else
+					moduleHandler.CloseOutputAgent();
 			});
 		}
 		#endregion
