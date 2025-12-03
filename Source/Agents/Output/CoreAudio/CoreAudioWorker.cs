@@ -25,6 +25,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 	/// </summary>
 	internal class CoreAudioWorker : OutputAgentBase, IAgentSettingsRegistrar, IAudioSessionEventsHandler, IMMNotificationClient
 	{
+		private const int MaxSampleRate = 48000;
+
 		/// <summary>
 		/// Playback State
 		/// </summary>
@@ -370,6 +372,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			outputFormat = audioClient.MixFormat;
 //			outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 32, 2);		// Uncomment the one you want to test
 //			outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 16, 2);
+
+			if (outputFormat.SampleRate > MaxSampleRate)
+				throw new ArgumentOutOfRangeException(string.Empty, string.Format(Resources.IDS_ERR_SAMPLE_RATE_TOO_HIGH, outputFormat.SampleRate, MaxSampleRate));
+
 			if (!audioClient.IsFormatSupported(AudioClientShareMode.Shared, outputFormat, out WaveFormatExtensible _))
 				throw new IOException(Resources.IDS_ERR_NO_OUTPUT_DEVICE_FOUND);
 
@@ -579,10 +585,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private void SetVolume()
 		{
 			float[] volumes = new float[audioClient.AudioStreamVolume.ChannelCount];
+
 			for (int i = 0; i < volumes.Length; ++i)
-			{
 				volumes[i] = currentVolume;
-			}
+
 			audioClient.AudioStreamVolume.SetAllVolumes(volumes);
 		}
 

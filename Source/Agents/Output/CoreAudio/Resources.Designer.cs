@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -89,6 +89,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio {
         internal static string IDS_ERR_NO_OUTPUT_DEVICE_FOUND {
             get {
                 return ResourceManager.GetString("IDS_ERR_NO_OUTPUT_DEVICE_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sample rate has been set to {0} Hz in Windows, but only a sample rate of max {1} Hz is supported. Please select a lower sample rate in Windows settings..
+        /// </summary>
+        internal static string IDS_ERR_SAMPLE_RATE_TOO_HIGH {
+            get {
+                return ResourceManager.GetString("IDS_ERR_SAMPLE_RATE_TOO_HIGH", resourceCulture);
             }
         }
         

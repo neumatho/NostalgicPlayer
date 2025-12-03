@@ -137,4 +137,7 @@ This agent plays the sound using the Windows Core Audio API.</value>
   <data name="IDS_NAME_AGENT1" xml:space="preserve">
     <value>Core Audio</value>
   </data>
+  <data name="IDS_ERR_SAMPLE_RATE_TOO_HIGH" xml:space="preserve">
+    <value>Sample rate has been set to {0} Hz in Windows, but only a sample rate of max {1} Hz is supported. Please select a lower sample rate in Windows settings.</value>
+  </data>
 </root>
