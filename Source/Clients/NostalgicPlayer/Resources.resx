@@ -1738,4 +1738,7 @@ This will delete the local database file and clear all data from memory.</value>
   <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_SAMPLES" xml:space="preserve">
     <value>Only samples</value>
   </data>
+  <data name="IDS_TIP_MAIN_EQUALIZER" xml:space="preserve">
+    <value>Opens the equalizer window</value>
+  </data>
 </root>

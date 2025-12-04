@@ -3387,6 +3387,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			toolTip.SetToolTip(pauseCheckButton, Resources.IDS_TIP_MAIN_PAUSE);
 
 			toolTip.SetToolTip(loopCheckButton, Resources.IDS_TIP_MAIN_MODULELOOP);
+			toolTip.SetToolTip(equalizerButton, Resources.IDS_TIP_MAIN_EQUALIZER);
 			toolTip.SetToolTip(sampleInfoButton, Resources.IDS_TIP_MAIN_SAMP);
 		}
 

@@ -4318,6 +4318,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opens the equalizer window.
+        /// </summary>
+        internal static string IDS_TIP_MAIN_EQUALIZER {
+            get {
+                return ResourceManager.GetString("IDS_TIP_MAIN_EQUALIZER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opens the favorite song system window where you can
         ///see the number of times of the modules you have played.
         /// </summary>
