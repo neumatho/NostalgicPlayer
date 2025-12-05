@@ -4142,38 +4142,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List path.
+        ///   Looks up a localized string similar to List.
         /// </summary>
-        internal static string IDS_SETTINGS_PATHS_LISTPATH {
+        internal static string IDS_SETTINGS_PATHS_LIST {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_PATHS_LISTPATH", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_PATHS_LIST", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Module Library.
+        ///   Looks up a localized string similar to Module.
         /// </summary>
-        internal static string IDS_SETTINGS_PATHS_MODLIBRARYPATH {
+        internal static string IDS_SETTINGS_PATHS_MODULE {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_PATHS_MODLIBRARYPATH", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_PATHS_MODULE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Module path.
+        ///   Looks up a localized string similar to Module library.
         /// </summary>
-        internal static string IDS_SETTINGS_PATHS_MODULEPATH {
+        internal static string IDS_SETTINGS_PATHS_MODULELIBRARY {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_PATHS_MODULEPATH", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_PATHS_MODULELIBRARY", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start scan path.
+        ///   Looks up a localized string similar to Start scan.
         /// </summary>
-        internal static string IDS_SETTINGS_PATHS_STARTSCANPATH {
+        internal static string IDS_SETTINGS_PATHS_STARTSCAN {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_PATHS_STARTSCANPATH", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_PATHS_STARTSCAN", resourceCulture);
             }
         }
         

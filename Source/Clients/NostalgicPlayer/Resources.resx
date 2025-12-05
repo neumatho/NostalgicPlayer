@@ -1250,17 +1250,17 @@ switcher</value>
     <value>Use database to store module
 information</value>
   </data>
-  <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
-    <value>List path</value>
+  <data name="IDS_SETTINGS_PATHS_LIST" xml:space="preserve">
+    <value>List</value>
   </data>
-  <data name="IDS_SETTINGS_PATHS_MODLIBRARYPATH" xml:space="preserve">
-    <value>Module Library</value>
+  <data name="IDS_SETTINGS_PATHS_MODULELIBRARY" xml:space="preserve">
+    <value>Module library</value>
   </data>
-  <data name="IDS_SETTINGS_PATHS_MODULEPATH" xml:space="preserve">
-    <value>Module path</value>
+  <data name="IDS_SETTINGS_PATHS_MODULE" xml:space="preserve">
+    <value>Module</value>
   </data>
-  <data name="IDS_SETTINGS_PATHS_STARTSCANPATH" xml:space="preserve">
-    <value>Start scan path</value>
+  <data name="IDS_SETTINGS_PATHS_STARTSCAN" xml:space="preserve">
+    <value>Start scan</value>
   </data>
   <data name="IDS_SETTINGS_TAB_AGENTS" xml:space="preserve">
     <value>Agents</value>

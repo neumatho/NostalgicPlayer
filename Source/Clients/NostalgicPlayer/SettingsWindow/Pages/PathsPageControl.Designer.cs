@@ -29,213 +29,204 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PathsPageControl));
-			this.controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
-			this.group = new Krypton.Toolkit.KryptonGroup();
-			this.startScanButton = new Krypton.Toolkit.KryptonButton();
-			this.startScanTextBox = new Krypton.Toolkit.KryptonTextBox();
-			this.startScanLabel = new Krypton.Toolkit.KryptonLabel();
-			this.moduleButton = new Krypton.Toolkit.KryptonButton();
-			this.moduleTextBox = new Krypton.Toolkit.KryptonTextBox();
-			this.moduleLabel = new Krypton.Toolkit.KryptonLabel();
-			this.listButton = new Krypton.Toolkit.KryptonButton();
-			this.listTextBox = new Krypton.Toolkit.KryptonTextBox();
-			this.listLabel = new Krypton.Toolkit.KryptonLabel();
-			this.modLibraryButton = new Krypton.Toolkit.KryptonButton();
-			this.modLibraryTextBox = new Krypton.Toolkit.KryptonTextBox();
-			this.modLibraryLabel = new Krypton.Toolkit.KryptonLabel();
-			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.group)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.group.Panel)).BeginInit();
-			this.group.Panel.SuspendLayout();
-			this.SuspendLayout();
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
+			group = new Krypton.Toolkit.KryptonGroup();
+			startScanButton = new Krypton.Toolkit.KryptonButton();
+			startScanTextBox = new Krypton.Toolkit.KryptonTextBox();
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			startScanLabel = new Krypton.Toolkit.KryptonLabel();
+			moduleButton = new Krypton.Toolkit.KryptonButton();
+			moduleTextBox = new Krypton.Toolkit.KryptonTextBox();
+			moduleLabel = new Krypton.Toolkit.KryptonLabel();
+			listButton = new Krypton.Toolkit.KryptonButton();
+			listTextBox = new Krypton.Toolkit.KryptonTextBox();
+			listLabel = new Krypton.Toolkit.KryptonLabel();
+			modLibraryButton = new Krypton.Toolkit.KryptonButton();
+			modLibraryTextBox = new Krypton.Toolkit.KryptonTextBox();
+			modLibraryLabel = new Krypton.Toolkit.KryptonLabel();
+			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
+			((System.ComponentModel.ISupportInitialize)group).BeginInit();
+			((System.ComponentModel.ISupportInitialize)group.Panel).BeginInit();
+			group.Panel.SuspendLayout();
+			SuspendLayout();
 			// 
 			// controlResource
 			// 
-			this.controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
+			controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
 			// 
 			// group
 			// 
-			this.group.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.group.Location = new System.Drawing.Point(8, 8);
-			this.group.Name = "group";
+			group.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			group.Location = new System.Drawing.Point(8, 8);
+			group.Name = "group";
 			// 
 			// 
 			// 
-			this.group.Panel.Controls.Add(this.startScanButton);
-			this.group.Panel.Controls.Add(this.startScanTextBox);
-			this.group.Panel.Controls.Add(this.startScanLabel);
-			this.group.Panel.Controls.Add(this.moduleButton);
-			this.group.Panel.Controls.Add(this.moduleTextBox);
-			this.group.Panel.Controls.Add(this.moduleLabel);
-			this.group.Panel.Controls.Add(this.listButton);
-			this.group.Panel.Controls.Add(this.listTextBox);
-			this.group.Panel.Controls.Add(this.listLabel);
-			this.group.Panel.Controls.Add(this.modLibraryButton);
-			this.group.Panel.Controls.Add(this.modLibraryTextBox);
-			this.group.Panel.Controls.Add(this.modLibraryLabel);
-			this.controlResource.SetResourceKey(this.group, null);
-			this.group.Size = new System.Drawing.Size(592, 340);
-			this.group.TabIndex = 0;
+			group.Panel.Controls.Add(startScanButton);
+			group.Panel.Controls.Add(startScanTextBox);
+			group.Panel.Controls.Add(startScanLabel);
+			group.Panel.Controls.Add(moduleButton);
+			group.Panel.Controls.Add(moduleTextBox);
+			group.Panel.Controls.Add(moduleLabel);
+			group.Panel.Controls.Add(listButton);
+			group.Panel.Controls.Add(listTextBox);
+			group.Panel.Controls.Add(listLabel);
+			group.Panel.Controls.Add(modLibraryButton);
+			group.Panel.Controls.Add(modLibraryTextBox);
+			group.Panel.Controls.Add(modLibraryLabel);
+			group.Size = new System.Drawing.Size(592, 340);
+			group.TabIndex = 0;
 			// 
 			// startScanButton
 			// 
-			this.startScanButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.startScanButton.Location = new System.Drawing.Point(556, 37);
-			this.startScanButton.Name = "startScanButton";
-			this.controlResource.SetResourceKey(this.startScanButton, null);
-			this.startScanButton.Size = new System.Drawing.Size(22, 22);
-			this.startScanButton.TabIndex = 2;
-			this.startScanButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("startScanButton.Values.Image")));
-			this.startScanButton.Values.Text = "";
-			this.startScanButton.Click += new System.EventHandler(this.StartScanButton_Click);
+			startScanButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			startScanButton.Location = new System.Drawing.Point(556, 37);
+			startScanButton.Name = "startScanButton";
+			startScanButton.Size = new System.Drawing.Size(22, 22);
+			startScanButton.TabIndex = 2;
+			startScanButton.Values.Image = (System.Drawing.Image)resources.GetObject("startScanButton.Values.Image");
+			startScanButton.Values.Text = "";
+			startScanButton.Click += StartScanButton_Click;
 			// 
 			// startScanTextBox
 			// 
-			this.startScanTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.startScanTextBox.Location = new System.Drawing.Point(100, 38);
-			this.startScanTextBox.Name = "startScanTextBox";
-			this.startScanTextBox.Palette = this.fontPalette;
-			this.startScanTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.startScanTextBox, null);
-			this.startScanTextBox.Size = new System.Drawing.Size(454, 20);
-			this.startScanTextBox.TabIndex = 1;
+			startScanTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			startScanTextBox.Location = new System.Drawing.Point(100, 38);
+			startScanTextBox.Name = "startScanTextBox";
+			startScanTextBox.Palette = fontPalette;
+			startScanTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			startScanTextBox.Size = new System.Drawing.Size(454, 20);
+			startScanTextBox.TabIndex = 1;
+			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// startScanLabel
 			// 
-			this.startScanLabel.Location = new System.Drawing.Point(4, 40);
-			this.startScanLabel.Name = "startScanLabel";
-			this.startScanLabel.Palette = this.fontPalette;
-			this.startScanLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.startScanLabel, "IDS_SETTINGS_PATHS_STARTSCANPATH");
-			this.startScanLabel.Size = new System.Drawing.Size(84, 16);
-			this.startScanLabel.TabIndex = 0;
-			this.startScanLabel.Values.Text = "Start scan path";
+			startScanLabel.Location = new System.Drawing.Point(4, 40);
+			startScanLabel.Name = "startScanLabel";
+			startScanLabel.Palette = fontPalette;
+			startScanLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(startScanLabel, "IDS_SETTINGS_PATHS_STARTSCAN");
+			startScanLabel.Size = new System.Drawing.Size(84, 16);
+			startScanLabel.TabIndex = 0;
+			startScanLabel.Values.Text = "Start scan path";
 			// 
 			// moduleButton
 			// 
-			this.moduleButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.moduleButton.Location = new System.Drawing.Point(556, 69);
-			this.moduleButton.Name = "moduleButton";
-			this.controlResource.SetResourceKey(this.moduleButton, null);
-			this.moduleButton.Size = new System.Drawing.Size(22, 22);
-			this.moduleButton.TabIndex = 5;
-			this.moduleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moduleButton.Values.Image")));
-			this.moduleButton.Values.Text = "";
-			this.moduleButton.Click += new System.EventHandler(this.ModuleButton_Click);
+			moduleButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			moduleButton.Location = new System.Drawing.Point(556, 69);
+			moduleButton.Name = "moduleButton";
+			moduleButton.Size = new System.Drawing.Size(22, 22);
+			moduleButton.TabIndex = 5;
+			moduleButton.Values.Image = (System.Drawing.Image)resources.GetObject("moduleButton.Values.Image");
+			moduleButton.Values.Text = "";
+			moduleButton.Click += ModuleButton_Click;
 			// 
 			// moduleTextBox
 			// 
-			this.moduleTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.moduleTextBox.Location = new System.Drawing.Point(100, 70);
-			this.moduleTextBox.Name = "moduleTextBox";
-			this.moduleTextBox.Palette = this.fontPalette;
-			this.moduleTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.moduleTextBox, null);
-			this.moduleTextBox.Size = new System.Drawing.Size(454, 20);
-			this.moduleTextBox.TabIndex = 4;
+			moduleTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			moduleTextBox.Location = new System.Drawing.Point(100, 70);
+			moduleTextBox.Name = "moduleTextBox";
+			moduleTextBox.Palette = fontPalette;
+			moduleTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			moduleTextBox.Size = new System.Drawing.Size(454, 20);
+			moduleTextBox.TabIndex = 4;
 			// 
 			// moduleLabel
 			// 
-			this.moduleLabel.Location = new System.Drawing.Point(4, 72);
-			this.moduleLabel.Name = "moduleLabel";
-			this.moduleLabel.Palette = this.fontPalette;
-			this.moduleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.moduleLabel, "IDS_SETTINGS_PATHS_MODULEPATH");
-			this.moduleLabel.Size = new System.Drawing.Size(70, 16);
-			this.moduleLabel.TabIndex = 3;
-			this.moduleLabel.Values.Text = "Module path";
+			moduleLabel.Location = new System.Drawing.Point(4, 72);
+			moduleLabel.Name = "moduleLabel";
+			moduleLabel.Palette = fontPalette;
+			moduleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(moduleLabel, "IDS_SETTINGS_PATHS_MODULE");
+			moduleLabel.Size = new System.Drawing.Size(70, 16);
+			moduleLabel.TabIndex = 3;
+			moduleLabel.Values.Text = "Module path";
 			// 
 			// listButton
 			// 
-			this.listButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.listButton.Location = new System.Drawing.Point(556, 101);
-			this.listButton.Name = "listButton";
-			this.controlResource.SetResourceKey(this.listButton, null);
-			this.listButton.Size = new System.Drawing.Size(22, 22);
-			this.listButton.TabIndex = 8;
-			this.listButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("listButton.Values.Image")));
-			this.listButton.Values.Text = "";
-			this.listButton.Click += new System.EventHandler(this.ListButton_Click);
+			listButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			listButton.Location = new System.Drawing.Point(556, 101);
+			listButton.Name = "listButton";
+			listButton.Size = new System.Drawing.Size(22, 22);
+			listButton.TabIndex = 8;
+			listButton.Values.Image = (System.Drawing.Image)resources.GetObject("listButton.Values.Image");
+			listButton.Values.Text = "";
+			listButton.Click += ListButton_Click;
 			// 
 			// listTextBox
 			// 
-			this.listTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.listTextBox.Location = new System.Drawing.Point(100, 102);
-			this.listTextBox.Name = "listTextBox";
-			this.listTextBox.Palette = this.fontPalette;
-			this.listTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.listTextBox, null);
-			this.listTextBox.Size = new System.Drawing.Size(454, 20);
-			this.listTextBox.TabIndex = 7;
+			listTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			listTextBox.Location = new System.Drawing.Point(100, 102);
+			listTextBox.Name = "listTextBox";
+			listTextBox.Palette = fontPalette;
+			listTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			listTextBox.Size = new System.Drawing.Size(454, 20);
+			listTextBox.TabIndex = 7;
 			// 
 			// listLabel
-			//
-			this.listLabel.Location = new System.Drawing.Point(4, 104);
-			this.listLabel.Name = "listLabel";
-			this.listLabel.Palette = this.fontPalette;
-			this.listLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.listLabel, "IDS_SETTINGS_PATHS_LISTPATH");
-			this.listLabel.Size = new System.Drawing.Size(52, 16);
-			this.listLabel.TabIndex = 6;
-			this.listLabel.Values.Text = "List path";
-			//
+			// 
+			listLabel.Location = new System.Drawing.Point(4, 104);
+			listLabel.Name = "listLabel";
+			listLabel.Palette = fontPalette;
+			listLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(listLabel, "IDS_SETTINGS_PATHS_LIST");
+			listLabel.Size = new System.Drawing.Size(52, 16);
+			listLabel.TabIndex = 6;
+			listLabel.Values.Text = "List path";
+			// 
 			// modLibraryButton
-			//
-			this.modLibraryButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.modLibraryButton.Location = new System.Drawing.Point(556, 133);
-			this.modLibraryButton.Name = "modLibraryButton";
-			this.controlResource.SetResourceKey(this.modLibraryButton, null);
-			this.modLibraryButton.Size = new System.Drawing.Size(22, 22);
-			this.modLibraryButton.TabIndex = 11;
-			this.modLibraryButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("listButton.Values.Image")));
-			this.modLibraryButton.Values.Text = "";
-			this.modLibraryButton.Click += new System.EventHandler(this.ModLibraryButton_Click);
-			//
+			// 
+			modLibraryButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			modLibraryButton.Location = new System.Drawing.Point(556, 133);
+			modLibraryButton.Name = "modLibraryButton";
+			modLibraryButton.Size = new System.Drawing.Size(22, 22);
+			modLibraryButton.TabIndex = 11;
+			modLibraryButton.Values.Image = (System.Drawing.Image)resources.GetObject("modLibraryButton.Values.Image");
+			modLibraryButton.Values.Text = "";
+			modLibraryButton.Click += ModLibraryButton_Click;
+			// 
 			// modLibraryTextBox
-			//
-			this.modLibraryTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.modLibraryTextBox.Location = new System.Drawing.Point(100, 134);
-			this.modLibraryTextBox.Name = "modLibraryTextBox";
-			this.modLibraryTextBox.Palette = this.fontPalette;
-			this.modLibraryTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.modLibraryTextBox, null);
-			this.modLibraryTextBox.Size = new System.Drawing.Size(454, 20);
-			this.modLibraryTextBox.TabIndex = 10;
-			//
+			// 
+			modLibraryTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			modLibraryTextBox.Location = new System.Drawing.Point(100, 134);
+			modLibraryTextBox.Name = "modLibraryTextBox";
+			modLibraryTextBox.Palette = fontPalette;
+			modLibraryTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			modLibraryTextBox.Size = new System.Drawing.Size(454, 20);
+			modLibraryTextBox.TabIndex = 10;
+			// 
 			// modLibraryLabel
-			//
-			this.modLibraryLabel.Location = new System.Drawing.Point(4, 136);
-			this.modLibraryLabel.Name = "modLibraryLabel";
-			this.modLibraryLabel.Palette = this.fontPalette;
-			this.modLibraryLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.modLibraryLabel, "IDS_SETTINGS_PATHS_MODLIBRARYPATH");
-			this.modLibraryLabel.Size = new System.Drawing.Size(86, 16);
-			this.modLibraryLabel.TabIndex = 9;
-			this.modLibraryLabel.Values.Text = "Module Library";
-			//
+			// 
+			modLibraryLabel.Location = new System.Drawing.Point(4, 136);
+			modLibraryLabel.Name = "modLibraryLabel";
+			modLibraryLabel.Palette = fontPalette;
+			modLibraryLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(modLibraryLabel, "IDS_SETTINGS_PATHS_MODULELIBRARY");
+			modLibraryLabel.Size = new System.Drawing.Size(79, 16);
+			modLibraryLabel.TabIndex = 9;
+			modLibraryLabel.Values.Text = "Module library";
+			// 
 			// PathsPageControl
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.BackColor = System.Drawing.Color.Transparent;
-			this.Controls.Add(this.group);
-			this.Name = "PathsPageControl";
-			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(608, 356);
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.group.Panel)).EndInit();
-			this.group.Panel.ResumeLayout(false);
-			this.group.Panel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.group)).EndInit();
-			this.ResumeLayout(false);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			BackColor = System.Drawing.Color.Transparent;
+			Controls.Add(group);
+			Name = "PathsPageControl";
+			Size = new System.Drawing.Size(608, 356);
+			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
+			((System.ComponentModel.ISupportInitialize)group.Panel).EndInit();
+			group.Panel.ResumeLayout(false);
+			group.Panel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)group).EndInit();
+			ResumeLayout(false);
 
 		}
 
