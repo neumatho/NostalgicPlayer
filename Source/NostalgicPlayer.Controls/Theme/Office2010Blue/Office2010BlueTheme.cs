@@ -15,6 +15,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue
 
 		private static readonly Office2010BlueFormColors formColors = new Office2010BlueFormColors();
 		private static readonly Office2010BlueButtonColors buttonColors = new Office2010BlueButtonColors();
+		private static readonly Office2010BlueComboBoxColors comboBoxColors = new Office2010BlueComboBoxColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -74,5 +75,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue
 		/// </summary>
 		/********************************************************************/
 		public IButtonColors ButtonColors => buttonColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by combo boxes
+		/// </summary>
+		/********************************************************************/
+		public IComboBoxColors ComboBoxColors => comboBoxColors;
 	}
 }
