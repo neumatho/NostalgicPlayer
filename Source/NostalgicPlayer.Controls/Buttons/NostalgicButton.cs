@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 		private bool isHovered;
 		private bool isPressed;			// True while mouse down or space-bar held
-		private bool spacePressed;		// Track if space currently holds the pressed state
+		private bool isSpacePressed;	// Track if space currently holds the pressed state
 
 		/********************************************************************/
 		/// <summary>
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
-			if (isPressed && !spacePressed)
+			if (isPressed && !isSpacePressed)
 			{
 				isPressed = false;
 				Invalidate();
@@ -217,7 +217,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		protected override void OnMouseCaptureChanged(EventArgs e)
 		{
 			// If capture is lost unexpectedly while pressed, normalize state
-			if (!Capture && isPressed && !spacePressed)
+			if (!Capture && isPressed && !isSpacePressed)
 			{
 				isPressed = false;
 				Invalidate();
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		protected override void OnLostFocus(EventArgs e)
 		{
-			spacePressed = false;
+			isSpacePressed = false;
 			isPressed = false;
 			Invalidate();
 
@@ -265,9 +265,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if ((e.KeyCode == Keys.Space) && !spacePressed)
+			if ((e.KeyCode == Keys.Space) && !isSpacePressed)
 			{
-				spacePressed = true;
+				isSpacePressed = true;
 				isPressed = true;
 				Invalidate();
 			}
@@ -284,9 +284,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Space && spacePressed)
+			if (e.KeyCode == Keys.Space && isSpacePressed)
 			{
-				spacePressed = false;
+				isSpacePressed = false;
 				isPressed = false;
 				Invalidate();
 			}
@@ -305,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		{
 			if (!Enabled)
 			{
-				spacePressed = false;
+				isSpacePressed = false;
 				isPressed = false;
 			}
 
@@ -524,7 +524,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		{
 			Font font = fontConfiguration?.Font ?? fonts.RegularFont;
 
-			int y = (rect.Height - font.Height) / 2 - 1;
+			int y = ((rect.Height - font.Height) / 2) - 1;
 
 			TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
 			Rectangle drawRect = new Rectangle(rect.X, rect.Y + y, rect.Width, Font.Height);
