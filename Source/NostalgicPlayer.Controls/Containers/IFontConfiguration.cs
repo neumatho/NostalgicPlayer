@@ -15,6 +15,6 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		/// <summary>
 		/// Set the FontConfiguration component to use for this control
 		/// </summary>
-		public FontConfiguration UseFont { get; set; }
+		FontConfiguration UseFont { get; set; }
 	}
 }

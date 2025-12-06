@@ -38,7 +38,7 @@
 			removeButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			resetButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			favoriteGroup = new Krypton.Toolkit.KryptonGroup();
-			showComboBox = new Krypton.Toolkit.KryptonComboBox();
+			showComboBox = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicComboBox();
 			otherNumberTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox();
 			toolTip = new System.Windows.Forms.ToolTip(components);
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).BeginInit();
@@ -46,7 +46,6 @@
 			((System.ComponentModel.ISupportInitialize)favoriteGroup).BeginInit();
 			((System.ComponentModel.ISupportInitialize)favoriteGroup.Panel).BeginInit();
 			favoriteGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)showComboBox).BeginInit();
 			SuspendLayout();
 			// 
 			// favoriteDataGridView
@@ -63,7 +62,6 @@
 			favoriteDataGridView.Palette = fontPalette;
 			favoriteDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			favoriteDataGridView.ReadOnly = true;
-			controlResource.SetResourceKey(favoriteDataGridView, null);
 			favoriteDataGridView.RowHeadersVisible = false;
 			favoriteDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			favoriteDataGridView.ShowCellErrors = false;
@@ -140,22 +138,17 @@
 			// 
 			// 
 			favoriteGroup.Panel.Controls.Add(favoriteDataGridView);
-			controlResource.SetResourceKey(favoriteGroup, null);
 			favoriteGroup.Size = new System.Drawing.Size(406, 184);
 			favoriteGroup.TabIndex = 0;
 			// 
 			// showComboBox
 			// 
 			showComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-			showComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			showComboBox.DropDownWidth = 121;
 			showComboBox.IntegralHeight = false;
-			showComboBox.Location = new System.Drawing.Point(196, 202);
+			showComboBox.Location = new System.Drawing.Point(196, 200);
 			showComboBox.Name = "showComboBox";
-			showComboBox.Palette = fontPalette;
-			showComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(showComboBox, null);
-			showComboBox.Size = new System.Drawing.Size(90, 19);
+			showComboBox.Size = new System.Drawing.Size(90, 21);
 			showComboBox.TabIndex = 3;
 			showComboBox.SelectedIndexChanged += ShowComboBox_SelectedIndexChanged;
 			// 
@@ -167,7 +160,6 @@
 			otherNumberTextBox.Name = "otherNumberTextBox";
 			otherNumberTextBox.Palette = fontPalette;
 			otherNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(otherNumberTextBox, null);
 			otherNumberTextBox.Size = new System.Drawing.Size(30, 20);
 			otherNumberTextBox.TabIndex = 4;
 			otherNumberTextBox.TextChanged += OtherNumberTextBox_TextChanged;
@@ -185,14 +177,12 @@
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(438, 264);
 			Name = "FavoriteSongSystemForm";
-			controlResource.SetResourceKey(this, null);
 			FormClosed += FavoriteSongSystemWindowForm_FormClosed;
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).EndInit();
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
 			((System.ComponentModel.ISupportInitialize)favoriteGroup.Panel).EndInit();
 			favoriteGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)favoriteGroup).EndInit();
-			((System.ComponentModel.ISupportInitialize)showComboBox).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 
@@ -205,7 +195,7 @@
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton removeButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton resetButton;
 		private Krypton.Toolkit.KryptonGroup favoriteGroup;
-		private Krypton.Toolkit.KryptonComboBox showComboBox;
+		private NostalgicPlayer.Controls.Lists.NostalgicComboBox showComboBox;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox otherNumberTextBox;
 		private System.Windows.Forms.ToolTip toolTip;
 		private Kit.Gui.Components.FontPalette fontPalette;
