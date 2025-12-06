@@ -9,8 +9,8 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Theme;
-using Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue;
 using Polycode.NostalgicPlayer.Controls.Theme.Purple;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -207,7 +207,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 					case Keys.F12:
 					{
 						theme = !theme;
-						ThemeManagerFactory.GetThemeManager().SwitchTheme(theme ? new PurpleTheme() : new Office2010BlueTheme());
+						ThemeManagerFactory.GetThemeManager().SwitchTheme(theme ? new PurpleTheme() : new StandardTheme());
 
 						return true;
 					}
