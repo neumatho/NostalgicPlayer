@@ -6,16 +6,16 @@
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue
+namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {
 	/// <summary>
 	/// Different colors used by combo box
 	/// </summary>
-	internal class Office2010BlueComboBoxColors : IComboBoxColors
+	internal class StandardComboBoxColors : IComboBoxColors
 	{
-		private readonly IInputControlColors inputControlColors = new Office2010BlueInputControlColors();
-		private readonly IButtonColors buttonColors = new Office2010BlueButtonColors();
-		private readonly IListItemColors listColors = new Office2010BlueListColors();
+		private readonly IInputControlColors inputControlColors = new StandardInputControlColors();
+		private readonly IButtonColors buttonColors = new StandardButtonColors();
+		private readonly IListItemColors listColors = new StandardListColors();
 
 		/********************************************************************/
 		/// <summary>
