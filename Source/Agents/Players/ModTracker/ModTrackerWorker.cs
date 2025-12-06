@@ -1830,7 +1830,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					}
 
 					// Fill out the channel
-					if (modChan.Length > 0)
+					if ((modChan.Length > 0) && (modChan.SampleData != null))
 					{
 						uint offset = modChan.Offset + modChan.StartOffset;
 						chan.PlaySample(modChan.SampleNumber, modChan.SampleData, offset, (uint)(modChan.Length * 2));
