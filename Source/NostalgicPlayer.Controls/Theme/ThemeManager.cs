@@ -6,7 +6,7 @@
 using System;
 using Polycode.NostalgicPlayer.Controls.Containers.Events;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
-using Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme
 {
@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/********************************************************************/
 		public ThemeManager()
 		{
-			theme = new Office2010BlueTheme();
+			theme = new StandardTheme();
 		}
 
 
