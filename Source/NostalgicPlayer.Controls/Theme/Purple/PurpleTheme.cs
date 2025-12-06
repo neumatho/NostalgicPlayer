@@ -16,6 +16,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private StandardFonts standardFonts;
 		private static readonly PurpleFormColors formColors = new PurpleFormColors();
 		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
+		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -75,5 +76,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public IButtonColors ButtonColors => buttonColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by combo boxes
+		/// </summary>
+		/********************************************************************/
+		public IComboBoxColors ComboBoxColors => comboBoxColors;
 	}
 }
