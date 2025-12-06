@@ -1,89 +1,96 @@
-/******************************************************************************/
+﻿/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// A simple purple themed test implementation of ITheme
+	/// Different colors used by combo box
 	/// </summary>
-	public class PurpleTheme : ITheme, IDisposable
+	internal class PurpleListColors : IListItemColors
 	{
-		private StandardFonts standardFonts;
-		private static readonly PurpleFormColors formColors = new PurpleFormColors();
-		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
-		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
+		private static readonly Color normalBackgroundStartColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color normalBackgroundMiddleColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color normalBackgroundStopColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color normalTextColor = Color.FromArgb(55, 30, 85);
+
+		private static readonly Color selectedBackgroundStartColor = Color.FromArgb(190, 170, 230);
+		private static readonly Color selectedBackgroundMiddleColor = Color.FromArgb(175, 155, 215);
+		private static readonly Color selectedBackgroundStopColor = Color.FromArgb(205, 185, 240);
+		private static readonly Color selectedTextColor = Color.FromArgb(55, 30, 85);
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public PurpleTheme()
-		{
-			standardFonts = new StandardFonts();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup
-		/// </summary>
-		/********************************************************************/
-		public void Dispose()
-		{
-			standardFonts.Dispose();
-			standardFonts = null;
-		}
+		public Color NormalBackgroundStartColor => normalBackgroundStartColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a unique ID for the theme
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public Guid Id => new Guid("A4F0D3C0-5D2E-44A2-9CF1-8A1C6D2E0B12");
+		public Color NormalBackgroundMiddleColor => normalBackgroundMiddleColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of standard fonts
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IFonts StandardFonts => standardFonts;
+		public Color NormalBackgroundStopColor => normalBackgroundStopColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by forms
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IFormColors FormColors => formColors;
+		public Color NormalTextColor => normalTextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by buttons
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IButtonColors ButtonColors => buttonColors;
+		public Color SelectedBackgroundStartColor => selectedBackgroundStartColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by combo boxes
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IComboBoxColors ComboBoxColors => comboBoxColors;
+		public Color SelectedBackgroundMiddleColor => selectedBackgroundMiddleColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color SelectedBackgroundStopColor => selectedBackgroundStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color SelectedTextColor => selectedTextColor;
 	}
 }
