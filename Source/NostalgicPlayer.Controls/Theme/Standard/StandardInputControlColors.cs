@@ -6,9 +6,9 @@
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme.Office2010Blue
+namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {
-	internal class Office2010BlueInputControlColors : IInputControlColors
+	internal class StandardInputControlColors : IInputControlColors
 	{
 		private static readonly Color normalBorderColor = Color.FromArgb(177, 192, 214);
 		private static readonly Color normalBackgroundColor = Color.FromArgb(255, 255, 255);
