@@ -10,10 +10,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Containers.Events;
+using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Native;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
@@ -164,12 +164,12 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			List<IThemeControl> result = new List<IThemeControl>();
 
-			foreach (IThemeControl control in controls.OfType<IThemeControl>())
+			foreach (Control control in controls)
 			{
-				result.Add(control);
+				if (control is IThemeControl themedControl)
+					result.Add(themedControl);
 
-				if (control is Control ctrl)
-					result.AddRange(FindThemedControls(ctrl.Controls));
+				result.AddRange(FindThemedControls(control.Controls));
 			}
 
 			return result;
@@ -1213,9 +1213,9 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/// </summary>
 		private sealed class NostalgicFormTypeDescriptionProvider : TypeDescriptionProvider
 		{
-			private static readonly TypeDescriptionProvider Parent = TypeDescriptor.GetProvider(typeof(Form));
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(Form));
 
-			private static readonly string[] PropertiesToHide =
+			private static readonly string[] propertiesToHide =
 			[
 				nameof(AutoScaleDimensions),
 				nameof(AutoScaleMode),
@@ -1229,7 +1229,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public NostalgicFormTypeDescriptionProvider() : base(Parent)
+			public NostalgicFormTypeDescriptionProvider() : base(parent)
 			{
 			}
 
@@ -1242,57 +1242,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			/********************************************************************/
 			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
 			{
-				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
-			}
-
-			/// <summary>
-			/// 
-			/// </summary>
-			private sealed class HidingTypeDescriptor : CustomTypeDescriptor
-			{
-				/********************************************************************/
-				/// <summary>
-				/// Constructor
-				/// </summary>
-				/********************************************************************/
-				public HidingTypeDescriptor(ICustomTypeDescriptor parent) : base(parent)
-				{
-				}
-
-
-
-				/********************************************************************/
-				/// <summary>
-				/// 
-				/// </summary>
-				/********************************************************************/
-				public override PropertyDescriptorCollection GetProperties()
-				{
-					return GetProperties(null);
-				}
-
-
-
-				/********************************************************************/
-				/// <summary>
-				/// 
-				/// </summary>
-				/********************************************************************/
-				public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
-				{
-					PropertyDescriptorCollection props = base.GetProperties(attributes);
-					List<PropertyDescriptor> kept = new List<PropertyDescriptor>(props.Count);
-
-					foreach (PropertyDescriptor pd in props)
-					{
-						if (PropertiesToHide.Contains(pd.Name))
-							continue;
-
-						kept.Add(pd);
-					}
-
-					return new PropertyDescriptorCollection(kept.ToArray(), true);
-				}
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance), propertiesToHide);
 			}
 		}
 		#endregion
