@@ -4,14 +4,13 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Containers;
+using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
@@ -566,9 +565,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/// </summary>
 		private sealed class NostalgicButtonTypeDescriptionProvider : TypeDescriptionProvider
 		{
-			private static readonly TypeDescriptionProvider Parent = TypeDescriptor.GetProvider(typeof(Button));
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(Button));
 
-			private static readonly string[] PropertiesToHide =
+			private static readonly string[] propertiesToHide =
 			[
 				nameof(FlatStyle),
 				nameof(BackColor),
@@ -594,7 +593,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public NostalgicButtonTypeDescriptionProvider() : base(Parent)
+			public NostalgicButtonTypeDescriptionProvider() : base(parent)
 			{
 			}
 
@@ -607,57 +606,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 			/********************************************************************/
 			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
 			{
-				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance));
-			}
-
-			/// <summary>
-			/// 
-			/// </summary>
-			private sealed class HidingTypeDescriptor : CustomTypeDescriptor
-			{
-				/********************************************************************/
-				/// <summary>
-				/// Constructor
-				/// </summary>
-				/********************************************************************/
-				public HidingTypeDescriptor(ICustomTypeDescriptor parent) : base(parent)
-				{
-				}
-
-
-
-				/********************************************************************/
-				/// <summary>
-				/// 
-				/// </summary>
-				/********************************************************************/
-				public override PropertyDescriptorCollection GetProperties()
-				{
-					return GetProperties(null);
-				}
-
-
-
-				/********************************************************************/
-				/// <summary>
-				/// 
-				/// </summary>
-				/********************************************************************/
-				public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
-				{
-					PropertyDescriptorCollection props = base.GetProperties(attributes);
-					List<PropertyDescriptor> kept = new List<PropertyDescriptor>(props.Count);
-
-					foreach (PropertyDescriptor pd in props)
-					{
-						if (PropertiesToHide.Contains(pd.Name))
-							continue;
-
-						kept.Add(pd);
-					}
-
-					return new PropertyDescriptorCollection(kept.ToArray(), true);
-				}
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance), propertiesToHide);
 			}
 		}
 		#endregion
