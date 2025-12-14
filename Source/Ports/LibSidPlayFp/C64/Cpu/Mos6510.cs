@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 		/// <summary>
 		/// Status register
 		/// </summary>
-		private Flags flags = new Flags();
+		private readonly Flags flags = new Flags();
 
 		/// <summary>
 		/// Data regarding current instruction

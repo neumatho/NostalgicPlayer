@@ -34,9 +34,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 		private readonly float peakDecay;
 
 		// Text size caching
-		private float textWidthFull;   // Width of "CH01"
-		private float textWidthShort;  // Width of "01"
-		private float textHeight;      // Height of text
+		private readonly float textWidthFull;   // Width of "CH01"
+		private readonly float textWidthShort;  // Width of "01"
+		private readonly float textHeight;      // Height of text
 
 		private float measuredLevel;
 

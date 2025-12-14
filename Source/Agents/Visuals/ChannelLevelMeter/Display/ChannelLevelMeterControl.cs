@@ -30,8 +30,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 
 		private Bitmap backgroundBitmap;
 		private int channelCount;
-		private Orientation currentOrientation = Orientation.Horizontal;
-		private ChannelLevelMeterSettings settings;
+		private Orientation currentOrientation;
+		private readonly ChannelLevelMeterSettings settings;
 
 		/********************************************************************/
 		/// <summary>

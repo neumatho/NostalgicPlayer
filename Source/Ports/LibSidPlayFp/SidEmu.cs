@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		private bool isFilterDisabled = false;
 
 		// Flags for muted voices
-		private bool[] isMuted;
+		private readonly bool[] isMuted;
 
 		protected string error;
 

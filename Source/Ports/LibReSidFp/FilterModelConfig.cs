@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		private class RandomNoise
 		{
-			private double[] buffer = new double[1024];
+			private readonly double[] buffer = new double[1024];
 			private int index = 0;
 
 			/********************************************************************/

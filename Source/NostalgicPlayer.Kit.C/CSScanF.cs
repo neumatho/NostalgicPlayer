@@ -262,7 +262,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		}
 
 		// Lookup table to find parser by parser type
-		private TypeParser[] _typeParsers;
+		private readonly TypeParser[] typeParsers;
 
 		/// <summary>
 		/// Holds results after calling Parse()
@@ -275,16 +275,18 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public CSScanF()
 		{
 			// Populate parser type lookup table
-			_typeParsers = new TypeParser[] {
-			new TypeParser() { Type = Types.Character, Parser = ParseCharacter },
-			new TypeParser() { Type = Types.Decimal, Parser = ParseDecimal },
-			new TypeParser() { Type = Types.Float, Parser = ParseFloat },
-			new TypeParser() { Type = Types.Hexadecimal, Parser = ParseHexadecimal },
-			new TypeParser() { Type = Types.Octal, Parser = ParseOctal },
-			new TypeParser() { Type = Types.ScanSet, Parser = ParseScanSet },
-			new TypeParser() { Type = Types.String, Parser = ParseString },
-			new TypeParser() { Type = Types.Unsigned, Parser = ParseDecimal }
-		};
+			typeParsers =
+			[
+				new TypeParser() { Type = Types.Character, Parser = ParseCharacter },
+				new TypeParser() { Type = Types.Decimal, Parser = ParseDecimal },
+				new TypeParser() { Type = Types.Float, Parser = ParseFloat },
+				new TypeParser() { Type = Types.Hexadecimal, Parser = ParseHexadecimal },
+				new TypeParser() { Type = Types.Octal, Parser = ParseOctal },
+				new TypeParser() { Type = Types.ScanSet, Parser = ParseScanSet },
+				new TypeParser() { Type = Types.String, Parser = ParseString },
+				new TypeParser() { Type = Types.Unsigned, Parser = ParseDecimal }
+			];
+
 			// Allocate results collection
 			Results = new List<object>();
 		}
@@ -313,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				if (ParseFormatSpecifier(fmt, spec))
 				{
 					// Found a format specifier
-					TypeParser parser = _typeParsers.First(tp => tp.Type == spec.Type);
+					TypeParser parser = typeParsers.First(tp => tp.Type == spec.Type);
 					if (parser.Parser(inp, spec))
 						count++;
 					else

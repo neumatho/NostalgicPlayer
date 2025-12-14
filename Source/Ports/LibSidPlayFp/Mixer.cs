@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		private class RandomLcg
 		{
-			private int MAX_VAL;
+			private readonly int MAX_VAL;
 			private uint32_t rand_seed;
 
 			public RandomLcg(int maxVal, uint32_t seed)

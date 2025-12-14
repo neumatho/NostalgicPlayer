@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 		private readonly LhaCore lha;
 
 		private int decrunchedBytesLeft;
-		private bool stored;			// Indicate if the data are just stored or compressed
+		private readonly bool stored;			// Indicate if the data are just stored or compressed
 
 		/********************************************************************/
 		/// <summary>

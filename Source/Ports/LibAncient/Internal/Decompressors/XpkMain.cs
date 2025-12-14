@@ -50,8 +50,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		private readonly bool longHeaders;
 		private readonly bool hasPassword = false;
 
-		private CreateSubDecompressor subDecompressor;
-		private DecompressorType decompressorType;
+		private readonly CreateSubDecompressor subDecompressor;
+		private readonly DecompressorType decompressorType;
 
 		/********************************************************************/
 		/// <summary>

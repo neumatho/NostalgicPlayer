@@ -155,8 +155,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Synth_Format basic_Format = Synth_Format.None;	// Default is always 16bit, or whatever
 
 			if (false)
+#pragma warning disable CS0162 // Unreachable code detected
 			{
 			}
+#pragma warning restore CS0162 // Unreachable code detected
 			else if ((fr.Af.Dec_Enc & Mpg123_Enc_Enum.Enc_16) != 0)
 				basic_Format = Synth_Format.Sixteen;
 			// 24 bit integer means decoding to 32 bit first

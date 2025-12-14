@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// <summary>
 		/// Table of the fir filter coefficients
 		/// </summary>
-		private matrix_t firTable;
+		private readonly matrix_t firTable;
 
 		private int sampleIndex = 0;
 

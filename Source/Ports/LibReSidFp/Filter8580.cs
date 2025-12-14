@@ -260,7 +260,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// VCR + associated capacitor connected to highpass output
 		/// </summary>
-		private Integrator8580 hpIntegrator;
+		private readonly Integrator8580 hpIntegrator;
 
 		/// <summary>
 		/// VCR + associated capacitor connected to bandpass output

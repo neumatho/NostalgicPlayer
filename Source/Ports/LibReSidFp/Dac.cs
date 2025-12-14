@@ -74,8 +74,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		private readonly uint dacLength;
 
-		private double MOSFET_LEAKAGE_6581 = 0.0075;
-		private double MOSFET_LEAKAGE_8580 = 0.0035;
+		private readonly double MOSFET_LEAKAGE_6581 = 0.0075;
+		private readonly double MOSFET_LEAKAGE_8580 = 0.0035;
 
 		/********************************************************************/
 		/// <summary>

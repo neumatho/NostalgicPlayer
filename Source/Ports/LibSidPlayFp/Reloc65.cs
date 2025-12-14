@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		private static readonly byte[] o65Hdr = { 1, 0, (byte)'o', (byte)'6', (byte)'5' };
 
-		private int tBase;
+		private readonly int tBase;
 		private int tDiff;
 
 		/********************************************************************/
