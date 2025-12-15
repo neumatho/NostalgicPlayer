@@ -81,10 +81,10 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			base.OnHandleCreated(e);
-
 			if (DesignMode)
 				SetTheme(ThemeManagerFactory.GetThemeManager().CurrentTheme);
+
+			base.OnHandleCreated(e);
 		}
 		#endregion
 
