@@ -36,5 +36,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by combo boxes
 		/// </summary>
 		IComboBoxColors ComboBoxColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by DataGridView
+		/// </summary>
+		IDataGridViewColors DataGridViewColors { get; }
 	}
 }

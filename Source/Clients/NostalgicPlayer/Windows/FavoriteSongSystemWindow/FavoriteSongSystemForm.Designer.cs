@@ -30,7 +30,7 @@
 		{
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FavoriteSongSystemForm));
-			favoriteDataGridView = new Krypton.Toolkit.KryptonDataGridView();
+			favoriteDataGridView = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicDataGridView();
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			addButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
@@ -50,28 +50,11 @@
 			// 
 			// favoriteDataGridView
 			// 
-			favoriteDataGridView.AllowUserToAddRows = false;
-			favoriteDataGridView.AllowUserToDeleteRows = false;
 			favoriteDataGridView.AllowUserToOrderColumns = true;
-			favoriteDataGridView.AllowUserToResizeRows = false;
-			favoriteDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			favoriteDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			favoriteDataGridView.GridStyles.StyleDataCells = Krypton.Toolkit.GridStyle.Sheet;
 			favoriteDataGridView.Location = new System.Drawing.Point(0, 0);
 			favoriteDataGridView.Name = "favoriteDataGridView";
-			favoriteDataGridView.Palette = fontPalette;
-			favoriteDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			favoriteDataGridView.ReadOnly = true;
-			favoriteDataGridView.RowHeadersVisible = false;
-			favoriteDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			favoriteDataGridView.ShowCellErrors = false;
-			favoriteDataGridView.ShowEditingIcon = false;
-			favoriteDataGridView.ShowRowErrors = false;
 			favoriteDataGridView.Size = new System.Drawing.Size(404, 182);
-			favoriteDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			favoriteDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
-			favoriteDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			favoriteDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right;
 			favoriteDataGridView.TabIndex = 0;
 			favoriteDataGridView.SelectionChanged += FavoriteDataGridView_SelectionChanged;
 			favoriteDataGridView.CellDoubleClick += FavoriteDataGridView_CellDoubleClick;
@@ -189,7 +172,7 @@
 		}
 
 		#endregion
-		private Krypton.Toolkit.KryptonDataGridView favoriteDataGridView;
+		private Polycode.NostalgicPlayer.Controls.Lists.NostalgicDataGridView favoriteDataGridView;
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton addButton;
 		private Kit.Gui.Designer.ControlResource controlResource;
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton removeButton;
