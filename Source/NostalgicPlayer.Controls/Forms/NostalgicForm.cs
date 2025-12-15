@@ -98,8 +98,6 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			InitializeTheme();
 
-			base.OnHandleCreated(e);
-
 			isActive = ActiveForm == this;
 
 			SetFormProperties();
@@ -107,6 +105,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			CalculateTitleHeight();
 			ApplyWindowRegion();
 			RefreshNonClientArea();
+
+			base.OnHandleCreated(e);
 		}
 		#endregion
 
@@ -924,7 +924,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void DrawTitle(Graphics g, int left, int right)
 		{
-			Rectangle rect = new Rectangle(left, FrameBorderThickness + ((titleBarHeight - titleBarFontSize) / 2), right - left, titleBarFontSize);
+			Rectangle rect = new Rectangle(left, FrameBorderThickness + ((titleBarHeight - titleBarFontSize) / 2) - 1, right - left, titleBarFontSize);
 
 			Color titleColor = isActive ? colors.ActivatedWindowTitleColor : colors.DeactivatedWindowTitleColor;
 
