@@ -97,12 +97,12 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			base.OnHandleCreated(e);
-
 			if (DesignMode)
 				SetTheme(ThemeManagerFactory.GetThemeManager().CurrentTheme);
 
 			UpdateFont();
+
+			base.OnHandleCreated(e);
 		}
 		#endregion
 
@@ -117,6 +117,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			colors = theme.ComboBoxColors;
 			fonts = theme.StandardFonts;
 
+			UpdateFont();
 			Invalidate();
 		}
 		#endregion
@@ -437,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			string text = GetItemText(SelectedItem);
 
-			TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
+			TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix;
 			Rectangle drawRect = new Rectangle(rect.X, rect.Y, rect.Width - DropDownButtonWidth - PaddingBetweenTextAndButton, rect.Height);
 			TextRenderer.DrawText(g, text, font, drawRect, stateColors.TextColor, flags);
 		}
