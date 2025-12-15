@@ -16,12 +16,12 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color normalBackgroundStartColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color normalBackgroundMiddleColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color normalBackgroundStopColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color normalTextColor = Color.FromArgb(30, 57, 91);
+		private static readonly Color normalTextColor = Color.FromArgb(0, 0, 0);
 
 		private static readonly Color selectedBackgroundStartColor = Color.FromArgb(255, 225, 112);
 		private static readonly Color selectedBackgroundMiddleColor = Color.FromArgb(255, 216, 108);
 		private static readonly Color selectedBackgroundStopColor = Color.FromArgb(255, 237, 123);
-		private static readonly Color selectedTextColor = Color.FromArgb(30, 57, 91);
+		private static readonly Color selectedTextColor = Color.FromArgb(0, 0, 0);
 
 		/********************************************************************/
 		/// <summary>

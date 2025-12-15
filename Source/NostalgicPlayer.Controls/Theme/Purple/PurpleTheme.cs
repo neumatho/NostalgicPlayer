@@ -17,6 +17,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleFormColors formColors = new PurpleFormColors();
 		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
 		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
+		private static readonly PurpleDataGridViewColors dataGridViewColors = new PurpleDataGridViewColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -85,5 +86,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public IComboBoxColors ComboBoxColors => comboBoxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by DataGridView
+		/// </summary>
+		/********************************************************************/
+		public IDataGridViewColors DataGridViewColors => dataGridViewColors;
 	}
 }
