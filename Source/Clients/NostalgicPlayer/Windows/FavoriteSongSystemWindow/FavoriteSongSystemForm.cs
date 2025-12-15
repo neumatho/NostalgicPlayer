@@ -92,18 +92,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 				DisplayIndex = settings.Column3Pos
 			});
 
-			// Add items to the combo controls
-			showComboBox.Items.AddRange(new object[]
-			{
-				Resources.IDS_FAVORITE_SHOW_TOP10,
-				Resources.IDS_FAVORITE_SHOW_TOP50,
-				Resources.IDS_FAVORITE_SHOW_TOP100,
-				Resources.IDS_FAVORITE_SHOW_TOPX,
-				Resources.IDS_FAVORITE_SHOW_BOTTOM10,
-				Resources.IDS_FAVORITE_SHOW_BOTTOM50,
-				Resources.IDS_FAVORITE_SHOW_BOTTOM100,
-				Resources.IDS_FAVORITE_SHOW_BOTTOMX
-			});
+				// Add items to the combo controls
+				showComboBox.Items.AddRange(
+				[
+					Resources.IDS_FAVORITE_SHOW_TOP10,
+					Resources.IDS_FAVORITE_SHOW_TOP50,
+					Resources.IDS_FAVORITE_SHOW_TOP100,
+					Resources.IDS_FAVORITE_SHOW_TOPX,
+					Resources.IDS_FAVORITE_SHOW_BOTTOM10,
+					Resources.IDS_FAVORITE_SHOW_BOTTOM50,
+					Resources.IDS_FAVORITE_SHOW_BOTTOM100,
+					Resources.IDS_FAVORITE_SHOW_BOTTOMX
+				]);
 
 			showComboBox.SelectedIndex = (int)settings.Show;
 			otherNumberTextBox.Text = settings.ShowOther.ToString();
@@ -196,12 +196,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 				if (ArchivePath.IsArchivePath(fileName))
 					fileName = ArchivePath.GetEntryName(fileName);
 
-				row.Cells.AddRange(new DataGridViewCell[]
-				{
+				row.Cells.AddRange(
+				[
 					new KryptonDataGridViewTextBoxCell { Value = pos },
 					new KryptonDataGridViewTextBoxCell { Value = fileName },
 					new KryptonDataGridViewTextBoxCell { Value = pair.Value.ListenCount }
-				});
+				]);
 
 				row.Tag = pair.Key;
 
