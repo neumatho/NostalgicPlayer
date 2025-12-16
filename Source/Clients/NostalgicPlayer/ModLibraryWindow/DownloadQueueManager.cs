@@ -5,8 +5,9 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
@@ -18,18 +19,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private readonly Queue<DownloadQueueItem> queue = new();
 		private readonly HashSet<string> queuedPaths = new();
 		private readonly object queueLock = new();
-		private CancellationTokenSource cancellationTokenSource;
-		private int successCount = 0;
-		private int failureCount = 0;
+		private readonly AutoResetEvent queueEvent = new(false);
+		private readonly ModLibraryDownloadService downloadService;
 
-		public bool IsProcessing
+		private volatile bool stopRequested;
+		private Thread workerThread;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public DownloadQueueManager(ModLibraryDownloadService downloadService)
+		{
+			this.downloadService = downloadService;
+		}
+
+		public int SuccessCount
 		{
 			get;
 			private set;
 		}
 
-		public int SuccessCount => successCount;
-		public int FailureCount => failureCount;
+		public int FailureCount
+		{
+			get;
+			private set;
+		}
 
 		public int QueueCount
 		{
@@ -46,6 +62,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		public event EventHandler<DownloadCompletedEventArgs> DownloadCompleted;
 		public event EventHandler QueueCompleted;
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Enqueue files for download (avoiding duplicates)
@@ -58,14 +76,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				bool isFirst = true;
 
 				foreach (var entry in entries)
+				{
 					if (!entry.IsDirectory && !queuedPaths.Contains(entry.FullPath))
 					{
 						queuedPaths.Add(entry.FullPath);
 						queue.Enqueue(new DownloadQueueItem(entry, isFirst && playFirst));
 						isFirst = false;
 					}
+				}
+			}
+
+			// Start worker thread if not running
+			if (workerThread == null || !workerThread.IsAlive)
+			{
+				stopRequested = false;
+
+				workerThread = new Thread(WorkerLoop)
+				{
+					IsBackground = true,
+					Name = "DownloadQueueWorker"
+				};
+				workerThread.Start();
+			}
+			else
+			{
+				// Wake up the worker thread
+				queueEvent.Set();
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -75,86 +114,84 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public void EnqueueDirectory(TreeNode directoryNode, ModLibraryData data, bool playFirst)
 		{
-			var files = CollectFilesRecursive(directoryNode, data);
+			// Use flat view mode to get all files in one call instead of recursing
+			var allEntries = data.GetEntries(directoryNode.FullPath, true, FlatViewSortOrder.NameThenPath);
+
+			// Filter to only files (flat view may include direct subfolders)
+			var files = allEntries.Where(e => !e.IsDirectory);
+
 			EnqueueFiles(files, playFirst);
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
-		/// Collect all files recursively from a directory node
+		/// Clears pending downloads from the queue
 		/// </summary>
 		/********************************************************************/
-		private List<TreeNode> CollectFilesRecursive(TreeNode node, ModLibraryData data)
+		public void Clear()
 		{
-			List<TreeNode> result = new();
-
-			if (node.IsDirectory)
+			lock (queueLock)
 			{
-				// Get children from data
-				var children = data.GetEntries(node.FullPath, false, FlatViewSortOrder.NameThenPath);
-
-				foreach (var child in children)
-					if (child.IsDirectory)
-						result.AddRange(CollectFilesRecursive(child, data));
-					else
-						result.Add(child);
+				queue.Clear();
+				queuedPaths.Clear();
 			}
-			else
-				result.Add(node);
-
-			return result;
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
-		/// Start processing the download queue
+		/// Terminates the worker thread (call when window is closing)
 		/// </summary>
 		/********************************************************************/
-		public async Task ProcessQueueAsync(Func<TreeNode, bool, CancellationToken, Task<string>> downloadFunc)
+		public void Terminate()
 		{
-			if (IsProcessing)
-				return;
+			stopRequested = true;
 
-			IsProcessing = true;
-			cancellationTokenSource = new CancellationTokenSource();
+			// Wake up thread so it can exit
+			queueEvent.Set();
+		}
 
-			// Reset counters
-			successCount = 0;
-			failureCount = 0;
 
-			try
+
+		/********************************************************************/
+		/// <summary>
+		/// Background worker loop
+		/// </summary>
+		/********************************************************************/
+		private void WorkerLoop()
+		{
+			SuccessCount = 0;
+			FailureCount = 0;
+
+			while (!stopRequested)
 			{
-				while (true)
+				DownloadQueueItem item = null;
+				int remainingCount = 0;
+
+				lock (queueLock)
 				{
-					if (cancellationTokenSource.Token.IsCancellationRequested)
-						break;
-
-					DownloadQueueItem item;
-					int remainingCount;
-
-					// Dequeue with lock
-					lock (queueLock)
+					if (queue.Count > 0)
 					{
-						if (queue.Count == 0)
-							break;
-
 						item = queue.Dequeue();
 						queuedPaths.Remove(item.Entry.FullPath);
-						remainingCount = queue.Count; // Files still in queue
+						remainingCount = queue.Count;
 					}
+				}
 
+				if (item != null)
+				{
 					// Fire progress event
 					ProgressChanged?.Invoke(this, new DownloadProgressEventArgs(remainingCount, item.Entry));
 
 					// Download file
 					try
 					{
-						string localPath = await downloadFunc(item.Entry, item.ShouldPlayImmediately,
-							cancellationTokenSource.Token);
+						string localPath = downloadService.DownloadModule(item.Entry);
 
-						successCount++;
+						SuccessCount++;
 
 						// Fire completed event
 						DownloadCompleted?.Invoke(this,
@@ -162,39 +199,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					}
 					catch (Exception ex)
 					{
-						failureCount++;
+						FailureCount++;
 
 						// Fire completed event with error
 						DownloadCompleted?.Invoke(this,
 							new DownloadCompletedEventArgs(item.Entry, null, item.ShouldPlayImmediately, false, ex.Message));
 					}
+
+					// Check if queue is now empty
+					bool queueEmpty;
+					lock (queueLock)
+					{
+						queueEmpty = queue.Count == 0;
+					}
+
+					if (queueEmpty)
+					{
+						QueueCompleted?.Invoke(this, EventArgs.Empty);
+					}
 				}
-			}
-			finally
-			{
-				IsProcessing = false;
-				cancellationTokenSource?.Dispose();
-				cancellationTokenSource = null;
+				else
+				{
+					// Wait for new items
+					queueEvent.WaitOne();
 
-				QueueCompleted?.Invoke(this, EventArgs.Empty);
-			}
-		}
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cancel the current download queue
-		/// </summary>
-		/********************************************************************/
-		public void Cancel()
-		{
-			cancellationTokenSource?.Cancel();
-
-			// Clear the queue
-			lock (queueLock)
-			{
-				queue.Clear();
-				queuedPaths.Clear();
+					if (stopRequested)
+						return;
+				}
 			}
 		}
 	}

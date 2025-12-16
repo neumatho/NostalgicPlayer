@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
@@ -62,6 +63,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			set
 			{
 				settings.SetBoolEntry("ModLibrary", "FlatViewEnabled", value);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Favorites only checkbox state
+		/// </summary>
+		/********************************************************************/
+		public bool FavoritesOnlyEnabled
+		{
+			get => settings.GetBoolEntry("ModLibrary", "FavoritesOnlyEnabled", false);
+			set
+			{
+				settings.SetBoolEntry("ModLibrary", "FavoritesOnlyEnabled", value);
 			}
 		}
 
@@ -159,6 +176,69 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			{
 				settings.SetStringEntry("ModLibrary", "LastOfflinePath", value);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if update warning is ignored for a specific service
+		/// </summary>
+		/********************************************************************/
+		public bool IsUpdateIgnored(string serviceId)
+		{
+			return settings.GetBoolEntry("ModLibrary", $"IgnoreUpdate_{serviceId}", false);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set ignore state for update warning of a specific service
+		/// </summary>
+		/********************************************************************/
+		public void SetUpdateIgnored(string serviceId, bool ignored)
+		{
+			settings.SetBoolEntry("ModLibrary", $"IgnoreUpdate_{serviceId}", ignored);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Column width for Name column
+		/// </summary>
+		/********************************************************************/
+		public int ColumnWidthName
+		{
+			get => settings.GetIntEntry("ModLibrary", "ColumnWidthName", 400);
+			set => settings.SetIntEntry("ModLibrary", "ColumnWidthName", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Column width for Path column (only used in flat view)
+		/// </summary>
+		/********************************************************************/
+		public int ColumnWidthPath
+		{
+			get => settings.GetIntEntry("ModLibrary", "ColumnWidthPath", 300);
+			set => settings.SetIntEntry("ModLibrary", "ColumnWidthPath", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Column width for Size column
+		/// </summary>
+		/********************************************************************/
+		public int ColumnWidthSize
+		{
+			get => settings.GetIntEntry("ModLibrary", "ColumnWidthSize", 100);
+			set => settings.SetIntEntry("ModLibrary", "ColumnWidthSize", value);
 		}
 	}
 }

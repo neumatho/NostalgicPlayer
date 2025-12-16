@@ -5575,6 +5575,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Get all file paths currently in the playlist as a HashSet for fast lookup
+		/// </summary>
+		/********************************************************************/
+		public HashSet<string> GetPlaylistPathsAsHashSet()
+		{
+			return new HashSet<string>(
+				moduleListControl.Items.Select(item => item.ListItem.Source),
+				StringComparer.OrdinalIgnoreCase);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Select and play the given module list item
 		/// </summary>
 		/********************************************************************/
