@@ -99,11 +99,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		public TreeNode FindByPath(string path)
 		{
 			// If this is the path we're looking for, return this node
-			if (FullPath == path) return this;
+			if (FullPath == path)
+			{
+				return this;
+			}
 
 			// If the path doesn't start with our path, it's not in our subtree
 			// Special case: root has empty FullPath
-			if (!string.IsNullOrEmpty(FullPath) && !path.StartsWith(FullPath)) return null;
+			if (!string.IsNullOrEmpty(FullPath) && !path.StartsWith(FullPath))
+			{
+				return null;
+			}
 
 			// Find the child that matches the next part of the path
 			foreach (var child in Children)
@@ -111,11 +117,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				// For root node (FullPath=""), all paths are valid
 				// For service nodes (ending with "://"), check if path starts with it
 				// For other nodes, check if path matches or is a subpath
+			{
 				if (path == child.FullPath ||
 				    (child.FullPath.EndsWith("://") && path.StartsWith(child.FullPath)) ||
 				    path.StartsWith(child.FullPath + "/"))
 					// Recursively search in this child
+				{
 					return child.FindByPath(path);
+				}
+			}
 
 			return null;
 		}

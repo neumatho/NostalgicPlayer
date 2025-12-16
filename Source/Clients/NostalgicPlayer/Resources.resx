@@ -1420,10 +1420,34 @@ all the selected modules will be moved to the top of the list</value>
     <value>Clear Database</value>
   </data>
   <data name="IDS_MODLIBRARY_DELETE" xml:space="preserve">
-    <value>Delete</value>
+    <value>Delete from Disk</value>
+  </data>
+  <data name="IDS_MODLIBRARY_PLAY" xml:space="preserve">
+    <value>Play Module(s)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_ADD_TO_FAVORITES" xml:space="preserve">
+    <value>Add to Favorites</value>
+  </data>
+  <data name="IDS_MODLIBRARY_REMOVE_FROM_FAVORITES" xml:space="preserve">
+    <value>Remove from Favorites</value>
+  </data>
+  <data name="IDS_MODLIBRARY_ADD_TO_PLAYLIST" xml:space="preserve">
+    <value>Add to Playlist</value>
+  </data>
+  <data name="IDS_MODLIBRARY_RESCAN_LOCAL_FILES" xml:space="preserve">
+    <value>Rescan Local Files</value>
+  </data>
+  <data name="IDS_MODLIBRARY_DOWNLOAD_TO_DISK" xml:space="preserve">
+    <value>Download to Disk</value>
+  </data>
+  <data name="IDS_MODLIBRARY_DOWNLOAD_TO_PLAYLIST" xml:space="preserve">
+    <value>Download to Playlist</value>
+  </data>
+  <data name="IDS_MODLIBRARY_DOWNLOAD_AND_PLAY" xml:space="preserve">
+    <value>Download and Play</value>
   </data>
   <data name="IDS_MODLIBRARY_JUMP_TO_FOLDER" xml:space="preserve">
-    <value>Jump to folder</value>
+    <value>Jump to Folder</value>
   </data>
   <data name="IDS_MODLIBRARY_SEARCHMODE_FILENAME_AND_PATH" xml:space="preserve">
     <value>Filename and path</value>
@@ -1578,25 +1602,14 @@ This will permanently delete all selected items from your computer.</value>
   <data name="IDS_MODLIBRARY_STATUS_LOADING_DATABASE" xml:space="preserve">
     <value>Loading database...</value>
   </data>
-  <data name="IDS_MODLIBRARY_MSGBOX_DATABASE_OLD" xml:space="preserve">
-    <value>The ModLand database is {0} days old.
-
-Do you want to update it now?</value>
-  </data>
   <data name="IDS_MODLIBRARY_CANCEL" xml:space="preserve">
     <value>Cancel</value>
-  </data>
-  <data name="IDS_MODLIBRARY_DOWNLOAD_SELECTED" xml:space="preserve">
-    <value>Download Selected</value>
   </data>
   <data name="IDS_MODLIBRARY_STATUS_DOWNLOADING_BATCH" xml:space="preserve">
     <value>({0} remaining) Downloading: {1}</value>
   </data>
   <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_CANCELLED" xml:space="preserve">
     <value>Download cancelled</value>
-  </data>
-  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_UPDATE_DB" xml:space="preserve">
-    <value>Update Database</value>
   </data>
   <data name="IDS_MODLIBRARY_STATUS_UPDATING_DATABASE" xml:space="preserve">
     <value>Updating database...</value>
@@ -1729,8 +1742,29 @@ This will delete the local database file and clear all data from memory.</value>
   <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_SUCCESS" xml:space="preserve">
     <value>Download completed: {0} successful</value>
   </data>
+  <data name="IDS_MODLIBRARY_STATUS_ADDED_FILES" xml:space="preserve">
+    <value>Added {0} file(s) to playlist</value>
+  </data>
   <data name="IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_WITH_ERRORS" xml:space="preserve">
     <value>Download completed: {0} successful, {1} failed</value>
+  </data>
+  <data name="IDS_MODLIBRARY_INFOBAR_DATABASE_OLD" xml:space="preserve">
+    <value>The {0} database is {1} days old.</value>
+  </data>
+  <data name="IDS_MODLIBRARY_INFOBAR_UPDATE_NOW" xml:space="preserve">
+    <value>Update Now</value>
+  </data>
+  <data name="IDS_MODLIBRARY_INFOBAR_IGNORE" xml:space="preserve">
+    <value>Ignore</value>
+  </data>
+  <data name="IDS_MODLIBRARY_INFOBAR_DISMISS" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_DOWNLOAD_CONFIRM" xml:space="preserve">
+    <value>Download {0} files?</value>
+  </data>
+  <data name="IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_CONFIRM" xml:space="preserve">
+    <value>Confirm Download</value>
   </data>
   <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION_ALWAYS" xml:space="preserve">
     <value>Always</value>
@@ -1743,5 +1777,11 @@ This will delete the local database file and clear all data from memory.</value>
   </data>
   <data name="IDS_TIP_MAIN_EQUALIZER" xml:space="preserve">
     <value>Opens the equalizer window</value>
+  </data>
+  <data name="IDS_MODLIBRARY_FAVORITESONLY_CHECKBOX" xml:space="preserve">
+    <value>Favorites only</value>
+  </data>
+  <data name="IDS_MODLIBRARY_RELOAD" xml:space="preserve">
+    <value>Reload</value>
   </data>
 </root>

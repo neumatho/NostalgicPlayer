@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {
@@ -26,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 	{
 		// Local files (service-independent)
 		private readonly List<ModEntry> localFiles = new();
+		private readonly object localFilesLock = new();
 		private FilteredTreeBuilder currentBuilder;
 
 		// Current search results
@@ -46,10 +48,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Get readonly access to local files
+		/// Get a thread-safe snapshot of local files
 		/// </summary>
 		/********************************************************************/
-		public IReadOnlyList<ModEntry> LocalFiles => localFiles;
+		public List<ModEntry> GetLocalFilesSnapshot()
+		{
+			lock (localFilesLock)
+			{
+				return localFiles.ToList();
+			}
+		}
 
 
 		/********************************************************************/
@@ -92,10 +100,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			int count = 0;
 
 			foreach (var child in node.Children)
+			{
 				if (!child.IsDirectory)
+				{
 					count++;
+				}
 				else
+				{
 					count += CountFilesRecursive(child);
+				}
+			}
 
 			return count;
 		}
@@ -108,15 +122,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		private bool HasChildren(TreeNode node)
 		{
-			if (node.Children == null || node.Children.Count == 0) return false;
+			if (node.Children == null || node.Children.Count == 0)
+			{
+				return false;
+			}
 
 			// Check if any child is a file
 			foreach (var child in node.Children)
 			{
-				if (!child.IsDirectory) return true;
+				if (!child.IsDirectory)
+				{
+					return true;
+				}
 
 				// Recursively check subdirectories
-				if (HasChildren(child)) return true;
+				if (HasChildren(child))
+				{
+					return true;
+				}
 			}
 
 			return false;
@@ -148,7 +171,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public void AddLocalFile(string nameWithPath, long size)
 		{
-			localFiles.Add(new ModEntry(nameWithPath, size));
+			lock (localFilesLock)
+			{
+				localFiles.Add(new ModEntry(nameWithPath, size));
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add local file if it doesn't already exist (thread-safe)
+		/// </summary>
+		/********************************************************************/
+		public void AddLocalFileIfNotExists(string nameWithPath, long size)
+		{
+			lock (localFilesLock)
+			{
+				if (!localFiles.Any(e => e.FullName == nameWithPath))
+				{
+					localFiles.Add(new ModEntry(nameWithPath, size));
+				}
+			}
 		}
 
 
@@ -182,7 +226,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			// Build tree (empty filter shows everything)
 			currentBuilder =
-				new FilteredTreeBuilder(Services, LocalFiles, SearchFilter, IsOfflineMode, searchMode, isFlatView);
+				new FilteredTreeBuilder(Services, GetLocalFilesSnapshot(), SearchFilter, IsOfflineMode, searchMode, isFlatView);
 			currentBuilder.Completed += OnSearchCompleted;
 			currentBuilder.Start();
 		}
@@ -195,7 +239,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public void ClearLocalFiles()
 		{
-			localFiles.Clear();
+			lock (localFilesLock)
+			{
+				localFiles.Clear();
+			}
 		}
 
 
@@ -206,7 +253,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public int CountTotalFilesInFilteredCache()
 		{
-			if (currentTree == null) return 0;
+			if (currentTree == null)
+			{
+				return 0;
+			}
 
 			return CountFilesRecursive(currentTree);
 		}
@@ -219,13 +269,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public string GetDisplayPath(string path)
 		{
-			if (string.IsNullOrEmpty(path)) return "Root";
+			if (string.IsNullOrEmpty(path))
+			{
+				return "Root";
+			}
 
 			var service = GetServiceFromPath(path);
 			if (service != null)
 			{
 				string relativePath = GetRelativePathFromService(path, service);
-				if (string.IsNullOrEmpty(relativePath)) return service.DisplayName;
+				if (string.IsNullOrEmpty(relativePath))
+				{
+					return service.DisplayName;
+				}
 
 				return $"{service.DisplayName}/{relativePath}";
 			}
@@ -243,7 +299,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		public List<TreeNode> GetEntries(string currentPath, bool isFlatView, FlatViewSortOrder sortOrder)
 		{
 			var node = currentTree?.FindByPath(currentPath);
-			if (node == null) return new List<TreeNode>();
+			if (node == null)
+			{
+				return new List<TreeNode>();
+			}
 
 			List<TreeNode> sortedChildren;
 
@@ -254,8 +313,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 				// Add direct folders (not recursive)
 				foreach (var child in node.Children)
+				{
 					if (child.IsDirectory)
+					{
 						sortedChildren.Add(child);
+					}
+				}
 
 				// Add all files recursively
 				CollectFilesRecursive(node, sortedChildren);
@@ -267,27 +330,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 				// If at root with search filter in hierarchical view, filter out empty services
 				if (string.IsNullOrEmpty(currentPath) && !string.IsNullOrEmpty(SearchFilter))
+				{
 					sortedChildren = sortedChildren.Where(child => HasChildren(child)).ToList();
+				}
 			}
 
 			if (isFlatView)
 				// Flat view: Directories first, then files (with custom sort order for files)
+			{
 				sortedChildren.Sort((a, b) =>
 				{
 					// Directories always come before files
-					if (a.IsDirectory && !b.IsDirectory) return -1;
-					if (!a.IsDirectory && b.IsDirectory) return 1;
+					if (a.IsDirectory && !b.IsDirectory)
+					{
+						return -1;
+					}
+
+					if (!a.IsDirectory && b.IsDirectory)
+					{
+						return 1;
+					}
 
 					// Both directories: sort alphabetically by name
 					if (a.IsDirectory && b.IsDirectory)
+					{
 						return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+					}
 
 					// Both files: sort by selected order
 					if (sortOrder == FlatViewSortOrder.NameThenPath)
 					{
 						// Primary: Name, Secondary: Path
 						int nameCompare = string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
-						if (nameCompare != 0) return nameCompare;
+						if (nameCompare != 0)
+						{
+							return nameCompare;
+						}
 
 						// If names are equal, sort by full path
 						return string.Compare(a.FullPath, b.FullPath, StringComparison.OrdinalIgnoreCase);
@@ -296,23 +374,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					// PathThenName
 					// Primary: Path, Secondary: Name
 					int pathCompare = string.Compare(a.FullPath, b.FullPath, StringComparison.OrdinalIgnoreCase);
-					if (pathCompare != 0) return pathCompare;
+					if (pathCompare != 0)
+					{
+						return pathCompare;
+					}
 
 					// If paths are equal, sort by name (shouldn't happen but just in case)
 					return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
 				});
+			}
 			else
 				// Hierarchical view: directories first, then files (both alphabetically by name)
+			{
 				sortedChildren.Sort((a, b) =>
 				{
 					// Directories come before files
-					if (a.IsDirectory && !b.IsDirectory) return -1;
+					if (a.IsDirectory && !b.IsDirectory)
+					{
+						return -1;
+					}
 
-					if (!a.IsDirectory && b.IsDirectory) return 1;
+					if (!a.IsDirectory && b.IsDirectory)
+					{
+						return 1;
+					}
 
 					// Both are same type (both dirs or both files), sort alphabetically by name
 					return string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
 				});
+			}
 
 			return sortedChildren;
 		}
@@ -325,7 +415,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public string GetRelativePathFromService(string fullPath, ModuleService service)
 		{
-			if (fullPath.StartsWith(service.RootPath)) return fullPath.Substring(service.RootPath.Length);
+			if (fullPath.StartsWith(service.RootPath))
+			{
+				return fullPath.Substring(service.RootPath.Length);
+			}
 
 			return string.Empty;
 		}
@@ -350,8 +443,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		public ModuleService GetServiceFromPath(string path)
 		{
 			foreach (var service in Services)
+			{
 				if (path.StartsWith(service.RootPath))
+				{
 					return service;
+				}
+			}
 
 			return null;
 		}
@@ -365,10 +462,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private void CollectFilesRecursive(TreeNode node, List<TreeNode> files)
 		{
 			foreach (var child in node.Children)
+			{
 				if (!child.IsDirectory)
+				{
 					files.Add(child);
+				}
 				else
+				{
 					CollectFilesRecursive(child, files);
+				}
+			}
 		}
 	}
 }
