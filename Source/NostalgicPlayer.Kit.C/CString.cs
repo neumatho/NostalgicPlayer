@@ -120,6 +120,38 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Find the last occurrence of a character in a string. It checks
+		/// whether the given character is present in the given string. If
+		/// the character is found, it returns the pointer to its last
+		/// occurrence otherwise, it returns a null pointer, indicating the
+		/// character is not found in the string
+		/// </summary>
+		/********************************************************************/
+		public static CPointer<char> strrchr(CPointer<char> str, char ch)
+		{
+			if (str.IsNull)
+				throw new ArgumentNullException(nameof(str));
+
+			c_int i = (c_int)strlen(str);
+
+			if (i == str.Length)
+				i--;
+
+			while (i >= 0)
+			{
+				if (str[i] == ch)
+					return new CPointer<char>(str.Buffer, str.Offset + i);
+
+				i--;
+			}
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Finds the first occurrence of the string s2 in the string s1.
 		/// The process of matching does not include the terminating
 		/// null-characters(‘\0’), but function stops there
