@@ -49,3 +49,4 @@ global using time_t = System.Int64;
 global using pthread_t = System.Threading.Thread;
 global using pthread_mutex_t = System.Threading.Mutex;
 global using pthread_cond_t = Polycode.NostalgicPlayer.Kit.C.CThread.CondHandler;
+global using pthread_once_t = Polycode.NostalgicPlayer.Kit.C.CThread.ThreadOnce;

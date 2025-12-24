@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// the null character.
 		/// </summary>
 		/********************************************************************/
-		public static c_int FPuts(CPointer<char> str, Stream stream)
+		public static c_int fputs(CPointer<char> str, Stream stream)
 		{
 			size_t len = CString.strlen(str);
 			byte[] buffer = Encoding.UTF8.GetBytes(str.Buffer, str.Offset, (c_int)len);
@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// the null character.
 		/// </summary>
 		/********************************************************************/
-		public static c_int FPuts(CPointer<char> str, TextWriter textWriter)
+		public static c_int fputs(CPointer<char> str, TextWriter textWriter)
 		{
 			textWriter.Write(str);
 
