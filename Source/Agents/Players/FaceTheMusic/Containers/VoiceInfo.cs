@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic.Containers
 	/// <summary>
 	/// Holds playing information for a single voice
 	/// </summary>
-	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
+	internal class VoiceInfo : IDeepCloneable<VoiceInfo>, ICopyTo<VoiceInfo>
 	{
 		public int ChannelNumber { get; set; }
 
