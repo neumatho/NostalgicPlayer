@@ -47,6 +47,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		#endregion
 
 		#region ThreadOnce class
+		/// <summary>
+		/// 
+		/// </summary>
 		public class ThreadOnce
 		{
 			/********************************************************************/
