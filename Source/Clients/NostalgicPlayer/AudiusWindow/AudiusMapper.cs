@@ -6,10 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Polycode.NostalgicPlayer.Audius.Models.Playlists;
-using Polycode.NostalgicPlayer.Audius.Models.Tracks;
-using Polycode.NostalgicPlayer.Audius.Models.Users;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Users;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {

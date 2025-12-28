@@ -6,9 +6,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Polycode.NostalgicPlayer.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks;
 
-namespace Polycode.NostalgicPlayer.Audius.Interfaces
+namespace Polycode.NostalgicPlayer.RestClients.Audius.Interfaces
 {
 	/// <summary>
 	/// Interface for interacting of tracks with Audius

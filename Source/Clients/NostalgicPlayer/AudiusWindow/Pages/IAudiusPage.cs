@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.RestClients;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 {

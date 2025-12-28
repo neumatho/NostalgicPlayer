@@ -5,23 +5,19 @@
 /******************************************************************************/
 using System.Text.Json.Serialization;
 
-namespace Polycode.NostalgicPlayer.Audius.Models.Playlists
+namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Users
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class PlaylistArtworkModel
+	public class CoverPhotoModel
 	{
 		/// <summary></summary>
-		[JsonPropertyName("150x150")]
-		public string _150x150 { get; set; }
+		[JsonPropertyName("640x")]
+		public string _640x { get; set; }
 
 		/// <summary></summary>
-		[JsonPropertyName("480x480")]
-		public string _480x480 { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("1000x1000")]
-		public string _1000x1000 { get; set; }
+		[JsonPropertyName("2000x")]
+		public string _2000x { get; set; }
 	}
 }

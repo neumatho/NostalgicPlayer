@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Polycode.NostalgicPlayer.Audius
+namespace Polycode.NostalgicPlayer.RestClients
 {
 	/// <summary>
 	/// Helper class to run tasks with cancellation support

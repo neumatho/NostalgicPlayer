@@ -5,9 +5,9 @@
 /******************************************************************************/
 using System;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
+using Polycode.NostalgicPlayer.RestClients;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {

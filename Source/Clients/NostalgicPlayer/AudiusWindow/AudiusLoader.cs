@@ -9,13 +9,14 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Polycode.NostalgicPlayer.Audius;
-using Polycode.NostalgicPlayer.Audius.Interfaces;
-using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Loaders;
+using Polycode.NostalgicPlayer.RestClients;
+using Polycode.NostalgicPlayer.RestClients.Audius;
+using Polycode.NostalgicPlayer.RestClients.Audius.Interfaces;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {

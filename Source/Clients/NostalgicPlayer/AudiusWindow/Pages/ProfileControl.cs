@@ -8,10 +8,10 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Audius;
-using Polycode.NostalgicPlayer.Audius.Models.Users;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
+using Polycode.NostalgicPlayer.RestClients;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Users;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 {

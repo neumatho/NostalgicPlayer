@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Text.Json.Serialization;
 
-namespace Polycode.NostalgicPlayer.Audius.Models.Playlists
+namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists
 {
 	/// <summary>
 	/// 

@@ -9,13 +9,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.Audius;
-using Polycode.NostalgicPlayer.Audius.Interfaces;
-using Polycode.NostalgicPlayer.Audius.Models.Playlists;
-using Polycode.NostalgicPlayer.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.RestClients;
+using Polycode.NostalgicPlayer.RestClients.Audius;
+using Polycode.NostalgicPlayer.RestClients.Audius.Interfaces;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 {

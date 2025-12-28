@@ -5,11 +5,11 @@
 /******************************************************************************/
 using System;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.RestClients;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {

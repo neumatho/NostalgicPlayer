@@ -4,11 +4,11 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Threading;
-using Polycode.NostalgicPlayer.Audius.Models.Playlists;
-using Polycode.NostalgicPlayer.Audius.Models.Tracks;
-using Polycode.NostalgicPlayer.Audius.Models.Users;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Users;
 
-namespace Polycode.NostalgicPlayer.Audius.Interfaces
+namespace Polycode.NostalgicPlayer.RestClients.Audius.Interfaces
 {
 	/// <summary>
 	/// Interface for interacting of users with Audius

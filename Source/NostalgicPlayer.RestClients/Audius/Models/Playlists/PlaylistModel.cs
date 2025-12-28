@@ -4,15 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Text.Json.Serialization;
-using Polycode.NostalgicPlayer.Audius.Models.Tracks;
-using Polycode.NostalgicPlayer.Audius.Models.Users;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Users;
 
-namespace Polycode.NostalgicPlayer.Audius.Models.Playlists
+namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class TrendingPlaylistModel
+	public class PlaylistModel
 	{
 		/// <summary></summary>
 		[JsonPropertyName("artwork")]
@@ -52,13 +51,18 @@ namespace Polycode.NostalgicPlayer.Audius.Models.Playlists
 		public int FavoriteCount { get; set; }
 
 		/// <summary></summary>
+		[JsonPropertyName("total_play_count")]
+		[JsonRequired]
+		public int TotalPlayCount { get; set; }
+
+		/// <summary></summary>
 		[JsonPropertyName("user")]
 		[JsonRequired]
 		public UserModel User { get; set; }
 
 		/// <summary></summary>
-		[JsonPropertyName("tracks")]
+		[JsonPropertyName("playlist_contents")]
 		[JsonRequired]
-		public TrackModel[] Tracks { get; set; }
+		public PlaylistContentModel[] Tracks { get; set; }
 	}
 }

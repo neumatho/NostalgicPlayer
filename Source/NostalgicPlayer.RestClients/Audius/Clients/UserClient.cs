@@ -4,13 +4,13 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Threading;
-using Polycode.NostalgicPlayer.Audius.Interfaces;
-using Polycode.NostalgicPlayer.Audius.Models.Playlists;
-using Polycode.NostalgicPlayer.Audius.Models.Tracks;
-using Polycode.NostalgicPlayer.Audius.Models.Users;
+using Polycode.NostalgicPlayer.RestClients.Audius.Interfaces;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Users;
 using RestSharp;
 
-namespace Polycode.NostalgicPlayer.Audius.Clients
+namespace Polycode.NostalgicPlayer.RestClients.Audius.Clients
 {
 	/// <summary>
 	/// Holds methods for interacting with users on Audius

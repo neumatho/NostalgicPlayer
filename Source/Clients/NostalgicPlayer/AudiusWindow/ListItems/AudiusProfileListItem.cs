@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Audius.Models.Users;
+using Polycode.NostalgicPlayer.RestClients.Audius.Models.Users;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {

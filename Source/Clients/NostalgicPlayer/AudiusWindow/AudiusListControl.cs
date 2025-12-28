@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Audius;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.RestClients;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
