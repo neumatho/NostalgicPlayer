@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			lock (lockObject)
 			{
 				ulong oldState = state;
-				state = oldState * 6364136223846793005 + inc;
+				state = (oldState * 6364136223846793005) + inc;
 
 				uint xorShifted = (uint)(((oldState >> 18) ^ oldState) >> 27);
 				uint rot = (uint)(oldState >> 59);

@@ -116,6 +116,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static c_int pthread_mutex_init(out pthread_mutex_t mutex)
+		{
+			mutex = new pthread_mutex_t();
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static void pthread_mutex_destroy(pthread_mutex_t mutex)
 		{
 			mutex?.Dispose();

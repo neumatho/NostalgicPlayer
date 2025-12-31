@@ -163,6 +163,34 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void memcpy<T>(CPointer<T> dest, T[] source, size_t length)
+		{
+			if (length > 0)
+				Array.Copy(source, 0, dest.Buffer, dest.Offset, (int)length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void memcpy<T>(CPointer<T> dest, Span<T> source, size_t length)
+		{
+			if (length > 0)
+				source.Slice((int)length).CopyTo(dest.AsSpan());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void memcpy<T>(T[] dest, string str, size_t length)
 		{
 			if (length > 0)
@@ -178,6 +206,28 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int memcmp<T>(CPointer<T> ptr1, CPointer<T> ptr2, size_t length) where T : struct, IComparable
+		{
+			for (size_t i = 0; i < length; i++)
+			{
+				if (ptr1[i].CompareTo(ptr2[i]) < 0)
+					return -1;
+
+				if (ptr1[i].CompareTo(ptr2[i]) > 0)
+					return 1;
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int memcmp<T>(CPointer<T> ptr1, T[] ptr2, size_t length) where T : struct, IComparable
 		{
 			for (size_t i = 0; i < length; i++)
 			{
