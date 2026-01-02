@@ -389,9 +389,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 			return path;
 		}
+		#endregion
 
-
-
+		#region Drawing
 		/********************************************************************/
 		/// <summary>
 		/// Return the colors to use for the current state
