@@ -308,9 +308,9 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		{
 			return new Rectangle(rect.Width - DropDownButtonWidth - 2, 2, DropDownButtonWidth - 1, rect.Height - 5);
 		}
+		#endregion
 
-
-
+		#region Drawing
 		/********************************************************************/
 		/// <summary>
 		/// Return the colors to use for the current state

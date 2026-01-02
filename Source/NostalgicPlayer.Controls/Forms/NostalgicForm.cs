@@ -675,9 +675,9 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 			return handled;
 		}
+		#endregion
 
-
-
+		#region Drawing
 		/********************************************************************/
 		/// <summary>
 		/// Will draw the title bar and border of the form
