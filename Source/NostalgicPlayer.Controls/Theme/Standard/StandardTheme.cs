@@ -17,6 +17,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardButtonColors buttonColors = new StandardButtonColors();
 		private static readonly StandardComboBoxColors comboBoxColors = new StandardComboBoxColors();
 		private static readonly StandardDataGridViewColors dataGridViewColors = new StandardDataGridViewColors();
+		private static readonly StandardScrollBarColors scrollBarColors = new StandardScrollBarColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -94,5 +95,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public IDataGridViewColors DataGridViewColors => dataGridViewColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by scroll bars
+		/// </summary>
+		/********************************************************************/
+		public IScrollBarColors ScrollBarColors => scrollBarColors;
 	}
 }
