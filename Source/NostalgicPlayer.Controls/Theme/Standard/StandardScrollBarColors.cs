@@ -3,107 +3,100 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
+namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {
 	/// <summary>
-	/// A simple purple themed test implementation of ITheme
+	/// Standard colors for ScrollBar
 	/// </summary>
-	public class PurpleTheme : ITheme, IDisposable
+	internal class StandardScrollBarColors : IScrollBarColors
 	{
-		private StandardFonts standardFonts;
-		private static readonly PurpleFormColors formColors = new PurpleFormColors();
-		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
-		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
-		private static readonly PurpleDataGridViewColors dataGridViewColors = new PurpleDataGridViewColors();
-		private static readonly PurpleScrollBarColors scrollBarColors = new PurpleScrollBarColors();
+		private static readonly Color backgroundColor = Color.FromArgb(240, 240, 240);
+
+		private static readonly Color normalArrowColor = Color.FromArgb(134, 137, 153);
+
+		private static readonly Color hoverArrowColor = Color.FromArgb(73, 113, 185);
+
+		private static readonly Color pressedArrowColor = Color.FromArgb(30, 57, 91);
+
+		private static readonly Color disabledArrowColor = Color.FromArgb(168, 168, 168);
+
+		private static readonly Color normalThumbColor = Color.FromArgb(194, 195, 201);
+
+		private static readonly Color hoverThumbColor = Color.FromArgb(128, 129, 134);
+
+		private static readonly Color pressedThumbColor = Color.FromArgb(101, 102, 108);
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public PurpleTheme()
-		{
-			standardFonts = new StandardFonts();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup
-		/// </summary>
-		/********************************************************************/
-		public void Dispose()
-		{
-			standardFonts.Dispose();
-			standardFonts = null;
-		}
+		public Color BackgroundColor => backgroundColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a unique ID for the theme
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public Guid Id => new Guid("A4F0D3C0-5D2E-44A2-9CF1-8A1C6D2E0B12");
+		public Color NormalArrowColor => normalArrowColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of standard fonts
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IFonts StandardFonts => standardFonts;
+		public Color HoverArrowColor => hoverArrowColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by forms
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IFormColors FormColors => formColors;
+		public Color PressedArrowColor => pressedArrowColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by buttons
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IButtonColors ButtonColors => buttonColors;
+		public Color DisabledArrowColor => disabledArrowColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by combo boxes
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IComboBoxColors ComboBoxColors => comboBoxColors;
+		public Color NormalThumbColor => normalThumbColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by DataGridView
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IDataGridViewColors DataGridViewColors => dataGridViewColors;
+		public Color HoverThumbColor => hoverThumbColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by scroll bars
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public IScrollBarColors ScrollBarColors => scrollBarColors;
+		public Color PressedThumbColor => pressedThumbColor;
 	}
 }
