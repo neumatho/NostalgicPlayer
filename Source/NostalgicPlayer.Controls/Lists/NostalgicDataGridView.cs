@@ -5,12 +5,9 @@
 /******************************************************************************/
 using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Designer;
-using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Lists
@@ -18,34 +15,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 	/// <summary>
 	/// Custom DataGridView with theme support and custom rendering
 	/// </summary>
-	public class NostalgicDataGridView : DataGridView, IThemeControl
+	public partial class NostalgicDataGridView : UserControl, ISupportInitialize, IThemeControl
 	{
-		private const int GlyphWidthSize = 8;
-		private const int GlyphHeightSize = 5;
-
-		private IDataGridViewColors colors;
-		private IFonts fonts;
-
-		private FontConfiguration fontConfiguration;
-
-		private int pressedHeaderColumnIndex = -1;
-
-		private struct HeaderStateColors
-		{
-			public Color BorderColor { get; init; }
-			public Color BackgroundStartColor { get; init; }
-			public Color BackgroundStopColor { get; init; }
-			public Color TextColor { get; init; }
-		}
-
-		private struct CellStateColors
-		{
-			public Color BackgroundStartColor { get; init; }
-			public Color BackgroundMiddleColor { get; init; }
-			public Color BackgroundStopColor { get; init; }
-			public Color TextColor { get; init; }
-		}
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -53,22 +24,145 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		public NostalgicDataGridView()
 		{
-			SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+			InitializeComponent();
 
-			BorderStyle = BorderStyle.None;
-			CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-			ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-			EnableHeadersVisualStyles = false;
-			RowHeadersVisible = false;
-			ShowCellErrors = false;
-			ShowEditingIcon = false;
-			ShowRowErrors = false;
-			AllowUserToAddRows = false;
-			AllowUserToDeleteRows = false;
-			AllowUserToResizeRows = false;
-			ReadOnly = true;
-			SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+			nostalgicDataGridViewInternal.SetControls(nostalgicVScrollBar, nostalgicHScrollBar, cornerPanel, this);
 		}
+
+		#region ISupportInitialize implementation
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		void ISupportInitialize.BeginInit()
+		{
+			((ISupportInitialize)nostalgicDataGridViewInternal).BeginInit();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		void ISupportInitialize.EndInit()
+		{
+			((ISupportInitialize)nostalgicDataGridViewInternal).EndInit();
+		}
+		#endregion
+
+		#region Redirected properties
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DefaultValue(false)]
+		[Category("Behavior")]
+		[Description("Indicates whether manual column repositioning is enabled")]
+		public bool AllowUserToOrderColumns
+		{
+			get => nostalgicDataGridViewInternal.AllowUserToOrderColumns;
+
+			set => nostalgicDataGridViewInternal.AllowUserToOrderColumns = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DefaultValue(true)]
+		[Category("Behavior")]
+		[Description("Indicates whether users can resize columns")]
+		public bool AllowUserToResizeColumns
+		{
+			get => nostalgicDataGridViewInternal.AllowUserToResizeColumns;
+
+			set => nostalgicDataGridViewInternal.AllowUserToResizeColumns = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public DataGridViewColumnCollection Columns => nostalgicDataGridViewInternal.Columns;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public DataGridViewRowCollection Rows => nostalgicDataGridViewInternal.Rows;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public DataGridViewSelectedRowCollection SelectedRows => nostalgicDataGridViewInternal.SelectedRows;
+		#endregion
+
+		#region Redirected events
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler SelectionChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected virtual void OnSelectionChanged(EventArgs e)
+		{
+			if (SelectionChanged != null)
+				SelectionChanged(this, e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public new event EventHandler DoubleClick;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected override void OnDoubleClick(EventArgs e)
+		{
+			if (DoubleClick != null)
+				DoubleClick(this, e);
+		}
+		#endregion
 
 		#region Designer properties
 		/********************************************************************/
@@ -82,34 +176,21 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		[DefaultValue(null)]
 		public FontConfiguration UseFont
 		{
-			get => fontConfiguration;
+			get => nostalgicDataGridViewInternal.UseFont;
 
-			set
-			{
-				fontConfiguration = value;
-
-				UpdateFont();
-				Invalidate();
-			}
+			set => nostalgicDataGridViewInternal.UseFont = value;
 		}
 		#endregion
 
-		#region Initialize
+		#region Public methods
 		/********************************************************************/
 		/// <summary>
-		/// Initialize the control to use custom rendering
+		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void OnHandleCreated(EventArgs e)
+		public void AutoResizeRows()
 		{
-			if (DesignMode)
-				SetTheme(ThemeManagerFactory.GetThemeManager().CurrentTheme);
-
-			UpdateFont();
-
-			AutoResizeRows();
-
-			base.OnHandleCreated(e);
+			nostalgicDataGridViewInternal.AutoResizeRows();
 		}
 		#endregion
 
@@ -121,408 +202,40 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		public void SetTheme(ITheme theme)
 		{
-			colors = theme.DataGridViewColors;
-			fonts = theme.StandardFonts;
-
-			UpdateFont();
-			Invalidate();
+			cornerPanel.BackColor = theme.ScrollBarColors.BackgroundColor;
 		}
 		#endregion
 
-		#region Overrides
+		#region Helper methods
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void OnCellMouseDown(DataGridViewCellMouseEventArgs e)
-		{
-			if ((e.RowIndex == -1) && (e.ColumnIndex >= 0))
-			{
-				pressedHeaderColumnIndex = e.ColumnIndex;
-				Invalidate(GetColumnDisplayRectangle(e.ColumnIndex, false));
-			}
-
-			if ((e.RowIndex == -1) || (e.ColumnIndex == -1))
-			{
-				// Need to turn off double buffering, when clicking on a row or column
-				// header, else the drag'n'drop rectangle or resizing won't be painted
-				DoubleBuffered = false;
-			}
-
-			base.OnCellMouseDown(e);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		protected override void OnCellMouseUp(DataGridViewCellMouseEventArgs e)
-		{
-			if (!DoubleBuffered)
-				DoubleBuffered = true;
-
-			if (pressedHeaderColumnIndex >= 0)
-			{
-				int oldIndex = pressedHeaderColumnIndex;
-				pressedHeaderColumnIndex = -1;
-				Invalidate(GetColumnDisplayRectangle(oldIndex, false));
-			}
-
-			base.OnCellMouseUp(e);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		protected override void PaintBackground(Graphics graphics, Rectangle clipBounds, Rectangle gridBounds)
-		{
-			using (SolidBrush brush = new SolidBrush(colors.BackgroundColor))
-			{
-				graphics.FillRectangle(brush, gridBounds);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		protected override void OnCellPainting(DataGridViewCellPaintingEventArgs e)
-		{
-			Graphics g = e.Graphics;
-
-			if ((e.RowIndex >= 0) && (e.ColumnIndex >= 0))
-			{
-				DrawColumnCell(g, e.CellBounds, GetCellColors(e.State), e.CellStyle?.Alignment ?? DataGridViewContentAlignment.TopLeft, e.Value);
-				e.Handled = true;
-			}
-			else if ((e.RowIndex == -1) && (e.ColumnIndex >= 0))
-			{
-				DrawColumnHeader(g, e.ColumnIndex, e.CellBounds, GetHeaderColors(e.ColumnIndex), e.Value);
-				e.Handled = true;
-			}
-
-			base.OnCellPainting(e);
-		}
+		internal bool IsInDesignMode => DesignMode;
 		#endregion
 
-		#region Private methods
+		#region Handlers
 		/********************************************************************/
 		/// <summary>
-		/// Set font to use
+		/// 
 		/// </summary>
 		/********************************************************************/
-		private void UpdateFont()
+		private void SelectionChangedHandler(object sender, EventArgs e)
 		{
-			Font = fontConfiguration?.Font ?? fonts.RegularFont;
+			OnSelectionChanged(e);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the colors to use for the current state
+		/// 
 		/// </summary>
 		/********************************************************************/
-		private HeaderStateColors GetHeaderColors(int columnIndex)
+		private void DoubleClickHandler(object sender, EventArgs e)
 		{
-			if (columnIndex == pressedHeaderColumnIndex)
-			{
-				return new HeaderStateColors
-				{
-					BorderColor = colors.PressedHeaderBorderColor,
-					BackgroundStartColor = colors.PressedHeaderBackgroundStartColor,
-					BackgroundStopColor = colors.PressedHeaderBackgroundStopColor,
-					TextColor = colors.PressedHeaderTextColor
-				};
-			}
-
-			return new HeaderStateColors
-			{
-				BorderColor = colors.NormalHeaderBorderColor,
-				BackgroundStartColor = colors.NormalHeaderBackgroundStartColor,
-				BackgroundStopColor = colors.NormalHeaderBackgroundStopColor,
-				TextColor = colors.NormalHeaderTextColor
-			};
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the colors to use for the current state
-		/// </summary>
-		/********************************************************************/
-		private CellStateColors GetCellColors(DataGridViewElementStates state)
-		{
-			if ((state & DataGridViewElementStates.Selected) != 0)
-			{
-				return new CellStateColors
-				{
-					BackgroundStartColor = colors.SelectedCellBackgroundStartColor,
-					BackgroundMiddleColor = colors.SelectedCellBackgroundMiddleColor,
-					BackgroundStopColor = colors.SelectedCellBackgroundStopColor,
-					TextColor = colors.SelectedCellTextColor
-				};
-			}
-
-			return new CellStateColors
-			{
-				BackgroundStartColor = colors.NormalCellBackgroundStartColor,
-				BackgroundMiddleColor = colors.NormalCellBackgroundMiddleColor,
-				BackgroundStopColor = colors.NormalCellBackgroundStopColor,
-				TextColor = colors.NormalCellTextColor
-			};
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw a single column header
-		/// </summary>
-		/********************************************************************/
-		private void DrawColumnHeader(Graphics g, int columnIndex, Rectangle rect, HeaderStateColors headerStateColors, object value)
-		{
-			g.SmoothingMode = SmoothingMode.AntiAlias;
-
-			DrawColumnHeaderBackground(g, rect, headerStateColors);
-			DrawColumnHeaderText(g, rect, headerStateColors, value);
-			DrawSortGlyph(g, columnIndex, rect, headerStateColors);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw a single column header background
-		/// </summary>
-		/********************************************************************/
-		private void DrawColumnHeaderBackground(Graphics g, Rectangle rect, HeaderStateColors headerStateColors)
-		{
-			using (LinearGradientBrush brush = new LinearGradientBrush(rect, headerStateColors.BackgroundStartColor, headerStateColors.BackgroundStopColor, LinearGradientMode.Vertical))
-			{
-				g.FillRectangle(brush, rect);
-			}
-
-			using (Pen borderPen = new Pen(headerStateColors.BorderColor))
-			{
-				g.DrawLine(borderPen, rect.X, rect.Y + rect.Height - 1, rect.X + rect.Width - 1, rect.Y + rect.Height - 1);
-				g.DrawLine(borderPen, rect.X + rect.Width - 1, rect.Y + rect.Height - 1, rect.X + rect.Width - 1, rect.Y);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw a single column header text
-		/// </summary>
-		/********************************************************************/
-		private void DrawColumnHeaderText(Graphics g, Rectangle rect, HeaderStateColors headerStateColors, object value)
-		{
-			if (value != null)
-			{
-				string text = value.ToString();
-
-				if (!string.IsNullOrEmpty(text))
-				{
-					Rectangle textRect = new Rectangle(rect.X + 2, rect.Y, rect.Width - 4, rect.Height - 1);
-
-					TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix;
-					TextRenderer.DrawText(g, text, fonts.RegularFont, textRect, headerStateColors.TextColor, flags);
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw the sort icon
-		/// </summary>
-		/********************************************************************/
-		private void DrawSortGlyph(Graphics g, int columnIndex, Rectangle rect, HeaderStateColors headerStateColors)
-		{
-			DataGridViewColumn column = Columns[columnIndex];
-
-			if ((column.SortMode == DataGridViewColumnSortMode.NotSortable) || (column != SortedColumn))
-				return;
-
-			if (SortOrder == SortOrder.None)
-				return;
-
-			int glyphX = rect.Right - GlyphWidthSize - 8;
-			int glyphY = rect.Top + ((rect.Height - 1 - GlyphHeightSize) / 2);
-
-			Point[] triangle;
-
-			if (SortOrder == SortOrder.Ascending)
-			{
-				triangle =
-				[
-					new Point(glyphX, glyphY + GlyphHeightSize),
-					new Point(glyphX + GlyphWidthSize, glyphY + GlyphHeightSize),
-					new Point(glyphX + (GlyphWidthSize / 2), glyphY)
-				];
-			}
-			else
-			{
-				triangle =
-				[
-					new Point(glyphX, glyphY),
-					new Point(glyphX + GlyphWidthSize, glyphY),
-					new Point(glyphX + (GlyphWidthSize / 2), glyphY + GlyphHeightSize)
-				];
-			}
-
-			using (Brush brush = new SolidBrush(headerStateColors.TextColor))
-			{
-				g.FillPolygon(brush, triangle);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw a single column cell
-		/// </summary>
-		/********************************************************************/
-		private void DrawColumnCell(Graphics g, Rectangle rect, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
-		{
-			DrawColumnCellBackground(g, rect, cellStateColors);
-			DrawColumnCellText(g, rect, cellStateColors, alignment, value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw a single column cell background
-		/// </summary>
-		/********************************************************************/
-		private void DrawColumnCellBackground(Graphics g, Rectangle rect, CellStateColors cellStateColors)
-		{
-			g.SmoothingMode = SmoothingMode.None;
-
-			using (LinearGradientBrush brush = new LinearGradientBrush(rect, cellStateColors.BackgroundStartColor, cellStateColors.BackgroundStopColor, LinearGradientMode.Vertical))
-			{
-				ColorBlend blend = new ColorBlend
-				{
-					Colors = [ cellStateColors.BackgroundStartColor, cellStateColors.BackgroundMiddleColor, cellStateColors.BackgroundMiddleColor, cellStateColors.BackgroundStopColor ],
-					Positions = [ 0.0f, 0.1f, 0.7f, 1.0f ]
-				};
-
-				brush.InterpolationColors = blend;
-
-				g.FillRectangle(brush, rect);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw a single column cell text
-		/// </summary>
-		/********************************************************************/
-		private void DrawColumnCellText(Graphics g, Rectangle rect, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
-		{
-			if (value != null)
-			{
-				string text = value.ToString();
-
-				if (!string.IsNullOrEmpty(text))
-				{
-					g.SmoothingMode = SmoothingMode.AntiAlias;
-
-					Font font = Font;
-
-					Rectangle textRect = new Rectangle(rect.X + 1, rect.Y + 1, rect.Width - 1, rect.Height - 1);
-
-					TextFormatFlags flags = TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix;
-
-					switch (alignment)
-					{
-						case DataGridViewContentAlignment.TopLeft:
-						{
-							flags |= TextFormatFlags.Top | TextFormatFlags.Left;
-							break;
-						}
-
-						case DataGridViewContentAlignment.TopCenter:
-						{
-							flags |= TextFormatFlags.Top | TextFormatFlags.HorizontalCenter;
-							break;
-						}
-
-						case DataGridViewContentAlignment.TopRight:
-						{
-							flags |= TextFormatFlags.Top | TextFormatFlags.Right;
-							break;
-						}
-
-						case DataGridViewContentAlignment.MiddleLeft:
-						{
-							flags |= TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
-							break;
-						}
-
-						case DataGridViewContentAlignment.MiddleCenter:
-						{
-							flags |= TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter;
-							break;
-						}
-
-						case DataGridViewContentAlignment.MiddleRight:
-						{
-							flags |= TextFormatFlags.Right | TextFormatFlags.VerticalCenter;
-							break;
-						}
-
-						case DataGridViewContentAlignment.BottomLeft:
-						{
-							flags |= TextFormatFlags.Left | TextFormatFlags.Bottom;
-							break;
-						}
-
-						case DataGridViewContentAlignment.BottomCenter:
-						{
-							flags |= TextFormatFlags.HorizontalCenter | TextFormatFlags.Bottom;
-							break;
-						}
-
-						case DataGridViewContentAlignment.BottomRight:
-						{
-							flags |= TextFormatFlags.Right | TextFormatFlags.Bottom;
-							break;
-						}
-					}
-
-					TextRenderer.DrawText(g, text, font, textRect, cellStateColors.TextColor, flags);
-				}
-			}
-
-/*			if (CellBorderStyle != DataGridViewCellBorderStyle.None)
-			{
-				using (Pen gridPen = new Pen(colors.GridLineColor))
-				{
-					e.Graphics.DrawLine(gridPen, e.CellBounds.Left, e.CellBounds.Bottom - 1,
-					                    e.CellBounds.Right - 1, e.CellBounds.Bottom - 1);
-				}
-			}
-*/
+			OnDoubleClick(e);
 		}
 		#endregion
 
@@ -544,39 +257,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// </summary>
 		private sealed class NostalgicDataGridViewTypeDescriptionProvider : TypeDescriptionProvider
 		{
-			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(DataGridView));
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(UserControl));
 
 			private static readonly string[] propertiesToHide =
 			[
-				nameof(BackgroundColor),
-				nameof(BorderStyle),
-				nameof(AlternatingRowsDefaultCellStyle),
 				nameof(BackColor),
-				nameof(CellBorderStyle),
-				nameof(ColumnHeadersBorderStyle),
-				nameof(ColumnHeadersDefaultCellStyle),
-				nameof(ColumnHeadersVisible),
-				nameof(DefaultCellStyle),
-				nameof(EnableHeadersVisualStyles),
-				nameof(GridColor),
-				nameof(RowHeadersBorderStyle),
-				nameof(RowHeadersDefaultCellStyle),
-				nameof(RowHeadersVisible),
-				nameof(RowsDefaultCellStyle),
-				nameof(ShowCellErrors),
-				nameof(ShowEditingIcon),
-				nameof(ShowRowErrors),
-				nameof(AllowUserToAddRows),
-				nameof(AllowUserToDeleteRows),
-				nameof(AllowUserToResizeRows),
-				nameof(ReadOnly),
-				nameof(SelectionMode),
+				nameof(BorderStyle),
+				nameof(BackColor),
 				nameof(BackgroundImage),
 				nameof(BackgroundImageLayout),
 				nameof(Font),
 				nameof(ForeColor),
 				nameof(RightToLeft),
-				nameof(DrawMode)
 			];
 
 			/********************************************************************/
