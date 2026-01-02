@@ -373,7 +373,6 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			BackColor = colors.FormBackgroundColor;
 			AutoScaleMode = AutoScaleMode.None;
-			FormBorderStyle = FormBorderStyle.None;
 		}
 
 
