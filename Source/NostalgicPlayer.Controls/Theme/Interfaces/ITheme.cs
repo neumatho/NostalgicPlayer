@@ -41,5 +41,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by DataGridView
 		/// </summary>
 		IDataGridViewColors DataGridViewColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by scroll bars
+		/// </summary>
+		IScrollBarColors ScrollBarColors { get; }
 	}
 }
