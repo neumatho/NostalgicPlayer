@@ -329,7 +329,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 				case WM.NCLBUTTONDOWN:
 				{
-					CaptionButton button = FindCaptionButton((HT)m.WParam);
+					HT hitTest = (HT)m.WParam;
+					CaptionButton button = FindCaptionButton(hitTest);
 
 					if (button != pressButton)
 					{
@@ -337,7 +338,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 						DrawCustomNonClient();
 					}
 
-					if ((HT)m.WParam == HT.CAPTION)
+					// Let Windows handle resize operations and caption dragging
+					if (IsResizeHitTest(hitTest) || (hitTest == HT.CAPTION))
 						base.WndProc(ref m);
 
 					return;
@@ -371,6 +373,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			BackColor = colors.FormBackgroundColor;
 			AutoScaleMode = AutoScaleMode.None;
+			FormBorderStyle = FormBorderStyle.None;
 		}
 
 
@@ -601,6 +604,23 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			};
 
 			User32.TrackMouseEvent(ref tme);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the hit test corresponds to a resize area
+		/// </summary>
+		/********************************************************************/
+		private static bool IsResizeHitTest(HT hitTest)
+		{
+			return hitTest switch
+			{
+				HT.LEFT or HT.RIGHT or HT.TOP or HT.BOTTOM or
+				HT.TOPLEFT or HT.TOPRIGHT or HT.BOTTOMLEFT or HT.BOTTOMRIGHT => true,
+				_ => false
+			};
 		}
 
 
