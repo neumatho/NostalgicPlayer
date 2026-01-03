@@ -29,6 +29,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient
         /// <summary></summary>
         Xpk_Mash,
         /// <summary></summary>
+        Xpk_Nuke,
+        /// <summary></summary>
+        Xpk_Duke,
+        /// <summary></summary>
         Xpk_Rake,
         /// <summary></summary>
         Xpk_Shri,

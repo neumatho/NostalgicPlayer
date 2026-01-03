@@ -250,4 +250,15 @@ This XPK compressor uses the general purpose data compression library ZLIB by Je
   <data name="IDS_ANC_NAME_AGENT9" xml:space="preserve">
     <value>XPK (LHLB)</value>
   </data>
+  <data name="IDS_ANC_NAME_AGENT13" xml:space="preserve">
+    <value>XPK (NUKE)</value>
+  </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT13" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Oliver Ickler.
+
+The NUKE is a cruncher library for the XPK cruncher created by Christian von Roques.
+
+NUKE implements a highly optimized form of the popular LZ77 compression algorithm. This is essentially the same algorithm used in PowerPacker, Imploder and the LHA packers.</value>
+  </data>
 </root>

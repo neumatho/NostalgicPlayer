@@ -34,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 			new DecompressorPair { First = BZip2Decompressor.DetectHeaderXpk, Second = BZip2Decompressor.Create, Type = DecompressorType.Xpk_Bzp2 },
 			new DecompressorPair { First = LhDecompressor.DetectHeaderXpk, Second = LhDecompressor.Create, Type = DecompressorType.Xpk_Lhlb },
 			new DecompressorPair { First = MashDecompressor.DetectHeaderXpk, Second = MashDecompressor.Create, Type = DecompressorType.Xpk_Mash },
+			new DecompressorPair { First = NukeDecompressor.DetectHeaderXpk, Second = NukeDecompressor.Create, Type = DecompressorType.Xpk_Nuke },
 			new DecompressorPair { First = RakeDecompressor.DetectHeaderXpk, Second = RakeDecompressor.Create, Type = DecompressorType.Xpk_Rake },
 			new DecompressorPair { First = ShrXDecompressor.DetectHeaderXpk_Shri, Second = ShrXDecompressor.Create_Shri, Type = DecompressorType.Xpk_Shri },
 			new DecompressorPair { First = SmplDecompressor.DetectHeaderXpk, Second = SmplDecompressor.Create, Type = DecompressorType.Xpk_Smpl },
