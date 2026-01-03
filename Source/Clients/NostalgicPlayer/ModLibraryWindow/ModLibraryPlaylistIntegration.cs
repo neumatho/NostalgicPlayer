@@ -44,12 +44,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 					{
 						// Module already in list - select and play it if should play immediately
 						if (shouldPlayImmediately)
+						{
 							mainWindowForm.SelectAndPlayModule(existingItem);
+						}
 					}
 					else
 					{
 						// Add the file to the list and optionally play it immediately
-						mainWindowForm.AddFilesToModuleList(new[] { localPath }, shouldPlayImmediately);
+						mainWindowForm.AddFilesToModuleList(new[] {localPath}, shouldPlayImmediately);
 					}
 				}));
 			}

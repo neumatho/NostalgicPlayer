@@ -37,6 +37,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Download a single module file (synchronous, for background thread)
+		/// </summary>
+		/********************************************************************/
+		public string DownloadModule(TreeNode entry)
+		{
+			return DownloadModuleAsync(entry, CancellationToken.None).GetAwaiter().GetResult();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Download a single module file
 		/// </summary>
 		/********************************************************************/
@@ -44,7 +56,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		{
 			var service = data.GetService(entry.ServiceId);
 			if (service == null)
+			{
 				throw new InvalidOperationException("Service not found");
+			}
 
 			// Get relative path without service prefix
 			string relativePath = data.GetRelativePathFromService(entry.FullPath, service);
@@ -58,24 +72,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			if (!File.Exists(localPath))
 			{
 				// Create directory if needed
-				Directory.CreateDirectory(localDirectory);
-
-				// Download from service (currently only ModLand supported)
-				if (service.Id == "modland")
+				if (localDirectory != null)
 				{
-					using HttpClient client = new();
+					Directory.CreateDirectory(localDirectory);
 
-					// URL-encode the path to handle special characters
-					string encodedPath = string.Join("/", relativePath.Split('/').Select(Uri.EscapeDataString));
-					string downloadUrl = ModlandModulesUrl + encodedPath;
-					byte[] fileBytes = await client.GetByteArrayAsync(downloadUrl, cancellationToken);
-					await File.WriteAllBytesAsync(localPath, fileBytes, cancellationToken);
-
-					// Check if this is an mdat.* file - download matching smpl.* file
-					if (entry.Name.StartsWith("mdat.", StringComparison.OrdinalIgnoreCase))
+					// Download from service (currently only ModLand supported)
+					if (service.Id == "modland")
 					{
-						await DownloadSampleFileAsync(client, entry, service, relativePath, localDirectory,
-							cancellationToken);
+						using HttpClient client = new();
+
+						// URL-encode the path to handle special characters
+						string encodedPath = string.Join("/", relativePath.Split('/').Select(Uri.EscapeDataString));
+						string downloadUrl = ModlandModulesUrl + encodedPath;
+						byte[] fileBytes = await client.GetByteArrayAsync(downloadUrl, cancellationToken);
+						await File.WriteAllBytesAsync(localPath, fileBytes, cancellationToken);
+
+						// Check if this is an mdat.* file - download matching smpl.* file
+						if (entry.Name.StartsWith("mdat.", StringComparison.OrdinalIgnoreCase))
+						{
+							await DownloadSampleFileAsync(client, entry, service, relativePath, localDirectory,
+								cancellationToken);
+						}
 					}
 				}
 
@@ -127,10 +144,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Build full path including service folder name
 			string fullPath = $"{service.FolderName}/{relativePath}";
 
-			// Check if file already exists in local files
-			if (!data.LocalFiles.Any(e => e.FullName == fullPath))
-				// Add to local files list
-				data.AddLocalFile(fullPath, size);
+			// Add to local files list if not already present
+			data.AddLocalFileIfNotExists(fullPath, size);
 		}
 	}
 }

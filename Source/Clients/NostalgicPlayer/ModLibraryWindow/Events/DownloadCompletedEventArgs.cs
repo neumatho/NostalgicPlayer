@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 {
 	/// <summary>
 	/// Event args for download completion

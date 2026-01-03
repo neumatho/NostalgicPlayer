@@ -1915,6 +1915,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add to Favorites.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_ADD_TO_FAVORITES {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_ADD_TO_FAVORITES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add to Playlist.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_ADD_TO_PLAYLIST {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_ADD_TO_PLAYLIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 📋 Flat View - All Files ({0} files).
         /// </summary>
         internal static string IDS_MODLIBRARY_BREADCRUMB_FLAT_VIEW_ALL {
@@ -1978,7 +1996,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
+        ///   Looks up a localized string similar to Delete from Disk.
         /// </summary>
         internal static string IDS_MODLIBRARY_DELETE {
             get {
@@ -1987,11 +2005,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download Selected.
+        ///   Looks up a localized string similar to Download and Play.
         /// </summary>
-        internal static string IDS_MODLIBRARY_DOWNLOAD_SELECTED {
+        internal static string IDS_MODLIBRARY_DOWNLOAD_AND_PLAY {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_SELECTED", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_AND_PLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download to Disk.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_DOWNLOAD_TO_DISK {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_TO_DISK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download to Playlist.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_DOWNLOAD_TO_PLAYLIST {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_TO_PLAYLIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Favorites only.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_FAVORITESONLY_CHECKBOX {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_FAVORITESONLY_CHECKBOX", resourceCulture);
             }
         }
         
@@ -2032,7 +2077,43 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Jump to folder.
+        ///   Looks up a localized string similar to The {0} database is {1} days old..
+        /// </summary>
+        internal static string IDS_MODLIBRARY_INFOBAR_DATABASE_OLD {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_DATABASE_OLD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dismiss.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_INFOBAR_DISMISS {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_DISMISS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_INFOBAR_IGNORE {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_IGNORE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Now.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_INFOBAR_UPDATE_NOW {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_UPDATE_NOW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jump to Folder.
         /// </summary>
         internal static string IDS_MODLIBRARY_JUMP_TO_FOLDER {
             get {
@@ -2070,17 +2151,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_MSGBOX_DATABASE_NOT_LOADED {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DATABASE_NOT_LOADED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The ModLand database is {0} days old.
-        ///
-        ///Do you want to update it now?.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_DATABASE_OLD {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DATABASE_OLD", resourceCulture);
             }
         }
         
@@ -2219,6 +2289,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download {0} files?.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_MSGBOX_DOWNLOAD_CONFIRM {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DOWNLOAD_CONFIRM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to clear database:
         ///
         ///{0}.
@@ -2330,6 +2409,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirm Download.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_CONFIRM {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_CONFIRM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download Database.
         /// </summary>
         internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_DB {
@@ -2366,15 +2454,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Database.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_UPDATE_DB {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_UPDATE_DB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to ⬆ Parent.
         /// </summary>
         internal static string IDS_MODLIBRARY_PARENT_BUTTON {
@@ -2384,11 +2463,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Play Module(s).
+        /// </summary>
+        internal static string IDS_MODLIBRARY_PLAY {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_PLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Play immediately (otherwise just add to playlist).
         /// </summary>
         internal static string IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reload.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_RELOAD {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_RELOAD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from Favorites.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_REMOVE_FROM_FAVORITES {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_REMOVE_FROM_FAVORITES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rescan Local Files.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_RESCAN_LOCAL_FILES {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_RESCAN_LOCAL_FILES", resourceCulture);
             }
         }
         
@@ -2434,6 +2549,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added {0} file(s) to playlist.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_STATUS_ADDED_FILES {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ADDED_FILES", resourceCulture);
             }
         }
         

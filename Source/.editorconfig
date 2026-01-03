@@ -11,7 +11,7 @@ end_of_line = crlf
 
 # Microsoft .NET properties
 csharp_preferred_modifier_order = public, private, protected, internal, file, static, extern, new, virtual, abstract, sealed, override, readonly, unsafe, required, volatile, async:suggestion
-csharp_prefer_braces = false:suggestion
+csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = false
 csharp_style_expression_bodied_accessors = true:suggestion
 csharp_style_expression_bodied_constructors = false:warning
