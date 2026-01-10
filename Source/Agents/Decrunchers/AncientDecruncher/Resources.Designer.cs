@@ -350,5 +350,23 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT9", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (NUKE).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT13", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library)....
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT13", resourceCulture);
+            }
+        }
     }
 }
