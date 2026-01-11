@@ -267,6 +267,39 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// The strcsspn function is used to find the number of characters
+		/// in the given string before the 1st occurrence of a character from
+		/// the defined set of characters or string
+		/// </summary>
+		/********************************************************************/
+		public static size_t strcspn(CPointer<char> str1, CPointer<char> str2)
+		{
+			if (str1.IsNull)
+				throw new ArgumentNullException(nameof(str1));
+
+			if (str2.IsNull)
+				throw new ArgumentNullException(nameof(str2));
+
+			HashSet<char> rejectSet = new HashSet<char>(str2.AsSpan().ToArray());
+
+			size_t i = 0;
+			size_t maxLength = (size_t)str1.Length;
+
+			while ((i < maxLength) && (str1[i] != '\0'))
+			{
+				if (rejectSet.Contains(str1[i]))
+					break;
+
+				i++;
+			}
+
+			return i;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Compares the first n characters of two strings and returns an
 		/// integer indicating which one is greater
 		/// </summary>

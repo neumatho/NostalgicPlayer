@@ -75,8 +75,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			return processorTime.Ticks;
 		}
 
-
-
+		#region pthread_once
 		/********************************************************************/
 		/// <summary>
 		/// Initialize the thread once state
@@ -108,9 +107,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 			return 0;
 		}
+		#endregion
 
-
-
+		#region pthread_mutex
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -157,6 +156,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void pthread_mutex_unlock(pthread_mutex_t mutex)
 		{
 			mutex.ReleaseMutex();
+		}
+		#endregion
+
+		#region pthread_cond
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static c_int pthread_cond_init(out pthread_cond_t cond)
+		{
+			cond = new pthread_cond_t();
+
+			return 0;
 		}
 
 
@@ -220,6 +233,21 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				mutex.WaitOne();
 			}
 		}
+		#endregion
+
+		#region pthread
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static c_int pthread_create(out pthread_t thread, ParameterizedThreadStart start_Routine, object arg)
+		{
+			thread = new pthread_t(start_Routine);
+			thread.Start(arg);
+
+			return 0;
+		}
 
 
 
@@ -232,5 +260,6 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		{
 			thread.Join();
 		}
+		#endregion
 	}
 }
