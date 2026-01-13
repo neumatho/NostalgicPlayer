@@ -8,10 +8,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
+namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 {
 	/// <summary>
 	/// This class can load M3U or extended M3U lists

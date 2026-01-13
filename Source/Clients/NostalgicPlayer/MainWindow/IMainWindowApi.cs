@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
+using Polycode.NostalgicPlayer.Logic.MultiFiles;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {

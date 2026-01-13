@@ -11,8 +11,8 @@ using System.Threading;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -20,6 +20,7 @@ using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
+using Polycode.NostalgicPlayer.Logic.MultiFiles;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -286,7 +287,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (loader != null)
 					{
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
-							list.Add(ListItemConverter.Convert(info));
+							list.Add(ListItemMapper.Convert(info));
 					}
 				}
 

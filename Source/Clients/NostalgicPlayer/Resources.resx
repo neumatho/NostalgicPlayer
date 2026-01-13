@@ -718,9 +718,6 @@ Do you want to continue?</value>
   <data name="IDS_ERR_UNKNOWN_LIST_FORMAT" xml:space="preserve">
     <value>The file {0} could not be regonized as a module list.</value>
   </data>
-  <data name="IDS_ERR_UNKNOWN_LIST_VERSION" xml:space="preserve">
-    <value>Unknown version ({0}) of a NPML list.</value>
-  </data>
   <data name="IDS_FAVORITE_BUTTON_ADD" xml:space="preserve">
     <value>Add</value>
   </data>

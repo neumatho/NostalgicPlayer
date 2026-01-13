@@ -1618,15 +1618,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown version ({0}) of a NPML list..
-        /// </summary>
-        internal static string IDS_ERR_UNKNOWN_LIST_VERSION {
-            get {
-                return ResourceManager.GetString("IDS_ERR_UNKNOWN_LIST_VERSION", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         internal static string IDS_FAVORITE_BUTTON_ADD {

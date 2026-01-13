@@ -22,10 +22,10 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
@@ -43,6 +43,7 @@ using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 using Polycode.NostalgicPlayer.Library.Loaders;
+using Polycode.NostalgicPlayer.Logic.MultiFiles;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -570,7 +571,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public MultiFileInfo GetFileInfo()
 		{
-			return playItem == null ? null : ListItemConverter.Convert(playItem);
+			return playItem == null ? null : ListItemMapper.Convert(playItem);
 		}
 
 
@@ -4691,7 +4692,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							if (loader != null)
 							{
 								foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
-									list.Add(ListItemConverter.Convert(info));
+									list.Add(ListItemMapper.Convert(info));
 							}
 						}
 					}
@@ -4897,7 +4898,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						List<ModuleListItem> tempList = new List<ModuleListItem>();
 
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
-							tempList.Add(ListItemConverter.Convert(info));
+							tempList.Add(ListItemMapper.Convert(info));
 
 						int currentCount = moduleListControl.Items.Count;
 
@@ -4963,7 +4964,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private IEnumerable<MultiFileInfo> GetModuleList()
 		{
 			foreach (ModuleListItem listItem in moduleListControl.Items)
-				yield return ListItemConverter.Convert(listItem);
+				yield return ListItemMapper.Convert(listItem);
 		}
 
 
