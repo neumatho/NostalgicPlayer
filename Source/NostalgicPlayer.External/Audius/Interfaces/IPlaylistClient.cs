@@ -4,9 +4,9 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Threading;
-using Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.External.Audius.Models.Playlists;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius.Interfaces
+namespace Polycode.NostalgicPlayer.External.Audius.Interfaces
 {
 	/// <summary>
 	/// Interface for interacting of playlists with Audius

@@ -7,8 +7,8 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
+using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
-using Polycode.NostalgicPlayer.RestClients;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {

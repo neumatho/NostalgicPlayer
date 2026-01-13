@@ -3,10 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.RestClients.Audius.Clients;
-using Polycode.NostalgicPlayer.RestClients.Audius.Interfaces;
+using Polycode.NostalgicPlayer.External.Audius.Clients;
+using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius
+namespace Polycode.NostalgicPlayer.External.Audius
 {
 	/// <summary>
 	/// Main class for the Audius API

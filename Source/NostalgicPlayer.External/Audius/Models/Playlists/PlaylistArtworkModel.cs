@@ -5,12 +5,12 @@
 /******************************************************************************/
 using System.Text.Json.Serialization;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Users
+namespace Polycode.NostalgicPlayer.External.Audius.Models.Playlists
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class ProfilePictureModel
+	public class PlaylistArtworkModel
 	{
 		/// <summary></summary>
 		[JsonPropertyName("150x150")]

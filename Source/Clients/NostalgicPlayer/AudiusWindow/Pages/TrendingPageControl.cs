@@ -12,11 +12,11 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
-using Polycode.NostalgicPlayer.RestClients;
-using Polycode.NostalgicPlayer.RestClients.Audius;
-using Polycode.NostalgicPlayer.RestClients.Audius.Interfaces;
-using Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists;
-using Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.External;
+using Polycode.NostalgicPlayer.External.Audius;
+using Polycode.NostalgicPlayer.External.Audius.Interfaces;
+using Polycode.NostalgicPlayer.External.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.External.Audius.Models.Tracks;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 {

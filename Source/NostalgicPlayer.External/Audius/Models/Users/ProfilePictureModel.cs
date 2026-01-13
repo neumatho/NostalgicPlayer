@@ -5,15 +5,23 @@
 /******************************************************************************/
 using System.Text.Json.Serialization;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks
+namespace Polycode.NostalgicPlayer.External.Audius.Models.Users
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class TrackElementModel
+	public class ProfilePictureModel
 	{
 		/// <summary></summary>
-		[JsonPropertyName("parent_track_id")]
-		public string ParentTrackId { get; set; }
+		[JsonPropertyName("150x150")]
+		public string _150x150 { get; set; }
+
+		/// <summary></summary>
+		[JsonPropertyName("480x480")]
+		public string _480x480 { get; set; }
+
+		/// <summary></summary>
+		[JsonPropertyName("1000x1000")]
+		public string _1000x1000 { get; set; }
 	}
 }

@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
-using Polycode.NostalgicPlayer.RestClients;
+using Polycode.NostalgicPlayer.External;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {

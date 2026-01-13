@@ -4,11 +4,11 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Threading;
-using Polycode.NostalgicPlayer.RestClients.Audius.Interfaces;
-using Polycode.NostalgicPlayer.RestClients.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.External.Audius.Interfaces;
+using Polycode.NostalgicPlayer.External.Audius.Models.Playlists;
 using RestSharp;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius.Clients
+namespace Polycode.NostalgicPlayer.External.Audius.Clients
 {
 	/// <summary>
 	/// Holds methods for interacting with playlists on Audius

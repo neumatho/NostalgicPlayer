@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RestSharp;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius.Clients
+namespace Polycode.NostalgicPlayer.External.Audius.Clients
 {
 	/// <summary>
 	/// Base class for all Audius client classes

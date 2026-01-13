@@ -4,26 +4,26 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Text.Json.Serialization;
-using Polycode.NostalgicPlayer.RestClients.Audius.Models.Users;
+using Polycode.NostalgicPlayer.External.Audius.Models.Users;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks
+namespace Polycode.NostalgicPlayer.External.Audius.Models.Playlists
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class TrackModel
+	public class PlaylistModel
 	{
 		/// <summary></summary>
 		[JsonPropertyName("artwork")]
-		public TrackArtworkModel Artwork { get; set; }
+		public PlaylistArtworkModel Artwork { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("description")]
 		public string Description { get; set; }
 
 		/// <summary></summary>
-		[JsonPropertyName("genre")]
-		public string Genre { get; set; }
+		[JsonPropertyName("permalink")]
+		public string Permalink { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("id")]
@@ -31,20 +31,14 @@ namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks
 		public string Id { get; set; }
 
 		/// <summary></summary>
-		[JsonPropertyName("track_cid")]
-		public string TrackCid { get; set; }
+		[JsonPropertyName("is_album")]
+		[JsonRequired]
+		public bool IsAlbum { get; set; }
 
 		/// <summary></summary>
-		[JsonPropertyName("mood")]
-		public string Mood { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("release_date")]
-		public string ReleaseDate { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("remix_of")]
-		public RemixParentModel RemixOf { get; set; }
+		[JsonPropertyName("playlist_name")]
+		[JsonRequired]
+		public string PlaylistName { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("repost_count")]
@@ -57,13 +51,9 @@ namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks
 		public int FavoriteCount { get; set; }
 
 		/// <summary></summary>
-		[JsonPropertyName("tags")]
-		public string Tags { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("title")]
+		[JsonPropertyName("total_play_count")]
 		[JsonRequired]
-		public string Title { get; set; }
+		public int TotalPlayCount { get; set; }
 
 		/// <summary></summary>
 		[JsonPropertyName("user")]
@@ -71,23 +61,8 @@ namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks
 		public UserModel User { get; set; }
 
 		/// <summary></summary>
-		[JsonPropertyName("duration")]
-		public int? Duration { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("downloadable")]
-		public bool Downloadable { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("play_count")]
-		public int? PlayCount { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("permalink")]
-		public string Permalink { get; set; }
-
-		/// <summary></summary>
-		[JsonPropertyName("is_streamable")]
-		public bool IsStreamable { get; set; }
+		[JsonPropertyName("playlist_contents")]
+		[JsonRequired]
+		public PlaylistContentModel[] Tracks { get; set; }
 	}
 }

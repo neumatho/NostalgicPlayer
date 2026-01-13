@@ -3,18 +3,21 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Polycode.NostalgicPlayer.RestClients.Audius.Models.Tracks
+namespace Polycode.NostalgicPlayer.External.Audius.Models.Users
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class RemixParentModel
+	public class CoverPhotoModel
 	{
 		/// <summary></summary>
-		[JsonPropertyName("tracks")]
-		public List<TrackElementModel> Tracks { get; set; }
+		[JsonPropertyName("640x")]
+		public string _640x { get; set; }
+
+		/// <summary></summary>
+		[JsonPropertyName("2000x")]
+		public string _2000x { get; set; }
 	}
 }

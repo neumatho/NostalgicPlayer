@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.RestClients;
+using Polycode.NostalgicPlayer.External;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 {

@@ -210,7 +210,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Streamers", "Streamers", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActivisionPro", "Agents\Players\ActivisionPro\ActivisionPro.csproj", "{9C764461-0340-4F41-8DAB-AD5FE28889C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.RestClients", "NostalgicPlayer.RestClients\NostalgicPlayer.RestClients.csproj", "{4BA52648-90AB-4590-A489-91C79620885C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.External", "NostalgicPlayer.External\NostalgicPlayer.External.csproj", "{4BA52648-90AB-4590-A489-91C79620885C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundControl", "Agents\Players\SoundControl\SoundControl.csproj", "{4F8077C4-84AB-40C0-B8A7-5A7FABC1BE2E}"
 EndProject

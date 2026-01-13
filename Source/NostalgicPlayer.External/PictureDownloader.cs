@@ -12,7 +12,7 @@ using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Polycode.NostalgicPlayer.RestClients
+namespace Polycode.NostalgicPlayer.External
 {
 	/// <summary>
 	/// Helper class to download pictures from Audius
