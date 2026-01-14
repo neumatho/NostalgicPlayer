@@ -8,13 +8,14 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen;
+using Polycode.NostalgicPlayer.Logic.Application;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
 	/// <summary>
 	/// Will make sure only one instance of the player is running
 	/// </summary>
-	public class SingleInstanceApplication : WindowsFormsApplicationBase
+	public class SingleInstanceApplication : WindowsFormsApplicationBase, IApplicationHost
 	{
 		/********************************************************************/
 		/// <summary>

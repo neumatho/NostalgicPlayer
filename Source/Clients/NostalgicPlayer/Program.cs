@@ -6,8 +6,10 @@
 using System;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Composition;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Logic.Application;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
@@ -26,21 +28,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		{
 			try
 			{
-				// Some of the agents have their own settings. We use dependency injection
-				// to add an implementation that read these settings
-				DependencyInjection.Build(services =>
+				new ApplicationBuilder()
+					.ConfigureContainer(context =>
 					{
-						// We use the default NostalgicPlayer implementation
-						services.AddTransient<ISettings, Settings>();
-					}
-				);
+						CompositionRoot.Register(context.Container);
+					})
+					.ConfigureInitialization(context =>
+					{
+						// Some of the agents have their own settings. We use dependency injection
+						// to add an implementation that read these settings
+						DependencyInjection.Build(services =>
+							{
+								// We use the default NostalgicPlayer implementation
+								services.AddTransient<ISettings, Settings>();
+							}
+						);
 
-				Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
-
-				SingleInstanceApplication singleInstanceApplication = new SingleInstanceApplication();
-				singleInstanceApplication.Run(Environment.GetCommandLineArgs());
+						Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
+						Application.EnableVisualStyles();
+						Application.SetCompatibleTextRenderingDefault(false);
+					})
+					.ConfigureHost(new SingleInstanceApplication())
+					.Build()
+					.Run(Environment.GetCommandLineArgs());
 			}
 			catch (Exception ex)
 			{

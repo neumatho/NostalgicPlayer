@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayer.Kit.Utility\NostalgicPlayer.Kit.Utility.csproj" />
     <ProjectReference Include="..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
   </ItemGroup>
 

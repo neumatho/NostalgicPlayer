@@ -92,6 +92,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 			"Microsoft.",
 			"Krypton.",
 			"NAudio",
+			"SimpleInjector",
 			"NostalgicPlayer.",
 			"Lib"
 		];

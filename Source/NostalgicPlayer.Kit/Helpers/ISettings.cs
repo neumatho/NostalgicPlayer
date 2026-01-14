@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Kit.Helpers
 		/// <summary>
 		/// Will load the settings for the given component into memory
 		/// </summary>
-		public void LoadSettings(string component);
+		void LoadSettings(string component);
 
 		/// <summary>
 		/// Will save the settings in memory back
