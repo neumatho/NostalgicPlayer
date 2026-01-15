@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Logic.Application
 {
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/// <summary>
 		/// 
 		/// </summary>
-		public delegate void Initialization_Handler(IApplicationContext context);
+		public delegate void Initialization_Handler();
 
 		private event Configure_Handler configure;
 		private event Initialization_Handler initialize;
@@ -85,8 +86,10 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 
 			context.Container.Verify();
 
+			DependencyInjection.Container = context.Container;
+
 			if (initialize != null)
-				initialize(context);
+				initialize();
 
 			return applicationHost;
 		}

@@ -3,11 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Composition;
-using Polycode.NostalgicPlayer.Logic.Composition;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using SimpleInjector;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
+namespace Polycode.NostalgicPlayer.Kit.Composition
 {
 	/// <summary>
 	/// Register all classes/interfaces into the dependency injection container
@@ -19,10 +18,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Register(Container container)
+		public static void RegisterKit(this Container container)
 		{
-			container.RegisterKit();
-			container.RegisterLogic();
+			container.Register<ISettings, Settings>();
 		}
 	}
 }

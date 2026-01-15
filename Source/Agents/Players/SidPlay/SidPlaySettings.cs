@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -105,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public SidPlaySettings()
 		{
-			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettings>();
 			settings.LoadSettings("SidPlay");
 
 			// Remove obsolete settings

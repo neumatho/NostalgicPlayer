@@ -6,7 +6,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Helpers;
@@ -103,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
-			allWindowSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);

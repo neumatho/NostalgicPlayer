@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -23,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		public RememberListSettings()
 		{
-			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettings>();
 			settings.LoadSettings("__RememberList");
 		}
 

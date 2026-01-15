@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -42,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 				// Some of the agents have their own settings. We use dependency injection
 				// to add an implementation that read these settings. You can implement your
 				// own version by deriving from ISettings and register it
-				DependencyInjection.Build(services =>
+/*				DependencyInjection.Build(services =>
 					{
 						// We use the default NostalgicPlayer implementation,
 						// which will read/write the settings in
@@ -51,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 						// It is important that the ISettings is added as transient
 						services.AddTransient<ISettings, Settings>();
 					}
-				);
+				);*/
 
 				// Load needed agents
 				Manager agentManager = new Manager();

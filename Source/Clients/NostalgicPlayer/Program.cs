@@ -5,10 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Windows.Forms;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Composition;
-using Polycode.NostalgicPlayer.Kit.Helpers;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Logic.Application;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
@@ -33,17 +30,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 					{
 						CompositionRoot.Register(context.Container);
 					})
-					.ConfigureInitialization(context =>
+					.ConfigureInitialization(() =>
 					{
-						// Some of the agents have their own settings. We use dependency injection
-						// to add an implementation that read these settings
-						DependencyInjection.Build(services =>
-							{
-								// We use the default NostalgicPlayer implementation
-								services.AddTransient<ISettings, Settings>();
-							}
-						);
-
 						Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
 						Application.EnableVisualStyles();
 						Application.SetCompatibleTextRenderingDefault(false);

@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Containers;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -25,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public OscilloscopeSettings()
 		{
-			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettings>();
 			settings.LoadSettings("Oscilloscope");
 		}
 

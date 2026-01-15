@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
@@ -2967,7 +2966,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void InitSettings()
 		{
 			// Create instances of the settings
-			userSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			userSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			userSettings.LoadSettings("Settings");
 			FixSettings();
 

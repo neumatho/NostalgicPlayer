@@ -10,10 +10,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
@@ -1646,7 +1644,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		private string GetCurrentModLibraryPath()
 		{
-			var userSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			ISettings userSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			userSettings.LoadSettings("Settings");
 			PathSettings pathSettings = new(userSettings);
 			return pathSettings.ModLibrary ?? string.Empty;
