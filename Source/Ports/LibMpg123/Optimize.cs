@@ -341,10 +341,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// Concentrating on the plain stereo synth should be fine, mono stuff is derived
 			Synth_S.Func_Synth basic_Synth = fr.Synth;
 
-			if (false)
+/*			if (false)
 			{
 			}
-			else if (Find_Synth(basic_Synth, synth_Base.Plain))
+			else*/ if (Find_Synth(basic_Synth, synth_Base.Plain))
 				type = OptDec.Generic;
 
 			if (type != OptDec.NoDec)

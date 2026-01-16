@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// Reverse op-amp transfer function
 		protected readonly ushort[] opamp_rev = new ushort[1 << 16];	// This is initialized in the derived class constructor
 
-		private RandomNoise rnd = new RandomNoise();
+		private readonly RandomNoise rnd = new RandomNoise();
 
 		/********************************************************************/
 		/// <summary>

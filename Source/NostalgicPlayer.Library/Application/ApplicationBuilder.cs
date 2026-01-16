@@ -35,7 +35,6 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		private event SetupHost_Handler setupHost;
 
 		private readonly string[] arguments;
-		private IApplicationHost applicationHost;
 
 		/********************************************************************/
 		/// <summary>
