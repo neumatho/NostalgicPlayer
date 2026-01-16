@@ -16,8 +16,8 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
-using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow

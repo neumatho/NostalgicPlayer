@@ -9,8 +9,9 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Kit.Helpers
+namespace Polycode.NostalgicPlayer.Kit.Utility
 {
 	/// <summary>
 	/// This class helps to read and write user settings

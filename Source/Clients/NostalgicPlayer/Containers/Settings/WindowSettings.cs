@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Drawing;
-using Polycode.NostalgicPlayer.Kit.Helpers;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
