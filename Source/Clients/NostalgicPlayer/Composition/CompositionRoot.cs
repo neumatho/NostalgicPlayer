@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Composition;
 using Polycode.NostalgicPlayer.Logic.Composition;
 using SimpleInjector;
 
@@ -21,7 +20,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		/********************************************************************/
 		public static void Register(Container container)
 		{
-			container.RegisterKit();
 			container.RegisterLogic();
 		}
 	}

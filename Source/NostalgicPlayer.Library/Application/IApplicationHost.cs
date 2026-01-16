@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Logic.Application
+namespace Polycode.NostalgicPlayer.Library.Application
 {
 	/// <summary>
 	/// Create your own application class that derives from this
@@ -14,6 +14,6 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/// <summary>
 		/// Start the application
 		/// </summary>
-		void Run(string[] args);
+		void Run();
 	}
 }

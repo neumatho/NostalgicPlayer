@@ -6,7 +6,7 @@
 using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Composition;
-using Polycode.NostalgicPlayer.Logic.Application;
+using Polycode.NostalgicPlayer.Library.Application;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		{
 			try
 			{
-				new ApplicationBuilder()
+				new ApplicationBuilder(Environment.GetCommandLineArgs())
 					.ConfigureContainer(context =>
 					{
 						CompositionRoot.Register(context.Container);
@@ -36,9 +36,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 						Application.EnableVisualStyles();
 						Application.SetCompatibleTextRenderingDefault(false);
 					})
-					.ConfigureHost(new SingleInstanceApplication())
+					.ConfigureHost(context => new SingleInstanceApplication(context))
 					.Build()
-					.Run(Environment.GetCommandLineArgs());
+					.Run();
 			}
 			catch (Exception ex)
 			{

@@ -4,9 +4,11 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Composition;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Logic.Application
+namespace Polycode.NostalgicPlayer.Library.Application
 {
 	/// <summary>
 	/// Use this to configure and start your application
@@ -23,9 +25,29 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/// </summary>
 		public delegate void Initialization_Handler();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public delegate IApplicationHost SetupHost_Handler(IApplicationContext context);
+
 		private event Configure_Handler configure;
 		private event Initialization_Handler initialize;
+		private event SetupHost_Handler setupHost;
+
+		private readonly string[] arguments;
 		private IApplicationHost applicationHost;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ApplicationBuilder(string[] args)
+		{
+			arguments = args;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -60,9 +82,12 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/// Register host handler to run the application
 		/// </summary>
 		/********************************************************************/
-		public ApplicationBuilder ConfigureHost(IApplicationHost host)
+		public ApplicationBuilder ConfigureHost(SetupHost_Handler handler)
 		{
-			applicationHost = host;
+			if (setupHost != null)
+				throw new InvalidOperationException("Host handler has already been setup");
+
+			setupHost += handler;
 
 			return this;
 		}
@@ -76,10 +101,12 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/********************************************************************/
 		public IApplicationHost Build()
 		{
-			if (applicationHost == null)
+			if (setupHost == null)
 				throw new InvalidOperationException("Application host has not been defined");
 
-			ApplicationContext context = new ApplicationContext();
+			ApplicationContext context = new ApplicationContext(arguments);
+
+			context.Container.RegisterKit();
 
 			if (configure != null)
 				configure(context);
@@ -91,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 			if (initialize != null)
 				initialize();
 
-			return applicationHost;
+			return setupHost(context);
 		}
 	}
 }

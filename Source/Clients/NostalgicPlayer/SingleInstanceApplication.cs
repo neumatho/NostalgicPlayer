@@ -8,7 +8,8 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen;
-using Polycode.NostalgicPlayer.Logic.Application;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Library.Application;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
@@ -17,16 +18,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 	/// </summary>
 	public class SingleInstanceApplication : WindowsFormsApplicationBase, IApplicationHost
 	{
+		private readonly IApplicationContext context;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleInstanceApplication()
+		public SingleInstanceApplication(IApplicationContext appContext)
 		{
+			context = appContext;
+
 			IsSingleInstance = true;
 
 			StartupNextInstance += StartupNextInstanceHandler;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Start the application
+		/// </summary>
+		/********************************************************************/
+		public void Run()
+		{
+			base.Run(context.Arguments);
 		}
 
 

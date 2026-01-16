@@ -3,9 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using SimpleInjector;
 
-namespace Polycode.NostalgicPlayer.Logic.Application
+namespace Polycode.NostalgicPlayer.Library.Application
 {
 	/// <summary>
 	/// Holds the context of the application
@@ -17,8 +18,10 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ApplicationContext()
+		public ApplicationContext(string[] args)
 		{
+			Arguments = args;
+
 			Container = new Container();
 		}
 
@@ -30,6 +33,18 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/// </summary>
 		/********************************************************************/
 		public Container Container
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Command line arguments
+		/// </summary>
+		/********************************************************************/
+		public string[] Arguments
 		{
 			get;
 		}

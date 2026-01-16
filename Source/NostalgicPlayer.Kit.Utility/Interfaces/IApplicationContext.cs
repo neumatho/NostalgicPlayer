@@ -5,7 +5,7 @@
 /******************************************************************************/
 using SimpleInjector;
 
-namespace Polycode.NostalgicPlayer.Logic.Application
+namespace Polycode.NostalgicPlayer.Kit.Utility.Interfaces
 {
 	/// <summary>
 	/// Holds the context of the application
@@ -16,5 +16,10 @@ namespace Polycode.NostalgicPlayer.Logic.Application
 		/// Dependency injection container
 		/// </summary>
 		Container Container { get; }
+
+		/// <summary>
+		/// Command line arguments
+		/// </summary>
+		string[] Arguments { get; }
 	}
 }
