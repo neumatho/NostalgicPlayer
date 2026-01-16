@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Kit.Composition;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -25,14 +24,8 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		/// </summary>
 		public delegate void Initialization_Handler();
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public delegate IApplicationHost SetupHost_Handler(IApplicationContext context);
-
 		private event Configure_Handler configure;
 		private event Initialization_Handler initialize;
-		private event SetupHost_Handler setupHost;
 
 		private readonly string[] arguments;
 
@@ -78,32 +71,31 @@ namespace Polycode.NostalgicPlayer.Library.Application
 
 		/********************************************************************/
 		/// <summary>
-		/// Register host handler to run the application
-		/// </summary>
-		/********************************************************************/
-		public ApplicationBuilder ConfigureHost(SetupHost_Handler handler)
-		{
-			if (setupHost != null)
-				throw new InvalidOperationException("Host handler has already been setup");
-
-			setupHost += handler;
-
-			return this;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Build the application so it is ready to start
 		/// </summary>
 		/********************************************************************/
 		public IApplicationHost Build()
 		{
-			if (setupHost == null)
-				throw new InvalidOperationException("Application host has not been defined");
+			IApplicationContext context = InitializeApplicationContext();
 
+			DependencyInjection.Container = context.Container;
+
+			if (initialize != null)
+				initialize();
+
+			return context.Container.GetInstance<IApplicationHost>();
+		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Setup the application context
+		/// </summary>
+		/********************************************************************/
+		private IApplicationContext InitializeApplicationContext()
+		{
 			ApplicationContext context = new ApplicationContext(arguments);
+			context.Container.RegisterInstance<IApplicationContext>(context);
 
 			context.Container.RegisterKit();
 
@@ -112,12 +104,8 @@ namespace Polycode.NostalgicPlayer.Library.Application
 
 			context.Container.Verify();
 
-			DependencyInjection.Container = context.Container;
-
-			if (initialize != null)
-				initialize();
-
-			return setupHost(context);
+			return context;
 		}
+		#endregion
 	}
 }

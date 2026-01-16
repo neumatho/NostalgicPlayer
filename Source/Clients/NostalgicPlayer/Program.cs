@@ -36,7 +36,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 						Application.EnableVisualStyles();
 						Application.SetCompatibleTextRenderingDefault(false);
 					})
-					.ConfigureHost(context => new SingleInstanceApplication(context))
 					.Build()
 					.Run();
 			}
