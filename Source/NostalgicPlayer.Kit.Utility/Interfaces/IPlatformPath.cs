@@ -3,22 +3,16 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using SimpleInjector;
-
-namespace Polycode.NostalgicPlayer.Logic.Composition
+namespace Polycode.NostalgicPlayer.Kit.Utility.Interfaces
 {
 	/// <summary>
-	/// Register all classes/interfaces into the dependency injection container
+	/// Holds different system paths
 	/// </summary>
-	public static class CompositionRoot
+	public interface IPlatformPath
 	{
-		/********************************************************************/
 		/// <summary>
-		/// Register all client logic specific classes into the container
+		/// Return the path to where the settings should be stored
 		/// </summary>
-		/********************************************************************/
-		public static void RegisterLogic(this Container container)
-		{
-		}
+		string SettingsPath { get; }
 	}
 }

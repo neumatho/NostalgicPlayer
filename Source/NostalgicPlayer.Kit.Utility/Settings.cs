@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// <summary>
 	/// This class helps to read and write user settings
 	/// </summary>
-	public class Settings : ISettings
+	internal class Settings : ISettings
 	{
 		private enum LineType
 		{
@@ -31,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			public string Line { get; set; }
 		}
 
+		private readonly IPlatformPath platformPath;
+
 		private string comp;
 
 		private ReaderWriterLockSlim listLock;
@@ -43,8 +45,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Settings()
+		public Settings(IPlatformPath platformPath)
 		{
+			this.platformPath = platformPath;
+
 			// Initialize member variables
 			changed = false;
 
@@ -66,21 +70,6 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			listLock = null;
 
 			lineList = null;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the directory where settings are stored
-		/// </summary>
-		/********************************************************************/
-		public static string SettingsDirectory
-		{
-			get
-			{
-				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
-			}
 		}
 
 		#region ISettings implementation
@@ -713,7 +702,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		{
 			get
 			{
-				return Path.Combine(SettingsDirectory, comp + ".ini");
+				return Path.Combine(platformPath.SettingsPath, comp + ".ini");
 			}
 		}
 

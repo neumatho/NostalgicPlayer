@@ -84,6 +84,7 @@
     <ProjectReference Include="..\..\Agents\Streamers\OggStreamer\OggStreamer.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

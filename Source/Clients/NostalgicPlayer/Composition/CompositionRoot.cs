@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Library.Application;
 using Polycode.NostalgicPlayer.Logic.Composition;
+using Polycode.NostalgicPlayer.Platform.Composition;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
@@ -16,12 +17,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Register all client specific classes into the container
 		/// </summary>
 		/********************************************************************/
 		public static void Register(Container container)
 		{
 			container.RegisterLogic();
+			container.RegisterPlatform();
 
 			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
 		}

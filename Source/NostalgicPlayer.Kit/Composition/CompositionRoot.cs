@@ -3,8 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Composition;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Kit.Composition
@@ -16,12 +15,12 @@ namespace Polycode.NostalgicPlayer.Kit.Composition
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Register all kit specific classes into the container
 		/// </summary>
 		/********************************************************************/
 		public static void RegisterKit(this Container container)
 		{
-			container.Register<ISettings, Settings>();
+			container.RegisterUtility();
 		}
 	}
 }

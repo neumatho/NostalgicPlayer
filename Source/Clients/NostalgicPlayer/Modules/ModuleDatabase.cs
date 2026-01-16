@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 {
@@ -119,6 +120,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private ManualResetEvent cleanupEvent;
 		private CleanupDoneHandler cleanupDoneHandler;
 
+		private IPlatformPath platformPath;
+
 		/// <summary>
 		/// Return a new object if you want to change it or null to leave
 		/// the original in place
@@ -137,6 +140,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		public ModuleDatabase()
 		{
+			platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
+
 			root = new Dictionary<string, DatabaseValue>(StringComparer.InvariantCultureIgnoreCase);
 			queue = new Queue<QueueInfo>();
 
@@ -395,7 +400,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		private string GetDatabaseFileName()
 		{
-			return Path.Combine(Settings.SettingsDirectory, "ModuleInfo.db");
+			return Path.Combine(platformPath.SettingsPath, "ModuleInfo.db");
 		}
 
 

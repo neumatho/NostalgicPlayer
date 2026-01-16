@@ -30,6 +30,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private const string AllmodsZipUrl = "https://modland.com/allmods.zip";
 		private readonly Dictionary<string, InfoBarControl> activeInfoBars = new();
 
+		private readonly IPlatformPath platformPath;
+
 		private readonly ModLibraryData data = new();
 
 		// Download queue
@@ -97,6 +99,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			if (!DesignMode)
 			{
+				platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
+
 				InitializeWindow(mainWindow, optionSettings);
 
 				// Load window settings
@@ -1756,7 +1760,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		private void InitializeCacheDirectory()
 		{
-			cacheDirectory = Path.Combine(Settings.SettingsDirectory, "ModLibrary");
+			cacheDirectory = Path.Combine(platformPath.SettingsPath, "ModLibrary");
 			Directory.CreateDirectory(cacheDirectory);
 		}
 

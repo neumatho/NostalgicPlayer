@@ -57,6 +57,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public bool Enabled { get; set; }
 		}
 
+		private IPlatformPath platformPath;
+
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
@@ -160,6 +162,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void InitializeForm(Manager.LoadAgentProgress loadProgress)
 		{
+			platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
+
 			// Initialize and load settings
 			InitSettings();
 
@@ -1317,7 +1321,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			CreateWindows();
 
 			// Check if this is a new version of the application
-			string versionFile = Path.Combine(Settings.SettingsDirectory, "CurrentVersion.txt");
+			string versionFile = Path.Combine(platformPath.SettingsPath, "CurrentVersion.txt");
 
 			string currentVersion = Env.CurrentVersion;
 
@@ -2831,7 +2835,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				if (optionSettings.RememberList)
 				{
-					string fileName = Path.Combine(Settings.SettingsDirectory, "___RememberList.npml");
+					string fileName = Path.Combine(platformPath.SettingsPath, "___RememberList.npml");
 
 					if (File.Exists(fileName))
 					{
@@ -5489,7 +5493,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
-				string fileName = Path.Combine(Settings.SettingsDirectory, "___RememberList.npml");
+				string fileName = Path.Combine(platformPath.SettingsPath, "___RememberList.npml");
 				RememberListSettings infoSettings = new RememberListSettings();
 
 				// Delete the file if it exists
