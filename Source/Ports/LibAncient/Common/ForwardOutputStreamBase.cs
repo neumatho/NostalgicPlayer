@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 	/// </summary>
 	internal abstract class ForwardOutputStreamBase : IOutputStream
 	{
-		protected Buffer buffer;
+		protected readonly Buffer buffer;
 
 		protected readonly size_t startOffset;
 		protected size_t currentOffset;

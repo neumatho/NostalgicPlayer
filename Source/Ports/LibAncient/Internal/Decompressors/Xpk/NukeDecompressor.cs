@@ -11,26 +11,23 @@ using Buffer = Polycode.NostalgicPlayer.Ports.LibAncient.Common.Buffers.Buffer;
 namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 {
 	/// <summary>
-	/// XPK-NUKE decompressor (also handles DUKE)
+	/// XPK-NUKE decompressor
 	/// </summary>
 	internal class NukeDecompressor : XpkDecompressor
 	{
 		private readonly Buffer packedData;
-		private readonly bool isDuke;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private NukeDecompressor(uint32_t hdr, Buffer packedData)
+		protected NukeDecompressor(uint32_t hdr, Buffer packedData, bool skipDetect)
 		{
 			this.packedData = packedData;
 
-			if (!DetectHeaderXpk(hdr))
+			if (!skipDetect && !DetectHeaderXpk(hdr))
 				throw new InvalidFormatException();
-
-			isDuke = hdr == Common.Common.FourCC("DUKE");
 		}
 
 
@@ -42,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 		/********************************************************************/
 		public static bool DetectHeaderXpk(uint32_t hdr)
 		{
-			return (hdr == Common.Common.FourCC("NUKE")) || (hdr == Common.Common.FourCC("DUKE"));
+			return hdr == Common.Common.FourCC("NUKE");
 		}
 
 
@@ -54,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 		/********************************************************************/
 		public static XpkDecompressor Create(uint32_t hdr, Buffer packedData, ref State state)
 		{
-			return new NukeDecompressor(hdr, packedData);
+			return new NukeDecompressor(hdr, packedData, false);
 		}
 
 
@@ -157,9 +154,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors.Xpk
 
 				outputStream.Copy(distance, copyCount);
 			}
-
-			if (isDuke)
-				DltaDecode.Decode(rawData, rawData, 0, rawData.Size());
 		}
 	}
 }

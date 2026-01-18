@@ -35,6 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 			new DecompressorPair { First = LhDecompressor.DetectHeaderXpk, Second = LhDecompressor.Create, Type = DecompressorType.Xpk_Lhlb },
 			new DecompressorPair { First = MashDecompressor.DetectHeaderXpk, Second = MashDecompressor.Create, Type = DecompressorType.Xpk_Mash },
 			new DecompressorPair { First = NukeDecompressor.DetectHeaderXpk, Second = NukeDecompressor.Create, Type = DecompressorType.Xpk_Nuke },
+			new DecompressorPair { First = DukeDecompressor.DetectHeaderXpk, Second = DukeDecompressor.Create, Type = DecompressorType.Xpk_Duke },
 			new DecompressorPair { First = RakeDecompressor.DetectHeaderXpk, Second = RakeDecompressor.Create, Type = DecompressorType.Xpk_Rake },
 			new DecompressorPair { First = ShrXDecompressor.DetectHeaderXpk_Shri, Second = ShrXDecompressor.Create_Shri, Type = DecompressorType.Xpk_Shri },
 			new DecompressorPair { First = SmplDecompressor.DetectHeaderXpk, Second = SmplDecompressor.Create, Type = DecompressorType.Xpk_Smpl },
@@ -51,8 +52,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		private readonly bool longHeaders;
 		private readonly bool hasPassword = false;
 
-		private readonly CreateSubDecompressor subDecompressor;
-		private readonly DecompressorType decompressorType;
+		private CreateSubDecompressor subDecompressor;
+		private DecompressorType decompressorType;
 
 		/********************************************************************/
 		/// <summary>
