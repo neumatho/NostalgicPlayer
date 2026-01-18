@@ -777,7 +777,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						note += playingInfo.Tr;
 
 					cur.Note = (byte)note;
-					cur.Period = Tables.Periods[note + 36 - 1];
+					cur.Period = Tables.Periods[Math.Max(0, Math.Min(note + 36 - 1, Tables.Periods.Length - 1))];
 					cur.Restart = false;
 
 					// Should the voice be retrigged?
@@ -1183,7 +1183,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					// Find the period
 					cur.Restart = false;
-					cur.Period = Tables.Periods[note + 36 - 1];
+					cur.Period = Tables.Periods[Math.Max(0, Math.Min(note + 36 - 1, Tables.Periods.Length - 1))];
 					VirtualChannels[i].SetAmigaPeriod(cur.Period);
 				}
 			}
