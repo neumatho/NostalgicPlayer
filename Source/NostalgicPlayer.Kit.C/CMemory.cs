@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -181,6 +182,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		{
 			if (length > 0)
 				source.Slice((int)length).CopyTo(dest.AsSpan());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void memcpyCast<T1, T2>(CPointer<T1> dest, CPointer<T2> source, size_t length) where T1 : struct where T2 : struct
+		{
+			if (length > 0)
+				source.AsSpan().Slice(0, (c_int)length).CopyTo(MemoryMarshal.Cast<T1, T2>(dest.AsSpan()));
 		}
 
 
