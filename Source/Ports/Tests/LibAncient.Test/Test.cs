@@ -134,8 +134,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 		{
 			VerifyFile("test_C1_blzw.xpkf", "test_C1.raw");
 			VerifyFile("test_C1_bzp2.xpkf", "test_C1.raw");
+			VerifyFile("test_C1_duke.xpkf", "test_C1.raw");
 			VerifyFile("test_C1_lhlb.xpkf", "test_C1.raw");
 			VerifyFile("test_C1_mash.xpkf", "test_C1.raw");
+			VerifyFile("test_C1_nuke.xpkf", "test_C1.raw");
 			VerifyFile("test_C1_rake.xpkf", "test_C1.raw");
 			VerifyFile("test_C1_shri.xpkf", "test_C1.raw");
 			VerifyFile("test_C1_smpl.xpkf", "test_C1.raw");

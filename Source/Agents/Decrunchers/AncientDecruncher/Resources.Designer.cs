@@ -112,6 +112,34 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         
         /// <summary>
         ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Oliver Ickler.
+        ///
+        ///The NUKE is a cruncher library for the XPK cruncher created by Christian von Roques.
+        ///
+        ///NUKE implements a highly optimized form of the popular LZ77 compression algorithm. This is essentially the same algorithm used in PowerPacker, Imploder and the LHA packers..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Oliver Ickler.
+        ///
+        ///The DUKE is a cruncher library for the XPK cruncher created by Christian von Roques.
+        ///
+        ///DUKE uses the same compression algorithm as NUKE, but additionally applies delta encoding, making it especially suited for sample data..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT14 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
         ///Converted to C# by Thomas Neumann.
         ///
         ///The SQSH is a cruncher library for the XPK cruncher created by John Hendrikx. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression..
@@ -276,6 +304,24 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT12 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (NUKE).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (DUKE).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT14 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT14", resourceCulture);
             }
         }
         

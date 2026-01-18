@@ -34,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		private static readonly Guid agent10Id = Guid.Parse("8126B435-95E4-4205-A589-8A9B4CFF1DD1");
 		private static readonly Guid agent11Id = Guid.Parse("85226D94-249F-4C52-983B-99858862680D");
 		private static readonly Guid agent12Id = Guid.Parse("844B2EC4-E12A-4252-9362-8571E6B4801A");
+		private static readonly Guid agent13Id = Guid.Parse("A7B3C8D1-5E2F-4A6B-9C0D-1E2F3A4B5C6D");
+		private static readonly Guid agent14Id = Guid.Parse("B8C4D9E2-6F3A-5B7C-0D1E-2F3A4B5C6D7E");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -63,7 +65,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 			new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT9, Resources.IDS_ANC_DESCRIPTION_AGENT9, agent9Id),
 			new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT10, Resources.IDS_ANC_DESCRIPTION_AGENT10, agent10Id),
 			new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT11, Resources.IDS_ANC_DESCRIPTION_AGENT11, agent11Id),
-			new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT12, Resources.IDS_ANC_DESCRIPTION_AGENT12, agent12Id)
+			new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT12, Resources.IDS_ANC_DESCRIPTION_AGENT12, agent12Id),
+			new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT13, Resources.IDS_ANC_DESCRIPTION_AGENT13, agent13Id),
+			new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT14, Resources.IDS_ANC_DESCRIPTION_AGENT14, agent14Id)
 		];
 
 
@@ -110,6 +114,12 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 
 			if (typeId == agent12Id)
 				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT12);
+
+			if (typeId == agent13Id)
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT13);
+
+			if (typeId == agent14Id)
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT14);
 
 			return null;
 		}
@@ -213,6 +223,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT12;
 						typeId = agent12Id;
+						break;
+					}
+
+					case DecompressorType.Xpk_Nuke:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT13;
+						typeId = agent13Id;
+						break;
+					}
+
+					case DecompressorType.Xpk_Duke:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT14;
+						typeId = agent14Id;
 						break;
 					}
 
