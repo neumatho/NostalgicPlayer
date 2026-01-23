@@ -3,16 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Kit.C
 {
 	/// <summary>
-	/// Extension methods for enumerables
+	/// Extension methods for arrays
 	/// </summary>
-	public static class EnumerableExtension
+	public static class ArrayExtension
 	{
 		/********************************************************************/
 		/// <summary>
@@ -20,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<T> ToPointer<T>(this IEnumerable<T> e)
+		public static CPointer<T> ToPointer<T>(this T[] e)
 		{
-			return new CPointer<T>(e.ToArray());
+			return new CPointer<T>(e);
 		}
 	}
 }
