@@ -60,22 +60,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 		private class Liq_Header
 		{
-			public uint8[] Magic { get; } = new uint8[14];		// "Liquid Module:"
-			public uint8[] Name { get; } = new uint8[30];		// ASCIIZ module name
-			public uint8[] Author { get; } = new uint8[20];		// Author name
-			public uint8 _0x1a { get; set; }					// 0x1a
-			public uint8[] Tracker { get; } = new uint8[20];	// Tracker name
-			public uint16 Version { get; set; }					// Format version
-			public uint16 Speed { get; set; }					// Initial speed
-			public uint16 Bpm { get; set; }						// Initial bpm
-			public uint16 Low { get; set; }						// Lowest note (Amiga Period*4)
-			public uint16 High { get; set; }					// Uppest note (Amiga Period*4)
-			public uint16 Chn { get; set; }						// Number of channels
-			public Liq_Flag Flags { get; set; }					// Module flags
-			public uint16 Pat { get; set; }						// Number of patterns saved
-			public uint16 Ins { get; set; }						// Number of instruments
-			public uint16 Len { get; set; }						// Module length
-			public uint16 HdrSz { get; set; }					// Header size
+			public readonly uint8[] Magic = new uint8[14];		// "Liquid Module:"
+			public readonly uint8[] Name = new uint8[30];		// ASCIIZ module name
+			public readonly uint8[] Author = new uint8[20];		// Author name
+			public uint8 _0x1a;									// 0x1a
+			public readonly uint8[] Tracker = new uint8[20];	// Tracker name
+			public uint16 Version;								// Format version
+			public uint16 Speed;								// Initial speed
+			public uint16 Bpm;									// Initial bpm
+			public uint16 Low;									// Lowest note (Amiga Period*4)
+			public uint16 High;									// Uppest note (Amiga Period*4)
+			public uint16 Chn;									// Number of channels
+			public Liq_Flag Flags;								// Module flags
+			public uint16 Pat;									// Number of patterns saved
+			public uint16 Ins;									// Number of instruments
+			public uint16 Len;									// Module length
+			public uint16 HdrSz;								// Header size
 		}
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 		#endregion
@@ -83,40 +83,40 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Liq_Instrument
 		private class Liq_Instrument
 		{
-			public uint8[] Magic { get; } = new uint8[4];		// 'L', 'D', 'S', 'S'
-			public uint16 Version { get; set; }					// LDSS header version
-			public uint8[] Name { get; } = new uint8[30];		// Instrument name
-			public uint8[] Editor { get; } = new uint8[20];		// Generator name
-			public uint8[] Author { get; } = new uint8[20];		// Author name
-			public uint8 Hw_Id { get; set; }					// Hardware used to record the sample
-			public uint32 Length { get; set; }					// Sample length
-			public uint32 LoopStart { get; set; }				// Sample loop start
-			public uint32 LoopEnd { get; set; }					// Sample loop end
-			public uint32 C2Spd { get; set; }					// C2SPD
-			public uint8 Vol { get; set; }						// Volume
-			public Liq_Sample_Flag Flags { get; set; }			// Flags
-			public uint8 Pan { get; set; }						// Pan
-			public uint8 Midi_Ins { get; set; }					// General MIDI instrument
-			public uint8 Gvl { get; set; }						// Global volume
-			public uint8 Chord { get; set; }					// Chord type
-			public uint16 HdrSz { get; set; }					// LDSS header size
-			public uint16 Comp { get; set; }					// Compression algorithm
-			public uint32 Crc { get; set; }						// CRC
-			public uint8 Midi_Ch { get; set; }					// MIDI channel
-			public uint8 Loop_Type { get; set; }				// -1 or 0: normal, 1: ping pong
-			public uint8[] Rsvd { get; } = new uint8[10];		// Reserved
-			public uint8[] FileName { get; } = new uint8[25];	// DOS file name
+			public readonly uint8[] Magic = new uint8[4];		// 'L', 'D', 'S', 'S'
+			public uint16 Version;								// LDSS header version
+			public readonly uint8[] Name = new uint8[30];		// Instrument name
+			public readonly uint8[] Editor = new uint8[20];		// Generator name
+			public readonly uint8[] Author = new uint8[20];		// Author name
+			public uint8 Hw_Id;									// Hardware used to record the sample
+			public uint32 Length;								// Sample length
+			public uint32 LoopStart;							// Sample loop start
+			public uint32 LoopEnd;								// Sample loop end
+			public uint32 C2Spd;								// C2SPD
+			public uint8 Vol;									// Volume
+			public Liq_Sample_Flag Flags;						// Flags
+			public uint8 Pan;									// Pan
+			public uint8 Midi_Ins;								// General MIDI instrument
+			public uint8 Gvl;									// Global volume
+			public uint8 Chord;									// Chord type
+			public uint16 HdrSz;								// LDSS header size
+			public uint16 Comp;									// Compression algorithm
+			public uint32 Crc;									// CRC
+			public uint8 Midi_Ch;								// MIDI channel
+			public uint8 Loop_Type;								// -1 or 0: normal, 1: ping pong
+			public readonly uint8[] Rsvd = new uint8[10];		// Reserved
+			public readonly uint8[] FileName = new uint8[25];	// DOS file name
 		}
 		#endregion
 
 		#region Liq_Pattern
 		private class Liq_Pattern
 		{
-			public uint8[] Magic { get; } = new uint8[4];		// 'L', 'P', 0, 0
-			public uint8[] Name { get; } = new uint8[30];		// ASCIIZ pattern name
-			public uint16 Rows { get; set; }					// Number of rows
-			public uint32 Size { get; set; }					// Size of packed pattern
-			public uint32 Reserved { get; set; }				// Reserved
+			public readonly uint8[] Magic = new uint8[4];		// 'L', 'P', 0, 0
+			public readonly uint8[] Name = new uint8[30];		// ASCIIZ pattern name
+			public uint16 Rows;									// Number of rows
+			public uint32 Size;									// Size of packed pattern
+			public uint32 Reserved;								// Reserved
 		}
 		#endregion
 

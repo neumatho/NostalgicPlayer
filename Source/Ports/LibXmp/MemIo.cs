@@ -17,12 +17,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	{
 		private class MFile
 		{
-			public ref CPointer<uint8> Start => ref _Start;
-			private CPointer<uint8> _Start;
-			public ptrdiff_t Pos { get; set; }
-			public ptrdiff_t Size { get; set; }
-			public ref CPointer<uint8> Ptr_Free => ref _Ptr_Free;
-			private CPointer<uint8> _Ptr_Free;
+			public CPointer<uint8> Start;
+			public ptrdiff_t Pos;
+			public ptrdiff_t Size;
+			public CPointer<uint8> Ptr_Free;
 		}
 
 		private MFile m;

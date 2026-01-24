@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Iff
 	{
 		public delegate c_int Loader_Delegate(Module_Data m, c_int size, Hio f, object parm);
 
-		public byte[] Id { get; } = new byte[4];
-		public Loader_Delegate Loader { get; set; }
+		public readonly byte[] Id = new byte[4];
+		public Loader_Delegate Loader;
 	}
 }

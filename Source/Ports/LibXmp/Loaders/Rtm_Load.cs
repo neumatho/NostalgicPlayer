@@ -27,12 +27,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region ObjectHeader
 		private class ObjectHeader
 		{
-			public byte[] Id { get; } = new byte[4];			// "RTMM"
-			public byte Rc { get; set; }						// 0x20
-			public byte[] Name { get; } = new byte[32];			// Module name
-			public byte Eof { get; set; }						// 0x1a
-			public uint16 Version { get; set; }					// Version of the format (actual: 0x110)
-			public uint16 HeaderSize { get; set; }				// Object header size
+			public readonly byte[] Id = new byte[4];			// "RTMM"
+			public byte Rc;										// 0x20
+			public readonly byte[] Name = new byte[32];			// Module name
+			public byte Eof;									// 0x1a
+			public uint16 Version;								// Version of the format (actual: 0x110)
+			public uint16 HeaderSize;							// Object header size
 		}
 		#endregion
 
@@ -42,20 +42,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		private class RtmmHeader
 		{
-			public byte[] Software { get; } = new byte[20];		// Software used for saving the module
-			public byte[] Composer { get; } = new byte[32];
-			public uint16 Flags { get; set; }					// Song flags. Bit 0: Linear table, Bit 1: Track names present
-			public uint8 NTrack { get; set; }					// Number of tracks
-			public uint8 NInstr { get; set; }					// Number of instruments
-			public uint16 NPosition { get; set; }				// Number of positions
-			public uint16 NPattern { get; set; }				// Number of patterns
-			public uint8 Speed { get; set; }					// Initial speed
-			public uint8 Tempo { get; set; }					// Initial tempo
-			public int8[] Panning { get; } = new int8[32];		// Initial panning (for S3M compatibility)
-			public uint32 ExtraDataSize { get; set; }			// Length of data after the header
+			public readonly byte[] Software = new byte[20];		// Software used for saving the module
+			public readonly byte[] Composer = new byte[32];
+			public uint16 Flags;								// Song flags. Bit 0: Linear table, Bit 1: Track names present
+			public uint8 NTrack;								// Number of tracks
+			public uint8 NInstr;								// Number of instruments
+			public uint16 NPosition;							// Number of positions
+			public uint16 NPattern;								// Number of patterns
+			public uint8 Speed;									// Initial speed
+			public uint8 Tempo;									// Initial tempo
+			public readonly int8[] Panning = new int8[32];		// Initial panning (for S3M compatibility)
+			public uint32 ExtraDataSize;						// Length of data after the header
 
 			// Version 1.12
-			public byte[] OriginalName { get; } = new byte[32];
+			public readonly byte[] OriginalName = new byte[32];
 		}
 		#endregion
 
@@ -65,30 +65,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		private class RtndHeader
 		{
-			public uint16 Flags { get; set; }					// Always 1
-			public uint8 NTrack { get; set; }
-			public uint16 NRows { get; set; }
-			public uint32 DataSize { get; set; }				// Size of packed data
+			public uint16 Flags;								// Always 1
+			public uint8 NTrack;
+			public uint16 NRows;
+			public uint32 DataSize;								// Size of packed data
 		}
 		#endregion
 
 		#region EnvelopePoint
 		private class EnvelopePoint
 		{
-			public c_long X { get; set; }
-			public c_long Y { get; set; }
+			public c_long X;
+			public c_long Y;
 		}
 		#endregion
 
 		#region Envelope
 		private class Envelope
 		{
-			public uint8 NPoint { get; set; }
-			public EnvelopePoint[] Point { get; } = ArrayHelper.InitializeArray<EnvelopePoint>(12);
-			public uint8 Sustain { get; set; }
-			public uint8 LoopStart { get; set; }
-			public uint8 LoopEnd { get; set; }
-			public uint16 Flags { get; set; }					// Bit 0: Enable envelope, Bit 1: Sustain, Bit 2: Loop
+			public uint8 NPoint;
+			public readonly EnvelopePoint[] Point = ArrayHelper.InitializeArray<EnvelopePoint>(12);
+			public uint8 Sustain;
+			public uint8 LoopStart;
+			public uint8 LoopEnd;
+			public uint16 Flags;								// Bit 0: Enable envelope, Bit 1: Sustain, Bit 2: Loop
 		}
 		#endregion
 
@@ -98,28 +98,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		private class RtinHeader
 		{
-			public uint8 NSample { get; set; }
-			public uint16 Flags { get; set; }					// Bit 0: Default panning enabled, Bit 1: Mute samples
-			public uint8[] Table { get; } = new uint8[120];		// Sample number for each note
-			public Envelope VolumeEnv { get; } = new Envelope();
-			public Envelope PanningEnv { get; } = new Envelope();
-			public int8 VibFlg { get; set; }					// Vibrato type
-			public int8 VibSweep { get; set; }					// Vibrato sweep
-			public int8 VibDepth { get; set; }					// Vibrato depth
-			public int8 VibRate { get; set; }					// Vibrato rate
-			public uint16 VolFade { get; set; }
+			public uint8 NSample;
+			public uint16 Flags;								// Bit 0: Default panning enabled, Bit 1: Mute samples
+			public readonly uint8[] Table = new uint8[120];		// Sample number for each note
+			public readonly Envelope VolumeEnv = new Envelope();
+			public readonly Envelope PanningEnv = new Envelope();
+			public int8 VibFlg;									// Vibrato type
+			public int8 VibSweep;								// Vibrato sweep
+			public int8 VibDepth;                               // Vibrato depth
+			public int8 VibRate;								// Vibrato rate
+			public uint16 VolFade;
 
 			// Version 1.10
-			public uint8 MidiPort { get; set; }
-			public uint8 MidiChannel { get; set; }
-			public uint8 MidiProgram { get; set; }
-			public uint8 MidiEnabled { get; set; }
+			public uint8 MidiPort;
+			public uint8 MidiChannel;
+			public uint8 MidiProgram;
+			public uint8 MidiEnabled;
 
 			// Version 1.12
-			public int8 MidiTranspose { get; set; }
-			public uint8 MidiBenderRange { get; set; }
-			public uint8 MidiBaseVolume { get; set; }
-			public int8 MidiUseVelocity { get; set; }
+			public int8 MidiTranspose;
+			public uint8 MidiBenderRange;
+			public uint8 MidiBaseVolume;
+			public int8 MidiUseVelocity;
 		}
 		#endregion
 
@@ -129,17 +129,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		private class RtsmHeader
 		{
-			public uint16 Flags { get; set; }					// Bit 1: 16 bits, Bit 2: Delta encoded (always)
-			public uint8 BaseVolume { get; set; }
-			public uint8 DefaultVolume { get; set; }
-			public uint32 Length { get; set; }
-			public uint8 Loop { get; set; }						// =0: No loop, =1: Forward loop, =2: Bi-directional loop
-			public uint8[] Reserved { get; } = new uint8[3];
-			public uint32 LoopBegin { get; set; }
-			public uint32 LoopEnd { get; set; }
-			public uint32 BaseFreq { get; set; }
-			public uint8 BaseNote { get; set; }
-			public int8 Panning { get; set; }					// Panning from -64 to 64
+			public uint16 Flags;								// Bit 1: 16 bits, Bit 2: Delta encoded (always)
+			public uint8 BaseVolume;
+			public uint8 DefaultVolume;
+			public uint32 Length;
+			public uint8 Loop;									// =0: No loop, =1: Forward loop, =2: Bi-directional loop
+			public readonly uint8[] Reserved = new uint8[3];
+			public uint32 LoopBegin;
+			public uint32 LoopEnd;
+			public uint32 BaseFreq;
+			public uint8 BaseNote;
+			public int8 Panning;								// Panning from -64 to 64
 		}
 		#endregion
 

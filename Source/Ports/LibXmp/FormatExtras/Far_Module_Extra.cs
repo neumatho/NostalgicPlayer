@@ -16,11 +16,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 	{
 		public class Far_Module_Extra_Info : IModuleExtraInfo
 		{
-			public c_int Coarse_Tempo { get; set; }
-			public ref c_int Fine_Tempo => ref _Fine_Tempo;
-			private c_int _Fine_Tempo;
-			public c_int Tempo_Mode { get; set; }
-			public c_int Vib_Depth { get; set; }			// Vibrato depth for all channels
+			public c_int Coarse_Tempo;
+			public c_int Fine_Tempo;
+			public c_int Tempo_Mode;
+			public c_int Vib_Depth;			// Vibrato depth for all channels
 		}
 
 		// The time factor needed to directly use FAR tempos is a little unintuitive.

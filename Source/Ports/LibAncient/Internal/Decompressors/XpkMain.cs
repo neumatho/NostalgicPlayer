@@ -23,9 +23,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 
 		private struct DecompressorPair
 		{
-			public CheckMethod First { get; set; }
-			public CreateSubDecompressor Second { get; set; }
-			public DecompressorType Type { get; set; }
+			// ReSharper disable InconsistentNaming
+			public CheckMethod First;
+			public CreateSubDecompressor Second;
+			public DecompressorType Type;
+			// ReSharper restore InconsistentNaming
 		}
 
 		private static readonly DecompressorPair[] decompressors =
@@ -52,8 +54,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		private readonly bool longHeaders;
 		private readonly bool hasPassword = false;
 
-		private CreateSubDecompressor subDecompressor;
-		private DecompressorType decompressorType;
+		private readonly CreateSubDecompressor subDecompressor;
+		private readonly DecompressorType decompressorType;
 
 		/********************************************************************/
 		/// <summary>
@@ -218,6 +220,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 							// We should throw a correct error
 							throw new DecompressionException();
 						}
+
 						break;
 					}
 

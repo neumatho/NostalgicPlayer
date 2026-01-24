@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Ord_Data
 	{
-		public c_int Speed { get; set; }
-		public c_int Bpm { get; set; }
-		public c_int Gvl { get; set; }
-		public c_int Time { get; set; }	// TODO: double
-		public c_int Start_Row { get; set; }
-		public c_int St26_Speed { get; set; }
+		public c_int Speed;
+		public c_int Bpm;
+		public c_int Gvl;
+		public c_int Time;	// TODO: double
+		public c_int Start_Row;
+		public c_int St26_Speed;
 	}
 }

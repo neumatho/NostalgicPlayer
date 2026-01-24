@@ -20,12 +20,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	{
 		private class It_Stream
 		{
-			public ref CPointer<uint8> Pos => ref _Pos;
-			private CPointer<uint8> _Pos;
-			public size_t Left { get; set; }
-			public uint32 Bits { get; set; }
-			public c_int Num_Bits { get; set; }
-			public c_int Err { get; set; }
+			public CPointer<uint8> Pos;
+			public size_t Left;
+			public uint32 Bits;
+			public c_int Num_Bits;
+			public c_int Err;
 		}
 
 		/********************************************************************/

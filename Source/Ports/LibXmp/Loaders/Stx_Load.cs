@@ -26,50 +26,50 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Stx_File_Header
 		private class Stx_File_Header
 		{
-			public uint8[] Name { get; } = new uint8[20];		// Song name
-			public uint8[] Magic { get; } = new uint8[8];		// !Scream!
-			public uint16 PSize { get; set; }					// Pattern 0 size?
-			public uint16 Unknown1 { get; set; }				// ?!
-			public uint16 PP_Pat { get; set; }					// Pointer to pattern table
-			public uint16 PP_Ins { get; set; }					// Pattern to instrument table
-			public uint16 PP_Chn { get; set; }					// Pointer to channel table (?)
-			public uint16 Unknown2 { get; set; }
-			public uint16 Unknown3 { get; set; }
-			public uint8 GVol { get; set; }						// Global volume
-			public uint8 Tempo { get; set; }					// Playback tempo
-			public uint16 Unknown4 { get; set; }
-			public uint16 Unknown5 { get; set; }
-			public uint16 PatNum { get; set; }					// Number of patterns
-			public uint16 InsNum { get; set; }					// Number of instruments
-			public uint16 OrdNum { get; set; }					// Number of orders
-			public uint16 Unknown6 { get; set; }				// Flags?
-			public uint16 Unknown7 { get; set; }				// Version?
-			public uint16 Unknown8 { get; set; }				// Ffi?
-			public uint8[] Magic2 { get; } = new uint8[4];		// 'SCRM'
+			public readonly uint8[] Name = new uint8[20];		// Song name
+			public readonly uint8[] Magic = new uint8[8];		// !Scream!
+			public uint16 PSize;								// Pattern 0 size?
+			public uint16 Unknown1;								// ?!
+			public uint16 PP_Pat;								// Pointer to pattern table
+			public uint16 PP_Ins;								// Pattern to instrument table
+			public uint16 PP_Chn;								// Pointer to channel table (?)
+			public uint16 Unknown2;
+			public uint16 Unknown3;
+			public uint8 GVol;									// Global volume
+			public uint8 Tempo;									// Playback tempo
+			public uint16 Unknown4;
+			public uint16 Unknown5;
+			public uint16 PatNum;								// Number of patterns
+			public uint16 InsNum;								// Number of instruments
+			public uint16 OrdNum;								// Number of orders
+			public uint16 Unknown6;								// Flags?
+			public uint16 Unknown7;								// Version?
+			public uint16 Unknown8;								// Ffi?
+			public readonly uint8[] Magic2 = new uint8[4];		// 'SCRM'
 		}
 		#endregion
 
 		#region Stx_Instrument_Header
 		private class Stx_Instrument_Header
 		{
-			public uint8 Type { get; set; }						// Instrument type
-			public uint8[] DosName { get; } = new uint8[13];	// DOS file name
-			public uint16 MemSeg { get; set; }					// Pointer to sample data
-			public uint32 Length { get; set; }					// Length
-			public uint32 LoopBeg { get; set; }					// Loop begin
-			public uint32 LoopEnd { get; set; }					// Loop end
-			public uint8 Vol { get; set; }						// Volume
-			public uint8 Rsvd1 { get; set; }					// Reserved
-			public uint8 Pack { get; set; }						// Packing type (not used)
-			public uint8 Flags { get; set; }					// Loop/stereo/16bit samples flags
-			public uint16 C2Spd { get; set; }					// C 4 speed
-			public uint16 Rsvd2 { get; set; }					// Reserved
-			public uint8[] Rsvd3 { get; } = new uint8[4];		// Reserved
-			public uint16 Int_Gp { get; set; }					// Internal - GUS pointer
-			public uint16 Int_512 { get; set; }					// Internal - SB pointer
-			public uint32 Int_Last { get; set; }				// Internal - SB index
-			public uint8[] Name { get; } = new uint8[28];		// Instrument name
-			public uint8[] Magic { get; } = new uint8[4];		// Reserved (for 'SCRS')
+			public uint8 Type;									// Instrument type
+			public readonly uint8[] DosName = new uint8[13];	// DOS file name
+			public uint16 MemSeg;								// Pointer to sample data
+			public uint32 Length;								// Length
+			public uint32 LoopBeg;								// Loop begin
+			public uint32 LoopEnd;								// Loop end
+			public uint8 Vol;									// Volume
+			public uint8 Rsvd1;									// Reserved
+			public uint8 Pack;									// Packing type (not used)
+			public uint8 Flags;									// Loop/stereo/16bit samples flags
+			public uint16 C2Spd;								// C 4 speed
+			public uint16 Rsvd2;								// Reserved
+			public readonly uint8[] Rsvd3 = new uint8[4];		// Reserved
+			public uint16 Int_Gp;								// Internal - GUS pointer
+			public uint16 Int_512;								// Internal - SB pointer
+			public uint32 Int_Last;								// Internal - SB index
+			public readonly uint8[] Name = new uint8[28];		// Instrument name
+			public readonly uint8[] Magic = new uint8[4];		// Reserved (for 'SCRS')
 		}
 		#endregion
 

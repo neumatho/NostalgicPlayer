@@ -10,12 +10,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Lfo
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Lfo : IClearable, IDeepCloneable<Lfo>
+	internal class Lfo : IDeepCloneable<Lfo>
 	{
-		public c_int Type { get; set; }
-		public c_int Rate { get; set; }
-		public c_int Depth { get; set; }
-		public c_int Phase { get; set; }
+		public c_int Type;
+		public c_int Rate;
+		public c_int Depth;
+		public c_int Phase;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Lfo MakeDeepClone()
+		{
+			return (Lfo)MemberwiseClone();
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -28,18 +40,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Lfo
 			Rate = 0;
 			Depth = 0;
 			Phase = 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Make a deep copy of the current object
-		/// </summary>
-		/********************************************************************/
-		public Lfo MakeDeepClone()
-		{
-			return (Lfo)MemberwiseClone();
 		}
 
 

@@ -16,90 +16,86 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// Sampling rate
 		/// </summary>
-		public c_int Freq { get; set; }
+		public c_int Freq;
 
 		/// <summary>
 		/// Sample format
 		/// </summary>
-		public Xmp_Format Format { get; set; }
+		public Xmp_Format Format;
 
 		/// <summary>
 		/// Amplification multiplier
 		/// </summary>
-		public c_int Amplify { get; set; }
+		public c_int Amplify;
 
 		/// <summary>
 		/// Percentage of channel separation
 		/// </summary>
-		public c_int Mix { get; set; }
+		public c_int Mix;
 
 		/// <summary>
 		/// Interpolation type
 		/// </summary>
-		public Xmp_Interp Interp { get; set; }
+		public Xmp_Interp Interp;
 
 		/// <summary>
 		/// DSP effect flags
 		/// </summary>
-		public Xmp_Dsp Dsp { get; set; }
+		public Xmp_Dsp Dsp;
 
 		/// <summary>
 		/// Output buffer
 		/// </summary>
-		public ref CPointer<int8> Buffer => ref _Buffer;
-		private CPointer<int8> _Buffer;
+		public CPointer<int8> Buffer;
 
 		/// <summary>
 		/// Temporary buffer for 32 bit samples
 		/// </summary>
-		public ref CPointer<int32> Buf32 => ref _Buf32;
-		private CPointer<int32> _Buf32;
+		public CPointer<int32> Buf32;
 
 		/// <summary>
 		/// Output buffer for rear speakers
 		/// </summary>
-		public ref CPointer<int8> BufferRear => ref _BufferRear;
-		private CPointer<int8> _BufferRear;
+		public CPointer<int8> BufferRear;
 
 		/// <summary>
 		/// Temporary buffer for 32 bit samples for real speakers
 		/// </summary>
-		public ref CPointer<int32> Buf32Rear => ref _Buf32Rear;
-		private CPointer<int32> _Buf32Rear;
+		public CPointer<int32> Buf32Rear;
 
 		/// <summary>
 		/// Default softmixer voices number
 		/// </summary>
-		public c_int NumVoc { get; set; }
+		public c_int NumVoc;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int TickSize { get; set; }
+		public c_int TickSize;
 
 		/// <summary>
 		/// Anticlick control, right channel
 		/// </summary>
-		public c_int DtRight { get; set; }
+		public c_int DtRight;
 
 		/// <summary>
 		/// Anticlick control, left channel
 		/// </summary>
-		public c_int DtLeft { get; set; }
+		public c_int DtLeft;
 
 		/// <summary>
 		/// Adjustment for IT bidirectional loops
 		/// </summary>
-		public c_int BiDir_Adjust { get; set; }
+		public c_int BiDir_Adjust;
 
 		/// <summary>
 		/// Period base
 		/// </summary>
-		public c_double PBase { get; set; }
+		public c_double PBase;
 
 		/// <summary>
 		/// Indicate if surround should be handled or not
 		/// </summary>
-		public Surround EnableSurround { get; set; }
+		public Surround EnableSurround;
 	}
 }

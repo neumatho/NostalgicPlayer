@@ -18,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	{
 		private class CbFile
 		{
-			public object Priv { get; set; }
-			public Xmp_Callbacks Callbacks { get; set; }
-			public bool Eof { get; set; }
+			public object Priv;
+			public Xmp_Callbacks Callbacks;
+			public bool Eof;
 		}
 
 		private CbFile f;

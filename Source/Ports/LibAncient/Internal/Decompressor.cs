@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Ports.LibAncient.Common.Buffers.Exceptions;
@@ -24,8 +23,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
 
 		private struct DecompressorPair
 		{
-			public CheckMethod First { get; set; }
-			public CreateMethod Second { get; set; }
+			// ReSharper disable InconsistentNaming
+			public CheckMethod First;
+			public CreateMethod Second;
+			// ReSharper restore InconsistentNaming
 		}
 
 		private static readonly DecompressorPair[] decompressors =

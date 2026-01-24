@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Local_Data
 		private class Local_Data
 		{
-			public uint8[] Chn_Pan { get; } = new uint8[64];
+			public readonly uint8[] Chn_Pan = new uint8[64];
 		}
 		#endregion
 

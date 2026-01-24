@@ -12,117 +12,113 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Mixer_Voice : IClearable, IDeepCloneable<Mixer_Voice>
+	internal class Mixer_Voice : IDeepCloneable<Mixer_Voice>
 	{
 		/// <summary>
 		/// Channel number
 		/// </summary>
-		public c_int Chn { get; set; }
+		public c_int Chn;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Root { get; set; }
+		public c_int Root;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Note { get; set; }
+		public c_int Note;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Pan { get; set; }
+		public c_int Pan;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Vol { get; set; }
+		public c_int Vol;
 
 		/// <summary>
 		/// Current period
 		/// </summary>
-		public c_double Period { get; set; }
+		public c_double Period;
 
 		/// <summary>
 		/// Position in sample
 		/// </summary>
-		public c_double Pos { get; set; }
+		public c_double Pos;
 
 		/// <summary>
 		/// Position in sample before mixing
 		/// </summary>
-		public c_int Pos0 { get; set; }
+		public c_int Pos0;
 
 		/// <summary>
 		/// Mixer function index
 		/// </summary>
-		public Mixer_Index_Flag FIdx { get; set; }
+		public Mixer_Index_Flag FIdx;
 
 		/// <summary>
 		/// Instrument number
 		/// </summary>
-		public c_int Ins { get; set; }
+		public c_int Ins;
 
 		/// <summary>
 		/// Sample number
 		/// </summary>
-		public c_int Smp { get; set; }
+		public c_int Smp;
 
 		/// <summary>
 		/// Loop start
 		/// </summary>
-		public c_int Start { get; set; }
+		public c_int Start;
 
 		/// <summary>
 		/// Loop end
 		/// </summary>
-		public c_int End { get; set; }
+		public c_int End;
 
 		/// <summary>
 		/// NNA info and status of voice
 		/// </summary>
-		public Virt_Action Act { get; set; }
+		public Virt_Action Act;
 
 		/// <summary>
 		/// Key for DCA note check
 		/// </summary>
-		public c_int Key { get; set; }
+		public c_int Key;
 
 		/// <summary>
 		/// Previous volume, left channel
 		/// </summary>
-		// ReSharper disable once InconsistentNaming
-		public c_int Old_VL { get; set; }
+		public c_int Old_VL;
 
 		/// <summary>
 		/// Previous volume, right channel
 		/// </summary>
-		// ReSharper disable once InconsistentNaming
-		public c_int Old_VR { get; set; }
+		public c_int Old_VR;
 
 		/// <summary>
 		/// Last left sample output, in 32bit
 		/// </summary>
-		public c_int SLeft { get; set; }
+		public c_int SLeft;
 
 		/// <summary>
 		/// Last right sample output, in 32bit
 		/// </summary>
-		public c_int SRight { get; set; }
+		public c_int SRight;
 
 		/// <summary>
 		/// Flags
 		/// </summary>
-		public Mixer_Flag Flags { get; set; }
+		public Mixer_Flag Flags;
 
 		/// <summary>
 		/// Sample pointer
 		/// </summary>
-		public ref CPointer<byte> SPtr => ref _SPtr;
-		private CPointer<byte> _SPtr;
+		public CPointer<byte> SPtr;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Smp,
 			c_int Dummy
@@ -141,8 +137,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 			c_int B1,
 			c_int CutOff,
 			c_int Resonance
-		// ReSharper disable once InconsistentNaming
 		) Filter;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Mixer_Voice MakeDeepClone()
+		{
+			return (Mixer_Voice)MemberwiseClone();
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -181,18 +188,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 			Filter.B1 = 0;
 			Filter.CutOff = 0;
 			Filter.Resonance = 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Make a deep copy of the current object
-		/// </summary>
-		/********************************************************************/
-		public Mixer_Voice MakeDeepClone()
-		{
-			return (Mixer_Voice)MemberwiseClone();
 		}
 	}
 }

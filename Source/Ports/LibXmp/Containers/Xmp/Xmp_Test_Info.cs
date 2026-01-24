@@ -15,16 +15,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Module title
 		/// </summary>
-		public string Name { get; internal set; }
+		public string Name;
 
 		/// <summary>
 		/// Module format
 		/// </summary>
-		public string Type { get; internal set; }
+		public string Type;
 
 		/// <summary>
 		/// Unique ID for the format
 		/// </summary>
-		public Guid Id { get; internal set; }
+		public Guid Id;
 	}
 }

@@ -13,11 +13,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Entry_Point { get; internal set; }
+		public c_int Entry_Point;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Duration { get; internal set; }
+		public c_int Duration;
 	}
 }

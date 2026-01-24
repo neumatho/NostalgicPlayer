@@ -3,24 +3,22 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
-
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class Xmp_Track : IClearable
+	public class Xmp_Track
 	{
 		/// <summary>
 		/// Number of rows
 		/// </summary>
-		public c_int Rows { get; internal set; }
+		public c_int Rows;
 
 		/// <summary>
 		/// Event data
 		/// </summary>
-		public Xmp_Event[] Event { get; internal set; }
+		public Xmp_Event[] Event;
 
 		/********************************************************************/
 		/// <summary>

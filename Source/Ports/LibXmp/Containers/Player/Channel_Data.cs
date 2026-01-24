@@ -14,160 +14,153 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Channel_Data : IClearable, IDeepCloneable<Channel_Data>
+	internal class Channel_Data : IDeepCloneable<Channel_Data>
 	{
 		/// <summary>
 		/// Channel flags
 		/// </summary>
-		public Channel_Flag Flags { get; set; }
+		public Channel_Flag Flags;
 
 		/// <summary>
 		/// Persistent effect channel flags
 		/// </summary>
-		public Channel_Flag Per_Flags { get; set; }
+		public Channel_Flag Per_Flags;
 
 		/// <summary>
 		/// Note release, fadeout or end
 		/// </summary>
-		public Note_Flag Note_Flags { get; set; }
+		public Note_Flag Note_Flags;
 
 		/// <summary>
 		/// Note number
 		/// </summary>
-		public c_int Note { get; set; }
+		public c_int Note;
 
 		/// <summary>
 		/// Key number
 		/// </summary>
-		public c_int Key { get; set; }
+		public c_int Key;
 
 		/// <summary>
 		/// Amiga or linear period
 		/// </summary>
-		public ref c_double Period => ref _Period;
-		private c_double _Period;
+		public c_double Period;
 
 		/// <summary>
 		/// MED period/pitch adjustment factor hack
 		/// </summary>
-		public c_double Per_Adj { get; set; }
+		public c_double Per_Adj;
 
 		/// <summary>
 		/// Guess what
 		/// </summary>
-		public c_int FineTune { get; set; }
+		public c_int FineTune;
 
 		/// <summary>
 		/// Instrument number
 		/// </summary>
-		public c_int Ins { get; set; }
+		public c_int Ins;
 
 		/// <summary>
 		/// Last instrument
 		/// </summary>
-		public c_int Old_Ins { get; set; }
+		public c_int Old_Ins;
 
 		/// <summary>
 		/// Sample number
 		/// </summary>
-		public c_int Smp { get; set; }
+		public c_int Smp;
 
 		/// <summary>
 		/// Master vol -- for IT track vol effect
 		/// </summary>
-		public ref c_int MasterVol => ref _MasterVol;
-		private c_int _MasterVol;
+		public c_int MasterVol;
 
 		/// <summary>
 		/// Note delay in frames
 		/// </summary>
-		public c_int Delay { get; set; }
+		public c_int Delay;
 
 		/// <summary>
 		/// Key off counter
 		/// </summary>
-		public c_int KeyOff { get; set; }
+		public c_int KeyOff;
 
 		/// <summary>
 		/// Current fadeout (release) value
 		/// </summary>
-		public c_int FadeOut { get; set; }
+		public c_int FadeOut;
 
 		/// <summary>
 		/// Instrument fadeout value
 		/// </summary>
-		public c_int Ins_Fade { get; set; }
+		public c_int Ins_Fade;
 
 		/// <summary>
 		/// Current volume
 		/// </summary>
-		public ref c_int Volume => ref _Volume;
-		private c_int _Volume;
+		public c_int Volume;
 
 		/// <summary>
 		/// Global volume for instrument for IT
 		/// </summary>
-		public c_int Gvl { get; set; }
+		public c_int Gvl;
 
 		/// <summary>
 		/// Random volume variation
 		/// </summary>
-		public c_int Rvv { get; set; }
+		public c_int Rvv;
 
 		/// <summary>
 		/// Random pan variation
 		/// </summary>
-		public c_int Rpv { get; set; }
+		public c_int Rpv;
 
 		/// <summary>
 		/// Split channel
 		/// </summary>
-		public uint8 Split { get; set; }
+		public uint8 Split;
 
 		/// <summary>
 		/// Split channel pair
 		/// </summary>
-		public uint8 Pair { get; set; }
+		public uint8 Pair;
 
 		/// <summary>
 		/// Volume envelope index
 		/// </summary>
-		public c_int V_Idx { get; set; }
+		public c_int V_Idx;
 
 		/// <summary>
 		/// Pan envelope index
 		/// </summary>
-		public c_int P_Idx { get; set; }
+		public c_int P_Idx;
 
 		/// <summary>
 		/// Freq envelope index
 		/// </summary>
-		public c_int F_Idx { get; set; }
+		public c_int F_Idx;
 
 		/// <summary>
 		/// Key number for portamento target -- needed to handle IT portamento xpo
 		/// </summary>
-		public c_int Key_Porta { get; set; }
+		public c_int Key_Porta;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			Lfo.Lfo Lfo,
 			c_int Memory
 		) Vibrato = ( new Lfo.Lfo(), 0 );
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			Lfo.Lfo Lfo,
 			c_int Memory
 		) Tremolo = ( new Lfo.Lfo(), 0 );
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			Lfo.Lfo Lfo,
 			c_int Memory
 		) Panbrello = ( new Lfo.Lfo(), 0 );
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			int8[] Val,
 			c_int Size,
@@ -175,20 +168,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Memory
 		) Arpeggio = ( new int8[16], 0, 0, 0 );
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			Lfo.Lfo Lfo,
 			c_int Sweep
 		) InsVib = ( new Lfo.Lfo(), 0 );
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Val,
 			c_int Val2,		// For fx9 bug emulation
 			c_int Memory
 		) Offset;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Val,			// Retrig value
 			c_int Count,		// Retrig counter
@@ -196,7 +186,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Limit			// Number of retrigs
 		) Retrig;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Up,			// Tremor value
 			c_int Down,
@@ -204,7 +193,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Memory		// Tremor memory
 		) Tremor;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Slide,		// Volume slide value
 			c_int FSlide,		// Fine volume slide value
@@ -215,27 +203,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Target		// Target for persistent volslide
 		) Vol;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Up_Memory,	// Fine volume slide up memory (XM)
 			c_int Down_Memory	// Fine volume slide down memory (XM)
 		) Fine_Vol;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Slide,		// Global volume slide value
 			c_int FSlide,		// Fine global volume slide value
 			c_int Memory		// Global volume memory is saved per channel
 		) GVol;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Slide,		// Track volume slide value
 			c_int FSlide,		// Track fine volume slide value
 			c_int Memory		// Track volume slide effect memory
 		) TrackVol;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Slide,		// Frequency slide value
 			c_double FSlide,	// Fine frequency slide value
@@ -243,7 +227,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Down_Memory	// Portamento down effect memory (XM)
 		) Freq;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_double Target,	// Target period for tone portamento
 			c_int Dir,			// Tone portamento up/down direction
@@ -252,7 +235,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Note_Memory	// Tone portamento note memory (ULT)
 		) Porta;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Up_Memory,	// FT2 has separate memories for these
 			c_int Down_Memory,	// cases (see Porta-LinkMem.xm)
@@ -260,7 +242,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Xf_Dn_Memory
 		) Fine_Porta;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Val,			// Current pan value
 			c_int Slide,		// Pan slide value
@@ -269,20 +250,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			bool Surround		// Surround channel flag
 		) Pan;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Speed,
 			c_int Count,
 			c_int Pos
 		) InvLoop;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Slide,		// IT tempo slide
 			c_int Dummy			// Need this, because there has to be at least two items
 		) Tempo;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int CutOff,		// IT filter cutoff frequency
 			c_int Resonance,	// IT filter resonance
@@ -290,7 +268,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			bool Can_Disable	// IT hack: allow disabling for cutoff 127
 		) Filter;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_float Val,		// Current macro effect (use float for slides)
 			c_float Target,		// Current macro target (smooth macro)
@@ -300,7 +277,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int NotePan		// Previous tick note panning (0x80 center)
 		) Macro;
 
-		// ReSharper disable once InconsistentNaming
 		public (
 			c_int Slide,		// PTM note slide amount
 			c_int FSlide,		// OKT fine note slide amount
@@ -308,40 +284,67 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Count			// PTM note slide counter
 		) NoteSlide;
 
-		public IChannelExtra Extra { get; set; }
+		public IChannelExtra Extra;
 
-		public Xmp_Event Delayed_Event { get; set; } = new Xmp_Event();
+		public Xmp_Event Delayed_Event = new Xmp_Event();
 
 		/// <summary>
 		/// IT save instrument emulation
 		/// </summary>
-		public c_int Delayed_Ins { get; set; }
+		public c_int Delayed_Ins;
 
 		/// <summary>
 		/// Period
 		/// </summary>
-		public ref c_int Info_Period => ref _Info_Period;
-		private c_int _Info_Period;
+		public c_int Info_Period;
 
 		/// <summary>
 		/// Linear pitchbend
 		/// </summary>
-		public c_int Info_PitchBend { get; set; }
+		public c_int Info_PitchBend;
 
 		/// <summary>
 		/// Position before mixing
 		/// </summary>
-		public c_int Info_Position { get; set; }
+		public c_int Info_Position;
 
 		/// <summary>
 		/// Final volume including envelopes
 		/// </summary>
-		public c_int Info_FinalVol { get; set; }
+		public c_int Info_FinalVol;
 
 		/// <summary>
 		/// Final pan including envelopes
 		/// </summary>
-		public c_int Info_FinalPan { get; set; }
+		public c_int Info_FinalPan;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Channel_Data MakeDeepClone()
+		{
+			Channel_Data clone = (Channel_Data)MemberwiseClone();
+
+			clone.Arpeggio.Val = ArrayHelper.CloneArray(Arpeggio.Val);
+
+			clone.Vibrato.Lfo = Vibrato.Lfo.MakeDeepClone();
+			clone.Tremolo.Lfo = Tremolo.Lfo.MakeDeepClone();
+			clone.Panbrello.Lfo = Panbrello.Lfo.MakeDeepClone();
+			clone.InsVib.Lfo = InsVib.Lfo.MakeDeepClone();
+			clone.Delayed_Event = Delayed_Event.MakeDeepClone();
+
+			if (Extra != null)
+			{
+				clone.Extra = Extra.MakeDeepClone();
+				clone.Extra.SetChannel(clone);
+			}
+
+			return clone;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -479,34 +482,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			Info_Position = 0;
 			Info_FinalVol = 0;
 			Info_FinalPan = 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Make a deep copy of the current object
-		/// </summary>
-		/********************************************************************/
-		public Channel_Data MakeDeepClone()
-		{
-			Channel_Data clone = (Channel_Data)MemberwiseClone();
-
-			clone.Arpeggio.Val = ArrayHelper.CloneArray(Arpeggio.Val);
-
-			clone.Vibrato.Lfo = Vibrato.Lfo.MakeDeepClone();
-			clone.Tremolo.Lfo = Tremolo.Lfo.MakeDeepClone();
-			clone.Panbrello.Lfo = Panbrello.Lfo.MakeDeepClone();
-			clone.InsVib.Lfo = InsVib.Lfo.MakeDeepClone();
-			clone.Delayed_Event = Delayed_Event.MakeDeepClone();
-
-			if (Extra != null)
-			{
-				clone.Extra = Extra.MakeDeepClone();
-				clone.Extra.SetChannel(clone);
-			}
-
-			return clone;
 		}
 
 

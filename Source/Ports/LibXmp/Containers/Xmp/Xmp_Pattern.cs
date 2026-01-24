@@ -13,11 +13,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Number of rows
 		/// </summary>
-		public c_int Rows { get; internal set; }
+		public c_int Rows;
 
 		/// <summary>
 		/// Track index
 		/// </summary>
-		public c_int[] Index { get; internal set; }
+		public c_int[] Index;
 	}
 }

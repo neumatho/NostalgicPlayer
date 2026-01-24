@@ -15,38 +15,37 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Instrument name
 		/// </summary>
-		public ref string Name => ref _Name;
-		private string _Name = string.Empty;
+		public string Name = string.Empty;
 
 		/// <summary>
 		/// Instrument volume
 		/// </summary>
-		public c_int Vol { get; internal set; }
+		public c_int Vol;
 
 		/// <summary>
 		/// Number of samples
 		/// </summary>
-		public c_int Nsm { get; internal set; }
+		public c_int Nsm;
 
 		/// <summary>
 		/// Release (fadeout)
 		/// </summary>
-		public c_int Rls { get; internal set; }
+		public c_int Rls;
 
 		/// <summary>
 		/// Amplitude envelope info
 		/// </summary>
-		public Xmp_Envelope Aei { get; } = new Xmp_Envelope();
+		public readonly Xmp_Envelope Aei = new Xmp_Envelope();
 
 		/// <summary>
 		/// Pan envelope info
 		/// </summary>
-		public Xmp_Envelope Pei { get; } = new Xmp_Envelope();
+		public readonly Xmp_Envelope Pei = new Xmp_Envelope();
 
 		/// <summary>
 		/// Frequency envelope info
 		/// </summary>
-		public Xmp_Envelope Fei { get; } = new Xmp_Envelope();
+		public readonly Xmp_Envelope Fei = new Xmp_Envelope();
 
 		/// <summary>
 		/// 
@@ -56,27 +55,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 			/// <summary>
 			/// Instrument number for each key
 			/// </summary>
-			public byte Ins { get; internal set; }
+			public byte Ins;
 
 			/// <summary>
 			/// Instrument transpose for each key
 			/// </summary>
-			public sbyte Xpo { get; internal set; }
+			public sbyte Xpo;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public _Map[] Map { get; } = new _Map[Constants.Xmp_Max_Keys];
+		public readonly _Map[] Map = new _Map[Constants.Xmp_Max_Keys];
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Xmp_SubInstrument[] Sub { get; internal set; }
+		public Xmp_SubInstrument[] Sub;
 
 		/// <summary>
 		/// Extra fields
 		/// </summary>
-		public IInstrumentExtra Extra { get; internal set; }
+		public IInstrumentExtra Extra;
 	}
 }

@@ -38,8 +38,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				D = d;
 			}
 
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
 			public c_int S { get; }
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
 			public c_int M { get; }
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
 			public c_int D { get; }
 		}
 		#endregion
@@ -47,10 +70,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		#region Midi_Stream class
 		private class Midi_Stream
 		{
-			public ref CPointer<sbyte> Pos => ref _Pos;
-			private CPointer<sbyte> _Pos;
-			public c_int Buffer { get; set; }
-			public c_int Param { get; set; }
+			public CPointer<sbyte> Pos;
+			public c_int Buffer;
+			public c_int Param;
 		}
 		#endregion
 
@@ -1113,6 +1135,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						Apply_Midi_Macro_Effect(xc, 0, 127);
 						Apply_Midi_Macro_Effect(xc, 1, 0);
 					}
+
 					continue;
 				}
 

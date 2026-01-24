@@ -26,28 +26,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Fnk_Instrument
 		private class Fnk_Instrument
 		{
-			public uint8[] Name { get; } = new uint8[19];		// ASCIIZ instrument name
-			public uint32 Loop_Start { get; set; }				// Instrument loop start
-			public uint32 Length { get; set; }					// Instrument length
-			public uint8 Volume { get; set; }					// Volume (0-255)
-			public uint8 Pan { get; set; }						// Pan (0-255)
-			public uint8 Shifter { get; set; }					// Portamento and offset shift
-			public uint8 Waveform { get; set; }					// Vibrato and tremolo waveforms
-			public uint8 Retrig { get; set; }					// Retrig and arpeggio speed
+			public readonly uint8[] Name = new uint8[19];		// ASCIIZ instrument name
+			public uint32 Loop_Start;							// Instrument loop start
+			public uint32 Length;								// Instrument length
+			public uint8 Volume;								// Volume (0-255)
+			public uint8 Pan;									// Pan (0-255)
+			public uint8 Shifter;								// Portamento and offset shift
+			public uint8 Waveform;								// Vibrato and tremolo waveforms
+			public uint8 Retrig;								// Retrig and arpeggio speed
 		}
 		#endregion
 
 		#region Fnk_Header
 		private class Fnk_Header
 		{
-			public uint8[] Marker { get; } = new uint8[4];		// 'Funk'
-			public uint8[] Info { get; } = new uint8[4];
-			public uint32 FileSize { get; set; }				// File size
-			public uint8[] Fmt { get; } = new uint8[4];			// F2xx, Fkxx or Fvxx
-			public uint8 Loop { get; set; }						// Loop order number
-			public uint8[] Order { get; } = new uint8[256];		// Order list
-			public uint8[] PBrk { get; } = new uint8[128];		// Break list for patterns
-			public Fnk_Instrument[] Fih { get; } = ArrayHelper.InitializeArray<Fnk_Instrument>(64);	// Instruments
+			public readonly uint8[] Marker = new uint8[4];		// 'Funk'
+			public readonly uint8[] Info = new uint8[4];
+			public uint32 FileSize;								// File size
+			public readonly uint8[] Fmt = new uint8[4];			// F2xx, Fkxx or Fvxx
+			public uint8 Loop;									// Loop order number
+			public readonly uint8[] Order = new uint8[256];		// Order list
+			public readonly uint8[] PBrk = new uint8[128];		// Break list for patterns
+			public readonly Fnk_Instrument[] Fih = ArrayHelper.InitializeArray<Fnk_Instrument>(64);	// Instruments
 		}
 		#endregion
 

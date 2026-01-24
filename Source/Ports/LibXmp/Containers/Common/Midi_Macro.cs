@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Midi_Macro
 	{
-		public sbyte[] Data { get; } = new sbyte[32];
+		public readonly sbyte[] Data = new sbyte[32];
 	}
 }

@@ -26,31 +26,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Mtm_File_Header
 		private class Mtm_File_Header
 		{
-			public uint8[] Magic { get; } = new uint8[3];		// "MTM"
-			public uint8 Version { get; set; }					// MSN=major, LSN=minor
-			public uint8[] Name { get; } = new uint8[20];		// ASCIIZ module name
-			public uint16 Tracks { get; set; }					// Number of tracks saved
-			public uint8 Patterns { get; set; }					// Number of patterns saved
-			public uint8 ModLen { get; set; }					// Module length
-			public uint16 ExtraLen { get; set; }				// Length of the comment field
-			public uint8 Samples { get; set; }					// Number of samples
-			public uint8 Attr { get; set; }						// Always zero
-			public uint8 Rows { get; set; }						// Number rows per track
-			public uint8 Channels { get; set; }					// Number of tracks per pattern
-			public uint8[] Pan { get; } = new uint8[32];		// Pan positions for each channel
+			public readonly uint8[] Magic = new uint8[3];		// "MTM"
+			public uint8 Version;								// MSN=major, LSN=minor
+			public readonly uint8[] Name = new uint8[20];		// ASCIIZ module name
+			public uint16 Tracks;								// Number of tracks saved
+			public uint8 Patterns;								// Number of patterns saved
+			public uint8 ModLen;								// Module length
+			public uint16 ExtraLen;								// Length of the comment field
+			public uint8 Samples;								// Number of samples
+			public uint8 Attr;									// Always zero
+			public uint8 Rows;									// Number rows per track
+			public uint8 Channels;								// Number of tracks per pattern
+			public readonly uint8[] Pan = new uint8[32];		// Pan positions for each channel
 		}
 		#endregion
 
 		#region Mtm_Instrument_Header
 		private class Mtm_Instrument_Header
 		{
-			public uint8[] Name { get; } = new uint8[22];		// Instrument name
-			public uint32 Length { get; set; }					// Instrument length in bytes
-			public uint32 Loop_Start { get; set; }				// Sample loop start
-			public uint32 LoopEnd { get; set; }					// Sample loop end
-			public uint8 FineTune { get; set; }					// Finetune
-			public uint8 Volume { get; set; }					// Playback volume
-			public uint8 Attr { get; set; }						// &0x01: 16 bit sample
+			public readonly uint8[] Name = new uint8[22];		// Instrument name
+			public uint32 Length;								// Instrument length in bytes
+			public uint32 Loop_Start;							// Sample loop start
+			public uint32 LoopEnd;								// Sample loop end
+			public uint8 FineTune;								// Finetune
+			public uint8 Volume;								// Playback volume
+			public uint8 Attr;									// &0x01: 16 bit sample
 		}
 		#endregion
 

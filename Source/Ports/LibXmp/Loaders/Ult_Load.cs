@@ -25,44 +25,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Ult_Header
 		private class Ult_Header
 		{
-			public uint8[] Magic { get; } = new uint8[15];		// 'MAS_UTrack_V00x'
-			public uint8[] Name { get; } = new uint8[32];		// Song name
-			public uint8 MsgSize { get; set; }					// ver < 1.4: zero
+			public readonly uint8[] Magic = new uint8[15];		// 'MAS_UTrack_V00x'
+			public readonly uint8[] Name = new uint8[32];		// Song name
+			public uint8 MsgSize;								// ver < 1.4: zero
 		}
 		#endregion
 
 		#region Ult_Header2
 		private class Ult_Header2
 		{
-			public uint8[] Order { get; } = new uint8[256];		// Orders
-			public uint8 Channels { get; set; }					// Number of channels - 1
-			public uint8 Patterns { get; set; }					// Number of patterns - 1
+			public readonly uint8[] Order = new uint8[256];		// Orders
+			public uint8 Channels;								// Number of channels - 1
+			public uint8 Patterns;								// Number of patterns - 1
 		}
 		#endregion
 
 		#region Ult_Instrument
 		private class Ult_Instrument
 		{
-			public uint8[] Name { get; } = new uint8[32];		// Instrument name
-			public uint8[] DosName { get; } = new uint8[12];	// DOS file name
-			public uint32 Loop_Start { get; set; }				// Loop start
-			public uint32 LoopEnd { get; set; }					// Loop end
-			public uint32 SizeStart { get; set; }				// Sample size is SizeEnd - SizeStart
-			public uint32 SizeEnd { get; set; }
-			public uint8 Volume { get; set; }					// Volume (log; ver >= 1.4 linear)
-			public uint8 BidiLoop { get; set; }					// Sample loop flags
-			public int16 FineTune { get; set; }					// Finetune
-			public uint16 C2Spd { get; set; }					// C2 frequency
+			public readonly uint8[] Name = new uint8[32];		// Instrument name
+			public readonly uint8[] DosName = new uint8[12];	// DOS file name
+			public uint32 Loop_Start;							// Loop start
+			public uint32 LoopEnd;								// Loop end
+			public uint32 SizeStart;							// Sample size is SizeEnd - SizeStart
+			public uint32 SizeEnd;
+			public uint8 Volume;								// Volume (log; ver >= 1.4 linear)
+			public uint8 BidiLoop;								// Sample loop flags
+			public int16 FineTune;								// Finetune
+			public uint16 C2Spd;								// C2 frequency
 		}
 		#endregion
 
 		#region Ult_Event
 		private class Ult_Event
 		{
-			public uint8 Ins { get; set; }
-			public uint8 FxT { get; set; }						// MSN = fxt, LSN = f2t
-			public uint8 F2P { get; set; }						// Secondary comes first -- little endian!
-			public uint8 FxP { get; set; }
+			public uint8 Ins;
+			public uint8 FxT;									// MSN = fxt, LSN = f2t
+			public uint8 F2P;									// Secondary comes first -- little endian!
+			public uint8 FxP;
 		}
 		#endregion
 

@@ -27,59 +27,59 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Imf_Channel
 		private class Imf_Channel
 		{
-			public uint8[] Name { get; } = new uint8[12];		// Channel name (ASCIIZ-String, max 11 chars)
-			public uint8 Status { get; set; }					// Channel status
-			public uint8 Pan { get; set; }						// Pan positions
-			public uint8 Chorus { get; set; }					// Default chorus
-			public uint8 Reverb { get; set; }					// Default reverb
+			public readonly uint8[] Name = new uint8[12];		// Channel name (ASCIIZ-String, max 11 chars)
+			public uint8 Status;								// Channel status
+			public uint8 Pan;									// Pan positions
+			public uint8 Chorus;								// Default chorus
+			public uint8 Reverb;								// Default reverb
 		}
 		#endregion
 
 		#region Imf_Header
 		private class Imf_Header
 		{
-			public uint8[] Name { get; } = new uint8[32];		// Song name (ASCIIZ-String, max. 31 chars)
-			public uint16 Len { get; set; }						// Number of orders saved
-			public uint16 Pat { get; set; }						// Number of patterns saved
-			public uint16 Ins { get; set; }						// Number of instruments saved
-			public uint16 Flg { get; set; }						// Module flags
-			public uint8[] Unused1 { get; } = new uint8[8];
-			public uint8 Tpo { get; set; }						// Default tempo (1..255)
-			public uint8 Bpm { get; set; }						// Default beats per minute (BPM) (32..255)
-			public uint8 Vol { get; set; }						// Default master volume (0..64)
-			public uint8 Amp { get; set; }						// Amplification factor (4..127)
-			public uint8[] Unused2 { get; } = new uint8[8];
-			public uint32 Magic { get; set; }					// 'IM10'
-			public Imf_Channel[] Chn { get; } = ArrayHelper.InitializeArray<Imf_Channel>(32);	// Channel settings
-			public uint8[] Pos { get; } = new uint8[256];		// Order list
+			public readonly uint8[] Name = new uint8[32];		// Song name (ASCIIZ-String, max. 31 chars)
+			public uint16 Len;									// Number of orders saved
+			public uint16 Pat;									// Number of patterns saved
+			public uint16 Ins;									// Number of instruments saved
+			public uint16 Flg;									// Module flags
+			public readonly uint8[] Unused1 = new uint8[8];
+			public uint8 Tpo;									// Default tempo (1..255)
+			public uint8 Bpm;									// Default beats per minute (BPM) (32..255)
+			public uint8 Vol;									// Default master volume (0..64)
+			public uint8 Amp;									// Amplification factor (4..127)
+			public readonly uint8[] Unused2 = new uint8[8];
+			public uint32 Magic;								// 'IM10'
+			public readonly Imf_Channel[] Chn = ArrayHelper.InitializeArray<Imf_Channel>(32);	// Channel settings
+			public readonly uint8[] Pos = new uint8[256];		// Order list
 		}
 		#endregion
 
 		#region Imf_Env
 		private class Imf_Env
 		{
-			public uint8 Npt { get; set; }						// Number of envelope points
-			public uint8 Sus { get; set; }						// Envelope sustain point
-			public uint8 Lps { get; set; }						// Envelope loop start point
-			public uint8 Lpe { get; set; }						// Envelope loop end point
-			public uint8 Flg { get; set; }						// Envelope flags
-			public uint8[] Unused { get; } = new uint8[3];
+			public uint8 Npt;									// Number of envelope points
+			public uint8 Sus;									// Envelope sustain point
+			public uint8 Lps;									// Envelope loop start point
+			public uint8 Lpe;									// Envelope loop end point
+			public uint8 Flg;									// Envelope flags
+			public readonly uint8[] Unused = new uint8[3];
 		}
 		#endregion
 
 		#region Imf_Instrument
 		private class Imf_Instrument
 		{
-			public uint8[] Name { get; } = new uint8[32];		// Inst. name (ASCIIZ-String, max. 31 chars)
-			public uint8[] Map { get; } = new uint8[120];		// Multisample settings
-			public uint8[] Unused { get; } = new uint8[8];
-			public uint16[] Vol_Env { get; } = new uint16[32];	// Volume envelope settings
-			public uint16[] Pan_Env { get; } = new uint16[32];	// Pan envelope settings
-			public uint16[] Pitch_Env { get; } = new uint16[32];// Pitch envelope settings
-			public Imf_Env[] Env { get; } = ArrayHelper.InitializeArray<Imf_Env>(3);
-			public uint16 Fadeout { get; set; }					// Fadeout rate (0...0FFFH)
-			public uint16 Nsm { get; set; }						// Number of samples in instrument
-			public uint32 Magic { get; set; }					// 'II10'
+			public readonly uint8[] Name = new uint8[32];		// Inst. name (ASCIIZ-String, max. 31 chars)
+			public readonly uint8[] Map = new uint8[120];		// Multisample settings
+			public readonly uint8[] Unused = new uint8[8];
+			public readonly uint16[] Vol_Env = new uint16[32];	// Volume envelope settings
+			public readonly uint16[] Pan_Env = new uint16[32];	// Pan envelope settings
+			public readonly uint16[] Pitch_Env = new uint16[32];// Pitch envelope settings
+			public readonly Imf_Env[] Env = ArrayHelper.InitializeArray<Imf_Env>(3);
+			public uint16 Fadeout;								// Fadeout rate (0...0FFFH)
+			public uint16 Nsm;									// Number of samples in instrument
+			public uint32 Magic;								// 'II10'
 		}
 		#endregion
 
@@ -97,20 +97,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Imf_Sample
 		private class Imf_Sample
 		{
-			public uint8[] Name { get; } = new uint8[13];		// Sample filename (12345678.ABC)
-			public uint8[] Unused1 { get; } = new uint8[3];
-			public uint32 Len { get; set; }						// Length
-			public uint32 Lps { get; set; }						// Loop start
-			public uint32 Lpe { get; set; }						// Loop end
-			public uint32 Rate { get; set; }					// Sample rate
-			public uint8 Vol { get; set; }						// Default volume (0..64)
-			public uint8 Pan { get; set; }						// Default pan (00h = Left / 80h = Middle)
-			public uint8[] Unused2 { get; } = new uint8[14];
-			public Imf_Sample_Flag Flg { get; set; }			// Sample flags
-			public uint8[] Unused3 { get; } = new uint8[5];
-			public uint16 Ems { get; set; }						// Reserved for internal usage
-			public uint32 DRam { get; set; }					// Reserved for internal usage
-			public uint32 Magic { get; set; }					// 'IS10'
+			public readonly uint8[] Name = new uint8[13];		// Sample filename (12345678.ABC)
+			public readonly uint8[] Unused1 = new uint8[3];
+			public uint32 Len;									// Length
+			public uint32 Lps;									// Loop start
+			public uint32 Lpe;									// Loop end
+			public uint32 Rate;									// Sample rate
+			public uint8 Vol;									// Default volume (0..64)
+			public uint8 Pan;									// Default pan (00h = Left / 80h = Middle)
+			public readonly uint8[] Unused2 = new uint8[14];
+			public Imf_Sample_Flag Flg;							// Sample flags
+			public readonly uint8[] Unused3 = new uint8[5];
+			public uint16 Ems;									// Reserved for internal usage
+			public uint32 DRam;									// Reserved for internal usage
+			public uint32 Magic;								// 'IS10'
 		}
 		#endregion
 
@@ -122,12 +122,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private const c_int Imf_Fx_Follows = 0x80;
 		private const c_int Imf_F2_Follows = 0x40;
 
-		// ReSharper disable InconsistentNaming
 		private static readonly uint32 Magic_IM10 = Common.Magic4('I', 'M', '1', '0');
 		private static readonly uint32 Magic_II10 = Common.Magic4('I', 'I', '1', '0');
 		private static readonly uint32 Magic_IS10 = Common.Magic4('I', 'S', '1', '0');
 		private static readonly uint32 Magic_IW10 = Common.Magic4('I', 'W', '1', '0');		// Leaving all behind.imf
-		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;

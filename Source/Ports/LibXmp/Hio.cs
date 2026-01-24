@@ -27,16 +27,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		private class Hio_Handle
 		{
-			public Hio_Type Type { get; set; }
-			public c_long Size { get; set; }
-			// ReSharper disable once InconsistentNaming
+			public Hio_Type Type;
+			public c_long Size;
 			public (
 				Stream File,
 				MemIo Mem,
 				CallbackIo CbFile
 			) Handle;
-			public c_int Error { get; set; }
-			public bool NoClose { get; set; }
+			public c_int Error;
+			public bool NoClose;
 		}
 
 		private Hio_Handle h;
@@ -431,6 +430,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						h.Error = ex.HResult;
 					}
+
 					break;
 				}
 
@@ -483,6 +483,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						h.Error = ex.HResult;
 					}
+
 					break;
 				}
 
@@ -535,6 +536,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						h.Error = ex.HResult;
 					}
+
 					break;
 				}
 
@@ -546,6 +548,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						// Should _not_ happend!
 						h.Error = ErrNo.EINVAL;
 					}
+
 					break;
 				}
 

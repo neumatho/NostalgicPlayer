@@ -10,51 +10,59 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 	/// <summary>
 	/// 
 	/// </summary>
-	public class Xmp_Event : IClearable, IDeepCloneable<Xmp_Event>
+	public class Xmp_Event : IDeepCloneable<Xmp_Event>
 	{
 		/// <summary>
 		/// Note number (0 means no note)
 		/// </summary>
-		public byte Note { get; internal set; }
+		public byte Note;
 
 		/// <summary>
 		/// Patch number
 		/// </summary>
-		public byte Ins { get; internal set; }
+		public byte Ins;
 
 		/// <summary>
 		/// Volume (0 to basevol)
 		/// </summary>
-		public byte Vol { get; internal set; }
+		public byte Vol;
 
 		/// <summary>
 		/// Effect type
 		/// </summary>
-		public ref byte FxT => ref _FxT;
-		private byte _FxT;
+		public byte FxT;
 
 		/// <summary>
 		/// Effect parameter
 		/// </summary>
-		public ref byte FxP => ref _FxP;
-		private byte _FxP;
+		public byte FxP;
 
 		/// <summary>
 		/// Secondary effect type
 		/// </summary>
-		public ref byte F2T => ref _F2T;
-		private byte _F2T;
+		public byte F2T;
 
 		/// <summary>
 		/// Secondary effect parameter
 		/// </summary>
-		public ref byte F2P => ref _F2P;
-		private byte _F2P;
+		public byte F2P;
 
 		/// <summary>
 		/// Internal (reserved) flags
 		/// </summary>
-		internal byte _Flag { get; set; }
+		public byte _Flag;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Xmp_Event MakeDeepClone()
+		{
+			return (Xmp_Event)MemberwiseClone();
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -71,18 +79,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 			F2T = 0;
 			F2P = 0;
 			_Flag = 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Make a deep copy of the current object
-		/// </summary>
-		/********************************************************************/
-		public Xmp_Event MakeDeepClone()
-		{
-			return (Xmp_Event)MemberwiseClone();
 		}
 
 

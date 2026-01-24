@@ -13,41 +13,41 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Flags
 		/// </summary>
-		public Xmp_Envelope_Flag Flg { get; internal set; }
+		public Xmp_Envelope_Flag Flg;
 
 		/// <summary>
 		/// Number of envelope points
 		/// </summary>
-		public c_int Npt { get; internal set; }
+		public c_int Npt;
 
 		/// <summary>
 		/// Envelope scaling
 		/// </summary>
-		public c_int Scl { get; internal set; }
+		public c_int Scl;
 
 		/// <summary>
 		/// Sustain start point
 		/// </summary>
-		public c_int Sus { get; internal set; }
+		public c_int Sus;
 
 		/// <summary>
 		/// Sustain end point
 		/// </summary>
-		public c_int Sue { get; internal set; }
+		public c_int Sue;
 
 		/// <summary>
 		/// Loop start point
 		/// </summary>
-		public c_int Lps { get; internal set; }
+		public c_int Lps;
 
 		/// <summary>
 		/// Loop end point
 		/// </summary>
-		public c_int Lpe { get; internal set; }
+		public c_int Lpe;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_short[] Data { get; } = new c_short[Constants.Xmp_Max_Env_Points * 2];
+		public readonly c_short[] Data = new c_short[Constants.Xmp_Max_Env_Points * 2];
 	}
 }

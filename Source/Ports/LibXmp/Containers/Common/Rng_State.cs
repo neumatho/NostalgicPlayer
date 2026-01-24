@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Rng_State
 	{
-		public c_uint State { get; set; }
+		public c_uint State;
 	}
 }

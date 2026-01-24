@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Loader;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
@@ -16,106 +15,96 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Module title
 		/// </summary>
-		public ref string Name => ref _Name;
-		private string _Name = string.Empty;
+		public string Name = string.Empty;
 
 		/// <summary>
 		/// Module format
 		/// </summary>
-		public ref string Type => ref _Type;
-		private string _Type = string.Empty;
+		public string Type = string.Empty;
 
 		/// <summary>
 		/// Author
 		/// </summary>
-		public string Author { get; internal set; } = string.Empty;
+		public string Author = string.Empty;
 
 		/// <summary>
 		/// Number of patterns
 		/// </summary>
-		public ref c_int Pat => ref _Pat;
-		private c_int _Pat;
+		public c_int Pat;
 
 		/// <summary>
 		/// Number of tracks
 		/// </summary>
-		public c_int Trk { get; internal set; }
+		public c_int Trk;
 
 		/// <summary>
 		/// Tracks per pattern
 		/// </summary>
-		public ref c_int Chn => ref _Chn;
-		private c_int _Chn;
+		public c_int Chn;
 
 		/// <summary>
 		/// Number of instruments
 		/// </summary>
-		public ref c_int Ins => ref _Ins;
-		private c_int _Ins;
+		public c_int Ins;
 
 		/// <summary>
 		/// Number of samples
 		/// </summary>
-		public ref c_int Smp => ref _Smp;
-		private c_int _Smp;
+		public c_int Smp;
 
 		/// <summary>
 		/// Initial speed
 		/// </summary>
-		public ref c_int Spd => ref _Spd;
-		private c_int _Spd;
+		public c_int Spd;
 
 		/// <summary>
 		/// Initial BPM
 		/// </summary>
-		public ref c_int Bpm => ref _Bpm;
-		private c_int _Bpm;
+		public c_int Bpm;
 
 		/// <summary>
 		/// Module length in patterns
 		/// </summary>
-		public ref c_int Len => ref _Len;
-		private c_int _Len;
+		public c_int Len;
 
 		/// <summary>
 		/// Restart position
 		/// </summary>
-		public c_int Rst { get; internal set; }
+		public c_int Rst;
 
 		/// <summary>
 		/// Global volume
 		/// </summary>
-		public c_int Gvl { get; internal set; }
+		public c_int Gvl;
 
 		/// <summary>
 		/// Patterns
 		/// </summary>
-		public Xmp_Pattern[] Xxp { get; internal set; }
+		public Xmp_Pattern[] Xxp;
 
 		/// <summary>
 		/// Tracks
 		/// </summary>
-		public Xmp_Track[] Xxt { get; internal set; }
+		public Xmp_Track[] Xxt;
 
 		/// <summary>
 		/// Instruments
 		/// </summary>
-		public Xmp_Instrument[] Xxi { get; internal set; }
+		public Xmp_Instrument[] Xxi;
 
 		/// <summary>
 		/// Samples
 		/// </summary>
-		public ref Xmp_Sample[] Xxs => ref _Xxs;
-		private Xmp_Sample[] _Xxs;
+		public Xmp_Sample[] Xxs;
 
 		/// <summary>
 		/// Channel info
 		/// </summary>
-		public Xmp_Channel[] Xxc { get; } = ArrayHelper.InitializeArray<Xmp_Channel>(Constants.Xmp_Max_Channels);
+		public readonly Xmp_Channel[] Xxc = ArrayHelper.InitializeArray<Xmp_Channel>(Constants.Xmp_Max_Channels);
 
 		/// <summary>
 		/// Orders
 		/// </summary>
-		public byte[] Xxo { get; } = new byte[Constants.Xmp_Max_Mod_Length];
+		public readonly byte[] Xxo = new byte[Constants.Xmp_Max_Mod_Length];
 	}
 }

@@ -22,7 +22,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	/// </summary>
 	internal class Mixer
 	{
-		// ReSharper disable InconsistentNaming
 		private const c_int DownMix_Shift = 12;
 		private const c_int Lim16_Hi = 32767;
 		private const c_int Lim16_Lo = -32768;
@@ -31,38 +30,36 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		private const c_int Loop_Prologue = 1;
 		private const c_int Loop_Epilogue = 2;
-		// ReSharper restore InconsistentNaming
 
 		private delegate void Mix_Fp(Mixer_Voice vi, CPointer<int32> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R);
 
 		#region Loop_Data class
 		private class Loop_Data
 		{
-			public ref CPointer<byte> SPtr => ref _SPtr;
-			private CPointer<byte> _SPtr;
-			public c_int Start { get; set; }
-			public c_int End { get; set; }
-			public bool First_Loop { get; set; }
-			public bool _16Bit { get; set; }
-			public bool Active { get; set; }
-			public c_int Prologue_Num { get; set; }
-			public c_int Epilogue_Num { get; set; }
-			public uint8[] Prologue { get; } = new uint8[Loop_Prologue * 2 /* 16 bit */ * 2 /* stereo */];
-			public uint8[] Epilogue { get; } = new uint8[Loop_Epilogue * 2 /* 16 bit */ * 2 /* stereo */];
+			public CPointer<byte> SPtr;
+			public c_int Start;
+			public c_int End;
+			public bool First_Loop;
+			public bool _16Bit;
+			public bool Active;
+			public c_int Prologue_Num;
+			public c_int Epilogue_Num;
+			public readonly uint8[] Prologue = new uint8[Loop_Prologue * 2 /* 16 bit */ * 2 /* stereo */];
+			public readonly uint8[] Epilogue = new uint8[Loop_Epilogue * 2 /* 16 bit */ * 2 /* stereo */];
 		}
 		#endregion
 
 		#region VisualizerChannel class
 		private class VisualizerChannel
 		{
-			public bool Muted { get; set; }
-			public bool NoteKicked { get; set; }
-			public short SampleNumber { get; set; }
-			public uint SampleLength { get; set; }
-			public bool Looping { get; set; }
-			public int? SamplePosition { get; set; }
-			public ushort? Volume { get; set; }
-			public uint? Frequency { get; set; }
+			public bool Muted;
+			public bool NoteKicked;
+			public short SampleNumber;
+			public uint SampleLength;
+			public bool Looping;
+			public int? SamplePosition;
+			public ushort? Volume;
+			public uint? Frequency;
 		}
 		#endregion
 

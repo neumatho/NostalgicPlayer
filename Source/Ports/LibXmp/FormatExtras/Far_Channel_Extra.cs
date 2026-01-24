@@ -17,8 +17,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 	{
 		public class Far_Channel_Extra_Info : IChannelExtraInfo
 		{
-			public c_int Vib_Sustain { get; set; }		// Is vibrato persistent?
-			public c_int Vib_Rate { get; set; }			// Vibrato rate
+			public c_int Vib_Sustain;		// Is vibrato persistent?
+			public c_int Vib_Rate;			// Vibrato rate
 		}
 
 		private readonly LibXmp lib;
@@ -256,6 +256,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 						xc.Retrig.Type = 0;
 						xc.Retrig.Limit = fxP - 1;
 					}
+
 					break;
 				}
 
@@ -279,6 +280,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 						xc.Retrig.Type = 0;
 						xc.Retrig.Limit = fxP != 0 ? 1 : 0;
 					}
+
 					break;
 				}
 

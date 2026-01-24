@@ -16,113 +16,111 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Current position
 		/// </summary>
-		public c_int Pos { get; internal set; }
+		public c_int Pos;
 
 		/// <summary>
 		/// Current pattern
 		/// </summary>
-		public c_int Pattern { get; internal set; }
+		public c_int Pattern;
 
 		/// <summary>
 		/// Current row in pattern
 		/// </summary>
-		public c_int Row { get; internal set; }
+		public c_int Row;
 
 		/// <summary>
 		/// Number of rows in current pattern
 		/// </summary>
-		public c_int Num_Rows { get; internal set; }
+		public c_int Num_Rows;
 
 		/// <summary>
 		/// Current frame
 		/// </summary>
-		public c_int Frame { get; internal set; }
+		public c_int Frame;
 
 		/// <summary>
 		/// Current replay speed
 		/// </summary>
-		public c_int Speed { get; internal set; }
+		public c_int Speed;
 
 		/// <summary>
 		/// Current bpm
 		/// </summary>
-		public c_int Bpm { get; internal set; }
+		public c_int Bpm;
 
 		/// <summary>
 		/// Current module time in ms
 		/// </summary>
-		public c_int Time { get; internal set; }
+		public c_int Time;
 
 		/// <summary>
 		/// Estimated replay time in ms
 		/// </summary>
-		public c_int Total_Time { get; internal set; }
+		public c_int Total_Time;
 
 		/// <summary>
 		/// Frame replay time in us
 		/// </summary>
-		public c_int Frame_Time { get; internal set; }
+		public c_int Frame_Time;
 
 		/// <summary>
 		/// Pointer to sound buffer
 		/// </summary>
-		public ref CPointer<int8> Buffer => ref _Buffer;
-		private CPointer<int8> _Buffer;
+		public CPointer<int8> Buffer;
 
 		/// <summary>
 		/// Pointer to sound buffer for rear speakers
 		/// </summary>
-		public ref CPointer<int8> BufferRear => ref _BufferRear;
-		private CPointer<int8> _BufferRear;
+		public CPointer<int8> BufferRear;
 
 		/// <summary>
 		/// Used buffer size
 		/// </summary>
-		public c_int Buffer_Size { get; internal set; }
+		public c_int Buffer_Size;
 
 		/// <summary>
 		/// Total buffer size
 		/// </summary>
-		public c_int Total_Size { get; internal set; }
+		public c_int Total_Size;
 
 		/// <summary>
 		/// Current master volume
 		/// </summary>
-		public c_int Volume { get; internal set; }
+		public c_int Volume;
 
 		/// <summary>
 		/// Loop counter
 		/// </summary>
-		public c_int Loop_Count { get; internal set; }
+		public c_int Loop_Count;
 
 		/// <summary>
 		/// Number of virtual channels
 		/// </summary>
-		public c_int Virt_Channels { get; internal set; }
+		public c_int Virt_Channels;
 
 		/// <summary>
 		/// Used virtual channels
 		/// </summary>
-		public c_int Virt_Used { get; internal set; }
+		public c_int Virt_Used;
 
 		/// <summary>
 		/// Current sequence
 		/// </summary>
-		public c_int Sequence { get; internal set; }
+		public c_int Sequence;
 
 		/// <summary>
 		/// Current channel information
 		/// </summary>
-		public Xmp_Channel_Info[] Channel_Info { get; } = ArrayHelper.InitializeArray<Xmp_Channel_Info>(Constants.Xmp_Max_Channels);
+		public readonly Xmp_Channel_Info[] Channel_Info = ArrayHelper.InitializeArray<Xmp_Channel_Info>(Constants.Xmp_Max_Channels);
 
 		/// <summary>
 		/// Current playing tracks
 		/// </summary>
-		public c_int[] Playing_Tracks { get; } = new c_int[Constants.Xmp_Max_Channels];
+		public readonly c_int[] Playing_Tracks = new c_int[Constants.Xmp_Max_Channels];
 
 		/// <summary>
 		/// Status of the Amiga filter
 		/// </summary>
-		public bool Filter { get; internal set; }
+		public bool Filter;
 	}
 }

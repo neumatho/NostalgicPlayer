@@ -14,168 +14,166 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// </summary>
 	internal class Module_Data
 	{
-		public Xmp_Module Mod { get; set; } = new Xmp_Module();
+		public Xmp_Module Mod = new Xmp_Module();
 
 		/// <summary>
 		/// File dirname
 		/// </summary>
-		public string DirName { get; set; }
+		public string DirName;
 
 		/// <summary>
 		/// File basename
 		/// </summary>
-		public string BaseName { get; set; }
+		public string BaseName;
 
 		/// <summary>
 		/// Module file name
 		/// </summary>
-		public string FileName { get; set; }
+		public string FileName;
 
 		/// <summary>
 		/// Comments, if any
 		/// </summary>
-		public string Comment { get; set; }
+		public string Comment;
 
 		/// <summary>
 		/// MD5 message digest
 		/// </summary>
-		public uint8[] Md5 { get; } = new uint8[16];
+		public readonly uint8[] Md5 = new uint8[16];
 
 		/// <summary>
 		/// File size
 		/// </summary>
-		public c_int Size { get; set; }
+		public c_int Size;
 
 		/// <summary>
 		/// Replay rate
 		/// </summary>
-		public c_double RRate { get; set; }
+		public c_double RRate;
 
 		/// <summary>
 		/// Time conversion constant
 		/// </summary>
-		public c_double Time_Factor { get; set; }
+		public c_double Time_Factor;
 
 		/// <summary>
 		/// C4 replay rate
 		/// </summary>
-		public c_int C4Rate { get; set; }
+		public c_int C4Rate;
 
 		/// <summary>
 		/// Volume base
 		/// </summary>
-		public c_int VolBase { get; set; }
+		public c_int VolBase;
 
 		/// <summary>
 		/// Global volume base
 		/// </summary>
-		public c_int GVolBase { get; set; }
+		public c_int GVolBase;
 
 		/// <summary>
 		/// Global volume
 		/// </summary>
-		public c_int GVol { get; set; }
+		public c_int GVol;
 
 		/// <summary>
 		/// Mix volume base (S3M/IT)
 		/// </summary>
-		public c_int MVolBase { get; set; }
+		public c_int MVolBase;
 
 		/// <summary>
 		/// Mix volume (S3M/IT)
 		/// </summary>
-		public ref c_int MVol => ref _MVol;
-		private c_int _MVol;
+		public c_int MVol;
 
 		/// <summary>
 		/// Volume translation table
 		/// </summary>
-		public c_int[] Vol_Table { get; set; }
+		public c_int[] Vol_Table;
 
 		/// <summary>
 		/// Player quirks
 		/// </summary>
-		public Quirk_Flag Quirk { get; set; }
+		public Quirk_Flag Quirk;
 
 		/// <summary>
 		/// Flow quirks, esp. Pattern Loop
 		/// </summary>
-		public FlowMode_Flag Flow_Mode { get; set; }
+		public FlowMode_Flag Flow_Mode;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Read_Event Read_Event_Type { get; set; }
+		public Read_Event Read_Event_Type;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Period Period_Type { get; set; }
+		public Period Period_Type;
 
 		/// <summary>
 		/// Sample control flags
 		/// </summary>
-		public Xmp_SmpCtl_Flag SmpCtl { get; set; }
+		public Xmp_SmpCtl_Flag SmpCtl;
 
 		/// <summary>
 		/// Default pan setting
 		/// </summary>
-		public c_int DefPan { get; set; }
+		public c_int DefPan;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Ord_Data[] Xxo_Info { get; set; } = ArrayHelper.InitializeArray<Ord_Data>(Constants.Xmp_Max_Mod_Length);
+		public Ord_Data[] Xxo_Info = ArrayHelper.InitializeArray<Ord_Data>(Constants.Xmp_Max_Mod_Length);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int Num_Sequences { get; set; }
+		public c_int Num_Sequences;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Xmp_Sequence[] Seq_Data { get; } = ArrayHelper.InitializeArray<Xmp_Sequence>(Constants.Max_Sequences);
+		public Xmp_Sequence[] Seq_Data = ArrayHelper.InitializeArray<Xmp_Sequence>(Constants.Max_Sequences);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string Instrument_Path { get; set; }
+		public string Instrument_Path;
 
 		/// <summary>
 		/// Format-specific extra fields
 		/// </summary>
-		public IModuleExtra Extra { get; set; }
+		public IModuleExtra Extra;
 
 		/// <summary>
 		/// Scan counters
 		/// </summary>
-		public uint8[][] Scan_Cnt { get; set; }
+		public uint8[][] Scan_Cnt;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public ref Extra_Sample_Data[] Xtra => ref _Xtra;
-		private Extra_Sample_Data[] _Xtra;
+		public Extra_Sample_Data[] Xtra;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Midi_Macro_Data Midi { get; set; }
+		public Midi_Macro_Data Midi;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool Compare_VBlank { get; set; }
+		public bool Compare_VBlank;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public Xmp_Module_Flags Module_Flags { get; set; }
+		public Xmp_Module_Flags Module_Flags;
 
 		/// <summary>
 		/// Names of found DSP effects/VST plugins
 		/// </summary>
-		public string[] DspEffects { get; set; }
+		public string[] DspEffects;
 	}
 }

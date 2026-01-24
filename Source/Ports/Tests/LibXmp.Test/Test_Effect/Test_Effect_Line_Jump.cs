@@ -16,8 +16,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	{
 		private struct Pos_Row
 		{
-			public c_int Pos { get; set; }
-			public c_int Row { get; set; }
+			public c_int Pos;
+			public c_int Row;
 		}
 
 		private static readonly Pos_Row[] vals_LJ =

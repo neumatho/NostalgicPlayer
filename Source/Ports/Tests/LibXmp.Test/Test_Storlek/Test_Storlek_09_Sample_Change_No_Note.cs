@@ -15,9 +15,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 	{
 		private struct Data
 		{
-			public c_int Period { get; set; }
-			public c_int Volume { get; set; }
-			public c_int Instrument { get; set; }
+			public c_int Period;
+			public c_int Volume;
+			public c_int Instrument;
 		}
 
 		/********************************************************************/
