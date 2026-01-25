@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 			// Get meta data
 			OpusTags tags = opusFile.Op_Tags(0);
 
-			vendor = Encoding.UTF8.GetString(tags.Vendor.Buffer, tags.Vendor.Offset, tags.Vendor.Length - 1);
+			vendor = Encoding.UTF8.GetString(tags.Vendor.AsSpan(tags.Vendor.Length - 1));
 			if (string.IsNullOrEmpty(vendor))
 				vendor = Resources.IDS_OPUS_INFO_UNKNOWN;
 
@@ -561,7 +561,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 			for (int i = 0; i < tags.Comments; i++)
 			{
 				int length = tags.Comment_Lengths[i];
-				string tag = encoder.GetString(tags.User_Comments[i].Buffer, tags.User_Comments[i].Offset, length);
+				string tag = encoder.GetString(tags.User_Comments[i].AsSpan(length));
 
 				int index = tag.IndexOf('=');
 				if (index > 0)
@@ -589,9 +589,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 				if (tag.Description.IsNull || (tag.Description.Length == 1))
 					description = type;
 				else
-					description = $"{type}: {Encoding.UTF8.GetString(tag.Description.Buffer, tag.Description.Offset, tag.Description.Length - 1)}";
+					description = $"{type}: {Encoding.UTF8.GetString(tag.Description.AsSpan(tag.Description.Length - 1))}";
 
-				return new PictureInfo(tag.Data.AsSpan().Slice(0, (int)tag.Data_Length).ToArray(), description);
+				return new PictureInfo(tag.Data.AsSpan((int)tag.Data_Length).ToArray(), description);
 			}
 			catch (Exception)
 			{

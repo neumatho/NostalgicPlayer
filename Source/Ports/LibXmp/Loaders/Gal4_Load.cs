@@ -477,7 +477,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			f.Hio_Read(buf, 1, 28);
-			mod.Xxi[i].Name = encoder.GetString(buf.Buffer, buf.Offset, buf.Length);
+			mod.Xxi[i].Name = encoder.GetString(buf.AsSpan());
 
 			mod.Xxi[i].Nsm = f.Hio_Read8();
 
@@ -575,7 +575,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				f.Hio_Read32B();	// Size
 
 				f.Hio_Read(buf, 1, 28);
-				mod.Xxs[data.SNum].Name = encoder.GetString(buf.Buffer, buf.Offset, buf.Length);
+				mod.Xxs[data.SNum].Name = encoder.GetString(buf.AsSpan());
 
 				mod.Xxi[i].Sub[j].Pan = f.Hio_Read8() * 4;
 

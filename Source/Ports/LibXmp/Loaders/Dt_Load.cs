@@ -1053,12 +1053,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					{
 						int clipLen = ((i > 0) && (comment[i - 1] == 0x0d) ? i - 1 : i) - startIndex;
 
-						m.Comment += encoder.GetString(comment.Buffer, comment.Offset + startIndex, clipLen) + "\n";
+						m.Comment += encoder.GetString(comment.AsSpan(startIndex, clipLen)) + "\n";
 						startIndex = i + 1;
 					}
 				}
 
-				m.Comment += encoder.GetString(comment.Buffer, comment.Offset + startIndex, (int)(len - startIndex));
+				m.Comment += encoder.GetString(comment.AsSpan(startIndex, (int)(len - startIndex)));
 			}
 
 			return 0;

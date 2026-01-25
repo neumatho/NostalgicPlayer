@@ -47,8 +47,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -170,8 +171,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -296,8 +298,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -467,8 +470,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -640,8 +644,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -795,8 +800,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -954,8 +960,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1139,8 +1146,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1327,8 +1335,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1373,7 +1382,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -1439,7 +1449,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -1507,8 +1518,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1554,7 +1566,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -1621,7 +1634,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -1690,8 +1704,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1758,7 +1773,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -1767,7 +1783,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion
@@ -1858,7 +1875,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -1867,7 +1885,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion
@@ -1953,8 +1972,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2023,7 +2043,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2032,7 +2053,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion
@@ -2125,7 +2147,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2134,7 +2157,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion
@@ -2219,8 +2243,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2270,7 +2295,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2350,7 +2376,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2431,8 +2458,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2483,7 +2511,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2564,7 +2593,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2646,8 +2676,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset;
+			var s = vi.SPtr.AsXmp();
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
+			int sPtrOffset = s.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2719,7 +2750,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2728,7 +2760,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion
@@ -2824,7 +2857,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -2833,7 +2867,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion
@@ -2923,8 +2958,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
-			int sPtrOffset = vi.SPtr.Offset / 2;
+			var s = vi.SPtr.AsXmp();
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
+			int sPtrOffset = s.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2998,7 +3034,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -3007,7 +3044,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion
@@ -3017,6 +3055,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					smpL = smp_In_L;
 					smpR = smp_In_R;
 				}
+
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
@@ -3104,7 +3143,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
-							fl2 = fl1; fl1 = sl;
+							fl2 = fl1;
+							fl1 = sl;
 							smp_In_L = (sl >> PreAmp_Bits);
 						}
 						#endregion
@@ -3113,7 +3153,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
-							fr2 = fr1; fr1 = sr;
+							fr2 = fr1;
+							fr1 = sr;
 							smp_In_R = (sr >> PreAmp_Bits);
 						}
 						#endregion

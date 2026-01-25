@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 
 			Stream stream = (Stream)datasource;
 
-			int ret = stream.Read(ptr.Buffer, ptr.Offset, toRead);
+			int ret = stream.Read(ptr.AsSpan(toRead));
 
 			return (size_t)ret;
 		}

@@ -132,11 +132,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 
 			if (lpc != null)
 			{
-				Array.Clear(lpc.Buffer);
-				Array.Clear(oldEBands.Buffer);
-				Array.Clear(oldLogE.Buffer);
-				Array.Clear(oldLogE2.Buffer);
-				Array.Clear(backgroundLogE.Buffer);
+				lpc.Clear();
+				oldEBands.Clear();
+				oldLogE.Clear();
+				oldLogE2.Clear();
+				backgroundLogE.Clear();
 			}
 		}
 

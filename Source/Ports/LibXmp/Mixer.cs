@@ -1195,8 +1195,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (ld._16Bit)
 			{
-				Span<uint16> buf = MemoryMarshal.Cast<byte, uint16>(ld.SPtr.Buffer);
-				int sPtrOffset = ld.SPtr.Offset / 2;
+				var s1 = vi.SPtr.AsXmp();
+				Span<uint16> buf = MemoryMarshal.Cast<byte, uint16>(s1.Buffer.Span);
+				int sPtrOffset = s1.Offset / 2;
 				c_int start = ld.Start;
 				c_int end = ld.End;
 

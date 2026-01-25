@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Read32B();
 
 			f.Hio_Read(buf, 1, 60);
-			mod.Name = encoder.GetString(buf.Buffer, buf.Offset, 59);
+			mod.Name = encoder.GetString(buf.AsSpan(59));
 
 			c_int type = f.Hio_Read8();		// Song type
 			c_int ver = f.Hio_Read8();		// Song version
@@ -184,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				Xmp_SubInstrument sub = xxi.Sub[0];
 
-				xxi.Name = encoder.GetString(buf.Buffer, buf.Offset + 13, 24);
+				xxi.Name = encoder.GetString(buf.AsSpan(13, 24));
 				p_Smp[i] = DataIo.ReadMem32L(buf + 37);
 
 				uint16 flags = buf[47];		// Sample type

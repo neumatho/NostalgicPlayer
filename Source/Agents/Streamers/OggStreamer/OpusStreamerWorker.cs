@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		{
 			OpusTags tags = opusFile.Op_Tags(0);
 
-			string vendor = Encoding.UTF8.GetString(tags.Vendor.Buffer, tags.Vendor.Offset, tags.Vendor.Length - 1);
+			string vendor = Encoding.UTF8.GetString(tags.Vendor.AsSpan(tags.Vendor.Length - 1));
 			if (string.IsNullOrEmpty(vendor))
 				vendor = Resources.IDS_OGG_INFO_UNKNOWN;
 
@@ -295,7 +295,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 			for (int i = 0; i < tags.Comments; i++)
 			{
 				int length = tags.Comment_Lengths[i];
-				string tag = encoder.GetString(tags.User_Comments[i].Buffer, tags.User_Comments[i].Offset, length);
+				string tag = encoder.GetString(tags.User_Comments[i].AsSpan(length));
 
 				int index = tag.IndexOf('=');
 				if (index > 0)

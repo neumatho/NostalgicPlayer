@@ -9,7 +9,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Player based on LibXmp</Description>
-    <Version>3.1.0</Version>
+    <Version>3.1.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

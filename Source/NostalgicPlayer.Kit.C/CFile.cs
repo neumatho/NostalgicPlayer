@@ -21,8 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public static c_int fputs(CPointer<char> str, Stream stream)
 		{
-			size_t len = CString.strlen(str);
-			byte[] buffer = Encoding.UTF8.GetBytes(str.Buffer, str.Offset, (c_int)len);
+			byte[] buffer = Encoding.UTF8.GetBytes(str.ToString());
 
 			stream.Write(buffer);
 

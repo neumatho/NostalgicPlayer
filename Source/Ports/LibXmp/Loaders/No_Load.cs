@@ -176,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			buf[nSize] = 0x00;
-			mod.Name = encoder.GetString(buf.Buffer, buf.Offset, buf.Length).TrimEnd();
+			mod.Name = encoder.GetString(buf.AsSpan()).TrimEnd();
 
 			mod.Pat = f.Hio_Read8();
 			f.Hio_Read8();

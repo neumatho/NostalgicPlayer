@@ -211,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 		{
 			VorbisComment comment = vorbisFile.Ov_Comment(0);
 
-			string vendor = Encoding.UTF8.GetString(comment.vendor.Buffer, comment.vendor.Offset, comment.vendor.Length - 1);
+			string vendor = Encoding.UTF8.GetString(comment.vendor.AsSpan(comment.vendor.Length - 1));
 			if (string.IsNullOrEmpty(vendor))
 				vendor = Resources.IDS_OGG_INFO_UNKNOWN;
 
@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.OggStreamer
 			for (int i = 0; i < comment.comments; i++)
 			{
 				int length = comment.comment_lengths[i];
-				string tag = encoder.GetString(comment.user_comments[i].Buffer, comment.user_comments[i].Offset, length);
+				string tag = encoder.GetString(comment.user_comments[i].AsSpan(length));
 
 				int index = tag.IndexOf('=');
 				if (index > 0)

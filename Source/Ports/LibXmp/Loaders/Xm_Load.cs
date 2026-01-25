@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibVorbis;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
@@ -1379,7 +1380,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private c_int Vorbis_Decode_Memory(CPointer<uint8> data, c_int len, out c_int ch, out c_int rate, out CPointer<int16> decodedBuffer)
 		{
-			VorbisError result = VorbisFile.Ov_Open(new MemoryStream(data.Buffer, data.Offset, data.Length), false, out VorbisFile vorbisFile, null, 0);
+			VorbisError result = VorbisFile.Ov_Open(new ReadOnlyMemoryStream(data.AsMemory(len)), false, out VorbisFile vorbisFile, null, 0);
 			if (result != VorbisError.Ok)
 			{
 				ch = 0;

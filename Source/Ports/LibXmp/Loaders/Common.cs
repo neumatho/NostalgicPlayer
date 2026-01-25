@@ -338,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		public void LibXmp_Copy_Adjust(out string s, CPointer<uint8> r, c_int n, Encoding encoder)
 		{
-			s = encoder.GetString(r.Buffer, r.Offset, n).TrimEnd();
+			s = encoder.GetString(r.AsSpan(n)).TrimEnd();
 		}
 
 

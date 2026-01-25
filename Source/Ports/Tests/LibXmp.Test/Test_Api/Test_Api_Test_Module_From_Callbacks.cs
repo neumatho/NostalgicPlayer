@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 		{
 			Stream f = (Stream)priv;
 
-			return (c_ulong)f.Read(dest.Buffer, dest.Offset, (int)(len * nMemB)) / len;
+			return (c_ulong)f.Read(dest.AsSpan((int)(len * nMemB))) / len;
 		}
 
 

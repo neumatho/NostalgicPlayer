@@ -25,7 +25,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 1, 2, 3, 4, 5 ];
 			CPointer<int> ptr = new CPointer<int>(buffer, 2);
 
-			Assert.AreEqual(buffer, ptr.Buffer);
+			Assert.AreEqual(buffer, ptr.GetOriginalArray());
 			Assert.AreEqual(2, ptr.Offset);
 			Assert.AreEqual(3, ptr.Length);
 			Assert.IsFalse(ptr.IsNull);
@@ -45,7 +45,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 1, 2, 3, 4, 5 ];
 			CPointer<int> ptr = new CPointer<int>(buffer);
 
-			Assert.AreEqual(buffer, ptr.Buffer);
+			Assert.AreEqual(buffer, ptr.GetOriginalArray());
 			Assert.AreEqual(0, ptr.Offset);
 			Assert.AreEqual(5, ptr.Length);
 		}
@@ -62,8 +62,8 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 		{
 			CPointer<int> ptr = new CPointer<int>(10);
 
-			Assert.IsNotNull(ptr.Buffer);
-			Assert.HasCount(10, ptr.Buffer);
+			Assert.IsNotNull(ptr.GetOriginalArray());
+			Assert.HasCount(10, ptr.GetOriginalArray());
 			Assert.AreEqual(0, ptr.Offset);
 			Assert.AreEqual(10, ptr.Length);
 		}
@@ -81,10 +81,30 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			size_t length = 15;
 			CPointer<int> ptr = new CPointer<int>(length);
 
-			Assert.IsNotNull(ptr.Buffer);
-			Assert.HasCount(15, ptr.Buffer);
+			Assert.IsNotNull(ptr.GetOriginalArray());
+			Assert.HasCount(15, ptr.GetOriginalArray());
 			Assert.AreEqual(0, ptr.Offset);
 			Assert.AreEqual(15, ptr.Length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test constructor with another pointer and offset
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Constructor_WithPointerAndOffset()
+		{
+			int[] buffer = [ 1, 2, 3, 4, 5 ];
+			CPointer<int> ptr1 = new CPointer<int>(buffer, 1);
+			CPointer<int> ptr2 = new CPointer<int>(ptr1, 2);
+
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreEqual(3, ptr2.Offset);
+			Assert.AreEqual(2, ptr2.Length);
+			Assert.AreEqual(4, ptr2[0]);
 		}
 		#endregion
 
@@ -117,7 +137,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 		[TestMethod]
 		public void Test_IsNull()
 		{
-			CPointer<int> ptr = new CPointer<int>(null, 0);
+			CPointer<int> ptr = new CPointer<int>();
 
 			Assert.IsTrue(ptr.IsNull);
 			Assert.IsFalse(ptr.IsNotNull);
@@ -262,7 +282,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -281,7 +301,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2U;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -300,7 +320,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2L;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -319,7 +339,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2UL;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -338,7 +358,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -357,7 +377,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2U;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -376,7 +396,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2L;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -395,7 +415,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2UL;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -433,7 +453,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 		{
 			int[] buffer = [ 10, 20, 30, 40, 50 ];
 			CPointer<int> ptr1 = new CPointer<int>(buffer, 2);
-			CPointer<int> ptr2 = new CPointer<int>(null, 0);
+			CPointer<int> ptr2 = new CPointer<int>();
 
 			int diff = ptr2 - ptr1;
 			Assert.AreEqual(-0x12345678, diff);
@@ -480,7 +500,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ++ptr;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(2, ptr2.Offset);
 			Assert.AreEqual(30, ptr2[0]);
 		}
@@ -499,7 +519,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = --ptr;
 
-			Assert.AreEqual(buffer, ptr2.Buffer);
+			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(2, ptr2.Offset);
 			Assert.AreEqual(30, ptr2[0]);
 		}
@@ -649,6 +669,109 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 		/********************************************************************/
 		/// <summary>
+		/// Test AsSpan method with length parameter
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_AsSpan_WithLength()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			Span<int> span = ptr.AsSpan(3);
+
+			Assert.AreEqual(3, span.Length);
+			Assert.AreEqual(20, span[0]);
+			Assert.AreEqual(30, span[1]);
+			Assert.AreEqual(40, span[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test AsSpan method with offset and length parameters
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_AsSpan_WithOffsetAndLength()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			Span<int> span = ptr.AsSpan(1, 2);
+
+			Assert.AreEqual(2, span.Length);
+			Assert.AreEqual(30, span[0]);
+			Assert.AreEqual(40, span[1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test AsMemory method
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_AsMemory()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 2);
+
+			Memory<int> memory = ptr.AsMemory();
+
+			Assert.AreEqual(3, memory.Length);
+			Assert.AreEqual(30, memory.Span[0]);
+			Assert.AreEqual(40, memory.Span[1]);
+			Assert.AreEqual(50, memory.Span[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test AsMemory method with length parameter
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_AsMemory_WithLength()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			Memory<int> memory = ptr.AsMemory(3);
+
+			Assert.AreEqual(3, memory.Length);
+			Assert.AreEqual(20, memory.Span[0]);
+			Assert.AreEqual(30, memory.Span[1]);
+			Assert.AreEqual(40, memory.Span[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test AsMemory method with offset and length parameters
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_AsMemory_WithOffsetAndLength()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			Memory<int> memory = ptr.AsMemory(1, 2);
+
+			Assert.AreEqual(2, memory.Length);
+			Assert.AreEqual(30, memory.Span[0]);
+			Assert.AreEqual(40, memory.Span[1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Test Clear method without parameters
 		/// </summary>
 		/********************************************************************/
@@ -717,7 +840,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 		[TestMethod]
 		public void Test_ToString_NullCharPointer()
 		{
-			CPointer<char> ptr = new CPointer<char>(null, 0);
+			CPointer<char> ptr = new CPointer<char>();
 
 			string result = ptr.ToString();
 
@@ -775,7 +898,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 		{
 			int[] buffer = [ 10, 20, 30, 40, 50 ];
 			CPointer<int> ptr1 = new CPointer<int>(buffer, 1);
-			CPointer<int> ptr2 = new CPointer<int>(null, 0);
+			CPointer<int> ptr2 = new CPointer<int>();
 
 			Assert.IsGreaterThan(0, ptr1.CompareTo(ptr2));
 			Assert.IsLessThan(0, ptr2.CompareTo(ptr1));
@@ -823,7 +946,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> clonedPtr = ptr.MakeDeepClone();
 
-			Assert.AreNotEqual(ptr.Buffer, clonedPtr.Buffer);
+			Assert.AreNotEqual(ptr.GetOriginalArray(), clonedPtr.GetOriginalArray());
 			Assert.AreEqual(ptr.Offset, clonedPtr.Offset);
 			Assert.AreEqual(ptr.Length, clonedPtr.Length);
 			Assert.AreEqual(30, clonedPtr[0]);
@@ -843,7 +966,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 		[TestMethod]
 		public void Test_MakeDeepClone_Null()
 		{
-			CPointer<int> ptr = new CPointer<int>(null, 0);
+			CPointer<int> ptr = new CPointer<int>();
 
 			CPointer<int> clonedPtr = ptr.MakeDeepClone();
 
@@ -863,7 +986,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 10, 20, 30, 40, 50 ];
 			CPointer<int> ptr = buffer;
 
-			Assert.AreEqual(buffer, ptr.Buffer);
+			Assert.AreEqual(buffer, ptr.GetOriginalArray());
 			Assert.AreEqual(0, ptr.Offset);
 			Assert.AreEqual(5, ptr.Length);
 			Assert.AreEqual(10, ptr[0]);

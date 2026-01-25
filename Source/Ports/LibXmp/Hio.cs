@@ -422,7 +422,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					try
 					{
-						ret = (size_t)h.Handle.File.Read(buf.Buffer, buf.Offset, (int)(num * size)) / size;
+						ret = (size_t)h.Handle.File.Read(buf.AsSpan((int)(num * size))) / size;
 						if (ret != num)
 							h.Error = Constants.EOF;
 					}

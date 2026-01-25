@@ -161,8 +161,8 @@ namespace NostalgicPlayer.Kit.C.Test.String
 				c_int result = CString.strcmp(a, b);
 				result = result < 0 ? -1 : (result > 0 ? 1 : 0);
 
-				string c1 = Array.IndexOf(a.Buffer, '\0') == -1 ? a.ToString() : new string(a.Buffer, a.Offset, Array.IndexOf(a.Buffer, '\0') - a.Offset);
-				string c2 = Array.IndexOf(b.Buffer, '\0') == -1 ? b.ToString() : new string(b.Buffer, b.Offset, Array.IndexOf(b.Buffer, '\0') - b.Offset);
+				string c1 = Array.IndexOf(a.GetOriginalArray(), '\0') == -1 ? a.ToString() : new string(a.GetOriginalArray(), a.Offset, Array.IndexOf(a.GetOriginalArray(), '\0') - a.Offset);
+				string c2 = Array.IndexOf(b.GetOriginalArray(), '\0') == -1 ? b.ToString() : new string(b.GetOriginalArray(), b.Offset, Array.IndexOf(b.GetOriginalArray(), '\0') - b.Offset);
 				c_int expected = string.Compare(c1, c2, StringComparison.Ordinal);
 				expected = expected < 0 ? -1 : (expected > 0 ? 1 : 0);
 

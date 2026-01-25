@@ -436,7 +436,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						comment.SetToNull();
 					}
 					else
-						m.Comment = encoder.GetString(comment.Buffer, comment.Offset, comment.Length);
+						m.Comment = encoder.GetString(comment.AsSpan());
 				}
 			}
 

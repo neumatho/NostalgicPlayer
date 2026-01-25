@@ -558,7 +558,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			}
 
 			// Expose a segment at least as large as requested at the fill mark
-			return new CPointer<byte>(oy.Data.Buffer, oy.Data.Offset + oy.Fill);
+			return oy.Data + oy.Fill;
 		}
 
 

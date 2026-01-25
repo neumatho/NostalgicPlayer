@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			while (i < maxLength)
 			{
 				if (str[i] == ch)
-					return new CPointer<char>(str.Buffer, str.Offset + i);
+					return new CPointer<char>(str, i);
 
 				if (str[i] == '\0')
 					break;
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			while (i >= 0)
 			{
 				if (str[i] == ch)
-					return new CPointer<char>(str.Buffer, str.Offset + i);
+					return new CPointer<char>(str, i);
 
 				i--;
 			}
@@ -407,7 +407,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 						j = i + 8; // length of "infinity"
 
 					i = j;
-					end = new CPointer<char>(str.Buffer, str.Offset + i);
+					end = new CPointer<char>(str, i);
 
 					return negative ? c_double.NegativeInfinity : c_double.PositiveInfinity;
 				}
@@ -429,7 +429,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 					}
 
 					i = j;
-					end = new CPointer<char>(str.Buffer, str.Offset + i);
+					end = new CPointer<char>(str, i);
 
 					return c_double.NaN;
 				}
@@ -527,7 +527,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 						value = mantD * CMath.pow(2.0, effectiveExp);
 					}
 
-					end = new CPointer<char>(str.Buffer, str.Offset + i);
+					end = new CPointer<char>(str, i);
 
 					return negative ? -value : value;
 				}
@@ -614,7 +614,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			if (!c_double.TryParse(numberString, NumberStyles.Float, CultureInfo.InvariantCulture, out c_double parsed))
 				parsed = 0;
 
-			end = new CPointer<char>(str.Buffer, str.Offset + numberEnd);
+			end = new CPointer<char>(str, numberEnd);
 
 			return parsed;
 		}
@@ -1202,7 +1202,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			else
 				result = neg ? -acc : acc;
 
-			end = new CPointer<char>(str.Buffer, str.Offset + i);
+			end = new CPointer<char>(str, i);
 
 			return result;
 		}

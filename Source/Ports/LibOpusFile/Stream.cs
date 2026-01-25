@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			System.IO.Stream stream = (System.IO.Stream)_stream;
 
-			int ret = stream.Read(_ptr.Buffer, _ptr.Offset, _buf_size);
+			int ret = stream.Read(_ptr.AsSpan(_buf_size));
 
 			return ret;
 		}

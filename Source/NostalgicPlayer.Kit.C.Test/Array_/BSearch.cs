@@ -352,7 +352,7 @@ namespace NostalgicPlayer.Kit.C.Test.Array_
 			if (ret.IsNull)
 				return false;
 
-			if (ret.Buffer != @base.Buffer)
+			if (ret.GetOriginalArray() != @base.GetOriginalArray())
 				return false;
 
 			if ((ret.Offset < @base.Offset) || (ret.Offset >= (@base.Offset + (c_int)nMemb)))

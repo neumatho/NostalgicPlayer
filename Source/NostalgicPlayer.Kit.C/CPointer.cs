@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.C
@@ -18,8 +18,23 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct CPointer<T> : IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
+	public struct CPointer<T> : IPointer, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
 	{
+		private Memory<T> internalBuffer;
+		private int bufferOffset;
+		private bool bufferSet;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public CPointer()
+		{
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -27,8 +42,12 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public CPointer(T[] buffer, int offset)
 		{
-			Buffer = buffer;
-			Offset = offset;
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException(nameof(offset), "Offset has to be a positive number");
+
+			internalBuffer = new Memory<T>(buffer);
+			bufferOffset = buffer != null ? offset : 0;
+			bufferSet = buffer != null;
 		}
 
 
@@ -68,19 +87,42 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the whole buffer
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public T[] Buffer { get; private set; }
+		public CPointer(CPointer<T> pointer, int offset)
+		{
+			if (pointer.IsNotNull)
+			{
+				internalBuffer = pointer.internalBuffer;
+				bufferOffset = pointer.bufferOffset + offset;
+				bufferSet = true;
+			}
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the offset in the buffer where the first item starts
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public int Offset { get; private set; }
+		private CPointer(Memory<T> buffer, int offset)
+		{
+			internalBuffer = buffer;
+			bufferOffset = offset;
+			bufferSet = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the offset in the buffer where the first item starts.
+		/// Only used by unit tests
+		/// </summary>
+		/********************************************************************/
+		internal int Offset => bufferOffset;
 
 
 
@@ -89,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// Return the length of the buffer
 		/// </summary>
 		/********************************************************************/
-		public int Length => Buffer.Length - Offset;
+		public int Length => internalBuffer.Length - bufferOffset;
 
 
 
@@ -100,8 +142,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public void SetToNull()
 		{
-			Buffer = null;
-			Offset = 0;
+			internalBuffer = null;
+			bufferOffset = 0;
+			bufferSet = false;
 		}
 
 
@@ -111,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// Check to see if the pointer is null
 		/// </summary>
 		/********************************************************************/
-		public bool IsNull => Buffer == null;
+		public bool IsNull => !bufferSet;
 
 
 
@@ -120,7 +163,19 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// Check to see if the pointer is not null
 		/// </summary>
 		/********************************************************************/
-		public bool IsNotNull => Buffer != null;
+		public bool IsNotNull => bufferSet;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a span
+		/// </summary>
+		/********************************************************************/
+		public (Memory<T> Buffer, int Offset) AsXmp()//XX Skal slettes igen
+		{
+			return (internalBuffer, bufferOffset);
+		}
 
 
 
@@ -131,7 +186,67 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public Span<T> AsSpan()
 		{
-			return new Span<T>(Buffer, Offset, Length);
+			return internalBuffer.Slice(bufferOffset).Span;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a span
+		/// </summary>
+		/********************************************************************/
+		public Span<T> AsSpan(int length)
+		{
+			return internalBuffer.Slice(bufferOffset, length).Span;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a span
+		/// </summary>
+		/********************************************************************/
+		public Span<T> AsSpan(int offset, int length)
+		{
+			return internalBuffer.Slice(bufferOffset + offset, length).Span;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a memory
+		/// </summary>
+		/********************************************************************/
+		public Memory<T> AsMemory()
+		{
+			return internalBuffer.Slice(bufferOffset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a memory
+		/// </summary>
+		/********************************************************************/
+		public Memory<T> AsMemory(int length)
+		{
+			return internalBuffer.Slice(bufferOffset, length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a memory
+		/// </summary>
+		/********************************************************************/
+		public Memory<T> AsMemory(int offset, int length)
+		{
+			return internalBuffer.Slice(bufferOffset + offset, length);
 		}
 
 
@@ -143,7 +258,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public void Clear()
 		{
-			Array.Clear(Buffer, Offset, Length);
+			internalBuffer.Slice(bufferOffset).Span.Clear();
 		}
 
 
@@ -155,7 +270,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public void Clear(int length)
 		{
-			Array.Clear(Buffer, Offset, length);
+			internalBuffer.Slice(bufferOffset, length).Span.Clear();
 		}
 
 
@@ -168,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public ref T this[int index]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => ref Buffer[Offset + index];
+			get => ref internalBuffer.Span[bufferOffset + index];
 		}
 
 
@@ -181,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public ref T this[uint index]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => ref Buffer[Offset + index];
+			get => ref internalBuffer.Span[bufferOffset + (int)index];
 		}
 
 
@@ -194,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public ref T this[long index]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => ref Buffer[Offset + index];
+			get => ref internalBuffer.Span[bufferOffset + (int)index];
 		}
 
 
@@ -207,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public ref T this[ulong index]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => ref Buffer[Offset + (long)index];
+			get => ref internalBuffer.Span[bufferOffset + (int)index];
 		}
 
 
@@ -229,8 +344,8 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get
 			{
-				T val = Buffer[Offset + index];
-				Offset += increment;
+				T val = internalBuffer.Span[bufferOffset + index];
+				bufferOffset += increment;
 
 				return val;
 			}
@@ -238,8 +353,8 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			set
 			{
-				Buffer[Offset + index] = value;
-				Offset += increment;
+				internalBuffer.Span[bufferOffset + index] = value;
+				bufferOffset += increment;
 			}
 		}
 
@@ -254,7 +369,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator + (CPointer<T> ptr, int increment)
 		{
-			return new CPointer<T>(ptr.Buffer, ptr.Offset + increment);
+			return new CPointer<T>(ptr.internalBuffer, ptr.bufferOffset + increment);
 		}
 
 
@@ -268,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator + (CPointer<T> ptr, uint increment)
 		{
-			return new CPointer<T>(ptr.Buffer, ptr.Offset + (int)increment);
+			return new CPointer<T>(ptr.internalBuffer, ptr.bufferOffset + (int)increment);
 		}
 
 
@@ -282,7 +397,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator + (CPointer<T> ptr, long increment)
 		{
-			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset + increment));
+			return new CPointer<T>(ptr.internalBuffer, (int)(ptr.bufferOffset + increment));
 		}
 
 
@@ -296,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator + (CPointer<T> ptr, ulong increment)
 		{
-			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset + (long)increment));
+			return new CPointer<T>(ptr.internalBuffer, (int)(ptr.bufferOffset + (long)increment));
 		}
 
 
@@ -310,7 +425,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator - (CPointer<T> ptr, int decrement)
 		{
-			return new CPointer<T>(ptr.Buffer, ptr.Offset - decrement);
+			return new CPointer<T>(ptr.internalBuffer, ptr.bufferOffset - decrement);
 		}
 
 
@@ -324,7 +439,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator - (CPointer<T> ptr, uint decrement)
 		{
-			return new CPointer<T>(ptr.Buffer, ptr.Offset - (int)decrement);
+			return new CPointer<T>(ptr.internalBuffer, ptr.bufferOffset - (int)decrement);
 		}
 
 
@@ -338,7 +453,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator - (CPointer<T> ptr, long decrement)
 		{
-			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset - decrement));
+			return new CPointer<T>(ptr.internalBuffer, (int)(ptr.bufferOffset - decrement));
 		}
 
 
@@ -352,7 +467,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> operator - (CPointer<T> ptr, ulong decrement)
 		{
-			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset - (long)decrement));
+			return new CPointer<T>(ptr.internalBuffer, (int)(ptr.bufferOffset - (long)decrement));
 		}
 
 
@@ -397,10 +512,10 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			if (ptr1.IsNull && ptr2.IsNotNull)
 				return -0x12345678;
 
-			if (ptr1.IsNotNull && ptr2.IsNotNull && (ptr1.Buffer != ptr2.Buffer))
+			if (ptr1.IsNotNull && ptr2.IsNotNull && (ptr1.GetOriginalArray() != ptr2.GetOriginalArray()))
 				throw new ArgumentException("Both pointers need to use the same buffer");
 
-			return ptr1.Offset - ptr2.Offset;
+			return ptr1.bufferOffset - ptr2.bufferOffset;
 		}
 
 
@@ -505,13 +620,14 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		{
 			if (typeof(T) == typeof(char))
 			{
-				if (Buffer == null)
+				if (IsNull)
 					return string.Empty;
 
-				CPointer<char> ptr = new CPointer<char>(Buffer as char[], Offset);
+				Memory<char> charBuffer = (Memory<char>)(object)internalBuffer;
+				CPointer<char> ptr = new CPointer<char>(charBuffer, bufferOffset);
 				c_int len = (c_int)CString.strlen(ptr);
 
-				return (len > 0) ? new string(ptr.AsSpan().Slice(0, len).ToArray()) : string.Empty;
+				return (len > 0) ? new string(ptr.AsSpan(len).ToArray()) : string.Empty;
 			}
 
 			return base.ToString();
@@ -549,7 +665,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public bool Equals(CPointer<T> other)
 		{
-			return (Buffer == other.Buffer) && (Offset == other.Offset);
+			return (GetOriginalArray() == other.GetOriginalArray()) && (bufferOffset == other.bufferOffset);
 		}
 		#endregion
 
@@ -567,10 +683,10 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			if (IsNull)
 				return -1;
 
-			if (Buffer != other.Buffer)
+			if (GetOriginalArray() != other.GetOriginalArray())
 				throw new ArgumentException("Both pointers need to use the same buffer");
 
-			return Offset.CompareTo(other.Offset);
+			return bufferOffset.CompareTo(other.bufferOffset);
 		}
 		#endregion
 
@@ -583,9 +699,25 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public CPointer<T> MakeDeepClone()
 		{
 			if (IsNull)
-				return null;
+				return new CPointer<T>();
 
-			return new CPointer<T>(ArrayHelper.CloneArray(Buffer), Offset);
+			return new CPointer<T>(internalBuffer.ToArray(), bufferOffset);
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal T[] GetOriginalArray()
+		{
+			if (MemoryMarshal.TryGetArray(internalBuffer, out ArraySegment<T> segment))
+				return segment.Array;
+
+			return null;
 		}
 		#endregion
 	}

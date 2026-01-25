@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
@@ -22,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// <summary>
 		/// 
 		/// </summary>
-		public delegate c_int Op_Decode_Cb_Func(object _ctx, OpusMsDecoder _decoder, Array _pcm, Ogg_Packet _op, c_int _nsamples, c_int _nchannels, DecodeFormat _format, c_int _li);
+		public delegate c_int Op_Decode_Cb_Func(object _ctx, OpusMsDecoder _decoder, IPointer _pcm, Ogg_Packet _op, c_int _nsamples, c_int _nchannels, DecodeFormat _format, c_int _li);
 
 		/// <summary>
 		/// The maximum number of bytes in a page (including page headers)
@@ -3410,7 +3409,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			// First we try using the application-provided decode callback
 			if (_of.decode_cb != null)
-				ret = _of.decode_cb(_of.decode_cb_ctx, _of.od, _pcm.Buffer, _op, _nsamples, _nchannels, DecodeFormat.Float, _of.cur_link);
+				ret = _of.decode_cb(_of.decode_cb_ctx, _of.od, _pcm, _op, _nsamples, _nchannels, DecodeFormat.Float, _of.cur_link);
 			else
 				ret = Constants.Op_Dec_Use_Default;
 

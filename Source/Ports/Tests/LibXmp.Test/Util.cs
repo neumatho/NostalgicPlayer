@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -103,10 +104,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		{
 			using (MD5 md5 = MD5.Create())
 			{
-				byte[] checksum = md5.ComputeHash(buffer.Buffer, buffer.Offset, length);
+				using (ReadOnlyMemoryStream ms = new ReadOnlyMemoryStream(buffer.AsMemory(length)))
+				{
+					byte[] checksum = md5.ComputeHash(ms);
 
-				string d = DataHelper.ToHex(checksum);
-				return string.CompareOrdinal(d, digest);
+					string d = DataHelper.ToHex(checksum);
+					return string.CompareOrdinal(d, digest);
+				}
 			}
 		}
 
@@ -344,9 +348,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 					{
 						using (MD5 md5 = MD5.Create())
 						{
-							byte[] checksum = md5.ComputeHash(xxs.Data.Buffer, xxs.Data.Offset, len);
-							string d = DataHelper.ToHex(checksum);
-							Assert.AreEqual(s.Substring(0, 32).ToUpper(), d, "Sample data");
+							using (ReadOnlyMemoryStream ms = new ReadOnlyMemoryStream(xxs.Data.AsMemory(len)))
+							{
+								byte[] checksum = md5.ComputeHash(ms);
+								string d = DataHelper.ToHex(checksum);
+								Assert.AreEqual(s.Substring(0, 32).ToUpper(), d, "Sample data");
+							}
 						}
 					}
 

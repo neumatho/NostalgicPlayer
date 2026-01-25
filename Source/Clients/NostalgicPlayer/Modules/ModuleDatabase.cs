@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private ManualResetEvent cleanupEvent;
 		private CleanupDoneHandler cleanupDoneHandler;
 
-		private IPlatformPath platformPath;
+		private readonly IPlatformPath platformPath;
 
 		/// <summary>
 		/// Return a new object if you want to change it or null to leave
@@ -575,6 +575,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 								cleanupDoneHandler();
 								cleanupDoneHandler = null;
 							}
+
 							break;
 						}
 
@@ -587,6 +588,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 								SaveDatabase();
 								lastSaved = DateTime.Now;
 							}
+
 							break;
 						}
 					}

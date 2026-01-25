@@ -849,7 +849,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			}
 			else
 			{
-				string mime = Encoding.Latin1.GetString(mime_type.Buffer, mime_type.Offset, mime_type.Length - 1).ToLower();
+				string mime = Encoding.Latin1.GetString(mime_type.AsSpan(mime_type.Length - 1)).ToLower();
 
 				if ((mime_type_length == 10) && (mime == "image/jpeg"))
 				{

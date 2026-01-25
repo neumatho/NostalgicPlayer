@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				return ptr;
 
 			T[] newArray = new T[newSize];
-			Array.Copy(ptr.Buffer, ptr.Offset, newArray, 0, Math.Min((int)newSize, ptr.Length));
+			ptr.AsSpan(Math.Min((int)newSize, ptr.Length)).CopyTo(newArray);
 
 			return new CPointer<T>(newArray);
 		}
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 			T[] newArray = new T[newSize];
 			size_t copyLength = Math.Min(newSize, (size_t)ptr.Length);
-			Array.Copy(ptr.Buffer, ptr.Offset, newArray, 0, (int)copyLength);
+			ptr.AsSpan((int)copyLength).CopyTo(newArray);
 
 			for (size_t i = copyLength; i < newSize; i++)
 				newArray[i] = new T();
@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memmove<T>(CPointer<T> dest, CPointer<T> source, size_t length)
 		{
 			if (length > 0)
-				Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, (int)length);
+				source.AsSpan((int)length).CopyTo(dest.AsSpan());
 		}
 
 
@@ -153,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memcpy<T>(CPointer<T> dest, CPointer<T> source, size_t length)
 		{
 			if (length > 0)
-				Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, (int)length);
+				source.AsSpan((int)length).CopyTo(dest.AsSpan());
 		}
 
 
@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memcpy<T>(CPointer<T> dest, T[] source, size_t length)
 		{
 			if (length > 0)
-				Array.Copy(source, 0, dest.Buffer, dest.Offset, (int)length);
+				source.AsSpan(0, (int)length).CopyTo(dest.AsSpan());
 		}
 
 
@@ -182,20 +182,6 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		{
 			if (length > 0)
 				source.Slice((int)length).CopyTo(dest.AsSpan());
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void memcpyCast<T1, T2>(CPointer<T1> dest, CPointer<T2> source, size_t length) where T1 : struct where T2 : struct
-		{
-			if (length > 0)
-				source.AsSpan().Slice(0, (c_int)length).CopyTo(MemoryMarshal.Cast<T1, T2>(dest.AsSpan()));
 		}
 
 
@@ -319,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void memset<T>(CPointer<T> ptr, T value, size_t length)
 		{
-			ptr.Buffer.AsSpan(ptr.Offset, (int)length).Fill(value);
+			ptr.AsSpan((int)length).Fill(value);
 		}
 
 

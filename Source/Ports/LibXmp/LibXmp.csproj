@@ -9,7 +9,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the libxmp library created by Claudio Matsuoka, but mainly maintained at the moment by Alice Rowan and Ozkan Sezer.</Description>
-    <Version>4.6.3-2</Version>
+    <Version>4.6.3-3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

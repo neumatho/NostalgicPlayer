@@ -439,6 +439,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 							sub = inst.Sub[0];
 					}
 
+					Array sampleData = null;
+					uint sampleOffset = 0;
+
+					if (MemoryMarshal.TryGetArray(sample.Data.AsMemory(), out ArraySegment<byte> segment))
+					{
+						sampleData = segment.Array;
+						sampleOffset = (uint)segment.Offset;
+					}
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = name,
@@ -446,8 +455,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 						Type = SampleInfo.SampleType.Sample,
 						Volume = 256,
 						Panning = -1,
-						Sample = sample.Data.Buffer,
-						SampleOffset = (uint)sample.Data.Offset,
+						Sample = sampleData,
+						SampleOffset = sampleOffset,
 						Length = (uint)sample.Len,
 						LoopStart = (uint)sample.Lps,
 						LoopLength = (uint)(sample.Lpe - sample.Lps)
@@ -538,6 +547,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 						description = Resources.IDS_XMP_INFODESCLINE1a;
 						value = moduleInfo.Mod.Pat.ToString();
 					}
+
 					break;
 				}
 
