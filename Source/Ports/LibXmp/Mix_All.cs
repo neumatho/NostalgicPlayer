@@ -3,9 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
@@ -47,9 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -65,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -112,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -171,9 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -189,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -237,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -298,9 +292,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -316,7 +308,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -330,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -386,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -400,7 +392,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -470,9 +462,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -488,7 +478,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -503,7 +493,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{
@@ -560,7 +550,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -575,7 +565,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{
@@ -644,9 +634,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -667,7 +655,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -728,7 +716,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -800,9 +788,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -823,7 +809,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -885,7 +871,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -960,9 +946,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -983,7 +967,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -997,7 +981,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -1058,7 +1042,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -1072,7 +1056,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -1146,9 +1130,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1169,7 +1151,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -1184,7 +1166,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{
@@ -1246,7 +1228,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -1261,7 +1243,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{
@@ -1335,9 +1317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1360,7 +1340,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -1427,7 +1407,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -1518,9 +1498,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1543,7 +1521,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -1611,7 +1589,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -1704,9 +1682,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1736,7 +1712,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -1750,7 +1726,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -1838,7 +1814,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -1852,7 +1828,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -1972,9 +1948,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2004,7 +1978,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -2019,7 +1993,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{
@@ -2108,7 +2082,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -2123,7 +2097,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{
@@ -2243,9 +2217,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2273,7 +2245,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -2354,7 +2326,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -2458,9 +2430,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2488,7 +2458,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -2570,7 +2540,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -2676,9 +2646,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(s.Buffer.Span);
-			int sPtrOffset = s.Offset;
+			CPointer<int8> sPtr = vi.SPtr.Cast<byte, int8>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2713,7 +2681,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -2727,7 +2695,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -2820,7 +2788,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_8BIT
 					{
@@ -2834,7 +2802,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_8BIT
 					{
@@ -2958,9 +2926,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			var s = vi.SPtr.AsXmp();
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(s.Buffer.Span);
-			int sPtrOffset = s.Offset / 2;
+			CPointer<int16> sPtr = vi.SPtr.Cast<byte, int16>();
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2995,7 +2961,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -3010,7 +2976,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{
@@ -3104,7 +3070,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					c_int off = 0 + sPtrOffset;
+					const c_int off = 0;
 
 					#region SPLINE_16BIT
 					{
@@ -3119,7 +3085,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				{
-					c_int off = 1 + sPtrOffset;
+					const c_int off = 1;
 
 					#region SPLINE_16BIT
 					{

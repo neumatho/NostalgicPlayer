@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -20,6 +21,70 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// </summary>
 	public struct CPointer<T> : IPointer, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
 	{
+		#region CastMemoryManager class
+		private sealed class CastMemoryManager<TFrom, TTo> : MemoryManager<TTo> where TFrom : unmanaged where TTo : unmanaged
+		{
+			private readonly Memory<TFrom> fromMemory;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public CastMemoryManager(Memory<TFrom> from)
+			{
+				fromMemory = from;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Do the casting
+			/// </summary>
+			/********************************************************************/
+			public override Span<TTo> GetSpan()
+			{
+				return MemoryMarshal.Cast<TFrom, TTo>(fromMemory.Span);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			protected override void Dispose(bool disposing)
+			{
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public override MemoryHandle Pin(int elementIndex = 0)
+			{
+				throw new NotSupportedException();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public override void Unpin()
+			{
+				throw new NotSupportedException();
+			}
+		}
+		#endregion
+
 		private Memory<T> internalBuffer;
 		private int bufferOffset;
 		private bool bufferSet;
@@ -164,18 +229,6 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		public bool IsNotNull => bufferSet;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Convert the pointer to a span
-		/// </summary>
-		/********************************************************************/
-		public (Memory<T> Buffer, int Offset) AsXmp()//XX Skal slettes igen
-		{
-			return (internalBuffer, bufferOffset);
-		}
 
 
 
@@ -607,6 +660,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static implicit operator CPointer<T>(T[] array)
 		{
 			return new CPointer<T>(array);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Case a pointer from one type to another
+		/// </summary>
+		/********************************************************************/
+		public CPointer<TTo> Cast<TFrom, TTo>() where TFrom : unmanaged where TTo : unmanaged
+		{
+			int newOffset = (int)(((float)Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>()) * bufferOffset);
+
+			return new CPointer<TTo>(new CastMemoryManager<TFrom, TTo>((Memory<TFrom>)(object)internalBuffer).Memory, newOffset);
 		}
 
 

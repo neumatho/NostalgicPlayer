@@ -550,6 +550,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -591,6 +592,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 							break;
 						}
 					}
+
 					break;
 				}
 			}

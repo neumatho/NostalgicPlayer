@@ -476,6 +476,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			try
 			{
+				// ReSharper disable once UnusedVariable
 				int diff = ptr1 - ptr2;
 			}
 			catch (ArgumentException)
@@ -579,6 +580,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			Assert.IsTrue(ptr1 > ptr2);
 			Assert.IsFalse(ptr2 > ptr1);
 #pragma warning disable CS1718 // Comparison made to same variable
+			// ReSharper disable once EqualExpressionComparison
 			Assert.IsFalse(ptr1 > ptr1);
 #pragma warning restore CS1718 // Comparison made to same variable
 		}
@@ -600,6 +602,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			Assert.IsTrue(ptr1 < ptr2);
 			Assert.IsFalse(ptr2 < ptr1);
 #pragma warning disable CS1718 // Comparison made to same variable
+			// ReSharper disable once EqualExpressionComparison
 			Assert.IsFalse(ptr1 < ptr1);
 #pragma warning restore CS1718 // Comparison made to same variable
 		}
@@ -921,6 +924,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			try
 			{
+				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
 				ptr1.CompareTo(ptr2);
 			}
 			catch (ArgumentException)
@@ -1011,6 +1015,300 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			ptr = new CPointer<int>(buffer, 5);
 			Assert.AreEqual(0, ptr.Length);
+		}
+		#endregion
+
+		#region Cast tests
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast from int to byte
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_IntToByte()
+		{
+			int[] buffer = [ 0x12345678, unchecked((int)0xabcdef01) ];
+			CPointer<int> intPtr = new CPointer<int>(buffer, 0);
+
+			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+
+			Assert.IsTrue(bytePtr.IsNotNull);
+			Assert.AreEqual(0, bytePtr.Offset);
+
+			if (BitConverter.IsLittleEndian)
+			{
+				Assert.AreEqual(0x78, bytePtr[0]);
+				Assert.AreEqual(0x56, bytePtr[1]);
+				Assert.AreEqual(0x34, bytePtr[2]);
+				Assert.AreEqual(0x12, bytePtr[3]);
+				Assert.AreEqual(0x01, bytePtr[4]);
+				Assert.AreEqual(0xef, bytePtr[5]);
+				Assert.AreEqual(0xcd, bytePtr[6]);
+				Assert.AreEqual(0xab, bytePtr[7]);
+			}
+			else
+			{
+				Assert.AreEqual(0x12, bytePtr[0]);
+				Assert.AreEqual(0x34, bytePtr[1]);
+				Assert.AreEqual(0x56, bytePtr[2]);
+				Assert.AreEqual(0x78, bytePtr[3]);
+				Assert.AreEqual(0xab, bytePtr[4]);
+				Assert.AreEqual(0xcd, bytePtr[5]);
+				Assert.AreEqual(0xef, bytePtr[6]);
+				Assert.AreEqual(0x01, bytePtr[7]);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast from byte to int
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_ByteToInt()
+		{
+			byte[] buffer = [ 0x78, 0x56, 0x34, 0x12, 0x01, 0xef, 0xcd, 0xab ];
+			CPointer<byte> bytePtr = new CPointer<byte>(buffer, 0);
+
+			CPointer<int> intPtr = bytePtr.Cast<byte, int>();
+
+			Assert.IsTrue(intPtr.IsNotNull);
+			Assert.AreEqual(0, intPtr.Offset);
+
+			if (BitConverter.IsLittleEndian)
+			{
+				Assert.AreEqual(0x12345678, intPtr[0]);
+				Assert.AreEqual(unchecked((int)0xabcdef01), intPtr[1]);
+			}
+			else
+			{
+				Assert.AreEqual(0x78563412, intPtr[0]);
+				Assert.AreEqual(0x01efcdab, intPtr[1]);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast from short to byte
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_ShortToByte()
+		{
+			short[] buffer = [ 0x1234, 0x5678, unchecked((short)0xabcd) ];
+			CPointer<short> shortPtr = new CPointer<short>(buffer, 0);
+
+			CPointer<byte> bytePtr = shortPtr.Cast<short, byte>();
+
+			Assert.IsTrue(bytePtr.IsNotNull);
+			Assert.AreEqual(0, bytePtr.Offset);
+
+			if (BitConverter.IsLittleEndian)
+			{
+				Assert.AreEqual(0x34, bytePtr[0]);
+				Assert.AreEqual(0x12, bytePtr[1]);
+				Assert.AreEqual(0x78, bytePtr[2]);
+				Assert.AreEqual(0x56, bytePtr[3]);
+				Assert.AreEqual(0xcd, bytePtr[4]);
+				Assert.AreEqual(0xab, bytePtr[5]);
+			}
+			else
+			{
+				Assert.AreEqual(0x12, bytePtr[0]);
+				Assert.AreEqual(0x34, bytePtr[1]);
+				Assert.AreEqual(0x56, bytePtr[2]);
+				Assert.AreEqual(0x78, bytePtr[3]);
+				Assert.AreEqual(0xab, bytePtr[4]);
+				Assert.AreEqual(0xcd, bytePtr[5]);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast from byte to short
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_ByteToShort()
+		{
+			byte[] buffer = [ 0x34, 0x12, 0x78, 0x56, 0xcd, 0xab ];
+			CPointer<byte> bytePtr = new CPointer<byte>(buffer, 0);
+
+			CPointer<short> shortPtr = bytePtr.Cast<byte, short>();
+
+			Assert.IsTrue(shortPtr.IsNotNull);
+			Assert.AreEqual(0, shortPtr.Offset);
+
+			if (BitConverter.IsLittleEndian)
+			{
+				Assert.AreEqual(0x1234, shortPtr[0]);
+				Assert.AreEqual(0x5678, shortPtr[1]);
+				Assert.AreEqual(unchecked((short)0xabcd), shortPtr[2]);
+			}
+			else
+			{
+				Assert.AreEqual(0x3412, shortPtr[0]);
+				Assert.AreEqual(0x7856, shortPtr[1]);
+				Assert.AreEqual(unchecked((short)0xcdab), shortPtr[2]);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast with offset from big size to small size
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_WithOffset_BigToSmall()
+		{
+			int[] buffer = [ 0x11111111, 0x22222222, 0x33333333, 0x44444444 ];
+			CPointer<int> intPtr = new CPointer<int>(buffer, 1);
+
+			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+
+			Assert.IsTrue(bytePtr.IsNotNull);
+			Assert.AreEqual(4, bytePtr.Offset);
+			Assert.AreEqual(0x22, bytePtr[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast with offset from small size to big size
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_WithOffset_SmallToBig()
+		{
+			byte[] buffer = [ 0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22, 0x22, 0x33, 0x33, 0x33, 0x33, 0x44, 0x44, 0x44, 0x44 ];
+			CPointer<byte> bytePtr = new CPointer<byte>(buffer, 8);
+
+			CPointer<int> intPtr = bytePtr.Cast<byte, int>();
+
+			Assert.IsTrue(intPtr.IsNotNull);
+			Assert.AreEqual(2, intPtr.Offset);
+			Assert.AreEqual(0x33333333, intPtr[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast from long to int
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_LongToInt()
+		{
+			long[] buffer = [ 0x1234567890abcdef ];
+			CPointer<long> longPtr = new CPointer<long>(buffer, 0);
+
+			CPointer<int> intPtr = longPtr.Cast<long, int>();
+
+			Assert.IsTrue(intPtr.IsNotNull);
+			Assert.AreEqual(0, intPtr.Offset);
+
+			if (BitConverter.IsLittleEndian)
+			{
+				Assert.AreEqual(unchecked((int)0x90abcdef), intPtr[0]);
+				Assert.AreEqual(0x12345678, intPtr[1]);
+			}
+			else
+			{
+				Assert.AreEqual(0x12345678, intPtr[0]);
+				Assert.AreEqual(unchecked((int)0x90abcdef), intPtr[1]);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast modifying values through casted pointer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_ModifyThroughCastedPointer()
+		{
+			int[] buffer = [ 0x12345678 ];
+			CPointer<int> intPtr = new CPointer<int>(buffer, 0);
+
+			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+
+			if (BitConverter.IsLittleEndian)
+			{
+				bytePtr[0] = 0xff;
+				Assert.AreEqual(0x123456ff, intPtr[0]);
+			}
+			else
+			{
+				bytePtr[3] = 0xff;
+				Assert.AreEqual(0x123456ff, intPtr[0]);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast from float to int
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_FloatToInt()
+		{
+			float[] buffer = [ 1.5f, 2.5f ];
+			CPointer<float> floatPtr = new CPointer<float>(buffer, 0);
+
+			CPointer<int> intPtr = floatPtr.Cast<float, int>();
+
+			Assert.IsTrue(intPtr.IsNotNull);
+			Assert.AreEqual(0, intPtr.Offset);
+			Assert.AreEqual(BitConverter.SingleToInt32Bits(1.5f), intPtr[0]);
+			Assert.AreEqual(BitConverter.SingleToInt32Bits(2.5f), intPtr[1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Cast preserves original buffer reference
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Cast_PreservesOriginalBuffer()
+		{
+			int[] buffer = [ 0x12345678, unchecked((int)0xabcdef01) ];
+			CPointer<int> intPtr1 = new CPointer<int>(buffer, 0);
+
+			CPointer<byte> bytePtr = intPtr1.Cast<int, byte>();
+			CPointer<int> intPtr2 = bytePtr.Cast<byte, int>();
+
+			bytePtr[0] = 0x42;
+
+			Assert.AreEqual(0x42, bytePtr[0]);
+
+			if (BitConverter.IsLittleEndian)
+			{
+				Assert.AreEqual(0x12345642, intPtr1[0]);
+				Assert.AreEqual(0x12345642, intPtr2[0]);
+				Assert.AreEqual(0x12345642, buffer[0]);
+			}
+			else
+			{
+				Assert.AreEqual(0x42345678, intPtr1[0]);
+				Assert.AreEqual(0x42345678, intPtr2[0]);
+				Assert.AreEqual(0x42345678, buffer[0]);
+			}
 		}
 		#endregion
 	}
