@@ -10,5 +10,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// </summary>
 	public interface IPointer
 	{
+		/// <summary>
+		/// Case a pointer from one type to another
+		/// </summary>
+		CPointer<TTo> Cast<TFrom, TTo>() where TFrom : unmanaged where TTo : unmanaged;
 	}
 }
