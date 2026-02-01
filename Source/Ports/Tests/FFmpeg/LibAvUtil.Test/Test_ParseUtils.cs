@@ -245,6 +245,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 		private void Test_Av_Parse_Time()
 		{
 			CPointer<char> tzStr = "TZ=CET-1".ToCharPointer();
+
 			string[] time_String =
 			[
 				"now",
@@ -255,6 +256,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 				"2000-12-12 1:35:46+05:30",
 				"2002-12-12 22:30:40-02"
 			];
+
 			string[] duration_String =
 			[
 				"2:34:56.79",
@@ -269,6 +271,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 			];
 
 			Log.Av_Log_Set_Level(Log.Av_Log_Debug);
+			CEnvironment.putenv(tzStr);
 
 			printf("(now is 2012-03-17 09:14:13.2 +0100, local time is UTC+1)\n");
 

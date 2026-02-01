@@ -1,4 +1,4 @@
-﻿/******************************************************************************/
+/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
@@ -77,24 +77,44 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		/// <summary>
 		/// Thread-safe conversion from time_t to broken down local time
-		/// (similar to POSIX localtime_r). DST flag is set if in effect
+		/// (similar to POSIX localtime_r). DST flag is set if in effect.
+		/// Respects TZ environment variable if set via CEnvironment.putenv()
 		/// </summary>
 		/********************************************************************/
 		public static tm localtime_r(time_t timer, out tm buf)
 		{
 			DateTimeOffset dto;
+			TimeZoneInfo timeZone = TimeZoneInfo.Local;
+
+			// Check if TZ environment variable is set
+			CPointer<char> tzValue = CEnvironment.getenv("TZ");
+
+			if (tzValue.IsNotNull)
+			{
+				try
+				{
+					// Try to find the timezone by ID
+					timeZone = TimeZoneInfo.FindSystemTimeZoneById(tzValue.ToString());
+				}
+				catch
+				{
+					// If timezone not found, fall back to local
+					timeZone = TimeZoneInfo.Local;
+				}
+			}
 
 			try
 			{
-				// Convert to local time preserving wall clock representation
-				dto = DateTimeOffset.FromUnixTimeSeconds(timer).ToLocalTime();
+				// Convert to UTC first, then to target timezone
+				dto = DateTimeOffset.FromUnixTimeSeconds(timer);
+				dto = TimeZoneInfo.ConvertTime(dto, timeZone);
 			}
 			catch (ArgumentOutOfRangeException)
 			{
 				dto = timer >= 0 ? DateTimeOffset.MaxValue : DateTimeOffset.MinValue;
 			}
 
-			DateTime local = dto.LocalDateTime;
+			DateTime local = dto.DateTime;
 
 			buf.tm_Sec = local.Second;
 			buf.tm_Min = local.Minute;
@@ -104,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			buf.tm_Year = local.Year - 1900;
 			buf.tm_WDay = (c_int)local.DayOfWeek;
 			buf.tm_YDay = local.DayOfYear - 1;
-			buf.tm_IsDst = TimeZoneInfo.Local.IsDaylightSavingTime(local) ? 1 : 0;
+			buf.tm_IsDst = timeZone.IsDaylightSavingTime(local) ? 1 : 0;
 
 			return buf;
 		}
