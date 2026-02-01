@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvDevice</RootNamespace>
+    <DocumentationFile>bin\LibAvDevice.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Description>This is a port of the libAvDevice from FFmpeg</Description>
+    <Version>8.0.0</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NostalgicPlayer.Kit.C\NostalgicPlayer.Kit.C.csproj" />
+    <ProjectReference Include="..\LibAvUtil\LibAvUtil.csproj" />
+  </ItemGroup>
+
+</Project>

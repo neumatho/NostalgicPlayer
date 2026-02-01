@@ -13,6 +13,7 @@ If you want to try it out, you can install the player from Microsoft Store <a hr
 
 NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">MIT License</a>. Some parts of the player are 3rd party components which has been ported to C#. Their original licenses are the following:
 * Ancient decruncher (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibAncient/LICENSE">BSD 2-Clause License</a>)
+* FFmpeg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/FFmpeg/LICENSE">GNU Lesser General Public License version 2.1</a>)
 * libFLAC (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibFlac/LICENSE">BSD License</a>)
 * libOgg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOgg/LICENSE">BSD License</a>)
 * libOpus (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpus/LICENSE">BSD License</a>)
