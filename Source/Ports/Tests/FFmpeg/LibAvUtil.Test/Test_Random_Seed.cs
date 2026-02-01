@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Random_Seed_()
 		{
 			RunTest("random_seed");
 		}

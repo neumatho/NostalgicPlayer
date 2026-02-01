@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Eval_()
 		{
 			RunTest("eval");
 		}

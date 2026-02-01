@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Display_()
 		{
 			RunTest("display");
 		}

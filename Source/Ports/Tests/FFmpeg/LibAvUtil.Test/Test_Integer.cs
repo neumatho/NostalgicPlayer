@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Integer_()
 		{
 			for (int64_t a = 7; a < 256 * 256 * 256; a += 13215)
 			{
