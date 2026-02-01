@@ -56,6 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.FFmpegTest
 					finally
 					{
 						Log.Av_Log_Set_Level(oldLogLevel);
+						Log.Av_Log_Set_Callback(Log.Av_Log_Default_Callback);
 					}
 
 					if (referenceFile == null)
