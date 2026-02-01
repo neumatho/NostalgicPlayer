@@ -11,8 +11,33 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	public interface IPointer
 	{
 		/// <summary>
-		/// Case a pointer from one type to another
+		/// Return the length of the buffer
+		/// </summary>
+		int Length { get; }
+
+		/// <summary>
+		/// Clear the pointer
+		/// </summary>
+		void SetToNull();
+
+		/// <summary>
+		/// Check to see if the pointer is null
+		/// </summary>
+		bool IsNull { get; }
+
+		/// <summary>
+		/// Check to see if the pointer is not null
+		/// </summary>
+		bool IsNotNull { get; }
+
+		/// <summary>
+		/// Cast a pointer from one type to another
 		/// </summary>
 		CPointer<TTo> Cast<TFrom, TTo>() where TFrom : unmanaged where TTo : unmanaged;
+
+		/// <summary>
+		/// Return a pointer from the interface
+		/// </summary>
+		CPointer<TTo> ToPointer<TTo>() where TTo : unmanaged;
 	}
 }

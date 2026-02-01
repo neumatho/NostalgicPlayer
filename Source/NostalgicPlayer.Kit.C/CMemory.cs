@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -196,6 +197,42 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		{
 			if (length > 0)
 				Array.Copy(Encoding.Latin1.GetBytes(str), dest, (int)length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void memcpy(IPointer dest, IPointer source, size_t length)
+		{
+			if (length > 0)
+			{
+				Type destType = ((IPointerInternal)dest).GetElementType();
+				Type srcType = ((IPointerInternal)source).GetElementType();
+
+				int destSize = Marshal.SizeOf(destType);
+				int srcSize = Marshal.SizeOf(srcType);
+
+				MethodInfo asSpanMethod = source.GetType().GetMethod("AsSpan", new[] { typeof(int) });
+				object sourceSpan = asSpanMethod.Invoke(source, new object[] { (int)length });
+
+				Type spanType = typeof(Span<>).MakeGenericType(srcType);
+				MethodInfo castMethod = spanType.GetMethod("Cast").MakeGenericMethod(destType);
+				object destSpan = castMethod.Invoke(sourceSpan, null);
+
+				MethodInfo destAsSpanMethod = dest.GetType().GetMethod("AsSpan", Type.EmptyTypes);
+				object destSpanTarget = destAsSpanMethod.Invoke(dest, null);
+
+				int destLength = (int)(((ulong)length * (ulong)srcSize + (ulong)destSize - 1) / (ulong)destSize);
+
+				Type destSpanType = typeof(Span<>).MakeGenericType(destType);
+				MethodInfo copyToMethod = destSpan.GetType().GetMethod("CopyTo", new[] { destSpanType });
+				copyToMethod.Invoke(destSpan, new[] { destSpanTarget });
+			}
 		}
 
 

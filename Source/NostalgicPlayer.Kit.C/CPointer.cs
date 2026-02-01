@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct CPointer<T> : IPointer, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
+	public struct CPointer<T> : IPointerInternal, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
 	{
 		#region CastMemoryManager class
 		private sealed class CastMemoryManager<TFrom, TTo> : MemoryManager<TTo> where TFrom : unmanaged where TTo : unmanaged
@@ -96,6 +96,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public CPointer()
 		{
+			SetToNull();
 		}
 
 
@@ -183,11 +184,10 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the offset in the buffer where the first item starts.
-		/// Only used by unit tests
+		/// Return the offset in the buffer where the first item starts
 		/// </summary>
 		/********************************************************************/
-		internal int Offset => bufferOffset;
+		public int Offset => bufferOffset;
 
 
 
@@ -666,7 +666,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
-		/// Case a pointer from one type to another
+		/// Cast a pointer from one type to another
 		/// </summary>
 		/********************************************************************/
 		public CPointer<TTo> Cast<TFrom, TTo>() where TFrom : unmanaged where TTo : unmanaged
@@ -677,6 +677,38 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			int newOffset = (int)(((float)Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>()) * bufferOffset);
 
 			return new CPointer<TTo>(new CastMemoryManager<TFrom, TTo>((Memory<TFrom>)(object)internalBuffer).Memory, newOffset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a pointer from the interface
+		/// </summary>
+		/********************************************************************/
+		public CPointer<TTo> ToPointer<TTo>() where TTo : unmanaged
+		{
+			if (internalBuffer.GetType() != typeof(Memory<TTo>))
+				throw new ArgumentException("Generic type is not the right type", nameof(TTo));
+
+			if (IsNull)
+				return new CPointer<TTo>();
+
+			return new CPointer<TTo>((Memory<TTo>)(object)internalBuffer, bufferOffset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the type of the elements
+		/// </summary>
+		/********************************************************************/
+		Type IPointerInternal.GetElementType()
+		{
+			Type[] genericArgs = internalBuffer.GetType().GetGenericArguments();
+
+			return genericArgs[0];
 		}
 
 

@@ -200,6 +200,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 
 							Info.Opus_Picture_Tag_Clear(pic);
 						}
+
 						break;
 					}
 				}

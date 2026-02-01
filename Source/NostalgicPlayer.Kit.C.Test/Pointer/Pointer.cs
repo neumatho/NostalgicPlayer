@@ -1311,5 +1311,161 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			}
 		}
 		#endregion
+
+		#region ToPointer tests
+		/********************************************************************/
+		/// <summary>
+		/// Test ToPointer with same type
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_ToPointer_SameType()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 2);
+
+			CPointer<int> result = ptr.ToPointer<int>();
+
+			Assert.AreEqual(buffer, result.GetOriginalArray());
+			Assert.AreEqual(2, result.Offset);
+			Assert.AreEqual(30, result[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test ToPointer with null pointer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_ToPointer_NullPointer()
+		{
+			CPointer<int> ptr = new CPointer<int>();
+
+			CPointer<int> result = ptr.ToPointer<int>();
+
+			Assert.IsTrue(result.IsNull);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test ToPointer with wrong type throws exception
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_ToPointer_WrongType_ThrowsException()
+		{
+			int[] buffer = [ 10, 20, 30 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 0);
+
+			bool exceptionThrown = false;
+
+			try
+			{
+				ptr.ToPointer<byte>();
+			}
+			catch (ArgumentException ex)
+			{
+				exceptionThrown = true;
+				Assert.AreEqual("Generic type is not the right type (Parameter 'TTo')", ex.Message);
+			}
+
+			Assert.IsTrue(exceptionThrown);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test ToPointer preserves offset
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_ToPointer_PreservesOffset()
+		{
+			byte[] buffer = [ 1, 2, 3, 4, 5, 6, 7, 8 ];
+			CPointer<byte> ptr = new CPointer<byte>(buffer, 3);
+
+			CPointer<byte> result = ptr.ToPointer<byte>();
+
+			Assert.AreEqual(buffer, result.GetOriginalArray());
+			Assert.AreEqual(3, result.Offset);
+			Assert.AreEqual(4, result[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test ToPointer with casted pointer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_ToPointer_WithCastedPointer()
+		{
+			int[] buffer = [ 0x12345678, unchecked((int)0xabcdef01) ];
+			CPointer<int> intPtr = new CPointer<int>(buffer, 0);
+
+			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+
+			CPointer<byte> result = bytePtr.ToPointer<byte>();
+
+			Assert.IsTrue(result.IsNotNull);
+			Assert.AreEqual(0, result.Offset);
+
+			if (BitConverter.IsLittleEndian)
+				Assert.AreEqual(0x78, result[0]);
+			else
+				Assert.AreEqual(0x12, result[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test ToPointer modifying values
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_ToPointer_ModifyingValues()
+		{
+			short[] buffer = [ 100, 200, 300 ];
+			CPointer<short> ptr = new CPointer<short>(buffer, 1);
+
+			CPointer<short> result = ptr.ToPointer<short>();
+
+			result[0] = 999;
+
+			Assert.AreEqual(999, buffer[1]);
+			Assert.AreEqual(999, ptr[0]);
+			Assert.AreEqual(999, result[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test ToPointer shares same buffer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_ToPointer_SharesSameBuffer()
+		{
+			long[] buffer = [ 1L, 2L, 3L, 4L ];
+			CPointer<long> ptr1 = new CPointer<long>(buffer, 1);
+
+			CPointer<long> ptr2 = ptr1.ToPointer<long>();
+
+			Assert.AreEqual(ptr1.GetOriginalArray(), ptr2.GetOriginalArray());
+			Assert.AreEqual(ptr1.Offset, ptr2.Offset);
+			Assert.AreEqual(ptr1.Length, ptr2.Length);
+
+			ptr2[0] = 999L;
+			Assert.AreEqual(999L, ptr1[0]);
+		}
+		#endregion
 	}
 }
