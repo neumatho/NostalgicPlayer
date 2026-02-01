@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		// Current log state
 		private static AvMutex mutex = new AvMutex();
 
-		private static c_int av_Log_Level = Av_Log_Info;
+		private static volatile c_int av_Log_Level = Av_Log_Info;
 		private static AvLog flags = AvLog.None;
 		private static UtilFunc.Log_Delegate av_Log_Callback = Av_Log_Default_Callback;
 

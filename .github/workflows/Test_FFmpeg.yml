@@ -23,4 +23,4 @@ jobs:
       - name: Build
         run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Debug" -property:Platform="Any CPU"
       - name: Test LibAvUtil
-        run: dotnet test Source\Ports\Tests\FFmpeg\LibAvUtil.Test\LibAvUtil.Test.csproj --no-build --verbosity normal -- RunConfiguration.MaxCpuCount=1
+        run: dotnet test Source\Ports\Tests\FFmpeg\LibAvUtil.Test\LibAvUtil.Test.csproj --no-build --verbosity normal
