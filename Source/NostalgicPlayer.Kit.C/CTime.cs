@@ -84,37 +84,29 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static tm localtime_r(time_t timer, out tm buf)
 		{
 			DateTimeOffset dto;
-			TimeZoneInfo timeZone = TimeZoneInfo.Local;
-
-			// Check if TZ environment variable is set
-			CPointer<char> tzValue = CEnvironment.getenv("TZ");
-
-			if (tzValue.IsNotNull)
-			{
-				try
-				{
-					// Try to find the timezone by ID
-					timeZone = TimeZoneInfo.FindSystemTimeZoneById(tzValue.ToString());
-				}
-				catch
-				{
-					// If timezone not found, fall back to local
-					timeZone = TimeZoneInfo.Local;
-				}
-			}
+			c_int? tzOffset = GetTzOffset();
 
 			try
 			{
-				// Convert to UTC first, then to target timezone
 				dto = DateTimeOffset.FromUnixTimeSeconds(timer);
-				dto = TimeZoneInfo.ConvertTime(dto, timeZone);
+
+				if (tzOffset.HasValue)
+				{
+					// Use POSIX TZ offset
+					dto = dto.ToOffset(TimeSpan.FromSeconds(tzOffset.Value));
+				}
+				else
+				{
+					// Use system local time
+					dto = dto.ToLocalTime();
+				}
 			}
 			catch (ArgumentOutOfRangeException)
 			{
 				dto = timer >= 0 ? DateTimeOffset.MaxValue : DateTimeOffset.MinValue;
 			}
 
-			DateTime local = dto.DateTime;
+			DateTime local = tzOffset.HasValue ? dto.DateTime : dto.LocalDateTime;
 
 			buf.tm_Sec = local.Second;
 			buf.tm_Min = local.Minute;
@@ -124,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			buf.tm_Year = local.Year - 1900;
 			buf.tm_WDay = (c_int)local.DayOfWeek;
 			buf.tm_YDay = local.DayOfYear - 1;
-			buf.tm_IsDst = timeZone.IsDaylightSavingTime(local) ? 1 : 0;
+			buf.tm_IsDst = tzOffset.HasValue ? 0 : (TimeZoneInfo.Local.IsDaylightSavingTime(local) ? 1 : 0);
 
 			return buf;
 		}
@@ -134,7 +126,8 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		/// <summary>
 		/// Convert broken-down local time to time_t (seconds since epoch).
-		/// Returns -1 on error
+		/// Returns -1 on error.
+		/// Respects TZ environment variable if set via CEnvironment.putenv()
 		/// </summary>
 		/********************************************************************/
 		public static time_t mktime(tm dt)
@@ -148,10 +141,31 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				c_int minute = dt.tm_Min;
 				c_int second = dt.tm_Sec;
 
-				DateTime local = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Local);
-				DateTimeOffset off = new DateTimeOffset(local);
+				c_int? tzOffset = GetTzOffset();
 
-				return off.ToUnixTimeSeconds();
+				if (tzOffset.HasValue)
+				{
+					// When TZ offset is set, interpret the input as being in that timezone
+					// and convert to Unix timestamp (which is always UTC)
+					// Create an unspecified DateTime representing the wall clock time in the target timezone
+					DateTime unspecified = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified);
+					
+					// Convert to UTC by subtracting the offset (if TZ is UTC+1, we subtract 1 hour)
+					DateTime utc = unspecified.AddSeconds(-tzOffset.Value);
+					
+					// Get Unix timestamp from UTC time
+					DateTimeOffset off = new DateTimeOffset(utc, TimeSpan.Zero);
+
+					return off.ToUnixTimeSeconds();
+				}
+				else
+				{
+					// Use system local time
+					DateTime local = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Local);
+					DateTimeOffset off = new DateTimeOffset(local);
+
+					return off.ToUnixTimeSeconds();
+				}
 			}
 			catch
 			{
@@ -530,6 +544,60 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Parse POSIX TZ environment variable to get UTC offset in seconds.
+		/// Format: "XXX+H" or "XXX-H" where XXX is timezone name and H is
+		/// hours.
+		/// Note: In POSIX TZ format, the sign is reversed
+		/// (UTC+1 is "XXX-1")
+		/// </summary>
+		/********************************************************************/
+		private static c_int? GetTzOffset()
+		{
+			CPointer<char> tzValue = CEnvironment.getenv("TZ");
+			if (tzValue.IsNull)
+				return null;
+
+			string tz = tzValue.ToString();
+			if (string.IsNullOrEmpty(tz))
+				return null;
+
+			// Find the sign (+ or -)
+			c_int signIndex = -1;
+
+			for (c_int i = 0; i < tz.Length; i++)
+			{
+				if ((tz[i] == '+') || (tz[i] == '-'))
+				{
+					signIndex = i;
+					break;
+				}
+			}
+
+			if (signIndex < 0)
+				return null;
+
+			// Get the offset part
+			string offsetStr = tz.Substring(signIndex + 1);
+			if (string.IsNullOrEmpty(offsetStr))
+				return null;
+
+			// Parse hours
+			if (c_int.TryParse(offsetStr, out c_int hours))
+			{
+				// In POSIX TZ format, the sign is reversed
+				// TZ=CET-1 means UTC+1 (1 hour ahead of UTC)
+				c_int sign = tz[signIndex] == '-' ? 1 : -1;
+
+				return sign * hours * 3600;
+			}
+
+			return null;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Helper method to format date/time recursively
