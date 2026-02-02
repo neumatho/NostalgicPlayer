@@ -76,7 +76,7 @@
 			favoriteDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right;
 			favoriteDataGridView.TabIndex = 0;
 			favoriteDataGridView.SelectionChanged += FavoriteDataGridView_SelectionChanged;
-			favoriteDataGridView.DoubleClick += FavoriteDataGridView_DoubleClick;
+			favoriteDataGridView.CellDoubleClick += FavoriteDataGridView_CellDoubleClick;
 			// 
 			// fontPalette
 			// 

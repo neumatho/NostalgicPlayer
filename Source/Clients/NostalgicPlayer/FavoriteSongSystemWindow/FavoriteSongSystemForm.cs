@@ -265,13 +265,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when an item is double clicked in the list
+		/// Is called when a cell is double clicked in the list
 		/// </summary>
 		/********************************************************************/
-		private void FavoriteDataGridView_DoubleClick(object sender, EventArgs e)
+		private void FavoriteDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (favoriteDataGridView.SelectedRows.Count > 0)
-				mainWindowApi.AddFilesToModuleList(new[] { favoriteDataGridView.SelectedRows[0].Tag as string });
+			if (e.RowIndex >= 0)
+			{
+				DataGridViewSelectedRowCollection selectedRows = favoriteDataGridView.SelectedRows;
+				int count = selectedRows.Count;
+
+				if (count > 0)
+				{
+					string[] files = new string[count];
+
+					for (int i = 0; i < count; i++)
+						files[i] = selectedRows[i].Tag as string;
+
+					mainWindowApi.AddFilesToModuleList(files);
+				}
+			}
 		}
 
 
