@@ -54,6 +54,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			equalizerControl.EqualizerChanged += EqualizerControl_EqualizerChanged;
 		}
 
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl => "equalizer.html";
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
