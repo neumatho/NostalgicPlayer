@@ -1443,7 +1443,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				modChan.WaveControl = 0;
 				modChan.GlissFunk = 0;
 				modChan.SampleOffset = 0;
-				modChan.PattPos = -1;
+				modChan.PattPos = 0;
 				modChan.LoopCount = 0;
 				modChan.FunkOffset = 0;
 				modChan.WaveStart = 0;
@@ -1524,8 +1524,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{
 				if (HasPositionBeenVisited(playingInfo.SongPos))
 				{
-					// No Dxx                 || Change of position                              || Loop on same pattern, but ignore if D00 is on row 1 (patternPos is one higher) (ignore backwards playing)
-					if (!playingInfo.GotBreak || (playingInfo.SongPos != playingInfo.OldSongPos) || (playingInfo.GotBreak && ((playingInfo.BreakPos == 0) && (playingInfo.PatternPos != 2))))
+					// No Dxx                 || Change of position
+					if (!playingInfo.GotBreak || (playingInfo.SongPos != playingInfo.OldSongPos))
 						endReached = true;
 					else
 					{
@@ -3310,21 +3310,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 				if (arg != 0)
 				{
-					if (playingInfo.PattDelayTime2 == 0)
-					{
-						// Jump to the loop currently set
-						if (modChan.LoopCount == 0)
-							modChan.LoopCount = arg;
-						else
-							modChan.LoopCount--;
+					// Jump to the loop currently set
+					if (modChan.LoopCount == 0)
+						modChan.LoopCount = arg;
+					else
+						modChan.LoopCount--;
 
-						if ((modChan.LoopCount != 0) && (modChan.PattPos != -1))
-						{
-							playingInfo.BreakPos = (byte)modChan.PattPos;
-							playingInfo.BreakFlag = true;
-						}
-						else
-							modChan.PattPos = -1;
+					if ((modChan.LoopCount != 0))// && (modChan.PattPos != -1))
+					{
+						playingInfo.BreakPos = (byte)modChan.PattPos;
+						playingInfo.BreakFlag = true;
 					}
 				}
 				else
