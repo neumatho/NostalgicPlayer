@@ -258,15 +258,23 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			converterStream.WriteMark("FC14");
 			moduleStream.Seek(4, SeekOrigin.Begin);
 
-			// Copy the sequence length and make it even
+			// Read the sequence length
 			uint seqLength = moduleStream.Read_B_UINT32();
+
+			// Read the offsets
+			moduleStream.ReadArray_B_UINT32s(offsetsAndLength, 0, 8);
+
+			// If sequence length is zero, calculate it based on the offsets.
+			// This fixes the cult.fc module
+			if (seqLength == 0)
+				seqLength = offsetsAndLength[0] - 0x100;
+
+			// Make the sequence length even
 			if ((seqLength % 2) != 0)
 				converterStream.Write_B_UINT32(seqLength + 1);
 			else
 				converterStream.Write_B_UINT32(seqLength);
 
-			// Read the offsets
-			moduleStream.ReadArray_B_UINT32s(offsetsAndLength, 0, 8);
 			converterStream.Seek(8 * 4, SeekOrigin.Current);
 
 			// Copy the sample information
