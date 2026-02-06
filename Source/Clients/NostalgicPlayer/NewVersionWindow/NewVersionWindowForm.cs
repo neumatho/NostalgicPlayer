@@ -3,11 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-using System.Net.Http;
-using System.Text;
 using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
+using Polycode.NostalgicPlayer.External.Homepage.Models.VersionHistory;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 {
@@ -16,6 +16,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 	/// </summary>
 	public partial class NewVersionWindowForm : KryptonForm
 	{
+		private readonly IVersionHistoryClient versionHistoryClient;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -29,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 			{
 				// Set the title of the window
 				Text = Resources.IDS_NEWVERSION_TITLE;
+
+				versionHistoryClient = DependencyInjection.Container.GetInstance<IVersionHistoryClient>();
 
 				// Retrieve and build the history list
 				BuildHistoryList(fromVersion, toVersion);
@@ -44,82 +48,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 		/********************************************************************/
 		private void BuildHistoryList(string fromVersion, string toVersion)
 		{
-			string historyHtml = RetrieveAllVersions();
+			HistoriesModel histories = versionHistoryClient.GetHistories(fromVersion, toVersion);
 
 			historyRichTextBox.Clear();
 
-			// Find where the history starts in the HTML
-			int index = historyHtml.IndexOf("<!-- History start -->");
-			if (index != -1)
+			if (histories.Histories != null)
 			{
-				// First find the list for the version that has been upgraded to
-				string currentVersion;
+				AddHistory(histories.Histories[0]);
 
-				do
+				for (int i = 1; i < histories.Histories.Length; i++)
 				{
-					currentVersion = SearchAfterVersion(historyHtml, ref index);
-					if (string.IsNullOrEmpty(currentVersion))
-						return;
-				}
-				while (currentVersion != toVersion);
-
-				AddHistory(historyHtml, currentVersion, ref index);
-
-				for (;;)
-				{
-					currentVersion = SearchAfterVersion(historyHtml, ref index);
-					if (string.IsNullOrEmpty(currentVersion) || (currentVersion == fromVersion))
-						break;
-
 					historyRichTextBox.SelectedText = "\n";
-					AddHistory(historyHtml, currentVersion, ref index);
+					AddHistory(histories.Histories[i]);
 				}
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Retrieve all versions from the internet
-		/// </summary>
-		/********************************************************************/
-		private string RetrieveAllVersions()
-		{
-			try
-			{
-				using (HttpClient httpClient = new HttpClient())
-				{
-					byte[] bytes = httpClient.GetByteArrayAsync("https://nostalgicplayer.dk/history").Result;
-
-					return Encoding.UTF8.GetString(bytes);
-				}
-			}
-			catch (Exception)
-			{
-				return string.Empty;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Search after the next version and return it
-		/// </summary>
-		/********************************************************************/
-		private string SearchAfterVersion(string historyHtml, ref int index)
-		{
-			int startIndex = historyHtml.IndexOf("<h1>", index);
-			if (startIndex == -1)
-				return null;
-
-			int endIndex = historyHtml.IndexOf("</h1>", startIndex + 4);
-			if (endIndex == -1)
-				return null;
-
-			index = endIndex + 5;
-			return historyHtml.Substring(startIndex + 4, endIndex - startIndex - 4);
 		}
 
 
@@ -129,10 +71,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 		/// Add all changes for the given version
 		/// </summary>
 		/********************************************************************/
-		private void AddHistory(string historyHtml, string version, ref int index)
+		private void AddHistory(HistoryModel history)
 		{
 			historyRichTextBox.SelectionFont = FontPalette.GetRegularFont(12.0f);
-			historyRichTextBox.SelectedText = version + "\n";
+			historyRichTextBox.SelectedText = history.Version + "\n";
 			historyRichTextBox.SelectionFont = FontPalette.GetRegularFont(9.0f);
 			historyRichTextBox.SelectedText = "\n";
 
@@ -140,32 +82,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 			historyRichTextBox.SelectionIndent = 4;
 			historyRichTextBox.BulletIndent = 12;
 
-			int startList = historyHtml.IndexOf("<ul", index);
-			if (startList != -1)
-			{
-				int endList = historyHtml.IndexOf("</ul>", startList);
-				if (endList != -1)
-				{
-					index = startList;
-
-					for (;;)
-					{
-						int bulletStart = historyHtml.IndexOf("<li>", index);
-						if ((bulletStart == -1) || (bulletStart > endList))
-							break;
-
-						int bulletEnd = historyHtml.IndexOf("</li>", bulletStart + 4);
-						if (bulletEnd == -1)
-							break;
-
-						string bullet = historyHtml.Substring(bulletStart + 4, bulletEnd - bulletStart - 4);
-						bullet = bullet.Replace("&quot;", "\"").Replace("<i>", string.Empty).Replace("</i>", string.Empty);
-						historyRichTextBox.SelectedText = bullet + "\n";
-
-						index = bulletEnd + 5;
-					}
-				}
-			}
+			foreach (string bullet in history.Bullets)
+				historyRichTextBox.SelectedText = bullet + "\n";
 
 			historyRichTextBox.SelectionBullet = false;
 			historyRichTextBox.SelectionIndent = 0;

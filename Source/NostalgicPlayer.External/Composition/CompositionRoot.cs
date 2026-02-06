@@ -3,13 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.External.Composition;
-using Polycode.NostalgicPlayer.Library.Application;
-using Polycode.NostalgicPlayer.Logic.Composition;
-using Polycode.NostalgicPlayer.Platform.Composition;
+using Polycode.NostalgicPlayer.External.Homepage.Clients;
+using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
 using SimpleInjector;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
+namespace Polycode.NostalgicPlayer.External.Composition
 {
 	/// <summary>
 	/// Register all classes/interfaces into the dependency injection container
@@ -21,13 +19,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		/// Register all client specific classes into the container
 		/// </summary>
 		/********************************************************************/
-		public static void Register(Container container)
+		public static void RegisterExternal(this Container container)
 		{
-			container.RegisterLogic();
-			container.RegisterExternal();
-			container.RegisterPlatform();
+			RegisterHomepage(container);
+		}
 
-			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all homepage
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterHomepage(Container container)
+		{
+			container.Register<IVersionHistoryClient, VersionHistoryClient>();
 		}
 	}
 }

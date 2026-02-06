@@ -330,6 +330,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						dialog.ShowDialog(this);
 						response = dialog.GetButtonResult('p');
 					}
+
 					break;
 				}
 
@@ -391,6 +392,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							}
 						}
 					}
+
 					break;
 				}
 
@@ -432,6 +434,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							}
 						}
 					}
+
 					break;
 				}
 
@@ -1833,6 +1836,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							StopAndFreeModule();
 							LoadAndPlayModule(jumpNumber);
 						}
+
 						break;
 					}
 				}
