@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 					// Kludge for broken 4-ch modules that use x-4/x-5/x-6... as x-3
 					if (!isMultiOctave[lastINum])
 					{
-						while (note.NoteNum + iTrans[lastINum] > 3 * 12)
+						while ((sbyte)note.NoteNum + iTrans[lastINum] > 3 * 12)
 							note.NoteNum -= 12;
 					}
 
