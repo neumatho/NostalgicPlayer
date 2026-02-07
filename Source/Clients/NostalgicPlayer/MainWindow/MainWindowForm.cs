@@ -59,6 +59,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		}
 
 		private IPlatformPath _platformPath;
+		private FormCreatorService _formCreatorService;
 
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
@@ -149,9 +150,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Initialize the form by loading agents, initialize controls etc.
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IPlatformPath platformPath)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IPlatformPath platformPath, ISettings settings, FormCreatorService formCreatorService)
 		{
 			_platformPath = platformPath;
+			userSettings = settings;
+			_formCreatorService = formCreatorService;
 
 			// Disable escape key closing
 			disableEscapeKey = true;
@@ -1331,8 +1334,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				string previousVersion = File.ReadAllText(versionFile);
 				if (previousVersion != currentVersion)
 				{
-					using (NewVersionWindowForm dialog = new NewVersionWindowForm(previousVersion, currentVersion))
+					using (NewVersionWindowForm dialog = _formCreatorService.GetFormInstance<NewVersionWindowForm>())
 					{
+						dialog.BuildHistoryList(previousVersion, currentVersion);
 						dialog.ShowDialog(this);
 					}
 
@@ -2971,8 +2975,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void InitSettings()
 		{
-			// Create instances of the settings
-			userSettings = DependencyInjection.Container.GetInstance<ISettings>();
+			// Load the settings
 			userSettings.LoadSettings("Settings");
 			FixSettings();
 

@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen;
 using Polycode.NostalgicPlayer.External.Composition;
@@ -64,6 +65,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		{
 			RegisterSingleWindow<SplashScreenForm>(container);
 			RegisterSingleWindow<MainWindowForm>(container);
+			RegisterSingleWindow<NewVersionWindowForm>(container);
 		}
 
 

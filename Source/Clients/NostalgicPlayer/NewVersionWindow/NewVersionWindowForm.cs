@@ -7,7 +7,6 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
 using Polycode.NostalgicPlayer.External.Homepage.Models.VersionHistory;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 {
@@ -16,27 +15,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 	/// </summary>
 	public partial class NewVersionWindowForm : KryptonForm
 	{
-		private readonly IVersionHistoryClient versionHistoryClient;
+		private IVersionHistoryClient _versionHistoryClient;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NewVersionWindowForm(string fromVersion, string toVersion)
+		public NewVersionWindowForm()
 		{
 			InitializeComponent();
+		}
 
-			if (!DesignMode)
-			{
-				// Set the title of the window
-				Text = Resources.IDS_NEWVERSION_TITLE;
 
-				versionHistoryClient = DependencyInjection.Container.GetInstance<IVersionHistoryClient>();
 
-				// Retrieve and build the history list
-				BuildHistoryList(fromVersion, toVersion);
-			}
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		/// </summary>
+		/********************************************************************/
+		public void InitializeForm(IVersionHistoryClient versionHistoryClient)
+		{
+			_versionHistoryClient = versionHistoryClient;
+
+			// Set the title of the window
+			Text = Resources.IDS_NEWVERSION_TITLE;
 		}
 
 
@@ -46,9 +49,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 		/// Fill the rich text box with the list of changes
 		/// </summary>
 		/********************************************************************/
-		private void BuildHistoryList(string fromVersion, string toVersion)
+		public void BuildHistoryList(string fromVersion, string toVersion)
 		{
-			HistoriesModel histories = versionHistoryClient.GetHistories(fromVersion, toVersion);
+			HistoriesModel histories = _versionHistoryClient.GetHistories(fromVersion, toVersion);
 
 			historyRichTextBox.Clear();
 
