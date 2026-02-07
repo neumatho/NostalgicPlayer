@@ -62,35 +62,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 			// Set the title of the window
 			Text = Resources.IDS_FAVORITE_TITLE;
 
-			// Add the columns to the grid
-			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
-			{
-				Name = "#",
-				Resizable = DataGridViewTriState.True,
-				SortMode = DataGridViewColumnSortMode.NotSortable,
-				DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
-				Width = settings.Column1Width,
-				DisplayIndex = settings.Column1Pos
-			});
+				// Add the columns to the grid
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
+				{
+					Name = "#",
+					Resizable = DataGridViewTriState.True,
+					SortMode = DataGridViewColumnSortMode.NotSortable,
+					DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
+					Width = settings.Column1Width,
+					DisplayIndex = settings.Column1Pos
+				});
 
-			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
-			{
-				Name = Resources.IDS_FAVORITE_COLUMN_NAME,
-				Resizable = DataGridViewTriState.True,
-				SortMode = DataGridViewColumnSortMode.NotSortable,
-				Width = settings.Column2Width,
-				DisplayIndex = settings.Column2Pos
-			});
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
+				{
+					Name = Resources.IDS_FAVORITE_COLUMN_NAME,
+					Resizable = DataGridViewTriState.True,
+					SortMode = DataGridViewColumnSortMode.NotSortable,
+					Width = settings.Column2Width,
+					DisplayIndex = settings.Column2Pos
+				});
 
-			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
-			{
-				Name = Resources.IDS_FAVORITE_COLUMN_COUNT,
-				Resizable = DataGridViewTriState.True,
-				SortMode = DataGridViewColumnSortMode.NotSortable,
-				DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
-				Width = settings.Column3Width,
-				DisplayIndex = settings.Column3Pos
-			});
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
+				{
+					Name = Resources.IDS_FAVORITE_COLUMN_COUNT,
+					Resizable = DataGridViewTriState.True,
+					SortMode = DataGridViewColumnSortMode.NotSortable,
+					DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
+					Width = settings.Column3Width,
+					DisplayIndex = settings.Column3Pos
+				});
 
 				// Add items to the combo controls
 				showComboBox.Items.AddRange(
