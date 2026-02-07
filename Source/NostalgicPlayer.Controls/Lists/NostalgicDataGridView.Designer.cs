@@ -57,7 +57,7 @@
 			nostalgicDataGridViewInternal.Size = new System.Drawing.Size(150, 150);
 			nostalgicDataGridViewInternal.TabIndex = 0;
 			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
-			nostalgicDataGridViewInternal.DoubleClick += DoubleClickHandler;
+			nostalgicDataGridViewInternal.MouseDoubleClick += MouseDoubleClickHandler;
 			// 
 			// nostalgicVScrollBar
 			// 
