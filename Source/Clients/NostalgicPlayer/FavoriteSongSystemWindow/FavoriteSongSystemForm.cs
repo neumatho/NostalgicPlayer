@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 				Text = Resources.IDS_FAVORITE_TITLE;
 
 				// Add the columns to the grid
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = "#",
 					Resizable = DataGridViewTriState.True,
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 					DisplayIndex = settings.Column1Pos
 				});
 
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_FAVORITE_COLUMN_NAME,
 					Resizable = DataGridViewTriState.True,
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 					DisplayIndex = settings.Column2Pos
 				});
 
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_FAVORITE_COLUMN_COUNT,
 					Resizable = DataGridViewTriState.True,
