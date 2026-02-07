@@ -6,18 +6,18 @@
 namespace Polycode.NostalgicPlayer.External.Homepage.Models.VersionHistory
 {
 	/// <summary>
-	/// Holds information about a single history
+	/// A single bullet
 	/// </summary>
-	public class HistoryModel
+	public class HistoryBulletModel
 	{
 		/// <summary>
-		/// 
+		/// Holds the text to show
 		/// </summary>
-		public string Version { get; set; }
+		public string BulletText { get; set; }
 
 		/// <summary>
-		/// 
+		/// If set, holds sub-bullets
 		/// </summary>
-		public HistoryBulletModel[] Bullets { get; set; }
+		public HistoryBulletModel[] SubBullets { get; set; }
 	}
 }

@@ -81,15 +81,50 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 			historyRichTextBox.SelectionFont = FontPalette.GetRegularFont(9.0f);
 			historyRichTextBox.SelectedText = "\n";
 
-			historyRichTextBox.SelectionBullet = true;
-			historyRichTextBox.SelectionIndent = 4;
-			historyRichTextBox.BulletIndent = 12;
+			AddHistoryBullets(history.Bullets, 0);
+		}
 
-			foreach (string bullet in history.Bullets)
-				historyRichTextBox.SelectedText = bullet + "\n";
 
-			historyRichTextBox.SelectionBullet = false;
+
+		/********************************************************************/
+		/// <summary>
+		/// Add all the bullets
+		/// </summary>
+		/********************************************************************/
+		private void AddHistoryBullets(HistoryBulletModel[] bullets, int index)
+		{
+			historyRichTextBox.SelectionIndent = index * 8;
+			historyRichTextBox.SelectionHangingIndent = 12;
+
+			string bulletChar = index switch
+			{
+				0 => "•",
+				1 => "◦",
+				2 => "▪",
+				_ => "‣"
+			};
+
+			bool insertEmptyLine = false;
+
+			foreach (HistoryBulletModel bullet in bullets)
+			{
+				if (insertEmptyLine)
+				{
+					historyRichTextBox.SelectedText = "\n";
+					insertEmptyLine = false;
+				}
+
+				historyRichTextBox.SelectedText = $"{bulletChar} {bullet.BulletText}\n";
+
+				if (bullet.SubBullets != null)
+				{
+					AddHistoryBullets(bullet.SubBullets, index + 1);
+					insertEmptyLine = true;
+				}
+			}
+
 			historyRichTextBox.SelectionIndent = 0;
+			historyRichTextBox.SelectionHangingIndent = 0;
 		}
 	}
 }

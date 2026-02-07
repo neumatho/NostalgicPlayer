@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
@@ -78,7 +79,7 @@ namespace Polycode.NostalgicPlayer.External.Homepage.Clients
 				{
 					byte[] bytes = httpClient.GetByteArrayAsync("https://nostalgicplayer.dk/history").Result;
 
-					return Encoding.UTF8.GetString(bytes);
+					return Encoding.UTF8.GetString(bytes).Replace("\r", string.Empty);
 				}
 			}
 			catch (Exception)
@@ -117,41 +118,89 @@ namespace Polycode.NostalgicPlayer.External.Homepage.Clients
 		/********************************************************************/
 		private HistoryModel BuildHistoryModel(string historyHtml, string version, ref int index)
 		{
-			List<string> bullets = new List<string>();
+			HistoryModel result = new HistoryModel
+			{
+				Version = version
+			};
 
 			int startList = historyHtml.IndexOf("<ul", index);
 			if (startList != -1)
 			{
-				int endList = historyHtml.IndexOf("</ul>", startList);
-				if (endList != -1)
+				index = startList;
+
+				result.Bullets = ReadBullets(historyHtml, ref index);
+			}
+
+			if (result.Bullets == null)
+				result.Bullets = [];
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read bullets
+		/// </summary>
+		/********************************************************************/
+		private HistoryBulletModel[] ReadBullets(string historyHtml, ref int index)
+		{
+			// Adjust index, if not right there
+			index = historyHtml.IndexOf("<ul", index);
+
+			List<HistoryBulletModel> bullets = new List<HistoryBulletModel>();
+			HistoryBulletModel currentBullet = null;
+
+			StringReader sr = new StringReader(historyHtml.Substring(index));
+
+			// Skip the ul
+			string line = sr.ReadLine();
+			index += line!.Length + 1;
+
+			for (;;)
+			{
+				line = sr.ReadLine();
+				if (line == null)
+					break;
+
+				string trimmedLine = line.TrimStart();
+
+				if (trimmedLine.StartsWith("<ul "))
 				{
-					index = startList;
+					currentBullet.SubBullets = ReadBullets(historyHtml, ref index);
 
-					for (;;)
+					sr.Dispose();
+					sr = new StringReader(historyHtml.Substring(index));
+				}
+				else if (trimmedLine.StartsWith("<li>"))
+				{
+					int bulletEnd = trimmedLine.IndexOf("</li>", 4);
+					if (bulletEnd == -1)
+						break;
+
+					string bullet = trimmedLine.Substring(4, bulletEnd - 4);
+					bullet = bullet.Replace("&quot;", "\"").Replace("<i>", string.Empty).Replace("</i>", string.Empty);
+
+					currentBullet = new HistoryBulletModel
 					{
-						int bulletStart = historyHtml.IndexOf("<li>", index);
-						if ((bulletStart == -1) || (bulletStart > endList))
-							break;
+						BulletText = bullet
+					};
 
-						int bulletEnd = historyHtml.IndexOf("</li>", bulletStart + 4);
-						if (bulletEnd == -1)
-							break;
+					bullets.Add(currentBullet);
 
-						string bullet = historyHtml.Substring(bulletStart + 4, bulletEnd - bulletStart - 4);
-						bullet = bullet.Replace("&quot;", "\"").Replace("<i>", string.Empty).Replace("</i>", string.Empty);
-
-						bullets.Add(bullet);
-
-						index = bulletEnd + 5;
-					}
+					index += line.Length + 1;
+				}
+				else
+				{
+					index += line.Length + 1;
+					break;
 				}
 			}
 
-			return new HistoryModel
-			{
-				Version = version,
-				Bullets = bullets.ToArray()
-			};
+			sr.Dispose();
+
+			return bullets.ToArray();
 		}
 		#endregion
 	}
