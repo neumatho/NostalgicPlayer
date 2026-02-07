@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 	/// <summary>
 	/// This shows the favorite song system
 	/// </summary>
-	public partial class FavoriteSongSystemForm : WindowFormBase
+	public partial class FavoriteSongSystemForm : WindowFormBase2
 	{
 		private ModuleDatabase database;
 
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 				Text = Resources.IDS_FAVORITE_TITLE;
 
 				// Add the columns to the grid
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = "#",
 					Resizable = DataGridViewTriState.True,
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 					DisplayIndex = settings.Column1Pos
 				});
 
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_FAVORITE_COLUMN_NAME,
 					Resizable = DataGridViewTriState.True,
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 					DisplayIndex = settings.Column2Pos
 				});
 
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_FAVORITE_COLUMN_COUNT,
 					Resizable = DataGridViewTriState.True,
@@ -83,8 +83,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 				});
 
 				// Add items to the combo controls
-				showComboBox.Items.AddRange(new object[]
-				{
+				showComboBox.Items.AddRange(
+				[
 					Resources.IDS_FAVORITE_SHOW_TOP10,
 					Resources.IDS_FAVORITE_SHOW_TOP50,
 					Resources.IDS_FAVORITE_SHOW_TOP100,
@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 					Resources.IDS_FAVORITE_SHOW_BOTTOM50,
 					Resources.IDS_FAVORITE_SHOW_BOTTOM100,
 					Resources.IDS_FAVORITE_SHOW_BOTTOMX
-				});
+				]);
 
 				showComboBox.SelectedIndex = (int)settings.Show;
 				otherNumberTextBox.Text = settings.ShowOther.ToString();
@@ -187,12 +187,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 				if (ArchivePath.IsArchivePath(fileName))
 					fileName = ArchivePath.GetEntryName(fileName);
 
-				row.Cells.AddRange(new DataGridViewCell[]
-				{
+				row.Cells.AddRange(
+				[
 					new KryptonDataGridViewTextBoxCell { Value = pos },
 					new KryptonDataGridViewTextBoxCell { Value = fileName },
 					new KryptonDataGridViewTextBoxCell { Value = pair.Value.ListenCount }
-				});
+				]);
 
 				row.Tag = pair.Key;
 
@@ -268,9 +268,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		/// Is called when a cell is double clicked in the list
 		/// </summary>
 		/********************************************************************/
-		private void FavoriteDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		private void FavoriteDataGridView_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			if (e.RowIndex >= 0)
+			DataGridView.HitTestInfo hitTest = favoriteDataGridView.HitTest(e.X, e.Y);
+
+			if ((hitTest.Type == DataGridViewHitTestType.Cell) && (hitTest.RowIndex >= 0))
 			{
 				DataGridViewSelectedRowCollection selectedRows = favoriteDataGridView.SelectedRows;
 				int count = selectedRows.Count;
