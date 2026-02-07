@@ -57,7 +57,7 @@
 			favoriteDataGridView.Size = new System.Drawing.Size(404, 182);
 			favoriteDataGridView.TabIndex = 0;
 			favoriteDataGridView.SelectionChanged += FavoriteDataGridView_SelectionChanged;
-			favoriteDataGridView.CellDoubleClick += FavoriteDataGridView_CellDoubleClick;
+			favoriteDataGridView.MouseDoubleClick += FavoriteDataGridView_MouseDoubleClick;
 			// 
 			// fontPalette
 			// 
