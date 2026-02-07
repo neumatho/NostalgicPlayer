@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new event EventHandler DoubleClick;
+		public new event MouseEventHandler MouseDoubleClick;
 
 
 
@@ -157,10 +157,10 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void OnDoubleClick(EventArgs e)
+		protected override void OnMouseDoubleClick(MouseEventArgs e)
 		{
-			if (DoubleClick != null)
-				DoubleClick(this, e);
+			if (MouseDoubleClick != null)
+				MouseDoubleClick(this, e);
 		}
 		#endregion
 
@@ -191,6 +191,19 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		public void AutoResizeRows()
 		{
 			nostalgicDataGridViewInternal.AutoResizeRows();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns information about the part of the DataGridView at the
+		/// specified client coordinates
+		/// </summary>
+		/********************************************************************/
+		public DataGridView.HitTestInfo HitTest(int x, int y)
+		{
+			return nostalgicDataGridViewInternal.HitTest(x, y);
 		}
 		#endregion
 
@@ -233,9 +246,9 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void DoubleClickHandler(object sender, EventArgs e)
+		private void MouseDoubleClickHandler(object sender, MouseEventArgs e)
 		{
-			OnDoubleClick(e);
+			OnMouseDoubleClick(e);
 		}
 		#endregion
 

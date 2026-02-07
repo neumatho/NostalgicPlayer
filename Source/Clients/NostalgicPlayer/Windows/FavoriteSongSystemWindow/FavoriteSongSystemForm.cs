@@ -277,9 +277,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		/// Is called when a cell is double clicked in the list
 		/// </summary>
 		/********************************************************************/
-		private void FavoriteDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		private void FavoriteDataGridView_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			if (e.RowIndex >= 0)
+			DataGridView.HitTestInfo hitTest = favoriteDataGridView.HitTest(e.X, e.Y);
+
+			if ((hitTest.Type == DataGridViewHitTestType.Cell) && (hitTest.RowIndex >= 0))
 			{
 				DataGridViewSelectedRowCollection selectedRows = favoriteDataGridView.SelectedRows;
 				int count = selectedRows.Count;
