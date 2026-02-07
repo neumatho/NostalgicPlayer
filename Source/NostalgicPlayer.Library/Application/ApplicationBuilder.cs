@@ -83,6 +83,10 @@ namespace Polycode.NostalgicPlayer.Library.Application
 			if (initialize != null)
 				initialize();
 
+			// Verify container after initialization to ensure Forms are not created
+			// before SetCompatibleTextRenderingDefault is called
+			VerifyContainer(context);
+
 			return context.Container.GetInstance<IApplicationHost>();
 		}
 
@@ -102,9 +106,19 @@ namespace Polycode.NostalgicPlayer.Library.Application
 			if (configure != null)
 				configure(context);
 
-			context.Container.Verify();
-
 			return context;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Verify the container after initialization is complete
+		/// </summary>
+		/********************************************************************/
+		private void VerifyContainer(IApplicationContext context)
+		{
+			context.Container.Verify();
 		}
 		#endregion
 	}

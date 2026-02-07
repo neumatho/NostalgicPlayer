@@ -5,13 +5,14 @@
 /******************************************************************************/
 using System.Windows.Forms;
 using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
 {
 	/// <summary>
 	/// Show a simple splash screen with a progress bar
 	/// </summary>
-	public partial class SplashScreenForm : KryptonForm
+	public partial class SplashScreenForm : KryptonForm, ILoadProgressCallback
 	{
 		/********************************************************************/
 		/// <summary>
@@ -23,8 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
 			InitializeComponent();
 		}
 
-
-
+		#region ILoadProgressCallback implementation
 		/********************************************************************/
 		/// <summary>
 		/// Update the progress bar
@@ -39,5 +39,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
 			progressBar.Refresh();
 			Application.DoEvents();
 		}
+		#endregion
 	}
 }

@@ -28,6 +28,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -57,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public bool Enabled { get; set; }
 		}
 
-		private IPlatformPath platformPath;
+		private IPlatformPath _platformPath;
 
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
@@ -113,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool playSamples;
 
 		// Misc.
-		private readonly List<int> randomList;
+		private readonly List<int> randomList = new List<int>();
 
 		private long lastAddedTimeFromExplorer = 0;
 		private readonly Lock processingEndReached = new Lock();
@@ -128,8 +129,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private AudiusWindowForm audiusWindow = null;
 		private EqualizerWindowForm equalizerWindow = null;
 
-		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
-		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
+		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
+		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
 
 		/********************************************************************/
 		/// <summary>
@@ -139,18 +140,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		public MainWindowForm()
 		{
 			InitializeComponent();
-
-			// Disable escape key closing
-			disableEscapeKey = true;
-
-			// Initialize member variables
-			playItem = null;
-			allowPosSliderUpdate = true;
-
-			randomList = new List<int>();
-
-			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
-			openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
 		}
 
 
@@ -160,15 +149,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Initialize the form by loading agents, initialize controls etc.
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(Manager.LoadAgentProgress loadProgress)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IPlatformPath platformPath)
 		{
-			platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
+			_platformPath = platformPath;
+
+			// Disable escape key closing
+			disableEscapeKey = true;
+
+			// Initialize member variables
+			playItem = null;
+			allowPosSliderUpdate = true;
 
 			// Initialize and load settings
 			InitSettings();
 
-			// Load agents
-			LoadAgents(loadProgress);
+			// Load agents with progress callback from factory
+			ILoadProgressCallback loadProgress = progressCallbackFactory.CurrentCallback;
+			LoadAgents(loadProgress.UpdateProgress);
 
 			// Initialize module handler
 			InitModuleHandler();
@@ -198,6 +195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			SetupHandlers();
 		}
+
 
 
 		/********************************************************************/
@@ -1324,7 +1322,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			CreateWindows();
 
 			// Check if this is a new version of the application
-			string versionFile = Path.Combine(platformPath.SettingsPath, "CurrentVersion.txt");
+			string versionFile = Path.Combine(_platformPath.SettingsPath, "CurrentVersion.txt");
 
 			string currentVersion = Env.CurrentVersion;
 
@@ -2839,7 +2837,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				if (optionSettings.RememberList)
 				{
-					string fileName = Path.Combine(platformPath.SettingsPath, "___RememberList.npml");
+					string fileName = Path.Combine(_platformPath.SettingsPath, "___RememberList.npml");
 
 					if (File.Exists(fileName))
 					{
@@ -5497,7 +5495,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
-				string fileName = Path.Combine(platformPath.SettingsPath, "___RememberList.npml");
+				string fileName = Path.Combine(_platformPath.SettingsPath, "___RememberList.npml");
 				RememberListSettings infoSettings = new RememberListSettings();
 
 				// Delete the file if it exists

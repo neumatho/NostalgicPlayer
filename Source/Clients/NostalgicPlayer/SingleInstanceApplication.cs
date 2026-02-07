@@ -4,10 +4,9 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Linq;
-using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Application;
 
@@ -18,16 +17,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 	/// </summary>
 	public class SingleInstanceApplication : WindowsFormsApplicationBase, IApplicationHost
 	{
-		private readonly IApplicationContext context;
+		private readonly IApplicationContext _applicationContext;
+		private readonly SplashScreenService _splashScreenService;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleInstanceApplication(IApplicationContext appContext)
+		public SingleInstanceApplication(IApplicationContext applicationContext, SplashScreenService splashScreenService)
 		{
-			context = appContext;
+			_applicationContext = applicationContext;
+			_splashScreenService = splashScreenService;
 
 			IsSingleInstance = true;
 
@@ -43,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		/********************************************************************/
 		public void Run()
 		{
-			base.Run(context.Arguments);
+			base.Run(_applicationContext.Arguments);
 		}
 
 
@@ -55,19 +56,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		/********************************************************************/
 		protected override void OnCreateMainForm()
 		{
-			SplashScreenForm splash = new SplashScreenForm();
-			splash.Show();
-			splash.Update();
-
-			// Create main form (heavy work happens here)
-			MainWindowForm form = new MainWindowForm();
-			MainForm = form;
-			form.InitializeForm(splash.UpdateProgress);
-
-			// Ensure UI refresh before closing splash
-			Application.DoEvents();
-			splash.Close();
-			splash.Dispose();
+			MainForm = _splashScreenService.CreateMainForm();
 
 			base.OnCreateMainForm();
 		}
