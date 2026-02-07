@@ -39,6 +39,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		protected WindowFormBase()//XX skal slettes
+		{
+			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will update the window settings
 		/// </summary>
 		/********************************************************************/
@@ -56,6 +68,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 			}
 
 			windowSettings.Maximized = WindowState == FormWindowState.Maximized;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		/// </summary>
+		/********************************************************************/
+		protected void InitializeForm(ISettings settings)
+		{
+			allWindowSettings = settings;
 		}
 
 
@@ -102,7 +126,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
-			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);
