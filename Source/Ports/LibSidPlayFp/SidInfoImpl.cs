@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
@@ -12,6 +13,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 	/// </summary>
 	internal class SidInfoImpl : SidInfo
 	{
+		public readonly List<SidTuneInfo.model_t> sidModels = new List<SidTuneInfo.model_t>();
+
 		public string speedString;
 
 		public uint maxSids = Mixer.MAX_SIDS;
@@ -22,8 +25,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		public uint_least16_t driverLength = 0;
 
 		public uint_least16_t powerOnDelay = 0;
-
-		public SidConfig.sid_model_t sidModel;
 
 		#region Overrides
 		/********************************************************************/
@@ -100,12 +101,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		/********************************************************************/
 		/// <summary>
+		/// SID chips
+		/// </summary>
+		/********************************************************************/
+		protected override int GetNumberOfSids()
+		{
+			return sidModels.Count;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// SID model used by the engine
 		/// </summary>
 		/********************************************************************/
-		protected override SidConfig.sid_model_t GetSidModel()
+		protected override SidTuneInfo.model_t GetSidModel(uint i)
 		{
-			return sidModel;
+			return sidModels.Count != 0 ? sidModels[(int)i] : SidTuneInfo.model_t.SIDMODEL_UNKNOWN;
 		}
 		#endregion
 	}

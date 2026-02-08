@@ -84,12 +84,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		/********************************************************************/
 		/// <summary>
+		/// SID chips
+		/// </summary>
+		/********************************************************************/
+		public int NumberOfSids()
+		{
+			return GetNumberOfSids();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// SID model used by the engine
 		/// </summary>
 		/********************************************************************/
-		public SidConfig.sid_model_t SidModel()
+		public SidTuneInfo.model_t SidModel(uint i)
 		{
-			return GetSidModel();
+			return GetSidModel(i);
 		}
 
 		#region Overrides
@@ -149,10 +161,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		/********************************************************************/
 		/// <summary>
+		/// SID chips
+		/// </summary>
+		/********************************************************************/
+		protected abstract int GetNumberOfSids();
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// SID model used by the engine
 		/// </summary>
 		/********************************************************************/
-		protected abstract SidConfig.sid_model_t GetSidModel();
+		protected abstract SidTuneInfo.model_t GetSidModel(uint i);
 		#endregion
 	}
 }

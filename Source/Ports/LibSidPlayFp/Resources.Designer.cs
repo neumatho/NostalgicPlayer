@@ -81,9 +81,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         /// <summary>
         ///   Looks up a localized string similar to Bad buffer size.
         /// </summary>
-        internal static string IDS_SID_ERR_BAD_BUFFER_SIZE {
+        internal static string IDS_SID_ERR_BAD_BUF_SIZE {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_BAD_BUFFER_SIZE", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_BAD_BUF_SIZE", resourceCulture);
             }
         }
         
@@ -144,9 +144,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         /// <summary>
         ///   Looks up a localized string similar to Illegal instruction executed.
         /// </summary>
-        internal static string IDS_SID_ERR_ILLEGAL_INST {
+        internal static string IDS_SID_ERR_ILLEGAL_INSN {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_ILLEGAL_INST", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_ILLEGAL_INSN", resourceCulture);
             }
         }
         
@@ -165,6 +165,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         internal static string IDS_SID_ERR_INVALID_CHIP {
             get {
                 return ResourceManager.GetString("IDS_SID_ERR_INVALID_CHIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid configuration.
+        /// </summary>
+        internal static string IDS_SID_ERR_INVALID_CONF {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_INVALID_CONF", resourceCulture);
             }
         }
         
@@ -216,9 +225,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         /// <summary>
         ///   Looks up a localized string similar to No tune loaded.
         /// </summary>
-        internal static string IDS_SID_ERR_NO_TUNE {
+        internal static string IDS_SID_ERR_NO_TUNE_LOADED {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_NO_TUNE", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_NO_TUNE_LOADED", resourceCulture);
             }
         }
         

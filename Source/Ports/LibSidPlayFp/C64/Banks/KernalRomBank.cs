@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
@@ -39,25 +40,51 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 
 			if (kernal == null)
 			{
-				// IRQ entry point
-				SetVal(0xffa0, Opcodes.PHAn);	// Save regs
-				SetVal(0xffa1, Opcodes.TXAn);
-				SetVal(0xffa2, Opcodes.PHAn);
-				SetVal(0xffa3, Opcodes.TYAn);
-				SetVal(0xffa4, Opcodes.PHAn);
-				SetVal(0xffa5, Opcodes.JMPi);	// Jump to IRQ routine
-				SetVal(0xffa6, 0x14);
-				SetVal(0xffa7, 0x03);
+				Array.Fill(rom, Opcodes.RTSn);
 
-				// Halt
-				SetVal(0xea39, 0x02);
+				// IRQ routine
+				SetVal(0xea31, Opcodes.JMPw);
+				SetVal(0xea32, 0x7e);
+				SetVal(0xea33, 0xea);
+
+				SetVal(0xea7e, Opcodes.NOPa);	// Clear IRQ
+				SetVal(0xea7f, 0x0d);
+				SetVal(0xea80, 0xdc);
+				SetVal(0xea81, Opcodes.PLAn);	// Restore registers
+				SetVal(0xea82, Opcodes.TAYn);
+				SetVal(0xea83, Opcodes.PLAn);
+				SetVal(0xea84, Opcodes.TAXn);
+				SetVal(0xea85, Opcodes.PLAn);
+				SetVal(0xea86, Opcodes.RTIn);	// Return from interrupt
+
+				// RESET
+				SetVal(0xfce2, 0x02);			// Halt
+
+				// NMI entry point
+				SetVal(0xfe43, Opcodes.SEIn);
+				SetVal(0xfe44, Opcodes.JMPi);	// Jump to NMI routine (Default: $fe47)
+				SetVal(0xfe45, 0x18);
+				SetVal(0xfe46, 0x03);
+
+				// NMI routine
+				SetVal(0xfe47, Opcodes.RTIn);
+
+				// IRQ entry point
+				SetVal(0xff48, Opcodes.PHAn);	// Save regs
+				SetVal(0xff49, Opcodes.TXAn);
+				SetVal(0xff4a, Opcodes.PHAn);
+				SetVal(0xff4b, Opcodes.TYAn);
+				SetVal(0xff4c, Opcodes.PHAn);
+				SetVal(0xff4d, Opcodes.JMPi);	// Jump to IRQ routine (Default: $ea31)
+				SetVal(0xff4e, 0x14);
+				SetVal(0xff4f, 0x03);
 
 				// Hardware vectors
-				SetVal(0xfffa, 0x39);			// NMI vector
-				SetVal(0xfffb, 0xea);
-				SetVal(0xfffc, 0x39);			// RESET vector
-				SetVal(0xfffd, 0xea);
-				SetVal(0xfffe, 0xa0);			// IRQ/BRK vector
+				SetVal(0xfffa, 0x43);			// NMI vector $fe43
+				SetVal(0xfffb, 0xfe);
+				SetVal(0xfffc, 0xe2);			// RESET vector $fce2
+				SetVal(0xfffd, 0xfc);
+				SetVal(0xfffe, 0x48);			// IRQ/BRK vector $ff48
 				SetVal(0xffff, 0xff);
 			}
 

@@ -123,7 +123,7 @@
   <data name="IDS_SID_ERR_BAD_ADDR" xml:space="preserve">
     <value>Bad address data</value>
   </data>
-  <data name="IDS_SID_ERR_BAD_BUFFER_SIZE" xml:space="preserve">
+  <data name="IDS_SID_ERR_BAD_BUF_SIZE" xml:space="preserve">
     <value>Bad buffer size</value>
   </data>
   <data name="IDS_SID_ERR_BAD_RELOC" xml:space="preserve">
@@ -144,7 +144,7 @@
   <data name="IDS_SID_ERR_EMPTY" xml:space="preserve">
     <value>No data to load</value>
   </data>
-  <data name="IDS_SID_ERR_ILLEGAL_INST" xml:space="preserve">
+  <data name="IDS_SID_ERR_ILLEGAL_INSN" xml:space="preserve">
     <value>Illegal instruction executed</value>
   </data>
   <data name="IDS_SID_ERR_INVALID" xml:space="preserve">
@@ -152,6 +152,9 @@
   </data>
   <data name="IDS_SID_ERR_INVALID_CHIP" xml:space="preserve">
     <value>Invalid chip model</value>
+  </data>
+  <data name="IDS_SID_ERR_INVALID_CONF" xml:space="preserve">
+    <value>Invalid configuration</value>
   </data>
   <data name="IDS_SID_ERR_INVALID_CW" xml:space="preserve">
     <value>Invalid combined waveforms strength</value>
@@ -168,7 +171,7 @@
   <data name="IDS_SID_ERR_NO_SPACE" xml:space="preserve">
     <value>No space to install PSID driver in C64 ram</value>
   </data>
-  <data name="IDS_SID_ERR_NO_TUNE" xml:space="preserve">
+  <data name="IDS_SID_ERR_NO_TUNE_LOADED" xml:space="preserve">
     <value>No tune loaded</value>
   </data>
   <data name="IDS_SID_ERR_PSID_MUS" xml:space="preserve">

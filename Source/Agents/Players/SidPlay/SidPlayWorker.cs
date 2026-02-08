@@ -504,7 +504,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			}
 			while (todo > 0);
 
-
 			// Setup the NostalgicPlayer channel
 			IChannel channel = VirtualChannels[0];
 			channel.PlayBuffer(leftOutputBuffer, 0, BufferSize, PlayBufferFlag._16Bit);
@@ -707,7 +706,44 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 7:
 				{
 					description = Resources.IDS_SID_INFODESCLINE7;
-					value = engineInfo.SidModel() == SidConfig.sid_model_t.MOS8580 ? "8580" : "6581";
+
+					value = string.Empty;
+
+					for (uint i = 0; i < engineInfo.NumberOfSids(); i++)
+					{
+						SidTuneInfo.model_t model = engineInfo.SidModel(i);
+
+						if (i > 0)
+							value += ", ";
+
+						switch (model)
+						{
+							case SidTuneInfo.model_t.SIDMODEL_6581:
+							{
+								value += "6581";
+								break;
+							}
+
+							case SidTuneInfo.model_t.SIDMODEL_8580:
+							{
+								value += "8580";
+								break;
+							}
+
+							case SidTuneInfo.model_t.SIDMODEL_ANY:
+							{
+								value += "Any";
+								break;
+							}
+
+							case SidTuneInfo.model_t.SIDMODEL_UNKNOWN:
+							{
+								value += "Unknown";
+								break;
+							}
+						}
+					}
+
 					break;
 				}
 

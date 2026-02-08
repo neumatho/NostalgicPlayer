@@ -259,11 +259,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 					// Configure, setup and install C64 environment/events
 					Initialize();
 				}
-				catch(Exception ex)
+				catch(Exception)
 				{
 					SidRelease();
 
-					errorString = ex.Message;
+//					errorString = ex.Message;
+					errorString = Resources.IDS_SID_ERR_INVALID_CONF;
 					cfg.sidEmulation = null;
 
 					if (cfg != config)
@@ -393,7 +394,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			// Make sure a tune is loaded
 			if (tune == null)
 			{
-				errorString = Resources.IDS_SID_ERR_NO_TUNE;
+				errorString = Resources.IDS_SID_ERR_NO_TUNE_LOADED;
 				return -1;
 			}
 
@@ -430,7 +431,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			}
 			catch (HaltInstructionException)
 			{
-				errorString = Resources.IDS_SID_ERR_ILLEGAL_INST;
+				errorString = Resources.IDS_SID_ERR_ILLEGAL_INSN;
 				return -1;
 			}
 		}
@@ -527,12 +528,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				}
 				catch (HaltInstructionException)
 				{
-					errorString = Resources.IDS_SID_ERR_ILLEGAL_INST;
+					errorString = Resources.IDS_SID_ERR_ILLEGAL_INSN;
 					isPlaying = state_t.STOPPING;
 				}
 				catch (BadBufferSize)
 				{
-					errorString = Resources.IDS_SID_ERR_BAD_BUFFER_SIZE;
+					errorString = Resources.IDS_SID_ERR_BAD_BUF_SIZE;
 					isPlaying = state_t.STOPPING;
 				}
 			}
@@ -621,7 +622,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 			c64.ResetCpu();
 
-			startTime = c64.GetTimeMs();
 #if false
 			// Run for some cycles until the initialization routine is done
 			for (int j = 0; j < 50; j++)
@@ -630,6 +630,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			mixer.ClockChips();
 			mixer.ResetBufs();
 #endif
+			startTime = c64.GetTimeMs();
 		}
 
 
@@ -788,6 +789,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// Get the SID model
 		/// </summary>
 		/********************************************************************/
+		private SidTuneInfo.model_t GetSidModel(SidConfig.sid_model_t sidModel)
+		{
+			switch (sidModel)
+			{
+				case SidConfig.sid_model_t.MOS6581:
+					return SidTuneInfo.model_t.SIDMODEL_6581;
+
+				case SidConfig.sid_model_t.MOS8580:
+					return SidTuneInfo.model_t.SIDMODEL_8580;
+
+				default:
+					return SidTuneInfo.model_t.SIDMODEL_UNKNOWN;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the SID model
+		/// </summary>
+		/********************************************************************/
 		private SidConfig.sid_model_t GetSidModel(SidTuneInfo.model_t sidModel, SidConfig.sid_model_t defaultModel, bool force)
 		{
 			SidTuneInfo.model_t tuneModel = sidModel;
@@ -868,11 +891,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		{
 			if (builder != null)
 			{
+				info.sidModels.Clear();
+
 				SidTuneInfo tuneInfo = tune.GetInfo();
 
 				// Setup base SID
 				SidConfig.sid_model_t userModel = GetSidModel(tuneInfo.SidModel(0), defaultModel, forced);
-				info.sidModel = userModel;
 
 				SidEmu s = builder.Lock(c64.GetEventScheduler(), userModel, digiBoost);
 				if (!builder.GetStatus())
@@ -880,6 +904,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 				c64.SetBaseSid(s);
 				mixer.AddSid(s);
+				info.sidModels.Add(GetSidModel(userModel));
 
 				// Setup extra SIDs if needed
 				if (extraSidAddresses.Count != 0)
@@ -902,6 +927,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 							throw new ConfigErrorException(Resources.IDS_SID_ERR_UNSUPPORTED_SID_ADDR);
 
 						mixer.AddSid(s);
+						info.sidModels.Add(GetSidModel(userModel));
 					}
 				}
 			}
