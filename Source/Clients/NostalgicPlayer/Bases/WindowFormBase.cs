@@ -51,6 +51,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Initialize the form
+		/// </summary>
+		/********************************************************************/
+		public void InitializeBaseForm(ISettings settings)
+		{
+			allWindowSettings = settings;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will update the window settings
 		/// </summary>
 		/********************************************************************/
@@ -68,18 +80,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 			}
 
 			windowSettings.Maximized = WindowState == FormWindowState.Maximized;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initialize the form
-		/// </summary>
-		/********************************************************************/
-		protected void InitializeForm(ISettings settings)
-		{
-			allWindowSettings = settings;
 		}
 
 

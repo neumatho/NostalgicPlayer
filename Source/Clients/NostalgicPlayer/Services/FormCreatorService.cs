@@ -39,7 +39,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		{
 			T form = _applicationContext.Container.GetInstance<T>();
 
-			MethodInfo initializeMethod = typeof(T).GetMethod("InitializeForm", BindingFlags.Public | BindingFlags.Instance);
+			MethodInfo initializeMethod = typeof(T).GetMethod("InitializeBaseForm", BindingFlags.Public | BindingFlags.Instance);
+
+			if (initializeMethod != null)
+			{
+				ParameterInfo[] parameters = initializeMethod.GetParameters();
+				object[] arguments = parameters.Select(p => _applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
+
+				initializeMethod.Invoke(form, arguments);
+			}
+
+			initializeMethod = typeof(T).GetMethod("InitializeForm", BindingFlags.Public | BindingFlags.Instance);
 
 			if (initializeMethod != null)
 			{

@@ -156,8 +156,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			userSettings = settings;
 			_formCreatorService = formCreatorService;
 
-			base.InitializeForm(settings);
-
 			// Disable escape key closing
 			disableEscapeKey = true;
 
