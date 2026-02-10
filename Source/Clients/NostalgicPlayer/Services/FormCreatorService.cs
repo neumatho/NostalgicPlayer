@@ -35,9 +35,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// InitializeForm() on it while resolving dependencies
 		/// </summary>
 		/********************************************************************/
-		public T GetFormInstance<T>() where T : Form
+		public T GetFormInstance<T>() where T : Form, new()
 		{
-			T form = _applicationContext.Container.GetInstance<T>();
+			T form = new T();
 
 			CallInitializeMethod(form, "InitializeBaseForm");
 			CallInitializeMethod(form, "InitializeForm");

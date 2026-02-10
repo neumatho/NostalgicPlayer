@@ -34,7 +34,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			container.RegisterPlatform();
 
 			RegisterServices(container);
-			RegisterWindows(container);
 
 			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
 		}
@@ -52,36 +51,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 
 			container.RegisterSingleton<IProgressCallbackFactory, ProgressCallbackFactory>();
 			container.RegisterSingleton<SplashScreenService>();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Register all the different windows into the container
-		/// </summary>
-		/********************************************************************/
-		private static void RegisterWindows(Container container)
-		{
-			RegisterSingleWindow<SplashScreenForm>(container);
-			RegisterSingleWindow<MainWindowForm>(container);
-			RegisterSingleWindow<NewVersionWindowForm>(container);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Register a single window into the container
-		/// </summary>
-		/********************************************************************/
-		private static void RegisterSingleWindow<T>(Container container) where T : Form
-		{
-			// Register windows as transient - Forms manage their own disposal lifecycle
-			// We need to tell SimpleInjector not to dispose them automatically
-			Registration registration = Lifestyle.Transient.CreateRegistration<T>(container);
-			registration.SuppressDiagnosticWarning(DiagnosticType.DisposableTransientComponent, "Forms manage their own disposal");
-			container.AddRegistration(typeof(T), registration);
 		}
 	}
 }
