@@ -39,27 +39,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		{
 			T form = _applicationContext.Container.GetInstance<T>();
 
-			MethodInfo initializeMethod = typeof(T).GetMethod("InitializeBaseForm", BindingFlags.Public | BindingFlags.Instance);
-
-			if (initializeMethod != null)
-			{
-				ParameterInfo[] parameters = initializeMethod.GetParameters();
-				object[] arguments = parameters.Select(p => _applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
-
-				initializeMethod.Invoke(form, arguments);
-			}
-
-			initializeMethod = typeof(T).GetMethod("InitializeForm", BindingFlags.Public | BindingFlags.Instance);
-
-			if (initializeMethod != null)
-			{
-				ParameterInfo[] parameters = initializeMethod.GetParameters();
-				object[] arguments = parameters.Select(p => _applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
-
-				initializeMethod.Invoke(form, arguments);
-			}
+			CallInitializeMethod(form, "InitializeBaseForm");
+			CallInitializeMethod(form, "InitializeForm");
 
 			return form;
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Try to find the given method and call it
+		/// </summary>
+		/********************************************************************/
+		private void CallInitializeMethod(Form form, string methodName)
+		{
+			MethodInfo initializeMethod = form.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
+
+			if (initializeMethod != null)
+			{
+				ParameterInfo[] parameters = initializeMethod.GetParameters();
+				object[] arguments = parameters.Select(p => _applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
+
+				initializeMethod.Invoke(form, arguments);
+			}
+		}
+		#endregion
 	}
 }
