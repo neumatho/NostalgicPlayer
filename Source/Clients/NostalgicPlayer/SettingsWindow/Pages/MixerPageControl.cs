@@ -10,6 +10,7 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
@@ -103,13 +104,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, IMainWindowApi mainWindow, ISettings userSettings, ISettings windowSettings)
+		public void InitSettings(Manager agentManager, ModuleHandler modHandler, IMainWindowApi mainWindow, SettingsService settingsService, ISettings windowSettings)
 		{
 			manager = agentManager;
 			moduleHandler = modHandler;
 			mainWindowApi = mainWindow;
 
-			soundSettings = new SoundSettings(userSettings);
+			soundSettings = new SoundSettings(settingsService);
 		}
 
 

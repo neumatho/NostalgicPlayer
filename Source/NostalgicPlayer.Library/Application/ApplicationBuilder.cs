@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		/********************************************************************/
 		public void Dispose()
 		{
-			container.Dispose();
+			container?.Dispose();
 		}
 
 

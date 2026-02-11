@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
@@ -22,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public HelpWindowForm(IMainWindowApi mainWindow, OptionSettings optionSettings)
+		public HelpWindowForm(IMainWindowApi mainWindow)
 		{
 			InitializeComponent();
 
@@ -33,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow, optionSettings);
+				InitializeWindow(mainWindow);
 
 				// Load window settings
 				LoadWindowSettings("HelpWindow");

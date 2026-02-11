@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Timer = System.Windows.Forms.Timer;
@@ -40,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private readonly IMainWindowApi mainWindow;
 		private readonly Timer searchDebounceTimer;
 		private readonly Timer searchTimer;
-		private readonly ModLibrarySettings settings;
+		private readonly ModLibraryWindowSettings settings;
 		private bool addDownloadsToPlaylist = true;
 
 		private string cacheDirectory;
@@ -59,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModLibraryWindowForm(IMainWindowApi mainWindow, OptionSettings optionSettings)
+		public ModLibraryWindowForm(IMainWindowApi mainWindow)
 		{
 			InitializeComponent();
 
@@ -101,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			{
 				platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
 
-				InitializeWindow(mainWindow, optionSettings);
+				InitializeWindow(mainWindow);
 
 				// Load window settings
 				LoadWindowSettings("ModLibraryWindow");
@@ -135,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
 
 				// Load and apply ModLibrary settings (must be done AFTER timer initialization)
-				settings = new ModLibrarySettings(allWindowSettings);
+				settings = new ModLibraryWindowSettings(allWindowSettings);
 				data.IsOfflineMode = settings.IsOfflineMode;
 				modeTabControl.SelectedIndex = settings.IsOfflineMode ? 1 : 0;
 				flatViewCheckBox.Checked = settings.FlatViewEnabled;
@@ -1648,9 +1649,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		private string GetCurrentModLibraryPath()
 		{
-			ISettings userSettings = DependencyInjection.Container.GetInstance<ISettings>();
-			userSettings.LoadSettings("Settings");
-			PathSettings pathSettings = new(userSettings);
+			PathSettings pathSettings = DependencyInjection.Container.GetInstance<PathSettings>();
 			return pathSettings.ModLibrary ?? string.Empty;
 		}
 

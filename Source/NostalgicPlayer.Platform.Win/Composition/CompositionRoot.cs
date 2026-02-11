@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Platform.Composition
 		/********************************************************************/
 		public static void RegisterPlatform(this Container container)
 		{
-			container.Register<IPlatformPath, PlatformPath>();
+			container.RegisterSingleton<IPlatformPath, PlatformPath>();
 		}
 	}
 }

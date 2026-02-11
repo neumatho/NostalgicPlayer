@@ -7,7 +7,6 @@ using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.External;
 
@@ -30,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusWindowForm(IMainWindowApi mainWindow, OptionSettings optionSettings)
+		public AudiusWindowForm(IMainWindowApi mainWindow)
 		{
 			InitializeComponent();
 
@@ -38,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow, optionSettings);
+				InitializeWindow(mainWindow);
 
 				// Load window settings
 				LoadWindowSettings("AudiusWindow");

@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 
@@ -18,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// <summary>
 		/// Will prepare to handle the settings
 		/// </summary>
-		void InitSettings(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, ISettings userSettings, ISettings windowSettings);
+		void InitSettings(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, SettingsService settingsService, ISettings windowSettings);
 
 		/// <summary>
 		/// Will make a backup of settings that can be changed in real-time

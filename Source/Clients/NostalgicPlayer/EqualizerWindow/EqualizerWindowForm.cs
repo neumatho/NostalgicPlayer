@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public EqualizerWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optSettings, SoundSettings soundSettings)
+		public EqualizerWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, SoundSettings soundSettings)
 		{
 			InitializeComponent();
 
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			Text = Resources.IDS_SETTINGS_MIXER_EQUALIZER;
 
 			// Initialize the window
-			InitializeWindow(mainWindow, optSettings);
+			InitializeWindow(mainWindow);
 			LoadWindowSettings(WindowSettingsName);
 
 			// Create and configure equalizer control

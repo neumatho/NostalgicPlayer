@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Linq;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
@@ -76,9 +77,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleSettings(ISettings userSettings)
+		public ModuleSettings(SettingsService settingsService)
 		{
-			settings = userSettings;
+			settings = settingsService.Settings;
 		}
 
 

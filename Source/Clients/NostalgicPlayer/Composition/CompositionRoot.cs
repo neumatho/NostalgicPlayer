@@ -3,17 +3,13 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Library.Application;
 using Polycode.NostalgicPlayer.Logic.Composition;
 using Polycode.NostalgicPlayer.Platform.Composition;
 using SimpleInjector;
-using SimpleInjector.Diagnostics;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 {
@@ -33,9 +29,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			container.RegisterExternal();
 			container.RegisterPlatform();
 
+			RegisterSettings(container);
 			RegisterServices(container);
 
 			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all the different settings into the container
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterSettings(Container container)
+		{
+			container.RegisterSingleton<SettingsService>();
+
+			container.RegisterSingleton<ModuleSettings>();
+			container.RegisterSingleton<OptionSettings>();
+			container.RegisterSingleton<PathSettings>();
+			container.RegisterSingleton<SoundSettings>();
 		}
 
 

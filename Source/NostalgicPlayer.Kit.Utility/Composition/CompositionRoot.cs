@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility.Composition
 		public static void RegisterUtility(this Container container)
 		{
 			container.Register<ISettings, Settings>();
+			container.RegisterSingleton<ISettingsFactory, SettingsFactory>();
 		}
 	}
 }

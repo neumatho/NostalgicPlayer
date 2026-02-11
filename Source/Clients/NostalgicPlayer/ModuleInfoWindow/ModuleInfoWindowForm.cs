@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optionSettings, ModuleSettings moduleSettings)
+		public ModuleInfoWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, ModuleSettings moduleSettings)
 		{
 			InitializeComponent();
 
@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			{
 				animationLock = new Lock();
 
-				InitializeWindow(mainWindow, optionSettings);
+				InitializeWindow(mainWindow);
 
 				// Load window settings
 				LoadWindowSettings("ModuleInfoWindow");

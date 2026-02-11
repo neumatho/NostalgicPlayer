@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 	/// <summary>
 	/// This class holds the ModLibrary-specific settings
 	/// </summary>
-	public class ModLibrarySettings
+	public class ModLibraryWindowSettings
 	{
 		private readonly ISettings settings;
 
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModLibrarySettings(ISettings windowSettings)
+		public ModLibraryWindowSettings(ISettings windowSettings)
 		{
 			settings = windowSettings;
 		}
@@ -43,10 +43,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public bool IsOfflineMode
 		{
 			get => settings.GetBoolEntry("ModLibrary", "IsOfflineMode", false);
-			set
-			{
-				settings.SetBoolEntry("ModLibrary", "IsOfflineMode", value);
-			}
+
+			set => settings.SetBoolEntry("ModLibrary", "IsOfflineMode", value);
 		}
 
 
@@ -59,10 +57,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public bool FlatViewEnabled
 		{
 			get => settings.GetBoolEntry("ModLibrary", "FlatViewEnabled", false);
-			set
-			{
-				settings.SetBoolEntry("ModLibrary", "FlatViewEnabled", value);
-			}
+
+			set => settings.SetBoolEntry("ModLibrary", "FlatViewEnabled", value);
 		}
 
 
@@ -75,10 +71,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public bool FavoritesOnlyEnabled
 		{
 			get => settings.GetBoolEntry("ModLibrary", "FavoritesOnlyEnabled", false);
-			set
-			{
-				settings.SetBoolEntry("ModLibrary", "FavoritesOnlyEnabled", value);
-			}
+
+			set => settings.SetBoolEntry("ModLibrary", "FavoritesOnlyEnabled", value);
 		}
 
 
@@ -91,10 +85,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public bool PlayImmediately
 		{
 			get => settings.GetBoolEntry("ModLibrary", "PlayImmediately", true);
-			set
-			{
-				settings.SetBoolEntry("ModLibrary", "PlayImmediately", value);
-			}
+
+			set => settings.SetBoolEntry("ModLibrary", "PlayImmediately", value);
 		}
 
 
@@ -107,10 +99,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public string SearchText
 		{
 			get => settings.GetStringEntry("ModLibrary", "SearchText", string.Empty);
-			set
-			{
-				settings.SetStringEntry("ModLibrary", "SearchText", value);
-			}
+
+			set => settings.SetStringEntry("ModLibrary", "SearchText", value);
 		}
 
 
@@ -123,10 +113,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public int SearchMode
 		{
 			get => settings.GetIntEntry("ModLibrary", "SearchMode", 0);
-			set
-			{
-				settings.SetIntEntry("ModLibrary", "SearchMode", value);
-			}
+
+			set => settings.SetIntEntry("ModLibrary", "SearchMode", value);
 		}
 
 
@@ -139,10 +127,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public int FlatViewSortOrder
 		{
 			get => settings.GetIntEntry("ModLibrary", "FlatViewSortOrder", 0);
-			set
-			{
-				settings.SetIntEntry("ModLibrary", "FlatViewSortOrder", value);
-			}
+
+			set => settings.SetIntEntry("ModLibrary", "FlatViewSortOrder", value);
 		}
 
 
@@ -155,10 +141,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public string LastOnlinePath
 		{
 			get => settings.GetStringEntry("ModLibrary", "LastOnlinePath", string.Empty);
-			set
-			{
-				settings.SetStringEntry("ModLibrary", "LastOnlinePath", value);
-			}
+
+			set => settings.SetStringEntry("ModLibrary", "LastOnlinePath", value);
 		}
 
 
@@ -171,10 +155,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public string LastOfflinePath
 		{
 			get => settings.GetStringEntry("ModLibrary", "LastOfflinePath", string.Empty);
-			set
-			{
-				settings.SetStringEntry("ModLibrary", "LastOfflinePath", value);
-			}
+
+			set => settings.SetStringEntry("ModLibrary", "LastOfflinePath", value);
 		}
 
 
@@ -211,6 +193,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public int ColumnWidthName
 		{
 			get => settings.GetIntEntry("ModLibrary", "ColumnWidthName", 400);
+
 			set => settings.SetIntEntry("ModLibrary", "ColumnWidthName", value);
 		}
 
@@ -224,6 +207,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public int ColumnWidthPath
 		{
 			get => settings.GetIntEntry("ModLibrary", "ColumnWidthPath", 300);
+
 			set => settings.SetIntEntry("ModLibrary", "ColumnWidthPath", value);
 		}
 
@@ -237,6 +221,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public int ColumnWidthSize
 		{
 			get => settings.GetIntEntry("ModLibrary", "ColumnWidthSize", 100);
+
 			set => settings.SetIntEntry("ModLibrary", "ColumnWidthSize", value);
 		}
 	}

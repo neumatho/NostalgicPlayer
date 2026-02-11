@@ -20,6 +20,5 @@ namespace Polycode.NostalgicPlayer.Platform
 		/// </summary>
 		/********************************************************************/
 		public string SettingsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
-
 	}
 }

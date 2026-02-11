@@ -7,7 +7,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
@@ -31,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AgentSettingsWindowForm(Manager agentManager, AgentInfo agentInfo, IMainWindowApi mainWindow, OptionSettings optionSettings)
+		public AgentSettingsWindowForm(Manager agentManager, AgentInfo agentInfo, IMainWindowApi mainWindow)
 		{
 			InitializeComponent();
 
@@ -40,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow, optionSettings);
+				InitializeWindow(mainWindow);
 
 				// Set the title of the window
 				Text = string.Format(Resources.IDS_AGENTSETTINGS_TITLE, agentInfo.TypeName);

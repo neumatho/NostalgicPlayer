@@ -11,7 +11,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
-using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
-		private readonly ISettings userSettings;
+		private readonly SettingsService settingsService;
 		private readonly SettingsWindowSettings windowSettings;
 
 		private const int Page_Options = 0;
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, OptionSettings optionSettings, ISettings userSettings)
+		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, SettingsService settingsService)
 		{
 			InitializeComponent();
 
@@ -51,11 +51,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// Remember the arguments
 			this.agentManager = agentManager;
 			this.moduleHandler = moduleHandler;
-			this.userSettings = userSettings;
+			this.settingsService = settingsService;
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow, optionSettings);
+				InitializeWindow(mainWindow);
 
 				// Load window settings
 				LoadWindowSettings("SettingsWindow");
@@ -213,11 +213,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private void InitSettings()
 		{
 			// Initialize the tab pages
-			optionsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
-			modulesPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
-			pathsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
-			mixerPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
-			agentsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, userSettings, allWindowSettings);
+			optionsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
+			modulesPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
+			pathsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
+			mixerPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
+			agentsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
 
 			// Make a backup of the settings. This is used for real-time
 			// settings, that can be restored back when clicking cancel
@@ -278,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			agentsPageControl.WriteSettings();
 
 			// Save the settings to disk
-			userSettings.SaveSettings();
+			settingsService.SaveSettings();
 
 			// Update main window UI based on changed settings
 			mainWindowApi?.EnableUserInterfaceSettings();

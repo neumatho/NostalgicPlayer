@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -21,9 +22,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SoundSettings(ISettings userSettings)
+		public SoundSettings(SettingsService settingsService)
 		{
-			settings = userSettings;
+			settings = settingsService.Settings;
 		}
 
 
