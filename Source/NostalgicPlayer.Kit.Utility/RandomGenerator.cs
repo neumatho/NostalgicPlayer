@@ -79,7 +79,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				uint xorShifted = (uint)(((oldState >> 18) ^ oldState) >> 27);
 				uint rot = (uint)(oldState >> 59);
 
-				return Math.Abs((int)((xorShifted >> (int)rot) | (xorShifted << ((-(int)rot) & 31))));
+				uint result = (xorShifted >> (int)rot) | (xorShifted << ((-(int)rot) & 31));
+
+				return (int)(result & 0x7fffffff);
 			}
 		}
 
