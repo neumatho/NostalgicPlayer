@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Library.Application;
+using Polycode.NostalgicPlayer.Logic.Composition;
 using Polycode.NostalgicPlayer.Platform.Composition;
 
 namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
@@ -31,14 +32,17 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 
 			try
 			{
-				new ApplicationBuilder(args)
-					.ConfigureContainer(context =>
+				using (ApplicationBuilder builder = new ApplicationBuilder(args))
+				{
+					builder.ConfigureContainer(context =>
 					{
+						context.Container.RegisterLogic();
 						context.Container.RegisterPlatform();
 						context.Container.RegisterSingleton<IApplicationHost, ConsoleApplication>();
 					})
 					.Build()
 					.Run();
+				}
 			}
 			catch (Exception ex)
 			{

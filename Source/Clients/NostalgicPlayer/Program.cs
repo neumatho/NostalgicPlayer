@@ -25,8 +25,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		{
 			try
 			{
-				new ApplicationBuilder(Environment.GetCommandLineArgs())
-					.ConfigureContainer(context =>
+				using (ApplicationBuilder builder = new ApplicationBuilder(Environment.GetCommandLineArgs()))
+				{
+					builder.ConfigureContainer(context =>
 					{
 						CompositionRoot.Register(context.Container);
 					})
@@ -38,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 					})
 					.Build()
 					.Run();
+				}
 			}
 			catch (Exception ex)
 			{

@@ -3,16 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Kit.Composition;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Library.Application
 {
 	/// <summary>
 	/// Use this to configure and start your application
 	/// </summary>
-	public class ApplicationBuilder
+	public class ApplicationBuilder : IDisposable
 	{
 		/// <summary>
 		/// 
@@ -29,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Library.Application
 
 		private readonly string[] arguments;
 
+		private Container container;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -37,6 +41,18 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		public ApplicationBuilder(string[] args)
 		{
 			arguments = args;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Dispose the builder
+		/// </summary>
+		/********************************************************************/
+		public void Dispose()
+		{
+			container.Dispose();
 		}
 
 
@@ -78,6 +94,7 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		{
 			IApplicationContext context = InitializeApplicationContext();
 
+			container = context.Container;
 			DependencyInjection.Container = context.Container;
 
 			if (initialize != null)
