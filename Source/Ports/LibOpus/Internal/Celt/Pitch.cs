@@ -121,28 +121,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Pitch_Downsample(CPointer<CPointer<celt_sig>> x, CPointer<opus_val16> x_lp, c_int len, c_int C, c_int arch)
+		public static void Pitch_Downsample(CPointer<CPointer<celt_sig>> x, CPointer<opus_val16> x_lp, c_int len, c_int C, c_int factor, c_int arch)
 		{
 			opus_val32[] ac = new opus_val32[5];
 			opus_val16 tmp = Constants.Q15One;
 			opus_val16[] lpc = new opus_val16[4];
 			opus_val16[] lpc2 = new opus_val16[5];
 			opus_val16 c1 = Arch.QCONST16(0.8f, 15);
+			c_int offset = factor / 2;
 
-			for (c_int i = 1; i < (len >> 1); i++)
-				x_lp[i] = 0.25f * x[0][2 * i - 1] + 0.25f * x[0][2 * i + 1] + 0.5f * x[0][2 * i];
+			for (c_int i = 1; i < len; i++)
+				x_lp[i] = (0.25f * x[0][(factor * i) - offset]) + (0.25f * x[0][(factor * i) + offset]) + (0.5f * x[0][factor * i]);
 
-			x_lp[0] = 0.25f * x[0][1] + 0.5f * x[0][0];
+			x_lp[0] = (0.25f * x[0][offset]) + (0.5f * x[0][0]);
 
 			if (C == 2)
 			{
-				for (c_int i = 1; i < (len >> 1); i++)
-					x_lp[i] += 0.25f * x[1][2 * i - 1] + 0.25f * x[1][2 * i + 1] + 0.5f * x[1][2 * i];
+				for (c_int i = 1; i < len; i++)
+					x_lp[i] += (0.25f * x[1][(factor * i) - offset]) + (0.25f * x[1][(factor * i) + offset]) + (0.5f * x[1][factor * i]);
 
-				x_lp[0] += 0.25f * x[1][1] + 0.5f * x[1][0];
+				x_lp[0] += (0.25f * x[1][offset]) + (0.5f * x[1][0]);
 			}
 
-			Celt_Lpc._Celt_Autocorr(x_lp, ac, null, 0, 4, len >> 1, arch);
+			Celt_Lpc._Celt_Autocorr(x_lp, ac, null, 0, 4, len, arch);
 
 			// Noise floor -40 dB
 			ac[0] *= 1.0001f;
@@ -166,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			lpc2[3] = lpc[3] + Arch.MULT16_16_Q15(c1, lpc[2]);
 			lpc2[4] = Arch.MULT16_16_Q15(c1, lpc[3]);
 
-			Celt_Fir5(x_lp, lpc2, len >> 1);
+			Celt_Fir5(x_lp, lpc2, len);
 		}
 
 

@@ -85,9 +85,48 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static celt_glog MING(celt_glog a, celt_glog b)
+		{
+			return MIN32(a, b);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static celt_glog MAXG(celt_glog a, celt_glog b)
+		{
+			return MAX32(a, b);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static c_int IMIN(c_int a, c_int b)
 		{
 			return a < b ? a : b;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int IMAX(c_int a, c_int b)
+		{
+			return a > b ? a : b;
 		}
 
 
@@ -111,9 +150,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int IMAX(c_int a, c_int b)
+		public static c_float FMAX(c_float a, c_float b)
 		{
 			return a > b ? a : b;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_float FMIN(c_float a, c_float b)
+		{
+			return a < b ? a : b;
 		}
 
 
@@ -151,6 +203,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static opus_val32 QCONST32(opus_val32 x, int bits)
+		{
+			return x;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static celt_glog GCONST(celt_glog x)
 		{
 			return x;
 		}
@@ -254,7 +319,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_val32 SHL32_ovflw(opus_val32 a, int shift)
+		{
+			return a;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static opus_val32 PSHR32(opus_val32 a, int shift)
+		{
+			return a;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_val32 PSHR32_ovflw(opus_val32 a, int shift)
 		{
 			return a;
 		}
@@ -540,6 +631,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_val32 MULT_COEF_32(celt_coef a, opus_val32 b)
+		{
+			return a * b;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static celt_coef MULT_COEF_TAPS(opus_val16 a, opus_val16 b)
+		{
+			return a * b;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static celt_coef MULT_COEF(celt_coef a, celt_coef b)
+		{
+			return a * b;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static opus_val16 DIV32_16(opus_val32 a, opus_val16 b)
 		{
 			return a / b;
@@ -553,7 +683,59 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_val16 SCALEOUT(opus_val16 a)
+		public static opus_val16 COEF2VAL16(celt_coef x)
+		{
+			return x;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_res SIG2RES(celt_sig a)
+		{
+			return (1.0f / Constants.Celt_Sig_Scale) * a;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_int16 RES2INT16(opus_res a)
+		{
+			return Float_Cast.Float2Int16(a);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_float RES2FLOAT(opus_res a)
+		{
+			return a;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_res INT16TORES(opus_int16 a)
 		{
 			return a * (1.0f / Constants.Celt_Sig_Scale);
 		}
@@ -566,9 +748,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_val16 SIG2WORD16(celt_sig x)
+		public static opus_res ADD_RES(opus_res a, opus_res b)
 		{
-			return x;
+			return ADD32(a, b);
 		}
 	}
 }

@@ -97,10 +97,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Unquant_Coarse_Energy(CeltMode m, c_int start, c_int end, CPointer<opus_val16> oldEBands, bool intra, Ec_Dec dec, c_int C, c_int LM)
+		public static void Unquant_Coarse_Energy(CeltMode m, c_int start, c_int end, CPointer<celt_glog> oldEBands, bool intra, Ec_Dec dec, c_int C, c_int LM)
 		{
 			byte[] prob_model = e_prob_model[LM][intra ? 1 : 0];
-			opus_val32[] prev = [ 0, 0 ];
+			opus_val64[] prev = [ 0, 0 ];
 			opus_val16 coef;
 			opus_val16 beta;
 
@@ -161,21 +161,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Unquant_Fine_Energy(CeltMode m, c_int start, c_int end, CPointer<opus_val16> oldEBands, CPointer<c_int> fine_quant, Ec_Dec dec, c_int C)
+		public static void Unquant_Fine_Energy(CeltMode m, c_int start, c_int end, CPointer<celt_glog> oldEBands, CPointer<c_int> prev_quant, CPointer<c_int> extra_quant, Ec_Dec dec, c_int C)
 		{
 			// Decode finer resolution
 			for (c_int i = start; i < end; i++)
 			{
-				if (fine_quant[i] <= 0)
+				opus_int16 extra = (opus_int16)extra_quant[i];
+
+				if (extra_quant[i] <= 0)
 					continue;
+
+				if ((EntCode.Ec_Tell(dec) + (C * extra_quant[i])) > ((opus_int32)dec.storage * 8))
+					continue;
+
+				opus_int16 prev = (opus_int16)(prev_quant.IsNotNull ? prev_quant[i] : 0);
 
 				c_int c = 0;
 
 				do
 				{
-					c_int q2 = (c_int)EntDec.Ec_Dec_Bits(dec, (c_uint)fine_quant[i]);
-					opus_val16 offset = (q2 + 0.5f) * (1 << (14 - fine_quant[i])) * (1.0f / 16384) - 0.5f;
-					oldEBands[i + c * m.nbEBands] += offset;
+					c_int q2 = (c_int)EntDec.Ec_Dec_Bits(dec, (c_uint)extra);
+					celt_glog offset = ((q2 + 0.5f) * (1 << (14 - extra)) * (1.0f / 16384)) - 0.5f;
+					offset *= (1 << (14 - prev)) * (1.0f / 16384);
+					oldEBands[i + (c * m.nbEBands)] += offset;
 				}
 				while (++c < C);
 			}
@@ -188,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Unquant_Energy_Finalise(CeltMode m, c_int start, c_int end, CPointer<opus_val16> oldEBands, CPointer<c_int> fine_quant, CPointer<bool> fine_priority, c_int bits_left, Ec_Dec dec, c_int C)
+		public static void Unquant_Energy_Finalise(CeltMode m, c_int start, c_int end, CPointer<celt_glog> oldEBands, CPointer<c_int> fine_quant, CPointer<bool> fine_priority, c_int bits_left, Ec_Dec dec, c_int C)
 		{
 			bool[] prioList = [ false, true ];
 
@@ -205,8 +213,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					do
 					{
 						c_int q2 = (c_int)EntDec.Ec_Dec_Bits(dec, 1);
-						opus_val16 offset = (q2 - 0.5f) * (1 << (14 - fine_quant[i] - 1)) * (1.0f / 16384);
-						oldEBands[i + c * m.nbEBands] += offset;
+						celt_glog offset = (q2 - 0.5f) * (1 << (14 - fine_quant[i] - 1)) * (1.0f / 16384);
+
+						if (oldEBands.IsNotNull)
+							oldEBands[i + (c * m.nbEBands)] += offset;
+
 						bits_left--;
 					}
 					while (++c < C);

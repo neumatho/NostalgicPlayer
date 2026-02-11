@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 
 				psDec.ec_prevLagIndex = psDec.indices.lagIndex;
 
-				// Get countour index
+				// Get contour index
 				psDec.indices.contourIndex = (opus_int8)EntDec.Ec_Dec_Icdf(psRangeDec, psDec.pitch_contour_iCDF, 8);
 
 				/********************/

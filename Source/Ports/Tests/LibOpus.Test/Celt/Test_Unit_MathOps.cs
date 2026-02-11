@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
@@ -177,6 +178,39 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 				c_float error = Math.Abs(x - (MathOps.Celt_Log2(MathOps.Celt_Exp2(x))));
 				if (error > 0.001)
 					Assert.Fail($"celt_log2/celt_exp2 failed: x = {x}, error = {error}");
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Atan2()
+		{
+			c_float error_threshold = 1.5e-07f;
+			c_float max_error = 0;
+
+			for (c_float x = 0.0f; x < 1.0f; x += 0.007f)
+			{
+				for (c_float y = 0.0f; y < 1.0f; y += 0.07f)
+				{
+					if ((x == 0) && (y == 0))
+					{
+						// atan2(0,0) is undefined behavior
+						continue;
+					}
+
+					c_float error = (c_float)CMath.fabs((0.636619772367581f * CMath.atan2(y, x)) - MathOps.Celt_Atanp_Norm(y, x));
+					if (max_error < error)
+						max_error = error;
+
+					if (error > error_threshold)
+						Assert.Fail($"celt_atan2p_norm failed: (fabs)(2/pi*atan2(y,x) - celt_atan2p_norm(y,x))>{error_threshold} (x = {x}, y = {y}, error = {error})");
+				}
 			}
 		}
 	}

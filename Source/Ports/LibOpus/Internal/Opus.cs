@@ -19,17 +19,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Opus_Pcm_Soft_Clip(CPointer<c_float> _x, c_int N, c_int C, CPointer<c_float> declip_mem)
+		public static void Opus_Pcm_Soft_Clip_Impl(CPointer<c_float> _x, c_int N, c_int C, CPointer<c_float> declip_mem, c_int arch)
 		{
 			if ((C < 1) || (N < 1) || _x.IsNull || declip_mem.IsNull)
 				return;
 
-			// First thing: saturate everything to +/- 2 which is the highest level our
-			// non-linearity can handle. At the point where the signal reaches +/-2,
-			// the derivative will be zero anyway, so this doesn't introduce any
-			// discontinuity in the derivative
-			for (c_int i = 0; i < (N * C); i++)
-				_x[i] = Arch.MAX16(-2.0f, Arch.MIN16(2.0f, _x[i]));
+			// Clamp everything within the range [-2, +2] which is the domain of the soft
+			// clipping non-linearity. Outside the defined range the derivative will be zero,
+			// therefore there is no discontinuity introduced here. The implementation
+			// might provide a hint if all input samples are within the [-1, +1] range.
+			//
+			// `opus_limit2_checkwithin1()`:
+			//    - Clamps all samples within the valid range [-2, +2].
+			//    - Generic C implementation:
+			//       * Does not attempt early detection whether samples are within hinted range.
+			//       * Always returns 0.
+			//    - Architecture specific implementation:
+			//       * Uses SIMD instructions to efficiently detect if all samples are
+			//         within the hinted range [-1, +1].
+			//       * Returns 1 if no samples exceed the hinted range, 0 otherwise.
+			//
+			// `all_within_neg1pos1`:
+			//    - Optimization hint to skip per-sample out-of-bound checks.
+			//      If true, the check can be skipped
+			c_int all_Within_Neg1Pos1 = MathOps.Opus_Limit2_CheckWithin1(_x, N * C, arch);
 
 			for (c_int c = 0; c < C; c++)
 			{
@@ -53,10 +66,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 				{
 					c_int i;
 
-					for (i = curr; i < N; i++)
+					// Detection for early exit can be skipped if hinted by `all_within_neg1pos1`
+					if (all_Within_Neg1Pos1 != 0)
+						i = N;
+					else
 					{
-						if ((x[i * C] > 1) || ((x[i * C]) < -1))
-							break;
+						for (i = curr; i < N; i++)
+						{
+							if ((x[i * C] > 1) || ((x[i * C]) < -1))
+								break;
+						}
 					}
 
 					if (i == N)
@@ -207,6 +226,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			opus_int32 pad = 0;
 			CPointer<byte> data0 = data;
+
+			// Make sure we return null/0 on error
+			if (padding.IsNotNull)
+			{
+				padding.SetToNull();
+				padding_len = 0;
+			}
 
 			if (size.IsNull || (len < 0))
 				return (c_int)OpusError.Bad_Arg;

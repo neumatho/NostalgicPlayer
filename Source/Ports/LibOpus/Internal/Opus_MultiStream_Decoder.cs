@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 	/// </summary>
 	internal static class Opus_MultiStream_Decoder
 	{
-		private delegate void Opus_Copy_Channel_Out_Func<T>(CPointer<T> dst, c_int dst_stride, c_int dst_channel, CPointer<opus_val16> src, c_int src_stride, c_int frame_size, object user_data);
+		private delegate void Opus_Copy_Channel_Out_Func<T>(CPointer<T> dst, c_int dst_stride, c_int dst_channel, CPointer<opus_res> src, c_int src_stride, c_int frame_size, object user_data);
 
 		/********************************************************************/
 		/// <summary>
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 				return (c_int)OpusError.Internal_Error;
 
 			frame_size = Arch.IMIN(frame_size, Fs / 25 * 3);
-			CPointer<opus_val16> buf = new CPointer<opus_val16>(2 * frame_size);
+			CPointer<opus_res> buf = new CPointer<opus_res>(2 * frame_size);
 
 			if (len == 0)
 				do_plc = true;
@@ -241,19 +241,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Opus_Copy_Channel_Out_Short(CPointer<opus_int16> dst, c_int dst_stride, c_int dst_channel, CPointer<opus_val16> src, c_int src_stride, c_int frame_size, object user_data)
+		private static void Opus_Copy_Channel_Out_Short(CPointer<opus_int16> dst, c_int dst_stride, c_int dst_channel, CPointer<opus_res> src, c_int src_stride, c_int frame_size, object user_data)
 		{
 			CPointer<opus_int16> short_dst = dst;
 
 			if (src.IsNotNull)
 			{
 				for (opus_int32 i = 0; i < frame_size; i++)
-					short_dst[i * dst_stride + dst_channel] = Float_Cast.Float2Int16(src[i * src_stride]);
+					short_dst[(i * dst_stride) + dst_channel] = Arch.RES2INT16(src[i * src_stride]);
 			}
 			else
 			{
 				for (opus_int32 i = 0; i < frame_size; i++)
-					short_dst[i * dst_stride + dst_channel] = 0;
+					short_dst[(i * dst_stride) + dst_channel] = 0;
 			}
 		}
 
@@ -264,19 +264,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Opus_Copy_Channel_Out_Float(CPointer<c_float> dst, c_int dst_stride, c_int dst_channel, CPointer<opus_val16> src, c_int src_stride, c_int frame_size, object user_data)
+		private static void Opus_Copy_Channel_Out_Float(CPointer<c_float> dst, c_int dst_stride, c_int dst_channel, CPointer<opus_res> src, c_int src_stride, c_int frame_size, object user_data)
 		{
 			CPointer<c_float> float_dst = dst;
 
 			if (src.IsNotNull)
 			{
 				for (opus_int32 i = 0; i < frame_size; i++)
-					float_dst[i * dst_stride + dst_channel] = src[i * src_stride];
+					float_dst[(i * dst_stride) + dst_channel] = Arch.RES2FLOAT(src[i * src_stride]);
 			}
 			else
 			{
 				for (opus_int32 i = 0; i < frame_size; i++)
-					float_dst[i * dst_stride + dst_channel] = 0;
+					float_dst[(i * dst_stride) + dst_channel] = 0;
 			}
 		}
 
@@ -417,6 +417,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 						if (ret != OpusError.Ok)
 							return ret;
 					}
+
 					break;
 				}
 
@@ -433,6 +434,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 						if (ret != OpusError.Ok)
 							return ret;
 					}
+
 					break;
 				}
 

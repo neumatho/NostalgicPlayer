@@ -6,6 +6,8 @@
 global using celt_sig = System.Single;
 global using celt_norm = System.Single;
 global using celt_ener = System.Single;
+global using celt_glog = System.Single;
+global using celt_coef = System.Single;
 
 global using kiss_fft_scalar = System.Single;
 global using kiss_twiddle_scalar = System.Single;

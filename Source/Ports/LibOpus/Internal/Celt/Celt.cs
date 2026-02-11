@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
@@ -19,6 +20,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			[ Arch.QCONST16(0.4638671875f, 15), Arch.QCONST16(0.2680664062f, 15), Arch.QCONST16(0.0f, 15) ],
 			[ Arch.QCONST16(0.7998046875f, 15), Arch.QCONST16(0.1000976562f, 15), Arch.QCONST16(0.0f, 15) ]
 		];
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int QExt_Scale(c_int x)
+		{
+			return x;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -78,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Comb_Filter_Const_C(CPointer<opus_val32> y, CPointer<opus_val32> x, c_int T, c_int N, opus_val16 g10, opus_val16 g11, opus_val16 g12)
+		public static void Comb_Filter_Const_C(CPointer<opus_val32> y, CPointer<opus_val32> x, c_int T, c_int N, celt_coef g10, celt_coef g11, celt_coef g12)
 		{
 			opus_val32 x4 = x[-T - 2];
 			opus_val32 x3 = x[-T - 1];
@@ -89,9 +104,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			{
 				opus_val32 x0 = x[i - T + 2];
 				y[i] = x[i]
-		                 + Arch.MULT16_32_Q15(g10, x2)
-						 + Arch.MULT16_32_Q15(g11, Arch.ADD32(x1, x3))
-						 + Arch.MULT16_32_Q15(g12, Arch.ADD32(x0, x4));
+		                 + Arch.MULT_COEF_32(g10, x2)
+						 + Arch.MULT_COEF_32(g11, Arch.ADD32(x1, x3))
+						 + Arch.MULT_COEF_32(g12, Arch.ADD32(x0, x4));
 				y[i] = Arch.SATURATE(y[i], Constants.Sig_Sat);
 
 				x4 = x3;
@@ -108,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Comb_Filter(CPointer<opus_val32> y, CPointer<opus_val32> x, c_int T0, c_int T1, c_int N, opus_val16 g0, opus_val16 g1, c_int tapset0, c_int tapset1, CPointer<opus_val16> window, c_int overlap, c_int arch)
+		public static void Comb_Filter(CPointer<opus_val32> y, CPointer<opus_val32> x, c_int T0, c_int T1, c_int N, opus_val16 g0, opus_val16 g1, c_int tapset0, c_int tapset1, CPointer<celt_coef> window, c_int overlap, c_int arch)
 		{
 			if ((g0 == 0) && (g1 == 0))
 			{
@@ -123,12 +138,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			// to have then be at least 2 to avoid processing garbage data
 			T0 = Arch.IMAX(T0, Constants.CombFilter_MinPeriod);
 			T1 = Arch.IMAX(T1, Constants.CombFilter_MinPeriod);
-			opus_val16 g00 = Arch.MULT16_16_P15(g0, gains[tapset0][0]);
-			opus_val16 g01 = Arch.MULT16_16_P15(g0, gains[tapset0][1]);
-			opus_val16 g02 = Arch.MULT16_16_P15(g0, gains[tapset0][2]);
-			opus_val16 g10 = Arch.MULT16_16_P15(g1, gains[tapset1][0]);
-			opus_val16 g11 = Arch.MULT16_16_P15(g1, gains[tapset1][1]);
-			opus_val16 g12 = Arch.MULT16_16_P15(g1, gains[tapset1][2]);
+			celt_coef g00 = Arch.MULT_COEF_TAPS(g0, gains[tapset0][0]);
+			celt_coef g01 = Arch.MULT_COEF_TAPS(g0, gains[tapset0][1]);
+			celt_coef g02 = Arch.MULT_COEF_TAPS(g0, gains[tapset0][2]);
+			celt_coef g10 = Arch.MULT_COEF_TAPS(g1, gains[tapset1][0]);
+			celt_coef g11 = Arch.MULT_COEF_TAPS(g1, gains[tapset1][1]);
+			celt_coef g12 = Arch.MULT_COEF_TAPS(g1, gains[tapset1][2]);
 			opus_val32 x1 = x[-T1 + 1];
 			opus_val32 x2 = x[-T1];
 			opus_val32 x3 = x[-T1 - 1];
@@ -142,15 +157,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			for (i = 0; i < overlap; i++)
 			{
 				opus_val32 x0 = x[i - T1 + 2];
-				opus_val16 f = Arch.MULT16_16_Q15(window[i], window[i]);
+				celt_coef f = Arch.MULT_COEF(window[i], window[i]);
 
 				y[i] = x[i]
-						+ Arch.MULT16_32_Q15(Arch.MULT16_16_Q15((Constants.Q15One - f), g00), x[i - T0])
-						+ Arch.MULT16_32_Q15(Arch.MULT16_16_Q15((Constants.Q15One - f), g01), Arch.ADD32(x[i - T0 + 1], x[i - T0 - 1]))
-						+ Arch.MULT16_32_Q15(Arch.MULT16_16_Q15((Constants.Q15One - f), g02), Arch.ADD32(x[i - T0 + 2], x[i - T0 - 2]))
-						+ Arch.MULT16_32_Q15(Arch.MULT16_16_Q15(f, g10), x2)
-						+ Arch.MULT16_32_Q15(Arch.MULT16_16_Q15(f, g11), Arch.ADD32(x1, x3))
-						+ Arch.MULT16_32_Q15(Arch.MULT16_16_Q15(f, g12), Arch.ADD32(x0, x4));
+						+ Arch.MULT_COEF_32(Arch.MULT_COEF((Constants.Coef_One - f), g00), x[i - T0])
+						+ Arch.MULT_COEF_32(Arch.MULT_COEF((Constants.Coef_One - f), g01), Arch.ADD32(x[i - T0 + 1], x[i - T0 - 1]))
+						+ Arch.MULT_COEF_32(Arch.MULT_COEF((Constants.Coef_One - f), g02), Arch.ADD32(x[i - T0 + 2], x[i - T0 - 2]))
+						+ Arch.MULT_COEF_32(Arch.MULT_COEF(f, g10), x2)
+						+ Arch.MULT_COEF_32(Arch.MULT_COEF(f, g11), Arch.ADD32(x1, x3))
+						+ Arch.MULT_COEF_32(Arch.MULT_COEF(f, g12), Arch.ADD32(x0, x4));
 				y[i] = Arch.SATURATE(y[i], Constants.Sig_Sat);
 
 				x4 = x3;

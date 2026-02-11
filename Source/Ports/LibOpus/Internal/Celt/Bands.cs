@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// unit-energy bands
 		/// </summary>
 		/********************************************************************/
-		public static void Denormalise_Bands(CeltMode m, CPointer<celt_norm> X, CPointer<celt_sig> freq, CPointer<opus_val16> bandLogE, c_int start, c_int end, c_int M, c_int downsample, bool silence)
+		public static void Denormalise_Bands(CeltMode m, CPointer<celt_norm> X, CPointer<celt_sig> freq, CPointer<celt_glog> bandLogE, c_int start, c_int end, c_int M, c_int downsample, bool silence)
 		{
 			CPointer<opus_int16> eBands = m.eBands;
 			c_int N = M * m.shortMdctSize;
@@ -101,21 +101,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			}
 
 			CPointer<celt_sig> f = freq;
-			CPointer<celt_norm> x = X + M * eBands[start];
+			CPointer<celt_norm> x = X + (M * eBands[start]);
 
-			for (c_int i = 0; i < M * eBands[start]; i++)
-				f[0, 1] = 0;
+			if (start != 0)
+			{
+				for (c_int i = 0; i < M * eBands[start]; i++)
+					f[0, 1] = 0;
+			}
+			else
+				f += M * eBands[start];
 
 			for (c_int i = start; i < end; i++)
 			{
 				c_int j = M * eBands[i];
 				c_int band_end = M * eBands[i + 1];
-				opus_val16 lg = Arch.SATURATE16(Arch.ADD32(bandLogE[i], Arch.SHL32(Tables.EMeans[i], 6)));
-				opus_val16 g = MathOps.Celt_Exp2(Arch.MIN32(32.0f, lg));
+				celt_glog lg = Arch.ADD32(bandLogE[i], Arch.SHL32(Tables.EMeans[i], Constants.Db_Shift - 4));
+				opus_val32 g = MathOps.Celt_Exp2_Db(Arch.MIN32(32.0f, lg));
 
 				do
 				{
-					f[0, 1] = Arch.SHR32(Arch.MULT16_16(x[0, 1], g), 0/*shift*/);
+					f[0, 1] = Arch.PSHR32(Arch.MULT32_32_Q31(Arch.SHL32(x[0], /*30 - NORMSHIFT*/0), g), 0/*shift*/);
+					x++;
 				}
 				while (++j < band_end);
 			}
@@ -131,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// MDCTs
 		/// </summary>
 		/********************************************************************/
-		public static void Anti_Collapse(CeltMode m, CPointer<celt_norm> X_, CPointer<byte> collapse_masks, c_int LM, c_int C, c_int size, c_int start, c_int end, CPointer<opus_val16> logE, CPointer<opus_val16> prev1logE, CPointer<opus_val16> prev2logE, CPointer<c_int> pulses, opus_uint32 seed, c_int arch)
+		public static void Anti_Collapse(CeltMode m, CPointer<celt_norm> X_, CPointer<byte> collapse_masks, c_int LM, c_int C, c_int size, c_int start, c_int end, CPointer<celt_glog> logE, CPointer<celt_glog> prev1logE, CPointer<celt_glog> prev2logE, CPointer<c_int> pulses, opus_uint32 seed, c_int encode, c_int arch)
 		{
 			for (c_int i = start; i < end; i++)
 			{
@@ -148,21 +154,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				do
 				{
 					bool renormalize = false;
-					opus_val16 prev1 = prev1logE[c * m.nbEBands + i];
-					opus_val16 prev2 = prev2logE[c * m.nbEBands + i];
+					celt_glog prev1 = prev1logE[(c * m.nbEBands) + i];
+					celt_glog prev2 = prev2logE[(c * m.nbEBands) + i];
 
-					if (C == 1)
+					if ((encode == 0) && (C == 1))
 					{
-						prev1 = Arch.MAX16(prev1, prev1logE[m.nbEBands + i]);
-						prev2 = Arch.MAX16(prev2, prev2logE[m.nbEBands + i]);
+						prev1 = Arch.MAXG(prev1, prev1logE[m.nbEBands + i]);
+						prev2 = Arch.MAXG(prev2, prev2logE[m.nbEBands + i]);
 					}
 
-					opus_val32 Ediff = Arch.EXTEND32(logE[c * m.nbEBands + i]) - Arch.EXTEND32(Arch.MIN16(prev1, prev2));
+					opus_val32 Ediff = logE[(c * m.nbEBands) + i] - Arch.MING(prev1, prev2);
 					Ediff = Arch.MAX32(0, Ediff);
 
 					// r needs to be multiplied by 2 or 2*sqrt(2) depending on LM because
 					// short blocks don't have the same energy as long
-					opus_val16 r = 2.0f * MathOps.Celt_Exp2(-Ediff);
+					celt_norm r = 2.0f * MathOps.Celt_Exp2_Db(-Ediff);
 
 					if (LM == 3)
 						r *= 1.41421356f;
@@ -190,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 					// We just added some energy, so we need to renormalise
 					if (renormalize)
-						Vq.Renormalise_Vector(X, N0 << LM, Constants.Q15One, arch);
+						Vq.Renormalise_Vector(X, N0 << LM, Constants.Q31One, arch);
 				}
 				while (++c < C);
 			}
@@ -235,15 +241,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			opus_val16 left = Arch.VSHR32(bandE[i], 0/*shift*/);
 			opus_val16 right = Arch.VSHR32(bandE[i + m.nbEBands], 0/*shift*/);
 			opus_val16 norm = Constants.Epsilon + MathOps.Celt_Sqrt(Constants.Epsilon + Arch.MULT16_16(left, left) + Arch.MULT16_16(right, right));
-			opus_val16 a1 = Arch.DIV32_16(Arch.SHL32(Arch.EXTEND32(left), 14), norm);
-			opus_val16 a2 = Arch.DIV32_16(Arch.SHL32(Arch.EXTEND32(right), 14), norm);
+			opus_val16 a1 = Arch.DIV32_16(Arch.SHL32(Arch.EXTEND32(left), 15), norm);
+			opus_val16 a2 = Arch.DIV32_16(Arch.SHL32(Arch.EXTEND32(right), 15), norm);
 
 			for (c_int j = 0; j < N; j++)
 			{
-				celt_norm l = X[j];
-				celt_norm r = Y[j];
-
-				X[j] = Arch.EXTRACT16(Arch.SHR32(Arch.MAC16_16(Arch.MULT16_16(a1, l), a2, r), 14));
+				X[j] = Arch.ADD32(Arch.MULT16_32_Q15(a1, X[j]), Arch.MULT16_32_Q15(a2, Y[j]));
 
 				// Side is not encoded, no need to calculate
 			}
@@ -260,11 +263,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		{
 			for (c_int j = 0; j < N; j++)
 			{
-				opus_val32 l = Arch.MULT16_16(Arch.QCONST16(0.70710678f, 15), X[j]);
-				opus_val32 r = Arch.MULT16_16(Arch.QCONST16(0.70710678f, 15), Y[j]);
+				opus_val32 l = Arch.MULT32_32_Q31(Arch.QCONST32(0.70710678f, 31), X[j]);
+				opus_val32 r = Arch.MULT32_32_Q31(Arch.QCONST32(0.70710678f, 31), Y[j]);
 
-				X[j] = Arch.EXTRACT16(Arch.SHR32(Arch.ADD32(l, r), 15));
-				Y[j] = Arch.EXTRACT16(Arch.SHR32(Arch.SUB32(r, l), 15));
+				X[j] = Arch.ADD32(l, r);
+				Y[j] = Arch.SUB32(r, l);
 			}
 		}
 
@@ -275,18 +278,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Stereo_Merge(CPointer<celt_norm> X, CPointer<celt_norm> Y, opus_val16 mid, c_int N, c_int arch)
+		private static void Stereo_Merge(CPointer<celt_norm> X, CPointer<celt_norm> Y, opus_val32 mid, c_int N, c_int arch)
 		{
 			// Compute the norm of x+y and x-y as |x|^2 + |y|^2 +/- sum(xy)
-			Pitch.Dual_Inner_Prod(Y, X, Y, N, out opus_val32 xp, out opus_val32 side, arch);
+			opus_val32 xp = Vq.Celt_Inner_Prod_Norm_Shift(Y, X, N, arch);
+			opus_val32 side = Vq.Celt_Inner_Prod_Norm_Shift(Y, Y, N, arch);
 
 			// Compensating for the mid normalization
-			xp = Arch.MULT16_32_Q15(mid, xp);
+			xp = Arch.MULT32_32_Q31(mid, xp);
 
 			// mid and side are in Q15, not Q14 like X and Y
-			opus_val16 mid2 = Arch.SHR16(mid, 1);
-			opus_val32 El = Arch.MULT16_16(mid2, mid2) + side - 2 * xp;
-			opus_val32 Er = Arch.MULT16_16(mid2, mid2) + side + 2 * xp;
+			opus_val32 El = Arch.SHR32(Arch.MULT32_32_Q31(mid, mid), 3) + side - (2 * xp);
+			opus_val32 Er = Arch.SHR32(Arch.MULT32_32_Q31(mid, mid), 3) + side + (2 * xp);
 
 			if ((Er < Arch.QCONST32(6e-4f, 28)) || (El < Arch.QCONST32(6e-4f, 28)))
 			{
@@ -294,19 +297,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				return;
 			}
 
-			opus_val32 t = Arch.VSHR32(El, 0/*(kl - 7) << 1*/);
-			opus_val32 lgain = MathOps.Celt_Rsqrt_Norm(t);
-			t = Arch.VSHR32(Er, 0/*(kr - 7) << 1*/);
-			opus_val32 rgain = MathOps.Celt_Rsqrt_Norm(t);
+			opus_val32 t = Arch.VSHR32(El, 0/*(kl << 1) - 29*/);
+			opus_val32 lgain = MathOps.Celt_Rsqrt_Norm32(t);
+			t = Arch.VSHR32(Er, 0/*(kr << 1) - 29*/);
+			opus_val32 rgain = MathOps.Celt_Rsqrt_Norm32(t);
 
 			for (c_int j = 0; j < N; j++)
 			{
 				// Apply mid scaling (side is already scaled)
-				celt_norm l = Arch.MULT16_16_P15(mid, X[j]);
+				celt_norm l = Arch.MULT32_32_Q31(mid, X[j]);
 				celt_norm r = Y[j];
 
-				X[j] = Arch.EXTRACT16(Arch.PSHR32(Arch.MULT16_16(lgain, Arch.SUB16(l, r)), 0/*kl + 1*/));
-				Y[j] = Arch.EXTRACT16(Arch.PSHR32(Arch.MULT16_16(rgain, Arch.ADD16(l, r)), 0/*kr + 1*/));
+				X[j] = Arch.VSHR32(Arch.MULT32_32_Q31(lgain, Arch.SUB32(l, r)), /*kl - 15*/0);
+				Y[j] = Arch.VSHR32(Arch.MULT32_32_Q31(rgain, Arch.ADD32(l, r)), /*kr - 15*/0);
 			}
 		}
 
@@ -393,11 +396,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			{
 				for (c_int j = 0; j < N0; j++)
 				{
-					opus_val32 tmp1 = Arch.MULT16_16(Arch.QCONST16(0.70710678f, 15), X[stride * 2 * j + i]);
-					opus_val32 tmp2 = Arch.MULT16_16(Arch.QCONST16(0.70710678f, 15), X[stride * (2 * j + 1) + i]);
+					opus_val32 tmp1 = Arch.MULT32_32_Q31(Arch.QCONST32(0.70710678f, 31), X[(stride * 2 * j) + i]);
+					opus_val32 tmp2 = Arch.MULT32_32_Q31(Arch.QCONST32(0.70710678f, 31), X[(stride * ((2 * j) + 1)) + i]);
 
-					X[stride * 2 * j + i] = Arch.EXTRACT16(Arch.PSHR32(Arch.ADD32(tmp1, tmp2), 15));
-					X[stride * (2 * j + 1) + i] = Arch.EXTRACT16(Arch.PSHR32(Arch.SUB32(tmp1, tmp2), 15));
+					X[(stride * 2 * j) + i] = Arch.ADD32(tmp1, tmp2);
+					X[(stride * ((2 * j) + 1)) + i] = Arch.SUB32(tmp1, tmp2);
 				}
 			}
 		}
@@ -446,6 +449,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		private static void Compute_Theta(Band_Ctx ctx, out Split_Ctx sctx, CPointer<celt_norm> X, CPointer<celt_norm> Y, c_int N, ref c_int b, c_int B, c_int B0, c_int LM, bool stereo, ref c_int fill)
 		{
 			c_int itheta = 0;
+			c_int itheta_q30 = 0;
 			c_int delta;
 			c_int imid, iside;
 			bool inv = false;
@@ -471,7 +475,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				// side and mid. With just that parameter, we can re-scale both
 				// mid and side because we know that 1) they have unit norm and
 				// 2) they are orthogonal
-				itheta = Vq.Stereo_Itheta(X, Y, stereo, N, ctx.arch);
+				itheta_q30 = Vq.Stereo_Itheta(X, Y, stereo, N, ctx.arch);
+				itheta = itheta_q30 >> 16;
 			}
 
 			opus_int32 tell = (opus_int32)EntCode.Ec_Tell_Frac(ec);
@@ -482,7 +487,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					if (!stereo || (ctx.theta_round == 0))
 					{
-						itheta = (itheta * qn + 8192) >> 14;
+						itheta = ((itheta * qn) + 8192) >> 14;
 
 						if (!stereo && ctx.avoid_split_noise && (itheta > 0) && (itheta < qn))
 						{
@@ -520,7 +525,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					c_int p0 = 3;
 					c_int x = itheta;
 					c_int x0 = qn / 2;
-					c_int ft = p0 * (x0 + 1) + x0;
+					c_int ft = (p0 * (x0 + 1)) + x0;
 
 					// Use a probability of p0 up to itheta=8192 and then use 1 after
 					if (encode)
@@ -534,7 +539,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 						else
 							x = x0 + 1 + (fs - (x0 + 1) * p0);
 
-						EntDec.Ec_Dec_Update(ec, (c_uint)(x <= x0 ? p0 * x : (x - 1 - x0) + (x0 + 1) * p0), (c_uint)(x <= x0 ? p0 * (x + 1) : (x - x0) + (x0 + 1) * p0), (c_uint)ft);
+						EntDec.Ec_Dec_Update(ec, (c_uint)(x <= x0 ? p0 * x : (x - 1 - x0) + ((x0 + 1) * p0)), (c_uint)(x <= x0 ? p0 * (x + 1) : (x - x0) + ((x0 + 1) * p0)), (c_uint)ft);
 
 						itheta = x;
 					}
@@ -555,7 +560,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					if (encode)
 					{
 						fs = itheta <= (qn >> 1) ? itheta + 1 : qn + 1 - itheta;
-						c_int fl = itheta <= (qn >> 1) ? itheta * (itheta + 1) >> 1 : ft - ((qn + 1 - itheta) * (qn + 2 - itheta) >> 1);
+						c_int fl = itheta <= (qn >> 1) ? itheta * (itheta + 1) >> 1 : ft - (((qn + 1 - itheta) * (qn + 2 - itheta)) >> 1);
 
 						EntEnc.Ec_Encode(ec, (c_uint)fl, (c_uint)(fl + fs), (c_uint)ft);
 					}
@@ -565,17 +570,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 						c_int fl = 0;
 						c_int fm = (c_int)EntDec.Ec_Decode(ec, (c_uint)ft);
 
-						if (fm < ((qn >> 1) * ((qn >> 1) + 1) >> 1))
+						if (fm < (((qn >> 1) * ((qn >> 1) + 1)) >> 1))
 						{
-							itheta = (c_int)((MathOps.Isqrt32(8 * (opus_uint32)fm + 1) - 1) >> 1);
+							itheta = (c_int)((MathOps.Isqrt32((8 * (opus_uint32)fm) + 1) - 1) >> 1);
 							fs = itheta + 1;
 							fl = itheta * (itheta + 1) >> 1;
 						}
 						else
 						{
-							itheta = (c_int)((2 * (qn + 1) - MathOps.Isqrt32(8 * (opus_uint32)(ft - fm - 1) + 1)) >> 1);
+							itheta = (c_int)((2 * (qn + 1) - MathOps.Isqrt32((8 * (opus_uint32)(ft - fm - 1)) + 1)) >> 1);
 							fs = qn + 1 - itheta;
-							fl = ft - ((qn + 1 - itheta) * (qn + 2 - itheta) >> 1);
+							fl = ft - (((qn + 1 - itheta) * (qn + 2 - itheta)) >> 1);
 						}
 
 						EntDec.Ec_Dec_Update(ec, (c_uint)fl, (c_uint)(fl + fs), (c_uint)ft);
@@ -623,6 +628,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					inv = false;
 
 				itheta = 0;
+				itheta_q30 = 0;
 			}
 
 			c_int qalloc = (c_int)(EntCode.Ec_Tell_Frac(ec) - tell);
@@ -703,7 +709,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			while (++c < (1 + stereo));
 
 			if (lowband_out.IsNotNull)
-				lowband_out[0] = Arch.SHR16(X[0], 4);
+				lowband_out[0] = Arch.SHR32(X[0], 4);
 
 			return 1;
 		}
@@ -718,11 +724,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// so bands can end up being split in 8 parts
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Quant_Partition(Band_Ctx ctx, CPointer<celt_norm> X, c_int N, c_int b, c_int B, CPointer<celt_norm> lowband, c_int LM, opus_val16 gain, c_int fill)
+		private static c_uint Quant_Partition(Band_Ctx ctx, CPointer<celt_norm> X, c_int N, c_int b, c_int B, CPointer<celt_norm> lowband, c_int LM, opus_val32 gain, c_int fill)
 		{
 			c_int imid = 0, iside = 0;
 			c_int B0 = B;
-			opus_val16 mid = 0, side = 0;
+			opus_val32 mid = 0, side = 0;
 			c_uint cm = 0;
 			CPointer<celt_norm> Y = null;
 
@@ -733,7 +739,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			Ec_Ctx ec = ctx.ec;
 
 			// If we need 1.5 more bit than we can produce, split the band in two
-			CPointer<byte> cache = m.cache.bits + m.cache.index[(LM + 1) * m.nbEBands + i];
+			CPointer<byte> cache = m.cache.bits + m.cache.index[((LM + 1) * m.nbEBands) + i];
 
 			if ((LM != -1) && (b > (cache[cache[0]] + 12)) && (N > 2))
 			{
@@ -785,23 +791,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				if (mbits >= sbits)
 				{
-					cm = Quant_Partition(ctx, X, N, mbits, B, lowband, LM, Arch.MULT16_16_P15(gain, mid), fill);
+					cm = Quant_Partition(ctx, X, N, mbits, B, lowband, LM, Arch.MULT32_32_Q31(gain, mid), fill);
 					rebalance = mbits - (rebalance - ctx.remaining_bits);
 
 					if ((rebalance > (3 << Constants.BitRes)) && (itheta != 0))
 						sbits += rebalance - (3 << Constants.BitRes);
 
-					cm |= Quant_Partition(ctx, Y, N, sbits, B, next_lowband2, LM, Arch.MULT16_16_P15(gain, side), fill >> B) << (B0 >> 1);
+					cm |= Quant_Partition(ctx, Y, N, sbits, B, next_lowband2, LM, Arch.MULT32_32_Q31(gain, side), fill >> B) << (B0 >> 1);
 				}
 				else
 				{
-					cm = Quant_Partition(ctx, Y, N, sbits, B, next_lowband2, LM, Arch.MULT16_16_P15(gain, side), fill >> B) << (B0 >> 1);
+					cm = Quant_Partition(ctx, Y, N, sbits, B, next_lowband2, LM, Arch.MULT32_32_Q31(gain, side), fill >> B) << (B0 >> 1);
 					rebalance = sbits - (rebalance - ctx.remaining_bits);
 
 					if ((rebalance > (3 << Constants.BitRes)) && (itheta != 16384))
 						mbits += rebalance - (3 << Constants.BitRes);
 
-					cm |= Quant_Partition(ctx, X, N, mbits, B, lowband, LM, Arch.MULT16_16_P15(gain, mid), fill);
+					cm |= Quant_Partition(ctx, X, N, mbits, B, lowband, LM, Arch.MULT32_32_Q31(gain, mid), fill);
 				}
 			}
 			else
@@ -850,7 +856,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 								for (c_int j = 0; j < N; j++)
 								{
 									ctx.seed = Celt_Lcg_Rand(ctx.seed);
-									X[j] = ((opus_int32)ctx.seed >> 20);
+									X[j] = Arch.SHL32((celt_norm)((opus_int32)ctx.seed >> 20), /*NORM_SHIFT - 14*/0);
 								}
 
 								cm = cm_mask;
@@ -863,7 +869,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 									ctx.seed = Celt_Lcg_Rand(ctx.seed);
 
 									// About 48 dB below the "normal" folding level
-									opus_val16 tmp = Arch.QCONST16(1.0f / 256, 10);
+									opus_val16 tmp = Arch.QCONST16(1.0f / 256, /*NORM_SHIFT - 4*/0);
 									tmp = ((ctx.seed) & 0x8000) != 0 ? tmp : -tmp;
 									X[j] = lowband[j] + tmp;
 								}
@@ -888,7 +894,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// the mono case
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Quant_Band(Band_Ctx ctx, CPointer<celt_norm> X, c_int N, c_int b, c_int B, CPointer<celt_norm> lowband, c_int LM, CPointer<celt_norm> lowband_out, opus_val16 gain, CPointer<celt_norm> lowband_scratch, c_int fill)
+		private static c_uint Quant_Band(Band_Ctx ctx, CPointer<celt_norm> X, c_int N, c_int b, c_int B, CPointer<celt_norm> lowband, c_int LM, CPointer<celt_norm> lowband_out, opus_val32 gain, CPointer<celt_norm> lowband_scratch, c_int fill)
 		{
 			c_int N0 = N;
 			c_int N_B = N;
@@ -998,7 +1004,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					opus_val16 n = MathOps.Celt_Sqrt(Arch.SHL32(Arch.EXTEND32(N0), 22));
 
 					for (c_int j = 0; j < N0; j++)
-						lowband_out[j] = Arch.MULT16_16_Q15(n, X[j]);
+						lowband_out[j] = Arch.MULT16_32_Q15(n, X[j]);
 				}
 
 				cm &= (c_uint)((1 << B) - 1);
@@ -1038,8 +1044,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			c_int itheta = sctx.itheta;
 			c_int qalloc = sctx.qalloc;
 
-			opus_val16 mid = (1.0f / 32768) * imid;
-			opus_val16 side = (1.0f / 32768) * iside;
+			opus_val32 mid = (1.0f / 32768) * imid;
+			opus_val32 side = (1.0f / 32768) * iside;
 
 			// This is a special case for n=2 that only works for stereo and takes
 			// advantage of the fact that mid and side are orthogonal to encode
@@ -1066,18 +1072,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					if (encode)
 					{
 						// Here we only need to encode a sign for the side
-						sign = x2[0] * y2[1] - x2[1] * y2[0] < 0 ? 1 : 0;
+						sign = Arch.MULT32_32_Q31(x2[0], y2[1]) - Arch.MULT32_32_Q31(x2[1], y2[0]) < 0 ? 1 : 0;
 						EntEnc.Ec_Enc_Bits(ec, (opus_uint32)sign, 1);
 					}
 					else
 						sign = (c_int)EntDec.Ec_Dec_Bits(ec, 1);
 				}
 
-				sign = 1 - 2 * sign;
+				sign = 1 - (2 * sign);
 
 				// We use orig_fill here because we want to fold the side, but if
 				// itheta==16384, we'll have cleared the low bits of fill
-				cm = Quant_Band(ctx, x2, N, mbits, B, lowband, LM, lowband_out, Constants.Q15One, lowband_scratch, orig_fill);
+				cm = Quant_Band(ctx, x2, N, mbits, B, lowband, LM, lowband_out, Constants.Q31One, lowband_scratch, orig_fill);
 
 				// We don't split N=2 bands, so cm is either 1 or 0 (for a fold-collapse),
 				// and there's no need to worry about mixing with the other channel
@@ -1086,18 +1092,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				if (ctx.resynth)
 				{
-					X[0] = Arch.MULT16_16_Q15(mid, X[0]);
-					X[1] = Arch.MULT16_16_Q15(mid, X[1]);
-					Y[0] = Arch.MULT16_16_Q15(side, Y[0]);
-					Y[1] = Arch.MULT16_16_Q15(side, Y[1]);
+					X[0] = Arch.MULT32_32_Q31(mid, X[0]);
+					X[1] = Arch.MULT32_32_Q31(mid, X[1]);
+					Y[0] = Arch.MULT32_32_Q31(side, Y[0]);
+					Y[1] = Arch.MULT32_32_Q31(side, Y[1]);
 
 					celt_norm tmp = X[0];
-					X[0] = Arch.SUB16(tmp, Y[0]);
-					Y[0] = Arch.ADD16(tmp, Y[0]);
+					X[0] = Arch.SUB32(tmp, Y[0]);
+					Y[0] = Arch.ADD32(tmp, Y[0]);
 
 					tmp = X[1];
-					X[1] = Arch.SUB16(tmp, Y[1]);
-					Y[1] = Arch.ADD16(tmp, Y[1]);
+					X[1] = Arch.SUB32(tmp, Y[1]);
+					Y[1] = Arch.ADD32(tmp, Y[1]);
 				}
 			}
 			else
@@ -1113,7 +1119,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					// In stereo mode, we do not apply a scaling to the mid because we need the normalized
 					// mid for folding later
-					cm = Quant_Band(ctx, X, N, mbits, B, lowband, LM, lowband_out, Constants.Q15One, lowband_scratch, fill);
+					cm = Quant_Band(ctx, X, N, mbits, B, lowband, LM, lowband_out, Constants.Q31One, lowband_scratch, fill);
 					rebalance = mbits - (rebalance - ctx.remaining_bits);
 
 					if ((rebalance > (3 << Constants.BitRes)) && (itheta != 0))
@@ -1135,7 +1141,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 					// In stereo mode, we do not apply a scaling to the mid because we need the normalized
 					// mid for folding later
-					cm |= Quant_Band(ctx, X, N, mbits, B, lowband, LM, lowband_out, Constants.Q15One, lowband_scratch, fill);
+					cm |= Quant_Band(ctx, X, N, mbits, B, lowband, LM, lowband_out, Constants.Q31One, lowband_scratch, fill);
 				}
 			}
 
@@ -1242,6 +1248,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			ctx.disable_inv = disable_inv;
 			ctx.resynth = resynth;
 			ctx.theta_round = 0;
+
+			byte[] bytes_save = new byte[theta_rdo ? 1275 : Constants.Alloc_None];
 
 			// Avoid injecting noise in the first band on transients
 			ctx.avoid_split_noise = B > 1;
@@ -1358,10 +1366,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					x_cm = Quant_Band(ctx, X, N, b / 2, B,
 									effective_lowband != -1 ? norm + effective_lowband : null, LM,
-									last ? null : norm + M * eBands[i] - norm_offset, Constants.Q15One, lowband_scratch, (c_int)x_cm);
+									last ? null : norm + M * eBands[i] - norm_offset, Constants.Q31One, lowband_scratch, (c_int)x_cm);
 					y_cm = Quant_Band(ctx, Y, N, b / 2, B,
 									effective_lowband != -1 ? norm2 + effective_lowband : null, LM,
-									last ? null : norm2 + M * eBands[i] - norm_offset, Constants.Q15One, lowband_scratch, (c_int)y_cm);
+									last ? null : norm2 + M * eBands[i] - norm_offset, Constants.Q31One, lowband_scratch, (c_int)y_cm);
 				}
 				else
 				{
@@ -1369,7 +1377,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					{
 						if (theta_rdo && (i < intensity))
 						{
-							byte[] bytes_save = new byte[1275];
 							opus_val16[] w = new opus_val16[2];
 
 							Compute_Channel_Weights(bandE[i], bandE[i + m.nbEBands], w);
@@ -1389,7 +1396,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 											effective_lowband != -1 ? norm + effective_lowband : null, LM,
 											last ? null : norm + M * eBands[i] - norm_offset, lowband_scratch, (c_int)cm);
 
-							opus_val32 dist0 = Arch.MULT16_32_Q15(w[0], Pitch.Celt_Inner_Prod(X_save, X, N, arch)) + Arch.MULT16_32_Q15(w[1], Pitch.Celt_Inner_Prod(Y_save, Y, N, arch));
+							opus_val32 dist0 = Arch.MULT16_32_Q15(w[0], Vq.Celt_Inner_Prod_Norm_Shift(X_save, X, N, arch)) + Arch.MULT16_32_Q15(w[1], Vq.Celt_Inner_Prod_Norm_Shift(Y_save, Y, N, arch));
 
 							// Save first result
 							c_uint cm2 = x_cm;
@@ -1400,7 +1407,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 							Memory.Opus_Copy(Y_save2, Y, N);
 
 							if (!last)
-								Memory.Opus_Copy(norm_save2, norm + M * eBands[i] - norm_offset, N);
+								Memory.Opus_Copy(norm_save2, norm + (M * eBands[i]) - norm_offset, N);
 
 							c_int nstart_bytes = (c_int)ec_save.offs;
 							c_int nend_bytes = (c_int)ec_save.storage;
@@ -1423,9 +1430,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 							x_cm = Quant_Band_Stereo(ctx, X, Y, N, b, B,
 											effective_lowband != -1 ? norm + effective_lowband : null, LM,
-											last ? null : norm + M * eBands[i] - norm_offset, lowband_scratch, (c_int)cm);
+											last ? null : norm + (M * eBands[i]) - norm_offset, lowband_scratch, (c_int)cm);
 
-							opus_val32 dist1 = Arch.MULT16_32_Q15(w[0], Pitch.Celt_Inner_Prod(X_save, X, N, arch)) + Arch.MULT16_32_Q15(w[1], Pitch.Celt_Inner_Prod(Y_save, Y, N, arch));
+							opus_val32 dist1 = Arch.MULT16_32_Q15(w[0], Vq.Celt_Inner_Prod_Norm(X_save, X, N, arch)) + Arch.MULT16_32_Q15(w[1], Vq.Celt_Inner_Prod_Norm(Y_save, Y, N, arch));
 
 							if (dist0 >= dist1)
 							{
@@ -1437,7 +1444,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 								Memory.Opus_Copy(Y, Y_save2, N);
 
 								if (!last)
-									Memory.Opus_Copy(norm + M * eBands[i] - norm_offset, norm_save2, N);
+									Memory.Opus_Copy(norm + (M * eBands[i]) - norm_offset, norm_save2, N);
 
 								Memory.Opus_Copy(bytes_buf, bytes_save, save_bytes);
 							}
@@ -1448,14 +1455,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 							x_cm = Quant_Band_Stereo(ctx, X, Y, N, b, B,
 											effective_lowband != -1 ? norm + effective_lowband : null, LM,
-											last ? null : norm + M * eBands[i] - norm_offset, lowband_scratch, (c_int)(x_cm | y_cm));
+											last ? null : norm + (M * eBands[i]) - norm_offset, lowband_scratch, (c_int)(x_cm | y_cm));
 						}
 					}
 					else
 					{
 						x_cm = Quant_Band(ctx, X, N, b, B,
 										effective_lowband != -1 ? norm + effective_lowband : null, LM,
-										last ? null : norm + M * eBands[i] - norm_offset, Constants.Q15One, lowband_scratch, (c_int)(x_cm | y_cm));
+										last ? null : norm + M * eBands[i] - norm_offset, Constants.Q31One, lowband_scratch, (c_int)(x_cm | y_cm));
 					}
 
 					y_cm = x_cm;

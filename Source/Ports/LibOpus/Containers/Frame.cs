@@ -3,21 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.C;
-
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Kiss_Fft_State
+	internal enum Frame
 	{
-		public c_int nfft;
-		public celt_coef scale;
-		public c_int shift;
-		public opus_int16[] factors = new opus_int16[2 * Constants.MaxFactors];
-		public CPointer<opus_int16> bitrev;
-		public CPointer<Kiss_Twiddle_Cpx> twiddles;
-		public CPointer<Arch_Fft_State> arch_fft;
+		None = 0,
+		Normal = 1,
+		Plc_Noise = 2,
+		Plc_Periodic = 3,
+		Plc_Neural = 4,
+		Dred = 5
 	}
 }

@@ -14,3 +14,6 @@ global using opus_int = System.Int32;			// Used for counters etc; at least 16 bi
 
 global using opus_val16 = System.Single;
 global using opus_val32 = System.Single;
+global using opus_val64 = System.Single;
+
+global using opus_res = System.Single;

@@ -6,6 +6,7 @@
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
+using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -38,15 +39,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			/* 12 */ [  0,  7,  3 ],
 			/* 16 */ [  0,  1, 10 ],
 			/* 24 */ [  0,  2,  6 ],
-			/* 48 */ [ 18, 10, 12 ]
+			/* 48 */ [ 18, 10, 12 ],
+			/* 96 */ [  0,  0, 44 ]
 		];
 
 		private static readonly opus_int8[][] delay_matrix_dec =
 		[
-			// in \ out 8  12  16  24  48
-			/*  8 */ [  4,  0,  2,  0,  0 ],
-			/* 12 */ [  0,  9,  4,  7,  4 ],
-			/* 16 */ [  0,  3, 12,  7,  7 ]
+			// in \ out 8  12  16  24  48  96
+			/*  8 */ [  4,  0,  2,  0,  0,  0 ],
+			/* 12 */ [  0,  9,  4,  7,  4,  4 ],
+			/* 16 */ [  0,  3, 12,  7,  7,  7 ]
 		];
 
 		// Number of input samples to process in the inner loop
@@ -61,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static opus_int32 RateID(opus_int32 R)
 		{
-			return (((R >> 12) - (R > 16000 ? 1 : 0)) >> (R > 24000 ? 1 : 0)) - 1;
+			return Arch.IMIN(5, ((R >> 12) - (R > 16000 ? 1 : 0)) >> (R > 24000 ? 1 : 0) - 1);
 		}
 
 

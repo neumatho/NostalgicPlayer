@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 				SigProc_Fix.Silk_MemSet<opus_int16>(psPLC.LTPCoef_Q14, 0, Constants.Ltp_Order);
 			}
 
-			// Save LPC coeficients
+			// Save LPC coefficients
 			SigProc_Fix.Silk_MemCpy<opus_int16>(psPLC.prevLPC_Q12, psDecCtrl.PredCoef_Q12[1], psDec.LPC_Order);
 			psPLC.PrevLTP_scale_Q14 = (opus_int16)psDecCtrl.LTP_scale_Q14;
 

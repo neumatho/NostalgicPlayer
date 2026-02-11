@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 				CPointer<opus_int32> pres_Q14 = res_Q14;
 				CPointer<opus_int16> A_Q12 = psDecCtrl.PredCoef_Q12[k >> 1];
 
-				// Preload LPC coeficients to array on stack. Gives small performance gain
+				// Preload LPC coefficients to array on stack. Gives small performance gain
 				SigProc_Fix.Silk_MemCpy(A_Q12_tmp, A_Q12, psDec.LPC_Order);
 
 				CPointer<opus_int16> B_Q14 = psDecCtrl.LTPCoef_Q14 + k * Constants.Ltp_Order;

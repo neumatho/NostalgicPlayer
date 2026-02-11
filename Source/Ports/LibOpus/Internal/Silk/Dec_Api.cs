@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static SilkError Silk_Decode(Silk_Decoder decState, Silk_DecControlStruct decControl, LostFlag lostFlag, bool newPacketFlag, Ec_Dec psRangeDec, CPointer<opus_int16> samplesOut, out opus_int32 nSamplesOut, c_int arch)
+		public static SilkError Silk_Decode(Silk_Decoder decState, Silk_DecControlStruct decControl, LostFlag lostFlag, bool newPacketFlag, Ec_Dec psRangeDec, CPointer<opus_res> samplesOut, out opus_int32 nSamplesOut, c_int arch)
 		{
 			nSamplesOut = 0;
 
@@ -259,20 +259,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			// Check if the temp buffer fits into the output PCM buffer. If it fits,
 			// we can delay allocating the temp buffer until after the SILK peak stack
 			// usage. We need to use a < and not a <= because of the two extra samples
-			bool delay_stack_alloc = (decControl.internalSampleRate * decControl.nChannelsInternal) < (decControl.API_sampleRate * decControl.nChannelsAPI);
+			CPointer<opus_int16> samplesOut1_tmp_storage1 = new CPointer<opus_int16>(decControl.nChannelsInternal * (channel_state[0].frame_length + 2));
 
-			CPointer<opus_int16> samplesOut1_tmp_storage1 = new CPointer<opus_int16>(delay_stack_alloc ? Constants.Alloc_None : decControl.nChannelsInternal * (channel_state[0].frame_length + 2));
-
-			if (delay_stack_alloc)
-			{
-				samplesOut1_tmp[0] = samplesOut;
-				samplesOut1_tmp[1] = samplesOut + channel_state[0].frame_length + 2;
-			}
-			else
-			{
-				samplesOut1_tmp[0] = samplesOut1_tmp_storage1;
-				samplesOut1_tmp[1] = samplesOut1_tmp_storage1 + channel_state[0].frame_length + 2;
-			}
+			samplesOut1_tmp[0] = samplesOut1_tmp_storage1;
+			samplesOut1_tmp[1] = samplesOut1_tmp_storage1 + channel_state[0].frame_length + 2;
 
 			bool has_side;
 
@@ -330,23 +320,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			nSamplesOut = SigProc_Fix.Silk_DIV32(nSamplesOutDec * decControl.API_sampleRate, Macros.Silk_SMULBB(channel_state[0].fs_kHz, 1000));
 
 			// Set up pointers to temp buffers
-			opus_int16[] samplesOut2_tmp = new opus_int16[decControl.nChannelsAPI == 2 ? nSamplesOut : Constants.Alloc_None];
-			CPointer<opus_int16> resample_out_ptr;
-
-			if (decControl.nChannelsAPI == 2)
-				resample_out_ptr = samplesOut2_tmp;
-			else
-				resample_out_ptr = samplesOut;
-
-			CPointer<opus_int16> samplesOut1_tmp_storage2 = new CPointer<opus_int16>(delay_stack_alloc ? decControl.nChannelsInternal * (channel_state[0].frame_length + 2) : Constants.Alloc_None);
-
-			if (delay_stack_alloc)
-			{
-				Memory.Opus_Copy(samplesOut1_tmp_storage2, samplesOut, decControl.nChannelsInternal * (channel_state[0].frame_length + 2));
-
-				samplesOut1_tmp[0] = samplesOut1_tmp_storage2;
-				samplesOut1_tmp[1] = samplesOut1_tmp_storage2 + channel_state[0].frame_length + 2;
-			}
+			opus_int16[] samplesOut2_tmp = new opus_int16[nSamplesOut];
+			CPointer<opus_int16> resample_out_ptr = samplesOut2_tmp;
 
 			for (opus_int n = 0; n < SigProc_Fix.Silk_Min(decControl.nChannelsAPI, decControl.nChannelsInternal); n++)
 			{
@@ -358,7 +333,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 				if (decControl.nChannelsAPI == 2)
 				{
 					for (opus_int i = 0; i < nSamplesOut; i++)
-						samplesOut[n + 2 * i] = resample_out_ptr[i];
+						samplesOut[n + (2 * i)] = Arch.INT16TORES(resample_out_ptr[i]);
+				}
+				else
+				{
+					for (opus_int i = 0; i < nSamplesOut; i++)
+						samplesOut[i] = Arch.INT16TORES(resample_out_ptr[i]);
 				}
 			}
 
@@ -373,12 +353,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					ret = resultRet != SilkError.No_Error ? resultRet : ret;
 
 					for (opus_int i = 0; i < nSamplesOut; i++)
-						samplesOut[1 + 2 * i] = resample_out_ptr[i];
+						samplesOut[1 + (2 * i)] = Arch.INT16TORES(resample_out_ptr[i]);
 				}
 				else
 				{
 					for (opus_int i = 0; i < nSamplesOut; i++)
-						samplesOut[1 + 2 * i] = samplesOut[0 + 2 * i];
+						samplesOut[1 + (2 * i)] = samplesOut[0 + (2 * i)];
 				}
 			}
 

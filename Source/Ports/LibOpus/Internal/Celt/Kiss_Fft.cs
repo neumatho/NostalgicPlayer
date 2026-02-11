@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		private static void Kf_Bfly2(Span<Kiss_Fft_Cpx> Fout, c_int m, c_int N)
 		{
 			{
-				opus_val16 tw = Arch.QCONST16(0.7071067812f, 15);
+				celt_coef tw = Arch.QCONST16(0.7071067812f, Constants.Coef_Shift - 1);
 
 				for (c_int i = 0; i < N; i++)
 				{
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					Kiss_Fft_Guts.C_ADDTO(ref Fout[1], t);
 
 					t.r = Fout2[2].i;
-					t.i = -Fout2[2].r;
+					t.i = Arch.NEG32_ovflw(Fout2[2].r);
 					Kiss_Fft_Guts.C_SUB(ref Fout2[2], Fout[2], t);
 					Kiss_Fft_Guts.C_ADDTO(ref Fout[2], t);
 
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Opus_Fft_Impl(Kiss_Fft_State st, Span<Kiss_Fft_Cpx> fout)
+		public static void Opus_Fft_Impl(Kiss_Fft_State st, Span<Kiss_Fft_Cpx> fout, c_int downshift)
 		{
 			c_int[] fstride = new c_int[Constants.MaxFactors];
 
@@ -273,13 +273,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			do
 			{
 				c_int p = st.factors[2 * L];
-				m = st.factors[2 * L + 1];
+				m = st.factors[(2 * L) + 1];
 				fstride[L + 1] = fstride[L] * p;
 				L++;
 			}
 			while (m != 1);
 
-			m = st.factors[2 * L - 1];
+			m = st.factors[(2 * L) - 1];
 
 			for (c_int i = L - 1; i >= 0; i--)
 			{
@@ -294,24 +294,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					case 2:
 					{
+						Fft_Downshift(fout, st.nfft, ref downshift, 1);
 						Kf_Bfly2(fout, m, fstride[i]);
 						break;
 					}
 
 					case 4:
 					{
+						Fft_Downshift(fout, st.nfft, ref downshift, 2);
 						Kf_Bfly4(fout, (size_t)fstride[i] << shift, st, m, fstride[i], m2);
 						break;
 					}
 
 					case 3:
 					{
+						Fft_Downshift(fout, st.nfft, ref downshift, 2);
 						Kf_Bfly3(fout, (size_t)fstride[i] << shift, st, m, fstride[i], m2);
 						break;
 					}
 
 					case 5:
 					{
+						Fft_Downshift(fout, st.nfft, ref downshift, 3);
 						Kf_Bfly5(fout, (size_t)fstride[i] << shift, st, m, fstride[i], m2);
 						break;
 					}
@@ -319,6 +323,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				m = m2;
 			}
+
+			Fft_Downshift(fout, st.nfft, ref downshift, downshift);
 		}
 
 
@@ -343,17 +349,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/********************************************************************/
 		private static void Opus_Fft_C(Kiss_Fft_State st, CPointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout)
 		{
-			opus_val16 scale = st.scale;
+			celt_coef scale = st.scale;
 
 			// Bit-reverse the input
 			for (c_int i = 0; i < st.nfft; i++)
 			{
 				Kiss_Fft_Cpx x = fin[i];
-				fout[st.bitrev[i]].r = Arch.SHR32(Arch.MULT16_32_Q16(scale, x.r), 0/*scale_shift*/);
-				fout[st.bitrev[i]].i = Arch.SHR32(Arch.MULT16_32_Q16(scale, x.i), 0/*scale_shift*/);
+				fout[st.bitrev[i]].r = Kiss_Fft_Guts.S_MUL2(x.r, scale);
+				fout[st.bitrev[i]].i = Kiss_Fft_Guts.S_MUL2(x.i, scale);
 			}
 
-			Opus_Fft_Impl(st, fout);
+			Opus_Fft_Impl(st, fout, 0/*scale_shift*/);
 		}
 
 
@@ -376,6 +382,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private static void Fft_Downshift(Span<Kiss_Fft_Cpx> x, c_int N, ref c_int total, c_int step)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private static void Opus_Ifft_C(Kiss_Fft_State st, CPointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout)
 		{
 			// Bit-reverse the input
@@ -385,7 +402,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			for (c_int i = 0; i < st.nfft; i++)
 				fout[i].i = -fout[i].i;
 
-			Opus_Fft_Impl(st, fout);
+			Opus_Fft_Impl(st, fout, 0);
 
 			for (c_int i = 0; i < st.nfft; i++)
 				fout[i].i = -fout[i].i;

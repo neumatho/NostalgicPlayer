@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int _Celt_Autocorr(CPointer<opus_val16> x, CPointer<opus_val32> ac, CPointer<opus_val16> window, c_int overlap, c_int lag, c_int n, c_int arch)
+		public static c_int _Celt_Autocorr(CPointer<opus_val16> x, CPointer<opus_val32> ac, CPointer<celt_coef> window, c_int overlap, c_int lag, c_int n, c_int arch)
 		{
 			c_int fastN = n - lag;
 			CPointer<opus_val16> xptr;
@@ -207,8 +207,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				for (c_int i = 0; i < overlap; i++)
 				{
-					xx[i] = Arch.MULT16_16_Q15(x[i], window[i]);
-					xx[n - i - 1] = Arch.MULT16_16_Q15(x[n - i - 1], window[i]);
+					opus_val16 w = Arch.COEF2VAL16(window[i]);
+					xx[i] = Arch.MULT16_16_Q15(x[i], w);
+					xx[n - i - 1] = Arch.MULT16_16_Q15(x[n - i - 1], w);
 				}
 
 				xptr = xx;

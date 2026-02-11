@@ -41,11 +41,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		private void Test_Rotation(c_int N, c_int K)
 		{
 			c_double err = 0, ener = 0;
-			opus_val16[] x0 = new opus_val16[Max_Size];
-			opus_val16[] x1 = new opus_val16[Max_Size];
+			celt_norm[] x0 = new opus_val16[Max_Size];
+			celt_norm[] x1 = new opus_val16[Max_Size];
 
 			for (c_int i = 0; i < N; i++)
-				x1[i] = x0[i] = RandomGenerator.GetRandomNumber() % 32767 - 16384;
+				x1[i] = x0[i] = (RandomGenerator.GetRandomNumber() % 16777215) - 8388608;
 
 			Vq.Exp_Rotation(x1, N, 1, 1, K, Spread.Normal);
 

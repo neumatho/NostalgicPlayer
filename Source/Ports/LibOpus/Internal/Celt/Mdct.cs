@@ -33,10 +33,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// Forward MDCT trashes the input array
 		/// </summary>
 		/********************************************************************/
-		private static void Clt_Mdct_Forward_C(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
+		private static void Clt_Mdct_Forward_C(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<celt_coef> window, c_int overlap, c_int shift, c_int stride, c_int arch)
 		{
 			Kiss_Fft_State st = l.kfft[shift];
-			opus_val16 scale = st.scale;
+			celt_coef scale = st.scale;
 
 			c_int N = l.n;
 			CPointer<kiss_twiddle_scalar> trig = l.trig;
@@ -59,15 +59,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				CPointer<kiss_fft_scalar> xp1 = _in + (overlap >> 1);
 				CPointer<kiss_fft_scalar> xp2 = _in + N2 - 1 + (overlap >> 1);
 				CPointer<kiss_fft_scalar> yp = f;
-				CPointer<opus_val16> wp1 = window + (overlap >> 1);
-				CPointer<opus_val16> wp2 = window + (overlap >> 1) - 1;
+				CPointer<celt_coef> wp1 = window + (overlap >> 1);
+				CPointer<celt_coef> wp2 = window + (overlap >> 1) - 1;
 
 				c_int i;
 				for (i = 0; i < ((overlap + 3) >> 2); i++)
 				{
 					// Real part arranged as -d-cR, Imag part arranged as -b+aR
-					yp[0] = Arch.MULT16_32_Q15(wp2[0], xp1[N2]) + Arch.MULT16_32_Q15(wp1[0], xp2[0]);
-					yp[1] = Arch.MULT16_32_Q15(wp1[0], xp1[0]) - Arch.MULT16_32_Q15(wp2[0], xp2[-N2]);
+					yp[0] = Kiss_Fft_Guts.S_MUL(xp1[N2], wp2[0]) + Kiss_Fft_Guts.S_MUL(xp2[0], wp1[0]);
+					yp[1] = Kiss_Fft_Guts.S_MUL(xp1[0], wp1[0]) - Kiss_Fft_Guts.S_MUL(xp2[-N2], wp2[0]);
 
 					yp += 2;
 					xp1 += 2;
@@ -93,8 +93,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				for (; i < N4; i++)
 				{
 					// Real part arranged as a-bR, Imag part arranged as -c-dR
-					yp[0] = -Arch.MULT16_32_Q15(wp1[0], xp1[-N2]) + Arch.MULT16_32_Q15(wp2[0], xp2[0]);
-					yp[1] = Arch.MULT16_32_Q15(wp2[0], xp1[0]) + Arch.MULT16_32_Q15(wp1[0], xp2[N2]);
+					yp[0] = -Kiss_Fft_Guts.S_MUL(xp1[-N2], wp1[0]) + Kiss_Fft_Guts.S_MUL(xp2[0], wp2[0]);
+					yp[1] = Kiss_Fft_Guts.S_MUL(xp1[0], wp2[0]) + Kiss_Fft_Guts.S_MUL(xp2[N2], wp1[0]);
 
 					yp += 2;
 					xp1 += 2;
@@ -121,17 +121,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					kiss_fft_scalar yr = Kiss_Fft_Guts.S_MUL(re, t0) - Kiss_Fft_Guts.S_MUL(im, t1);
 					kiss_fft_scalar yi = Kiss_Fft_Guts.S_MUL(im, t0) + Kiss_Fft_Guts.S_MUL(re, t1);
 
-					yc.r = yr;
-					yc.i = yi;
-					yc.r = Arch.PSHR32(Arch.MULT16_32_Q16(scale, yc.r), 0/*scale_shift*/);
-					yc.i = Arch.PSHR32(Arch.MULT16_32_Q16(scale, yc.i), 0/*scale_shift*/);
+					yc.r = Kiss_Fft_Guts.S_MUL2(yr, scale);
+					yc.i = Kiss_Fft_Guts.S_MUL2(yi, scale);
 
 					f2[st.bitrev[i]] = yc;
 				}
 			}
 
 			// N/4 complex FFT, does not downscale anymore
-			Kiss_Fft.Opus_Fft_Impl(st, f2);
+			Kiss_Fft.Opus_Fft_Impl(st, f2, 0/*scale_shift - headroom*/);
 
 			// Post-rotate
 			{
@@ -142,8 +140,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				for (c_int i = 0; i < N4; i++)
 				{
-					kiss_fft_scalar yr = Kiss_Fft_Guts.S_MUL(fp[0].i, t[N4 + i]) - Kiss_Fft_Guts.S_MUL(fp[0].r, t[i]);
-					kiss_fft_scalar yi = Kiss_Fft_Guts.S_MUL(fp[0].r, t[N4 + i]) + Kiss_Fft_Guts.S_MUL(fp[0].i, t[i]);
+					kiss_fft_scalar t0 = t[i];
+					kiss_fft_scalar t1 = t[N4 + i];
+
+					kiss_fft_scalar yr = Arch.PSHR32(Kiss_Fft_Guts.S_MUL(fp[0].i, t1) - Kiss_Fft_Guts.S_MUL(fp[0].r, t0), 0/*headroom*/);
+					kiss_fft_scalar yi = Arch.PSHR32(Kiss_Fft_Guts.S_MUL(fp[0].r, t1) + Kiss_Fft_Guts.S_MUL(fp[0].i, t0), 0/*headroom*/);
 					yp1[0] = yr;
 					yp2[0] = yi;
 
@@ -174,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Clt_Mdct_Backward_C(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
+		private static void Clt_Mdct_Backward_C(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<celt_coef> window, c_int overlap, c_int shift, c_int stride, c_int arch)
 		{
 			c_int N = l.n;
 			CPointer<kiss_twiddle_scalar> trig = l.trig;
@@ -201,11 +202,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					c_int rev = bitrev[0, 1];
 
-					kiss_fft_scalar yr = Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(xp2[0], t[i]), Kiss_Fft_Guts.S_MUL(xp1[0], t[N4 + i]));
-					kiss_fft_scalar yi = Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(xp1[0], t[i]), Kiss_Fft_Guts.S_MUL(xp2[0], t[N4 + i]));
+					opus_val32 x1 = Arch.SHL32_ovflw(xp1[0], 0/*pre_shift*/);
+					opus_val32 x2 = Arch.SHL32_ovflw(xp2[0], 0/*pre_shift*/);
+
+					kiss_fft_scalar yr = Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(x2, t[i]), Kiss_Fft_Guts.S_MUL(x1, t[N4 + i]));
+					kiss_fft_scalar yi = Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(x1, t[i]), Kiss_Fft_Guts.S_MUL(x2, t[N4 + i]));
 
 					// We swap real and imag because we use an FFT instead of an IFFT
-					yp[2 * rev + 1] = yr;
+					yp[(2 * rev) + 1] = yr;
 					yp[2 * rev] = yi;
 
 					// Storing the pre-rotation directly in the bitrev order
@@ -214,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				}
 			}
 
-			Kiss_Fft.Opus_Fft_Impl(l.kfft[shift], MemoryMarshal.Cast<kiss_fft_scalar, Kiss_Fft_Cpx>((_out + (overlap >> 1)).AsSpan()));
+			Kiss_Fft.Opus_Fft_Impl(l.kfft[shift], MemoryMarshal.Cast<kiss_fft_scalar, Kiss_Fft_Cpx>((_out + (overlap >> 1)).AsSpan()), 0/*fft_shift*/);
 
 			// Post-rotate and de-shuffle from both ends of the buffer at once to make
 			// it in-place
@@ -234,8 +238,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					kiss_twiddle_scalar t1 = t[N4 + i];
 
 					// We'd scale up by 2 here, but instead it's done when mixing the windows
-					kiss_fft_scalar yr = Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(re, t0), Kiss_Fft_Guts.S_MUL(im, t1));
-					kiss_fft_scalar yi = Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(re, t1), Kiss_Fft_Guts.S_MUL(im, t0));
+					kiss_fft_scalar yr = Arch.PSHR32_ovflw(Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(re, t0), Kiss_Fft_Guts.S_MUL(im, t1)), 0/*post_shift*/);
+					kiss_fft_scalar yi = Arch.PSHR32_ovflw(Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(re, t1), Kiss_Fft_Guts.S_MUL(im, t0)), 0/*post_shift*/);
 
 					// We swap real and imag because we're using an FFT instead of an IFFT
 					re = yp1[1];
@@ -247,8 +251,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					t1 = t[N2 - i - 1];
 
 					// We'd scale up by 2 here, but instead it's done when mixing the windows
-					yr = Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(re, t0), Kiss_Fft_Guts.S_MUL(im, t1));
-					yi = Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(re, t1), Kiss_Fft_Guts.S_MUL(im, t0));
+					yr = Arch.PSHR32_ovflw(Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(re, t0), Kiss_Fft_Guts.S_MUL(im, t1)), 0/*post_shift*/);
+					yi = Arch.PSHR32_ovflw(Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(re, t1), Kiss_Fft_Guts.S_MUL(im, t0)), 0/*post_shift*/);
 
 					yp1[0] = yr;
 					yp0[1] = yi;
@@ -262,16 +266,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			{
 				CPointer<kiss_fft_scalar> xp1 = _out + overlap - 1;
 				CPointer<kiss_fft_scalar> yp1 = _out;
-				CPointer<opus_val16> wp1 = window;
-				CPointer<opus_val16> wp2 = window + overlap - 1;
+				CPointer<celt_coef> wp1 = window;
+				CPointer<celt_coef> wp2 = window + overlap - 1;
 
 				for (c_int i = 0; i < (overlap / 2); i++)
 				{
 					kiss_fft_scalar x1 = xp1[0];
 					kiss_fft_scalar x2 = yp1[0];
 
-					yp1[0, 1] = Arch.SUB32_ovflw(Arch.MULT16_32_Q15(wp2[0], x2), Arch.MULT16_32_Q15(wp1[0], x1));
-					xp1[0, -1] = Arch.ADD32_ovflw(Arch.MULT16_32_Q15(wp1[0], x2), Arch.MULT16_32_Q15(wp2[0], x1));
+					yp1[0, 1] = Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(x2, wp2[0]), Kiss_Fft_Guts.S_MUL(x1, wp1[0]));
+					xp1[0, -1] = Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(x2, wp1[0]), Kiss_Fft_Guts.S_MUL(x1, wp2[0]));
 
 					wp1++;
 					wp2--;

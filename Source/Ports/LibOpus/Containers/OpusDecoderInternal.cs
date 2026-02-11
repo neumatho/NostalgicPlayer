@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public Silk_DecControlStruct DecControl = new Silk_DecControlStruct();
 		public c_int decode_gain;
 		public c_int complexity;
+		public c_int ignore_extensions;
 		public c_int arch;
 
 		// Everything beyond this point gets cleared on a reset
@@ -56,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 			DecControl.Clear();
 			decode_gain = 0;
 			complexity = 0;
+			ignore_extensions = 0;
 			arch = 0;
 
 			Reset();
@@ -103,6 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 				DecControl = DecControl.MakeDeepClone(),
 				decode_gain = decode_gain,
 				complexity = complexity,
+				ignore_extensions = ignore_extensions,
 				arch = arch,
 
 				stream_channels = stream_channels,

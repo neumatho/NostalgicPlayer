@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public CPointer<byte> allocVectors;
 		public CPointer<opus_int16> logN;
 
-		public CPointer<opus_val16> window;
+		public CPointer<celt_coef> window;
 		public Mdct_Lookup mdct = new Mdct_Lookup();
 		public PulseCache cache = new PulseCache();
 	}

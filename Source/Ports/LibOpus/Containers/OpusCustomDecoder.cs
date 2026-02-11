@@ -32,6 +32,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public bool error;
 		public c_int last_pitch_index;
 		public c_int loss_duration;
+		public c_int plc_duration;
+		public Frame last_frame_type;
 		public bool skip_plc;
 		public c_int postfilter_period;
 		public c_int postfilter_period_old;
@@ -47,11 +49,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		// one big block of memory and stored in decode_mem. The pointers
 		// are then calculated. I have decided to use separate arrays instead
 		public CPointer<celt_sig> decode_mem;
+		public CPointer<celt_glog> oldEBands;
+		public CPointer<celt_glog> oldLogE;
+		public CPointer<celt_glog> oldLogE2;
+		public CPointer<celt_glog> backgroundLogE;
 		public CPointer<opus_val16> lpc;
-		public CPointer<opus_val16> oldEBands;
-		public CPointer<opus_val16> oldLogE;
-		public CPointer<opus_val16> oldLogE2;
-		public CPointer<opus_val16> backgroundLogE;
 
 		/********************************************************************/
 		/// <summary>
@@ -63,11 +65,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 			CeltMode m = Modes.Opus_Custom_Mode_Create(48000, 960, out _);
 
 			decode_mem = new CPointer<celt_sig>(channels * (Celt_Decoder.Decode_Buffer_Size + m.overlap));
+			oldEBands = new CPointer<celt_glog>(2 * m.nbEBands);
+			oldLogE = new CPointer<celt_glog>(2 * m.nbEBands);
+			oldLogE2 = new CPointer<celt_glog>(2 * m.nbEBands);
+			backgroundLogE = new CPointer<celt_glog>(2 * m.nbEBands);
 			lpc = new CPointer<opus_val16>(channels * Constants.Celt_Lpc_Order);
-			oldEBands = new CPointer<opus_val16>(2 * m.nbEBands);
-			oldLogE = new CPointer<opus_val16>(2 * m.nbEBands);
-			oldLogE2 = new CPointer<opus_val16>(2 * m.nbEBands);
-			backgroundLogE = new CPointer<opus_val16>(2 * m.nbEBands);
 		}
 
 
@@ -119,6 +121,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 			error = false;
 			last_pitch_index = 0;
 			loss_duration = 0;
+			plc_duration = 0;
+			last_frame_type = Frame.None;
 			skip_plc = false;
 			postfilter_period = 0;
 			postfilter_period_old = 0;
@@ -132,11 +136,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 
 			if (lpc != null)
 			{
-				lpc.Clear();
 				oldEBands.Clear();
 				oldLogE.Clear();
 				oldLogE2.Clear();
 				backgroundLogE.Clear();
+				lpc.Clear();
 			}
 		}
 
@@ -167,6 +171,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 				error = error,
 				last_pitch_index = last_pitch_index,
 				loss_duration = loss_duration,
+				plc_duration = plc_duration,
+				last_frame_type = last_frame_type,
 				skip_plc = skip_plc,
 				postfilter_period = postfilter_period,
 				postfilter_period_old = postfilter_period_old,
@@ -180,11 +186,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 			Array.Copy(preemph_memD, clone.preemph_memD, preemph_memD.Length);
 
 			clone.decode_mem = decode_mem.MakeDeepClone();
-			clone.lpc = lpc.MakeDeepClone();
 			clone.oldEBands = oldEBands.MakeDeepClone();
 			clone.oldLogE = oldLogE.MakeDeepClone();
 			clone.oldLogE2 = oldLogE2.MakeDeepClone();
 			clone.backgroundLogE = backgroundLogE.MakeDeepClone();
+			clone.lpc = lpc.MakeDeepClone();
 
 			return clone;
 		}

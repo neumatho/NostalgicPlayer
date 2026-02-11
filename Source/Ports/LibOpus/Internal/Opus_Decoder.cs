@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Smooth_Fade(CPointer<opus_val16> in1, CPointer<opus_val16> in2, CPointer<opus_val16> _out, c_int overlap, c_int channels, CPointer<opus_val16> window, opus_int32 Fs)
+		private static void Smooth_Fade(CPointer<opus_res> in1, CPointer<opus_res> in2, CPointer<opus_res> _out, c_int overlap, c_int channels, CPointer<celt_coef> window, opus_int32 Fs)
 		{
 			c_int inc = 48000 / Fs;
 
@@ -105,8 +105,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			{
 				for (c_int i = 0; i < overlap; i++)
 				{
-					opus_val16 w = Arch.MULT16_16_Q15(window[i * inc], window[i * inc]);
-					_out[i * channels + c] = Arch.SHR32(Arch.MAC16_16(Arch.MULT16_16(w, in2[i * channels + c]), Constants.Q15One - w, in1[i * channels + c]), 15);
+					opus_val16 w = Arch.COEF2VAL16(window[i * inc]);
+					w = Arch.MULT16_16_Q15(w, w);
+					_out[(i * channels) + c] = Arch.SHR32(Arch.MAC16_16(Arch.MULT16_16(w, in2[(i * channels) + c]), Constants.Q15One - w, in1[(i * channels) + c]), 15);
 				}
 			}
 		}
@@ -139,12 +140,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opus_Decode_Frame(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_val16> pcm, c_int frame_size, bool decode_fec)
+		private static c_int Opus_Decode_Frame(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_res> pcm, c_int frame_size, bool decode_fec)
 		{
 			SilkError silk_ret = SilkError.No_Error;
 			c_int celt_ret = 0;
 			Ec_Dec dec = null;
-			CPointer<opus_val16> pcm_transition = null;
+			CPointer<opus_res> pcm_transition = null;
 
 			c_int audiosize;
 			PacketMode mode;
@@ -227,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 				}
 			}
 
-			bool celt_accum = false;
+			bool celt_accum = mode != PacketMode.Celt_Only;
 
 			c_int pcm_transition_silk_size = Constants.Alloc_None;
 			c_int pcm_transition_celt_size = Constants.Alloc_None;
@@ -243,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 					pcm_transition_silk_size = F5 * st.channels;
 			}
 
-			opus_val16[] pcm_transition_celt = new opus_val16[pcm_transition_celt_size];
+			opus_res[] pcm_transition_celt = new opus_res[pcm_transition_celt_size];
 
 			if (transition && (mode == PacketMode.Celt_Only))
 			{
@@ -256,14 +257,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			else
 				frame_size = audiosize;
 
-			// Don't allocate any memory when in CELT-only mode
-			c_int pcm_silk_size = (mode != PacketMode.Celt_Only) && !celt_accum ? Arch.IMAX(F10, frame_size) * st.channels : Constants.Alloc_None;
-			opus_int16[] pcm_silk = new opus_int16[pcm_silk_size];
-
 			// SILK processing
 			if (mode != PacketMode.Celt_Only)
 			{
-				CPointer<opus_int16> pcm_ptr = pcm_silk;
+				CPointer<opus_res> pcm_ptr;
+				c_int pcm_silk_size = Constants.Alloc_None;
+				bool pcm_too_small = frame_size < F10;
+
+				if (pcm_too_small)
+					pcm_silk_size = F10 * st.channels;
+
+				opus_res[] pcm_silk = new opus_res[pcm_silk_size];
+
+				if (pcm_too_small)
+					pcm_ptr = pcm_silk;
+				else
+					pcm_ptr = pcm;
 
 				if (st.prev_mode == PacketMode.Celt_Only)
 					Dec_Api.Silk_ResetDecoder(silk_dec);
@@ -322,11 +331,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 					decoded_samples += silk_frame_size;
 				}
 				while (decoded_samples < frame_size);
+
+				if (pcm_too_small)
+					Memory.Opus_Copy(pcm, pcm_silk, frame_size * st.channels);
 			}
 
 			c_int start_band = 0;
 
-			if (!decode_fec && (mode != PacketMode.Celt_Only) && data.IsNotNull && ((EntCode.Ec_Tell(dec) + 17 + 20 * (mode == PacketMode.Hybrid ? 1 : 0)) <= (8 * len)))
+			if (!decode_fec && (mode != PacketMode.Celt_Only) && data.IsNotNull && ((EntCode.Ec_Tell(dec) + 17 + (20 * (mode == PacketMode.Hybrid ? 1 : 0))) <= (8 * len)))
 			{
 				// Check if we have a redundant 0-8 kHz band
 				if (mode == PacketMode.Hybrid)
@@ -366,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 				pcm_transition_silk_size = Constants.Alloc_None;
 			}
 
-			opus_val16[] pcm_transition_silk = new opus_val16[pcm_transition_silk_size];
+			opus_res[] pcm_transition_silk = new opus_res[pcm_transition_silk_size];
 
 			if (transition && (mode != PacketMode.Celt_Only))
 			{
@@ -415,7 +427,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			// Only allocation memory for redundancy if/when needed
 			c_int redundant_audio_size = redundancy ? F5 * st.channels : Constants.Alloc_None;
-			CPointer<opus_val16> redundant_audio = new opus_val16[redundant_audio_size];
+			CPointer<opus_res> redundant_audio = new opus_res[redundant_audio_size];
 
 			// 5 ms redundant frame for CELT->SILK
 			if (redundancy && celt_to_silk)
@@ -451,6 +463,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 				// Decode CELT
 				celt_ret = Celt_Decoder.Celt_Decode_With_Ec_Dred(celt_dec, decode_fec ? null : data, len, pcm, celt_frame_size, dec, celt_accum);
+				Celt_Decoder.Celt_Decoder_Ctl_Get(celt_dec, OpusControlGetRequest.Opus_Get_Final_Range, out st.rangeFinal);
 			}
 			else
 			{
@@ -471,15 +484,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 					Celt_Decoder.Celt_Decode_With_Ec(celt_dec, silence, 2, pcm, F2_5, null, celt_accum);
 				}
+
+				st.rangeFinal = dec.rng;
 			}
 
-			if ((mode != PacketMode.Celt_Only) && !celt_accum)
-			{
-				for (c_int i = 0; i < (frame_size * st.channels); i++)
-					pcm[i] = pcm[i] + ((1.0f / 32768.0f) * pcm_silk[i]);
-			}
-
-			CPointer<opus_val16> window;
+			CPointer<celt_coef> window;
 			{
 				if (Celt_Decoder.Celt_Decoder_Ctl_Get(celt_dec, OpusControlGetRequest.Celt_Get_Mode, out CeltMode celtMode) != OpusError.Ok)
 					return (c_int)OpusError.Internal_Error;
@@ -555,7 +564,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			if (len <= 1)
 				st.rangeFinal = 0;
 			else
-				st.rangeFinal = dec.rng ^ redundant_rng;
+				st.rangeFinal ^= redundant_rng;
 
 			st.prev_mode = mode;
 			st.prev_redundancy = redundancy && !celt_to_silk;
@@ -570,7 +579,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Decode_Native(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_val16> pcm, c_int frame_size, bool decode_fec, bool self_delimited, out opus_int32 packet_offset, bool soft_clip, OpusDRED dred, opus_int32 dred_offset)
+		public static c_int Opus_Decode_Native(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_res> pcm, c_int frame_size, bool decode_fec, bool self_delimited, out opus_int32 packet_offset, bool soft_clip, OpusDRED dred, opus_int32 dred_offset)
 		{
 			packet_offset = 0;
 
@@ -607,7 +616,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			c_int packet_frame_size = Opus.Opus_Packet_Get_Samples_Per_Frame(data, st.Fs);
 			c_int packet_stream_channels = Opus_Packet_Get_Nb_Channels(data);
 
-			c_int count = Opus.Opus_Packet_Parse_Impl(data, len, self_delimited, out byte toc, null, size, out c_int offset, out packet_offset, out _, out _);
+			c_int count = Opus.Opus_Packet_Parse_Impl(data, len, self_delimited, out byte toc, null, size, out c_int offset, out packet_offset, out CPointer<byte> padding, out opus_int32 padding_len);
+
+			if (st.ignore_extensions != 0)
+			{
+				padding.SetToNull();
+				padding_len = 0;
+			}
+
 			if (count < 0)
 				return count;
 
@@ -639,7 +655,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 				st.frame_size = packet_frame_size;
 				st.stream_channels = packet_stream_channels;
 
-				ret = Opus_Decode_Frame(st, data, size[0], pcm + st.channels * (frame_size - packet_frame_size), packet_frame_size, true);
+				ret = Opus_Decode_Frame(st, data, size[0], pcm + (st.channels * (frame_size - packet_frame_size)), packet_frame_size, true);
 				if (ret < 0)
 					return ret;
 
@@ -661,7 +677,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			for (c_int i = 0; i < count; i++)
 			{
-				c_int ret = Opus_Decode_Frame(st, data, size[i], pcm + nb_samples * st.channels, frame_size - nb_samples, false);
+				c_int ret = Opus_Decode_Frame(st, data, size[i], pcm + (nb_samples * st.channels), frame_size - nb_samples, false);
 				if (ret < 0)
 					return ret;
 
@@ -672,7 +688,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			st.last_packet_duration = nb_samples;
 
 			if (soft_clip)
-				Opus.Opus_Pcm_Soft_Clip(pcm, nb_samples, st.channels, st.softclip_mem);
+				Opus.Opus_Pcm_Soft_Clip_Impl(pcm, nb_samples, st.channels, st.softclip_mem, st.arch);
 			else
 				st.softclip_mem[0] = st.softclip_mem[1] = 0;
 
@@ -700,14 +716,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 					return (c_int)OpusError.Invalid_Packet;
 			}
 
-			c_float[] _out = new c_float[frame_size * st.channels];
+			opus_res[] _out = new opus_res[frame_size * st.channels];
 
 			c_int ret = Opus_Decode_Native(st, data, len, _out, frame_size, decode_fec, false, out _, true, null, 0);
 			if (ret > 0)
-			{
-				for (c_int i = 0; i < (ret * st.channels); i++)
-					pcm[i] = Float_Cast.Float2Int16(_out[i]);
-			}
+				MathOps.Celt_Float2Int16(_out, pcm, ret * st.channels, st.arch);
 
 			return ret;
 		}

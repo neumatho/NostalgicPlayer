@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.C;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 {
@@ -64,11 +65,69 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 		/********************************************************************/
 		/// <summary>
+		/// Calculates the arctangent of x using a Remez approximation of
+		/// order 15, incorporating only odd-powered terms
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_float Celt_Atan_Norm(c_float x)
+		{
+			const c_float ATAN2_2_OVER_PI = 0.636619772367581f;
+			c_float x_sq = x * x;
+
+			// Polynomial coefficients approximated in the [0, 1] range.
+			// Lolremez command: lolremez --degree 6 --range "0:1"
+			//                   "(atan(sqrt(x))-sqrt(x))/(x*sqrt(x))" "1/(sqrt(x)*x)"
+			// Please note that ATAN2_COEFF_A01 is fixed to 1.0f
+			const c_float ATAN2_COEFF_A03 = -3.3331659436225891113281250000e-01f;
+			const c_float ATAN2_COEFF_A05 = 1.99627041816711425781250000000e-01f;
+			const c_float ATAN2_COEFF_A07 = -1.3976582884788513183593750000e-01f;
+			const c_float ATAN2_COEFF_A09 = 9.79423448443412780761718750000e-02f;
+			const c_float ATAN2_COEFF_A11 = -5.7773590087890625000000000000e-02f;
+			const c_float ATAN2_COEFF_A13 = 2.30401363223791122436523437500e-02f;
+			const c_float ATAN2_COEFF_A15 = -4.3554059229791164398193359375e-03f;
+
+			return ATAN2_2_OVER_PI * (x + (x * x_sq * (ATAN2_COEFF_A03
+			+ (x_sq * (ATAN2_COEFF_A05
+			+ (x_sq * (ATAN2_COEFF_A07
+			+ (x_sq * (ATAN2_COEFF_A09
+			+ (x_sq * (ATAN2_COEFF_A11
+			+ (x_sq * (ATAN2_COEFF_A13
+			+ (x_sq * (ATAN2_COEFF_A15)))))))))))))));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the arctangent of y/x, returning an approximate value
+		/// in radians.
+		/// Please refer to the linked wiki page (https://en.wikipedia.org/wiki/Atan2)
+		/// to learn how atan2 results are computed
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_float Celt_Atanp_Norm(c_float y, c_float x)
+		{
+			// For very small values, we don't care about the answer
+			if (((x * x) + (y * y)) < 1e-18f)
+				return 0;
+
+			if (y < x)
+				return Celt_Atan_Norm(y / x);
+			else
+				return 1.0f - Celt_Atan_Norm(x / y);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_float Celt_Sqrt(c_float x)
+		public static opus_val32 Celt_Sqrt(opus_val32 x)
 		{
 			return (c_float)Math.Sqrt(x);
 		}
@@ -81,7 +140,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_float Celt_Rsqrt(c_float x)
+		public static opus_val32 Celt_Sqrt32(opus_val32 x)
+		{
+			return (c_float)Math.Sqrt(x);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_val32 Celt_Rsqrt(opus_val32 x)
 		{
 			return 1.0f / Celt_Sqrt(x);
 		}
@@ -94,7 +166,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_float Celt_Rsqrt_Norm(c_float x)
+		public static opus_val32 Celt_Rsqrt_Norm(opus_val32 x)
 		{
 			return Celt_Rsqrt(x);
 		}
@@ -107,7 +179,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_float Celt_Cos_Norm(c_float x)
+		public static opus_val32 Celt_Rsqrt_Norm32(opus_val32 x)
+		{
+			return Celt_Rsqrt(x);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_val32 Celt_Cos_Norm(opus_val32 x)
 		{
 			return (c_float)Math.Cos((0.5 * Math.PI) * x);
 		}
@@ -120,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_float Celt_Rcp(c_float x)
+		public static opus_val32 Celt_Rcp(opus_val32 x)
 		{
 			return 1.0f / x;
 		}
@@ -181,6 +266,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_float Celt_Exp2_Db(c_float x)
+		{
+			return Celt_Exp2(x);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Compute floor(sqrt(val)) with exact arithmetic
 		/// </summary>
 		/********************************************************************/
@@ -209,6 +307,70 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			while (bshift >= 0);
 
 			return g;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Celt_Float2Int16(CPointer<c_float> _in, CPointer<c_short> _out, c_int cnt, c_int arch)
+		{
+			Celt_Float2Int16_C(_in, _out, cnt);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static void Celt_Float2Int16_C(CPointer<c_float> _in, CPointer<c_short> _out, c_int cnt)
+		{
+			for (c_int i = 0; i < cnt; i++)
+				_out[i] = Float_Cast.Float2Int16(_in[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int Opus_Limit2_CheckWithin1(CPointer<c_float> samples, c_int cnt, c_int arch)
+		{
+			return Opus_Limit2_CheckWithin1_C(samples, cnt);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static c_int Opus_Limit2_CheckWithin1_C(CPointer<c_float> samples, c_int cnt)
+		{
+			if (cnt <= 0)
+				return 1;
+
+			for (c_int i = 0; i < cnt; i++)
+			{
+				c_float clippedVal = samples[i];
+
+				clippedVal = Arch.FMAX(-2.0f, clippedVal);
+				clippedVal = Arch.FMIN(2.0f, clippedVal);
+
+				samples[i] = clippedVal;
+			}
+
+			return 0;
 		}
 	}
 }

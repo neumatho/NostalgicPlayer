@@ -32,6 +32,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static opus_val32 S_MUL2(kiss_fft_scalar a, celt_coef b)
+		{
+			return a * b;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void C_MUL(ref Kiss_Fft_Cpx m, Kiss_Fft_Cpx a, Kiss_Twiddle_Cpx b)
 		{
 			m.r = a.r * b.r - a.i * b.i;

@@ -21,9 +21,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		//
 		public const float Celt_Sig_Scale = 32768.0f;
 
-		public const int Db_Shift = 10;
+		public const int Db_Shift = 24;
 
 		public const c_float Q15One = 1.0f;
+		public const c_float Q31One = 1.0f;
+		public const c_float Coef_One = 1.0f;
 
 		public const c_float Norm_Scaling = 1.0f;
 
@@ -141,6 +143,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		// 4*4*4*2
 		public const int MaxFactors = 8;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public const int Coef_Shift = 16;
+
 		//
 		// Mfrngcod
 		//
@@ -171,6 +178,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		// Modes
 		//
 		public const int Max_Period = 1024;
+
+		public const int Dec_Pitch_Buf_Size = 2048;
 
 		//
 		// Pitch_est_defines
