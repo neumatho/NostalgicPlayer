@@ -336,7 +336,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		{
 			CPointer<opus_val16> lp_pitch_buf = new CPointer<opus_val16>(Decode_Buffer_Size >> 1);
 
-			Pitch.Pitch_Downsample(decode_mem, lp_pitch_buf, Decode_Buffer_Size, C, Celt.QExt_Scale(2), arch);
+			Pitch.Pitch_Downsample(decode_mem, lp_pitch_buf, Decode_Buffer_Size >> 1, C, Celt.QExt_Scale(2), arch);
 			Pitch.Pitch_Search(lp_pitch_buf + (Plc_Pitch_Lag_Max >> 1), lp_pitch_buf, Decode_Buffer_Size - Plc_Pitch_Lag_Max, Plc_Pitch_Lag_Max - Plc_Pitch_Lag_Min, out c_int pitch_index, arch);
 			pitch_index = Plc_Pitch_Lag_Max - pitch_index;
 

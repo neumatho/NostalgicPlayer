@@ -144,7 +144,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		{
 			SilkError silk_ret = SilkError.No_Error;
 			c_int celt_ret = 0;
-			Ec_Dec dec = null;
+			Ec_Dec dec = new Ec_Dec();
 			CPointer<opus_res> pcm_transition = null;
 
 			c_int audiosize;
