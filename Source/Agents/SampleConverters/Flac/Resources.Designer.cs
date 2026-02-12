@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels..
+        ///   Looks up a localized string similar to Only up to 8 channels are supported at the moment. You tried to play a sample that uses {0} channels..
         /// </summary>
         internal static string IDS_FLAC_ERR_ILLEGAL_CHANNELS {
             get {

@@ -148,7 +148,7 @@ Opus is the successor of OggVorbis, MP3 and other lossless audio compression alg
     <value>There was a hole in the page sequence numbers (e.g., a page was corrupt or missing)</value>
   </data>
   <data name="IDS_OPUS_ERR_ILLEGAL_CHANNELS" xml:space="preserve">
-    <value>Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels.</value>
+    <value>Only up to 8 channels are supported at the moment. You tried to play a sample that uses {0} channels.</value>
   </data>
   <data name="IDS_OPUS_ERR_IMPL" xml:space="preserve">
     <value>The stream used a feature that is not implemented, such as an unsupported channel family</value>
