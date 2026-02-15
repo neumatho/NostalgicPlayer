@@ -378,6 +378,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						description = Resources.IDS_MOD_INFODESCLINE1a;
 						value = maxPattern.ToString();
 					}
+
 					break;
 				}
 
@@ -410,6 +411,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						description = Resources.IDS_MOD_INFODESCLINE4a;
 						value = positions[playingInfo.SongPos].ToString();
 					}
+
 					break;
 				}
 
@@ -1443,7 +1445,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				modChan.WaveControl = 0;
 				modChan.GlissFunk = 0;
 				modChan.SampleOffset = 0;
-				modChan.PattPos = 0;
+				modChan.LoopPattPos = 0;
+				modChan.DoLoopPattPos = -1;
 				modChan.LoopCount = 0;
 				modChan.FunkOffset = 0;
 				modChan.WaveStart = 0;
@@ -2095,6 +2098,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								if (cmd == Effect.VolumeSlide)
 									VolumeSlide(modChan, modChan.TrackLine.EffectArg);
 							}
+
 							break;
 						}
 					}
@@ -2137,6 +2141,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -2169,6 +2174,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -2220,6 +2226,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							break;
 						}
 					}
+
 					break;
 				}
 			}
@@ -2481,6 +2488,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 										}
 									}
 								}
+
 								break;
 							}
 
@@ -2509,6 +2517,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 										}
 									}
 								}
+
 								break;
 							}
 
@@ -2542,6 +2551,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 										}
 									}
 								}
+
 								break;
 							}
 
@@ -2565,6 +2575,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 									chan.Mute();
 								}
+
 								break;
 							}
 						}
@@ -3310,22 +3321,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 				if (arg != 0)
 				{
+					if (modChan.DoLoopPattPos == -1)
+						modChan.DoLoopPattPos = (sbyte)playingInfo.PatternPos;
+
+					// If another E6x is reached, but a new E60 has not been used, ignore it to prevent infinity loop
+					if (playingInfo.PatternPos != modChan.DoLoopPattPos)
+						return;
+
 					// Jump to the loop currently set
 					if (modChan.LoopCount == 0)
 						modChan.LoopCount = arg;
 					else
 						modChan.LoopCount--;
 
-					if ((modChan.LoopCount != 0))// && (modChan.PattPos != -1))
+					if (modChan.LoopCount != 0)
 					{
-						playingInfo.BreakPos = (byte)modChan.PattPos;
+						playingInfo.BreakPos = modChan.LoopPattPos;
 						playingInfo.BreakFlag = true;
 					}
 				}
 				else
 				{
 					// Set the loop start point
-					modChan.PattPos = (sbyte)playingInfo.PatternPos;
+					modChan.LoopPattPos = (byte)playingInfo.PatternPos;
+					modChan.DoLoopPattPos = -1;
 				}
 			}
 		}
