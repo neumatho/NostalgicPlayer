@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer.Containers
 		// <summary>
 		// 
 		// </summary>
-//		public c_int Index_Read;
+		public c_int Index_Read;
 
 		/// <summary>
 		/// 

@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// <summary></summary>
 		public delegate c_int ReadPause_Delegate(IContext opaque, c_int pause);
 		/// <summary></summary>
-		public delegate c_int ReadSeek_Delegate(IOpaque opaque, c_int stream_Index, int64_t timestamp, c_int flags);
+		public delegate c_int ReadSeek_Delegate(object opaque, c_int stream_Index, int64_t timestamp, AvSeekFlag flags);
 		/// <summary></summary>
 		public delegate c_int WriteDataType_Delegate(object opaque, CPointer<uint8_t> buf, c_int buf_size, AvIoDataMarkerType type, int64_t time);
 
@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// <summary></summary>
 		public delegate c_int Read_Close_Delegate(AvFormatContext s);
 		/// <summary></summary>
-		public delegate c_int Read_Seek_Delegate(AvFormatContext s, c_int stream_Index, int64_t timestamp, c_int flags);
+		public delegate c_int Read_Seek_Delegate(AvFormatContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags);
 		/// <summary></summary>
 		public delegate int64_t Read_Timestamp_Delegate(AvFormatContext s, c_int stream_Index, ref int64_t pos, int64_t pos_Limit);
 		/// <summary></summary>
@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// <summary></summary>
 		public delegate c_int Read_Pause_Delegate(AvFormatContext s);
 		/// <summary></summary>
-		public delegate c_int Read_Seek2_Delegate(AvFormatContext s, c_int stream_Index, int64_t min_Ts, int64_t max_Ts, c_int flags);
+		public delegate c_int Read_Seek2_Delegate(AvFormatContext s, c_int stream_Index, int64_t min_Ts, int64_t ts, int64_t max_Ts, AvSeekFlag flags);
 		/// <summary></summary>
 		public delegate c_int Get_Device_List_Delegate(AvFormatContext s, out AvDeviceInfoList device_List);
 

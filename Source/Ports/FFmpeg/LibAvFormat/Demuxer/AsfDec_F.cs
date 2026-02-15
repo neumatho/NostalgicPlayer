@@ -1692,6 +1692,29 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private static void Skip_To_Key(AvFormatContext s)//XX 1420
+		{
+			AsfContext asf = (AsfContext)s.Priv_Data;
+
+			for (c_int i = 0; i < 128; i++)
+			{
+				c_int j = asf.AsfId2AvId[i];
+				AsfStream asf_St = asf.Streams[i];
+
+				if ((j < 0) || (s.Streams[j].CodecPar.Codec_Type != AvMediaType.Video))
+					continue;
+
+				asf_St.Skip_To_Key = 1;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private static c_int Asf_Read_Close(AvFormatContext s)//XX 1435
 		{
 			Asf_Reset_Header(s);
@@ -1706,9 +1729,65 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Asf_Read_Pts(AvFormatContext s, c_int stream_Index, ref int64_t ppos, int64_t pos_Limit)//XX 1442
+		private static int64_t Asf_Read_Pts(AvFormatContext s, c_int stream_Index, ref int64_t pPos, int64_t pos_Limit)//XX 1442
 		{
-			throw new NotImplementedException();//XX
+			FFFormatContext si = Internal.FFFormatContext(s);
+			AsfContext asf = (AsfContext)s.Priv_Data;
+			AvPacket pkt1 = new AvPacket();
+			AvPacket pkt = pkt1;
+			int64_t pts;
+			int64_t pos = pPos;
+			int64_t[] start_Pos = new int64_t[Asf_Max_Streams];
+
+			for (c_int i = 0; i < s.Nb_Streams; i++)
+				start_Pos[i] = pos;
+
+			if (s.Packet_Size > 0)
+				pos = ((pos + s.Packet_Size - 1 - si.Data_Offset) / s.Packet_Size * s.Packet_Size) + si.Data_Offset;
+
+			pPos = pos;
+
+			if (AvIoBuf.AvIo_Seek(s.Pb, pos, AvSeek.Set) < 0)
+				return UtilConstants.Av_NoPts_Value;
+
+			Seek.FF_Read_Frame_Flush(s);
+			Asf_Reset_Header(s);
+
+			for (;;)
+			{
+				if (Demux.Av_Read_Frame(s, pkt) < 0)
+				{
+					Log.Av_Log(s, Log.Av_Log_Info, "asf_read_pts failed\n");
+
+					return UtilConstants.Av_NoPts_Value;
+				}
+
+				pts = pkt.Dts;
+
+				if ((pkt.Flags & AvPktFlag.Key) != 0)
+				{
+					c_int i = pkt.Stream_Index;
+
+					AsfStream asf_St = asf.Streams[s.Streams[i].Id];
+
+					pos = asf_St.Packet_Pos;
+
+					Seek.Av_Add_Index_Entry(s.Streams[i], pos, pts, pkt.Size, (c_int)(pos - start_Pos[i] + 1), AvIndex.KeyFrame);
+					start_Pos[i] = asf_St.Packet_Pos + 1;
+
+					if (pkt.Stream_Index == stream_Index)
+					{
+						Packet.Av_Packet_Unref(pkt);
+						break;
+					}
+				}
+
+				Packet.Av_Packet_Unref(pkt);
+			}
+
+			pPos = pos;
+
+			return pts;
 		}
 
 
@@ -1718,9 +1797,163 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Seek(AvFormatContext s, c_int stream_Index, int64_t pts, c_int flags)//XX 1568
+		private static c_int Asf_Build_Simple_Index(AvFormatContext s, c_int stream_Index)//XX 1500
 		{
-			throw new NotImplementedException();//XX
+			AsfContext asf = (AsfContext)s.Priv_Data;
+			int64_t current_Pos = AvIoBuf.AvIo_Tell(s.Pb);
+
+			int64_t ret = AvIoBuf.AvIo_Seek(s.Pb, (int64_t)(asf.Data_Object_Offset + asf.Data_Object_Size), AvSeek.Set);
+
+			if (ret < 0)
+				return (c_int)ret;
+
+			ret = RiffDec.FF_Get_Guid(s.Pb, out FF_Asf_Guid g);
+
+			if (ret < 0)
+				goto End;
+
+			// The data object can be followed by other top-level objects,
+			// skip them until the simple index object is reached
+			while (RiffDec.FF_GuidCmp(g, Asf_Tags.FF_Asf_Simple_Index_Header) != 0)
+			{
+				int64_t gSize = (int64_t)AvIoBuf.AvIo_RL64(s.Pb);
+
+				if ((gSize < 24) || (AvIoBuf.AvIo_FEof(s.Pb) != 0))
+					goto End;
+
+				AvIoBuf.AvIo_Skip(s.Pb, gSize - 24);
+
+				ret = RiffDec.FF_Get_Guid(s.Pb, out g);
+
+				if (ret < 0)
+					goto End;
+			}
+
+			{
+				int64_t last_Pos = -1;
+				int64_t gSize = (int64_t)AvIoBuf.AvIo_RL64(s.Pb);
+
+				ret = RiffDec.FF_Get_Guid(s.Pb, out g);
+
+				if (ret < 0)
+					goto End;
+
+				int64_t iTime = (int64_t)AvIoBuf.AvIo_RL64(s.Pb);
+				c_int pct = (c_int)AvIoBuf.AvIo_RL32(s.Pb);
+				c_int ict = (c_int)AvIoBuf.AvIo_RL32(s.Pb);
+
+				Log.Av_Log(s, Log.Av_Log_Debug, "itime:0x%llx, pct:%d, ict:%d\n", iTime, pct, ict);
+
+				for (c_int i = 0; i < ict; i++)
+				{
+					c_int pktNum = (c_int)AvIoBuf.AvIo_RL32(s.Pb);
+					c_int pktCt = (c_int)AvIoBuf.AvIo_RL16(s.Pb);
+
+					int64_t pos = Internal.FFFormatContext(s).Data_Offset + (s.Packet_Size * pktNum);
+					int64_t index_Pts = Macros.FFMax(Mathematics.Av_Rescale(iTime, i, 10000) - asf.Hdr.Preroll, 0);
+
+					if (AvIoBuf.AvIo_FEof(s.Pb) != 0)
+					{
+						ret = Error.InvalidData;
+
+						goto End;
+					}
+
+					if (pos != last_Pos)
+					{
+						Log.Av_Log(s, Log.Av_Log_Debug, "pktnum:%d, pktct:%d  pts: %lld\n", pktNum, pktCt, index_Pts);
+
+						Seek.Av_Add_Index_Entry(s.Streams[stream_Index], pos, index_Pts, (c_int)s.Packet_Size, 0, AvIndex.KeyFrame);
+
+						last_Pos = pos;
+					}
+				}
+
+				asf.Index_Read = ict > 1 ? 1 : 0;
+			}
+
+			End:
+			AvIoBuf.AvIo_Seek(s.Pb, current_Pos, AvSeek.Set);
+
+			return (c_int)ret;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static c_int Asf_Read_Seek(AvFormatContext s, c_int stream_Index, int64_t pts, AvSeekFlag flags)//XX 1568
+		{
+			AsfContext asf = (AsfContext)s.Priv_Data;
+			AvStream st = s.Streams[stream_Index];
+			FFStream sti = Internal.FFStream(st);
+			c_int ret = 0;
+
+			if (s.Packet_Size <= 0)
+				return -1;
+
+			// Try using the protocol's read_seek if available
+			if (s.Pb != null)
+			{
+				int64_t ret1 = AvIoBuf.AvIo_Seek_Time(s.Pb, stream_Index, pts, flags);
+
+				if (ret1 >= 0)
+					Asf_Reset_Header(s);
+
+				if (ret1 != Error.ENOSYS)
+					return (c_int)ret1;
+			}
+
+			// Explicitly handle the case of seeking to 0
+			if (pts == 0)
+			{
+				Asf_Reset_Header(s);
+				AvIoBuf.AvIo_Seek(s.Pb, Internal.FFFormatContext(s).Data_Offset, AvSeek.Set);
+
+				return 0;
+			}
+
+			if (asf.Index_Read == 0)
+			{
+				ret = Asf_Build_Simple_Index(s, stream_Index);
+
+				if (ret < 0)
+					asf.Index_Read = -1;
+			}
+
+			if ((asf.Index_Read > 0) && sti.Index_Entries.IsNotNull)
+			{
+				c_int index = Seek.Av_Index_Search_Timestamp(st, pts, flags);
+
+				if (index >= 0)
+				{
+					// Find the position
+					uint64_t pos = (uint64_t)sti.Index_Entries[index].Pos;
+
+					// Do the seek
+					Log.Av_Log(s, Log.Av_Log_Debug, "SEEKTO: %lld\n", pos);
+
+					if (AvIoBuf.AvIo_Seek(s.Pb, (int64_t)pos, AvSeek.Set) < 0)
+						return -1;
+
+					Asf_Reset_Header(s);
+					Skip_To_Key(s);
+
+					return 0;
+				}
+			}
+
+			// No index or seeking by index failed
+			if (Seek.FF_Seek_Frame_Binary(s, stream_Index, pts, flags) < 0)
+				return -1;
+
+			Asf_Reset_Header(s);
+			Skip_To_Key(s);
+
+			return 0;
 		}
 		#endregion
 	}

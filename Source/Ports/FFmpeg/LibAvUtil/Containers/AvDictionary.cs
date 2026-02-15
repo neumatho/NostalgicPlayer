@@ -15,11 +15,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil.Containers
 		/// <summary>
 		/// 
 		/// </summary>
-		internal c_int Count;
+		public c_int Count;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		internal CPointer<AvDictionaryEntry> Elems;
+		public CPointer<AvDictionaryEntry> Elems;
 	}
 }

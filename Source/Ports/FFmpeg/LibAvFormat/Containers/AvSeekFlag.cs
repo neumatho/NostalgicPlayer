@@ -14,6 +14,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Containers
 	public enum AvSeekFlag
 	{
 		/// <summary>
+		/// 
+		/// </summary>
+		None = 0,
+
+		/// <summary>
 		/// Seek backward
 		/// </summary>
 		Backward = 1,

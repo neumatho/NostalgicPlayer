@@ -3738,7 +3738,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 			// Check that the codec id is supported
 			c_int ret = Extract_ExtraData_Check(st);
 
-			if (ret != 0)
+			if (ret == 0)
 				goto Finish;
 
 			Bsf.Av_Bsf_Free(ref sti.Extract_ExtraData.Bsf);

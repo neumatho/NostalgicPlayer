@@ -840,6 +840,36 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 
 		/********************************************************************/
 		/// <summary>
+		/// Seek to a given timestamp relative to some component stream.
+		/// Only meaningful if using a network streaming protocol (e.g. MMS.)
+		/// </summary>
+		/********************************************************************/
+		public static int64_t AvIo_Seek_Time(AvIoContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)//XX 1235
+		{
+			if (s.Read_Seek == null)
+				return Error.ENOSYS;
+
+			int64_t ret = s.Read_Seek(s.Opaque, stream_Index, timestamp, flags);
+
+			if (ret >= 0)
+			{
+				s.Buf_Ptr = s.Buf_End;	// Flush buffer
+
+				int64_t pos = s.Seek(s.Opaque, 0, AvSeek.Cur);
+
+				if (pos >= 0)
+					s.Pos = pos;
+				else if (pos != Error.ENOSYS)
+					ret = pos;
+			}
+
+			return ret;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Open a write only memory stream
 		/// </summary>
 		/********************************************************************/
