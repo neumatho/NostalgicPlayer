@@ -306,6 +306,19 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Convert the pointer to an array. Note that this will copy the
+		/// data into a new array
+		/// </summary>
+		/********************************************************************/
+		public T[] ToArray()
+		{
+			return internalBuffer.Slice(bufferOffset).ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Clear the array
 		/// </summary>
 		/********************************************************************/
