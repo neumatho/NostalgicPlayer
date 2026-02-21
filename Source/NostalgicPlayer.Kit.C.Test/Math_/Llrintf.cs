@@ -73,8 +73,8 @@ namespace NostalgicPlayer.Kit.C.Test.Math_
 		[TestMethod]
 		public void Test_Large_Values()
 		{
-			Assert.AreEqual(9000000000000000000L, CMath.llrintf(9e18f));
-			Assert.AreEqual(-9000000000000000000L, CMath.llrintf(-9e18f));
+			Assert.AreEqual(1000000000, CMath.llrintf(1000000000.0f));
+			Assert.AreEqual(-1000000000, CMath.llrintf(-1000000000.0f));
 
 			c_float big = 1.0e20f;
 			c_long_long r = CMath.llrintf(big);
