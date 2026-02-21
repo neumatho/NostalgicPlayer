@@ -86,26 +86,6 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			Assert.AreEqual(0, ptr.Offset);
 			Assert.AreEqual(15, ptr.Length);
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Test constructor with another pointer and offset
-		/// </summary>
-		/********************************************************************/
-		[TestMethod]
-		public void Test_Constructor_WithPointerAndOffset()
-		{
-			int[] buffer = [ 1, 2, 3, 4, 5 ];
-			CPointer<int> ptr1 = new CPointer<int>(buffer, 1);
-			CPointer<int> ptr2 = new CPointer<int>(ptr1, 2);
-
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
-			Assert.AreEqual(3, ptr2.Offset);
-			Assert.AreEqual(2, ptr2.Length);
-			Assert.AreEqual(4, ptr2[0]);
-		}
 		#endregion
 
 		#region Null tests
@@ -141,6 +121,158 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			Assert.IsTrue(ptr.IsNull);
 			Assert.IsFalse(ptr.IsNotNull);
+		}
+		#endregion
+
+		#region Slice tests
+		/********************************************************************/
+		/// <summary>
+		/// Test Slice method with positive offset
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Slice_PositiveOffset()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			CPointer<int> sliced = ptr.Slice(2);
+
+			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreEqual(3, sliced.Offset);
+			Assert.AreEqual(2, sliced.Length);
+			Assert.AreEqual(40, sliced[0]);
+			Assert.AreEqual(50, sliced[1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Slice method with zero offset
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Slice_ZeroOffset()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 2);
+
+			CPointer<int> sliced = ptr.Slice(0);
+
+			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreEqual(2, sliced.Offset);
+			Assert.AreEqual(3, sliced.Length);
+			Assert.AreEqual(30, sliced[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Slice method with negative offset
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Slice_NegativeOffset()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 3);
+
+			CPointer<int> sliced = ptr.Slice(-2);
+
+			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreEqual(1, sliced.Offset);
+			Assert.AreEqual(4, sliced.Length);
+			Assert.AreEqual(20, sliced[0]);
+			Assert.AreEqual(30, sliced[1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Slice method multiple times (chaining)
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Slice_Chaining()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50, 60, 70 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			CPointer<int> sliced1 = ptr.Slice(2);
+			CPointer<int> sliced2 = sliced1.Slice(1);
+
+			Assert.AreEqual(buffer, sliced2.GetOriginalArray());
+			Assert.AreEqual(4, sliced2.Offset);
+			Assert.AreEqual(3, sliced2.Length);
+			Assert.AreEqual(50, sliced2[0]);
+			Assert.AreEqual(60, sliced2[1]);
+			Assert.AreEqual(70, sliced2[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test that Slice does not modify the original pointer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Slice_DoesNotModifyOriginal()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			CPointer<int> sliced = ptr.Slice(2);
+
+			Assert.AreEqual(1, ptr.Offset);
+			Assert.AreEqual(3, sliced.Offset);
+			Assert.AreEqual(20, ptr[0]);
+			Assert.AreEqual(40, sliced[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Slice on a pointer that is already at the end
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Slice_AtEnd()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 5);
+
+			CPointer<int> sliced = ptr.Slice(0);
+
+			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreEqual(5, sliced.Offset);
+			Assert.AreEqual(0, sliced.Length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Slice shares the same underlying buffer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Slice_SharesBuffer()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			CPointer<int> sliced = ptr.Slice(1);
+
+			sliced[0] = 99;
+
+			Assert.AreEqual(99, buffer[2]);
+			Assert.AreEqual(99, ptr[1]);
+			Assert.AreEqual(99, sliced[0]);
 		}
 		#endregion
 

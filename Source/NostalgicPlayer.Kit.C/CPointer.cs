@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public CPointer(CPointer<T> pointer, int offset)
+		private CPointer(CPointer<T> pointer, int offset)
 		{
 			if (pointer.IsNotNull)
 			{
@@ -229,6 +229,18 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		public bool IsNotNull => bufferSet;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a slice of the current array the pointer points to
+		/// </summary>
+		/********************************************************************/
+		public CPointer<T> Slice(int offset)
+		{
+			return new CPointer<T>(this, offset);
+		}
 
 
 

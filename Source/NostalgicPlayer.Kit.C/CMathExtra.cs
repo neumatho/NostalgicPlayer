@@ -32,6 +32,19 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_long_long llabs(c_long_long x)
+		{
+			return Math.Abs(x);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static c_double acos(c_double x)
 		{
 			return Math.Acos(x);
@@ -258,12 +271,60 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static long llrint(c_double x)
+		public static c_int lrint(c_double x)
 		{
 			if (c_double.IsInfinity(x) || c_double.IsNaN(x))
 				return 0;
 
-			return (long)Math.Round(x, MidpointRounding.ToEven);
+			return (c_int)Math.Round(x, MidpointRounding.ToEven);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int lrintf(c_float x)
+		{
+			if (c_float.IsInfinity(x) || c_float.IsNaN(x))
+				return 0;
+
+			return (c_int)MathF.Round(x, MidpointRounding.ToEven);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_long llrint(c_double x)
+		{
+			if (c_double.IsInfinity(x) || c_double.IsNaN(x))
+				return 0;
+
+			return (c_long)Math.Round(x, MidpointRounding.ToEven);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_long llrintf(c_float x)
+		{
+			if (c_float.IsInfinity(x) || c_float.IsNaN(x))
+				return 0;
+
+			return (c_long)MathF.Round(x, MidpointRounding.ToEven);
 		}
 
 
