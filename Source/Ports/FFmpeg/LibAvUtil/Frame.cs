@@ -727,11 +727,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		private static c_int Get_Audio_Buffer(AvFrame frame, c_int align)//XX 146
 		{
-			bool planar = SampleFmt.Av_Sample_Fmt_Is_Planar(frame.Format.Sample);
+			c_int planar = SampleFmt.Av_Sample_Fmt_Is_Planar(frame.Format.Sample);
 			c_int ret;
 
 			c_int channels = frame.Ch_Layout.Nb_Channels;
-			c_int planes = planar ? channels : 1;
+			c_int planes = planar != 0 ? channels : 1;
 
 			if (frame.LineSize[0] == 0)
 			{
@@ -913,9 +913,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		private static c_int Frame_Copy_Audio(AvFrame dst, AvFrame src)//XX 691
 		{
-			bool planar = SampleFmt.Av_Sample_Fmt_Is_Planar(dst.Format.Sample);
+			c_int planar = SampleFmt.Av_Sample_Fmt_Is_Planar(dst.Format.Sample);
 			c_int channels = dst.Ch_Layout.Nb_Channels;
-			c_int planes = planar ? channels : 1;
+			c_int planes = planar != 0 ? channels : 1;
 
 			if ((dst.Nb_Samples != src.Nb_Samples) || (Channel_Layout.Av_Channel_Layout_Compare(dst.Ch_Layout, src.Ch_Layout) != 0))
 				return Error.EINVAL;

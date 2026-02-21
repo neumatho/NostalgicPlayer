@@ -197,7 +197,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					pool.Format = frame.Format;
 					pool.Channels = frame.Ch_Layout.Nb_Channels;
 					pool.Samples = frame.Nb_Samples;
-					pool.Planes = SampleFmt.Av_Sample_Fmt_Is_Planar(pool.Format.Sample) ? pool.Channels : 1;
+					pool.Planes = SampleFmt.Av_Sample_Fmt_Is_Planar(pool.Format.Sample) != 0 ? pool.Channels : 1;
 					break;
 				}
 			}

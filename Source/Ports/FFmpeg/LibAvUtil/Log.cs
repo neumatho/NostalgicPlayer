@@ -210,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 			if ((avc != null) && (avc.Version >= ((50 << 16) | (15 << 8) | 2)) && (avc.Log_Level_Offset_Name != null) && (level >= Av_Log_Fatal))
 			{
-				FieldInfo field = avcl.GetType().GetField(avc.Log_Level_Offset_Name);
+				FieldInfo field = avcl.GetType().GetField(avc.Log_Level_Offset_Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 				level += (c_int)field.GetValue(avcl);
 			}
 
@@ -450,7 +450,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			{
 				if (avc.Parent_Log_Context_Name != null)
 				{
-					FieldInfo fieldInfo = avcl.GetType().GetField(avc.Parent_Log_Context_Name);
+					FieldInfo fieldInfo = avcl.GetType().GetField(avc.Parent_Log_Context_Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 					AvClass parent = (AvClass)fieldInfo.GetValue(avcl);
 
 					if (parent != null)

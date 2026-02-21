@@ -14,9 +14,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 	public static class Mathematics
 	{
 		/// <summary></summary>
+		public const c_double M_Ln10 = 2.30258509299404568402;		// log_e 10
+		/// <summary></summary>
 		public const c_double M_Log2_10 = 3.32192809488736234787;	// log_2 10
 		/// <summary></summary>
 		public const c_double M_Phi = 1.61803398874989484820;		// phi / golden ratio
+		/// <summary></summary>
+		public const c_double M_Sqrt1_2 = 0.70710678118654752440;	// 1/sqrt(2)
 
 		/********************************************************************/
 		/// <summary>

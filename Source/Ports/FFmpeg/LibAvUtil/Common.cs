@@ -107,6 +107,94 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint8_t Av_Clip_UInt8(c_int a)
+		{
+			return Av_Clip_UInt8_C(a);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clip a signed integer value into the -128,127 range
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint8_t Av_Clip_UInt8_C(c_int a)
+		{
+			if ((a & ~0xff) != 0)
+				return (uint8_t)((~a) >> 31);
+			else
+				return (uint8_t)a;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int16_t Av_Clip_Int16(c_int a)
+		{
+			return Av_Clip_Int16_C(a);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clip a signed integer value into the -32768,32767 range
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int16_t Av_Clip_Int16_C(c_int a)
+		{
+			if (((a + 0x8000U) & ~0xffff) != 0)
+				return (int16_t)((a >> 31) ^ 0x7fff);
+			else
+				return (int16_t)a;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int32_t Av_ClipL_Int32(int64_t a)
+		{
+			return Av_ClipL_Int32_C(a);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clip a signed 64-bit integer value into the
+		/// -2147483648,2147483647 range
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int32_t Av_ClipL_Int32_C(int64_t a)
+		{
+			if ((((uint64_t)a + 0x80000000) & ~(uint64_t)0xffffffff) != 0)
+				return (int32_t)((a >> 63) ^ 0x7fffffff);
+			else
+				return (int32_t)a;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int64_t Av_Sat_Sub64(int64_t a, int64_t b)
 		{
 			return Av_Sat_Sub64_C(a, b);

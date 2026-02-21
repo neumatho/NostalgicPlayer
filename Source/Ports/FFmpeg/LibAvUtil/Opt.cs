@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		private class Type_Desc
 		{
 			/// <summary></summary>
-			public delegate c_int SetArray_Delegate(Type_Desc type, IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, ref object dst);
+			public delegate c_int SetArray_Delegate(Type_Desc type, IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, OptFieldInfo dst);
 			/// <summary></summary>
 			public delegate c_int GetArray_Delegate(AvOption o, object dst, out CPointer<char> out_Val);
 			/// <summary></summary>
@@ -81,6 +81,63 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			public FreeArray_Delegate FreeArrayFunc { get; }
 			/// <summary></summary>
 			public CopyElement_Delegate CopyElementFunc { get; }
+		}
+		#endregion
+
+		#region OptFieldInfo class
+		private class OptFieldInfo
+		{
+			private object obj;
+			private readonly FieldInfo fieldInfo;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public OptFieldInfo(object obj, FieldInfo fieldInfo)
+			{
+				this.obj = obj;
+				this.fieldInfo = fieldInfo;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public OptFieldInfo(object obj) : this(obj, null)
+			{
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Return the value on the field
+			/// </summary>
+			/********************************************************************/
+			public object GetValue()
+			{
+				return fieldInfo != null ? fieldInfo.GetValue(obj) : obj;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Will set a new value on the field
+			/// </summary>
+			/********************************************************************/
+			public void SetValue(object value)
+			{
+				if (fieldInfo != null)
+					fieldInfo.SetValue(obj, value);
+				else
+					obj = value;
+			}
 		}
 		#endregion
 
@@ -188,17 +245,17 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		public static c_int Av_Opt_Set(IOptionContext obj, CPointer<char> name, CPointer<char> val, AvOptSearch search_Flags)//XX 835
 		{
-			c_int ret = Opt_Set_Init(obj, name, search_Flags, AvOptionType.None, out IOptionContext target_Obj, out AvOption o, out object dst);
+			c_int ret = Opt_Set_Init(obj, name, search_Flags, AvOptionType.None, out IOptionContext target_Obj, out AvOption o, out OptFieldInfo dst);
 
 			if (ret < 0)
 				return ret;
 
-			ret = ((o.Type & AvOptionType.Array) != 0) ? Opt_Set_Array(obj, target_Obj, o, val, ref dst) : Opt_Set_Elem(obj, target_Obj, o, val, ref dst);
+			ret = ((o.Type & AvOptionType.Array) != 0) ? Opt_Set_Array(obj, target_Obj, o, val, dst) : Opt_Set_Elem(obj, target_Obj, o, val, dst);
 
 			if (ret < 0)
 				return ret;
 
-			target_Obj.GetType().GetField(o.OptionName).SetValue(target_Obj, dst);
+			GetFieldInfo(target_Obj, o.OptionName).SetValue(dst.GetValue());
 
 			return ret;
 		}
@@ -224,16 +281,35 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		public static c_int Av_Opt_Set_Dict_Val(IOptionContext obj, CPointer<char> name, AvDictionary val, AvOptSearch search_Flags)//XX 984
 		{
-			c_int ret = Opt_Set_Init(obj, name, search_Flags, AvOptionType.Dict, out _, out _, out object o);
+			c_int ret = Opt_Set_Init(obj, name, search_Flags, AvOptionType.Dict, out _, out _, out OptFieldInfo o);
 
 			if (ret < 0)
 				return ret;
 
-			AvDictionary dst = (AvDictionary)o;
+			AvDictionary dst = (AvDictionary)o.GetValue();
 
 			Dict.Av_Dict_Free(ref dst);
 
 			return Dict.Av_Dict_Copy(ref dst, val, AvDict.None);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static c_int Av_Opt_Set_ChLayout(IOptionContext obj, CPointer<char> name, AvChannelLayout channel_Layout, AvOptSearch search_Flags)//XX 1000
+		{
+			c_int ret = Opt_Set_Init(obj, name, search_Flags, AvOptionType.ChLayout, out _, out _, out OptFieldInfo o);
+
+			if (ret < 0)
+				return ret;
+
+			AvChannelLayout dst = (AvChannelLayout)o.GetValue();
+
+			return Channel_Layout.Av_Channel_Layout_Copy(dst, channel_Layout);
 		}
 
 
@@ -256,14 +332,10 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			if ((o.Flags & AvOptFlag.Deprecated) != 0)
 				Log.Av_Log(obj, Log.Av_Log_Warning, "The \"%s\" option is deprecated: %s\n", name, o.Help);
 
-			FieldInfo fieldInfo = null;
 			object dst = null;
 
 			if (!string.IsNullOrEmpty(o.OptionName))
-			{
-				fieldInfo = obj.GetType().GetField(o.OptionName);
-				dst = fieldInfo.GetValue(obj);
-			}
+				dst = GetFieldInfo(obj, o.OptionName).GetValue();
 
 			if ((o.Type & AvOptionType.Array) != 0)
 			{
@@ -324,8 +396,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			if (o.Type != AvOptionType.Dict)
 				return Error.EINVAL;
 
-			FieldInfo fieldInfo = obj.GetType().GetField(name.ToString());
-			AvDictionary src = (AvDictionary)fieldInfo.GetValue(obj);
+			AvDictionary src = (AvDictionary)GetFieldInfo(obj, name.ToString()).GetValue();
 
 			return Dict.Av_Dict_Copy(ref out_Val, src, AvDict.None);
 		}
@@ -375,14 +446,10 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		{
 			foreach (AvOption opt in Av_Opt_Next(s))
 			{
-				FieldInfo fieldInfo = null;
-				object dst = null;
+				OptFieldInfo dst = null;
 
 				if (!string.IsNullOrEmpty(opt.OptionName))
-				{
-					fieldInfo = s.GetType().GetField(opt.OptionName);
-					dst = fieldInfo.GetValue(s);
-				}
+					dst = GetFieldInfo(s, opt.OptionName);
 
 				if ((opt.Flags & mask) != flags)
 					continue;
@@ -395,10 +462,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					CPointer<AvOptionArrayDef> arr = opt.Default_Value.Arr;
 
 					if (arr.IsNotNull && (arr[0].Def.IsNotNull))
-					{
-						Opt_Set_Array(s, s, opt, arr[0].Def, ref dst);
-						fieldInfo.SetValue(s, dst);
-					}
+						Opt_Set_Array(s, s, opt, arr[0].Def, dst);
 
 					continue;
 				}
@@ -421,7 +485,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					case AvOptionType.Pixel_Fmt:
 					case AvOptionType.Sample_Fmt:
 					{
-						Write_Number(s, opt, ref dst, 1, 1, opt.Default_Value.I64);
+						Write_Number(s, opt, dst, 1, 1, opt.Default_Value.I64);
 						break;
 					}
 
@@ -429,67 +493,67 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					case AvOptionType.Float:
 					{
 						c_double val = opt.Default_Value.Dbl;
-						Write_Number(s, opt, ref dst, val, 1, 1);
+						Write_Number(s, opt, dst, val, 1, 1);
 						break;
 					}
 
 					case AvOptionType.Rational:
 					{
 						AvRational val = Rational.Av_D2Q(opt.Default_Value.Dbl, c_int.MaxValue);
-						Write_Number(s, opt, ref dst, 1, val.Den, val.Num);
+						Write_Number(s, opt, dst, 1, val.Den, val.Num);
 						break;
 					}
 
 					case AvOptionType.Color:
 					{
-						ColorInfo t = (ColorInfo)dst;
+						ColorInfo t = (ColorInfo)dst.GetValue();
 						Set_String_Color(s, opt, opt.Default_Value.Str, ref t);
-						dst = t;
+						dst.SetValue(t);
 						break;
 					}
 
 					case AvOptionType.String:
 					{
-						CPointer<char> t = (CPointer<char>)dst;
+						CPointer<char> t = (CPointer<char>)dst.GetValue();
 						Set_String(s, opt, opt.Default_Value.Str, ref t);
-						dst = t;
+						dst.SetValue(t);
 						break;
 					}
 
 					case AvOptionType.Image_Size:
 					{
-						SizeInfo t = (SizeInfo)dst;
+						SizeInfo t = (SizeInfo)dst.GetValue();
 						Set_String_Image_Size(s, opt, opt.Default_Value.Str, ref t);
-						dst = t;
+						dst.SetValue(t);
 						break;
 					}
 
 					case AvOptionType.Video_Rate:
 					{
 						Set_String_Video_Rate(s, opt, opt.Default_Value.Str, out AvRational t);
-						dst = t;
+						dst.SetValue(t);
 						break;
 					}
 
 					case AvOptionType.Binary:
 					{
-						PtrInfo<uint8_t> t = (PtrInfo<uint8_t>)dst;
+						PtrInfo<uint8_t> t = (PtrInfo<uint8_t>)dst.GetValue();
 						Set_String_Binary(s, opt, opt.Default_Value.Str, ref t);
-						dst = t;
+						dst.SetValue(t);
 						break;
 					}
 
 					case AvOptionType.ChLayout:
 					{
-						Set_String_Channel_Layout(s, opt, opt.Default_Value.Str, ref dst);
+						Set_String_Channel_Layout(s, opt, opt.Default_Value.Str, dst);
 						break;
 					}
 
 					case AvOptionType.Dict:
 					{
-						AvDictionary t = (AvDictionary)dst;
+						AvDictionary t = (AvDictionary)dst.GetValue();
 						Set_String_Dict(s, opt, opt.Default_Value.Str, ref t);
-						dst = t;
+						dst.SetValue(t);
 						break;
 					}
 
@@ -499,9 +563,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 						break;
 					}
 				}
-
-				if (fieldInfo != null)
-					fieldInfo.SetValue(s, dst);
 			}
 		}
 
@@ -656,13 +717,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		{
 			foreach (AvOption o in Av_Opt_Next(obj))
 			{
-				FieldInfo fieldInfo = null;
+				OptFieldInfo fieldInfo = null;
 				object pItem = null;
 
 				if (!string.IsNullOrEmpty(o.OptionName))
 				{
-					fieldInfo = obj.GetType().GetField(o.OptionName);
-					pItem = fieldInfo.GetValue(obj);
+					fieldInfo = GetFieldInfo(obj, o.OptionName);
+					pItem = fieldInfo.GetValue();
 				}
 
 				if ((o.Type & AvOptionType.Array) != 0)
@@ -674,7 +735,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					Opt_Free_Elem(o.Type, ref pItem);
 
 				if (fieldInfo != null)
-					fieldInfo.SetValue(obj, pItem);
+					fieldInfo.SetValue(pItem);
 			}
 		}
 
@@ -884,14 +945,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 			foreach (AvOption o in Av_Opt_Next(src))
 			{
-				FieldInfo field_Dst = dst.GetType().GetField(o.OptionName);
-				FieldInfo field_Src = src.GetType().GetField(o.OptionName);
+				OptFieldInfo field_Dst = GetFieldInfo(dst, o.OptionName);
+				OptFieldInfo field_Src = GetFieldInfo(src, o.OptionName);
 
-				object dstVal = field_Dst.GetValue(dst);
-				object srcVal = field_Src.GetValue(src);
+				object dstVal = field_Dst.GetValue();
+				object srcVal = field_Src.GetValue();
 
 				c_int err = (o.Type & AvOptionType.Array) != 0 ? Opt_Copy_Array(dst, o, ref dstVal, srcVal) : Opt_Copy_Elem(dst, o.Type, ref dstVal, srcVal);
-				field_Dst.SetValue(dst, dstVal);
+				field_Dst.SetValue(dstVal);
 
 				if (err < 0)
 					ret = err;
@@ -918,8 +979,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			if (((o.Type & AvOptionType.Array) == 0) || ((out_Type & AvOptionType.Array) != 0))
 				return Error.EINVAL;
 
-			FieldInfo fieldInfo = target_Obj.GetType().GetField(o.OptionName);
-			ArrayInfo<T1> array = (ArrayInfo<T1>)fieldInfo.GetValue(target_Obj);
+			ArrayInfo<T1> array = (ArrayInfo<T1>)GetFieldInfo(target_Obj, o.OptionName).GetValue();
 
 			CPointer<T1> pArray = array.Array;
 			c_uint array_Size = array.Count;
@@ -1199,14 +1259,10 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			CPointer<char> str;
 			c_int ret;
 
-			FieldInfo fieldInfo = null;
 			object dst = null;
 
 			if (!string.IsNullOrEmpty(o.OptionName))
-			{
-				fieldInfo = obj.GetType().GetField(o.OptionName);
-				dst = fieldInfo.GetValue(obj);
-			}
+				dst = GetFieldInfo(obj, o.OptionName).GetValue();
 
 			if ((o.Type & AvOptionType.Array) != 0)
 			{
@@ -1608,7 +1664,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Perform common setup for option-setting functions
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opt_Set_Init(IOptionContext obj, CPointer<char> name, AvOptSearch search_Flags, AvOptionType require_Type, out IOptionContext pTgt, out AvOption pO, out object pDst)//XX 166
+		private static c_int Opt_Set_Init(IOptionContext obj, CPointer<char> name, AvOptSearch search_Flags, AvOptionType require_Type, out IOptionContext pTgt, out AvOption pO, out OptFieldInfo pDst)//XX 166
 		{
 			pTgt = null;
 			pO = null;
@@ -1636,14 +1692,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				AvClass @class = (AvClass)tgt;
 
 				if (!string.IsNullOrEmpty(@class.State_Flags_Name))
-					state_Flags = (AvClassStateFlag?)tgt.GetType().GetField(@class.State_Flags_Name)?.GetValue(tgt);
+					state_Flags = (AvClassStateFlag?)GetFieldInfo(tgt, @class.State_Flags_Name)?.GetValue();
 
 				if ((state_Flags == null) && (obj != tgt))
 				{
 					@class = (AvClass)obj;
 
 					if (!string.IsNullOrEmpty(@class.State_Flags_Name))
-						state_Flags = (AvClassStateFlag?)obj.GetType().GetField(@class.State_Flags_Name)?.GetValue(obj);
+						state_Flags = (AvClassStateFlag?)GetFieldInfo(obj, @class.State_Flags_Name)?.GetValue();
 				}
 
 				if ((state_Flags != null) && ((state_Flags & AvClassStateFlag.Initialized) != 0))
@@ -1655,11 +1711,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			}
 
 			if ((o.Flags & AvOptFlag.Deprecated) != 0)
-				Log.Av_Log(obj, Log.Av_Log_Warning, "The \"%s\" optiion is deprecated: %s\n", name, o.Help);
+				Log.Av_Log(obj, Log.Av_Log_Warning, "The \"%s\" option is deprecated: %s\n", name, o.Help);
 
 			pO = o;
 			pTgt = tgt;
-			pDst = tgt.GetType().GetField(o.OptionName).GetValue(tgt);
+			pDst = GetFieldInfo(tgt, o.OptionName);
 
 			return 0;
 		}
@@ -1793,7 +1849,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Write_Number(IOptionContext obj, AvOption o, ref object dst, c_double num, c_int den, int64_t intNum)//XX 283
+		private static c_int Write_Number(IOptionContext obj, AvOption o, OptFieldInfo dst, c_double num, c_int den, int64_t intNum)//XX 283
 		{
 			AvOptionType type = Type_Base(o.Type);
 
@@ -1821,13 +1877,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			{
 				case AvOptionType.Pixel_Fmt:
 				{
-					dst = (AvPixelFormat)(CMath.llrint(num / den) * intNum);
+					dst.SetValue((AvPixelFormat)(CMath.llrint(num / den) * intNum));
 					break;
 				}
 
 				case AvOptionType.Sample_Fmt:
 				{
-					dst = (AvSampleFormat)(CMath.llrint(num / den) * intNum);
+					dst.SetValue((AvSampleFormat)(CMath.llrint(num / den) * intNum));
 					break;
 				}
 
@@ -1835,13 +1891,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				case AvOptionType.Flags:
 				case AvOptionType.Int:
 				{
-					dst = (c_int)(CMath.llrint(num / den) * intNum);
+					dst.SetValue((c_int)(CMath.llrint(num / den) * intNum));
 					break;
 				}
 
 				case AvOptionType.UInt:
 				{
-					dst = (c_uint)(CMath.llrint(num / den) * intNum);
+					dst.SetValue((c_uint)(CMath.llrint(num / den) * intNum));
 					break;
 				}
 
@@ -1851,9 +1907,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					c_double d = num / den;
 
 					if ((intNum == 1) && (d == int64_t.MaxValue))
-						dst = int64_t.MaxValue;
+						dst.SetValue(int64_t.MaxValue);
 					else
-						dst = (int64_t)(CMath.llrint(d) * intNum);
+						dst.SetValue((int64_t)(CMath.llrint(d) * intNum));
 
 					break;
 				}
@@ -1867,24 +1923,24 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					// "INT64_MAX + 1ULL" is used as it is representable exactly as IEEE double
 					// while INT64_MAX is not
 					if ((intNum == 1) && (d == uint64_t.MaxValue))
-						dst = uint64_t.MaxValue;
+						dst.SetValue(uint64_t.MaxValue);
 					else if (d > (int64_t.MaxValue + 1UL))
-						dst = (uint64_t)(((uint64_t)CMath.llrint(d - (int64_t.MaxValue + 1UL)) + (int64_t.MaxValue + 1UL)) * (uint64_t)intNum);
+						dst.SetValue((uint64_t)(((uint64_t)CMath.llrint(d - (int64_t.MaxValue + 1UL)) + (int64_t.MaxValue + 1UL)) * (uint64_t)intNum));
 					else
-						dst = (uint64_t)(CMath.llrint(d) * intNum);
+						dst.SetValue((uint64_t)(CMath.llrint(d) * intNum));
 
 					break;
 				}
 
 				case AvOptionType.Float:
 				{
-					dst = (c_float)(num * intNum / den);
+					dst.SetValue((c_float)(num * intNum / den));
 					break;
 				}
 
 				case AvOptionType.Double:
 				{
-					dst = (c_double)(num * intNum / den);
+					dst.SetValue((c_double)(num * intNum / den));
 					break;
 				}
 
@@ -1892,9 +1948,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				case AvOptionType.Video_Rate:
 				{
 					if ((c_int)num == num)
-						dst = new AvRational((c_int)(num * intNum), den);
+						dst.SetValue(new AvRational((c_int)(num * intNum), den));
 					else
-						dst = Double_To_Rational(num * intNum / den);
+						dst.SetValue(Double_To_Rational(num * intNum / den));
 
 					break;
 				}
@@ -2018,7 +2074,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Set_String_Number(IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, ref object dst)//XX 420
+		private static c_int Set_String_Number(IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, OptFieldInfo dst)//XX 420
 		{
 			AvOptionType type = Type_Base(o.Type);
 			c_int ret = 0;
@@ -2029,7 +2085,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 				if (sscanF.Parse(val.ToString(), "%d%*1[:/]%d%c") == 2)
 				{
-					ret = Write_Number(obj, o, ref dst, 1, (c_int)sscanF.Results[1], (c_int)sscanF.Results[0]);
+					ret = Write_Number(obj, o, dst, 1, (c_int)sscanF.Results[1], (c_int)sscanF.Results[0]);
 					if (ret >= 0)
 						return ret;
 
@@ -2118,7 +2174,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 				if (type == AvOptionType.Flags)
 				{
-					intNum = (c_uint)(c_int)dst;
+					intNum = (c_uint)(c_int)dst.GetValue();
 
 					if (cmd == '+')
 						d = intNum | (int64_t)d;
@@ -2126,7 +2182,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 						d = intNum & ~(int64_t)d;
 				}
 
-				ret = Write_Number(obj, o, ref dst, d, 1, 1);
+				ret = Write_Number(obj, o, dst, d, 1, 1);
 				if (ret < 0)
 					return ret;
 
@@ -2400,9 +2456,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Set_String_Channel_Layout(IOptionContext obj, AvOption o, CPointer<char> val, ref object dst)//XX 670
+		private static c_int Set_String_Channel_Layout(IOptionContext obj, AvOption o, CPointer<char> val, OptFieldInfo dst)//XX 670
 		{
-			AvChannelLayout channel_Layout = (AvChannelLayout)dst;
+			AvChannelLayout channel_Layout = (AvChannelLayout)dst.GetValue();
 
 			Channel_Layout.Av_Channel_Layout_Uninit(channel_Layout);
 
@@ -2410,7 +2466,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				return 0;
 
 			c_int ret = Channel_Layout.Av_Channel_Layout_From_String(ref channel_Layout, val);
-			dst = channel_Layout;
+			dst.SetValue(channel_Layout);
 
 			return ret;
 		}
@@ -2422,7 +2478,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opt_Set_Elem(IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, ref object dst)//XX 680
+		private static c_int Opt_Set_Elem(IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, OptFieldInfo dst)//XX 680
 		{
 			AvOptionType type = Type_Base(o.Type);
 			c_int ret;
@@ -2440,27 +2496,27 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			{
 				case AvOptionType.Bool:
 				{
-					c_int t = (c_int)dst;
+					c_int t = (c_int)dst.GetValue();
 					ret = Set_String_Bool(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
 
 				case AvOptionType.String:
 				{
-					CPointer<char> t = (CPointer<char>)dst;
+					CPointer<char> t = (CPointer<char>)dst.GetValue();
 					ret = Set_String(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
 
 				case AvOptionType.Binary:
 				{
-					PtrInfo<uint8_t> t = (PtrInfo<uint8_t>)dst;
+					PtrInfo<uint8_t> t = (PtrInfo<uint8_t>)dst.GetValue();
 					ret = Set_String_Binary(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
@@ -2473,13 +2529,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				case AvOptionType.Float:
 				case AvOptionType.Double:
 				case AvOptionType.Rational:
-					return Set_String_Number(obj, target_Obj, o, val, ref dst);
+					return Set_String_Number(obj, target_Obj, o, val, dst);
 
 				case AvOptionType.Image_Size:
 				{
-					SizeInfo t = (SizeInfo)dst;
+					SizeInfo t = (SizeInfo)dst.GetValue();
 					ret = Set_String_Image_Size(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
@@ -2490,23 +2546,23 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					if (ret < 0)
 						return ret;
 
-					return Write_Number(obj, o, ref dst, 1, tmp.Den, tmp.Num);
+					return Write_Number(obj, o, dst, 1, tmp.Den, tmp.Num);
 				}
 
 				case AvOptionType.Pixel_Fmt:
 				{
-					AvPixelFormat t = (AvPixelFormat)dst;
+					AvPixelFormat t = (AvPixelFormat)dst.GetValue();
 					ret = Set_String_Pixel_Fmt(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
 
 				case AvOptionType.Sample_Fmt:
 				{
-					AvSampleFormat t = (AvSampleFormat)dst;
+					AvSampleFormat t = (AvSampleFormat)dst.GetValue();
 					ret = Set_String_Sample_Fmt(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
@@ -2534,23 +2590,23 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 						return Error.ERANGE;
 					}
 
-					dst = usecs;
+					dst.SetValue(usecs);
 
 					return 0;
 				}
 
 				case AvOptionType.Color:
 				{
-					ColorInfo t = (ColorInfo)dst;
+					ColorInfo t = (ColorInfo)dst.GetValue();
 					ret = Set_String_Color(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
 
 				case AvOptionType.ChLayout:
 				{
-					ret = Set_String_Channel_Layout(obj, o, val, ref dst);
+					ret = Set_String_Channel_Layout(obj, o, val, dst);
 
 					if (ret < 0)
 					{
@@ -2564,9 +2620,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 				case AvOptionType.Dict:
 				{
-					AvDictionary t = (AvDictionary)dst;
+					AvDictionary t = (AvDictionary)dst.GetValue();
 					ret = Set_String_Dict(obj, o, val, ref t);
-					dst = t;
+					dst.SetValue(t);
 
 					return ret;
 				}
@@ -2584,11 +2640,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opt_Set_Array(IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, ref object dst)//XX 756
+		private static c_int Opt_Set_Array(IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, OptFieldInfo dst)//XX 756
 		{
 			Type_Desc type = opt_Type_Desc[(c_int)Type_Base(o.Type)];
 
-			c_int ret = type.SetArrayFunc(type, obj, target_Obj, o, val, ref dst);
+			c_int ret = type.SetArrayFunc(type, obj, target_Obj, o, val, dst);
 
 			return ret;
 		}
@@ -2600,9 +2656,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opt_Set_Array_Helper<T>(Type_Desc type, IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, ref object dst)
+		private static c_int Opt_Set_Array_Helper<T>(Type_Desc type, IOptionContext obj, IOptionContext target_Obj, AvOption o, CPointer<char> val, OptFieldInfo dst)
 		{
-			ArrayInfo<T> arrayDst = (ArrayInfo<T>)dst;
+			ArrayInfo<T> arrayDst = (ArrayInfo<T>)dst.GetValue();
 
 			AvOptionArrayDef arr = o.Default_Value.Arr != null ? o.Default_Value.Arr[0] : null;
 			char sep = Opt_Array_Sep(o);
@@ -2656,13 +2712,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 				elems = tmp;
 
-				object tmpElem = elems[nb_Elems];
+				OptFieldInfo tmpElem = new OptFieldInfo(elems[nb_Elems]);
 
-				ret = Opt_Set_Elem(obj, target_Obj, o, str, ref tmpElem);
+				ret = Opt_Set_Elem(obj, target_Obj, o, str, tmpElem);
 				if (ret < 0)
 					goto Fail;
 
-				elems[nb_Elems] = (T)tmpElem;
+				elems[nb_Elems] = (T)tmpElem.GetValue();
 
 				nb_Elems++;
 			}
@@ -2681,7 +2737,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 			arrayDst.Array = elems;
 			arrayDst.Count = nb_Elems;
-			dst = arrayDst;
+			dst.SetValue(arrayDst);
 
 			return 0;
 
@@ -2701,12 +2757,12 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		private static c_int Set_Number(IOptionContext obj, CPointer<char> name, c_double num, c_int den, int64_t intNum, AvOptSearch search_Flags, AvOptionType require_Type)//XX 866
 		{
-			c_int ret = Opt_Set_Init(obj, name, search_Flags, require_Type, out _, out AvOption o, out object dst);
+			c_int ret = Opt_Set_Init(obj, name, search_Flags, require_Type, out _, out AvOption o, out OptFieldInfo dst);
 
 			if (ret < 0)
 				return ret;
 
-			return Write_Number(obj, o, ref dst, num, den, intNum);
+			return Write_Number(obj, o, dst, num, den, intNum);
 		}
 
 
@@ -3672,6 +3728,26 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			}
 
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will recursively try to find the instance and field given
+		/// </summary>
+		/********************************************************************/
+		private static OptFieldInfo GetFieldInfo(object obj, string fieldName)
+		{
+			int index = fieldName.IndexOf('.');
+			string searchFieldName = index == -1 ? fieldName : fieldName.Substring(0, index);
+
+			FieldInfo fieldInfo = obj.GetType().GetField(searchFieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+			if (index == -1)
+				return new OptFieldInfo(obj, fieldInfo);
+
+			return GetFieldInfo(fieldInfo.GetValue(obj), fieldName.Substring(index + 1));
 		}
 		#endregion
 	}

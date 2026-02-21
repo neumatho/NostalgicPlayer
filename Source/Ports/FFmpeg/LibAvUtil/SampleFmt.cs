@@ -82,6 +82,48 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 		/********************************************************************/
 		/// <summary>
+		/// Get the packed alternative form of the given sample format.
+		///
+		/// If the passed sample_fmt is already in packed format, the format
+		/// returned is the same as the input
+		/// </summary>
+		/********************************************************************/
+		public static AvSampleFormat Av_Get_Packed_Sample_Fmt(AvSampleFormat sample_Fmt)//XX 77
+		{
+			if ((sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb))
+				return AvSampleFormat.None;
+
+			if (sample_Fmt_Info[(int)sample_Fmt].Planar != 0)
+				return sample_Fmt_Info[(int)sample_Fmt].AltForm;
+
+			return sample_Fmt;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the planar alternative form of the given sample format.
+		///
+		/// If the passed sample_fmt is already in planar format, the format
+		/// returned is the same as the input
+		/// </summary>
+		/********************************************************************/
+		public static AvSampleFormat Av_Get_Planar_Sample_Fmt(AvSampleFormat sample_Fmt)//XX 86
+		{
+			if ((sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb))
+				return AvSampleFormat.None;
+
+			if (sample_Fmt_Info[(int)sample_Fmt].Planar != 0)
+				return sample_Fmt;
+
+			return sample_Fmt_Info[(int)sample_Fmt].AltForm;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return number of bytes per sample
 		/// </summary>
 		/********************************************************************/
@@ -97,12 +139,12 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Check if the sample format is planar
 		/// </summary>
 		/********************************************************************/
-		public static bool Av_Sample_Fmt_Is_Planar(AvSampleFormat sample_Fmt)//XX 114
+		public static c_int Av_Sample_Fmt_Is_Planar(AvSampleFormat sample_Fmt)//XX 114
 		{
 			if ((sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb))
-				return false;
+				return 0;
 
-			return sample_Fmt_Info[(c_int)sample_Fmt].Planar != 0;
+			return sample_Fmt_Info[(c_int)sample_Fmt].Planar != 0 ? 1 : 0;
 		}
 
 
@@ -115,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		public static c_int Av_Samples_Get_Buffer_Size(CPointer<c_int> lineSize, c_int nb_Channels, c_int nb_Samples, AvSampleFormat sample_Fmt, c_int align)//XX 121
 		{
 			c_int sample_Size = Av_Get_Bytes_Per_Sample(sample_Fmt);
-			bool planar = Av_Sample_Fmt_Is_Planar(sample_Fmt);
+			c_int planar = Av_Sample_Fmt_Is_Planar(sample_Fmt);
 
 			// Validate parameter ranges
 			if ((sample_Size == 0) || (nb_Samples <= 0) || (nb_Channels <= 0))
@@ -135,12 +177,12 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			if ((nb_Channels > (c_int.MaxValue / align)) || (((int64_t)nb_Samples * nb_Samples) > ((c_int.MaxValue - (align * nb_Samples)) / sample_Size)))
 				return Error.EINVAL;
 
-			c_int line_Size = planar ? Macros.FFAlign(nb_Samples * sample_Size, align) : Macros.FFAlign(nb_Samples * sample_Size * nb_Channels, align);
+			c_int line_Size = planar != 0 ? Macros.FFAlign(nb_Samples * sample_Size, align) : Macros.FFAlign(nb_Samples * sample_Size * nb_Channels, align);
 
 			if (lineSize.IsNotNull)
 				lineSize[0] = line_Size;
 
-			return planar ? line_Size * nb_Channels : line_Size;
+			return planar != 0 ? line_Size * nb_Channels : line_Size;
 		}
 
 
@@ -152,9 +194,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		public static c_int Av_Samples_Copy(CPointer<CPointer<uint8_t>> dst, CPointer<CPointer<uint8_t>> src, c_int dst_Offset, c_int src_Offset, c_int nb_Samples, c_int nb_Channels, AvSampleFormat sample_Fmt)//XX 222
 		{
-			bool planar = Av_Sample_Fmt_Is_Planar(sample_Fmt);
-			c_int planes = planar ? nb_Channels : 1;
-			c_int block_Align = Av_Get_Bytes_Per_Sample(sample_Fmt) * (planar ? 1 : nb_Channels);
+			c_int planar = Av_Sample_Fmt_Is_Planar(sample_Fmt);
+			c_int planes = planar != 0 ? nb_Channels : 1;
+			c_int block_Align = Av_Get_Bytes_Per_Sample(sample_Fmt) * (planar != 0 ? 1 : nb_Channels);
 			c_int data_Size = nb_Samples * block_Align;
 
 			dst_Offset *= block_Align;
