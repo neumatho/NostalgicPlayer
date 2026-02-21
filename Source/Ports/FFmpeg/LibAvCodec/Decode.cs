@@ -1075,6 +1075,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 				if ((side != null) && ((avci.Skip_Samples != 0) || (discard_Padding != 0)))
 				{
+					dataBuffer = (DataBufferContext)side.Data;
+
 					IntReadWrite.Av_WL32(dataBuffer.Data, (c_uint)avci.Skip_Samples);
 					IntReadWrite.Av_WL32(dataBuffer.Data + 4, discard_Padding);
 					IntReadWrite.Av_WL8(dataBuffer.Data + 8, skip_Reason);
@@ -1193,7 +1195,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 			// Some codecs (at least wma lossless) will crash when feeding drain packets
 			// after EOF was signaled
-			if (avci.Draining != 0)
+			if (avci.Draining_Done != 0)
 				return Error.EOF;
 
 			if (pkt.Data.IsNull && ((avCtx.Codec.Capabilities & AvCodecCap.Delay) == 0))
@@ -1246,7 +1248,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					}
 				}
 				else
-					avci.Draining = 1;
+					avci.Draining_Done = 1;
 			}
 
 			if ((consumed >= pkt.Size) || (ret < 0))

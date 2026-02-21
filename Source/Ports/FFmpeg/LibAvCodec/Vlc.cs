@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					return Error.ENOMEM;
 				}
 
-				for (c_int i = vlc.Table_Allocated - (1 << vlc.Bits); i < vlc.Table.Length; i++)
+				for (c_int i = vlc.Table_Allocated - (1 << vlc.Bits); i < vlc.Table_Allocated; i++)
 					vlc.Table[i].Clear();
 			}
 
