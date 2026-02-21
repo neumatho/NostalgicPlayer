@@ -379,12 +379,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		{
 			c_int last_Exp, n;
 			c_float v;
+			uint32_t iv;
 
 			CPointer<c_float> pTab = pow_Tab.ToPointer() + 60;
+			CPointer<uint32_t> ipTab = pTab.Cast<c_float, uint32_t>();
 
 			CPointer<uint16_t> ptr = s.Exponent_Bands[s.Frame_Len_Bits - s.Block_Len_Bits];
-			CPointer<c_float> q = s.Exponents[ch];
-			CPointer<c_float> q_End = q + s.Block_Len;
+			CPointer<uint32_t> q = s.Exponents[ch].ToPointer().Cast<c_float, uint32_t>();
+			CPointer<uint32_t> q_End = q + s.Block_Len;
 			c_float max_Scale = 0;
 
 			if (s.Version == 1)
@@ -392,12 +394,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				last_Exp = (c_int)Get_Bits._Get_Bits(s.Gb, 5) + 10;
 
 				v = pTab[last_Exp];
+				iv = ipTab[last_Exp];
 
 				max_Scale = v;
 				n = ptr[0, 1];
 
 				for (; n > 0; n--)
-					q[0, 1] = v;
+					q[0, 1] = iv;
 			}
 			else
 				last_Exp = 36;
@@ -417,6 +420,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				}
 
 				v = pTab[last_Exp];
+				iv = ipTab[last_Exp];
 
 				if (v > max_Scale)
 					max_Scale = v;
@@ -424,7 +428,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				n = ptr[0, 1];
 
 				for (; n > 0; n--)
-					q[0, 1] = v;
+					q[0, 1] = iv;
 			}
 
 			s.Max_Exponent[ch] = max_Scale;

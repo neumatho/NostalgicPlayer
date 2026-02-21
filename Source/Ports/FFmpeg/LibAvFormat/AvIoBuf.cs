@@ -570,7 +570,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		public static uint64_t AvIo_RL64(AvIoContext s)//XX 741
 		{
 			uint64_t val = AvIo_RL32(s);
-			val |= (uint64_t)AvIo_RL32(s) << 16;
+			val |= (uint64_t)AvIo_RL32(s) << 32;
 
 			return val;
 		}
