@@ -5,7 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Controls.Components;
 
-namespace Polycode.NostalgicPlayer.Controls.Containers
+namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 {
 	/// <summary>
 	/// Controls derive from this interface can be configured to use another font

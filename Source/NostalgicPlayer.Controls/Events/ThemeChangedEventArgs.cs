@@ -6,7 +6,7 @@
 using System;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Containers.Events
+namespace Polycode.NostalgicPlayer.Controls.Events
 {
 	/// <summary></summary>
 	public delegate void ThemeChangedEventHandler(object sender, ThemeChangedEventArgs e);

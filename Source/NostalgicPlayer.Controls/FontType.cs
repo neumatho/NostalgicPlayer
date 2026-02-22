@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Controls.Containers
+namespace Polycode.NostalgicPlayer.Controls
 {
 	/// <summary>
 	/// Holds the different font types to use
