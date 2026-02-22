@@ -32,7 +32,9 @@
 			nostalgicVScrollBar = new NostalgicVScrollBar();
 			nostalgicHScrollBar = new NostalgicHScrollBar();
 			cornerPanel = new System.Windows.Forms.Panel();
+			nostalgicBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			((System.ComponentModel.ISupportInitialize)nostalgicDataGridViewInternal).BeginInit();
+			nostalgicBox.SuspendLayout();
 			SuspendLayout();
 			// 
 			// nostalgicDataGridViewInternal
@@ -54,7 +56,7 @@
 			nostalgicDataGridViewInternal.ShowCellErrors = false;
 			nostalgicDataGridViewInternal.ShowEditingIcon = false;
 			nostalgicDataGridViewInternal.ShowRowErrors = false;
-			nostalgicDataGridViewInternal.Size = new System.Drawing.Size(150, 150);
+			nostalgicDataGridViewInternal.Size = new System.Drawing.Size(148, 148);
 			nostalgicDataGridViewInternal.TabIndex = 0;
 			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
 			nostalgicDataGridViewInternal.MouseDoubleClick += MouseDoubleClickHandler;
@@ -62,37 +64,47 @@
 			// nostalgicVScrollBar
 			// 
 			nostalgicVScrollBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			nostalgicVScrollBar.Location = new System.Drawing.Point(133, 0);
+			nostalgicVScrollBar.Location = new System.Drawing.Point(131, 0);
 			nostalgicVScrollBar.Name = "nostalgicVScrollBar";
-			nostalgicVScrollBar.Size = new System.Drawing.Size(17, 133);
+			nostalgicVScrollBar.Size = new System.Drawing.Size(17, 131);
 			nostalgicVScrollBar.TabIndex = 1;
 			// 
 			// nostalgicHScrollBar
 			// 
 			nostalgicHScrollBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			nostalgicHScrollBar.Location = new System.Drawing.Point(0, 133);
+			nostalgicHScrollBar.Location = new System.Drawing.Point(0, 131);
 			nostalgicHScrollBar.Name = "nostalgicHScrollBar";
-			nostalgicHScrollBar.Size = new System.Drawing.Size(133, 17);
+			nostalgicHScrollBar.Size = new System.Drawing.Size(131, 17);
 			nostalgicHScrollBar.TabIndex = 2;
 			// 
 			// cornerPanel
 			// 
 			cornerPanel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			cornerPanel.Location = new System.Drawing.Point(133, 133);
+			cornerPanel.Location = new System.Drawing.Point(131, 131);
 			cornerPanel.Name = "cornerPanel";
 			cornerPanel.Size = new System.Drawing.Size(17, 17);
 			cornerPanel.TabIndex = 3;
+			// 
+			// nostalgicBox
+			// 
+			nostalgicBox.Controls.Add(cornerPanel);
+			nostalgicBox.Controls.Add(nostalgicHScrollBar);
+			nostalgicBox.Controls.Add(nostalgicVScrollBar);
+			nostalgicBox.Controls.Add(nostalgicDataGridViewInternal);
+			nostalgicBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			nostalgicBox.Location = new System.Drawing.Point(0, 0);
+			nostalgicBox.Name = "nostalgicBox";
+			nostalgicBox.Size = new System.Drawing.Size(150, 150);
+			nostalgicBox.TabIndex = 0;
 			// 
 			// NostalgicDataGridView
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			Controls.Add(cornerPanel);
-			Controls.Add(nostalgicHScrollBar);
-			Controls.Add(nostalgicVScrollBar);
-			Controls.Add(nostalgicDataGridViewInternal);
+			Controls.Add(nostalgicBox);
 			Name = "NostalgicDataGridView";
 			((System.ComponentModel.ISupportInitialize)nostalgicDataGridViewInternal).EndInit();
+			nostalgicBox.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -102,5 +114,6 @@
 		private NostalgicVScrollBar nostalgicVScrollBar;
 		private NostalgicHScrollBar nostalgicHScrollBar;
 		private System.Windows.Forms.Panel cornerPanel;
+		private Containers.NostalgicBox nostalgicBox;
 	}
 }
