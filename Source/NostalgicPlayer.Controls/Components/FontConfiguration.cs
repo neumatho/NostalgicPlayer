@@ -6,7 +6,6 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using Polycode.NostalgicPlayer.Controls.Containers;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
