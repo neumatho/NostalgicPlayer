@@ -11,7 +11,6 @@ using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Purple;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
-using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -43,6 +42,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		protected WindowFormBase2()//XX skal slettes når alle forms kører DI
+		{
+			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
+			optionSettings = DependencyInjection.Container.GetInstance<OptionSettings>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeBaseForm(ISettings settings, OptionSettings optionSettings)
+		{
+			allWindowSettings = settings;
+			this.optionSettings = optionSettings;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will update the window settings
 		/// </summary>
 		/********************************************************************/
@@ -69,10 +96,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// Set option settings. Should only be used by the main window
 		/// </summary>
 		/********************************************************************/
-		protected void SetOptions(IMainWindowApi mainWindow, OptionSettings optSettings)
+		protected void SetOptions(IMainWindowApi mainWindow)
 		{
 			mainWindowApi = mainWindow;
-			optionSettings = optSettings;
 		}
 
 
@@ -82,9 +108,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// Call this to initialize the window with basis settings
 		/// </summary>
 		/********************************************************************/
-		protected void InitializeWindow(IMainWindowApi mainWindow, OptionSettings optSettings)
+		protected void InitializeWindow(IMainWindowApi mainWindow)
 		{
-			SetOptions(mainWindow, optSettings);
+			SetOptions(mainWindow);
 
 			// Set how the window should act in the task bar and task switcher
 			if (!optionSettings.SeparateWindows)
