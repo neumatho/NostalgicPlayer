@@ -37,24 +37,20 @@
 			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			removeButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			resetButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
-			favoriteGroup = new Krypton.Toolkit.KryptonGroup();
 			showComboBox = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicComboBox();
 			otherNumberTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox();
 			toolTip = new System.Windows.Forms.ToolTip(components);
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).BeginInit();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
-			((System.ComponentModel.ISupportInitialize)favoriteGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)favoriteGroup.Panel).BeginInit();
-			favoriteGroup.Panel.SuspendLayout();
 			SuspendLayout();
 			// 
 			// favoriteDataGridView
 			// 
 			favoriteDataGridView.AllowUserToOrderColumns = true;
-			favoriteDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			favoriteDataGridView.Location = new System.Drawing.Point(0, 0);
+			favoriteDataGridView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			favoriteDataGridView.Location = new System.Drawing.Point(8, 8);
 			favoriteDataGridView.Name = "favoriteDataGridView";
-			favoriteDataGridView.Size = new System.Drawing.Size(404, 182);
+			favoriteDataGridView.Size = new System.Drawing.Size(406, 184);
 			favoriteDataGridView.TabIndex = 0;
 			favoriteDataGridView.SelectionChanged += FavoriteDataGridView_SelectionChanged;
 			favoriteDataGridView.MouseDoubleClick += FavoriteDataGridView_MouseDoubleClick;
@@ -112,18 +108,6 @@
 			resetButton.UseFont = bigFontConfiguration;
 			resetButton.Click += ResetButton_Click;
 			// 
-			// favoriteGroup
-			// 
-			favoriteGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			favoriteGroup.Location = new System.Drawing.Point(8, 8);
-			favoriteGroup.Name = "favoriteGroup";
-			// 
-			// 
-			// 
-			favoriteGroup.Panel.Controls.Add(favoriteDataGridView);
-			favoriteGroup.Size = new System.Drawing.Size(406, 184);
-			favoriteGroup.TabIndex = 0;
-			// 
 			// showComboBox
 			// 
 			showComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
@@ -152,10 +136,10 @@
 			ClientSize = new System.Drawing.Size(422, 225);
 			Controls.Add(otherNumberTextBox);
 			Controls.Add(showComboBox);
-			Controls.Add(favoriteGroup);
 			Controls.Add(resetButton);
 			Controls.Add(removeButton);
 			Controls.Add(addButton);
+			Controls.Add(favoriteDataGridView);
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(438, 264);
@@ -163,9 +147,6 @@
 			FormClosed += FavoriteSongSystemWindowForm_FormClosed;
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).EndInit();
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
-			((System.ComponentModel.ISupportInitialize)favoriteGroup.Panel).EndInit();
-			favoriteGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)favoriteGroup).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 
@@ -177,7 +158,6 @@
 		private Kit.Gui.Designer.ControlResource controlResource;
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton removeButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton resetButton;
-		private Krypton.Toolkit.KryptonGroup favoriteGroup;
 		private NostalgicPlayer.Controls.Lists.NostalgicComboBox showComboBox;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox otherNumberTextBox;
 		private System.Windows.Forms.ToolTip toolTip;
