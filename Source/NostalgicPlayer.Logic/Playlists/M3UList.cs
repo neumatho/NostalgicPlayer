@@ -10,16 +10,16 @@ using System.Linq;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit;
 
-namespace Polycode.NostalgicPlayer.Logic.MultiFiles
+namespace Polycode.NostalgicPlayer.Logic.Playlists
 {
 	/// <summary>
 	/// This class can load M3U or extended M3U lists
 	/// </summary>
-	public class M3UList : IMultiFileLoader
+	internal class M3UList : IPlaylist
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Returns the file extensions that identify this player
+		/// Returns the file extensions that identify this list
 		/// </summary>
 		/********************************************************************/
 		public string[] FileExtensions => [ "m3u", "m3u8" ];
@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// Will load a list from the given file
 		/// </summary>
 		/********************************************************************/
-		public IEnumerable<MultiFileInfo> LoadList(string directory, Stream stream, string fileExtension)
+		public IEnumerable<PlaylistFileInfo> LoadList(string directory, Stream stream, string fileExtension)
 		{
 			// Make sure the file position is at the beginning of the file
 			stream.Seek(0, SeekOrigin.Begin);
@@ -50,13 +50,25 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will save a list to the given file
+		/// </summary>
+		/********************************************************************/
+		public void SaveList(string fileName, IEnumerable<PlaylistFileInfo> list)
+		{
+			throw new NotSupportedException("Saving m3u playlist not supported");
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Parse simple M3U list
 		/// </summary>
 		/********************************************************************/
-		private IEnumerable<MultiFileInfo> ParseSimple(string directory, StreamReader sr, string line)
+		private IEnumerable<PlaylistFileInfo> ParseSimple(string directory, StreamReader sr, string line)
 		{
 			do
 			{
@@ -75,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// Parse extended M3U list
 		/// </summary>
 		/********************************************************************/
-		private IEnumerable<MultiFileInfo> ParseExtended(string directory, StreamReader sr)
+		private IEnumerable<PlaylistFileInfo> ParseExtended(string directory, StreamReader sr)
 		{
 			TimeSpan? playTime = null;
 			string displayName = string.Empty;
@@ -107,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 					}
 					else
 					{
-						MultiFileInfo fileInfo = ParseFileLine(line, directory);
+						PlaylistFileInfo fileInfo = ParseFileLine(line, directory);
 
 						if (playTime.HasValue || !string.IsNullOrEmpty(displayName))
 						{
@@ -133,24 +145,24 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// Parse a single line and convert it
 		/// </summary>
 		/********************************************************************/
-		private MultiFileInfo ParseFileLine(string line, string directory)
+		private PlaylistFileInfo ParseFileLine(string line, string directory)
 		{
-			MultiFileInfo.FileType fileType;
+			PlaylistFileInfo.FileType fileType;
 
 			string fileName = line.Trim();
 
 			if (line.StartsWith("http://") || line.StartsWith("https://"))
-				fileType = MultiFileInfo.FileType.Url;
+				fileType = PlaylistFileInfo.FileType.Url;
 			else
 			{
-				fileType = MultiFileInfo.FileType.Plain;
+				fileType = PlaylistFileInfo.FileType.Plain;
 
 				// If the file name is relative, make it absolute
 				if (!Path.IsPathRooted(fileName))
 					fileName = Path.Combine(directory, fileName);
 			}
 
-			return new MultiFileInfo
+			return new PlaylistFileInfo
 			{
 				Type = fileType,
 				Source = fileName,

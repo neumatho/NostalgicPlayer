@@ -6,17 +6,17 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Polycode.NostalgicPlayer.Logic.MultiFiles
+namespace Polycode.NostalgicPlayer.Logic.Playlists
 {
 	/// <summary>
 	/// This interface is implemented by classes that can handle
 	/// different kind of files that contains other files, e.g.
 	/// module lists
 	/// </summary>
-	public interface IMultiFileLoader
+	public interface IPlaylist
 	{
 		/// <summary>
-		/// Returns the file extensions that identify this player
+		/// Returns the file extensions that identify this list
 		///
 		/// Has to be in lowercase
 		/// </summary>
@@ -25,6 +25,11 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// <summary>
 		/// Will load a list from the given file
 		/// </summary>
-		IEnumerable<MultiFileInfo> LoadList(string directory, Stream stream, string fileExtension);
+		IEnumerable<PlaylistFileInfo> LoadList(string directory, Stream stream, string fileExtension);
+
+		/// <summary>
+		/// Will save a list to the given file
+		/// </summary>
+		void SaveList(string fileName, IEnumerable<PlaylistFileInfo> list);
 	}
 }

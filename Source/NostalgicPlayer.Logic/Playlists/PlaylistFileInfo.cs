@@ -5,12 +5,12 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Logic.MultiFiles
+namespace Polycode.NostalgicPlayer.Logic.Playlists
 {
 	/// <summary>
 	/// This class holds information about a item in the multi file
 	/// </summary>
-	public class MultiFileInfo
+	public class PlaylistFileInfo
 	{
 		/// <summary>
 		/// The different types that can be stored in the list

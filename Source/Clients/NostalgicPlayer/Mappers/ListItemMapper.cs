@@ -6,7 +6,7 @@
 using System;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
-using Polycode.NostalgicPlayer.Logic.MultiFiles;
+using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 {
@@ -20,9 +20,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 		/// Convert a list item to a list info
 		/// </summary>
 		/********************************************************************/
-		public static MultiFileInfo Convert(ModuleListItem listItem)
+		public static PlaylistFileInfo Convert(ModuleListItem listItem)
 		{
-			MultiFileInfo multiFileInfo = new MultiFileInfo
+			PlaylistFileInfo multiFileInfo = new PlaylistFileInfo
 			{
 				Source = listItem.ListItem.Source,
 				DisplayName = listItem.ListItem.DisplayName,
@@ -32,19 +32,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 
 			if (listItem.ListItem is SingleFileModuleListItem)
 			{
-				multiFileInfo.Type = MultiFileInfo.FileType.Plain;
+				multiFileInfo.Type = PlaylistFileInfo.FileType.Plain;
 			}
 			else if (listItem.ListItem is ArchiveFileModuleListItem)
 			{
-				multiFileInfo.Type = MultiFileInfo.FileType.Archive;
+				multiFileInfo.Type = PlaylistFileInfo.FileType.Archive;
 			}
 			else if (listItem.ListItem is UrlModuleListItem)
 			{
-				multiFileInfo.Type = MultiFileInfo.FileType.Url;
+				multiFileInfo.Type = PlaylistFileInfo.FileType.Url;
 			}
 			else if (listItem.ListItem is AudiusModuleListItem)
 			{
-				multiFileInfo.Type = MultiFileInfo.FileType.Audius;
+				multiFileInfo.Type = PlaylistFileInfo.FileType.Audius;
 			}
 			else
 				throw new NotImplementedException("Unknown module list implementation");
@@ -59,31 +59,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 		/// Convert a list info to a list item
 		/// </summary>
 		/********************************************************************/
-		public static ModuleListItem Convert(MultiFileInfo fileInfo)
+		public static ModuleListItem Convert(PlaylistFileInfo fileInfo)
 		{
 			IModuleListItem item;
 
 			switch (fileInfo.Type)
 			{
-				case MultiFileInfo.FileType.Plain:
+				case PlaylistFileInfo.FileType.Plain:
 				{
 					item = new SingleFileModuleListItem(fileInfo.Source);
 					break;
 				}
 
-				case MultiFileInfo.FileType.Archive:
+				case PlaylistFileInfo.FileType.Archive:
 				{
 					item = new ArchiveFileModuleListItem(fileInfo.Source);
 					break;
 				}
 
-				case MultiFileInfo.FileType.Url:
+				case PlaylistFileInfo.FileType.Url:
 				{
 					item = new UrlModuleListItem(fileInfo.DisplayName, fileInfo.Source);
 					break;
 				}
 
-				case MultiFileInfo.FileType.Audius:
+				case PlaylistFileInfo.FileType.Audius:
 				{
 					item = new AudiusModuleListItem(fileInfo.DisplayName, fileInfo.Source);
 					break;

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Logic.Databases;
+using Polycode.NostalgicPlayer.Logic.Playlists;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Logic.Composition
@@ -20,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Logic.Composition
 		/********************************************************************/
 		public static void RegisterLogic(this Container container)
 		{
+			container.RegisterSingleton<IPlaylistFactory, PlaylistFactory>();
 			container.RegisterSingleton<IModuleDatabase, ModuleDatabase>();
 		}
 	}

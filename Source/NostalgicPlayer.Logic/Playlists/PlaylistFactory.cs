@@ -3,26 +3,27 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Polycode.NostalgicPlayer.Logic.MultiFiles
+namespace Polycode.NostalgicPlayer.Logic.Playlists
 {
 	/// <summary>
 	/// This class can create multi file loaders which can handle module lists
 	/// </summary>
-	public static class ListFactory
+	internal class PlaylistFactory : IPlaylistFactory
 	{
-		private static readonly byte[] npmlSignature;
-		private static readonly byte[] m3uExtSignature;
+		private readonly byte[] npmlSignature;
+		private readonly byte[] m3uExtSignature;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		static ListFactory()
+		public PlaylistFactory()
 		{
 			npmlSignature = Encoding.UTF8.GetBytes("@*NpML*@");
 			m3uExtSignature = Encoding.UTF8.GetBytes("#EXTM3U");
@@ -35,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// Return all available extensions for list files
 		/// </summary>
 		/********************************************************************/
-		public static string[] GetExtensions()
+		public string[] GetExtensions()
 		{
 			return
 				new NpmlList().FileExtensions
@@ -51,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// if anyone could be found
 		/// </summary>
 		/********************************************************************/
-		public static IMultiFileLoader Create(Stream stream, string fileExtension)
+		public IPlaylist Create(Stream stream, string fileExtension)
 		{
 			byte[] buffer = new byte[16];
 
@@ -77,6 +78,28 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 			}
 
 			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a playlist instance based on type
+		/// </summary>
+		/********************************************************************/
+		public IPlaylist Create(PlaylistType type)
+		{
+			switch (type)
+			{
+				case PlaylistType.Npml:
+					return new NpmlList();
+
+				case PlaylistType.M3U:
+					return new M3UList();
+
+				default:
+					throw new NotImplementedException();
+			}
 		}
 	}
 }

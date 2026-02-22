@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
-using Polycode.NostalgicPlayer.Logic.MultiFiles;
+using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// <summary>
 		/// Return some information about the current playing file
 		/// </summary>
-		MultiFileInfo GetFileInfo();
+		PlaylistFileInfo GetFileInfo();
 
 		/// <summary>
 		/// Will stop the current playing module and free it

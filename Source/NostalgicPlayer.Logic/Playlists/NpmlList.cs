@@ -9,16 +9,16 @@ using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 
-namespace Polycode.NostalgicPlayer.Logic.MultiFiles
+namespace Polycode.NostalgicPlayer.Logic.Playlists
 {
 	/// <summary>
 	/// This class can handle the NPML module list format
 	/// </summary>
-	public class NpmlList : IMultiFileLoader
+	internal class NpmlList : IPlaylist
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Returns the file extensions that identify this player
+		/// Returns the file extensions that identify this list
 		/// </summary>
 		/********************************************************************/
 		public string[] FileExtensions => [ "npml" ];
@@ -27,10 +27,114 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 
 		/********************************************************************/
 		/// <summary>
+		/// Will load a list from the given file
+		/// </summary>
+		/********************************************************************/
+		public IEnumerable<PlaylistFileInfo> LoadList(string directory, Stream stream, string fileExtension)
+		{
+			// Make sure the file position is at the beginning of the file
+			stream.Seek(0, SeekOrigin.Begin);
+
+			using (StreamReader sr = new StreamReader(stream, leaveOpen: true))
+			{
+				// Skip the header
+				sr.ReadLine();
+
+				// Get the version
+				string version = sr.ReadLine();
+				if (version != "1")
+					throw new InvalidDataException(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_VERSION, version));
+
+				string path = null;
+				PlaylistFileInfo.FileType mode = PlaylistFileInfo.FileType.Plain;
+
+				while (!sr.EndOfStream)
+				{
+					string line = sr.ReadLine();
+
+					if (!string.IsNullOrEmpty(line))
+					{
+						switch (line)
+						{
+							// "Path" command
+							case "@*Path*@":
+							{
+								path = sr.ReadLine();
+								mode = PlaylistFileInfo.FileType.Plain;
+								break;
+							}
+
+							// "Archive" command
+							case "@*Archive*@":
+							{
+								path = sr.ReadLine();
+								mode = PlaylistFileInfo.FileType.Archive;
+								break;
+							}
+
+							// "URL" command
+							case "@*URL*@":
+							{
+								mode = PlaylistFileInfo.FileType.Url;
+								break;
+							}
+
+							// "Audius" command
+							case "@*Audius*@":
+							{
+								mode = PlaylistFileInfo.FileType.Audius;
+								break;
+							}
+
+							case "@*Names*@":
+								break;
+
+							default:
+							{
+								// If not a command, it's the source, e.g. a file name or URL
+								PlaylistFileInfo fileInfo = null;
+
+								switch (mode)
+								{
+									case PlaylistFileInfo.FileType.Plain:
+									case PlaylistFileInfo.FileType.Archive:
+									{
+										fileInfo = ParseFileLine(line, path, directory, mode);
+										break;
+									}
+
+									case PlaylistFileInfo.FileType.Url:
+									{
+										fileInfo = ParseStreamLine(line);
+										break;
+									}
+
+									case PlaylistFileInfo.FileType.Audius:
+									{
+										fileInfo = ParseAudiusLine(line);
+										break;
+									}
+								}
+
+								if (fileInfo != null)
+									yield return fileInfo;
+
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will save a list to the given file
 		/// </summary>
 		/********************************************************************/
-		public static void SaveList(string fileName, IEnumerable<MultiFileInfo> list)
+		public void SaveList(string fileName, IEnumerable<PlaylistFileInfo> list)
 		{
 			// Open the file
 			using (StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8))
@@ -43,15 +147,15 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 
 				// Write all the items to the file
 				string oldPath = string.Empty;
-				MultiFileInfo.FileType oldType = (MultiFileInfo.FileType)(-1);
+				PlaylistFileInfo.FileType oldType = (PlaylistFileInfo.FileType)(-1);
 				string line;
 
-				foreach (MultiFileInfo listInfo in list)
+				foreach (PlaylistFileInfo listInfo in list)
 				{
 					switch (listInfo.Type)
 					{
 						// Plain file
-						case MultiFileInfo.FileType.Plain:
+						case PlaylistFileInfo.FileType.Plain:
 						{
 							// Check to see if the path is the same as the previous one
 							string path = Path.GetDirectoryName(listInfo.Source);
@@ -77,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 						}
 
 						// Archive file
-						case MultiFileInfo.FileType.Archive:
+						case PlaylistFileInfo.FileType.Archive:
 						{
 							// Check to see if the archive is the same as the previous one
 							string path = ArchivePath.GetArchiveName(listInfo.Source);
@@ -103,9 +207,9 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 						}
 
 						// URL
-						case MultiFileInfo.FileType.Url:
+						case PlaylistFileInfo.FileType.Url:
 						{
-							if (oldType != MultiFileInfo.FileType.Url)
+							if (oldType != PlaylistFileInfo.FileType.Url)
 							{
 								sw.WriteLine();
 								sw.WriteLine("@*URL*@");
@@ -118,9 +222,9 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 						}
 
 						// Audius track
-						case MultiFileInfo.FileType.Audius:
+						case PlaylistFileInfo.FileType.Audius:
 						{
-							if (oldType != MultiFileInfo.FileType.Audius)
+							if (oldType != PlaylistFileInfo.FileType.Audius)
 							{
 								sw.WriteLine();
 								sw.WriteLine("@*Audius*@");
@@ -151,119 +255,15 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 			}
 		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will load a list from the given file
-		/// </summary>
-		/********************************************************************/
-		public IEnumerable<MultiFileInfo> LoadList(string directory, Stream stream, string fileExtension)
-		{
-			// Make sure the file position is at the beginning of the file
-			stream.Seek(0, SeekOrigin.Begin);
-
-			using (StreamReader sr = new StreamReader(stream, leaveOpen: true))
-			{
-				// Skip the header
-				sr.ReadLine();
-
-				// Get the version
-				string version = sr.ReadLine();
-				if (version != "1")
-					throw new InvalidDataException(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_VERSION, version));
-
-				string path = null;
-				MultiFileInfo.FileType mode = MultiFileInfo.FileType.Plain;
-
-				while (!sr.EndOfStream)
-				{
-					string line = sr.ReadLine();
-
-					if (!string.IsNullOrEmpty(line))
-					{
-						switch (line)
-						{
-							// "Path" command
-							case "@*Path*@":
-							{
-								path = sr.ReadLine();
-								mode = MultiFileInfo.FileType.Plain;
-								break;
-							}
-
-							// "Archive" command
-							case "@*Archive*@":
-							{
-								path = sr.ReadLine();
-								mode = MultiFileInfo.FileType.Archive;
-								break;
-							}
-
-							// "URL" command
-							case "@*URL*@":
-							{
-								mode = MultiFileInfo.FileType.Url;
-								break;
-							}
-
-							// "Audius" command
-							case "@*Audius*@":
-							{
-								mode = MultiFileInfo.FileType.Audius;
-								break;
-							}
-
-							case "@*Names*@":
-								break;
-
-							default:
-							{
-								// If not a command, it's the source, e.g. a file name or URL
-								MultiFileInfo fileInfo = null;
-
-								switch (mode)
-								{
-									case MultiFileInfo.FileType.Plain:
-									case MultiFileInfo.FileType.Archive:
-									{
-										fileInfo = ParseFileLine(line, path, directory, mode);
-										break;
-									}
-
-									case MultiFileInfo.FileType.Url:
-									{
-										fileInfo = ParseStreamLine(line);
-										break;
-									}
-
-									case MultiFileInfo.FileType.Audius:
-									{
-										fileInfo = ParseAudiusLine(line);
-										break;
-									}
-								}
-
-								if (fileInfo != null)
-									yield return fileInfo;
-
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Parse file line
 		/// </summary>
 		/********************************************************************/
-		private MultiFileInfo ParseFileLine(string line, string path, string directory, MultiFileInfo.FileType mode)
+		private PlaylistFileInfo ParseFileLine(string line, string path, string directory, PlaylistFileInfo.FileType mode)
 		{
-			MultiFileInfo fileInfo = new MultiFileInfo
+			PlaylistFileInfo fileInfo = new PlaylistFileInfo
 			{
 				Type = mode
 			};
@@ -273,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 			// Check to see if there is loaded any path
 			if (string.IsNullOrEmpty(path))
 			{
-				if (mode == MultiFileInfo.FileType.Archive)
+				if (mode == PlaylistFileInfo.FileType.Archive)
 					return null;		// Skip the entry, if no archive has been set
 
 				// Set the file name using the load path
@@ -282,7 +282,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 			else
 			{
 				// Set the file name
-				if (mode == MultiFileInfo.FileType.Archive)
+				if (mode == PlaylistFileInfo.FileType.Archive)
 					fileInfo.Source = ArchivePath.CombinePathParts(path, line);
 				else
 					fileInfo.Source = Path.Combine(path, line);
@@ -298,11 +298,11 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// Parse stream line
 		/// </summary>
 		/********************************************************************/
-		private MultiFileInfo ParseStreamLine(string line)
+		private PlaylistFileInfo ParseStreamLine(string line)
 		{
-			MultiFileInfo fileInfo = new MultiFileInfo
+			PlaylistFileInfo fileInfo = new PlaylistFileInfo
 			{
-				Type = MultiFileInfo.FileType.Url
+				Type = PlaylistFileInfo.FileType.Url
 			};
 
 			int searchIndex = line.IndexOf('|');
@@ -327,11 +327,11 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// Parse Audius line
 		/// </summary>
 		/********************************************************************/
-		private MultiFileInfo ParseAudiusLine(string line)
+		private PlaylistFileInfo ParseAudiusLine(string line)
 		{
-			MultiFileInfo fileInfo = new MultiFileInfo()
+			PlaylistFileInfo fileInfo = new PlaylistFileInfo()
 			{
-				Type = MultiFileInfo.FileType.Audius
+				Type = PlaylistFileInfo.FileType.Audius
 			};
 
 			int searchIndex = line.IndexOf('|');
@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Logic.MultiFiles
 		/// Check for extra information in the line
 		/// </summary>
 		/********************************************************************/
-		private string ApplyExtraInformation(string line, MultiFileInfo fileInfo)
+		private string ApplyExtraInformation(string line, PlaylistFileInfo fileInfo)
 		{
 			// See if there is stored a default sub-song
 			int searchIndex = line.LastIndexOf('?');

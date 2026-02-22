@@ -44,7 +44,7 @@ using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Logic.Databases;
-using Polycode.NostalgicPlayer.Logic.MultiFiles;
+using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -60,6 +60,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		}
 
 		private IPlatformPath platformPath;
+		private IModuleDatabase database;
+		private IPlaylistFactory playlistFactory;
 		private FormCreatorService formCreatorService;
 
 		private Manager agentManager;
@@ -109,7 +111,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool allowPosSliderUpdate;
 
 		// Different helper classes
-		private IModuleDatabase database;
 		private FileScanner fileScanner;
 
 		// Play samples from sample info window info
@@ -154,10 +155,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IModuleDatabase moduleDatabase, IPlatformPath platformPath, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
 		{
-			database = moduleDatabase;
 			this.platformPath = platformPath;
+			database = moduleDatabase;
+			this.playlistFactory = playlistFactory;
+
 			userSettings = settings;
 			this.settingsService = settingsService;
 			this.moduleSettings = moduleSettings;
@@ -201,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 			}
 
-			fileScanner = new FileScanner(moduleListControl, optionSettings, agentManager, database, this);
+			fileScanner = new FileScanner(moduleListControl, agentManager, this);
 			fileScanner.Start();
 
 			SetupHandlers();
@@ -584,7 +587,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Return some information about the current playing file
 		/// </summary>
 		/********************************************************************/
-		public MultiFileInfo GetFileInfo()
+		public PlaylistFileInfo GetFileInfo()
 		{
 			return playItem == null ? null : ListItemMapper.Convert(playItem);
 		}
@@ -2877,7 +2880,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						// Add all the files in the directory
 						List<ModuleListItem> itemList = new List<ModuleListItem>();
 
-						string[] listExtensions = ListFactory.GetExtensions();
+						string[] listExtensions = playlistFactory.GetExtensions();
 						string[] archiveExtensions = new ArchiveDetector(agentManager).GetExtensions();
 
 						AddDirectoryToList(path, itemList, listExtensions, archiveExtensions, false);
@@ -3623,7 +3626,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				if (string.IsNullOrEmpty(moduleTitle))
 				{
-					MultiFileInfo fileInfo = GetFileInfo();
+					PlaylistFileInfo fileInfo = GetFileInfo();
 					if (fileInfo != null)
 						moduleTitle = fileInfo.DisplayName;
 				}
@@ -4552,7 +4555,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
-				IMultiFileLoader loader = null;
+				IPlaylist playlist = null;
 
 				string extension = Path.GetExtension(fileName);
 				if (!string.IsNullOrEmpty(extension))
@@ -4573,17 +4576,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					{
 						using (FileStream fs = File.OpenRead(fileName))
 						{
-							loader = ListFactory.Create(fs, extension);
-							if (loader != null)
+							playlist = playlistFactory.Create(fs, extension);
+							if (playlist != null)
 							{
-								foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
+								foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
 									list.Add(ListItemMapper.Convert(info));
 							}
 						}
 					}
 				}
 
-				if (loader == null)
+				if (playlist == null)
 				{
 					if (archiveExtensions.Contains(extension))
 					{
@@ -4775,14 +4778,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				using (FileStream fs = File.OpenRead(fileName))
 				{
-					IMultiFileLoader loader = ListFactory.Create(fs, extension);
-					if (loader == null)
+					IPlaylist playlist = playlistFactory.Create(fs, extension);
+					if (playlist == null)
 						ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_FORMAT, fileName));
 					else
 					{
 						List<ModuleListItem> tempList = new List<ModuleListItem>();
 
-						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
+						foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
 							tempList.Add(ListItemMapper.Convert(info));
 
 						int currentCount = moduleListControl.Items.Count;
@@ -4830,7 +4833,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
-				NpmlList.SaveList(fileName, GetModuleList());
+				IPlaylist playlist = playlistFactory.Create(PlaylistType.Npml);
+				playlist.SaveList(fileName, GetModuleList());
 			}
 			catch (Exception ex)
 			{
@@ -4846,7 +4850,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will return an enumerator returning all the module list items
 		/// </summary>
 		/********************************************************************/
-		private IEnumerable<MultiFileInfo> GetModuleList()
+		private IEnumerable<PlaylistFileInfo> GetModuleList()
 		{
 			foreach (ModuleListItem listItem in moduleListControl.Items)
 				yield return ListItemMapper.Convert(listItem);
@@ -4991,7 +4995,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			List<ModuleListItem> itemList = new List<ModuleListItem>();
 
-			string[] listExtensions = ListFactory.GetExtensions();
+			string[] listExtensions = playlistFactory.GetExtensions();
 			string[] archiveExtensions = new ArchiveDetector(agentManager).GetExtensions();
 
 			foreach (string file in files)

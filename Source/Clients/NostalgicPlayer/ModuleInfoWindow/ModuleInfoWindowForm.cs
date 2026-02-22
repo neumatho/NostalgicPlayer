@@ -13,7 +13,6 @@ using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
@@ -22,7 +21,7 @@ using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Library.Containers;
-using Polycode.NostalgicPlayer.Logic.MultiFiles;
+using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 {
@@ -478,7 +477,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private void AddItems(bool onLoad)
 		{
 			// Check to see if there are any module loaded at the moment
-			MultiFileInfo fileInfo;
+			PlaylistFileInfo fileInfo;
 
 			if (moduleHandler.IsPlaying && ((fileInfo = mainWindowApi.GetFileInfo()) != null))
 			{
@@ -517,9 +516,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				showingFileName = false;
 
-				if (fileInfo.Type != MultiFileInfo.FileType.Audius)
+				if (fileInfo.Type != PlaylistFileInfo.FileType.Audius)
 				{
-					if (fileInfo.Type == MultiFileInfo.FileType.Url)
+					if (fileInfo.Type == PlaylistFileInfo.FileType.Url)
 					{
 						moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_URL, fileInfo.Source);
 						firstCustomLine++;

@@ -20,7 +20,7 @@ using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
 using Polycode.NostalgicPlayer.Logic.Databases;
-using Polycode.NostalgicPlayer.Logic.MultiFiles;
+using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -34,10 +34,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public List<ModuleListItem> Items { get; set; }
 		}
 
-		private readonly ModuleListControl moduleListControl;
 		private readonly OptionSettings settings;
-		private readonly Manager manager;
 		private readonly IModuleDatabase database;
+		private readonly IPlaylistFactory playlistFactory;
+
+		private readonly ModuleListControl moduleListControl;
+		private readonly Manager manager;
 		private readonly IMainWindowApi mainWindowApi;
 
 		private ManualResetEvent shutdownEvent;
@@ -52,12 +54,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner(ModuleListControl listControl, OptionSettings optionSettings, Manager agentManager, IModuleDatabase moduleDatabase, IMainWindowApi mainWindow)
+		public FileScanner(ModuleListControl listControl, Manager agentManager, IMainWindowApi mainWindow)
 		{
+			settings = DependencyInjection.Container.GetInstance<OptionSettings>();
+			database = DependencyInjection.Container.GetInstance<IModuleDatabase>();
+			playlistFactory = DependencyInjection.Container.GetInstance<IPlaylistFactory>();
+
 			moduleListControl = listControl;
-			settings = optionSettings;
 			manager = agentManager;
-			database = moduleDatabase;
 			mainWindowApi = mainWindow;
 		}
 
@@ -283,10 +287,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				using (FileStream fs = File.OpenRead(fileName))
 				{
-					IMultiFileLoader loader = ListFactory.Create(fs, extension);
-					if (loader != null)
+					IPlaylist playlist = playlistFactory.Create(fs, extension);
+					if (playlist != null)
 					{
-						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs, extension))
+						foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
 							list.Add(ListItemMapper.Convert(info));
 					}
 				}
