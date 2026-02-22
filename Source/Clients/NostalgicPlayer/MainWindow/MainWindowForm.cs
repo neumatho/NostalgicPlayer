@@ -2753,7 +2753,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				favoriteSongSystemWindow = new FavoriteSongSystemForm(mainWindowApiAdapter, database);
+				favoriteSongSystemWindow = formCreatorService.GetFormInstance<FavoriteSongSystemForm>();
 				favoriteSongSystemWindow.Disposed += (o, args) => { favoriteSongSystemWindow = null; };
 				favoriteSongSystemWindow.Show();
 			}
@@ -3299,7 +3299,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (mainWindowSettings.OpenFavoriteSongSystemWindow && optionSettings.UseDatabase)
 			{
-				favoriteSongSystemWindow = new FavoriteSongSystemForm(mainWindowApiAdapter, database);
+				favoriteSongSystemWindow = formCreatorService.GetFormInstance<FavoriteSongSystemForm>();
 				favoriteSongSystemWindow.Show();
 			}
 

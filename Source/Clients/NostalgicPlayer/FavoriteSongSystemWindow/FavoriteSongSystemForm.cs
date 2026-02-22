@@ -27,85 +27,94 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		private IMainWindowApi mainWindowApi;
 		private IModuleDatabase database;
 
-		private readonly FavoriteSongSystemWindowSettings settings;
+		private FavoriteSongSystemWindowSettings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FavoriteSongSystemForm(IMainWindowApi mainWindowApi, IModuleDatabase database)
+		public FavoriteSongSystemForm()
 		{
 			InitializeComponent();
+		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form by loading agents, initialize controls etc.
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeForm(IMainWindowApi mainWindowApi, IModuleDatabase database)
+		{
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 			this.database = database;
 
-			if (!DesignMode)
+			InitializeWindow();
+
+			// Load window settings
+			LoadWindowSettings("FavoriteSongSystemWindow");
+			settings = new FavoriteSongSystemWindowSettings(allWindowSettings);
+
+			// Set the title of the window
+			Text = Resources.IDS_FAVORITE_TITLE;
+
+			// Add the columns to the grid
+			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
 			{
-				InitializeWindow();
+				Name = "#",
+				Resizable = DataGridViewTriState.True,
+				SortMode = DataGridViewColumnSortMode.NotSortable,
+				DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
+				Width = settings.Column1Width,
+				DisplayIndex = settings.Column1Pos
+			});
 
-				// Load window settings
-				LoadWindowSettings("FavoriteSongSystemWindow");
-				settings = new FavoriteSongSystemWindowSettings(allWindowSettings);
+			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			{
+				Name = Resources.IDS_FAVORITE_COLUMN_NAME,
+				Resizable = DataGridViewTriState.True,
+				SortMode = DataGridViewColumnSortMode.NotSortable,
+				Width = settings.Column2Width,
+				DisplayIndex = settings.Column2Pos
+			});
 
-				// Set the title of the window
-				Text = Resources.IDS_FAVORITE_TITLE;
+			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			{
+				Name = Resources.IDS_FAVORITE_COLUMN_COUNT,
+				Resizable = DataGridViewTriState.True,
+				SortMode = DataGridViewColumnSortMode.NotSortable,
+				DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
+				Width = settings.Column3Width,
+				DisplayIndex = settings.Column3Pos
+			});
 
-				// Add the columns to the grid
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
-				{
-					Name = "#",
-					Resizable = DataGridViewTriState.True,
-					SortMode = DataGridViewColumnSortMode.NotSortable,
-					DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
-					Width = settings.Column1Width,
-					DisplayIndex = settings.Column1Pos
-				});
+			// Add items to the combo controls
+			showComboBox.Items.AddRange(new object[]
+			{
+				Resources.IDS_FAVORITE_SHOW_TOP10,
+				Resources.IDS_FAVORITE_SHOW_TOP50,
+				Resources.IDS_FAVORITE_SHOW_TOP100,
+				Resources.IDS_FAVORITE_SHOW_TOPX,
+				Resources.IDS_FAVORITE_SHOW_BOTTOM10,
+				Resources.IDS_FAVORITE_SHOW_BOTTOM50,
+				Resources.IDS_FAVORITE_SHOW_BOTTOM100,
+				Resources.IDS_FAVORITE_SHOW_BOTTOMX
+			});
 
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
-				{
-					Name = Resources.IDS_FAVORITE_COLUMN_NAME,
-					Resizable = DataGridViewTriState.True,
-					SortMode = DataGridViewColumnSortMode.NotSortable,
-					Width = settings.Column2Width,
-					DisplayIndex = settings.Column2Pos
-				});
+			showComboBox.SelectedIndex = (int)settings.Show;
+			otherNumberTextBox.Text = settings.ShowOther.ToString();
 
-				favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
-				{
-					Name = Resources.IDS_FAVORITE_COLUMN_COUNT,
-					Resizable = DataGridViewTriState.True,
-					SortMode = DataGridViewColumnSortMode.NotSortable,
-					DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
-					Width = settings.Column3Width,
-					DisplayIndex = settings.Column3Pos
-				});
+			// Set tool tip
+			toolTip.SetToolTip(addButton, Resources.IDS_TIP_FAVORITE_ADD);
+			toolTip.SetToolTip(removeButton, Resources.IDS_TIP_FAVORITE_REMOVE);
+			toolTip.SetToolTip(resetButton, Resources.IDS_TIP_FAVORITE_RESET);
 
-				// Add items to the combo controls
-				showComboBox.Items.AddRange(new object[]
-				{
-					Resources.IDS_FAVORITE_SHOW_TOP10,
-					Resources.IDS_FAVORITE_SHOW_TOP50,
-					Resources.IDS_FAVORITE_SHOW_TOP100,
-					Resources.IDS_FAVORITE_SHOW_TOPX,
-					Resources.IDS_FAVORITE_SHOW_BOTTOM10,
-					Resources.IDS_FAVORITE_SHOW_BOTTOM50,
-					Resources.IDS_FAVORITE_SHOW_BOTTOM100,
-					Resources.IDS_FAVORITE_SHOW_BOTTOMX
-				});
-
-				showComboBox.SelectedIndex = (int)settings.Show;
-				otherNumberTextBox.Text = settings.ShowOther.ToString();
-
-				// Set tool tip
-				toolTip.SetToolTip(addButton, Resources.IDS_TIP_FAVORITE_ADD);
-				toolTip.SetToolTip(removeButton, Resources.IDS_TIP_FAVORITE_REMOVE);
-				toolTip.SetToolTip(resetButton, Resources.IDS_TIP_FAVORITE_RESET);
-
-				RefreshWindow();
-			}
+			RefreshWindow();
 		}
 
 

@@ -44,9 +44,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/********************************************************************/
 		protected WindowFormBase()//XX skal slettes når alle forms kører DI
 		{
-			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
-			optionSettings = DependencyInjection.Container.GetInstance<OptionSettings>();
+			if (DependencyInjection.Container != null)
+			{
+				mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
+				allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
+				optionSettings = DependencyInjection.Container.GetInstance<OptionSettings>();
+			}
 		}
 
 
