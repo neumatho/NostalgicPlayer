@@ -42,6 +42,7 @@
     <ProjectReference Include="..\..\Agents\Players\DigitalMugician\DigitalMugician.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DigitalSoundStudio\DigitalSoundStudio.csproj" />
     <ProjectReference Include="..\..\Agents\Players\FaceTheMusic\FaceTheMusic.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\FFmpeg\FFmpeg.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Fred\Fred.csproj" />
     <ProjectReference Include="..\..\Agents\Players\FutureComposer\FutureComposer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\GameMusicCreator\GameMusicCreator.csproj" />
