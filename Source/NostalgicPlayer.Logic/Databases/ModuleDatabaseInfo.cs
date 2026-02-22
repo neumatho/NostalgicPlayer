@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
+namespace Polycode.NostalgicPlayer.Logic.Databases
 {
 	/// <summary>
 	/// The different kind of information stored in the database

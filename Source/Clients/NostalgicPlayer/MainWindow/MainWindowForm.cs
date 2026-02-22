@@ -43,6 +43,7 @@ using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 using Polycode.NostalgicPlayer.Library.Loaders;
+using Polycode.NostalgicPlayer.Logic.Databases;
 using Polycode.NostalgicPlayer.Logic.MultiFiles;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
@@ -108,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool allowPosSliderUpdate;
 
 		// Different helper classes
-		private ModuleDatabase database;
+		private IModuleDatabase database;
 		private FileScanner fileScanner;
 
 		// Play samples from sample info window info
@@ -153,8 +154,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IPlatformPath platformPath, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IModuleDatabase moduleDatabase, IPlatformPath platformPath, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
 		{
+			database = moduleDatabase;
 			this.platformPath = platformPath;
 			userSettings = settings;
 			this.settingsService = settingsService;
@@ -185,8 +187,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			SetupControls();
 
 			// Initialize helper classes
-			database = new ModuleDatabase();
-
 			if ((new DateTime(optionSettings.LastCleanupTime).AddDays(7) < DateTime.Now))
 			{
 				database.StartCleanup(() =>
@@ -1430,8 +1430,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Remember the module list
 				RememberModuleList(rememberSelected, rememberPosition, rememberSong);
 
-				// Close down the database
-				CloseDatabase();
+				// Save or delete the database
+				SaveDatabase();
 			}
 		}
 		#endregion
@@ -2959,17 +2959,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Close down the database handler
+		/// Save the database if needed
 		/// </summary>
 		/********************************************************************/
-		private void CloseDatabase()
+		private void SaveDatabase()
 		{
 			if (optionSettings.UseDatabase)
 				database.SaveDatabase();
 			else
 				database.DeleteDatabase();
-
-			database.CloseDown();
 		}
 
 		#region Settings

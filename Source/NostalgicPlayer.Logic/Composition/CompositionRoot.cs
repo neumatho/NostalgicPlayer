@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Logic.Databases;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Logic.Composition
@@ -19,6 +20,7 @@ namespace Polycode.NostalgicPlayer.Logic.Composition
 		/********************************************************************/
 		public static void RegisterLogic(this Container container)
 		{
+			container.RegisterSingleton<IModuleDatabase, ModuleDatabase>();
 		}
 	}
 }

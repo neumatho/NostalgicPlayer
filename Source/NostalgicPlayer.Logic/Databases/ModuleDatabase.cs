@@ -8,18 +8,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
+namespace Polycode.NostalgicPlayer.Logic.Databases
 {
 	/// <summary>
 	/// This class stores extra information from the modules into a kind of database
 	/// </summary>
-	public class ModuleDatabase
+	internal class ModuleDatabase : IModuleDatabase, IDisposable
 	{
 		private const int DatabaseVersion = 2;
 		private const int MinutesBetweenEachSave = 7;
@@ -32,8 +30,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		private class QueueInfo
 		{
-			public string FullPath { get; set; }
-			public ModuleDatabaseInfo Info { get; set; }
+			public string FullPath { get; init; }
+			public ModuleDatabaseInfo Info { get; init; }
 		}
 
 		private class CleanupState
@@ -118,29 +116,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private Semaphore queueSemaphore;
 
 		private ManualResetEvent cleanupEvent;
-		private CleanupDoneHandler cleanupDoneHandler;
+		private IModuleDatabase.CleanupDoneHandler cleanupDoneHandler;
 
 		private readonly IPlatformPath platformPath;
-
-		/// <summary>
-		/// Return a new object if you want to change it or null to leave
-		/// the original in place
-		/// </summary>
-		public delegate ModuleDatabaseInfo ActionHandler(string fullPath, ModuleDatabaseInfo moduleDatabaseInfo);
-
-		/// <summary>
-		/// Is called when cleanup is done
-		/// </summary>
-		public delegate void CleanupDoneHandler();
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleDatabase()
+		public ModuleDatabase(IPlatformPath platformPath)
 		{
-			platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
+			this.platformPath = platformPath;
 
 			root = new Dictionary<string, DatabaseValue>(StringComparer.InvariantCultureIgnoreCase);
 			queue = new Queue<QueueInfo>();
@@ -153,9 +140,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			cleanupEvent = new ManualResetEvent(false);
 
 			// Start the background thread
-			handlerThread = new Thread(DoTaskThread);
-			handlerThread.Name = "Module database handler";
-			handlerThread.Priority = ThreadPriority.BelowNormal;
+			handlerThread = new Thread(DoTaskThread)
+			{
+				Name = "Module database handler",
+				Priority = ThreadPriority.BelowNormal
+			};
+
 			handlerThread.Start();
 		}
 
@@ -166,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Close down the database handler and cleanup
 		/// </summary>
 		/********************************************************************/
-		public void CloseDown()
+		public void Dispose()
 		{
 			if (shutdownEvent != null)
 			{
@@ -185,6 +175,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			cleanupEvent = null;
 
 			handlerThread = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve all module information
+		/// </summary>
+		/********************************************************************/
+		public IEnumerable<KeyValuePair<string, ModuleDatabaseInfo>> RetrieveAllInformation()
+		{
+			lock (root)
+			{
+				foreach (KeyValuePair<string, DatabaseValue> pair in root)
+				{
+					foreach (KeyValuePair<string, DatabaseValue> databasePair in RetrieveAllInformationOnLevel(pair.Key, pair.Value))
+						yield return new KeyValuePair<string, ModuleDatabaseInfo>(databasePair.Key, databasePair.Value.Info);
+				}
+			}
 		}
 
 
@@ -218,25 +227,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
-		/// Retrieve all module information
-		/// </summary>
-		/********************************************************************/
-		public IEnumerable<KeyValuePair<string, ModuleDatabaseInfo>> RetrieveAllInformation()
-		{
-			lock (root)
-			{
-				foreach (KeyValuePair<string, DatabaseValue> pair in root)
-				{
-					foreach (KeyValuePair<string, DatabaseValue> databasePair in RetrieveAllInformationOnLevel(pair.Key, pair.Value))
-						yield return new KeyValuePair<string, ModuleDatabaseInfo>(databasePair.Key, databasePair.Value.Info);
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Store module information
 		/// </summary>
 		/********************************************************************/
@@ -256,7 +246,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Do some action on all items in the database
 		/// </summary>
 		/********************************************************************/
-		public void RunAction(ActionHandler handler)
+		public void RunAction(IModuleDatabase.ActionHandler handler)
 		{
 			lock (root)
 			{
@@ -282,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Start the cleanup job
 		/// </summary>
 		/********************************************************************/
-		public void StartCleanup(CleanupDoneHandler handler)
+		public void StartCleanup(IModuleDatabase.CleanupDoneHandler handler)
 		{
 			cleanupDoneHandler = handler;
 			cleanupEvent.Set();
@@ -533,7 +523,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			try
 			{
 				bool stillRunning = true;
-				WaitHandle[] waitArray = { queueSemaphore, shutdownEvent, cleanupEvent };
+				WaitHandle[] waitArray = [ queueSemaphore, shutdownEvent, cleanupEvent ];
 				DateTime lastSaved = DateTime.Now;
 
 				while (stillRunning)

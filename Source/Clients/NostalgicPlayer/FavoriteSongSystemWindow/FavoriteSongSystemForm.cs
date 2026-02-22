@@ -10,13 +10,12 @@ using System.Linq;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Helpers;
+using Polycode.NostalgicPlayer.Logic.Databases;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 {
@@ -25,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 	/// </summary>
 	public partial class FavoriteSongSystemForm : WindowFormBase
 	{
-		private ModuleDatabase database;
+		private IModuleDatabase database;
 
 		private readonly FavoriteSongSystemWindowSettings settings;
 
@@ -34,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FavoriteSongSystemForm(IMainWindowApi mainWindow, ModuleDatabase database)
+		public FavoriteSongSystemForm(IMainWindowApi mainWindow, IModuleDatabase database)
 		{
 			InitializeComponent();
 

@@ -12,7 +12,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -20,6 +19,7 @@ using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
+using Polycode.NostalgicPlayer.Logic.Databases;
 using Polycode.NostalgicPlayer.Logic.MultiFiles;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly ModuleListControl moduleListControl;
 		private readonly OptionSettings settings;
 		private readonly Manager manager;
-		private readonly ModuleDatabase database;
+		private readonly IModuleDatabase database;
 		private readonly IMainWindowApi mainWindowApi;
 
 		private ManualResetEvent shutdownEvent;
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner(ModuleListControl listControl, OptionSettings optionSettings, Manager agentManager, ModuleDatabase moduleDatabase, IMainWindowApi mainWindow)
+		public FileScanner(ModuleListControl listControl, OptionSettings optionSettings, Manager agentManager, IModuleDatabase moduleDatabase, IMainWindowApi mainWindow)
 		{
 			moduleListControl = listControl;
 			settings = optionSettings;
