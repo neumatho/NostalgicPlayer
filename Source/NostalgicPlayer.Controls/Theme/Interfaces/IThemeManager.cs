@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Controls.Containers.Events;
+using Polycode.NostalgicPlayer.Controls.Events;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 {
