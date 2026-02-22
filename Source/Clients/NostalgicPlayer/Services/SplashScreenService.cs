@@ -60,5 +60,3 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		}
 	}
 }
-
-

@@ -21,6 +21,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 	/// </summary>
 	public partial class SettingsWindowForm : WindowFormBase
 	{
+		private IMainWindowApi mainWindowApi;
+
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
@@ -38,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow, SettingsService settingsService)
+		public SettingsWindowForm(IMainWindowApi mainWindowApi, Manager agentManager, ModuleHandler moduleHandler, SettingsService settingsService)
 		{
 			InitializeComponent();
 
@@ -49,13 +51,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			navigator.Button.ContextButtonDisplay = ButtonDisplay.Hide;
 
 			// Remember the arguments
+			this.mainWindowApi = mainWindowApi;
+
 			this.agentManager = agentManager;
 			this.moduleHandler = moduleHandler;
 			this.settingsService = settingsService;
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow);
+				InitializeWindow();
 
 				// Load window settings
 				LoadWindowSettings("SettingsWindow");

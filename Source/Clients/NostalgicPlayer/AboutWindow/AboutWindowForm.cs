@@ -10,7 +10,6 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
@@ -66,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AboutWindowForm(Manager agentManager, IMainWindowApi mainWindow)
+		public AboutWindowForm(Manager agentManager)
 		{
 			InitializeComponent();
 
@@ -74,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow);
+				InitializeWindow();
 
 				// Load window settings
 				LoadWindowSettings("AboutWindow");

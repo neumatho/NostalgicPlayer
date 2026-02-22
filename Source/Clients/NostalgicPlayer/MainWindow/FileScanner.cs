@@ -37,10 +37,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly OptionSettings settings;
 		private readonly IModuleDatabase database;
 		private readonly IPlaylistFactory playlistFactory;
+		private readonly IMainWindowApi mainWindowApi;
 
 		private readonly ModuleListControl moduleListControl;
 		private readonly Manager manager;
-		private readonly IMainWindowApi mainWindowApi;
 
 		private ManualResetEvent shutdownEvent;
 		private AutoResetEvent breakEvent;
@@ -54,15 +54,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner(ModuleListControl listControl, Manager agentManager, IMainWindowApi mainWindow)
+		public FileScanner(ModuleListControl listControl, Manager agentManager)
 		{
 			settings = DependencyInjection.Container.GetInstance<OptionSettings>();
 			database = DependencyInjection.Container.GetInstance<IModuleDatabase>();
 			playlistFactory = DependencyInjection.Container.GetInstance<IPlaylistFactory>();
+			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 
 			moduleListControl = listControl;
 			manager = agentManager;
-			mainWindowApi = mainWindow;
 		}
 
 

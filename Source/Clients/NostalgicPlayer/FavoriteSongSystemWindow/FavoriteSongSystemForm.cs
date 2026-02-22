@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 	/// </summary>
 	public partial class FavoriteSongSystemForm : WindowFormBase
 	{
+		private IMainWindowApi mainWindowApi;
 		private IModuleDatabase database;
 
 		private readonly FavoriteSongSystemWindowSettings settings;
@@ -33,16 +34,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FavoriteSongSystemForm(IMainWindowApi mainWindow, IModuleDatabase database)
+		public FavoriteSongSystemForm(IMainWindowApi mainWindowApi, IModuleDatabase database)
 		{
 			InitializeComponent();
 
 			// Remember the arguments
+			this.mainWindowApi = mainWindowApi;
 			this.database = database;
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow);
+				InitializeWindow();
 
 				// Load window settings
 				LoadWindowSettings("FavoriteSongSystemWindow");

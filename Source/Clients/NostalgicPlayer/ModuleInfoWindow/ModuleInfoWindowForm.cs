@@ -30,6 +30,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 	/// </summary>
 	public partial class ModuleInfoWindowForm : WindowFormBase
 	{
+		private IMainWindowApi mainWindowApi;
+
 		private ModuleHandler moduleHandler;
 
 		private PictureInfo[] pictures;
@@ -78,11 +80,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, ModuleSettings moduleSettings)
+		public ModuleInfoWindowForm(IMainWindowApi mainWindowApi, ModuleHandler moduleHandler, ModuleSettings moduleSettings)
 		{
 			InitializeComponent();
 
 			// Remember the arguments
+			this.mainWindowApi = mainWindowApi;
 			this.moduleHandler = moduleHandler;
 			this.moduleSettings = moduleSettings;
 
@@ -90,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			{
 				animationLock = new Lock();
 
-				InitializeWindow(mainWindow);
+				InitializeWindow();
 
 				// Load window settings
 				LoadWindowSettings("ModuleInfoWindow");

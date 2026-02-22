@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			{
 				platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
 
-				InitializeWindow(mainWindow);
+				InitializeWindow();
 
 				// Load window settings
 				LoadWindowSettings("ModLibraryWindow");

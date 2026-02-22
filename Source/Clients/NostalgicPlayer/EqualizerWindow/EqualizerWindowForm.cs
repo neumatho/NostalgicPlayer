@@ -7,7 +7,6 @@ using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Library.Containers;
 
@@ -29,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public EqualizerWindowForm(ModuleHandler moduleHandler, IMainWindowApi mainWindow, SoundSettings soundSettings)
+		public EqualizerWindowForm(ModuleHandler moduleHandler, SoundSettings soundSettings)
 		{
 			InitializeComponent();
 
@@ -40,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			Text = Resources.IDS_SETTINGS_MIXER_EQUALIZER;
 
 			// Initialize the window
-			InitializeWindow(mainWindow);
+			InitializeWindow();
 			LoadWindowSettings(WindowSettingsName);
 
 			// Create and configure equalizer control

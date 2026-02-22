@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	/// <summary>
 	/// This is the main window
 	/// </summary>
-	public partial class MainWindowForm : WindowFormBase, IMainWindowApi, IExtraChannels
+	public partial class MainWindowForm : WindowFormBase, IExtraChannels
 	{
 		private class AgentEntry
 		{
@@ -124,6 +124,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly Lock processingEndReached = new Lock();
 
 		// Other windows
+		private MainWindowApiAdapter mainWindowApiAdapter;//XX Skal slettes
 		private HelpWindowForm helpWindow = null;
 		private AboutWindowForm aboutWindow = null;
 		private SettingsWindowForm settingsWindow = null;
@@ -155,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
@@ -168,6 +169,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.pathSettings = pathSettings;
 			this.soundSettings = soundSettings;
 			this.formCreatorService = formCreatorService;
+
+			// Initialize the adapter with the created form
+			this.mainWindowApiAdapter = mainWindowApiAdapter;
+			mainWindowApiAdapter.Initialize(this);
 
 			// Disable escape key closing
 			disableEscapeKey = true;
@@ -204,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 			}
 
-			fileScanner = new FileScanner(moduleListControl, agentManager, this);
+			fileScanner = new FileScanner(moduleListControl, agentManager);
 			fileScanner.Start();
 
 			SetupHandlers();
@@ -264,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				helpWindow.Activate();
 			else
 			{
-				helpWindow = new HelpWindowForm(this);
+				helpWindow = new HelpWindowForm();
 				helpWindow.Disposed += (o, args) => { helpWindow = null; };
 				helpWindow.Show();
 			}
@@ -724,7 +729,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 				else
 				{
-					agentSettingsWindow = new AgentSettingsWindowForm(agentManager, agentInfo, this);
+					agentSettingsWindow = new AgentSettingsWindowForm(agentManager, agentInfo);
 					agentSettingsWindow.Disposed += (o, args) => { openAgentSettings.Remove(agentInfo.TypeId); };
 					agentSettingsWindow.Show();
 
@@ -773,7 +778,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 				else
 				{
-					agentDisplayWindow = new AgentDisplayWindowForm(agentManager, agentInfo, moduleHandler, this);
+					agentDisplayWindow = new AgentDisplayWindowForm(agentManager, agentInfo, moduleHandler);
 					agentDisplayWindow.Disposed += (o, args) => { openAgentDisplays.Remove(agentInfo.TypeId); };
 					agentDisplayWindow.Show();
 
@@ -1476,7 +1481,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow.Activate();
 			else
 			{
-				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, this, settingsService);
+				settingsWindow = new SettingsWindowForm(mainWindowApiAdapter, agentManager, moduleHandler, settingsService);
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}
@@ -1500,7 +1505,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				audiusWindow = new AudiusWindowForm(this);
+				audiusWindow = new AudiusWindowForm(mainWindowApiAdapter);
 				audiusWindow.Disposed += (o, args) => { audiusWindow = null; };
 				audiusWindow.Show();
 			}
@@ -1557,7 +1562,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				aboutWindow.Activate();
 			else
 			{
-				aboutWindow = new AboutWindowForm(agentManager, this);
+				aboutWindow = new AboutWindowForm(agentManager);
 				aboutWindow.Disposed += (o, args) => { aboutWindow = null; };
 				aboutWindow.Show();
 			}
@@ -1602,7 +1607,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, moduleSettings);
+				moduleInfoWindow = new ModuleInfoWindowForm(mainWindowApiAdapter, moduleHandler, moduleSettings);
 				moduleInfoWindow.Disposed += (o, args) => { moduleInfoWindow = null; };
 				moduleInfoWindow.Show();
 			}
@@ -2748,7 +2753,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				favoriteSongSystemWindow = new FavoriteSongSystemForm(this, database);
+				favoriteSongSystemWindow = new FavoriteSongSystemForm(mainWindowApiAdapter, database);
 				favoriteSongSystemWindow.Disposed += (o, args) => { favoriteSongSystemWindow = null; };
 				favoriteSongSystemWindow.Show();
 			}
@@ -2772,7 +2777,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler, this);
+				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
 				sampleInfoWindow.Disposed += (o, args) => { sampleInfoWindow = null; };
 				sampleInfoWindow.Show();
 			}
@@ -2995,9 +3000,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Set the loop song status
 			loopCheckButton.Checked = mainWindowSettings.LoopSong;
-
-			// Initialize base class
-			SetOptions(this);
 		}
 		#endregion
 
@@ -3291,31 +3293,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			if (mainWindowSettings.OpenModuleInformationWindow)
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, moduleSettings);
+				moduleInfoWindow = new ModuleInfoWindowForm(mainWindowApiAdapter, moduleHandler, moduleSettings);
 				moduleInfoWindow.Show();
 			}
 
 			if (mainWindowSettings.OpenFavoriteSongSystemWindow && optionSettings.UseDatabase)
 			{
-				favoriteSongSystemWindow = new FavoriteSongSystemForm(this, database);
+				favoriteSongSystemWindow = new FavoriteSongSystemForm(mainWindowApiAdapter, database);
 				favoriteSongSystemWindow.Show();
 			}
 
 			if (mainWindowSettings.OpenSampleInformationWindow)
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler, this);
+				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
 				sampleInfoWindow.Show();
 			}
 
 			if (mainWindowSettings.OpenAudiusWindow)
 			{
-				audiusWindow = new AudiusWindowForm(this);
+				audiusWindow = new AudiusWindowForm(mainWindowApiAdapter);
 				audiusWindow.Show();
 			}
 
 			if (mainWindowSettings.OpenModLibraryWindow)
 			{
-				modLibraryWindow = new ModLibraryWindowForm(this);
+				modLibraryWindow = new ModLibraryWindowForm(mainWindowApiAdapter);
 				modLibraryWindow.Show();
 			}
 
@@ -4166,7 +4168,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			CreateHandle();
 
 			moduleHandler = new ModuleHandler();
-			moduleHandler.Initialize(this, agentManager, soundSettings, masterVolumeTrackBar.Value);
+			moduleHandler.Initialize(mainWindowApiAdapter, agentManager, soundSettings, masterVolumeTrackBar.Value);
 			moduleHandler.SetMuteStatus(muteCheckButton.Checked);
 		}
 
@@ -5434,7 +5436,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				modLibraryWindow = new ModLibraryWindowForm(this);
+				modLibraryWindow = new ModLibraryWindowForm(mainWindowApiAdapter);
 				modLibraryWindow.Disposed += (o, args) => { modLibraryWindow = null; };
 				modLibraryWindow.Show();
 			}
@@ -5552,7 +5554,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				equalizerWindow = new EqualizerWindowForm(moduleHandler, this, soundSettings);
+				equalizerWindow = new EqualizerWindowForm(moduleHandler, soundSettings);
 				equalizerWindow.Disposed += (o, args) => { equalizerWindow = null; };
 				equalizerWindow.Show();
 			}
@@ -5582,7 +5584,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			if (mainWindowSettings.OpenEqualizerWindow)
 			{
-				equalizerWindow = new EqualizerWindowForm(moduleHandler, this, soundSettings);
+				equalizerWindow = new EqualizerWindowForm(moduleHandler, soundSettings);
 				equalizerWindow.Show();
 			}
 		}

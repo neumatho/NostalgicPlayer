@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow);
+				InitializeWindow();
 
 				// Load window settings
 				LoadWindowSettings("AudiusWindow");

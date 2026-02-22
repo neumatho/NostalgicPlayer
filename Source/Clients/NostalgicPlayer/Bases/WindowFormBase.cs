@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// <summary>
 		/// Holds the interface to the main window API
 		/// </summary>
-		protected IMainWindowApi mainWindowApi;
+		private IMainWindowApi mainWindowApi;
 
 		private OptionSettings optionSettings;
 		private WindowSettings windowSettings;
@@ -44,6 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/********************************************************************/
 		protected WindowFormBase()//XX skal slettes når alle forms kører DI
 		{
+			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			optionSettings = DependencyInjection.Container.GetInstance<OptionSettings>();
 		}
@@ -57,8 +58,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeBaseForm(ISettings settings, OptionSettings optionSettings)
+		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings)
 		{
+			this.mainWindowApi = mainWindowApi;
 			allWindowSettings = settings;
 			this.optionSettings = optionSettings;
 		}
@@ -90,29 +92,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Set option settings. Should only be used by the main window
-		/// </summary>
-		/********************************************************************/
-		protected void SetOptions(IMainWindowApi mainWindow)
-		{
-			mainWindowApi = mainWindow;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Call this to initialize the window with basis settings
 		/// </summary>
 		/********************************************************************/
-		protected void InitializeWindow(IMainWindowApi mainWindow)
+		protected void InitializeWindow()
 		{
-			SetOptions(mainWindow);
-
 			// Set how the window should act in the task bar and task switcher
 			if (!optionSettings.SeparateWindows)
 			{
-				Owner = mainWindow.Form;
+				Owner = mainWindowApi.Form;
 				ShowInTaskbar = false;
 			}
 			else

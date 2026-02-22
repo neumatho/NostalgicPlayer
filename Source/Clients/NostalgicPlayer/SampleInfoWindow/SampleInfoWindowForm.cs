@@ -14,7 +14,6 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
@@ -67,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler, IMainWindowApi mainWindow)
+		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler)
 		{
 			InitializeComponent();
 
@@ -85,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 			if (!DesignMode)
 			{
-				InitializeWindow(mainWindow);
+				InitializeWindow();
 
 				// Load window settings
 				LoadWindowSettings("SampleInfoWindow");

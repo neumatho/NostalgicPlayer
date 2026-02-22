@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Library.Application;
@@ -31,6 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 
 			RegisterSettings(container);
 			RegisterServices(container);
+			RegisterAdapters(container);
 
 			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
 		}
@@ -65,6 +67,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 
 			container.RegisterSingleton<IProgressCallbackFactory, ProgressCallbackFactory>();
 			container.RegisterSingleton<SplashScreenService>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all adapters into the container
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterAdapters(Container container)
+		{
+			container.RegisterSingleton<IMainWindowApi, MainWindowApiAdapter>();
+			container.RegisterSingleton<MainWindowApiAdapter>();
 		}
 	}
 }
