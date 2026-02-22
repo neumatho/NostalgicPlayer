@@ -174,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			}
 
 			// Check for integer overflow
-			if ((nb_Channels > (c_int.MaxValue / align)) || (((int64_t)nb_Samples * nb_Samples) > ((c_int.MaxValue - (align * nb_Samples)) / sample_Size)))
+			if ((nb_Channels > (c_int.MaxValue / align)) || (((int64_t)nb_Channels * nb_Samples) > ((c_int.MaxValue - (align * nb_Channels)) / sample_Size)))
 				return Error.EINVAL;
 
 			c_int line_Size = planar != 0 ? Macros.FFAlign(nb_Samples * sample_Size, align) : Macros.FFAlign(nb_Samples * sample_Size * nb_Channels, align);

@@ -317,6 +317,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 				goto Fail;
 			}
 
+			const c_int RSC = 1;
+
 			if (s.In.Ch_Count == 0)
 				s.In.Ch_Count = s.In_Ch_Layout.Nb_Channels;
 
@@ -352,6 +354,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 				ret = Error.EINVAL;
 				goto Fail;
 			}
+
+			s.Resample_First = ((RSC * s.Out.Ch_Count / s.Used_Ch_Layout.Nb_Channels) - RSC) < ((s.Out_Sample_Rate / (c_float)s.In_Sample_Rate) - 1.0f) ? 1 : 0;
 
 			s.In.CopyTo(s.In_Buffer);
 			s.In.CopyTo(s.Silence);
