@@ -28,6 +28,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		IFormColors FormColors { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by box
+		/// </summary>
+		IBoxColors BoxColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by buttons
 		/// </summary>
 		IButtonColors ButtonColors { get; }
