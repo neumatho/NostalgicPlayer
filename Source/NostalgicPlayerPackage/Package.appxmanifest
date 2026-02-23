@@ -1366,6 +1366,14 @@
             <uap:DisplayName>Sound Factory</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="wmafile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ms-wma">.wma</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Windows Media Audio</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
