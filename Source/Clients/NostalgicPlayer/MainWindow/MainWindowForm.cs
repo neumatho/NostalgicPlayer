@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 			}
 
-			fileScanner = new FileScanner(moduleListControl, agentManager);
+			fileScanner = new FileScanner(agentManager);
 			fileScanner.Start();
 
 			SetupHandlers();

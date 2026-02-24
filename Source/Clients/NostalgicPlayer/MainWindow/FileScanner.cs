@@ -39,7 +39,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly IPlaylistFactory playlistFactory;
 		private readonly IMainWindowApi mainWindowApi;
 
-		private readonly ModuleListControl moduleListControl;
 		private readonly Manager manager;
 
 		private ManualResetEvent shutdownEvent;
@@ -54,14 +53,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner(ModuleListControl listControl, Manager agentManager)
+		public FileScanner(Manager agentManager)
 		{
 			settings = DependencyInjection.Container.GetInstance<OptionSettings>();
 			database = DependencyInjection.Container.GetInstance<IModuleDatabase>();
 			playlistFactory = DependencyInjection.Container.GetInstance<IPlaylistFactory>();
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 
-			moduleListControl = listControl;
 			manager = agentManager;
 		}
 
@@ -311,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (list.Count > 0)
 				{
 					// Replace the list item with the new list
-					moduleListControl.Invoke(() =>
+					mainWindowApi.Form.Invoke(() =>
 					{
 						mainWindowApi.ReplaceItemInModuleList(listItem, list);
 					});
