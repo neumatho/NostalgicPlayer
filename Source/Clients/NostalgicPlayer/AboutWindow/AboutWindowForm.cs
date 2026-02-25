@@ -13,7 +13,9 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 {
@@ -31,6 +33,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			Logo,
 			Agents
 		}
+
+		private readonly IAgentManager agentManager;
 
 		private Bitmap bitmap;
 		private readonly int outsideHeight;
@@ -65,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AboutWindowForm(Manager agentManager)
+		public AboutWindowForm()
 		{
 			InitializeComponent();
 
@@ -73,6 +77,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 
 			if (!DesignMode)
 			{
+				agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+
 				InitializeWindow();
 
 				// Load window settings
@@ -121,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 				waitCount = 20;
 
 				// Find all the different types of agents
-				FindAgents(agentManager);
+				FindAgents();
 
 				// Start the timer
 				pulseTimer.Start();
@@ -172,15 +178,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// Find all the different agents installed and build the needed lists
 		/// </summary>
 		/********************************************************************/
-		private void FindAgents(Manager agentManager)
+		private void FindAgents()
 		{
-			supportedFormats = FindAgentTypes(agentManager, Manager.AgentType.Players, Manager.AgentType.ModuleConverters);
-			streamers = FindAgents(agentManager, Manager.AgentType.Streamers);
-			sampleConverters = FindAgents(agentManager, Manager.AgentType.SampleConverters);
-			moduleConverters = FindAgents(agentManager, Manager.AgentType.ModuleConverters);
-			outputAgents = FindAgentTypes(agentManager, Manager.AgentType.Output);
-			visualAgents = FindAgentTypes(agentManager, Manager.AgentType.Visuals);
-			decruncherAgents = FindAgentTypes(agentManager, Manager.AgentType.FileDecrunchers, Manager.AgentType.ArchiveDecrunchers);
+			supportedFormats = FindAgentTypes(AgentType.Players, AgentType.ModuleConverters);
+			streamers = FindAgents(AgentType.Streamers);
+			sampleConverters = FindAgents(AgentType.SampleConverters);
+			moduleConverters = FindAgents(AgentType.ModuleConverters);
+			outputAgents = FindAgentTypes(AgentType.Output);
+			visualAgents = FindAgentTypes(AgentType.Visuals);
+			decruncherAgents = FindAgentTypes(AgentType.FileDecrunchers, AgentType.ArchiveDecrunchers);
 		}
 
 
@@ -191,11 +197,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// type
 		/// </summary>
 		/********************************************************************/
-		private string[] FindAgentTypes(Manager agentManager, params Manager.AgentType[] agentTypes)
+		private string[] FindAgentTypes(params AgentType[] agentTypes)
 		{
 			List<string> names = new List<string>();
 
-			foreach (Manager.AgentType type in agentTypes)
+			foreach (AgentType type in agentTypes)
 			{
 				// Find all supported formats from the players
 				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(type).Where(agentInfo => !string.IsNullOrEmpty(agentInfo.TypeName)))
@@ -225,11 +231,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// type
 		/// </summary>
 		/********************************************************************/
-		private string[] FindAgents(Manager agentManager, params Manager.AgentType[] agentTypes)
+		private string[] FindAgents(params AgentType[] agentTypes)
 		{
 			HashSet<string> names = new HashSet<string>();
 
-			foreach (Manager.AgentType type in agentTypes)
+			foreach (AgentType type in agentTypes)
 			{
 				// Find all supported formats from the players
 				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(type))

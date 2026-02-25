@@ -9,7 +9,6 @@ using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
@@ -46,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// M:\Modules\AllMyModules.zip|Deep Joy.it
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileDecruncher(string fullArchivePath, Manager agentManager) : base(agentManager)
+		public ArchiveFileDecruncher(string fullArchivePath)
 		{
 			this.fullArchivePath = fullArchivePath;
 
@@ -62,7 +61,6 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		public void Dispose()
 		{
-			manager = null;
 			archive = null;
 
 			CloseStreams();
@@ -94,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 					StreamHelper.CopyData(entryStream, stream, (int)entryStream.Length);
 
 				// The entry may be crunched, so decrunch it
-				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+				SingleFileDecruncher decruncher = new SingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				List<string> algorithms = new List<string>(decruncherAlgorithms);

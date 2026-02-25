@@ -11,7 +11,6 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
@@ -97,13 +96,13 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/// Initialize the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public override bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
+		public override bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			bool retVal = true;
 
 			try
 			{
-				if (!base.Initialize(agentManager, playerConfiguration, out errorMessage))
+				if (!base.Initialize(playerConfiguration, out errorMessage))
 					return false;
 
 				// Clear the playing flag
@@ -116,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 
 				// Allocate and initialize he visual component
 				currentVisualizer = new Visualizer();
-				currentVisualizer.Initialize(agentManager);
+				currentVisualizer.Initialize();
 
 				if (bufferDirect)
 					currentMixer = new MixerBufferDirect();

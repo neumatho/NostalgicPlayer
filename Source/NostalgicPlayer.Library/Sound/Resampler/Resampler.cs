@@ -9,7 +9,6 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
 using Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers;
@@ -59,13 +58,13 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 		/// Initialize the resampler routines
 		/// </summary>
 		/********************************************************************/
-		public override bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
+		public override bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			bool retVal = true;
 
 			try
 			{
-				if (!base.Initialize(agentManager, playerConfiguration, out errorMessage))
+				if (!base.Initialize(playerConfiguration, out errorMessage))
 					return false;
 
 				// Get the player instance
@@ -78,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 				currentVisualizer = new Visualizer();
 
 				// Initialize the visualizer
-				currentVisualizer.Initialize(agentManager);
+				currentVisualizer.Initialize();
 
 				// Initialize the resampler
 				lock (mixerInfoLock)

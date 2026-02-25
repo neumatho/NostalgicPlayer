@@ -12,7 +12,9 @@ using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Players;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
@@ -32,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 			public bool HasSampleMarkings { get; set; }
 		}
 
-		private readonly Manager agentManager;
+		private readonly IAgentManager agentManager;
 
 		private string source;
 		private IPlayerAgent playerAgent;
@@ -54,9 +56,9 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Loader(Manager agentManager)
+		public Loader()
 		{
-			this.agentManager = agentManager;
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 
 			PlayerAgentInfo = null;
 			playerAgent = null;
@@ -300,9 +302,9 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		private ILoader FindLoader(string fileName)
 		{
 			if (ArchivePath.IsArchivePath(fileName))
-				return new ArchiveFileLoader(fileName, agentManager);
+				return new ArchiveFileLoader(fileName);
 
-			return new NormalFileLoader(fileName, agentManager);
+			return new NormalFileLoader(fileName);
 		}
 
 
@@ -413,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 			HashSet<Guid> agentsToSkip = new HashSet<Guid>();
 
-			foreach (AgentInfo info in agentManager.GetAllAgents(Manager.AgentType.Players))
+			foreach (AgentInfo info in agentManager.GetAllAgents(AgentType.Players))
 			{
 				if (agentsToSkip.Contains(info.AgentId))
 					continue;
@@ -437,7 +439,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 						IdentifyFormatInfo identifyFormatInfo = multipleFormatIdentify.IdentifyFormat(fileInfo);
 						if (identifyFormatInfo != null)
 						{
-							agentInfo = agentManager.GetAgent(Manager.AgentType.Players, identifyFormatInfo.TypeId);
+							agentInfo = agentManager.GetAgent(AgentType.Players, identifyFormatInfo.TypeId);
 							if (agentInfo.Enabled)
 								player = identifyFormatInfo.Worker as IPlayerAgent;
 						}
@@ -505,7 +507,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 			// Create a list with all the players and sort them by priority
 			List<(IPlayerAgent player, AgentInfo agentInfo)> agents = new List<(IPlayerAgent, AgentInfo)>();
 
-			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.Players))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.Players))
 			{
 				// Is the player enabled?
 				if (agentInfo.Enabled)
@@ -537,7 +539,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 					IdentifyFormatInfo identifyFormatInfo = multipleFormatIdentify.IdentifyFormat(fileInfo);
 					if (identifyFormatInfo != null)
 					{
-						agentInfo = agentManager.GetAgent(Manager.AgentType.Players, identifyFormatInfo.TypeId);
+						agentInfo = agentManager.GetAgent(AgentType.Players, identifyFormatInfo.TypeId);
 						if (agentInfo.Enabled)
 							player = identifyFormatInfo.Worker as IPlayerAgent;
 					}
@@ -594,7 +596,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				{
 					PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
 
-					foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.ModuleConverters))
+					foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.ModuleConverters))
 					{
 						// Is the converter enabled?
 						if (agentInfo.Enabled)
@@ -770,7 +772,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 			if (result)
 			{
-				Player = playerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : playerAgent is ISamplePlayerAgent ? new SamplePlayer(agentManager) : null;
+				Player = playerAgent is IModulePlayerAgent ? new ModulePlayer() : playerAgent is ISamplePlayerAgent ? new SamplePlayer() : null;
 
 				moduleSize = loader.ModuleSize;
 				crunchedSize = loader.CrunchedSize;

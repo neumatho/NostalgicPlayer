@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		{
 			using (ModuleStream moduleStream = new ModuleStream(new MemoryStream(data), false))
 			{
-				return new SidTune(new PlayerFileInfo("abc.mus", moduleStream, new NormalFileLoader("abc.mus", null)));
+				return new SidTune(new PlayerFileInfo("abc.mus", moduleStream, new NormalFileLoader("abc.mus")));
 			}
 		}
 		#endregion

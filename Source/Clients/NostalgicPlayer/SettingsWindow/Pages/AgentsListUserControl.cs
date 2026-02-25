@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 
@@ -54,8 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private IMainWindowApi mainWindowApi;
 
-		/// <summary></summary>
-		protected Manager manager;
+		private IAgentManager agentManager;
 
 		private ModuleHandler moduleHandler;
 
@@ -137,11 +137,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, IMainWindowApi mainWindow, ISettings userSettings, ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
+		public void InitSettings(ModuleHandler modHandler, ISettings userSettings, ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
 		{
-			mainWindowApi = mainWindow;
-
-			manager = agentManager;
+			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 
 			moduleHandler = modHandler;
 
@@ -531,10 +530,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// First check to see if we need to load the agent.
 			// This is checked to see if other types is enabled or not
 			// supported by this agent
-			if (manager.GetAllTypes(agentListInfo.AgentInfo.AgentId).FirstOrDefault(a => (a.TypeId != agentListInfo.AgentInfo.TypeId) && a.Enabled) == null)
+			if (agentManager.GetAllTypes(agentListInfo.AgentInfo.AgentId).FirstOrDefault(a => (a.TypeId != agentListInfo.AgentInfo.TypeId) && a.Enabled) == null)
 			{
 				// Need to load the agent
-				manager.LoadAgent(agentListInfo.AgentInfo.AgentId);
+				agentManager.LoadAgent(agentListInfo.AgentInfo.AgentId);
 			}
 
 			foreach (AgentInfo agentInfo in GetAgentCollection(agentListInfo))
@@ -592,10 +591,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			}
 
 			// Check to see if we need to unload the agent
-			if (manager.GetAllTypes(agentListInfo.AgentInfo.AgentId).FirstOrDefault(a => a.Enabled) == null)
+			if (agentManager.GetAllTypes(agentListInfo.AgentInfo.AgentId).FirstOrDefault(a => a.Enabled) == null)
 			{
 				// Unload the agent
-				manager.UnloadAgent(agentListInfo.AgentInfo.AgentId);
+				agentManager.UnloadAgent(agentListInfo.AgentInfo.AgentId);
 			}
 		}
 		#endregion

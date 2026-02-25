@@ -9,6 +9,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
@@ -21,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 	/// </summary>
 	internal class StreamingPlayer : IStreamingPlayer
 	{
-		private readonly Manager agentManager;
+		private readonly IAgentManager agentManager;
 
 		private IStreamerAgent currentPlayer;
 		private DurationInfo durationInfo;
@@ -35,9 +36,9 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public StreamingPlayer(Manager manager)
+		public StreamingPlayer()
 		{
-			agentManager = manager;
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 
 			// Initialize member variables
 			StaticModuleInformation = new ModuleInfoStatic();
@@ -106,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 						soundStream.EndReached += Stream_EndReached;
 						soundStream.ModuleInfoChanged += Stream_ModuleInfoChanged;
 
-						initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
+						initOk = soundStream.Initialize(playerConfiguration, out errorMessage);
 
 						if (!initOk)
 							CleanupPlayer();

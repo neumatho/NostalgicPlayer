@@ -10,6 +10,7 @@ using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Library.Sound
@@ -36,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 		private const int SampleBufferSizeInMs = 20;
 		private const int MaxMilliSecondsInSampleBuffer = 300;
 
-		private Manager manager;
+		private readonly IAgentManager agentManager;
 
 		private int mixerFrequency;
 
@@ -64,13 +65,23 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public Visualizer()
+		{
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will initialize itself
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(Manager agentManager)
+		public void Initialize()
 		{
-			manager = agentManager;
-
 			channelLatencyQueue = new Queue<ChannelDataInfo>();
 
 			lock (sampleDataListLock)
@@ -179,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 		/********************************************************************/
 		public void TellAgentsAboutPauseState(bool paused)
 		{
-			foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
+			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 				visualAgent.SetPauseState(paused);
 
 			lock (sampleDataListLock)
@@ -345,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 					{
 						ChannelChanged[] channelChanged = channelChanges;
 
-						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
+						foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 						{
 							if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
 								channelChangeVisualAgent.ChannelsChanged(channelChanged);
@@ -404,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 			{
 				NewSampleData sampleData = new NewSampleData(sampleDataInfo.Buffer, sampleDataInfo.ChannelMapping, sampleDataInfo.OutputChannelCount);
 
-				foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
+				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 				{
 					if (visualAgent is ISampleDataVisualAgent sampleDataVisualAgent)
 						sampleDataVisualAgent.SampleData(sampleData);

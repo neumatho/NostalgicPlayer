@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
@@ -54,9 +53,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/// Create the loader to use to load this item
 		/// </summary>
 		/********************************************************************/
-		public LoaderBase CreateLoader(Manager agentManager)
+		public LoaderBase CreateLoader()
 		{
-			return new StreamLoader(agentManager);
+			return new StreamLoader();
 		}
 		#endregion
 	}

@@ -34,12 +34,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public List<ModuleListItem> Items { get; set; }
 		}
 
+		private readonly IAgentManager agentManager;
 		private readonly OptionSettings settings;
 		private readonly IModuleDatabase database;
 		private readonly IPlaylistFactory playlistFactory;
 		private readonly IMainWindowApi mainWindowApi;
-
-		private readonly Manager manager;
 
 		private ManualResetEvent shutdownEvent;
 		private AutoResetEvent breakEvent;
@@ -53,14 +52,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner(Manager agentManager)
+		public FileScanner()
 		{
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 			settings = DependencyInjection.Container.GetInstance<OptionSettings>();
 			database = DependencyInjection.Container.GetInstance<IModuleDatabase>();
 			playlistFactory = DependencyInjection.Container.GetInstance<IPlaylistFactory>();
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-
-			manager = agentManager;
 		}
 
 
@@ -167,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			try
 			{
 				bool stillRunning = true;
-				WaitHandle[] waitArray = { shutdownEvent, queueSemaphore };
+				WaitHandle[] waitArray = [ shutdownEvent, queueSemaphore ];
 
 				while (stillRunning)
 				{
@@ -296,7 +294,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (list.Count == 0)
 				{
 					// Check if the file is an archive
-					ArchiveDetector detector = new ArchiveDetector(manager);
+					ArchiveDetector detector = new ArchiveDetector();
 
 					bool isArchive = detector.IsArchive(fileName);
 					if (isArchive)
@@ -435,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private Loader FindPlayer(string fileName)
 		{
-			Loader loader = new Loader(manager);
+			Loader loader = new Loader();
 
 			if (loader.FindPlayer(fileName, out string _))
 				return loader;

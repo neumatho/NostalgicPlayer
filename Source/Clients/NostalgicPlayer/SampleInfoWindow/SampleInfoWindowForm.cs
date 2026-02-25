@@ -18,6 +18,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Utility;
@@ -66,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler)
+		public SampleInfoWindowForm(ModuleHandler moduleHandler)
 		{
 			InitializeComponent();
 
@@ -84,6 +85,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 			if (!DesignMode)
 			{
+				IAgentManager agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+
 				InitializeWindow();
 
 				// Load window settings
@@ -246,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				// Add the sample converters to the format list
 				Guid saveFormat = settings.SampleSaveFormat;
 
-				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.SampleConverters).Where(a => a.Agent.CreateInstance(a.TypeId) is ISampleSaverAgent))
+				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.SampleConverters).Where(a => a.Agent.CreateInstance(a.TypeId) is ISampleSaverAgent))
 				{
 					KryptonListItem listItem = new KryptonListItem(agentInfo.TypeName);
 					listItem.Tag = agentInfo;

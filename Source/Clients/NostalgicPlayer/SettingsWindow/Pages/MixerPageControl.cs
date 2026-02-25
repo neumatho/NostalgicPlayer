@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
@@ -25,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	{
 		private const int MaxNumberOfChannels = 64;
 
-		private Manager manager;
+		private IAgentManager agentManager;
 		private ModuleHandler moduleHandler;
 		private IMainWindowApi mainWindowApi;
 
@@ -104,11 +105,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, IMainWindowApi mainWindow, SettingsService settingsService, ISettings windowSettings)
+		public void InitSettings(ModuleHandler modHandler, SettingsService settingsService, ISettings windowSettings)
 		{
-			manager = agentManager;
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 			moduleHandler = modHandler;
-			mainWindowApi = mainWindow;
+			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 
 			soundSettings = new SoundSettings(settingsService);
 		}
@@ -136,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// Fill the combobox with available agents
 			outputAgentComboBox.Items.Clear();
 
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Output))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.Output))
 			{
 				KryptonListItem listItem = new KryptonListItem(agentInfo.TypeName);
 				listItem.Tag = agentInfo;

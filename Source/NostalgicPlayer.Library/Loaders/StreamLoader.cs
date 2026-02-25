@@ -14,7 +14,9 @@ using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Players;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
@@ -27,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		private const int InitialTimeout = 10000;
 		private const int MaxNumberOfRedirects = 10;
 
-		private readonly Manager agentManager;
+		private readonly IAgentManager agentManager;
 
 		private Uri uri;
 		private IStreamerAgent streamerAgent;
@@ -45,9 +47,9 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public StreamLoader(Manager agentManager)
+		public StreamLoader()
 		{
-			this.agentManager = agentManager;
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 
 			Player = null;
 			PlayerAgentInfo = null;
@@ -317,7 +319,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 					// Create a list with all the streamers
 					List<(IStreamerAgent streamer, AgentInfo agentInfo)> agents = new List<(IStreamerAgent, AgentInfo)>();
 
-					foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.Streamers))
+					foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.Streamers))
 					{
 						// Is the streamer enabled?
 						if (agentInfo.Enabled)
@@ -388,7 +390,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				formatDescription = PlayerAgentInfo.TypeDescription;
 			}
 
-			Player = new StreamingPlayer(agentManager);
+			Player = new StreamingPlayer();
 		}
 		#endregion
 	}

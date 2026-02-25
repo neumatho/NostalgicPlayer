@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
@@ -30,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		}
 
 		private IMainWindowApi mainWindowApi;
-		private Manager agentManager;
+		private IAgentManager agentManager;
 		private SoundSettings soundSettings;
 
 		private readonly Lock outputAgentLock = new Lock();
@@ -102,17 +103,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, Manager manager, SoundSettings sndSettings, int startVolume)
+		public void Initialize(SoundSettings sndSettings, int startVolume)
 		{
 			// Remember the arguments
-			mainWindowApi = mainWindow;
-			agentManager = manager;
+			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 			soundSettings = sndSettings;
 
 			currentMasterVolume = startVolume;
 
 			mixerConfiguration = MixerConfigurationFactory.Create(sndSettings);
-			mixerConfiguration.ExtraChannels = mainWindow.ExtraChannelsImplementation;
+			mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
 
 			// Initialize the loader
 			loadedFiles = new List<ModuleItem>();
@@ -269,7 +270,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					string source = listItem.ListItem.Source;
 
 					// Create new loader
-					item.Loader = listItem.ListItem.CreateLoader(agentManager);
+					item.Loader = listItem.ListItem.CreateLoader();
 
 					// Load the module
 					if (!item.Loader.Load(source, out string errorMessage))
@@ -822,12 +823,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				{
 					Guid typeId = soundSettings.OutputAgent;
 
-					AgentInfo agentInfo = agentManager.GetAgent(Manager.AgentType.Output, typeId);
+					AgentInfo agentInfo = agentManager.GetAgent(AgentType.Output, typeId);
 					if ((agentInfo == null) || !agentInfo.Enabled)
 					{
 						// Selected output agent could not be loaded, try with the default one if not already that one
 						if (typeId != soundSettings.DefaultOutputAgent)
-							agentInfo = agentManager.GetAgent(Manager.AgentType.Output, soundSettings.DefaultOutputAgent);
+							agentInfo = agentManager.GetAgent(AgentType.Output, soundSettings.DefaultOutputAgent);
 					}
 
 					if ((agentInfo?.Agent != null) && agentInfo.Enabled)

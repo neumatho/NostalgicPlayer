@@ -11,7 +11,6 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
@@ -29,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/// Initialize the stream
 		/// </summary>
 		/********************************************************************/
-		public bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
+		public bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			mixer = new Mixer();
 			mixerLock = new Lock();
@@ -38,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			mixer.PositionChanged += Mixer_PositionChanged;
 			mixer.ModuleInfoChanged += Mixer_ModuleInfoChanged;
 
-			return mixer.Initialize(agentManager, playerConfiguration, out errorMessage);
+			return mixer.Initialize(playerConfiguration, out errorMessage);
 		}
 
 

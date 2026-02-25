@@ -8,7 +8,6 @@ using System.IO;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
 {
@@ -36,20 +35,15 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		private readonly string fileName;
 		private StreamInfo lastExtraFileInfo;
 
-		/// <summary></summary>
-		protected Manager manager;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected FileLoaderBase(string fileName, Manager agentManager)
+		protected FileLoaderBase(string fileName)
 		{
 			this.fileName = fileName;
 			lastExtraFileInfo = null;
-
-			manager = agentManager;
 		}
 
 
@@ -61,7 +55,6 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		public virtual void Dispose()
 		{
-			manager = null;
 		}
 
 

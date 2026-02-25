@@ -10,6 +10,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
@@ -22,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 	/// </summary>
 	internal class ModulePlayer : IModulePlayer
 	{
-		private readonly Manager agentManager;
+		private readonly IAgentManager agentManager;
 
 		private readonly Lock playerLock = new Lock();
 		private IModulePlayerAgent currentPlayer;
@@ -36,9 +37,9 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModulePlayer(Manager manager)
+		public ModulePlayer()
 		{
-			agentManager = manager;
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 
 			// Initialize member variables
 			StaticModuleInformation = new ModuleInfoStatic();
@@ -117,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 							soundStream.EndReached += Stream_EndReached;
 							soundStream.ModuleInfoChanged += Stream_ModuleInfoChanged;
 
-							initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
+							initOk = soundStream.Initialize(playerConfiguration, out errorMessage);
 
 							if (!initOk)
 								CleanupPlayer();

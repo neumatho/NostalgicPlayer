@@ -12,66 +12,15 @@ using System.Runtime.Loader;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Library.Agent
 {
 	/// <summary>
 	/// This class manage all available agents
 	/// </summary>
-	public class Manager
+	internal class AgentManager : IAgentManager
 	{
-		/// <summary>
-		/// The different types of agents
-		/// </summary>
-		public enum AgentType
-		{
-			/// <summary>
-			/// Output agents plays the actual sound
-			/// </summary>
-			Output,
-
-			/// <summary>
-			/// Player agents can parse and play a specific file format
-			/// </summary>
-			Players,
-
-			/// <summary>
-			/// Streamer agents can play from a network stream with a specific
-			/// audio format
-			/// </summary>
-			Streamers,
-
-			/// <summary>
-			/// Converters that can read and/or write samples
-			/// </summary>
-			SampleConverters,
-
-			/// <summary>
-			/// Converters that can convert from one module format to another
-			/// </summary>
-			ModuleConverters,
-
-			/// <summary>
-			/// Show what is playing in a window
-			/// </summary>
-			Visuals,
-
-			/// <summary>
-			/// Can decrunch a single file
-			/// </summary>
-			FileDecrunchers,
-
-			/// <summary>
-			/// Can decrunch archive files
-			/// </summary>
-			ArchiveDecrunchers
-		}
-
-		/// <summary>
-		/// Callback used when loading agents to inform about the progress
-		/// </summary>
-		public delegate void LoadAgentProgress(int numberLoaded, int totalNumbers);
-
 		private class AgentLoadInfo
 		{
 			public AssemblyLoadContext LoadContext { get; set; }
@@ -123,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/// for each agent loaded
 		/// </summary>
 		/********************************************************************/
-		public void LoadAllAgents(LoadAgentProgress callback)
+		public void LoadAllAgents(IAgentManager.LoadAgentProgress callback)
 		{
 			// Initialize the agent type dictionary
 			foreach (AgentType agentType in Enum.GetValues(typeof(AgentType)))
@@ -360,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/// Will load all available agents
 		/// </summary>
 		/********************************************************************/
-		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet, LoadAgentProgress callback)
+		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet, IAgentManager.LoadAgentProgress callback)
 		{
 			// Build the search directory
 			string searchDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

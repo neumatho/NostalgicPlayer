@@ -7,6 +7,7 @@ using System;
 using Polycode.NostalgicPlayer.Kit.Composition;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Library.Agent;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Library.Application
@@ -112,7 +113,8 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		private IApplicationContext InitializeApplicationContext()
 		{
 			ApplicationContext context = new ApplicationContext(arguments);
-			context.Container.RegisterInstance<IApplicationContext>(context);
+
+			Register(context);
 
 			context.Container.RegisterKit();
 
@@ -128,10 +130,24 @@ namespace Polycode.NostalgicPlayer.Library.Application
 
 		/********************************************************************/
 		/// <summary>
+		/// Register own implementations
+		/// </summary>
+		/********************************************************************/
+		private void Register(ApplicationContext context)
+		{
+			context.Container.RegisterInstance<IApplicationContext>(context);
+
+			context.Container.RegisterSingleton<IAgentManager, AgentManager>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Verify the container after initialization is complete
 		/// </summary>
 		/********************************************************************/
-		private void VerifyContainer(IApplicationContext context)
+		private void VerifyContainer(ApplicationContext context)
 		{
 			context.Container.Verify();
 		}

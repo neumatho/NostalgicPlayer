@@ -11,7 +11,6 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
@@ -36,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 		/// Initialize the stream
 		/// </summary>
 		/********************************************************************/
-		public bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
+		public bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			playing = false;
 
@@ -50,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 			resampler.PositionChanged += Resampler_PositionChanged;
 			resampler.ModuleInfoChanged += Resampler_ModuleInfoChanged;
 
-			return resampler.Initialize(agentManager, playerConfiguration, out errorMessage);
+			return resampler.Initialize(playerConfiguration, out errorMessage);
 		}
 
 

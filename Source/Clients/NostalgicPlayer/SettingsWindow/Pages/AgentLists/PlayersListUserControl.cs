@@ -8,7 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists
 {
@@ -17,6 +19,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 	/// </summary>
 	public class PlayersListUserControl : AgentsListUserControl
 	{
+		private readonly IAgentManager agentManager;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public PlayersListUserControl()
+		{
+			agentManager = DependencyInjection.Container?.GetInstance<IAgentManager>();
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will return all agents of the main and extra types
@@ -24,13 +40,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/********************************************************************/
 		protected override IEnumerable<AgentListInfo> GetAllAgents()
 		{
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Players).GroupBy(a => a.AgentId).Select(g => g.First()))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.Players).GroupBy(a => a.AgentId).Select(g => g.First()))
 				yield return new AgentListInfo { Id = agentInfo.AgentId, Name = agentInfo.AgentName, Description = agentInfo.AgentDescription, AgentInfo = agentInfo };
 
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ModuleConverters).GroupBy(a => a.AgentId).Select(g => g.First()))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.ModuleConverters).GroupBy(a => a.AgentId).Select(g => g.First()))
 				yield return new AgentListInfo { Id = agentInfo.AgentId, Name = agentInfo.AgentName, Description = agentInfo.AgentDescription, AgentInfo = agentInfo };
 
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Streamers).GroupBy(a => a.AgentId).Select(g => g.First()))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.Streamers).GroupBy(a => a.AgentId).Select(g => g.First()))
 				yield return new AgentListInfo { Id = agentInfo.AgentId, Name = agentInfo.AgentName, Description = agentInfo.AgentDescription, AgentInfo = agentInfo };
 		}
 
@@ -58,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/********************************************************************/
 		protected override IEnumerable<AgentInfo> GetAgentCollection(AgentListInfo agentListInfo)
 		{
-			return manager.GetAllTypes(agentListInfo.Id);
+			return agentManager.GetAllTypes(agentListInfo.Id);
 		}
 	}
 }

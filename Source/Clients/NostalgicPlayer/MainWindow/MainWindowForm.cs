@@ -61,10 +61,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		private IPlatformPath platformPath;
 		private IModuleDatabase database;
+		private IAgentManager agentManager;
 		private IPlaylistFactory playlistFactory;
 		private FormCreatorService formCreatorService;
 
-		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
 		// Settings
@@ -156,10 +156,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
+			this.agentManager = agentManager;
 			this.playlistFactory = playlistFactory;
 
 			userSettings = settings;
@@ -209,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 			}
 
-			fileScanner = new FileScanner(agentManager);
+			fileScanner = new FileScanner();
 			fileScanner.Start();
 
 			SetupHandlers();
@@ -729,7 +730,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 				else
 				{
-					agentSettingsWindow = new AgentSettingsWindowForm(agentManager, agentInfo);
+					agentSettingsWindow = new AgentSettingsWindowForm(agentInfo);
 					agentSettingsWindow.Disposed += (o, args) => { openAgentSettings.Remove(agentInfo.TypeId); };
 					agentSettingsWindow.Show();
 
@@ -778,7 +779,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 				else
 				{
-					agentDisplayWindow = new AgentDisplayWindowForm(agentManager, agentInfo, moduleHandler);
+					agentDisplayWindow = new AgentDisplayWindowForm(agentInfo, moduleHandler);
 					agentDisplayWindow.Disposed += (o, args) => { openAgentDisplays.Remove(agentInfo.TypeId); };
 					agentDisplayWindow.Show();
 
@@ -1481,7 +1482,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow.Activate();
 			else
 			{
-				settingsWindow = new SettingsWindowForm(mainWindowApiAdapter, agentManager, moduleHandler, settingsService);
+				settingsWindow = new SettingsWindowForm(mainWindowApiAdapter, moduleHandler, settingsService);
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}
@@ -1562,7 +1563,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				aboutWindow.Activate();
 			else
 			{
-				aboutWindow = new AboutWindowForm(agentManager);
+				aboutWindow = new AboutWindowForm();
 				aboutWindow.Disposed += (o, args) => { aboutWindow = null; };
 				aboutWindow.Show();
 			}
@@ -2777,7 +2778,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
 				sampleInfoWindow.Disposed += (o, args) => { sampleInfoWindow = null; };
 				sampleInfoWindow.Show();
 			}
@@ -2886,7 +2887,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						List<ModuleListItem> itemList = new List<ModuleListItem>();
 
 						string[] listExtensions = playlistFactory.GetExtensions();
-						string[] archiveExtensions = new ArchiveDetector(agentManager).GetExtensions();
+						string[] archiveExtensions = new ArchiveDetector().GetExtensions();
 
 						AddDirectoryToList(path, itemList, listExtensions, archiveExtensions, false);
 
@@ -3305,7 +3306,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (mainWindowSettings.OpenSampleInformationWindow)
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
 				sampleInfoWindow.Show();
 			}
 
@@ -4021,9 +4022,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will load all available agents
 		/// </summary>
 		/********************************************************************/
-		private void LoadAgents(Manager.LoadAgentProgress loadProgress)
+		private void LoadAgents(IAgentManager.LoadAgentProgress loadProgress)
 		{
-			agentManager = new Manager();
 			agentManager.LoadAllAgents(loadProgress);
 
 			// Fix agent settings
@@ -4032,10 +4032,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Build a list that holds which agents that still have some active types
 			Dictionary<Guid, bool> agentsEnableStatus = new Dictionary<Guid, bool>();
 
-			FixAgentSettings("Formats", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.Players).Union(agentManager.GetAllAgents(Manager.AgentType.ModuleConverters)));
-			FixAgentSettings("Output", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.Output));
-			FixAgentSettings("Visuals", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.Visuals));
-			FixAgentSettings("Decrunchers", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.FileDecrunchers).Union(agentManager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers)));
+			FixAgentSettings("Formats", agentsEnableStatus, agentManager.GetAllAgents(AgentType.Players).Union(agentManager.GetAllAgents(AgentType.ModuleConverters)));
+			FixAgentSettings("Output", agentsEnableStatus, agentManager.GetAllAgents(AgentType.Output));
+			FixAgentSettings("Visuals", agentsEnableStatus, agentManager.GetAllAgents(AgentType.Visuals));
+			FixAgentSettings("Decrunchers", agentsEnableStatus, agentManager.GetAllAgents(AgentType.FileDecrunchers).Union(agentManager.GetAllAgents(AgentType.ArchiveDecrunchers)));
 
 			// Flush all agents that is disabled
 			foreach (Guid agentId in agentsEnableStatus.Where(pair => pair.Value == false).Select(pair => pair.Key))
@@ -4168,7 +4168,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			CreateHandle();
 
 			moduleHandler = new ModuleHandler();
-			moduleHandler.Initialize(mainWindowApiAdapter, agentManager, soundSettings, masterVolumeTrackBar.Value);
+			moduleHandler.Initialize(soundSettings, masterVolumeTrackBar.Value);
 			moduleHandler.SetMuteStatus(muteCheckButton.Checked);
 		}
 
@@ -4593,7 +4593,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (archiveExtensions.Contains(extension))
 					{
 						// Check if the file is an archive
-						ArchiveDetector detector = new ArchiveDetector(agentManager);
+						ArchiveDetector detector = new ArchiveDetector();
 
 						bool isArchive = detector.IsArchive(fileName);
 						if (isArchive)
@@ -4998,7 +4998,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			List<ModuleListItem> itemList = new List<ModuleListItem>();
 
 			string[] listExtensions = playlistFactory.GetExtensions();
-			string[] archiveExtensions = new ArchiveDetector(agentManager).GetExtensions();
+			string[] archiveExtensions = new ArchiveDetector().GetExtensions();
 
 			foreach (string file in files)
 			{

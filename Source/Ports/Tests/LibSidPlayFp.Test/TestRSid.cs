@@ -409,7 +409,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		{
 			using (ModuleStream moduleStream = new ModuleStream(new MemoryStream(data), false))
 			{
-				return new SidTune(new PlayerFileInfo("abc.sid", moduleStream, new NormalFileLoader("abc.sid", null)));
+				return new SidTune(new PlayerFileInfo("abc.sid", moduleStream, new NormalFileLoader("abc.sid")));
 			}
 		}
 		#endregion

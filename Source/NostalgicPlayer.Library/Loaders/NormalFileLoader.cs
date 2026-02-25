@@ -6,7 +6,6 @@
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
 {
@@ -20,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NormalFileLoader(string fileName, Manager agentManager) : base(fileName, agentManager)
+		public NormalFileLoader(string fileName) : base(fileName)
 		{
 		}
 
@@ -42,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				CrunchedSize = stream.Length;
 
 				// First try to decrunch the file if needed
-				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+				SingleFileDecruncher decruncher = new SingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				// Update sizes
@@ -83,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				// Decrunch it if needed
 				streamInfo.CrunchedSize = stream.Length;
 
-				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+				SingleFileDecruncher decruncher = new SingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				streamInfo.DecrunchedSize = stream.Length;

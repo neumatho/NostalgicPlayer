@@ -12,7 +12,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
-using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 {
@@ -23,7 +22,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 	{
 		private IMainWindowApi mainWindowApi;
 
-		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
 		private readonly SettingsService settingsService;
@@ -40,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(IMainWindowApi mainWindowApi, Manager agentManager, ModuleHandler moduleHandler, SettingsService settingsService)
+		public SettingsWindowForm(IMainWindowApi mainWindowApi, ModuleHandler moduleHandler, SettingsService settingsService)
 		{
 			InitializeComponent();
 
@@ -53,7 +51,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 
-			this.agentManager = agentManager;
 			this.moduleHandler = moduleHandler;
 			this.settingsService = settingsService;
 
@@ -159,7 +156,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 				agentsPageControl.WriteWindowSettings();
 
 				// Cleanup
-				agentManager = null;
 				moduleHandler = null;
 				mainWindowApi = null;
 			}
@@ -217,11 +213,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private void InitSettings()
 		{
 			// Initialize the tab pages
-			optionsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
-			modulesPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
-			pathsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
-			mixerPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
-			agentsPageControl.InitSettings(agentManager, moduleHandler, mainWindowApi, settingsService, allWindowSettings);
+			optionsPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
+			modulesPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
+			pathsPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
+			mixerPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
+			agentsPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
 
 			// Make a backup of the settings. This is used for real-time
 			// settings, that can be restored back when clicking cancel

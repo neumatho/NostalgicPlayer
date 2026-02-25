@@ -7,7 +7,6 @@ using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Sound.Timer;
 using Polycode.NostalgicPlayer.Library.Sound.Timer.Events;
@@ -130,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 		/// Initialize the sound routines
 		/// </summary>
 		/********************************************************************/
-		public virtual bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
+		public virtual bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 

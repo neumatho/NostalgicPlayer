@@ -10,7 +10,9 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
 {
@@ -19,16 +21,16 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 	/// </summary>
 	internal class SingleFileDecruncher
 	{
-		private readonly Manager manager;
+		private readonly IAgentManager agentManager;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileDecruncher(Manager agentManager)
+		public SingleFileDecruncher()
 		{
-			manager = agentManager;
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 		}
 
 
@@ -86,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		{
 			HashSet<Guid> agentsToSkip = new HashSet<Guid>();
 
-			foreach (AgentInfo info in manager.GetAllAgents(Manager.AgentType.FileDecrunchers))
+			foreach (AgentInfo info in agentManager.GetAllAgents(AgentType.FileDecrunchers))
 			{
 				if (agentsToSkip.Contains(info.AgentId))
 					continue;
@@ -103,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 					IdentifyFormatInfo identifyFormatInfo = multipleFormatIdentify.IdentifyFormat(crunchedDataStream);
 					if (identifyFormatInfo != null)
 					{
-						agentInfo = manager.GetAgent(Manager.AgentType.FileDecrunchers, identifyFormatInfo.TypeId);
+						agentInfo = agentManager.GetAgent(AgentType.FileDecrunchers, identifyFormatInfo.TypeId);
 						if (agentInfo.Enabled)
 						{
 							IFileDecruncherAgent decruncher = identifyFormatInfo.Worker as IFileDecruncherAgent;

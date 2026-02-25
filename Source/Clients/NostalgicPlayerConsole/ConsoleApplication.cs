@@ -22,15 +22,17 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 	internal class ConsoleApplication : IApplicationHost
 	{
 		private readonly IApplicationContext context;
+		private readonly IAgentManager agentManager;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ConsoleApplication(IApplicationContext appContext)
+		public ConsoleApplication(IApplicationContext appContext, IAgentManager agentManager)
 		{
 			context = appContext;
+			this.agentManager = agentManager;
 		}
 
 
@@ -43,22 +45,21 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		public void Run()
 		{
 			// Load needed agents
-			Manager agentManager = new Manager();
 			agentManager.LoadAllAgents();
 
 			LoaderBase loader;
 
 			if (context.Arguments[0].StartsWith("http://") || context.Arguments[0].StartsWith("https://"))
-				loader = LoadStream(context.Arguments[0], agentManager);
+				loader = LoadStream(context.Arguments[0]);
 			else
-				loader = LoadFile(context.Arguments[0], agentManager);
+				loader = LoadFile(context.Arguments[0]);
 
 			if (loader == null)
 				return;
 
 			try
 			{
-				Play(agentManager, loader);
+				Play(loader);
 			}
 			finally
 			{
@@ -73,9 +74,9 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/// Will load a file
 		/// </summary>
 		/********************************************************************/
-		private static LoaderBase LoadFile(string fileName, Manager agentManager)
+		private LoaderBase LoadFile(string fileName)
 		{
-			Loader loader = new Loader(agentManager);
+			Loader loader = new Loader();
 
 			if (!loader.Load(fileName, out string errorMessage))
 			{
@@ -94,9 +95,9 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/// Will load a stream
 		/// </summary>
 		/********************************************************************/
-		private static LoaderBase LoadStream(string url, Manager agentManager)
+		private LoaderBase LoadStream(string url)
 		{
-			StreamLoader streamLoader = new StreamLoader(agentManager);
+			StreamLoader streamLoader = new StreamLoader();
 
 			if (!streamLoader.Load(url, out string errorMessage))
 			{
@@ -115,10 +116,10 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/// Will find the output agent to use
 		/// </summary>
 		/********************************************************************/
-		private static IOutputAgent FindOutputAgent(Manager agentManager)
+		private IOutputAgent FindOutputAgent()
 		{
 			// The guid points to CoreAudio output agent
-			AgentInfo agentInfo = agentManager.GetAgent(Manager.AgentType.Output, new Guid("b9cef7e4-c74c-4af0-b01d-802f0d1b4cc7"));
+			AgentInfo agentInfo = agentManager.GetAgent(AgentType.Output, new Guid("b9cef7e4-c74c-4af0-b01d-802f0d1b4cc7"));
 			if (agentInfo == null)
 				return null;
 
@@ -132,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/// Will start playing
 		/// </summary>
 		/********************************************************************/
-		private static void Play(Manager agentManager, LoaderInfoBase loaderInfo)
+		private void Play(LoaderInfoBase loaderInfo)
 		{
 			string errorMessage;
 
@@ -146,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 			}
 
 			// Find the output agent to use
-			IOutputAgent outputAgent = FindOutputAgent(agentManager);
+			IOutputAgent outputAgent = FindOutputAgent();
 			if (outputAgent == null)
 			{
 				Console.WriteLine("Could not find CoreAudio output agent");

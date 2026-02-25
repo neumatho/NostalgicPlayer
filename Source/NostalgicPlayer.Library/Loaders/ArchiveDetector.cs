@@ -12,7 +12,9 @@ using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
 {
@@ -21,17 +23,16 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 	/// </summary>
 	public class ArchiveDetector
 	{
-		/// <summary></summary>
-		protected Manager manager;
+		private readonly IAgentManager agentManager;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveDetector(Manager agentManager)
+		public ArchiveDetector()
 		{
-			manager = agentManager;
+			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 		}
 
 
@@ -123,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		private IEnumerable<(AgentInfo agentInfo, IArchiveDecruncherAgent archiveDecruncher)> GetAllArchiveAgents()
 		{
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.ArchiveDecrunchers))
 			{
 				// Is the decruncher enabled?
 				if (agentInfo.Enabled)
@@ -145,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		private IArchiveDecruncherAgent FindArchiveAgent(Stream stream, List<string> decruncherAlgorithms, out Stream newStream)
 		{
-			SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+			SingleFileDecruncher decruncher = new SingleFileDecruncher();
 
 			// The archive file itself can be crunched, e.g. Bzip2, so decrunch it
 			newStream = decruncher.DecrunchFileMultipleLevels(stream);
