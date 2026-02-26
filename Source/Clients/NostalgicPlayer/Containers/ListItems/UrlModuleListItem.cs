@@ -3,24 +3,24 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
 using Polycode.NostalgicPlayer.Library.Loaders;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 {
 	/// <summary>
-	/// This class holds a list item pointing to a file
+	/// This class holds a list item pointing to an URL
 	/// </summary>
-	public class SingleFileModuleListItem : IModuleListItem
+	public class UrlModuleListItem : IStreamModuleListItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileModuleListItem(string fullFileName)
+		public UrlModuleListItem(string displayName, string url)
 		{
-			Source = fullFileName;
+			DisplayName = displayName;
+			Source = url;
 		}
 
 		#region IModuleListItem implementation
@@ -29,7 +29,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/// Return the name which is shown in the list
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName => Path.GetFileName(Source);
+		public string DisplayName
+		{
+			get;
+		}
 
 
 
@@ -52,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/********************************************************************/
 		public LoaderBase CreateLoader()
 		{
-			return new Loader();
+			return new StreamLoader();
 		}
 		#endregion
 	}

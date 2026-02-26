@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 {

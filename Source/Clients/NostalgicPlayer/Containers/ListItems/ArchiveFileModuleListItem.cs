@@ -3,25 +3,25 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
+using System.IO;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Library.Loaders;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 {
 	/// <summary>
-	/// This class holds a list item pointing to an Audius track
+	/// This class holds a list item pointing to a file inside an archive
 	/// </summary>
-	public class AudiusModuleListItem : IStreamModuleListItem
+	public class ArchiveFileModuleListItem : IModuleListItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusModuleListItem(string displayName, string trackId)
+		public ArchiveFileModuleListItem(string fullArchivePath)
 		{
-			DisplayName = displayName;
-			Source = trackId;
+			Source = fullArchivePath;
 		}
 
 		#region IModuleListItem implementation
@@ -30,10 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/// Return the name which is shown in the list
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName
-		{
-			get;
-		}
+		public string DisplayName => Path.GetFileName(ArchivePath.GetEntryName(Source));
 
 
 
@@ -56,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/********************************************************************/
 		public LoaderBase CreateLoader()
 		{
-			return new AudiusLoader();
+			return new Loader();
 		}
 		#endregion
 	}

@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 {
 	/// <summary>
 	/// All list item types that are streams, must implement this interface
