@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {

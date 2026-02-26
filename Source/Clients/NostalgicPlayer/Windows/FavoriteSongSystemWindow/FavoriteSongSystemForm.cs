@@ -12,12 +12,12 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Logic.Databases;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow
 {
 	/// <summary>
 	/// This shows the favorite song system

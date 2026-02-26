@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// Helper class for searching modules in the module list

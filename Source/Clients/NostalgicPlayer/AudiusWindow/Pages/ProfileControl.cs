@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Audius.Models.Users;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;

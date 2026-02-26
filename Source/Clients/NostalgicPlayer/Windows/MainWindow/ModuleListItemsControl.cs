@@ -17,7 +17,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// This control draws the list items list

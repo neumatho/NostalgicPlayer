@@ -1,4 +1,4 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow
 {
 	partial class FavoriteSongSystemForm
 	{

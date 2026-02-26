@@ -5,8 +5,8 @@
 /******************************************************************************/
 using System.Linq;
 using Microsoft.VisualBasic.ApplicationServices;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Application;
 

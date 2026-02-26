@@ -1,4 +1,4 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	partial class ModuleListControl
 	{

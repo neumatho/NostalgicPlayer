@@ -8,7 +8,7 @@ using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
 using Polycode.NostalgicPlayer.External.Homepage.Models.VersionHistory;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 {
 	/// <summary>
 	/// This shows the help documentation

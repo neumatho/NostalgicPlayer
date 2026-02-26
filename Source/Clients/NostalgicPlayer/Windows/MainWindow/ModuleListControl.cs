@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// This control replaces a normal ListBox control to speed up things

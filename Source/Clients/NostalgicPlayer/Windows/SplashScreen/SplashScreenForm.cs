@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen
 {
 	/// <summary>
 	/// Show a simple splash screen with a progress bar

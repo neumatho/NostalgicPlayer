@@ -1,4 +1,4 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SplashScreen
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen
 {
 	partial class SplashScreenForm
 	{

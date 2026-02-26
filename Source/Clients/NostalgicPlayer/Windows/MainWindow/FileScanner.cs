@@ -22,7 +22,7 @@ using Polycode.NostalgicPlayer.Library.Players;
 using Polycode.NostalgicPlayer.Logic.Databases;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// Class that scans added files to find extra information

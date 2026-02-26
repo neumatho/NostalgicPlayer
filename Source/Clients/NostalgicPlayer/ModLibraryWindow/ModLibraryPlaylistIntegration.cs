@@ -3,9 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 {

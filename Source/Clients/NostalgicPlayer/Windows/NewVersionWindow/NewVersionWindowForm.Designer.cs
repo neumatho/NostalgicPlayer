@@ -1,5 +1,5 @@
 ﻿
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 {
 	partial class NewVersionWindowForm
 	{

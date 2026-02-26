@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Timer = System.Windows.Forms.Timer;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// Search popup control for filtering module list

@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Library.Application;
 using Polycode.NostalgicPlayer.Logic.Composition;

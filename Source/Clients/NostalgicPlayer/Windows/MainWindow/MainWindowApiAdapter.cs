@@ -10,7 +10,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// Adapter that delegates IMainWindowApi calls to the MainWindowForm
