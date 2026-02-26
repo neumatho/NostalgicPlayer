@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {

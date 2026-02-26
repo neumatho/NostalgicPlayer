@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.External;

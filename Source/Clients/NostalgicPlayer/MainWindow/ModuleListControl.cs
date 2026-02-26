@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow

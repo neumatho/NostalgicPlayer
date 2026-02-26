@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow

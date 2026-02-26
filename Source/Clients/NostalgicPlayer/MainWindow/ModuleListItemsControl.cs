@@ -12,6 +12,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;

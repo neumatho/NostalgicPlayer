@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
