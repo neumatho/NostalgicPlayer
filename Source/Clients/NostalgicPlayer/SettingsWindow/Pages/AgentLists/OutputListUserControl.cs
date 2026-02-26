@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
@@ -50,9 +50,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/// Return the IDs of the agents in use if any
 		/// </summary>
 		/********************************************************************/
-		protected override Guid[] GetAgentIdsInUse(ModuleHandler handler)
+		protected override Guid[] GetAgentIdsInUse(ModuleHandlerService modHandler)
 		{
-			return [ handler.OutputAgentInfo.TypeId ];
+			return [ modHandler.OutputAgentInfo.TypeId ];
 		}
 
 
@@ -62,9 +62,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/// Will make some extra closing, if an agent is disabled
 		/// </summary>
 		/********************************************************************/
-		protected override void CloseAgent(ModuleHandler handler)
+		protected override void CloseAgent(ModuleHandlerService modHandler)
 		{
-			handler.CloseOutputAgent();
+			modHandler.CloseOutputAgent();
 		}
 	}
 }

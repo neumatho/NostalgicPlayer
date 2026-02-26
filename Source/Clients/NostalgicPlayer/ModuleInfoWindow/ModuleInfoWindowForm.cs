@@ -13,13 +13,14 @@ using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 using Polycode.NostalgicPlayer.Kit.Helpers;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
@@ -32,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 	{
 		private IMainWindowApi mainWindowApi;
 
-		private ModuleHandler moduleHandler;
+		private ModuleHandlerService moduleHandler;
 
 		private PictureInfo[] pictures;
 		private int pictureIndex;
@@ -80,14 +81,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoWindowForm(IMainWindowApi mainWindowApi, ModuleHandler moduleHandler, ModuleSettings moduleSettings)
+		public ModuleInfoWindowForm()
 		{
 			InitializeComponent();
 
 			// Remember the arguments
-			this.mainWindowApi = mainWindowApi;
-			this.moduleHandler = moduleHandler;
-			this.moduleSettings = moduleSettings;
+			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
+			moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
+			moduleSettings = DependencyInjection.Container.GetInstance<ModuleSettings>();
 
 			if (!DesignMode)
 			{

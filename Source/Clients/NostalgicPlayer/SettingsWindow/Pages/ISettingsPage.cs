@@ -3,8 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
@@ -17,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// <summary>
 		/// Will prepare to handle the settings
 		/// </summary>
-		void InitSettings(ModuleHandler moduleHandler, SettingsService settingsService, ISettings windowSettings);
+		void InitSettings(ISettings windowSettings);
 
 		/// <summary>
 		/// Will make a backup of settings that can be changed in real-time

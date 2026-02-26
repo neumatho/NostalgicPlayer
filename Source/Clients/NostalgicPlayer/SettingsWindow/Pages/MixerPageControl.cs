@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private const int MaxNumberOfChannels = 64;
 
 		private IAgentManager agentManager;
-		private ModuleHandler moduleHandler;
+		private ModuleHandlerService moduleHandler;
 		private IMainWindowApi mainWindowApi;
 
 		private SoundSettings soundSettings;
@@ -105,13 +105,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(ModuleHandler modHandler, SettingsService settingsService, ISettings windowSettings)
+		public void InitSettings(ISettings windowSettings)
 		{
 			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
-			moduleHandler = modHandler;
+			moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-
-			soundSettings = new SoundSettings(settingsService);
+			soundSettings = DependencyInjection.Container.GetInstance<SoundSettings>();
 		}
 
 

@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
@@ -54,12 +54,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/// Return the IDs of the agents in use if any
 		/// </summary>
 		/********************************************************************/
-		protected override Guid[] GetAgentIdsInUse(ModuleHandler handler)
+		protected override Guid[] GetAgentIdsInUse(ModuleHandlerService modHandler)
 		{
-			if (handler.StaticModuleInformation.ConverterAgentInfo != null)
-				return [ handler.StaticModuleInformation.ConverterAgentInfo.TypeId ];
+			if (modHandler.StaticModuleInformation.ConverterAgentInfo != null)
+				return [ modHandler.StaticModuleInformation.ConverterAgentInfo.TypeId ];
 
-			return [ handler.StaticModuleInformation.PlayerAgentInfo.TypeId ];
+			return [ modHandler.StaticModuleInformation.PlayerAgentInfo.TypeId ];
 		}
 	}
 }

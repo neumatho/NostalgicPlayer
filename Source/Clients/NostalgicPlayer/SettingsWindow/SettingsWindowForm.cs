@@ -8,10 +8,10 @@ using System.Windows.Forms;
 using Krypton.Navigator;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 {
@@ -21,8 +21,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 	public partial class SettingsWindowForm : WindowFormBase
 	{
 		private IMainWindowApi mainWindowApi;
-
-		private ModuleHandler moduleHandler;
 
 		private readonly SettingsService settingsService;
 		private readonly SettingsWindowSettings windowSettings;
@@ -38,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(IMainWindowApi mainWindowApi, ModuleHandler moduleHandler, SettingsService settingsService)
+		public SettingsWindowForm()
 		{
 			InitializeComponent();
 
@@ -48,14 +46,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			navigator.Button.CloseButtonDisplay = ButtonDisplay.Hide;
 			navigator.Button.ContextButtonDisplay = ButtonDisplay.Hide;
 
-			// Remember the arguments
-			this.mainWindowApi = mainWindowApi;
-
-			this.moduleHandler = moduleHandler;
-			this.settingsService = settingsService;
-
 			if (!DesignMode)
 			{
+				mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
+				settingsService = DependencyInjection.Container.GetInstance<SettingsService>();
+
 				InitializeWindow();
 
 				// Load window settings
@@ -156,7 +151,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 				agentsPageControl.WriteWindowSettings();
 
 				// Cleanup
-				moduleHandler = null;
 				mainWindowApi = null;
 			}
 		}
@@ -213,11 +207,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private void InitSettings()
 		{
 			// Initialize the tab pages
-			optionsPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
-			modulesPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
-			pathsPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
-			mixerPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
-			agentsPageControl.InitSettings(moduleHandler, settingsService, allWindowSettings);
+			optionsPageControl.InitSettings(allWindowSettings);
+			modulesPageControl.InitSettings(allWindowSettings);
+			pathsPageControl.InitSettings(allWindowSettings);
+			mixerPageControl.InitSettings(allWindowSettings);
+			agentsPageControl.InitSettings(allWindowSettings);
 
 			// Make a backup of the settings. This is used for real-time
 			// settings, that can be restored back when clicking cancel

@@ -22,7 +22,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
@@ -65,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private FormCreatorService formCreatorService;
 		private FileScannerService fileScanner;
 
-		private ModuleHandler moduleHandler;
+		private ModuleHandlerService moduleHandler;
 
 		// Settings
 		private ISettings userSettings;
@@ -153,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService, FileScannerService fileScannerService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService, FileScannerService fileScannerService, ModuleHandlerService moduleHandlerService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
@@ -168,6 +167,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			this.soundSettings = soundSettings;
 			this.formCreatorService = formCreatorService;
 			fileScanner = fileScannerService;
+			moduleHandler = moduleHandlerService;
 
 			// Initialize the adapter with the created form
 			this.mainWindowApiAdapter = mainWindowApiAdapter;
@@ -774,7 +774,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				}
 				else
 				{
-					agentDisplayWindow = new AgentDisplayWindowForm(agentInfo, moduleHandler);
+					agentDisplayWindow = new AgentDisplayWindowForm(agentInfo);
 					agentDisplayWindow.Disposed += (o, args) => { openAgentDisplays.Remove(agentInfo.TypeId); };
 					agentDisplayWindow.Show();
 
@@ -1424,9 +1424,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				// Close all windows
 				CloseWindows();
 
-				// Stop the module handler
-				CleanupModuleHandler();
-
 				// Remember the module list
 				RememberModuleList(rememberSelected, rememberPosition, rememberSong);
 
@@ -1473,7 +1470,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				settingsWindow.Activate();
 			else
 			{
-				settingsWindow = new SettingsWindowForm(mainWindowApiAdapter, moduleHandler, settingsService);
+				settingsWindow = new SettingsWindowForm();
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}
@@ -1599,7 +1596,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(mainWindowApiAdapter, moduleHandler, moduleSettings);
+				moduleInfoWindow = new ModuleInfoWindowForm();
 				moduleInfoWindow.Disposed += (o, args) => { moduleInfoWindow = null; };
 				moduleInfoWindow.Show();
 			}
@@ -2769,7 +2766,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm();
 				sampleInfoWindow.Disposed += (o, args) => { sampleInfoWindow = null; };
 				sampleInfoWindow.Show();
 			}
@@ -3285,7 +3282,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			if (mainWindowSettings.OpenModuleInformationWindow)
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(mainWindowApiAdapter, moduleHandler, moduleSettings);
+				moduleInfoWindow = new ModuleInfoWindowForm();
 				moduleInfoWindow.Show();
 			}
 
@@ -3297,7 +3294,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			if (mainWindowSettings.OpenSampleInformationWindow)
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm();
 				sampleInfoWindow.Show();
 			}
 
@@ -4158,22 +4155,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// an error occur before the main window is opened
 			CreateHandle();
 
-			moduleHandler = new ModuleHandler();
-			moduleHandler.Initialize(soundSettings, masterVolumeTrackBar.Value);
+			moduleHandler.Initialize(masterVolumeTrackBar.Value);
 			moduleHandler.SetMuteStatus(muteCheckButton.Checked);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will shutdown the module handler again
-		/// </summary>
-		/********************************************************************/
-		private void CleanupModuleHandler()
-		{
-			moduleHandler?.Shutdown();
-			moduleHandler = null;
 		}
 
 
@@ -5545,7 +5528,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				equalizerWindow = new EqualizerWindowForm(moduleHandler, soundSettings);
+				equalizerWindow = new EqualizerWindowForm();
 				equalizerWindow.Disposed += (o, args) => { equalizerWindow = null; };
 				equalizerWindow.Show();
 			}
@@ -5575,7 +5558,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			if (mainWindowSettings.OpenEqualizerWindow)
 			{
-				equalizerWindow = new EqualizerWindowForm(moduleHandler, soundSettings);
+				equalizerWindow = new EqualizerWindowForm();
 				equalizerWindow.Show();
 			}
 		}

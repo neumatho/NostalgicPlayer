@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private IAgentManager agentManager;
 
-		private ModuleHandler moduleHandler;
+		private ModuleHandlerService moduleHandler;
 
 		private SettingsAgentsWindowSettings winSettings;
 		private ISettings settings;
@@ -137,12 +137,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(ModuleHandler modHandler, ISettings userSettings, ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
+		public void InitSettings(ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
 		{
+			SettingsService settingsService = DependencyInjection.Container.GetInstance<SettingsService>();
+			ISettings userSettings = settingsService.Settings;
+
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
-
-			moduleHandler = modHandler;
+			moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
 
 			winSettings = new SettingsAgentsWindowSettings(windowSettings, prefix);
 			settings = userSettings;
@@ -421,7 +423,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Return the IDs of the agents in use if any
 		/// </summary>
 		/********************************************************************/
-		protected virtual Guid[] GetAgentIdsInUse(ModuleHandler handler)
+		protected virtual Guid[] GetAgentIdsInUse(ModuleHandlerService modHandler)
 		{
 			return null;
 		}
@@ -445,7 +447,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will make some extra closing, if an agent is disabled
 		/// </summary>
 		/********************************************************************/
-		protected virtual void CloseAgent(ModuleHandler handler)
+		protected virtual void CloseAgent(ModuleHandlerService modHandler)
 		{
 		}
 		#endregion

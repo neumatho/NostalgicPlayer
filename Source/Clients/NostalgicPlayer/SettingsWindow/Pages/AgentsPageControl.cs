@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using Krypton.Navigator;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -54,20 +53,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(ModuleHandler moduleHandler, SettingsService settingsService, ISettings windowSettings)
+		public void InitSettings(ISettings windowSettings)
 		{
-			ISettings userSettings = settingsService.Settings;
-
 			changedEnableStates = new HashSet<Guid>();
 
 			winSettings = new SettingsAgentsWindowSettings(windowSettings, null);
 
-			formatsListControl.InitSettings(moduleHandler, userSettings, windowSettings, "Formats", changedEnableStates, playersListControl);
-			playersListControl.InitSettings(moduleHandler, userSettings, windowSettings, "Players", changedEnableStates, formatsListControl);
-			outputListControl.InitSettings(moduleHandler, userSettings, windowSettings, "Output", changedEnableStates);
-			sampleConvertersListControl.InitSettings(moduleHandler, userSettings, windowSettings, "SampleConverters", changedEnableStates);
-			visualsListControl.InitSettings(moduleHandler, userSettings, windowSettings, "Visuals", changedEnableStates);
-			decrunchersListUserControl.InitSettings(moduleHandler, userSettings, windowSettings, "Decrunchers", changedEnableStates);
+			formatsListControl.InitSettings(windowSettings, "Formats", changedEnableStates, playersListControl);
+			playersListControl.InitSettings(windowSettings, "Players", changedEnableStates, formatsListControl);
+			outputListControl.InitSettings(windowSettings, "Output", changedEnableStates);
+			sampleConvertersListControl.InitSettings(windowSettings, "SampleConverters", changedEnableStates);
+			visualsListControl.InitSettings(windowSettings, "Visuals", changedEnableStates);
+			decrunchersListUserControl.InitSettings(windowSettings, "Decrunchers", changedEnableStates);
 		}
 
 

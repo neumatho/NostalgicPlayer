@@ -6,7 +6,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 	public partial class AgentDisplayWindowForm : WindowFormBase
 	{
 		private IAgentManager agentManager;
-		private ModuleHandler moduleHandler;
+		private ModuleHandlerService moduleHandler;
 
 		private IVisualAgent visualAgent;
 		private readonly string helpUrl;
@@ -33,16 +33,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AgentDisplayWindowForm(AgentInfo agentInfo, ModuleHandler moduleHandler)
+		public AgentDisplayWindowForm(AgentInfo agentInfo)
 		{
 			InitializeComponent();
 
 			// Remember the arguments
-			this.moduleHandler = moduleHandler;
 
 			if (!DesignMode)
 			{
 				agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+				moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
 
 				InitializeWindow();
 

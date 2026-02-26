@@ -8,8 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
@@ -70,9 +69,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(ModuleHandler moduleHandler, SettingsService settingsService, ISettings windowSettings)
+		public void InitSettings(ISettings windowSettings)
 		{
-			moduleSettings = new ModuleSettings(settingsService);
+			moduleSettings = DependencyInjection.Container.GetInstance<ModuleSettings>();
 		}
 
 

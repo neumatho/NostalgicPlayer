@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 	/// </summary>
 	public partial class SampleInfoWindowForm : WindowFormBase
 	{
-		private ModuleHandler moduleHandler;
+		private ModuleHandlerService moduleHandler;
 
 		private readonly SampleInfoWindowSettings settings;
 
@@ -67,12 +67,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SampleInfoWindowForm(ModuleHandler moduleHandler)
+		public SampleInfoWindowForm()
 		{
 			InitializeComponent();
-
-			// Remember the arguments
-			this.moduleHandler = moduleHandler;
 
 			// Initialize sample play
 			samplePlayOctave = 48;
@@ -85,6 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 			if (!DesignMode)
 			{
+				moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
 				IAgentManager agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 
 				InitializeWindow();
