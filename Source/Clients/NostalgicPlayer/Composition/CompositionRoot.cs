@@ -63,10 +63,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		/********************************************************************/
 		private static void RegisterServices(Container container)
 		{
-			container.RegisterSingleton<FormCreatorService>();
-
 			container.RegisterSingleton<IProgressCallbackFactory, ProgressCallbackFactory>();
 			container.RegisterSingleton<SplashScreenService>();
+
+			container.RegisterSingleton<FormCreatorService>();
+			container.RegisterSingleton<FileScannerService>();
 		}
 
 

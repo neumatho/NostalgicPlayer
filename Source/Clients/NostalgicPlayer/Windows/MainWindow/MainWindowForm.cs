@@ -63,6 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private IAgentManager agentManager;
 		private IPlaylistFactory playlistFactory;
 		private FormCreatorService formCreatorService;
+		private FileScannerService fileScanner;
 
 		private ModuleHandler moduleHandler;
 
@@ -109,9 +110,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		// Window/control status variables
 		private bool allowPosSliderUpdate;
 
-		// Different helper classes
-		private FileScanner fileScanner;
-
 		// Play samples from sample info window info
 		private int playSamplesChannelNumber;
 		private bool playSamples;
@@ -155,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService, FileScannerService fileScannerService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
@@ -169,6 +167,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			this.pathSettings = pathSettings;
 			this.soundSettings = soundSettings;
 			this.formCreatorService = formCreatorService;
+			fileScanner = fileScannerService;
 
 			// Initialize the adapter with the created form
 			this.mainWindowApiAdapter = mainWindowApiAdapter;
@@ -208,9 +207,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 			}
-
-			fileScanner = new FileScanner();
-			fileScanner.Start();
 
 			SetupHandlers();
 		}
@@ -1427,10 +1423,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				// Close all windows
 				CloseWindows();
-
-				// Stop file scanner
-				fileScanner.Stop();
-				fileScanner = null;
 
 				// Stop the module handler
 				CleanupModuleHandler();

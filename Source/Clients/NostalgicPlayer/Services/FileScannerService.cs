@@ -12,29 +12,28 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
 using Polycode.NostalgicPlayer.Logic.Databases;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
 	/// <summary>
 	/// Class that scans added files to find extra information
 	/// </summary>
-	public class FileScanner
+	public class FileScannerService : IDisposable
 	{
 		private class QueueInfo
 		{
 			public List<ModuleListItem> Items { get; set; }
 		}
 
-		private readonly IAgentManager agentManager;
 		private readonly OptionSettings settings;
 		private readonly IModuleDatabase database;
 		private readonly IPlaylistFactory playlistFactory;
@@ -52,24 +51,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner()
+		public FileScannerService(IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, OptionSettings optionSettings, IMainWindowApi mainWindowApi)
 		{
-			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
-			settings = DependencyInjection.Container.GetInstance<OptionSettings>();
-			database = DependencyInjection.Container.GetInstance<IModuleDatabase>();
-			playlistFactory = DependencyInjection.Container.GetInstance<IPlaylistFactory>();
-			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-		}
+			database = moduleDatabase;
+			this.playlistFactory = playlistFactory;
+			settings = optionSettings;
+			this.mainWindowApi = mainWindowApi;
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Start the scanner
-		/// </summary>
-		/********************************************************************/
-		public void Start()
-		{
 			// Create event used to tell the thread to stop
 			shutdownEvent = new ManualResetEvent(false);
 
@@ -93,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Stop the scanner
 		/// </summary>
 		/********************************************************************/
-		public void Stop()
+		public void Dispose()
 		{
 			// Tell the thread to exit
 			shutdownEvent?.Set();
