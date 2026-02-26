@@ -7,10 +7,10 @@ using System;
 using System.Windows.Forms;
 using Krypton.Navigator;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow

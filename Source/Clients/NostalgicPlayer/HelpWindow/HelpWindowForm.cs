@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 {
