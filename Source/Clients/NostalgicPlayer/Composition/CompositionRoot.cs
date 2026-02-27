@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
@@ -35,6 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			RegisterFactories(container);
 			RegisterServices(container);
 			RegisterAdapters(container);
+			RegisterAudius(container);
 
 			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
 		}
@@ -96,6 +98,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		{
 			container.RegisterSingleton<IMainWindowApi, MainWindowApiAdapter>();
 			container.RegisterSingleton<MainWindowApiAdapter>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all Audius classes into the container
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterAudius(Container container)
+		{
+			container.RegisterSingleton<IAudiusHelper, AudiusHelper>();
 		}
 	}
 }

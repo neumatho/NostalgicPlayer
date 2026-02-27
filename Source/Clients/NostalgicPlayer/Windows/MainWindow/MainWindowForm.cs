@@ -1494,7 +1494,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				audiusWindow = new AudiusWindowForm(mainWindowApiAdapter);
+				audiusWindow = new AudiusWindowForm();
 				audiusWindow.Disposed += (o, args) => { audiusWindow = null; };
 				audiusWindow.Show();
 			}
@@ -3300,7 +3300,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			if (mainWindowSettings.OpenAudiusWindow)
 			{
-				audiusWindow = new AudiusWindowForm(mainWindowApiAdapter);
+				audiusWindow = new AudiusWindowForm();
 				audiusWindow.Show();
 			}
 

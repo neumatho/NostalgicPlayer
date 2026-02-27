@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.External.Audius
 	/// <summary>
 	/// Main class for the Audius API
 	/// </summary>
-	public class AudiusApi
+	internal class AudiusClientFactory : IAudiusClientFactory
 	{
 		/********************************************************************/
 		/// <summary>

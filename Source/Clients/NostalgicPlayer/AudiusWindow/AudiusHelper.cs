@@ -19,14 +19,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// <summary>
 	/// Different helper methods for Audius
 	/// </summary>
-	public static class AudiusHelper
+	public class AudiusHelper : IAudiusHelper
 	{
+		private readonly IMainWindowApi mainWindowApi;
+		private readonly IAudiusClientFactory clientFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public AudiusHelper(IMainWindowApi mainWindowApi, IAudiusClientFactory audiusClientFactory)
+		{
+			this.mainWindowApi = mainWindowApi;
+			clientFactory = audiusClientFactory;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Show error message
 		/// </summary>
 		/********************************************************************/
-		public static void ShowErrorMessage(Exception ex, AudiusListControl audiusListControl, IMainWindowApi mainWindowApi, IAudiusWindowApi audiusWindowApi)
+		public void ShowErrorMessage(Exception ex, AudiusListControl audiusListControl, IAudiusWindowApi audiusWindowApi)
 		{
 			string message = ex is TimeoutException ? Resources.IDS_AUDIUS_ERR_TIMEOUT : ex.Message;
 
@@ -46,11 +62,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Get tracks for all playlists
 		/// </summary>
 		/********************************************************************/
-		public static List<AudiusListItem> FillPlaylistsWithTracks(PlaylistModel[] playlists, CancellationToken cancellationToken)
+		public List<AudiusListItem> FillPlaylistsWithTracks(PlaylistModel[] playlists, CancellationToken cancellationToken)
 		{
-			AudiusApi audiusApi = new AudiusApi();
-
-			ITrackClient trackClient = audiusApi.GetTrackClient();
+			ITrackClient trackClient = clientFactory.GetTrackClient();
 
 			Dictionary<string, TrackModel> trackInfo = new Dictionary<string, TrackModel>();
 

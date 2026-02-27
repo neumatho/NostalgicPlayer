@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Audius;
 using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 using Polycode.NostalgicPlayer.External.Audius.Models.Playlists;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 {
@@ -21,8 +21,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 	/// </summary>
 	public partial class ProfilePlaylistsPageControl : UserControl, IAudiusPage
 	{
-		private IMainWindowApi mainWindowApi;
 		private IAudiusWindowApi audiusWindowApi;
+		private IAudiusHelper audiusHelper;
+		private IAudiusClientFactory clientFactory;
 
 		private TaskHelper taskHelper;
 
@@ -44,14 +45,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, IAudiusWindowApi audiusWindow, PictureDownloader downloader, string id)
+		public void Initialize(IAudiusWindowApi audiusWindow, PictureDownloader downloader, string id)
 		{
-			mainWindowApi = mainWindow;
 			audiusWindowApi = audiusWindow;
+			audiusHelper = DependencyInjection.Container.GetInstance<IAudiusHelper>();
+			clientFactory = DependencyInjection.Container.GetInstance<IAudiusClientFactory>();
 
 			userId = id;
 
-			audiusListControl.Initialize(mainWindow, downloader);
+			audiusListControl.Initialize(downloader);
 
 			taskHelper = new TaskHelper();
 		}
@@ -102,12 +104,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		{
 			taskHelper.RunTask((cancellationToken) =>
 			{
-				AudiusApi audiusApi = new AudiusApi();
-
-				IUserClient userClient = audiusApi.GetUserClient();
+				IUserClient userClient = clientFactory.GetUserClient();
 				PlaylistModel[] playlists = userClient.GetPlaylists(userId, cancellationToken);
 
-				List<AudiusListItem> items = AudiusHelper.FillPlaylistsWithTracks(playlists, cancellationToken);
+				List<AudiusListItem> items = audiusHelper.FillPlaylistsWithTracks(playlists, cancellationToken);
 
 				Invoke(() =>
 				{
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 				});
 
 				return Task.CompletedTask;
-			}, (ex) => AudiusHelper.ShowErrorMessage(ex, audiusListControl, mainWindowApi, audiusWindowApi));
+			}, (ex) => audiusHelper.ShowErrorMessage(ex, audiusListControl, audiusWindowApi));
 		}
 		#endregion
 	}

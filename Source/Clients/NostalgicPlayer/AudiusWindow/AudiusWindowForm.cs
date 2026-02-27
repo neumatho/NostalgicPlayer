@@ -7,7 +7,6 @@ using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
@@ -29,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusWindowForm(IMainWindowApi mainWindow)
+		public AudiusWindowForm()
 		{
 			InitializeComponent();
 
@@ -53,8 +52,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				navigator.Pages[Page_Search].Text = Resources.IDS_AUDIUS_TAB_SEARCH;
 
 				// Initialize all pages
-				trendingPageControl.Initialize(mainWindow, this, pictureDownloader, null);
-				searchPageControl.Initialize(mainWindow, this, pictureDownloader, null);
+				trendingPageControl.Initialize(this, pictureDownloader, null);
+				searchPageControl.Initialize(this, pictureDownloader, null);
 			}
 		}
 

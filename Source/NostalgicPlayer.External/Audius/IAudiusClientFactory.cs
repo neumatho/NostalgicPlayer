@@ -3,28 +3,28 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.External;
+using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
+namespace Polycode.NostalgicPlayer.External.Audius
 {
 	/// <summary>
-	/// All Audius pages must implement this interface
+	/// Creates the different clients
 	/// </summary>
-	public interface IAudiusPage
+	public interface IAudiusClientFactory
 	{
 		/// <summary>
-		/// Will initialize the control
+		/// Returns the client for interacting with tracks
 		/// </summary>
-		void Initialize(IAudiusWindowApi audiusWindow, PictureDownloader downloader, string id);
+		ITrackClient GetTrackClient();
 
 		/// <summary>
-		/// Will refresh the page with new data
+		/// Returns the client for interacting with playlists
 		/// </summary>
-		void RefreshPage();
+		IPlaylistClient GetPlaylistClient();
 
 		/// <summary>
-		/// Cleanup used resources
+		/// Returns the client for interacting with users
 		/// </summary>
-		void CleanupPage();
+		IUserClient GetUserClient();
 	}
 }

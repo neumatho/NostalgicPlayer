@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.External.Homepage;
 using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
 using Polycode.NostalgicPlayer.External.Homepage.Models.VersionHistory;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
@@ -15,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 	/// </summary>
 	public partial class NewVersionWindowForm : KryptonForm
 	{
-		private IVersionHistoryClient _versionHistoryClient;
+		private IHomepageClientFactory clientFactory;
 
 		/********************************************************************/
 		/// <summary>
@@ -34,9 +35,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 		/// Initialize the form
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IVersionHistoryClient versionHistoryClient)
+		public void InitializeForm(IHomepageClientFactory homepageClientFactory)
 		{
-			_versionHistoryClient = versionHistoryClient;
+			clientFactory = homepageClientFactory;
 
 			// Set the title of the window
 			Text = Resources.IDS_NEWVERSION_TITLE;
@@ -51,7 +52,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 		/********************************************************************/
 		public void BuildHistoryList(string fromVersion, string toVersion)
 		{
-			HistoriesModel histories = _versionHistoryClient.GetHistories(fromVersion, toVersion);
+			IVersionHistoryClient versionHistoryClient = clientFactory.GetVersionHistoryClient();
+			HistoriesModel histories = versionHistoryClient.GetHistories(fromVersion, toVersion);
 
 			historyRichTextBox.Clear();
 

@@ -15,6 +15,7 @@ using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 using Polycode.NostalgicPlayer.External.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
@@ -25,6 +26,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	public class AudiusLoader : StreamLoader, IMetadata, IStreamSeek
 	{
 		private static readonly PictureDownloader pictureDownloader;
+
+		private readonly IAudiusClientFactory clientFactory;
 
 		/********************************************************************/
 		/// <summary>
@@ -59,6 +62,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		public AudiusLoader()
 		{
+			clientFactory = DependencyInjection.Container.GetInstance<IAudiusClientFactory>();
 		}
 
 		#region LoaderBase overrides
@@ -73,9 +77,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 			// Get track information
 			SetupTrackInformation(source);
 
-			AudiusApi audiusApi = new AudiusApi();
-
-			ITrackClient trackClient = audiusApi.GetTrackClient();
+			ITrackClient trackClient = clientFactory.GetTrackClient();
 			Uri trackUrl = trackClient.GetStreamingUrl(source);
 
 			return base.Load(trackUrl.AbsoluteUri, out errorMessage);
@@ -216,9 +218,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		{
 			try
 			{
-				AudiusApi audiusApi = new AudiusApi();
-
-				ITrackClient trackClient = audiusApi.GetTrackClient();
+				ITrackClient trackClient = clientFactory.GetTrackClient();
 				TrackModel track = trackClient.GetTrackInfo(trackId, CancellationToken.None);
 
 				Title = track.Title;

@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
@@ -43,9 +44,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IMainWindowApi mainWindow, PictureDownloader downloader)
+		public void Initialize(PictureDownloader downloader)
 		{
-			mainWindowApi = mainWindow;
+			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 			pictureDownloader = downloader;
 		}
 

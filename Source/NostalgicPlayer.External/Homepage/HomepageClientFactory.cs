@@ -3,26 +3,24 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.External.Audius;
-using Polycode.NostalgicPlayer.External.Homepage;
-using SimpleInjector;
+using Polycode.NostalgicPlayer.External.Homepage.Clients;
+using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
 
-namespace Polycode.NostalgicPlayer.External.Composition
+namespace Polycode.NostalgicPlayer.External.Homepage
 {
 	/// <summary>
-	/// Register all classes/interfaces into the dependency injection container
+	/// Creates the different clients
 	/// </summary>
-	public static class CompositionRoot
+	internal class HomepageClientFactory : IHomepageClientFactory
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Register all client specific classes into the container
+		/// Returns the client for getting history
 		/// </summary>
 		/********************************************************************/
-		public static void RegisterExternal(this Container container)
+		public IVersionHistoryClient GetVersionHistoryClient()
 		{
-			container.RegisterSingleton<IAudiusClientFactory, AudiusClientFactory>();
-			container.RegisterSingleton<IHomepageClientFactory, HomepageClientFactory>();
+			return new VersionHistoryClient();
 		}
 	}
 }
