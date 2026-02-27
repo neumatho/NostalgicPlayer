@@ -6,19 +6,33 @@
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Library.Containers;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Factories
 {
 	/// <summary>
 	/// Use this to create an instance of MixerConfiguration
 	/// </summary>
-	public static class MixerConfigurationFactory
+	public class MixerConfigurationFactory : IMixerConfigurationFactory
 	{
+		private readonly SoundSettings soundSettings;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public MixerConfigurationFactory(SoundSettings soundSettings)
+		{
+			this.soundSettings = soundSettings;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Create a new instance based on the current settings
 		/// </summary>
 		/********************************************************************/
-		public static MixerConfiguration Create(SoundSettings soundSettings)
+		public MixerConfiguration Create()
 		{
 			return new MixerConfiguration
 			{

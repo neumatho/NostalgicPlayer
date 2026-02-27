@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -50,14 +50,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleHandlerService(IAgentManager agentManager, IMainWindowApi mainWindowApi, SoundSettings soundSettings)
+		public ModuleHandlerService(IAgentManager agentManager, IMainWindowApi mainWindowApi, IMixerConfigurationFactory mixerConfigurationFactory, SoundSettings soundSettings)
 		{
 			// Remember the arguments
 			this.agentManager = agentManager;
 			this.mainWindowApi = mainWindowApi;
 			this.soundSettings = soundSettings;
 
-			mixerConfiguration = MixerConfigurationFactory.Create(soundSettings);
+			mixerConfiguration = mixerConfigurationFactory.Create();
 			mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
 
 			// Initialize the loader

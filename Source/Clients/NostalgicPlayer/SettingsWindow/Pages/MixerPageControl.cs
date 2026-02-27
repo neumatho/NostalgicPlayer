@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -28,6 +28,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private IAgentManager agentManager;
 		private ModuleHandlerService moduleHandler;
+		private IMixerConfigurationFactory mixerConfigurationFactory;
 		private IMainWindowApi mainWindowApi;
 
 		private SoundSettings soundSettings;
@@ -110,6 +111,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 			moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
+			mixerConfigurationFactory = DependencyInjection.Container.GetInstance<IMixerConfigurationFactory>();
 			soundSettings = DependencyInjection.Container.GetInstance<SoundSettings>();
 		}
 
@@ -434,7 +436,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void SetMixerSettings()
 		{
-			MixerConfiguration configuration = MixerConfigurationFactory.Create(soundSettings);
+			MixerConfiguration configuration = mixerConfigurationFactory.Create();
 
 			Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);
 

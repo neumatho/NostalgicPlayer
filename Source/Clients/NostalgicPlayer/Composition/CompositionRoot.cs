@@ -32,6 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			container.RegisterPlatform();
 
 			RegisterSettings(container);
+			RegisterFactories(container);
 			RegisterServices(container);
 			RegisterAdapters(container);
 
@@ -59,12 +60,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 
 		/********************************************************************/
 		/// <summary>
+		/// Register all factories into the container
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterFactories(Container container)
+		{
+			container.RegisterSingleton<IProgressCallbackFactory, ProgressCallbackFactory>();
+			container.RegisterSingleton<IMixerConfigurationFactory, MixerConfigurationFactory>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Register all services into the container
 		/// </summary>
 		/********************************************************************/
 		private static void RegisterServices(Container container)
 		{
-			container.RegisterSingleton<IProgressCallbackFactory, ProgressCallbackFactory>();
 			container.RegisterSingleton<SplashScreenService>();
 
 			container.RegisterSingleton<FormCreatorService>();
