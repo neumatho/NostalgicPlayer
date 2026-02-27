@@ -18,6 +18,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow;

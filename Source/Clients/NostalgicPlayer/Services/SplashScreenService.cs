@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen;
 

@@ -5,7 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Factories
 {
 	/// <summary>
 	/// Factory for creating progress callbacks
