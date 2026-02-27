@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 {
 	/// <summary>
 	/// All window forms must implement this interface
