@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	/// <summary>
 	/// Class that scans added files to find extra information
 	/// </summary>
-	public class FileScannerService : IDisposable
+	public class FileScannerService : IFileScannerService, IDisposable
 	{
 		private class QueueInfo
 		{

@@ -11,9 +11,9 @@ using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
 	/// <summary>
-	/// Helper class to instance Windows Form objects
+	/// Helper to instance Windows Form objects
 	/// </summary>
-	public class FormCreatorService
+	public class FormCreatorService : IFormCreatorService
 	{
 		private readonly IApplicationContext _applicationContext;
 

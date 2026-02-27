@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private IAgentManager agentManager;
 
-		private ModuleHandlerService moduleHandler;
+		private IModuleHandlerService moduleHandler;
 
 		private SettingsAgentsWindowSettings winSettings;
 		private ISettings settings;
@@ -139,12 +139,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void InitSettings(ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
 		{
-			SettingsService settingsService = DependencyInjection.Container.GetInstance<SettingsService>();
+			ISettingsService settingsService = DependencyInjection.Container.GetInstance<ISettingsService>();
 			ISettings userSettings = settingsService.Settings;
 
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
-			moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
+			moduleHandler = DependencyInjection.Container.GetInstance<IModuleHandlerService>();
 
 			winSettings = new SettingsAgentsWindowSettings(windowSettings, prefix);
 			settings = userSettings;
@@ -423,7 +423,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Return the IDs of the agents in use if any
 		/// </summary>
 		/********************************************************************/
-		protected virtual Guid[] GetAgentIdsInUse(ModuleHandlerService modHandler)
+		protected virtual Guid[] GetAgentIdsInUse(IModuleHandlerService modHandler)
 		{
 			return null;
 		}
@@ -447,7 +447,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will make some extra closing, if an agent is disabled
 		/// </summary>
 		/********************************************************************/
-		protected virtual void CloseAgent(ModuleHandlerService modHandler)
+		protected virtual void CloseAgent(IModuleHandlerService modHandler)
 		{
 		}
 		#endregion

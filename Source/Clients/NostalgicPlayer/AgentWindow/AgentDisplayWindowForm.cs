@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 	public partial class AgentDisplayWindowForm : WindowFormBase
 	{
 		private IAgentManager agentManager;
-		private ModuleHandlerService moduleHandler;
+		private IModuleHandlerService moduleHandler;
 
 		private IVisualAgent visualAgent;
 		private readonly string helpUrl;
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			if (!DesignMode)
 			{
 				agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
-				moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
+				moduleHandler = DependencyInjection.Container.GetInstance<IModuleHandlerService>();
 
 				InitializeWindow();
 

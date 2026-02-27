@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 	{
 		private IMainWindowApi mainWindowApi;
 
-		private readonly SettingsService settingsService;
+		private readonly ISettingsService settingsService;
 		private readonly SettingsWindowSettings windowSettings;
 
 		private const int Page_Options = 0;
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			if (!DesignMode)
 			{
 				mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-				settingsService = DependencyInjection.Container.GetInstance<SettingsService>();
+				settingsService = DependencyInjection.Container.GetInstance<ISettingsService>();
 
 				InitializeWindow();
 

@@ -17,18 +17,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 	/// </summary>
 	public class SingleInstanceApplication : WindowsFormsApplicationBase, IApplicationHost
 	{
-		private readonly IApplicationContext _applicationContext;
-		private readonly SplashScreenService _splashScreenService;
+		private readonly IApplicationContext applicationContext;
+		private readonly ISplashScreenService splashScreenService;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleInstanceApplication(IApplicationContext applicationContext, SplashScreenService splashScreenService)
+		public SingleInstanceApplication(IApplicationContext applicationContext, ISplashScreenService splashScreenService)
 		{
-			_applicationContext = applicationContext;
-			_splashScreenService = splashScreenService;
+			this.applicationContext = applicationContext;
+			this.splashScreenService = splashScreenService;
 
 			IsSingleInstance = true;
 
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		/********************************************************************/
 		public void Run()
 		{
-			base.Run(_applicationContext.Arguments);
+			base.Run(applicationContext.Arguments);
 		}
 
 
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		/********************************************************************/
 		protected override void OnCreateMainForm()
 		{
-			MainForm = _splashScreenService.CreateMainForm();
+			MainForm = splashScreenService.CreateMainForm();
 
 			base.OnCreateMainForm();
 		}

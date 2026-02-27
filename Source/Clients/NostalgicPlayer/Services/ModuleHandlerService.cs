@@ -22,9 +22,9 @@ using Polycode.NostalgicPlayer.Library.Players;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
 	/// <summary>
-	/// This class handles all the loading and playing of modules
+	/// Handles all the loading and playing of modules
 	/// </summary>
-	public class ModuleHandlerService : IDisposable
+	public class ModuleHandlerService : IModuleHandlerService, IDisposable
 	{
 		private class ModuleItem
 		{

@@ -62,14 +62,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private IModuleDatabase database;
 		private IAgentManager agentManager;
 		private IPlaylistFactory playlistFactory;
-		private FormCreatorService formCreatorService;
-		private FileScannerService fileScanner;
-
-		private ModuleHandlerService moduleHandler;
+		private IFormCreatorService formCreatorService;
+		private IFileScannerService fileScanner;
+		private IModuleHandlerService moduleHandler;
 
 		// Settings
 		private ISettings userSettings;
-		private SettingsService settingsService;//XX skal slettes
+		private ISettingsService settingsService;//XX skal slettes
 		private OptionSettings optionSettings;
 		private ModuleSettings moduleSettings;
 		private PathSettings pathSettings;
@@ -153,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, SettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, FormCreatorService formCreatorService, FileScannerService fileScannerService, ModuleHandlerService moduleHandlerService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;

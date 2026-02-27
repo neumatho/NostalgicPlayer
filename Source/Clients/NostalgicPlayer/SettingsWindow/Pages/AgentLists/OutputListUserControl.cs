@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/// Return the IDs of the agents in use if any
 		/// </summary>
 		/********************************************************************/
-		protected override Guid[] GetAgentIdsInUse(ModuleHandlerService modHandler)
+		protected override Guid[] GetAgentIdsInUse(IModuleHandlerService modHandler)
 		{
 			return [ modHandler.OutputAgentInfo.TypeId ];
 		}
@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/// Will make some extra closing, if an agent is disabled
 		/// </summary>
 		/********************************************************************/
-		protected override void CloseAgent(ModuleHandlerService modHandler)
+		protected override void CloseAgent(IModuleHandlerService modHandler)
 		{
 			modHandler.CloseOutputAgent();
 		}

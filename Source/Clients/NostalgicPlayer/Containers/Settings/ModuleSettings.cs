@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleSettings(SettingsService settingsService)
+		public ModuleSettings(ISettingsService settingsService)
 		{
 			settings = settingsService.Settings;
 		}

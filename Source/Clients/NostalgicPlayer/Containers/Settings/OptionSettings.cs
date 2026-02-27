@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OptionSettings(SettingsService settingsService)
+		public OptionSettings(ISettingsService settingsService)
 		{
 			settings = settingsService.Settings;
 		}

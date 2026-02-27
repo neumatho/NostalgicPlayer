@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SoundSettings(SettingsService settingsService)
+		public SoundSettings(ISettingsService settingsService)
 		{
 			settings = settingsService.Settings;
 		}

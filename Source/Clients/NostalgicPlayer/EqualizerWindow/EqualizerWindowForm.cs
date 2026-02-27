@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 		private readonly EqualizerControl equalizerControl;
 
 		private readonly IMixerConfigurationFactory mixerConfigurationFactory;
-		private readonly ModuleHandlerService moduleHandler;
+		private readonly IModuleHandlerService moduleHandler;
 		private readonly SoundSettings soundSettings;
 
 		/********************************************************************/
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
 			InitializeComponent();
 
 			mixerConfigurationFactory = DependencyInjection.Container.GetInstance<IMixerConfigurationFactory>();
-			moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
+			moduleHandler = DependencyInjection.Container.GetInstance<IModuleHandlerService>();
 			soundSettings = DependencyInjection.Container.GetInstance<SoundSettings>();
 
 			// Set window title

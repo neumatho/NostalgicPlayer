@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		/********************************************************************/
 		private static void RegisterSettings(Container container)
 		{
-			container.RegisterSingleton<SettingsService>();
+			container.RegisterSingleton<ISettingsService, SettingsService>();
 
 			container.RegisterSingleton<ModuleSettings>();
 			container.RegisterSingleton<OptionSettings>();
@@ -78,11 +78,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		/********************************************************************/
 		private static void RegisterServices(Container container)
 		{
-			container.RegisterSingleton<SplashScreenService>();
+			container.RegisterSingleton<ISplashScreenService, SplashScreenService>();
 
-			container.RegisterSingleton<FormCreatorService>();
-			container.RegisterSingleton<FileScannerService>();
-			container.RegisterSingleton<ModuleHandlerService>();
+			container.RegisterSingleton<IFormCreatorService, FormCreatorService>();
+			container.RegisterSingleton<IFileScannerService, FileScannerService>();
+			container.RegisterSingleton<IModuleHandlerService, ModuleHandlerService>();
 		}
 
 

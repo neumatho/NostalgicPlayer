@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 	{
 		private IMainWindowApi mainWindowApi;
 
-		private ModuleHandlerService moduleHandler;
+		private IModuleHandlerService moduleHandler;
 
 		private PictureInfo[] pictures;
 		private int pictureIndex;
@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 			// Remember the arguments
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-			moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
+			moduleHandler = DependencyInjection.Container.GetInstance<IModuleHandlerService>();
 			moduleSettings = DependencyInjection.Container.GetInstance<ModuleSettings>();
 
 			if (!DesignMode)

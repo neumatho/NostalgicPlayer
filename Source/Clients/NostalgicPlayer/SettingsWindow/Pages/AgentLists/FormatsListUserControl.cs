@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/// Return the IDs of the agents in use if any
 		/// </summary>
 		/********************************************************************/
-		protected override Guid[] GetAgentIdsInUse(ModuleHandlerService modHandler)
+		protected override Guid[] GetAgentIdsInUse(IModuleHandlerService modHandler)
 		{
 			if (modHandler.StaticModuleInformation.ConverterAgentInfo != null)
 				return [ modHandler.StaticModuleInformation.ConverterAgentInfo.TypeId ];

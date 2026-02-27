@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	/// <summary>
 	/// Manage the current settings
 	/// </summary>
-	public class SettingsService : IDisposable
+	public class SettingsService : ISettingsService, IDisposable
 	{
 		private readonly ISettings settings;
 

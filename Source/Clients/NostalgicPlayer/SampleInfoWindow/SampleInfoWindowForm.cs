@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 	/// </summary>
 	public partial class SampleInfoWindowForm : WindowFormBase
 	{
-		private ModuleHandlerService moduleHandler;
+		private IModuleHandlerService moduleHandler;
 
 		private readonly SampleInfoWindowSettings settings;
 
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 			if (!DesignMode)
 			{
-				moduleHandler = DependencyInjection.Container.GetInstance<ModuleHandlerService>();
+				moduleHandler = DependencyInjection.Container.GetInstance<IModuleHandlerService>();
 				IAgentManager agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
 
 				InitializeWindow();

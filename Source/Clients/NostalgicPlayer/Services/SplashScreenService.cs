@@ -13,20 +13,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	/// <summary>
 	/// Service that handles the creation of the main form with splash screen
 	/// </summary>
-	public class SplashScreenService
+	public class SplashScreenService : ISplashScreenService
 	{
-		private readonly FormCreatorService _formCreatorService;
-		private readonly IProgressCallbackFactory _progressCallbackFactory;
+		private readonly IFormCreatorService formCreatorService;
+		private readonly IProgressCallbackFactory progressCallbackFactory;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SplashScreenService(FormCreatorService formCreatorService, IProgressCallbackFactory progressCallbackFactory)
+		public SplashScreenService(IFormCreatorService formCreatorService, IProgressCallbackFactory progressCallbackFactory)
 		{
-			_formCreatorService = formCreatorService;
-			_progressCallbackFactory = progressCallbackFactory;
+			this.formCreatorService = formCreatorService;
+			this.progressCallbackFactory = progressCallbackFactory;
 		}
 
 
@@ -36,18 +36,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Create the main form with splash screen showing progress
 		/// </summary>
 		/********************************************************************/
-		public MainWindowForm CreateMainForm()
+		public Form CreateMainForm()
 		{
-			SplashScreenForm splash = _formCreatorService.GetFormInstance<SplashScreenForm>();
+			SplashScreenForm splash = formCreatorService.GetFormInstance<SplashScreenForm>();
 			splash.Show();
 			splash.Update();
 
 			// Set the splash screen as the current progress callback
 			// MainWindowForm.InitializeForm() will get it via the factory
-			_progressCallbackFactory.CurrentCallback = splash;
+			progressCallbackFactory.CurrentCallback = splash;
 
 			// Create main form (heavy work happens here - InitializeForm will use the callback)
-			MainWindowForm form = _formCreatorService.GetFormInstance<MainWindowForm>();
+			MainWindowForm form = formCreatorService.GetFormInstance<MainWindowForm>();
 
 			// Ensure UI refresh before closing splash
 			Application.DoEvents();
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			splash.Dispose();
 
 			// Clear the callback
-			_progressCallbackFactory.CurrentCallback = null;
+			progressCallbackFactory.CurrentCallback = null;
 
 			return form;
 		}
