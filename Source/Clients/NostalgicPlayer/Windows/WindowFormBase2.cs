@@ -14,7 +14,7 @@ using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 {
 	/// <summary>
 	/// Use the class as the base class for all windows
