@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
@@ -27,6 +26,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -1551,7 +1551,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				aboutWindow.Activate();
 			else
 			{
-				aboutWindow = new AboutWindowForm();
+				aboutWindow = formCreatorService.GetFormInstance<AboutWindowForm>();
 				aboutWindow.Disposed += (o, args) => { aboutWindow = null; };
 				aboutWindow.Show();
 			}
