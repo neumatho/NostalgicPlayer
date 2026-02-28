@@ -123,6 +123,14 @@ Converted to C# by Thomas Neumann.
 
 This player uses the FFmpeg library to decode audio samples. Only the parts needed from FFmpeg is included.</value>
   </data>
+  <data name="IDS_FFMPEG_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>Based on FFmpeg.
+Converted to C# by Thomas Neumann.
+
+Windows Media Audio (WMA) is a series of audio codecs and their corresponding audio coding formats developed by Microsoft. It is a proprietary technology that forms part of the Windows Media framework. Audio encoded in WMA is stored in a digital container format called Advanced Systems Format (ASF).
+
+This player can play the original WMA version 1 format.</value>
+  </data>
   <data name="IDS_FFMPEG_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Based on FFmpeg.
 Converted to C# by Thomas Neumann.
@@ -166,6 +174,9 @@ This player can play the original WMA version 2 format.</value>
   </data>
   <data name="IDS_FFMPEG_NAME" xml:space="preserve">
     <value>FFmpeg</value>
+  </data>
+  <data name="IDS_FFMPEG_NAME_AGENT1" xml:space="preserve">
+    <value>Windows Media Audio 1</value>
   </data>
   <data name="IDS_FFMPEG_NAME_AGENT2" xml:space="preserve">
     <value>Windows Media Audio 2</value>

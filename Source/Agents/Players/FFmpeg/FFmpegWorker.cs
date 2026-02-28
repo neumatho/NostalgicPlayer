@@ -104,8 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 			if (!base.InitPlayer(moduleStream, out errorMessage))
 				return false;
 
-			// Enable debug logging temporarily to diagnose duration issues
-			Log.Av_Log_Set_Level(Log.Av_Log_Debug);
+			Log.Av_Log_Set_Level(Log.Av_Log_Quiet);
 
 			context = AvIoBuf.Avio_Alloc_Context(null, 0, 0, moduleStream, FFmpegReader.ReadFromStream, null, FFmpegReader.SeekInStream);
 			if (context == null)
@@ -141,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 			streamIndex = AvFormat.Av_Find_Best_Stream(formatContext, AvMediaType.Audio, -1, -1, out _, 0);
 			if (streamIndex < 0)
 			{
-				errorMessage = Error.Av_Err2Str(err).ToString();
+				errorMessage = Error.Av_Err2Str(streamIndex).ToString();
 				return false;
 			}
 

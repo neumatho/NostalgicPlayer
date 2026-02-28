@@ -20,6 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 	{
 		private static readonly FFCodec[] codec_List =
 		[
+			WmaDec.FF_Wma1_Decoder,
 			WmaDec.FF_Wma2_Decoder
 		];
 

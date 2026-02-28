@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 	/// </summary>
 	internal class WmaDec
 	{
+		public static readonly FFCodec FF_Wma1_Decoder;
 		public static readonly FFCodec FF_Wma2_Decoder;
 
 		// pow(10, i / 16.0) for i in -60..95
@@ -121,9 +122,28 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/********************************************************************/
 		static WmaDec()
 		{
+			FF_Wma1_Decoder = new FFCodec
+			{
+				Name = "wmav1".ToCharPointer(),
+				Long_Name = "Windows Media Audio 1".ToCharPointer(),
+				Type = AvMediaType.Audio,
+				Id = AvCodecId.WmaV1,
+				Priv_Data_Alloc = Alloc_Priv_Data,
+				Init = Wma_Decode_Init,
+				Close = Wma.FF_Wma_End,
+				Is_Decoder = true,
+				Cb_Type = FFCodecType.Decode,
+				Flush = Flush,
+				Capabilities = AvCodecCap.Dr1 | AvCodecCap.Delay,
+				Sample_Fmts = new CPointer<AvSampleFormat>([ AvSampleFormat.FltP ]),
+				Caps_Internal = FFCodecCap.Init_Cleanup
+			};
+
+			FF_Wma1_Decoder.Cb.Decode = Wma_Decode_SuperFrame;
+
 			FF_Wma2_Decoder = new FFCodec
 			{
-				Name = "wma2".ToCharPointer(),
+				Name = "wmav2".ToCharPointer(),
 				Long_Name = "Windows Media Audio 2".ToCharPointer(),
 				Type = AvMediaType.Audio,
 				Id = AvCodecId.WmaV2,
@@ -134,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				Cb_Type = FFCodecType.Decode,
 				Flush = Flush,
 				Capabilities = AvCodecCap.Dr1 | AvCodecCap.Delay,
-				Sample_Fmts = new CPointer<AvSampleFormat>([ AvSampleFormat.FltP, AvSampleFormat.None ]),//XX skal none være der?
+				Sample_Fmts = new CPointer<AvSampleFormat>([ AvSampleFormat.FltP ]),
 				Caps_Internal = FFCodecCap.Init_Cleanup
 			};
 

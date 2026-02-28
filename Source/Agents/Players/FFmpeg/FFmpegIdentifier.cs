@@ -85,6 +85,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 
 				switch (audioCodec)
 				{
+					case AvCodecId.WmaV1:
+						return FFmpeg.Agent1Id;
+
 					case AvCodecId.WmaV2:
 						return FFmpeg.Agent2Id;
 				}
