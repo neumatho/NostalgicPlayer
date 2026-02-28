@@ -17,14 +17,13 @@ using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 using Polycode.NostalgicPlayer.External.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.External.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.External.Download;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 {
 	/// <summary>
 	/// Holds all the controls for the Trending tab
 	/// </summary>
-	public partial class TrendingPageControl : UserControl, IAudiusPage
+	public partial class TrendingPageControl : UserControl, IDependencyInjectionControl, IAudiusPage
 	{
 		private IAudiusWindowApi audiusWindowApi;
 		private IAudiusHelper audiusHelper;
@@ -40,6 +39,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		public TrendingPageControl()
 		{
 			InitializeComponent();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(IAudiusHelper audiusHelper, IAudiusClientFactory audiusClientFactory)
+		{
+			this.audiusHelper = audiusHelper;
+			clientFactory = audiusClientFactory;
 
 			genreComboBox.Items.AddRange(
 			[
@@ -109,8 +123,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		public void Initialize(IAudiusWindowApi audiusWindow, IPictureDownloader downloader, string id)
 		{
 			audiusWindowApi = audiusWindow;
-			audiusHelper = DependencyInjection.Container.GetInstance<IAudiusHelper>();
-			clientFactory = DependencyInjection.Container.GetInstance<IAudiusClientFactory>();
 
 			audiusListControl.Initialize(downloader);
 

@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Initialize the form by loading agents, initialize controls etc.
+		/// Initialize the form
 		///
 		/// Called from FormCreatorService
 		/// </summary>

@@ -17,5 +17,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// InitializeForm() on it while resolving dependencies
 		/// </summary>
 		T GetFormInstance<T>() where T : Form, new();
+
+		/// <summary>
+		/// Initialize a single control with dependency injections
+		/// </summary>
+		void InitializeControl(Control control);
 	}
 }

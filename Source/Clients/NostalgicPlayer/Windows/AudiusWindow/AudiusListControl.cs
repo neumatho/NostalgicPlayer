@@ -10,20 +10,21 @@ using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External.Download;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 {
 	/// <summary>
 	/// Shows a list of Audius items, such as tracks, playlists, etc.
 	/// </summary>
-	public partial class AudiusListControl : UserControl
+	public partial class AudiusListControl : UserControl, IDependencyInjectionControl
 	{
 		private IMainWindowApi mainWindowApi;
+		private IFormCreatorService formCreatorService;
 		private IPictureDownloader pictureDownloader;
 
 		/********************************************************************/
@@ -38,6 +39,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 			flowLayoutPanel.MouseWheel += FlowLayout_MouseWheel;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(IMainWindowApi mainWindowApi, IFormCreatorService formCreatorService)
+		{
+			this.mainWindowApi = mainWindowApi;
+			this.formCreatorService = formCreatorService;
+		}
+
 		#region Public methods
 		/********************************************************************/
 		/// <summary>
@@ -46,7 +62,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		public void Initialize(IPictureDownloader downloader)
 		{
-			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 			pictureDownloader = downloader;
 		}
 
@@ -116,6 +131,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 						else
 							continue;
 
+						formCreatorService.InitializeControl(listItem as Control);
 						listItem.Initialize(item);
 
 						flowLayoutPanel.Controls.Add(listItem.Control);

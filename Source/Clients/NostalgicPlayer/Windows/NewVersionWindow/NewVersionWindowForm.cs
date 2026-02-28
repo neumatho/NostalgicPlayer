@@ -33,6 +33,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 		/********************************************************************/
 		/// <summary>
 		/// Initialize the form
+		///
+		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
 		public void InitializeForm(IHomepageClientFactory homepageClientFactory)

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.External;
@@ -18,18 +19,18 @@ using Polycode.NostalgicPlayer.External.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.External.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.External.Audius.Models.Users;
 using Polycode.NostalgicPlayer.External.Download;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 {
 	/// <summary>
 	/// Holds all the controls for the Search tab
 	/// </summary>
-	public partial class SearchPageControl : UserControl, IAudiusPage
+	public partial class SearchPageControl : UserControl, IDependencyInjectionControl, IAudiusPage
 	{
 		private IAudiusWindowApi audiusWindowApi;
 		private IAudiusClientFactory clientFactory;
 		private IAudiusHelper audiusHelper;
+		private IFormCreatorService formCreatorService;
 
 		private IPictureDownloader pictureDownloader;
 
@@ -47,6 +48,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 			InitializeComponent();
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(IAudiusHelper audiusHelper, IAudiusClientFactory audiusClientFactory, IFormCreatorService formCreatorService)
+		{
+			this.audiusHelper = audiusHelper;
+			clientFactory = audiusClientFactory;
+			this.formCreatorService = formCreatorService;
+		}
+
 		#region IAudiusPage implementation
 		/********************************************************************/
 		/// <summary>
@@ -56,8 +73,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		public void Initialize(IAudiusWindowApi audiusWindow, IPictureDownloader downloader, string id)
 		{
 			audiusWindowApi = audiusWindow;
-			clientFactory = DependencyInjection.Container.GetInstance<IAudiusClientFactory>();
-			audiusHelper = DependencyInjection.Container.GetInstance<IAudiusHelper>();
 
 			pictureDownloader = downloader;
 
@@ -187,6 +202,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 
 				Controls.Add(profileControl);
 
+				formCreatorService.InitializeControl(profileControl);
 				profileControl.Initialize(e.Item.User, audiusWindowApi, pictureDownloader);
 			}
 		}

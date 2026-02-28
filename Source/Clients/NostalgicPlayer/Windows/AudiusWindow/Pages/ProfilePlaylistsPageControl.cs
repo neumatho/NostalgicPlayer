@@ -13,14 +13,13 @@ using Polycode.NostalgicPlayer.External.Audius;
 using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 using Polycode.NostalgicPlayer.External.Audius.Models.Playlists;
 using Polycode.NostalgicPlayer.External.Download;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 {
 	/// <summary>
 	/// Holds all the controls for the profile Playlists tab
 	/// </summary>
-	public partial class ProfilePlaylistsPageControl : UserControl, IAudiusPage
+	public partial class ProfilePlaylistsPageControl : UserControl, IDependencyInjectionControl, IAudiusPage
 	{
 		private IAudiusWindowApi audiusWindowApi;
 		private IAudiusHelper audiusHelper;
@@ -40,6 +39,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 			InitializeComponent();
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(IAudiusHelper audiusHelper, IAudiusClientFactory audiusClientFactory)
+		{
+			this.audiusHelper = audiusHelper;
+			clientFactory = audiusClientFactory;
+		}
+
 		#region IAudiusPage implementation
 		/********************************************************************/
 		/// <summary>
@@ -49,8 +63,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		public void Initialize(IAudiusWindowApi audiusWindow, IPictureDownloader downloader, string id)
 		{
 			audiusWindowApi = audiusWindow;
-			audiusHelper = DependencyInjection.Container.GetInstance<IAudiusHelper>();
-			clientFactory = DependencyInjection.Container.GetInstance<IAudiusClientFactory>();
 
 			userId = id;
 
