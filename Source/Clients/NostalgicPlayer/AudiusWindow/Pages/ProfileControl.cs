@@ -8,8 +8,8 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Audius.Models.Users;
+using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		private const int Page_Tracks = 0;
 		private const int Page_Playlists = 1;
 
-		private PictureDownloader pictureDownloader;
+		private IPictureDownloader pictureDownloader;
 
 		private UserModel userModel;
 		private IAudiusPage currentPage;
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(UserModel user, IAudiusWindowApi audiusWindow, PictureDownloader downloader)
+		public void Initialize(UserModel user, IAudiusWindowApi audiusWindow, IPictureDownloader downloader)
 		{
 			pictureDownloader = downloader;
 

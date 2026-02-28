@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayer.External\NostalgicPlayer.External.csproj" />
     <ProjectReference Include="..\NostalgicPlayer.Logic\NostalgicPlayer.Logic.csproj" />
   </ItemGroup>
 

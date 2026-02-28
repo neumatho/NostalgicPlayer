@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.External;
+using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
@@ -65,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems
 		/// Will make sure that the item is refreshed with all missing data
 		/// </summary>
 		/********************************************************************/
-		public void RefreshItem(PictureDownloader pictureDownloader)
+		public void RefreshItem(IPictureDownloader pictureDownloader)
 		{
 			if (!string.IsNullOrEmpty(item.ImageUrl) && (profileBitmap == null))
 			{

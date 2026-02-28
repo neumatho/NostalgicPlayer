@@ -7,7 +7,8 @@ using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
-using Polycode.NostalgicPlayer.External;
+using Polycode.NostalgicPlayer.External.Download;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 {
@@ -19,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		private const int Page_Trending = 0;
 		private const int Page_Search = 1;
 
-		private PictureDownloader pictureDownloader;
+		private IPictureDownloader pictureDownloader;
 
 		private IAudiusPage currentPage;
 
@@ -42,7 +43,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 				LoadWindowSettings("AudiusWindow");
 
 				// Initialize picture downloader
-				pictureDownloader = new PictureDownloader(100);
+				IPictureDownloaderFactory factory = DependencyInjection.Container.GetInstance<IPictureDownloaderFactory>();
+				pictureDownloader = factory.Create();
+				pictureDownloader.SetMaxNumberInCache(100);
 
 				// Set the title of the window
 				Text = Resources.IDS_AUDIUS_TITLE;

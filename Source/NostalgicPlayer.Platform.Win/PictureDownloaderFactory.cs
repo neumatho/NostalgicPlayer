@@ -3,28 +3,27 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.External.Download;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
+namespace Polycode.NostalgicPlayer.Platform
 {
 	/// <summary>
-	/// All Audius pages must implement this interface
+	/// Create new instances of the picture downloader
 	/// </summary>
-	public interface IAudiusPage
+	internal class PictureDownloaderFactory : IPictureDownloaderFactory
 	{
+		/********************************************************************/
 		/// <summary>
-		/// Will initialize the control
+		/// Create a new instance
 		/// </summary>
-		void Initialize(IAudiusWindowApi audiusWindow, IPictureDownloader downloader, string id);
+		/********************************************************************/
+		public IPictureDownloader Create()
+		{
+			if (OperatingSystem.IsWindows())
+				return new PictureDownloader();
 
-		/// <summary>
-		/// Will refresh the page with new data
-		/// </summary>
-		void RefreshPage();
-
-		/// <summary>
-		/// Cleanup used resources
-		/// </summary>
-		void CleanupPage();
+			throw new NotSupportedException("Not running on Windows");
+		}
 	}
 }

@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using SimpleInjector;
 
@@ -21,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Platform.Composition
 		public static void RegisterPlatform(this Container container)
 		{
 			container.RegisterSingleton<IPlatformPath, PlatformPath>();
+			container.RegisterSingleton<IPictureDownloaderFactory, PictureDownloaderFactory>();
 		}
 	}
 }

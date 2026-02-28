@@ -11,14 +11,15 @@ using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.External.Download;
 
-namespace Polycode.NostalgicPlayer.External
+namespace Polycode.NostalgicPlayer.Platform
 {
 	/// <summary>
-	/// Helper class to download pictures from Audius
+	/// Helper class to download pictures
 	/// </summary>
 	[SupportedOSPlatform("windows")]
-	public class PictureDownloader : IDisposable
+	internal class PictureDownloader : IPictureDownloader
 	{
 		private const int DownloadPictureTimeout = 30000;
 
@@ -37,18 +38,19 @@ namespace Polycode.NostalgicPlayer.External
 		private readonly object downloadLock = new object();	// Cannot use Lock class here, because the way it is used
 		private readonly Dictionary<string, PictureCacheEntry> downloadedPictures;
 		private readonly Dictionary<string, DownloadWaitInfo> aboutToBeDownloaded;
-		private readonly int maxNumberOfItemsInCache;
+		private int maxNumberOfItemsInCache;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PictureDownloader(int maxNumberOfItemsInCache)
+		public PictureDownloader()
 		{
 			downloadedPictures = new Dictionary<string, PictureCacheEntry>(StringComparer.OrdinalIgnoreCase);
 			aboutToBeDownloaded = new Dictionary<string, DownloadWaitInfo>(StringComparer.OrdinalIgnoreCase);
-			this.maxNumberOfItemsInCache = maxNumberOfItemsInCache;
+
+			maxNumberOfItemsInCache = 10;
 		}
 
 
@@ -72,6 +74,18 @@ namespace Polycode.NostalgicPlayer.External
 
 				aboutToBeDownloaded.Clear();
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Change the max number of items in the cache
+		/// </summary>
+		/********************************************************************/
+		public void SetMaxNumberInCache(int maxNumberOfItemsInCache)
+		{
+			this.maxNumberOfItemsInCache = maxNumberOfItemsInCache;
 		}
 
 

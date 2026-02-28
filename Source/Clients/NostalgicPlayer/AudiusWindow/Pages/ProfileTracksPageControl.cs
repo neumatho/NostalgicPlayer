@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Audius;
 using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 using Polycode.NostalgicPlayer.External.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
@@ -46,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.Pages
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(IAudiusWindowApi audiusWindow, PictureDownloader downloader, string id)
+		public void Initialize(IAudiusWindowApi audiusWindow, IPictureDownloader downloader, string id)
 		{
 			audiusWindowApi = audiusWindow;
 			audiusHelper = DependencyInjection.Container.GetInstance<IAudiusHelper>();

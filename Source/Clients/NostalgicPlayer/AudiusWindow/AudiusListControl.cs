@@ -13,7 +13,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
-using Polycode.NostalgicPlayer.External;
+using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	public partial class AudiusListControl : UserControl
 	{
 		private IMainWindowApi mainWindowApi;
-		private PictureDownloader pictureDownloader;
+		private IPictureDownloader pictureDownloader;
 
 		/********************************************************************/
 		/// <summary>
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/// Will initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(PictureDownloader downloader)
+		public void Initialize(IPictureDownloader downloader)
 		{
 			mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
 			pictureDownloader = downloader;

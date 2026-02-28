@@ -9,10 +9,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Audius;
 using Polycode.NostalgicPlayer.External.Audius.Interfaces;
 using Polycode.NostalgicPlayer.External.Audius.Models.Tracks;
+using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 	/// </summary>
 	public class AudiusLoader : StreamLoader, IMetadata, IStreamSeek
 	{
-		private static readonly PictureDownloader pictureDownloader;
+		private static readonly IPictureDownloader pictureDownloader;
 
 		private readonly IAudiusClientFactory clientFactory;
 
@@ -36,7 +36,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow
 		/********************************************************************/
 		static AudiusLoader()
 		{
-			pictureDownloader = new PictureDownloader(5);
+			IPictureDownloaderFactory factory = DependencyInjection.Container.GetInstance<IPictureDownloaderFactory>();
+			pictureDownloader = factory.Create();
+			pictureDownloader.SetMaxNumberInCache(5);
 
 			AppDomain.CurrentDomain.ProcessExit += AudiusLoader_Dtor;
 		}
