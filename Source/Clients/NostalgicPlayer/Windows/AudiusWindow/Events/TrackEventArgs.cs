@@ -3,61 +3,51 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
-using Polycode.NostalgicPlayer.Library.Loaders;
+using System;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events
 {
+	/// <summary></summary>
+	public delegate void TrackEventHandler(object sender, TrackEventArgs e);
+
 	/// <summary>
-	/// This class holds a list item pointing to an Audius track
+	/// Event class holding needed information when playing a track
 	/// </summary>
-	public class AudiusModuleListItem : IStreamModuleListItem
+	public class TrackEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusModuleListItem(string displayName, string trackId)
+		public TrackEventArgs(AudiusMusicListItem item)
 		{
-			DisplayName = displayName;
-			Source = trackId;
+			Items = [ item ];
 		}
 
-		#region IModuleListItem implementation
+
+
 		/********************************************************************/
 		/// <summary>
-		/// Return the name which is shown in the list
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName
+		public TrackEventArgs(AudiusMusicListItem[] items)
+		{
+			Items = items;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holding the track item
+		/// </summary>
+		/********************************************************************/
+		public AudiusMusicListItem[] Items
 		{
 			get;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the full path to the file
-		/// </summary>
-		/********************************************************************/
-		public string Source
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Create the loader to use to load this item
-		/// </summary>
-		/********************************************************************/
-		public LoaderBase CreateLoader()
-		{
-			return new AudiusLoader();
-		}
-		#endregion
 	}
 }

@@ -3,34 +3,33 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
-using Polycode.NostalgicPlayer.Library.Loaders;
-
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems
 {
 	/// <summary>
-	/// This class holds a list item pointing to an Audius track
+	/// This class is used for each item in an Audius list
 	/// </summary>
-	public class AudiusModuleListItem : IStreamModuleListItem
+	public class AudiusListItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusModuleListItem(string displayName, string trackId)
+		public AudiusListItem(int position, string itemId, string imageUrl)
 		{
-			DisplayName = displayName;
-			Source = trackId;
+			Position = position;
+			ItemId = itemId;
+			ImageUrl = imageUrl;
 		}
 
-		#region IModuleListItem implementation
+
+
 		/********************************************************************/
 		/// <summary>
-		/// Return the name which is shown in the list
+		/// Return the position of the item
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName
+		public int Position
 		{
 			get;
 		}
@@ -39,10 +38,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the full path to the file
+		/// Returns the ID of the item
 		/// </summary>
 		/********************************************************************/
-		public string Source
+		public string ItemId
 		{
 			get;
 		}
@@ -51,13 +50,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 
 		/********************************************************************/
 		/// <summary>
-		/// Create the loader to use to load this item
+		/// Returns the URL to the image
 		/// </summary>
 		/********************************************************************/
-		public LoaderBase CreateLoader()
+		public string ImageUrl
 		{
-			return new AudiusLoader();
+			get;
 		}
-		#endregion
 	}
 }

@@ -14,8 +14,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	{
 		/********************************************************************/
 		/// <summary>
-		/// The container object. I'm not glad for this solution, so I need
-		/// to figure out a good way to do this
+		/// The container object.
+		///
+		/// This is only temporary and used until everything has been moved
+		/// into the DI container
 		/// </summary>
 		/********************************************************************/
 		public static Container Container { get; set; }

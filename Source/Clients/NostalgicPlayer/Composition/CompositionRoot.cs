@@ -3,10 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Library.Application;

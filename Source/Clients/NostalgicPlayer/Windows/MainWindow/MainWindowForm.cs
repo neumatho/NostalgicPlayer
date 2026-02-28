@@ -11,7 +11,6 @@ using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -27,6 +26,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -1494,7 +1494,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				audiusWindow = new AudiusWindowForm();
+				audiusWindow = formCreatorService.GetFormInstance<AudiusWindowForm>();
 				audiusWindow.Disposed += (o, args) => { audiusWindow = null; };
 				audiusWindow.Show();
 			}
@@ -3300,7 +3300,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			if (mainWindowSettings.OpenAudiusWindow)
 			{
-				audiusWindow = new AudiusWindowForm();
+				audiusWindow = formCreatorService.GetFormInstance<AudiusWindowForm>();
 				audiusWindow.Show();
 			}
 
