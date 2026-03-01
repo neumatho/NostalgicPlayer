@@ -29,46 +29,51 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutWindowForm));
-			this.pictureBox = new System.Windows.Forms.PictureBox();
-			this.pulseTimer = new System.Windows.Forms.Timer(this.components);
-			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-			this.SuspendLayout();
+			pictureBox = new System.Windows.Forms.PictureBox();
+			pulseTimer = new System.Windows.Forms.Timer(components);
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
+			SuspendLayout();
 			// 
 			// pictureBox
 			// 
-			this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pictureBox.Location = new System.Drawing.Point(8, 8);
-			this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
-			this.pictureBox.Name = "pictureBox";
-			this.pictureBox.Size = new System.Drawing.Size(342, 172);
-			this.pictureBox.TabIndex = 0;
-			this.pictureBox.TabStop = false;
+			pictureBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			pictureBox.Location = new System.Drawing.Point(8, 8);
+			pictureBox.Margin = new System.Windows.Forms.Padding(0);
+			pictureBox.Name = "pictureBox";
+			pictureBox.Size = new System.Drawing.Size(342, 172);
+			pictureBox.TabIndex = 0;
+			pictureBox.TabStop = false;
 			// 
 			// pulseTimer
 			// 
-			this.pulseTimer.Interval = 70;
-			this.pulseTimer.Tick += new System.EventHandler(this.Pulse_Tick);
+			pulseTimer.Interval = 50;
+			pulseTimer.Tick += Pulse_Tick;
+			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// AboutWindowForm
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(358, 188);
-			this.Controls.Add(this.pictureBox);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "AboutWindowForm";
-			this.Palette = this.fontPalette;
-			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-			this.ResumeLayout(false);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			ClientSize = new System.Drawing.Size(358, 188);
+			Controls.Add(pictureBox);
+			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+			MaximizeBox = false;
+			MinimizeBox = false;
+			Name = "AboutWindowForm";
+			Palette = fontPalette;
+			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
+			ResumeLayout(false);
 
 		}
 

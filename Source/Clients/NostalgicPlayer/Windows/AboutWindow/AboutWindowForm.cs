@@ -104,7 +104,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			textIndex = 0;
 
 			// Create the bitmap to draw in
-			outsideHeight = Font.Height;
+			using (Bitmap tempBitmap = new Bitmap(1, 1))
+			{
+				using (Graphics tempGraphics = Graphics.FromImage(tempBitmap))
+				{
+					outsideHeight = (int)Math.Ceiling(tempGraphics.MeasureString("Agj", Font).Height);
+				}
+			}
 
 			bitmap = new Bitmap(AreaWidth, AreaHeight + outsideHeight);
 			pictureBox.Image = bitmap;
