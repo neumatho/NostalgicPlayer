@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events
 {
 	/// <summary>
 	/// Event args for download progress
@@ -23,6 +23,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 			CurrentEntry = currentEntry;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Number of files remaining in queue
@@ -32,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 		{
 			get;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>

@@ -3,31 +3,21 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
-	/// Represents a single download item in the queue
+	/// API for the Module Library window
 	/// </summary>
-	internal class DownloadQueueItem
+	public interface IModLibraryWindowApi
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Return the form of the Module Library window
 		/// </summary>
 		/********************************************************************/
-		public DownloadQueueItem(TreeNode entry, bool shouldPlayImmediately)
-		{
-			Entry = entry;
-			ShouldPlayImmediately = shouldPlayImmediately;
-		}
-
-		public TreeNode Entry
-		{
-			get;
-		}
-
-		public bool ShouldPlayImmediately
+		Form Form
 		{
 			get;
 		}

@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Manages the download queue for batch downloading modules
@@ -35,18 +35,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			this.downloadService = downloadService;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public int SuccessCount
 		{
 			get;
 			private set;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public int FailureCount
 		{
 			get;
 			private set;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public int QueueCount
 		{
 			get
@@ -58,8 +79,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public event EventHandler<DownloadProgressEventArgs> ProgressChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public event EventHandler<DownloadCompletedEventArgs> DownloadCompleted;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public event EventHandler QueueCompleted;
 
 

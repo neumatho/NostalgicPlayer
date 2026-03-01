@@ -3,32 +3,44 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
-using System;
-
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
-	/// Event args for tree build completion
+	/// Represents a single download item in the queue
 	/// </summary>
-	internal class TreeBuildCompletedEventArgs : EventArgs
+	internal class DownloadQueueItem
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public TreeBuildCompletedEventArgs(TreeNode tree)
+		public DownloadQueueItem(TreeNode entry, bool shouldPlayImmediately)
 		{
-			ResultTree = tree;
+			Entry = entry;
+			ShouldPlayImmediately = shouldPlayImmediately;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
-		/// The resulting tree structure
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public TreeNode ResultTree
+		public TreeNode Entry
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public bool ShouldPlayImmediately
 		{
 			get;
 		}

@@ -6,7 +6,7 @@
 using System;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Handles integration with the main window playlist
@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		{
 			this.mainWindow = mainWindow;
 		}
+
 
 
 		/********************************************************************/

@@ -3,163 +3,143 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Collections.Generic;
-using System.IO;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
-	/// Manages favorites for the ModLibrary
+	/// Represents a node in the module library tree structure
 	/// </summary>
-	internal class ModLibraryFavorites
+	internal class TreeNode
 	{
-		private readonly HashSet<string> favorites = new(StringComparer.OrdinalIgnoreCase);
-		private readonly string favoritesFilePath;
-		private bool hasChanges;
-
 		/********************************************************************/
 		/// <summary>
-		/// Constructor - loads favorites from file
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModLibraryFavorites(string modLibraryPath)
+		public TreeNode()
 		{
-			favoritesFilePath = Path.Combine(modLibraryPath, "ModLibFavorites.txt");
-			Load();
+			Children = new List<TreeNode>();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Check if a path is a favorite
+		/// Child nodes
 		/// </summary>
 		/********************************************************************/
-		public bool IsFavorite(string fullPath)
+		public List<TreeNode> Children
 		{
-			return favorites.Contains(fullPath);
+			get;
+			set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Add a path to favorites
+		/// Full path from root
 		/// </summary>
 		/********************************************************************/
-		public void Add(string fullPath)
+		public string FullPath
 		{
-			if (favorites.Add(fullPath))
-			{
-				hasChanges = true;
-			}
+			get;
+			set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Remove a path from favorites
+		/// Whether this is a directory node
 		/// </summary>
 		/********************************************************************/
-		public void Remove(string fullPath)
+		public bool IsDirectory
 		{
-			if (favorites.Remove(fullPath))
-			{
-				hasChanges = true;
-			}
+			get;
+			set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Toggle favorite status for a path
+		/// Name of the node (file or directory name)
 		/// </summary>
 		/********************************************************************/
-		public bool Toggle(string fullPath)
+		public string Name
 		{
-			if (favorites.Contains(fullPath))
-			{
-				favorites.Remove(fullPath);
-				hasChanges = true;
-				return false;
-			}
-
-			favorites.Add(fullPath);
-			hasChanges = true;
-			return true;
+			get;
+			set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Save favorites to file (only if changed)
+		/// Service identifier this node belongs to
 		/// </summary>
 		/********************************************************************/
-		public void Save()
+		public string ServiceId
 		{
-			if (!hasChanges)
-			{
-				return;
-			}
-
-			try
-			{
-				string fileName = GetFavoritesFileName();
-				File.WriteAllLines(fileName, favorites);
-				hasChanges = false;
-			}
-			catch
-			{
-				// Ignore save errors
-			}
+			get;
+			set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Load favorites from file
+		/// Size in bytes (for files only)
 		/// </summary>
 		/********************************************************************/
-		private void Load()
+		public long Size
 		{
-			try
-			{
-				string fileName = GetFavoritesFileName();
+			get;
+			set;
+		}
 
-				if (File.Exists(fileName))
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find a node by its full path by navigating through the
+		/// tree
+		/// </summary>
+		/********************************************************************/
+		public TreeNode FindByPath(string path)
+		{
+			// If this is the path we're looking for, return this node
+			if (FullPath == path)
+			{
+				return this;
+			}
+
+			// If the path doesn't start with our path, it's not in our subtree
+			// Special case: root has empty FullPath
+			if (!string.IsNullOrEmpty(FullPath) && !path.StartsWith(FullPath))
+			{
+				return null;
+			}
+
+			// Find the child that matches the next part of the path
+			foreach (var child in Children)
+				// Check if this child is on the path
+				// For root node (FullPath=""), all paths are valid
+				// For service nodes (ending with "://"), check if path starts with it
+				// For other nodes, check if path matches or is a subpath
+			{
+				if (path == child.FullPath ||
+				    (child.FullPath.EndsWith("://") && path.StartsWith(child.FullPath)) ||
+				    path.StartsWith(child.FullPath + "/"))
+					// Recursively search in this child
 				{
-					foreach (string line in File.ReadAllLines(fileName))
-					{
-						if (!string.IsNullOrWhiteSpace(line))
-						{
-							favorites.Add(line.Trim());
-						}
-					}
+					return child.FindByPath(path);
 				}
 			}
-			catch
-			{
-				// Ignore load errors
-			}
 
-			hasChanges = false;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Get the path to the favorites file
-		/// </summary>
-		/********************************************************************/
-		private string GetFavoritesFileName()
-		{
-			return favoritesFilePath;
+			return null;
 		}
 	}
 }

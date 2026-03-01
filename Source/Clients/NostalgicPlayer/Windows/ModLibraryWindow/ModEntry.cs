@@ -3,11 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Represents a module file entry (not directories - only files!)
@@ -15,7 +14,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 	internal class ModEntry
 	{
 		private readonly List<string> pathParts;
-
 
 		/********************************************************************/
 		/// <summary>
@@ -50,6 +48,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// File size in bytes
@@ -60,6 +60,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			get;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Full path (all directory parts concatenated)
@@ -67,12 +69,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public string FullPath => pathParts.Count > 0 ? string.Join("/", pathParts) : string.Empty;
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Full name (full path + file name)
 		/// </summary>
 		/********************************************************************/
 		public string FullName => string.IsNullOrEmpty(FullPath) ? Name : FullPath + "/" + Name;
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -83,6 +89,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		{
 			get;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>

@@ -13,14 +13,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// This shows the Module Library window
@@ -30,17 +29,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private const string AllmodsZipUrl = "https://modland.com/allmods.zip";
 		private readonly Dictionary<string, InfoBarControl> activeInfoBars = new();
 
-		private readonly IPlatformPath platformPath;
+		private IMainWindowApi mainWindow;
+		private IPlatformPath platformPath;
 
 		private readonly ModLibraryData data = new();
 
 		// Download queue
 		private DownloadQueueManager downloadQueueManager;
 
-		private readonly IMainWindowApi mainWindow;
-		private readonly Timer searchDebounceTimer;
-		private readonly Timer searchTimer;
-		private readonly ModLibraryWindowSettings settings;
+		private Timer searchDebounceTimer;
+		private Timer searchTimer;
+		private ModLibraryWindowSettings settings;
 		private bool addDownloadsToPlaylist = true;
 
 		private string cacheDirectory;
@@ -59,18 +58,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModLibraryWindowForm(IMainWindowApi mainWindow)
+		public ModLibraryWindowForm()
 		{
 			InitializeComponent();
+		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeForm(IMainWindowApi mainWindow, IPlatformPath platformPath)
+		{
 			this.mainWindow = mainWindow;
-			Disposed += ModLibraryWindowForm_Disposed;
+			this.platformPath = platformPath;
 
-			// Copy icon from main window
-			if (mainWindow is Form mainForm)
-			{
-				Icon = mainForm.Icon;
-			}
+			Disposed += ModLibraryWindowForm_Disposed;
 
 			// Set context menu items (KryptonContextMenuItem cannot use ControlResource)
 			updateDatabaseItem.Text = Resources.IDS_MODLIBRARY_UPDATE_DATABASE;
@@ -97,71 +104,66 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			searchModeComboBox.Items.AddRange(Resources.IDS_MODLIBRARY_SEARCHMODE_FILENAME_AND_PATH,
 				Resources.IDS_MODLIBRARY_SEARCHMODE_FILENAME_ONLY, Resources.IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY);
 
-			if (!DesignMode)
-			{
-				platformPath = DependencyInjection.Container.GetInstance<IPlatformPath>();
+			InitializeWindow();
 
-				InitializeWindow();
+			// Load window settings
+			LoadWindowSettings("ModLibraryWindow");
 
-				// Load window settings
-				LoadWindowSettings("ModLibraryWindow");
+			// Remember initial path
+			initialModLibraryPath = GetCurrentModLibraryPath();
 
-				// Remember initial path
-				initialModLibraryPath = GetCurrentModLibraryPath();
+			// Set the title of the window
+			UpdateWindowTitle();
 
-				// Set the title of the window
-				UpdateWindowTitle();
+			// Set initial status text
+			statusLabel.Text = Resources.IDS_MODLIBRARY_STATUS_DEFAULT;
 
-				// Set initial status text
-				statusLabel.Text = Resources.IDS_MODLIBRARY_STATUS_DEFAULT;
+			// Initialize cache directory
+			InitializeCacheDirectory();
 
-				// Initialize cache directory
-				InitializeCacheDirectory();
+			// Initialize services
+			InitializeServices();
 
-				// Initialize services
-				InitializeServices();
+			// Initialize favorites (uses ModLibrary path)
+			favorites = new ModLibraryFavorites(GetModLibraryModulesPath());
 
-				// Initialize favorites (uses ModLibrary path)
-				favorites = new ModLibraryFavorites(GetModLibraryModulesPath());
+			// Initialize search timer for keyboard quick search
+			searchTimer = new Timer();
+			searchTimer.Interval = 1000; // 1 second timeout
+			searchTimer.Tick += SearchTimer_Tick;
 
-				// Initialize search timer for keyboard quick search
-				searchTimer = new Timer();
-				searchTimer.Interval = 1000; // 1 second timeout
-				searchTimer.Tick += SearchTimer_Tick;
+			// Initialize debounce timer for search textbox
+			searchDebounceTimer = new Timer();
+			searchDebounceTimer.Interval = 100; // 100ms debounce
+			searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
 
-				// Initialize debounce timer for search textbox
-				searchDebounceTimer = new Timer();
-				searchDebounceTimer.Interval = 100; // 100ms debounce
-				searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
+			// Load and apply ModLibrary settings (must be done AFTER timer initialization)
+			settings = new ModLibraryWindowSettings(allWindowSettings);
+			data.IsOfflineMode = settings.IsOfflineMode;
+			modeTabControl.SelectedIndex = settings.IsOfflineMode ? 1 : 0;
+			flatViewCheckBox.Checked = settings.FlatViewEnabled;
+			playImmediatelyCheckBox.Checked = settings.PlayImmediately;
+			searchTextBox.Text = settings.SearchText;
+			// Set SelectedIndex which will trigger the event handler, but now settings is initialized
+			searchModeComboBox.SelectedIndex = settings.SearchMode;
 
-				// Load and apply ModLibrary settings (must be done AFTER timer initialization)
-				settings = new ModLibraryWindowSettings(allWindowSettings);
-				data.IsOfflineMode = settings.IsOfflineMode;
-				modeTabControl.SelectedIndex = settings.IsOfflineMode ? 1 : 0;
-				flatViewCheckBox.Checked = settings.FlatViewEnabled;
-				playImmediatelyCheckBox.Checked = settings.PlayImmediately;
-				searchTextBox.Text = settings.SearchText;
-				// Set SelectedIndex which will trigger the event handler, but now settings is initialized
-				searchModeComboBox.SelectedIndex = settings.SearchMode;
+			// Restore column widths
+			columnName.Width = settings.ColumnWidthName;
+			columnPath.Width = flatViewCheckBox.Checked ? settings.ColumnWidthPath : 0;
+			columnSize.Width = settings.ColumnWidthSize;
 
-				// Restore column widths
-				columnName.Width = settings.ColumnWidthName;
-				columnPath.Width = flatViewCheckBox.Checked ? settings.ColumnWidthPath : 0;
-				columnSize.Width = settings.ColumnWidthSize;
+			// Restore favorites only checkbox (only visible in offline mode)
+			favoritesOnlyCheckBox.Checked = settings.FavoritesOnlyEnabled;
+			favoritesOnlyCheckBox.Visible = data.IsOfflineMode;
 
-				// Restore favorites only checkbox (only visible in offline mode)
-				favoritesOnlyCheckBox.Checked = settings.FavoritesOnlyEnabled;
-				favoritesOnlyCheckBox.Visible = data.IsOfflineMode;
+			// Restore last path based on mode
+			currentPath = data.IsOfflineMode ? settings.LastOfflinePath : settings.LastOnlinePath;
 
-				// Restore last path based on mode
-				currentPath = data.IsOfflineMode ? settings.LastOfflinePath : settings.LastOnlinePath;
+			// Check if we already have the database
+			CheckExistingDatabase();
 
-				// Check if we already have the database
-				CheckExistingDatabase();
-
-				// Hook up data loaded event
-				data.DataLoaded += OnDataLoaded;
-			}
+			// Hook up data loaded event
+			data.DataLoaded += OnDataLoaded;
 		}
 
 		#region WindowFormBase overrides
@@ -180,6 +182,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/// </summary>
 		/********************************************************************/
 		public Form Form => this;
+
 
 
 		/********************************************************************/
@@ -234,6 +237,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the form is shown for the first time
@@ -242,6 +246,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private void ModLibraryForm_Shown(object sender, EventArgs e)
 		{
 		}
+
 
 
 		/********************************************************************/
@@ -276,7 +281,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Save all settings when closing the window
 			settings.Settings.SaveSettings();
 		}
-		// Cleanup
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -354,6 +360,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when virtual list needs an item
@@ -412,6 +419,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			item.Tag = entry;
 			e.Item = item;
 		}
+
 
 
 		/********************************************************************/
@@ -477,6 +485,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the list view is right-clicked (for context
@@ -520,6 +529,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when a key is pressed in the list view
@@ -549,6 +559,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				e.Handled = true;
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -627,6 +638,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when search text changes
@@ -640,6 +652,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when search button is clicked
@@ -650,6 +663,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Trigger search immediately (same as debounce timer)
 			SearchDebounceTimer_Tick(sender, e);
 		}
+
 
 
 		/********************************************************************/
@@ -668,6 +682,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// For now, only ModLand is supported
 			await DownloadModLandDatabase();
 		}
+
 
 
 		/********************************************************************/
@@ -1056,6 +1071,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when search mode combobox selection changes
@@ -1075,6 +1091,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				data.BuildTree(searchFilter, searchMode, flatViewCheckBox.Checked);
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -1098,6 +1115,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when play immediately checkbox is toggled
@@ -1108,6 +1126,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Save setting
 			settings.PlayImmediately = playImmediatelyCheckBox.Checked;
 		}
+
 
 
 		/********************************************************************/
@@ -1123,6 +1142,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Reload current directory to apply filter
 			LoadCurrentDirectory();
 		}
+
 
 
 		/********************************************************************/
@@ -1175,6 +1195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Called when search/data operation is completed
@@ -1216,6 +1237,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			moduleListView.Enabled = true;
 			Cursor = Cursors.Default;
 		}
+
 
 
 		/********************************************************************/
@@ -1358,6 +1380,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when "Jump to folder" context menu item is clicked
@@ -1400,6 +1423,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			currentPath = fullFolderPath;
 			LoadCurrentDirectory();
 		}
+
 
 
 		/********************************************************************/
@@ -1519,6 +1543,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the Cancel download button is clicked
@@ -1531,6 +1556,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			progressBar.Visible = false;
 			statusLabel.Text = Resources.IDS_MODLIBRARY_STATUS_DOWNLOAD_CANCELLED;
 		}
+
 
 
 		/********************************************************************/
@@ -1566,6 +1592,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when a single download completes
@@ -1598,6 +1625,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_ERROR_PREFIX, e.ErrorMessage);
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -1653,6 +1681,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Update the window title, showing custom path if configured
@@ -1670,6 +1699,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			Text = title;
 		}
+
 
 
 		/********************************************************************/
@@ -1691,6 +1721,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Check if a file should be included (filters out smpl.* files)
@@ -1704,6 +1735,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Get local file path for a tree entry
@@ -1713,6 +1745,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		{
 			return data.IsOfflineMode ? GetLocalPathForLocalMode(entry) : GetLocalPathForOnlineMode(entry);
 		}
+
 
 
 		/********************************************************************/
@@ -1726,6 +1759,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// entry.FullPath is already the relative path from Modules directory
 			return Path.Combine(modulesBasePath, entry.FullPath.Replace('/', Path.DirectorySeparatorChar));
 		}
+
 
 
 		/********************************************************************/
@@ -1751,6 +1785,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Initialize cache directory for downloaded files
@@ -1761,6 +1796,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			cacheDirectory = Path.Combine(platformPath.SettingsPath, "ModLibrary");
 			Directory.CreateDirectory(cacheDirectory);
 		}
+
 
 
 		/********************************************************************/
@@ -1791,6 +1827,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			downloadQueueManager.QueueCompleted += DownloadQueue_QueueCompleted;
 			playlistIntegration = new ModLibraryPlaylistIntegration(mainWindow);
 		}
+
 
 
 		/********************************************************************/
@@ -1849,6 +1886,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				RebuildTree();
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -1940,6 +1978,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Parse ModLand allmods.txt and create ModEntry objects
@@ -1991,6 +2030,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				service.AddOnlineFile(entry.nameWithPath, entry.size);
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -2061,6 +2101,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Rebuild tree with current search filter
@@ -2071,6 +2112,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			SearchMode searchMode = (SearchMode)searchModeComboBox.SelectedIndex;
 			data.BuildTree(searchTextBox.Text.Trim(), searchMode, flatViewCheckBox.Checked);
 		}
+
 
 
 		/********************************************************************/
@@ -2108,6 +2150,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Select specific item or default to first
 			SelectItemInList(itemToSelect);
 		}
+
 
 
 		/********************************************************************/
@@ -2165,6 +2208,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				BuildClickableBreadcrumb(folderCount, fileCount);
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -2235,6 +2279,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Add breadcrumb for search mode
@@ -2265,6 +2310,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			Label countsLabel = new() {Text = string.Format(Resources.IDS_MODLIBRARY_SEARCH_COUNT, folderCount, fileCount, totalFiles), AutoSize = true, Margin = new Padding(0, 5, 0, 0), ForeColor = SystemColors.GrayText};
 			breadcrumbPanel.Controls.Add(countsLabel);
 		}
+
 
 
 		/********************************************************************/
@@ -2318,6 +2364,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Add a clickable breadcrumb link
@@ -2329,6 +2376,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			link.LinkClicked += BreadcrumbLink_Clicked;
 			breadcrumbPanel.Controls.Add(link);
 		}
+
 
 
 		/********************************************************************/
@@ -2343,6 +2391,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Add a breadcrumb separator
@@ -2353,6 +2402,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			Label separator = new() {Text = text == " > " ? text : $" {text} ", AutoSize = true, Margin = new Padding(0, 5, 0, 0), ForeColor = SystemColors.GrayText};
 			breadcrumbPanel.Controls.Add(separator);
 		}
+
 
 
 		/********************************************************************/
@@ -2393,6 +2443,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Select an item in the list view
@@ -2430,6 +2481,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Update column headers with sort indicators
@@ -2459,6 +2511,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				columnPath.Text = Resources.IDS_MODLIBRARY_COLUMN_PATH + " ▲";
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -2556,6 +2609,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Scan local files for a service
@@ -2634,6 +2688,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			return $"{Math.Round(bytes / (1024.0 * 1024.0 * 1024.0), 2):0.00} GB";
 		}
+
 
 
 		/********************************************************************/

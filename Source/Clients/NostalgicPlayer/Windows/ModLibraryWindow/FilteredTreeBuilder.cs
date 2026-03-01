@@ -5,13 +5,12 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Search mode for filtering files
@@ -59,12 +58,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			syncContext = SynchronizationContext.Current;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Event fired when tree building is completed
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler<TreeBuildCompletedEventArgs> Completed;
+
 
 
 		/********************************************************************/
@@ -129,6 +131,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Add file to local tree (without service)
@@ -189,6 +192,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Build filtered tree from services
@@ -226,13 +230,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Build tree for offline mode (local files)
 		/// </summary>
 		/********************************************************************/
-		private void BuildTreeOfflineMode(TreeNode root, bool showAll,
-			Regex filterRegex)
+		private void BuildTreeOfflineMode(TreeNode root, bool showAll, Regex filterRegex)
 		{
 			// Local mode: Use unified local files list (service-independent)
 			foreach (var entry in localFiles)
@@ -268,15 +272,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Build tree for online mode (service files)
 		/// </summary>
 		/********************************************************************/
-		private void BuildTreeOnlineMode(TreeNode root, bool showAll,
-			Regex filterRegex)
+		private void BuildTreeOnlineMode(TreeNode root, bool showAll, Regex filterRegex)
 		{
-
 			// Online mode: Use service-specific online files
 			foreach (var service in services)
 			{
@@ -315,6 +318,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Convert wildcard pattern to regex pattern
@@ -345,6 +349,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Notify completion and fire event
@@ -367,13 +372,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Process files for a specific service
 		/// </summary>
 		/********************************************************************/
-		private void ProcessServiceFiles(TreeNode serviceNode,
-			ModuleService service, bool showAll, Regex filterRegex)
+		private void ProcessServiceFiles(TreeNode serviceNode, ModuleService service, bool showAll, Regex filterRegex)
 		{
 			foreach (var entry in service.OnlineFiles)
 			{
@@ -412,6 +417,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Cancel the build task
@@ -422,6 +428,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			cancelled = true;
 			Completed = null; // Remove all event handlers
 		}
+
 
 
 		/********************************************************************/

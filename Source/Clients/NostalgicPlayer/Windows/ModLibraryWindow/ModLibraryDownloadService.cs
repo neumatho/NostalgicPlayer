@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.IO;
 using System.Linq;
@@ -11,7 +10,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Handles downloading of module files from ModLand
@@ -33,6 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			this.data = data;
 			this.modulesBasePath = modulesBasePath;
 		}
+
 
 
 		/********************************************************************/
@@ -104,13 +104,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Download matching sample file for mdat.* files
 		/// </summary>
 		/********************************************************************/
-		private async Task DownloadSampleFileAsync(HttpClient client, TreeNode entry, ModuleService service,
-			string relativePath, string localDirectory, CancellationToken cancellationToken)
+		private async Task DownloadSampleFileAsync(HttpClient client, TreeNode entry, ModuleService service, string relativePath, string localDirectory, CancellationToken cancellationToken)
 		{
 			string smplFileName = "smpl" + entry.Name.Substring(4);
 			string smplRelativePath = relativePath.Substring(0, relativePath.LastIndexOf('/') + 1) + smplFileName;
@@ -132,6 +132,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				// Sample file might not exist - that's ok
 			}
 		}
+
 
 
 		/********************************************************************/

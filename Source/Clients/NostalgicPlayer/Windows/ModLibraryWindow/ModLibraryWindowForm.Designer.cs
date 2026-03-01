@@ -1,4 +1,4 @@
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	partial class ModLibraryWindowForm
 	{
@@ -30,6 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModLibraryWindowForm));
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			searchLabel = new Krypton.Toolkit.KryptonLabel();
@@ -38,31 +39,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			parentButton = new Krypton.Toolkit.KryptonButton();
 			flatViewCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			favoritesOnlyCheckBox = new Krypton.Toolkit.KryptonCheckBox();
-			checkboxPanel = new System.Windows.Forms.Panel();
 			playImmediatelyCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			checkboxPanel = new System.Windows.Forms.Panel();
 			serviceContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			updateDatabaseMenuItem = new Krypton.Toolkit.KryptonContextMenuItems();
 			updateDatabaseItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			clearDatabaseItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			offlineContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			offlineContextMenuItems = new Krypton.Toolkit.KryptonContextMenuItems();
+			playItem = new Krypton.Toolkit.KryptonContextMenuItem();
+			addToPlaylistItem = new Krypton.Toolkit.KryptonContextMenuItem();
+			offlineSeparator1 = new Krypton.Toolkit.KryptonContextMenuSeparator();
+			addToFavoritesItem = new Krypton.Toolkit.KryptonContextMenuItem();
+			removeFromFavoritesItem = new Krypton.Toolkit.KryptonContextMenuItem();
+			offlineSeparator2 = new Krypton.Toolkit.KryptonContextMenuSeparator();
+			reloadItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			deleteItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			flatViewContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			flatViewContextMenuItems = new Krypton.Toolkit.KryptonContextMenuItems();
 			jumpToFolderItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			onlineContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			onlineContextMenuItems = new Krypton.Toolkit.KryptonContextMenuItems();
-			downloadToPlaylistItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			downloadAndPlayItem = new Krypton.Toolkit.KryptonContextMenuItem();
+			downloadToPlaylistItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			downloadToDiskItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			onlineSeparator = new Krypton.Toolkit.KryptonContextMenuSeparator();
-			addToFavoritesItem = new Krypton.Toolkit.KryptonContextMenuItem();
-			removeFromFavoritesItem = new Krypton.Toolkit.KryptonContextMenuItem();
-			offlineSeparator1 = new Krypton.Toolkit.KryptonContextMenuSeparator();
-			offlineSeparator2 = new Krypton.Toolkit.KryptonContextMenuSeparator();
-			reloadItem = new Krypton.Toolkit.KryptonContextMenuItem();
-			playItem = new Krypton.Toolkit.KryptonContextMenuItem();
-			addToPlaylistItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			searchPanel = new System.Windows.Forms.Panel();
 			searchButton = new Krypton.Toolkit.KryptonButton();
 			searchTextBox = new Krypton.Toolkit.KryptonTextBox();
@@ -79,9 +80,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			progressBar = new System.Windows.Forms.ToolStripProgressBar();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
+			checkboxPanel.SuspendLayout();
 			searchPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)searchModeComboBox).BeginInit();
-				modeTabControl.SuspendLayout();
+			modeTabControl.SuspendLayout();
 			statusStrip.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -89,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// 
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = string.Empty;
+			fontPalette.ThemeName = "";
 			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
@@ -137,42 +139,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			controlResource.SetResourceKey(parentButton, "IDS_MODLIBRARY_PARENT_BUTTON");
 			parentButton.Size = new System.Drawing.Size(884, 33);
 			parentButton.TabIndex = 3;
-			parentButton.Values.Text = "⬆ Parent Folder";
+			parentButton.Values.Text = "⬆ Parent";
 			parentButton.Click += ParentButton_Click;
-			//
-			// checkboxPanel
-			//
-			checkboxPanel.Controls.Add(favoritesOnlyCheckBox);
-			checkboxPanel.Controls.Add(flatViewCheckBox);
-			checkboxPanel.Dock = System.Windows.Forms.DockStyle.Top;
-			checkboxPanel.Location = new System.Drawing.Point(8, 127);
-			checkboxPanel.Name = "checkboxPanel";
-			checkboxPanel.Size = new System.Drawing.Size(884, 20);
-			checkboxPanel.TabIndex = 4;
-			//
+			// 
 			// flatViewCheckBox
-			//
+			// 
 			flatViewCheckBox.Dock = System.Windows.Forms.DockStyle.Left;
 			flatViewCheckBox.Location = new System.Drawing.Point(0, 0);
 			flatViewCheckBox.Name = "flatViewCheckBox";
 			controlResource.SetResourceKey(flatViewCheckBox, "IDS_MODLIBRARY_FLATVIEW_CHECKBOX");
-			flatViewCheckBox.Size = new System.Drawing.Size(250, 20);
+			flatViewCheckBox.Size = new System.Drawing.Size(211, 20);
 			flatViewCheckBox.TabIndex = 0;
 			flatViewCheckBox.Values.Text = "Flat view (show all files recursively)";
 			flatViewCheckBox.CheckedChanged += FlatViewCheckBox_CheckedChanged;
-			//
+			// 
 			// favoritesOnlyCheckBox
-			//
+			// 
 			favoritesOnlyCheckBox.Dock = System.Windows.Forms.DockStyle.Right;
-			favoritesOnlyCheckBox.Location = new System.Drawing.Point(784, 0);
+			favoritesOnlyCheckBox.Location = new System.Drawing.Point(785, 0);
 			favoritesOnlyCheckBox.Name = "favoritesOnlyCheckBox";
 			controlResource.SetResourceKey(favoritesOnlyCheckBox, "IDS_MODLIBRARY_FAVORITESONLY_CHECKBOX");
-			favoritesOnlyCheckBox.Size = new System.Drawing.Size(100, 20);
+			favoritesOnlyCheckBox.Size = new System.Drawing.Size(99, 20);
 			favoritesOnlyCheckBox.TabIndex = 1;
 			favoritesOnlyCheckBox.Values.Text = "Favorites only";
 			favoritesOnlyCheckBox.Visible = false;
 			favoritesOnlyCheckBox.CheckedChanged += FavoritesOnlyCheckBox_CheckedChanged;
-			//
+			// 
 			// playImmediatelyCheckBox
 			// 
 			playImmediatelyCheckBox.Checked = true;
@@ -183,8 +175,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			controlResource.SetResourceKey(playImmediatelyCheckBox, "IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX");
 			playImmediatelyCheckBox.Size = new System.Drawing.Size(884, 20);
 			playImmediatelyCheckBox.TabIndex = 5;
-			playImmediatelyCheckBox.Values.Text = "Play Immediately";
+			playImmediatelyCheckBox.Values.Text = "Play immediately (otherwise just add to playlist)";
 			playImmediatelyCheckBox.CheckedChanged += PlayImmediatelyCheckBox_CheckedChanged;
+			// 
+			// checkboxPanel
+			// 
+			checkboxPanel.Controls.Add(favoritesOnlyCheckBox);
+			checkboxPanel.Controls.Add(flatViewCheckBox);
+			checkboxPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			checkboxPanel.Location = new System.Drawing.Point(8, 127);
+			checkboxPanel.Name = "checkboxPanel";
+			checkboxPanel.Size = new System.Drawing.Size(884, 20);
+			checkboxPanel.TabIndex = 4;
 			// 
 			// serviceContextMenu
 			// 
@@ -203,90 +205,81 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// 
 			clearDatabaseItem.Text = "Clear Database";
 			clearDatabaseItem.Click += ClearDatabaseItem_Click;
-			//
+			// 
 			// offlineContextMenu
-			//
+			// 
 			offlineContextMenu.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { offlineContextMenuItems });
-			//
+			// 
 			// offlineContextMenuItems
-			//
+			// 
 			offlineContextMenuItems.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { playItem, addToPlaylistItem, offlineSeparator1, addToFavoritesItem, removeFromFavoritesItem, offlineSeparator2, reloadItem, deleteItem });
-			//
+			// 
 			// playItem
-			//
+			// 
 			playItem.Text = "Play Module(s)";
 			playItem.Click += PlayItem_Click;
-			//
+			// 
 			// addToPlaylistItem
-			//
+			// 
 			addToPlaylistItem.Text = "Add to Playlist";
 			addToPlaylistItem.Click += AddToPlaylistItem_Click;
-			//
-			// offlineSeparator1
-			//
-			//
+			// 
 			// addToFavoritesItem
-			//
+			// 
 			addToFavoritesItem.Text = "Add to Favorites";
 			addToFavoritesItem.Click += AddToFavoritesItem_Click;
-			//
+			// 
 			// removeFromFavoritesItem
-			//
+			// 
 			removeFromFavoritesItem.Text = "Remove from Favorites";
 			removeFromFavoritesItem.Click += RemoveFromFavoritesItem_Click;
-			//
-			// offlineSeparator2
-			//
-			//
+			// 
 			// reloadItem
-			//
+			// 
 			reloadItem.Text = "Rescan Local Files";
 			reloadItem.Click += ReloadItem_Click;
-			//
+			// 
 			// deleteItem
-			//
+			// 
 			deleteItem.Text = "Delete from Disk";
 			deleteItem.Click += DeleteItem_Click;
-			//
+			// 
 			// flatViewContextMenu
-			//
+			// 
 			flatViewContextMenu.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { flatViewContextMenuItems });
-			//
+			// 
 			// flatViewContextMenuItems
-			//
+			// 
 			flatViewContextMenuItems.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { jumpToFolderItem });
-			//
+			// 
 			// jumpToFolderItem
-			//
+			// 
 			jumpToFolderItem.Text = "Jump to Folder";
 			jumpToFolderItem.Click += JumpToFolderItem_Click;
-			//
+			// 
 			// onlineContextMenu
-			//
+			// 
 			onlineContextMenu.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { onlineContextMenuItems });
-			//
+			// 
 			// onlineContextMenuItems
-			//
+			// 
 			onlineContextMenuItems.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { downloadAndPlayItem, downloadToPlaylistItem, downloadToDiskItem, onlineSeparator, jumpToFolderItem });
-			//
+			// 
 			// downloadAndPlayItem
-			//
+			// 
 			downloadAndPlayItem.Text = "Download and Play";
 			downloadAndPlayItem.Click += DownloadAndPlayItem_Click;
-			//
+			// 
 			// downloadToPlaylistItem
-			//
+			// 
 			downloadToPlaylistItem.Text = "Download to Playlist";
 			downloadToPlaylistItem.Click += DownloadToPlaylistItem_Click;
-			//
+			// 
 			// downloadToDiskItem
-			//
+			// 
 			downloadToDiskItem.Text = "Download to Disk";
 			downloadToDiskItem.Click += DownloadToDiskItem_Click;
-			//
-			// onlineSeparator
-			//
-			//
+			// 
 			// searchPanel
 			// 
 			searchPanel.Controls.Add(searchButton);
@@ -307,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			searchButton.Size = new System.Drawing.Size(22, 22);
 			searchButton.TabIndex = 1;
 			searchButton.Values.Image = Resources.IDB_SEARCH;
-			searchButton.Values.Text = string.Empty;
+			searchButton.Values.Text = "";
 			searchButton.Click += SearchButton_Click;
 			// 
 			// searchTextBox
@@ -320,7 +313,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			searchTextBox.TextChanged += SearchTextBox_TextChanged;
 			// 
 			// searchModeComboBox
-			//
+			// 
 			searchModeComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
 			searchModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			searchModeComboBox.DropDownWidth = 200;
@@ -331,9 +324,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			searchModeComboBox.Size = new System.Drawing.Size(250, 22);
 			searchModeComboBox.TabIndex = 2;
 			searchModeComboBox.SelectedIndexChanged += SearchModeComboBox_SelectedIndexChanged;
-			//
+			// 
 			// infoBarPanel
-			//
+			// 
 			infoBarPanel.AutoSize = true;
 			infoBarPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			infoBarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -342,7 +335,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			infoBarPanel.Size = new System.Drawing.Size(884, 0);
 			infoBarPanel.TabIndex = 9;
 			infoBarPanel.Visible = false;
-			//
+			// 
 			// modeTabControl
 			// 
 			modeTabControl.Controls.Add(onlineTabPage);
@@ -405,33 +398,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			columnSize.Width = 100;
 			// 
 			// statusStrip
-			//
-			statusStrip.ImageScalingSize = new System.Drawing.Size(16, 16);
+			// 
 			statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { cancelDownloadButton, statusLabel, progressBar });
 			statusStrip.Location = new System.Drawing.Point(8, 578);
 			statusStrip.Name = "statusStrip";
-			statusStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 0);
+			statusStrip.Padding = new System.Windows.Forms.Padding(0);
 			statusStrip.Size = new System.Drawing.Size(884, 22);
 			statusStrip.TabIndex = 8;
-			//
+			// 
 			// cancelDownloadButton
-			//
+			// 
 			cancelDownloadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			cancelDownloadButton.Name = "cancelDownloadButton";
-			cancelDownloadButton.Size = new System.Drawing.Size(50, 19);
+			cancelDownloadButton.Size = new System.Drawing.Size(47, 28);
 			cancelDownloadButton.Text = "Cancel";
 			cancelDownloadButton.Visible = false;
 			cancelDownloadButton.Click += CancelDownloadButton_Click;
-			//
+			// 
 			// statusLabel
-			//
+			// 
 			statusLabel.Name = "statusLabel";
-			statusLabel.Size = new System.Drawing.Size(0, 0);
+			statusLabel.Size = new System.Drawing.Size(884, 17);
 			statusLabel.Spring = true;
 			statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			//
+			// 
 			// progressBar
-			//
+			// 
 			progressBar.Name = "progressBar";
 			progressBar.Size = new System.Drawing.Size(200, 24);
 			progressBar.Visible = false;
@@ -450,6 +442,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			Controls.Add(playImmediatelyCheckBox);
 			Controls.Add(infoBarPanel);
 			Controls.Add(statusStrip);
+			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(600, 480);
 			Name = "ModLibraryWindowForm";
@@ -459,10 +452,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			FormClosed += ModLibraryForm_FormClosed;
 			Shown += ModLibraryForm_Shown;
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
+			checkboxPanel.ResumeLayout(false);
+			checkboxPanel.PerformLayout();
 			searchPanel.ResumeLayout(false);
 			searchPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)searchModeComboBox).EndInit();
-				modeTabControl.ResumeLayout(false);
+			modeTabControl.ResumeLayout(false);
 			statusStrip.ResumeLayout(false);
 			statusStrip.PerformLayout();
 			ResumeLayout(false);

@@ -3,21 +3,33 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Windows.Forms;
+using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events
 {
 	/// <summary>
-	/// API for the Module Library window
+	/// Event args for tree build completion
 	/// </summary>
-	public interface IModLibraryWindowApi
+	internal class TreeBuildCompletedEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Return the form of the Module Library window
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		Form Form
+		public TreeBuildCompletedEventArgs(TreeNode tree)
+		{
+			ResultTree = tree;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The resulting tree structure
+		/// </summary>
+		/********************************************************************/
+		public TreeNode ResultTree
 		{
 			get;
 		}

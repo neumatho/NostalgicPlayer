@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events
 {
 	/// <summary>
 	/// Event args for download completion
@@ -26,6 +26,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 			ErrorMessage = errorMessage;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// The tree node entry that was downloaded
@@ -35,6 +37,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 		{
 			get;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -46,6 +50,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 			get;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Whether file should be played immediately
@@ -56,6 +62,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 			get;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Whether download was successful
@@ -65,6 +73,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events
 		{
 			get;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>

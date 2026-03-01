@@ -3,13 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow.Events;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Sort order for flat view
@@ -33,7 +32,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		// Current search results
 		private TreeNode currentTree;
 
-
 		/********************************************************************/
 		/// <summary>
 		/// Get or set local mode
@@ -44,6 +42,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			get;
 			set;
 		}
+
 
 
 		/********************************************************************/
@@ -60,6 +59,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Get current search filter
@@ -72,6 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		} = string.Empty;
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Get all available services
@@ -82,12 +83,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			get;
 		} = new();
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Event fired when data loading is completed
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler DataLoaded;
+
 
 
 		/********************************************************************/
@@ -113,6 +117,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			return count;
 		}
+
 
 
 		/********************************************************************/
@@ -146,6 +151,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Called when search is completed
@@ -162,6 +168,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			// Notify UI (already on UI thread via FilteredTreeBuilder)
 			DataLoaded?.Invoke(this, EventArgs.Empty);
 		}
+
 
 
 		/********************************************************************/
@@ -196,6 +203,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Add a service to the library
@@ -207,13 +215,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Build tree with optional filter (empty filter shows all files)
 		/// </summary>
 		/********************************************************************/
-		public void BuildTree(string filter, SearchMode searchMode = SearchMode.FilenameAndPath,
-			bool isFlatView = false)
+		public void BuildTree(string filter, SearchMode searchMode = SearchMode.FilenameAndPath, bool isFlatView = false)
 		{
 			SearchFilter = filter.Trim();
 
@@ -232,6 +240,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Clear local files
@@ -244,6 +253,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 				localFiles.Clear();
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -260,6 +270,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			return CountFilesRecursive(currentTree);
 		}
+
 
 
 		/********************************************************************/
@@ -288,6 +299,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			return path;
 		}
+
 
 
 		/********************************************************************/
@@ -408,6 +420,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Get relative path without service prefix
@@ -424,6 +437,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Get service by ID
@@ -433,6 +447,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		{
 			return Services.FirstOrDefault(s => s.Id == serviceId);
 		}
+
 
 
 		/********************************************************************/
@@ -452,6 +467,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 
 			return null;
 		}
+
 
 
 		/********************************************************************/

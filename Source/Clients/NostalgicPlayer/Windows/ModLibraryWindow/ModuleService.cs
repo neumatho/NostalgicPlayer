@@ -3,11 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.Collections.Generic;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Represents a module service provider (e.g., ModLand, AMP Archive)
@@ -28,6 +27,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			set;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Folder name for storing service files (filesystem-safe name)
@@ -38,6 +39,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			get;
 			init;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -50,6 +53,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			set;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Whether the service database is loaded
@@ -60,6 +65,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			get;
 			set;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -72,6 +79,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			set;
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Get readonly access to offline files
@@ -79,12 +88,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		/********************************************************************/
 		public IReadOnlyList<ModEntry> OfflineFiles => offlineFiles;
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Get readonly access to online files
 		/// </summary>
 		/********************************************************************/
 		public IReadOnlyList<ModEntry> OnlineFiles => onlineFiles;
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -96,6 +109,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 			get;
 			set;
 		}
+
 
 
 		/********************************************************************/
@@ -110,6 +124,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Add online file - creates ModEntry from already sorted
@@ -122,6 +137,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Clear offline files
@@ -131,6 +147,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow
 		{
 			offlineFiles.Clear();
 		}
+
 
 
 		/********************************************************************/

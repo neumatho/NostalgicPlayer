@@ -18,7 +18,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
@@ -28,6 +27,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -3306,7 +3306,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			if (mainWindowSettings.OpenModLibraryWindow)
 			{
-				modLibraryWindow = new ModLibraryWindowForm(mainWindowApiAdapter);
+				modLibraryWindow = formCreatorService.GetFormInstance<ModLibraryWindowForm>();
 				modLibraryWindow.Show();
 			}
 
@@ -5410,7 +5410,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				modLibraryWindow = new ModLibraryWindowForm(mainWindowApiAdapter);
+				modLibraryWindow = formCreatorService.GetFormInstance<ModLibraryWindowForm>();
 				modLibraryWindow.Disposed += (o, args) => { modLibraryWindow = null; };
 				modLibraryWindow.Show();
 			}
