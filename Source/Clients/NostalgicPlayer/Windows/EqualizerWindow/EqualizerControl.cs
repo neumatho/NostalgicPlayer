@@ -10,7 +10,7 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 {
 	/// <summary>
 	/// Equalizer control for the Mixer settings page

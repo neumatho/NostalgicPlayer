@@ -15,7 +15,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
@@ -27,6 +26,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -5528,7 +5528,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				equalizerWindow = new EqualizerWindowForm();
+				equalizerWindow = formCreatorService.GetFormInstance<EqualizerWindowForm>();
 				equalizerWindow.Disposed += (o, args) => { equalizerWindow = null; };
 				equalizerWindow.Show();
 			}
@@ -5558,7 +5558,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			if (mainWindowSettings.OpenEqualizerWindow)
 			{
-				equalizerWindow = new EqualizerWindowForm();
+				equalizerWindow = formCreatorService.GetFormInstance<EqualizerWindowForm>();
 				equalizerWindow.Show();
 			}
 		}

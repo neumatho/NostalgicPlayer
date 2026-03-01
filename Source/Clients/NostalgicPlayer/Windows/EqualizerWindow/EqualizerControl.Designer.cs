@@ -1,4 +1,4 @@
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.EqualizerWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 {
 	partial class EqualizerControl
 	{
