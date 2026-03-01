@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		private IAudiusWindowApi audiusWindowApi;
 		private IAudiusClientFactory clientFactory;
 		private IAudiusHelper audiusHelper;
-		private IFormCreatorService formCreatorService;
+		private IControlInitializerService controlInitializerService;
 
 		private IPictureDownloader pictureDownloader;
 
@@ -57,11 +57,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeControl(IAudiusHelper audiusHelper, IAudiusClientFactory audiusClientFactory, IFormCreatorService formCreatorService)
+		public void InitializeControl(IAudiusHelper audiusHelper, IAudiusClientFactory audiusClientFactory, IControlInitializerService controlInitializerService)
 		{
 			this.audiusHelper = audiusHelper;
 			clientFactory = audiusClientFactory;
-			this.formCreatorService = formCreatorService;
+			this.controlInitializerService = controlInitializerService;
 		}
 
 		#region IAudiusPage implementation
@@ -202,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 
 				Controls.Add(profileControl);
 
-				formCreatorService.InitializeControl(profileControl);
+				controlInitializerService.InitializeSingleControl(profileControl);
 				profileControl.Initialize(e.Item.User, audiusWindowApi, pictureDownloader);
 			}
 		}

@@ -8,14 +8,19 @@ using System.Windows.Forms;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
 	/// <summary>
-	/// Helper to instance Windows Form objects
+	/// Initialize controls with dependency injection
 	/// </summary>
-	public interface IFormCreatorService
+	public interface IControlInitializerService
 	{
 		/// <summary>
-		/// Will create a new instance of the window type given and call
-		/// InitializeForm() on it while resolving dependencies
+		/// Initialize a collection of controls with dependency injections
 		/// </summary>
-		T GetFormInstance<T>() where T : Form, new();
+		void InitializeControls(Control.ControlCollection controls);
+
+		/// <summary>
+		/// Initialize a single control and its child controls with
+		/// dependency injections
+		/// </summary>
+		void InitializeSingleControl(Control control);
 	}
 }

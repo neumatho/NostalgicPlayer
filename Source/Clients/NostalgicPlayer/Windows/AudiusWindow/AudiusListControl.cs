@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 	public partial class AudiusListControl : UserControl, IDependencyInjectionControl
 	{
 		private IMainWindowApi mainWindowApi;
-		private IFormCreatorService formCreatorService;
+		private IControlInitializerService controlInitializerService;
 		private IPictureDownloader pictureDownloader;
 
 		/********************************************************************/
@@ -48,10 +48,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeControl(IMainWindowApi mainWindowApi, IFormCreatorService formCreatorService)
+		public void InitializeControl(IMainWindowApi mainWindowApi, IControlInitializerService controlInitializerService)
 		{
 			this.mainWindowApi = mainWindowApi;
-			this.formCreatorService = formCreatorService;
+			this.controlInitializerService = controlInitializerService;
 		}
 
 		#region Public methods
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 						else
 							continue;
 
-						formCreatorService.InitializeControl(listItem as Control);
+						controlInitializerService.InitializeSingleControl(listItem as Control);
 						listItem.Initialize(item);
 
 						flowLayoutPanel.Controls.Add(listItem.Control);
