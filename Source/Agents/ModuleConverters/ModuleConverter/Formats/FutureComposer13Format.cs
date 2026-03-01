@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			// If sequence length is zero, calculate it based on the offsets.
 			// This fixes the cult.fc module
 			if (seqLength == 0)
-				seqLength = offsetsAndLength[0] - 0x100;
+				seqLength = offsetsAndLength[0] - 0x64;
 
 			// Make the sequence length even
 			if ((seqLength % 2) != 0)
