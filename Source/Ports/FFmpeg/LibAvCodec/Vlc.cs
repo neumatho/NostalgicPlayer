@@ -109,12 +109,16 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 				return 0;
 			}
 
-			Copy((len) => len > (c_uint)nb_Bits);
+			ret = Copy((len) => len > (c_uint)nb_Bits);
+			if (ret != 0)
+				return ret;
 
 			// qsort is the slowest part of vlc_init, and could probably be improved or avoided
 			QSort.Av_QSort<VlcCode>(buf, j, Compare_VlcSpec);
 
-			Copy((len) => (len != 0) && (len <= nb_Bits));
+			ret = Copy((len) => (len != 0) && (len <= nb_Bits));
+			if (ret != 0)
+				return ret;
 
 			nb_Codes = j;
 

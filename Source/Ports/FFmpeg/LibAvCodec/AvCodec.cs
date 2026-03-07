@@ -392,6 +392,41 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 		/********************************************************************/
 		/// <summary>
+		/// Reset the internal codec state / flush internal buffers. Should
+		/// be called e.g. when seeking or when switching to a different
+		/// stream.
+		///
+		/// Note for decoders, this function just releases any references
+		/// the decoder might keep internally, but the caller's references
+		/// remain valid
+		/// </summary>
+		/********************************************************************/
+		public static void AvCodec_Flush_Buffers(AvCodecContext avCtx)//XX 380
+		{
+			AvCodecInternal avci = avCtx.Internal;
+
+			if (Utils_Codec.Av_Codec_Is_Encoder(avCtx.Codec))
+				return;
+
+			Decode.FF_Decode_Flush_Buffers(avCtx);
+
+			avci.Draining = 0;
+			avci.Draining_Done = 0;
+
+			if (avci.Buffer_Frame != null)
+				Frame.Av_Frame_Unref(avci.Buffer_Frame);
+
+			if (avci.Buffer_Pkt != null)
+				Packet.Av_Packet_Unref(avci.Buffer_Pkt);
+
+			if (Codec_Internal.FFCodec(avCtx.Codec).Flush != null)
+				Codec_Internal.FFCodec(avCtx.Codec).Flush(avCtx);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Free all allocated data in the given subtitle struct
 		/// </summary>
 		/********************************************************************/

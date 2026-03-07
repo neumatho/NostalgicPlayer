@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 			}
 			else if (sample_Rate1 == 16000)
 			{
-				if (bps >= 0.5f)
+				if (bps > 0.5f)
 					high_Freq = high_Freq * 0.5f;
 				else
 					high_Freq = high_Freq * 0.3f;
@@ -525,7 +525,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 			}
 
 			c_int i = 2;
-			c_int level = 2;
+			c_int level = 1;
 			c_int k = 0;
 
 			while (i < n)

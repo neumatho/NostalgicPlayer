@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -478,6 +477,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 			double seconds = time.TotalSeconds;
 
 			Seek.Av_Seek_Frame(formatContext, -1, (long)(seconds * UtilConstants.Av_Time_Base), AvSeekFlag.Any);
+
+			AvCodec_.AvCodec_Flush_Buffers(decoderContext);
+
+			Frame.Av_Frame_Unref(frame);
+			inputTaken = 0;
 		}
 		#endregion
 

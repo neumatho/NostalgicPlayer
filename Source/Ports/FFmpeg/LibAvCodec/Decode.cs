@@ -790,6 +790,30 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static void FF_Decode_Flush_Buffers(AvCodecContext avCtx)//XX 2295
+		{
+			AvCodecInternal avci = avCtx.Internal;
+			DecodeContext dc = Decode_Ctx(avci);
+
+			Packet.Av_Packet_Unref(avci.Last_Pkt_Props);
+			Packet.Av_Packet_Unref(avci.In_Pkt);
+
+			dc.Pts_Correction_Last_Pts = dc.Pts_Correction_Last_Dts = int64_t.MinValue;
+
+			if (avci.Bsf != null)
+				Bsf.Av_Bsf_Flush(avci.Bsf);
+
+			dc.Nb_Draining_Errors = 0;
+			dc.Draining_Started = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
 		public static void FF_Decode_Internal_Uninit(AvCodecContext avCtx)//XX 2328
 		{
 			AvCodecInternal avci = avCtx.Internal;

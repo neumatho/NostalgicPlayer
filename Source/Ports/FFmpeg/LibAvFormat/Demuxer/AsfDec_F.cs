@@ -189,7 +189,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 				case AsfDataType.QWord:
 				case AsfDataType.Word:
 				{
-					uint64_t num = (uint16_t)Get_Value(s.Pb, type, type2_Size);
+					uint64_t num = (uint64_t)Get_Value(s.Pb, type, type2_Size);
 					CString.snprintf(value, Len, "%lld", num);
 					break;
 				}
@@ -1657,6 +1657,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 			asf.Packet_Size_Left = 0;
 			asf.Packet_Flags = 0;
 			asf.Packet_Property = 0;
+			asf.Packet_Timestamp = 0;
 			asf.Packet_Frag_Timestamp = 0;
 			asf.Packet_SegSizeType = 0;
 			asf.Packet_Segments = 0;
@@ -1849,7 +1850,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 					c_int pktNum = (c_int)AvIoBuf.AvIo_RL32(s.Pb);
 					c_int pktCt = (c_int)AvIoBuf.AvIo_RL16(s.Pb);
 
-					int64_t pos = Internal.FFFormatContext(s).Data_Offset + (s.Packet_Size * pktNum);
+					int64_t pos = Internal.FFFormatContext(s).Data_Offset + (s.Packet_Size * (int64_t)pktNum);
 					int64_t index_Pts = Macros.FFMax(Mathematics.Av_Rescale(iTime, i, 10000) - asf.Hdr.Preroll, 0);
 
 					if (AvIoBuf.AvIo_FEof(s.Pb) != 0)

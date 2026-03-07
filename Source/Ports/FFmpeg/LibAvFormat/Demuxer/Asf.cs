@@ -137,9 +137,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 			{
 				if (Dict.Av_Dict_Set(ref st.Metadata, "title", desc, AvDict.Dont_Strdup_Val) < 0)
 					Log.Av_Log(s, Log.Av_Log_Warning, "av_dict_set failed.\n");
-				else
-					Mem.Av_FreeP(ref desc);
 			}
+			else
+				Mem.Av_FreeP(ref desc);
 
 			if (Dict.Av_Dict_Set(ref st.Metadata, "comment", Id3v2.ff_Id3v2_Picture_Types[type], AvDict.None) < 0)
 				Log.Av_Log(s, Log.Av_Log_Warning, "av_dict_set failed.\n");

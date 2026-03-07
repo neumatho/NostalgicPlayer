@@ -639,7 +639,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				Max_Len = UtilConstants.Tx_Len_Unlimited,
 				Init = FF_Tx_Mdct_Naive_Init,
 				Cpu_Flags = AvCpuFlag.FF_All,
-				Prio = FFTxCodeletPriority.Base
+				Prio = FFTxCodeletPriority.Min
 			};
 			ff_Tx_Mdct_Naive_Fwd_Def.Factors[0] = 2;
 			ff_Tx_Mdct_Naive_Fwd_Def.Factors[1] = UtilConstants.Tx_Factor_Any;
@@ -655,7 +655,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				Max_Len = UtilConstants.Tx_Len_Unlimited,
 				Init = FF_Tx_Mdct_Naive_Init,
 				Cpu_Flags = AvCpuFlag.FF_All,
-				Prio = FFTxCodeletPriority.Base
+				Prio = FFTxCodeletPriority.Min
 			};
 			ff_Tx_Mdct_Naive_Inv_Def.Factors[0] = 2;
 			ff_Tx_Mdct_Naive_Inv_Def.Factors[1] = UtilConstants.Tx_Factor_Any;
@@ -975,7 +975,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				Name = $"rdft_{n}_{typeName.ToLower()}_c".ToCharPointer(),
 				Function = f,
 				Type = Tx_Type("Rdft"),
-				Flags = AvTxFlags.Unaligned | AvTxFlags.Inplace | AvTxFlags.FF_Out_Of_Place | AvTxFlags.FF_Forward_Only | (inv ? AvTxFlags.FF_Inverse_Only : AvTxFlags.FF_Forward_Only),
+				Flags = AvTxFlags.Unaligned | AvTxFlags.Inplace | AvTxFlags.FF_Out_Of_Place | (inv ? AvTxFlags.FF_Inverse_Only : AvTxFlags.FF_Forward_Only),
 				Nb_Factors = 2,
 				Min_Len = 4,
 				Max_Len = UtilConstants.Tx_Len_Unlimited,
@@ -1567,8 +1567,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 			x[1].Re = (tab[1].Re * w[0].Re) + (tab[2].Im * w[1].Re);
 			x[1].Im = (tab[1].Re * w[0].Im) + (tab[2].Im * w[1].Im);
-			x[2].Re = (tab[2].Re * w[0].Re) - (tab[3].Re * w[1].Re);
-			x[2].Im = (tab[2].Re * w[0].Im) - (tab[3].Re * w[1].Im);
+			x[2].Re = (tab[2].Im * w[0].Re) - (tab[3].Re * w[1].Re);
+			x[2].Im = (tab[2].Im * w[0].Im) - (tab[3].Re * w[1].Im);
 			y[1].Re = (tab[1].Im * w[2].Re) + (tab[2].Re * w[3].Re);
 			y[1].Im = (tab[1].Im * w[2].Im) + (tab[2].Re * w[3].Im);
 			y[2].Re = (tab[2].Re * w[2].Re) - (tab[3].Im * w[3].Re);
@@ -1754,7 +1754,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				Transform(ref z[0], ref z[o1 + 0], ref z[o2 + 0], ref z[o3 + 0], cos[0], wim[7], out t1, out t2, out t3, out t4, out t5, out t6);
 				Transform(ref z[2], ref z[o1 + 2], ref z[o2 + 2], ref z[o3 + 2], cos[2], wim[5], out t1, out t2, out t3, out t4, out t5, out t6);
 				Transform(ref z[4], ref z[o1 + 4], ref z[o2 + 4], ref z[o3 + 4], cos[4], wim[3], out t1, out t2, out t3, out t4, out t5, out t6);
-				Transform(ref z[6], ref z[o1 + 6], ref z[o2 + 6], ref z[o3 + 6], cos[6], wim[6], out t1, out t2, out t3, out t4, out t5, out t6);
+				Transform(ref z[6], ref z[o1 + 6], ref z[o2 + 6], ref z[o3 + 6], cos[6], wim[1], out t1, out t2, out t3, out t4, out t5, out t6);
 
 				Transform(ref z[1], ref z[o1 + 1], ref z[o2 + 1], ref z[o3 + 1], cos[1], wim[6], out t1, out t2, out t3, out t4, out t5, out t6);
 				Transform(ref z[3], ref z[o1 + 3], ref z[o2 + 3], ref z[o3 + 3], cos[3], wim[4], out t1, out t2, out t3, out t4, out t5, out t6);
@@ -2523,7 +2523,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				c_int len2 = len / len1;
 
 				// Our ptwo transforms don't support striding the output
-				if ((len2 != 0) && ((len2 - 1) != 0))
+				if ((len2 & (len2 - 1)) != 0)
 					Macros.FFSwap(ref len1, ref len2);
 
 				Tx.FF_Tx_Clear_Ctx(s);
@@ -2535,7 +2535,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				flags |= AvTxFlags.FF_Out_Of_Place;
 				flags |= AvTxFlags.FF_Preshuffle;		// This function handles the permute step
 
-				ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len, inv, _scale);
+				ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len1, inv, _scale);
 
 				if (ret == Error.ENOMEM)
 					return ret;
@@ -2543,7 +2543,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				{
 					flags &= ~AvTxFlags.FF_Preshuffle;
 
-					ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len, inv, _scale);
+					ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len1, inv, _scale);
 
 					if (ret == Error.ENOMEM)
 						return ret;
@@ -2559,7 +2559,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				flags &= ~AvTxFlags.FF_Out_Of_Place;
 				flags |= AvTxFlags.Inplace;
 
-				ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len, inv, _scale);
+				ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len2, inv, _scale);
 
 				if (ret == Error.ENOMEM)
 					return ret;
@@ -2568,7 +2568,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					flags |= AvTxFlags.FF_Out_Of_Place;
 					flags &= ~AvTxFlags.Inplace;
 
-					ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len, inv, _scale);
+					ret = Tx.FF_Tx_Init_SubTx(s, Tx_Type("Fft"), flags, sub_Opts, len2, inv, _scale);
 
 					if (ret == Error.ENOMEM)
 						return ret;
@@ -3724,7 +3724,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		private void FF_Tx_DctIII(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1943
 		{
-			DoDctII(s, _dst.ToPointer<TXSample>(), _src.ToPointer<TXSample>(), stride);
+			DoDctIII(s, _dst.ToPointer<TXSample>(), _src.ToPointer<TXSample>(), stride);
 		}
 
 
@@ -3837,7 +3837,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		{
 			CPointer<TXSample> dst = _dst.ToPointer<TXSample>();
 			CPointer<TXSample> src = _src.ToPointer<TXSample>();
-			c_int len = s.Len - 1;
+			c_int len = s.Len + 1;
 			CPointer<TXSample> tmp = s.Tmp.ToPointer<TXSample>();
 
 			stride /= Marshal.SizeOf<TXSample>();
