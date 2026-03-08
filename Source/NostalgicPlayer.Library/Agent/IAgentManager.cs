@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/// <summary>
 		/// Callback used when loading agents to inform about the progress
 		/// </summary>
-		delegate void LoadAgentProgress(int numberLoaded, int totalNumbers);
+		delegate void LoadAgentProgressHandler(int numberLoaded, int totalNumbers);
 
 		/// <summary>
 		/// Will load all available agents into memory
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/// Will load all available agents into memory and call the callback
 		/// for each agent loaded
 		/// </summary>
-		void LoadAllAgents(LoadAgentProgress callback);
+		void LoadAllAgents(LoadAgentProgressHandler callback);
 
 		/// <summary>
 		/// Will return information about the given agent type

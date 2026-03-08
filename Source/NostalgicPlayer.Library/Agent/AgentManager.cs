@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/// for each agent loaded
 		/// </summary>
 		/********************************************************************/
-		public void LoadAllAgents(IAgentManager.LoadAgentProgress callback)
+		public void LoadAllAgents(IAgentManager.LoadAgentProgressHandler callback)
 		{
 			// Initialize the agent type dictionary
 			foreach (AgentType agentType in Enum.GetValues(typeof(AgentType)))
@@ -309,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		/// Will load all available agents
 		/// </summary>
 		/********************************************************************/
-		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet, IAgentManager.LoadAgentProgress callback)
+		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet, IAgentManager.LoadAgentProgressHandler callback)
 		{
 			// Build the search directory
 			string searchDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

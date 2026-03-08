@@ -20,15 +20,15 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		/// <summary>
 		/// 
 		/// </summary>
-		public delegate void Configure_Handler(IApplicationContext context);
+		public delegate void ConfigureHandler(IApplicationContext context);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public delegate void Initialization_Handler();
+		public delegate void InitializationHandler();
 
-		private event Configure_Handler configure;
-		private event Initialization_Handler initialize;
+		private event ConfigureHandler configure;
+		private event InitializationHandler initialize;
 
 		private readonly string[] arguments;
 
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		/// Register handler to do the container configuration
 		/// </summary>
 		/********************************************************************/
-		public ApplicationBuilder ConfigureContainer(Configure_Handler handler)
+		public ApplicationBuilder ConfigureContainer(ConfigureHandler handler)
 		{
 			configure += handler;
 
@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Library.Application
 		/// Register handler to do the application initialization
 		/// </summary>
 		/********************************************************************/
-		public ApplicationBuilder ConfigureInitialization(Initialization_Handler handler)
+		public ApplicationBuilder ConfigureInitialization(InitializationHandler handler)
 		{
 			initialize += handler;
 

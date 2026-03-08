@@ -4010,7 +4010,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will load all available agents
 		/// </summary>
 		/********************************************************************/
-		private void LoadAgents(IAgentManager.LoadAgentProgress loadProgress)
+		private void LoadAgents(IAgentManager.LoadAgentProgressHandler loadProgress)
 		{
 			agentManager.LoadAllAgents(loadProgress);
 
