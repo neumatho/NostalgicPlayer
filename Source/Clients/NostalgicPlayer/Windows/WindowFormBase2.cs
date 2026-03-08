@@ -5,9 +5,12 @@
 /******************************************************************************/
 using System.Drawing;
 using System.Windows.Forms;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Controls.Forms;
+using Polycode.NostalgicPlayer.Controls.Theme;
+using Polycode.NostalgicPlayer.Controls.Theme.Purple;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -16,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 	/// <summary>
 	/// Use the class as the base class for all windows
 	/// </summary>
-	public class WindowFormBase : KryptonForm, IWindowForm
+	public class WindowFormBase2 : NostalgicForm, IWindowForm
 	{
 		/// <summary>
 		/// Holds all the settings for the form itself
@@ -36,23 +39,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 
 		private OptionSettings optionSettings;
 		private WindowSettings windowSettings;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		protected WindowFormBase()//XX skal slettes når alle forms kører DI
-		{
-			if (DependencyInjection.Container != null)
-			{
-				mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-				allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
-				optionSettings = DependencyInjection.Container.GetInstance<OptionSettings>();
-			}
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>
@@ -120,6 +106,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
+			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);
@@ -215,11 +202,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 
 						break;
 					}
+
+					//XX Denne skal slettes når jeg er færdig
+					case Keys.F12:
+					{
+						theme = !theme;
+						ThemeManagerFactory.GetThemeManager().SwitchTheme(theme ? new PurpleTheme() : new StandardTheme());
+
+						return true;
+					}
 				}
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
+		private bool theme = false;
 
 
 
