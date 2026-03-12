@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// This function generates a Ruritanian PFA input map into s.Map
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tx_Gen_Pfa_Input_Map(AvTxContext s, FFTxCodeletOptions opts, c_int d1, c_int d2)//XX 44
+		public static c_int FF_Tx_Gen_Pfa_Input_Map(AvTxContext s, FFTxCodeletOptions opts, c_int d1, c_int d2)
 		{
 			c_int sl = d1 * d2;
 
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// flattened
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tx_Gen_Compound_Mapping(AvTxContext s, FFTxCodeletOptions opts, c_int inv, c_int n, c_int m)//XX 75
+		public static c_int FF_Tx_Gen_Compound_Mapping(AvTxContext s, FFTxCodeletOptions opts, c_int inv, c_int n, c_int m)
 		{
 			c_int len = n * m;		// Will not be equal to s->len for MDCTs
 
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tx_Gen_PTwo_RevTab(AvTxContext s, FFTxCodeletOptions opts)//XX 136
+		public static c_int FF_Tx_Gen_PTwo_RevTab(AvTxContext s, FFTxCodeletOptions opts)
 		{
 			c_int len = s.Len;
 
@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// The sub-transform and its map should already be initialized
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tx_Gen_Inplace_Map(AvTxContext s, c_int len)//XX 156
+		public static c_int FF_Tx_Gen_Inplace_Map(AvTxContext s, c_int len)
 		{
 			c_int out_Map_Idx = 0;
 
@@ -272,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Clear the context by freeing all tables, maps and subtransforms
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Tx_Clear_Ctx(AvTxContext s)//XX 290
+		public static void FF_Tx_Clear_Ctx(AvTxContext s)
 		{
 			Reset_Ctx(s, 0);
 		}
@@ -285,7 +285,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// *ctx == NULL
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Tx_Uninit(ref AvTxContext ctx)//XX 295
+		public static void Av_Tx_Uninit(ref AvTxContext ctx)
 		{
 			if (ctx == null)
 				return;
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// len / dst1 == dst2, where dst1 and dst2 are coprime
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tx_Decompose_Length(CPointer<c_int> dst, AvTxType type, c_int len, c_int inv)//XX 412
+		public static c_int FF_Tx_Decompose_Length(CPointer<c_int> dst, AvTxType type, c_int len, c_int inv)
 		{
 			c_int nb_Decomp = 0;
 			FFTxLenDecomp[] ld = new FFTxLenDecomp[UtilConstants.Tx_Max_Decompositions];
@@ -436,7 +436,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// transforms) for a context
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tx_Gen_Default_Map(AvTxContext s, FFTxCodeletOptions opts)//XX 525
+		public static c_int FF_Tx_Gen_Default_Map(AvTxContext s, FFTxCodeletOptions opts)
 		{
 			s.Map = Mem.Av_MAlloc<c_int>((size_t)s.Len);
 
@@ -471,7 +471,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// MUST be called during the sub() callback of each codelet
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tx_Init_SubTx<T>(AvTxContext s, AvTxType type, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, T scale) where T : INumber<T> //XX 712
+		public static c_int FF_Tx_Init_SubTx<T>(AvTxContext s, AvTxType type, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, T scale) where T : INumber<T>
 		{
 			c_int ret = 0;
 			CPointer<AvTxContext> sub = null;
@@ -664,7 +664,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// (i)MDCTs with an odd length are currently not supported
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Tx_Init<T>(out AvTxContext ctx, out UtilFunc.Av_Tx_Fn tx, AvTxType type, c_int inv, c_int len, ref T scale, AvTxFlags flags) where T : INumber<T>//XX 903
+		public static c_int Av_Tx_Init<T>(out AvTxContext ctx, out UtilFunc.Av_Tx_Fn tx, AvTxType type, c_int inv, c_int len, ref T scale, AvTxFlags flags) where T : INumber<T>
 		{
 			return Av_Tx_Init(out ctx, out tx, type, inv, len, ref scale, true, flags);
 		}
@@ -677,7 +677,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// (i)MDCTs with an odd length are currently not supported
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Tx_Init<T>(out AvTxContext ctx, out UtilFunc.Av_Tx_Fn tx, AvTxType type, c_int inv, c_int len, AvTxFlags flags) where T : INumber<T>//XX 903
+		public static c_int Av_Tx_Init<T>(out AvTxContext ctx, out UtilFunc.Av_Tx_Fn tx, AvTxType type, c_int inv, c_int len, AvTxFlags flags) where T : INumber<T>
 		{
 			T scale = T.Zero;
 
@@ -691,7 +691,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static bool Type_Is(AvTxType type, params AvTxType[] x)//XX 28
+		private static bool Type_Is(AvTxType type, params AvTxType[] x)
 		{
 			return x.Contains(type);
 		}
@@ -704,7 +704,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int MulInv(c_int n, c_int m)//XX 34
+		private static c_int MulInv(c_int n, c_int m)
 		{
 			n = n % m;
 
@@ -725,7 +725,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int Split_Radix_Permutation(c_int i, c_int len, c_int inv)//XX 125
+		private static c_int Split_Radix_Permutation(c_int i, c_int len, c_int inv)
 		{
 			len >>= 1;
 
@@ -747,7 +747,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Reset_Ctx(AvTxContext s, c_int free_Sub)//XX 264
+		private static void Reset_Ctx(AvTxContext s, c_int free_Sub)
 		{
 			if (s == null)
 				return;
@@ -783,7 +783,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int FF_Tx_Null_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 304
+		private static c_int FF_Tx_Null_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			// Can only handle one sample+type to one sample+type transforms
 			if (Type_Is(s.Type, AvTxType.Double_Mdct, AvTxType.Float_Mdct, AvTxType.Int32_Mdct) || Type_Is(s.Type, AvTxType.Double_Rdft, AvTxType.Float_Rdft, AvTxType.Int32_Rdft))
@@ -799,7 +799,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Null transform when the length is 1
 		/// </summary>
 		/********************************************************************/
-		private static void FF_Tx_Null(AvTxContext s, IPointer @out, IPointer @in, ptrdiff_t stride)//XX 315
+		private static void FF_Tx_Null(AvTxContext s, IPointer @out, IPointer @in, ptrdiff_t stride)
 		{
 			CMemory.memcpy(@out, @in, 1);
 		}
@@ -811,7 +811,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Codelet_Prio(FFTxCodelet cd, AvCpuFlag cpu_Flags, c_int len)//XX 367
+		private static c_int Get_Codelet_Prio(FFTxCodelet cd, AvCpuFlag cpu_Flags, c_int len)
 		{
 			c_int prio = cd.Prio;
 			c_int max_Factor = 0;
@@ -853,7 +853,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Cmp_Decomp(FFTxLenDecomp a, FFTxLenDecomp b)//XX 407
+		private static c_int Cmp_Decomp(FFTxLenDecomp a, FFTxLenDecomp b)
 		{
 			return Macros.FFDiffSign(b.Prio, a.Prio);
 		}
@@ -865,7 +865,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Cmp_Matches(TxCodeletMatch a, TxCodeletMatch b)//XX 670
+		private static c_int Cmp_Matches(TxCodeletMatch a, TxCodeletMatch b)
 		{
 			return Macros.FFDiffSign(b.Prio, a.Prio);
 		}
@@ -878,7 +878,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int Check_Cd_Factors(FFTxCodelet cd, c_int len)//XX 676
+		private static c_int Check_Cd_Factors(FFTxCodelet cd, c_int len)
 		{
 			c_int matches = 0, any_Flag = 0;
 
@@ -933,7 +933,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// (i)MDCTs with an odd length are currently not supported
 		/// </summary>
 		/********************************************************************/
-		private static c_int Av_Tx_Init<T>(out AvTxContext ctx, out UtilFunc.Av_Tx_Fn tx, AvTxType type, c_int inv, c_int len, ref T scale, bool hasScale, AvTxFlags flags) where T : INumber<T>//XX 903
+		private static c_int Av_Tx_Init<T>(out AvTxContext ctx, out UtilFunc.Av_Tx_Fn tx, AvTxType type, c_int inv, c_int len, ref T scale, bool hasScale, AvTxFlags flags) where T : INumber<T>
 		{
 			ctx = null;
 			tx = null;

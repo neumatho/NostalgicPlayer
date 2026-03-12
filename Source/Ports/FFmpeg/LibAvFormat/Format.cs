@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Guess the file format
 		/// </summary>
 		/********************************************************************/
-		public static AvInputFormat Av_Probe_Input_Format3(AvProbeData pd, bool is_Opened, out c_int score_Ret)//XX 156
+		public static AvInputFormat Av_Probe_Input_Format3(AvProbeData pd, bool is_Opened, out c_int score_Ret)
 		{
 			AvProbeData lPd = pd;
 			AvInputFormat fmt = null;
@@ -163,7 +163,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Guess the file format
 		/// </summary>
 		/********************************************************************/
-		public static AvInputFormat Av_Probe_Input_Format2(AvProbeData pd, bool is_Opened, ref c_int score_Max)//XX 235
+		public static AvInputFormat Av_Probe_Input_Format2(AvProbeData pd, bool is_Opened, ref c_int score_Max)
 		{
 			AvInputFormat fmt = Av_Probe_Input_Format3(pd, is_Opened, out c_int score_Ret);
 
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// returned
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Probe_Input_Buffer2(AvIoContext pb, out AvInputFormat fmt, CPointer<char> fileName, IClass logCtx, c_uint offset, c_uint max_Probe_Size)//XX 253
+		public static c_int Av_Probe_Input_Buffer2(AvIoContext pb, out AvInputFormat fmt, CPointer<char> fileName, IClass logCtx, c_uint offset, c_uint max_Probe_Size)
 		{
 			fmt = null;
 

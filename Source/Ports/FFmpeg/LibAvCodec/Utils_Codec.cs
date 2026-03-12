@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool Av_Codec_Is_Encoder(AvCodec avCodec)//XX 79
+		public static bool Av_Codec_Is_Encoder(AvCodec avCodec)
 		{
 			FFCodec codec = Codec_Internal.FFCodec(avCodec);
 
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool Av_Codec_Is_Decoder(AvCodec avCodec)//XX 85
+		public static bool Av_Codec_Is_Decoder(AvCodec avCodec)
 		{
 			FFCodec codec = Codec_Internal.FFCodec(avCodec);
 
@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// on the codec context
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Set_Dimensions(AvCodecContext s, c_int width, c_int height)//XX 91
+		public static c_int FF_Set_Dimensions(AvCodecContext s, c_int width, c_int height)
 		{
 			c_int ret = ImgUtils.Av_Image_Check_Size2((c_uint)width, (c_uint)height, s.Max_Pixels, AvPixelFormat.None, 0, s);
 
@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// May only be used if a codec with AV_CODEC_CAP_DR1 has been opened
 		/// </summary>
 		/********************************************************************/
-		public static void AvCodec_Align_Dimensions2(AvCodecContext s, ref c_int width, ref c_int height, CPointer<c_int> lineSize_Align)//XX 141
+		public static void AvCodec_Align_Dimensions2(AvCodecContext s, ref c_int width, ref c_int height, CPointer<c_int> lineSize_Align)
 		{
 			c_int w_Align = 1;
 			c_int h_Align = 1;
@@ -327,7 +327,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvPriv_Codec_Get_Cap_Skip_Frame_Fill_Param(AvCodec codec)//XX 402
+		public static c_int AvPriv_Codec_Get_Cap_Skip_Frame_Fill_Param(AvCodec codec)
 		{
 			return (Codec_Internal.FFCodec(codec).Caps_Internal & FFCodecCap.Skip_Frame_Fill_Param) != 0 ? 1 : 0;
 		}
@@ -339,7 +339,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Get the name of a codec
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> AvCodec_Get_Name(AvCodecId id)//XX 406
+		public static CPointer<char> AvCodec_Get_Name(AvCodecId id)
 		{
 			if (id == AvCodecId.None)
 				return "none".ToCharPointer();
@@ -371,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Return a name for the specified profile, if available
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> AvCodec_Profile_Name(AvCodecId codec_Id, AvProfileType profile)//XX 439
+		public static CPointer<char> AvCodec_Profile_Name(AvCodecId codec_Id, AvProfileType profile)
 		{
 			AvCodecDescriptor desc = Codec_Desc.AvCodec_Descriptor_Get(codec_Id);
 
@@ -398,7 +398,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// not an approximation
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Get_Exact_Bits_Per_Sample(AvCodecId codec_Id)//XX 454
+		public static c_int Av_Get_Exact_Bits_Per_Sample(AvCodecId codec_Id)
 		{
 			switch (codec_Id)
 			{
@@ -486,7 +486,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Return codec bits per sample
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Get_Bits_Per_Sample(AvCodecId codec_Id)//XX 549
+		public static c_int Av_Get_Bits_Per_Sample(AvCodecId codec_Id)
 		{
 			switch (codec_Id)
 			{
@@ -520,7 +520,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Return audio frame duration
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Get_Audio_Frame_Duration(AvCodecContext avCtx, c_int frame_Bytes)//XX 803
+		public static c_int Av_Get_Audio_Frame_Duration(AvCodecContext avCtx, c_int frame_Bytes)
 		{
 			c_int channels = avCtx.Ch_Layout.Nb_Channels;
 
@@ -538,7 +538,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// AVCodecContext
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Get_Audio_Frame_Duration2(AvCodecParameters par, c_int frame_Bytes)//XX 816
+		public static c_int Av_Get_Audio_Frame_Duration2(AvCodecParameters par, c_int frame_Bytes)
 		{
 			c_int channels = par.Ch_Layout.Nb_Channels;
 
@@ -559,7 +559,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// always return NULL
 		/// </summary>
 		/********************************************************************/
-		public static AvCodecHwConfig AvCodec_Get_Hw_Config(AvCodec avCodec, c_int index)//XX 850
+		public static AvCodecHwConfig AvCodec_Get_Hw_Config(AvCodec avCodec, c_int index)
 		{
 			FFCodec codec = Codec_Internal.FFCodec(avCodec);
 
@@ -583,7 +583,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// default values
 		/// </summary>
 		/********************************************************************/
-		public static AvCpbProperties Av_Cpb_Properties_Alloc()//XX 968
+		public static AvCpbProperties Av_Cpb_Properties_Alloc()
 		{
 			AvCpbProperties props = Mem.Av_MAlloczObj<AvCpbProperties>();
 
@@ -599,7 +599,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Audio_Frame_Duration(AvCodecId id, c_int sr, c_int ch, c_int ba, uint32_t tag, c_int bits_Per_Coded_Sample, int64_t bitRate, IDataContext extraData, c_int frame_Size, c_int frame_Bytes)//XX 571
+		private static c_int Get_Audio_Frame_Duration(AvCodecId id, c_int sr, c_int ch, c_int ba, uint32_t tag, c_int bits_Per_Coded_Sample, int64_t bitRate, IDataContext extraData, c_int frame_Size, c_int frame_Bytes)
 		{
 			c_int bps = Av_Get_Exact_Bits_Per_Sample(id);
 			c_int frameCount = (ba > 0) && ((frame_Bytes / ba) > 0) ? frame_Bytes / ba : 1;

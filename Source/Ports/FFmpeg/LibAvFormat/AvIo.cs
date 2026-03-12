@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Connect an URLContext that has been allocated by ffurl_alloc
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_Connect(UrlContext uc, ref AvDictionary options)//XX 205
+		public static c_int FFUrl_Connect(UrlContext uc, ref AvDictionary options)
 		{
 			if (uc.Protocol_Whitelist.IsNotNull && (AvString.Av_Match_List(uc.Prot.Name, uc.Protocol_Whitelist, ',') <= 0))
 				return Error.EINVAL;
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// url, but do not initiate the connection yet
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_Alloc(out UrlContext puc, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb)//XX 350
+		public static c_int FFUrl_Alloc(out UrlContext puc, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb)
 		{
 			UrlProtocol p = Url_Find_Protocol(fileName);
 
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// url, and open it
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_Open_Whitelist(out UrlContext puc, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb, ref AvDictionary options, CPointer<char> whitelist, CPointer<char> blacklist, UrlContext parent)//XX 363
+		public static c_int FFUrl_Open_Whitelist(out UrlContext puc, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb, ref AvDictionary options, CPointer<char> whitelist, CPointer<char> blacklist, UrlContext parent)
 		{
 			c_int ret = FFUrl_Alloc(out puc, fileName, flags, int_Cb);
 			if (ret < 0)
@@ -191,7 +191,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// the AVIOContext can be used only for writing
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FFIo_FdOpen(out AvIoContext sp, UrlContext h)//XX 413
+		internal static c_int FFIo_FdOpen(out AvIoContext sp, UrlContext h)
 		{
 			sp = null;
 
@@ -280,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FFIo_Open_Whitelist(out AvIoContext s, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb, ref AvDictionary options, CPointer<char> whitelist, CPointer<char> blacklist)//XX 472
+		internal static c_int FFIo_Open_Whitelist(out AvIoContext s, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb, ref AvDictionary options, CPointer<char> whitelist, CPointer<char> blacklist)
 		{
 			s = null;
 
@@ -306,7 +306,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// the read bytes in buf
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_Read2(object urlContext, CPointer<uint8_t> buf, c_int size)//XX 549
+		public static c_int FFUrl_Read2(object urlContext, CPointer<uint8_t> buf, c_int size)
 		{
 			UrlContext h = (UrlContext)urlContext;
 
@@ -323,7 +323,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Write size bytes from buf to the resource accessed by h
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_Write2(object urlContext, CPointer<uint8_t> buf, c_int size)//XX 565
+		public static c_int FFUrl_Write2(object urlContext, CPointer<uint8_t> buf, c_int size)
 		{
 			UrlContext h = (UrlContext)urlContext;
 
@@ -345,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// operation on the resource accessed by h
 		/// </summary>
 		/********************************************************************/
-		public static int64_t FFUrl_Seek2(object urlContext, int64_t pos, AvSeek whence)//XX 578
+		public static int64_t FFUrl_Seek2(object urlContext, int64_t pos, AvSeek whence)
 		{
 			UrlContext h = (UrlContext)urlContext;
 
@@ -379,7 +379,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// memory used by it. Also set the URLContext pointer to NULL
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_CloseP(ref UrlContext hh)//XX 589
+		public static c_int FFUrl_CloseP(ref UrlContext hh)
 		{
 			UrlContext h = hh;
 			c_int ret = 0;
@@ -412,7 +412,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// memory used by it
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_Close(UrlContext h)//XX 589
+		public static c_int FFUrl_Close(UrlContext h)
 		{
 			return FFUrl_CloseP(ref h);
 		}
@@ -428,7 +428,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// resource
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_Close(AvIoContext s)//XX 617
+		public static c_int AvIo_Close(AvIoContext s)
 		{
 			FFIoContext ctx = AvIo_Internal.FFIoContext(s);
 
@@ -466,7 +466,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// resource
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_CloseP(ref AvIoContext s)//XX 650
+		public static c_int AvIo_CloseP(ref AvIoContext s)
 		{
 			c_int ret = AvIo_Close(s);
 			s = null;
@@ -481,7 +481,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Return the current short seek threshold value for this URL
 		/// </summary>
 		/********************************************************************/
-		public static c_int FFUrl_Get_Short_Seek(object urlContext)//XX 839
+		public static c_int FFUrl_Get_Short_Seek(object urlContext)
 		{
 			UrlContext h = (UrlContext)urlContext;
 
@@ -499,7 +499,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// associated with cb
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Check_Interrupt(AvIoInterruptCb cb)//XX 855
+		public static c_int FF_Check_Interrupt(AvIoInterruptCb cb)
 		{
 			if ((cb != null) && (cb.Callback != null))
 				return cb.Callback(cb.Opaque);
@@ -513,7 +513,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> UrlContext_To_Name(IClass ptr)//XX 40
+		private static CPointer<char> UrlContext_To_Name(IClass ptr)
 		{
 			UrlContext h = (UrlContext)ptr;
 
@@ -530,7 +530,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<IOptionContext> UrlContext_Child_Next(IOptionContext obj)//XX 49
+		private static IEnumerable<IOptionContext> UrlContext_Child_Next(IOptionContext obj)
 		{
 			UrlContext h = (UrlContext)obj;
 
@@ -545,7 +545,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<IOptionContext> AvIo_Child_Next(IOptionContext obj)//XX 77
+		private static IEnumerable<IOptionContext> AvIo_Child_Next(IOptionContext obj)
 		{
 			AvIoContext s = (AvIoContext)obj;
 
@@ -559,7 +559,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<AvClass> Child_Class_Iterate()//XX 83
+		private static IEnumerable<AvClass> Child_Class_Iterate()
 		{
 			yield return url_Context_Class;
 		}
@@ -571,7 +571,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Url_Alloc_For_Protocol(out UrlContext pUc, UrlProtocol up, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb)//XX 118
+		private static c_int Url_Alloc_For_Protocol(out UrlContext pUc, UrlProtocol up, CPointer<char> fileName, AvIoFlag flags, AvIoInterruptCb int_Cb)
 		{
 			pUc = null;
 
@@ -670,7 +670,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static UrlProtocol Url_Find_Protocol(CPointer<char> fileName)//XX 307
+		private static UrlProtocol Url_Find_Protocol(CPointer<char> fileName)
 		{
 			CPointer<char> proto_Str = new CPointer<char>(128);
 			CPointer<char> proto_Nested = new CPointer<char>(128);
@@ -707,7 +707,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int Retry_Transfer_Wrapper(UrlContext h, CPointer<uint8_t> buf, CPointer<uint8_t> cBuf, c_int size, c_int size_Min, c_int read)//XX 504
+		private static c_int Retry_Transfer_Wrapper(UrlContext h, CPointer<uint8_t> buf, CPointer<uint8_t> cBuf, c_int size, c_int size_Min, c_int read)
 		{
 			c_int fast_Retries = 5;
 			int64_t wait_Since = 0;

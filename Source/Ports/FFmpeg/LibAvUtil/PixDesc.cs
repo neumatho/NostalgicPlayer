@@ -3764,7 +3764,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// See av_get_pix_fmt(), av_get_pix_fmt_string()
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Get_Pix_Fmt_Name(AvPixelFormat pix_Fmt)//XX 3367
+		public static CPointer<char> Av_Get_Pix_Fmt_Name(AvPixelFormat pix_Fmt)
 		{
 			return pix_Fmt < AvPixelFormat.Nb ? av_Pix_Fmt_Descriptors[(c_int)pix_Fmt].Name : null;
 		}
@@ -3785,7 +3785,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// AV_PIX_FMT_NONE
 		/// </summary>
 		/********************************************************************/
-		public static AvPixelFormat Av_Get_Pix_Fmt(CPointer<char> name)//XX 3379
+		public static AvPixelFormat Av_Get_Pix_Fmt(CPointer<char> name)
 		{
 			if (CString.strcmp(name, "rgb32") == 0)
 				name = X_NE("argb", "bgra");
@@ -3812,7 +3812,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// NULL if this pixel format is unknown
 		/// </summary>
 		/********************************************************************/
-		public static AVPixFmtDescriptor Av_Pix_Fmt_Desc_Get(AvPixelFormat pix_Fmt)//XX 3447
+		public static AVPixFmtDescriptor Av_Pix_Fmt_Desc_Get(AvPixelFormat pix_Fmt)
 		{
 			if ((pix_Fmt < 0) || (pix_Fmt >= AvPixelFormat.Nb))
 				return null;
@@ -3828,7 +3828,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// pix_fmt is not a valid pixel format
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Pix_Fmt_Count_Planes(AvPixelFormat pix_Fmt)//XX 3487
+		public static c_int Av_Pix_Fmt_Count_Planes(AvPixelFormat pix_Fmt)
 		{
 			AVPixFmtDescriptor desc = Av_Pix_Fmt_Desc_Get(pix_Fmt);
 			c_int[] planes = new c_int[4];
@@ -3854,7 +3854,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return the name for provided color range or NULL if unknown
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Color_Range_Name(AvColorRange range)//XX 3763
+		public static CPointer<char> Av_Color_Range_Name(AvColorRange range)
 		{
 			return (c_uint)range < (c_uint)AvColorRange.Nb ? color_Range_Names[(c_int)range].ToCharPointer() : null;
 		}
@@ -3867,7 +3867,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// found
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Color_Primaries_Name(AvColorPrimaries primaries)//XX 3781
+		public static CPointer<char> Av_Color_Primaries_Name(AvColorPrimaries primaries)
 		{
 			return (c_uint)primaries < (c_uint)AvColorPrimaries.Nb ? color_Primaries_Names[(c_int)primaries].ToCharPointer() : null;
 		}
@@ -3879,7 +3879,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return the name for provided color transfer or NULL if unknown
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Color_Transfer_Name(AvColorTransferCharacteristic transfer)//XX 3802
+		public static CPointer<char> Av_Color_Transfer_Name(AvColorTransferCharacteristic transfer)
 		{
 			return (c_uint)transfer < (c_uint)AvColorTransferCharacteristic.Nb ? color_Transfer_Names[(c_int)transfer].ToCharPointer() : null;
 		}
@@ -3891,7 +3891,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return the name for provided color space or NULL if unknown
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Color_Space_Name(AvColorSpace space)//XX 3823
+		public static CPointer<char> Av_Color_Space_Name(AvColorSpace space)
 		{
 			return (c_uint)space < (c_uint)AvColorSpace.Nb ? color_Space_Names[(c_int)space].ToCharPointer() : null;
 		}
@@ -3903,7 +3903,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return the name for provided chroma location or NULL if unknown
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Chroma_Location_Name(AvChromaLocation location)//XX 3844
+		public static CPointer<char> Av_Chroma_Location_Name(AvChromaLocation location)
 		{
 			return (c_uint)location < (c_uint)AvChromaLocation.Nb ? chroma_Location_Names[(c_int)location].ToCharPointer() : null;
 		}
@@ -3933,7 +3933,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static CPointer<char> X_NE(string be, string le)//XX 3373
+		private static CPointer<char> X_NE(string be, string le)
 		{
 			return BitConverter.IsLittleEndian ? le.ToCharPointer() : be.ToCharPointer();
 		}

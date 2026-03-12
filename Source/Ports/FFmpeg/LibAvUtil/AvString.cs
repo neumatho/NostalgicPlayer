@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// to the address of the first character in str after the prefix
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_StrStart(CPointer<char> str, CPointer<char> pfx, out CPointer<char> ptr)//XX 36
+		public static c_int Av_StrStart(CPointer<char> str, CPointer<char> pfx, out CPointer<char> ptr)
 		{
 			while ((pfx[0] != 0) && (pfx[0] == str[0]))
 			{
@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// after the prefix
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_StriStart(CPointer<char> str, CPointer<char> pfx, out CPointer<char> ptr)//XX 47
+		public static c_int Av_StriStart(CPointer<char> str, CPointer<char> pfx, out CPointer<char> ptr)
 		{
 			while ((pfx[0] != 0) && (Av_ToUpper(pfx[0]) == Av_ToUpper(str[0])))
 			{
@@ -134,7 +134,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// strstr()
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_StriStr(CPointer<char> s1, CPointer<char> s2)//XX 58
+		public static CPointer<char> Av_StriStr(CPointer<char> s1, CPointer<char> s2)
 		{
 			if (s2.IsNull)
 				return s1;
@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// strstr()
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Strnstr(CPointer<char> haystack, CPointer<char> needle, size_t hay_Length)//XX 71
+		public static CPointer<char> Av_Strnstr(CPointer<char> haystack, CPointer<char> needle, size_t hay_Length)
 		{
 			size_t needle_Len = CString.strlen(needle);
 
@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// this will read beyond the end of the buffer and possibly crash
 		/// </summary>
 		/********************************************************************/
-		public static size_t Av_Strlcpy(CPointer<char> dst, CPointer<char> src, size_t size)//XX 85
+		public static size_t Av_Strlcpy(CPointer<char> dst, CPointer<char> src, size_t size)
 		{
 			size_t len = 0;
 
@@ -218,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// within the buffer
 		/// </summary>
 		/********************************************************************/
-		public static size_t Av_Strlcatf(CPointer<char> dst, size_t size, string fmt, params object[] args)//XX 103
+		public static size_t Av_Strlcatf(CPointer<char> dst, size_t size, string fmt, params object[] args)
 		{
 			return Av_Strlcatf(dst, size, fmt.ToCharPointer(), args);
 		}
@@ -232,7 +232,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// within the buffer
 		/// </summary>
 		/********************************************************************/
-		public static size_t Av_Strlcatf(CPointer<char> dst, size_t size, CPointer<char> fmt, params object[] args)//XX 103
+		public static size_t Av_Strlcatf(CPointer<char> dst, size_t size, CPointer<char> fmt, params object[] args)
 		{
 			size_t len = CString.strlen(dst);
 
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// auto allocated buffer. It is similar to GNU asprintf()
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Asprintf(string fmt, params object[] args)//XX 115
+		public static CPointer<char> Av_Asprintf(string fmt, params object[] args)
 		{
 			CPointer<char> p = null;
 
@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// enclosed between ''
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Get_Token(ref CPointer<char> buf, CPointer<char> term)//XX 143
+		public static CPointer<char> Av_Get_Token(ref CPointer<char> buf, CPointer<char> term)
 		{
 			CPointer<char> @out = Mem.Av_Realloc<char>(null, CString.strlen(buf) + 1);
 			CPointer<char> ret = @out, end = @out;
@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// This function is similar to strtok_r() defined in POSIX.1
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Strtok(CPointer<char> s, CPointer<char> delim, ref CPointer<char> savePtr)//XX 179
+		public static CPointer<char> Av_Strtok(CPointer<char> s, CPointer<char> delim, ref CPointer<char> savePtr)
 		{
 			if (s.IsNull && (s = savePtr).IsNull)
 				return null;
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Note: This means only ASCII-range characters are case-insensitive
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Strcasecmp(CPointer<char> a, CPointer<char> b)//XX 208
+		public static c_int Av_Strcasecmp(CPointer<char> a, CPointer<char> b)
 		{
 			uint8_t c1, c2;
 
@@ -429,7 +429,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Note: This means only ASCII-range characters are case-insensitive
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Strncasecmp(CPointer<char> a, CPointer<char> b, size_t n)//XX 218
+		public static c_int Av_Strncasecmp(CPointer<char> a, CPointer<char> b, size_t n)
 		{
 			uint8_t c1, c2;
 
@@ -454,7 +454,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Note: This means only ASCII-range characters are replaced.
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_StriReplace(CPointer<char> str, CPointer<char> from, CPointer<char> to)//XX 230
+		public static CPointer<char> Av_StriReplace(CPointer<char> str, CPointer<char> from, CPointer<char> to)
 		{
 			CPointer<char> ret = null;
 			CPointer<char> pStr = str;
@@ -495,7 +495,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Resulting string have to be freed with av_free()
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Append_Path_Component(CPointer<char> path, CPointer<char> component)//XX 297
+		public static CPointer<char> Av_Append_Path_Component(CPointer<char> path, CPointer<char> component)
 		{
 			if (path.IsNull)
 				return Mem.Av_StrDup(component);
@@ -540,7 +540,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Match_Name(CPointer<char> name, CPointer<char> names)//XX 346
+		public static c_int Av_Match_Name(CPointer<char> name, CPointer<char> names)
 		{
 			if (name.IsNull || names.IsNull)
 				return 0;
@@ -574,7 +574,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Check if a name is in a list
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Match_List(CPointer<char> name, CPointer<char> list, char separator)//XX 445
+		public static c_int Av_Match_List(CPointer<char> name, CPointer<char> list, char separator)
 		{
 			for (CPointer<char> p = name; p.IsNotNull && (p[0] != 0); )
 			{

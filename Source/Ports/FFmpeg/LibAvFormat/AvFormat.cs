@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// or if the stream is not yet attached to an AVFormatContext
 		/// </summary>
 		/********************************************************************/
-		internal static void FF_Free_Stream(ref AvStream pst)//XX 45
+		internal static void FF_Free_Stream(ref AvStream pst)
 		{
 			AvStream st = pst;
 			FFStream sti = Internal.FFStream(st);
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static void FF_Free_Stream_Group(ref AvStreamGroup pStg)//XX 76
+		internal static void FF_Free_Stream_Group(ref AvStreamGroup pStg)
 		{
 			AvStreamGroup stg = pStg;
 
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// The stream must be the last stream of the AVFormatContext
 		/// </summary>
 		/********************************************************************/
-		internal static void FF_Remove_Stream(AvFormatContext s, AvStream st)//XX 113
+		internal static void FF_Remove_Stream(AvFormatContext s, AvStream st)
 		{
 			FF_Free_Stream(ref s.Streams[--s.Nb_Streams]);
 		}
@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static void FF_Flush_Packet_Queue(AvFormatContext s)//XX 130
+		internal static void FF_Flush_Packet_Queue(AvFormatContext s)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFFormatContext si = fci.Fc;
@@ -151,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Free an AVFormatContext and all its streams
 		/// </summary>
 		/********************************************************************/
-		public static void AvFormat_Free_Context(AvFormatContext s)//XX 141
+		public static void AvFormat_Free_Context(AvFormatContext s)
 		{
 			if (s == null)
 				return;
@@ -220,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Find the programs which belong to a given stream
 		/// </summary>
 		/********************************************************************/
-		public static AvProgram Av_Find_Program_From_Stream(AvFormatContext ic, AvProgram last, c_int s)//XX 325
+		public static AvProgram Av_Find_Program_From_Stream(AvFormatContext ic, AvProgram last, c_int s)
 		{
 			for (c_uint i = 0; i < ic.Nb_Programs; i++)
 			{
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Get the codec tag for the given codec id
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Find_Default_Stream_Index(AvFormatContext s)//XX 340
+		public static c_int Av_Find_Default_Stream_Index(AvFormatContext s)
 		{
 			c_int best_Stream = 0;
 			c_int best_Score = c_int.MinValue;
@@ -308,7 +308,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// which no decoder can be found are ignored
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Find_Best_Stream(AvFormatContext ic, AvMediaType type, c_int wanted_Stream_Nb, c_int related_Stream, out AvCodec decoder_Ret, c_int flags)//XX 376
+		public static c_int Av_Find_Best_Stream(AvFormatContext ic, AvMediaType type, c_int wanted_Stream_Nb, c_int related_Stream, out AvCodec decoder_Ret, c_int flags)
 		{
 			c_int nb_Streams = (c_int)ic.Nb_Streams;
 			c_int ret = Error.Stream_Not_Found;
@@ -394,7 +394,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// leaves the stream unchanged
 		/// </summary>
 		/********************************************************************/
-		internal static void AvPriv_Set_Pts_Info(AvStream st, c_int pts_Wrap_Bits, c_uint pts_Num, c_uint pts_Den)//XX 777
+		internal static void AvPriv_Set_Pts_Info(AvStream st, c_int pts_Wrap_Bits, c_uint pts_Num, c_uint pts_Den)
 		{
 			FFStream sti = Internal.FFStream(st);
 			AvRational new_Tb;
@@ -428,7 +428,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static AvCodec FF_Find_Decoder(AvFormatContext s, AvStream st, AvCodecId codec_Id)//XX 804
+		internal static AvCodec FF_Find_Decoder(AvFormatContext s, AvStream st, AvCodecId codec_Id)
 		{
 			switch (st.CodecPar.Codec_Type)
 			{
@@ -467,7 +467,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static bool FF_Is_Intra_Only(AvCodecId id)//XX 850
+		internal static bool FF_Is_Intra_Only(AvCodecId id)
 		{
 			AvCodecDescriptor d = Codec_Desc.AvCodec_Descriptor_Get(id);
 
@@ -488,7 +488,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// instead of calling the pointer directly
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FF_Format_Io_Close(AvFormatContext s, ref AvIoContext pb)//XX 868
+		internal static c_int FF_Format_Io_Close(AvFormatContext s, ref AvIoContext pb)
 		{
 			c_int ret = 0;
 

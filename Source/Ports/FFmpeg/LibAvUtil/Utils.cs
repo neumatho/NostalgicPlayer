@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// media_type is unknown
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Get_Media_Type_String(AvMediaType media_Type)//XX 28
+		public static CPointer<char> Av_Get_Media_Type_String(AvMediaType media_Type)
 		{
 			switch (media_Type)
 			{
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// (four-character code) representation
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_FourCC_Make_String(CPointer<char> buf, uint32_t fourCC)//XX 75
+		public static CPointer<char> Av_FourCC_Make_String(CPointer<char> buf, uint32_t fourCC)
 		{
 			CPointer<char> orig_Buf = buf;
 			size_t buf_Size = AvUtil.Av_FourCC_Max_String_Size;

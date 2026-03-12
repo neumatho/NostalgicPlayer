@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_AsfCrypt_Dec(CPointer<uint8_t> key, CPointer<uint8_t> data, c_int len)//XX 148
+		public static void FF_AsfCrypt_Dec(CPointer<uint8_t> key, CPointer<uint8_t> data, c_int len)
 		{
 			c_int num_Qwords = len >> 3;
 			CPointer<uint8_t> qwords = data;
@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// Find multiplicative inverse modulo 2 ^ 32
 		/// </summary>
 		/********************************************************************/
-		private static uint32_t Inverse(uint32_t v)//XX 36
+		private static uint32_t Inverse(uint32_t v)
 		{
 			// v ^ 3 gives the inverse (mod 16), could also be implemented
 			// as table etc. (only lowest 4 bits matter!)
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// Read keys from keybuf into keys
 		/// </summary>
 		/********************************************************************/
-		private static void MultiSwap_Init(CPointer<uint8_t> keyBuf, CPointer<uint32_t> keys)//XX 55
+		private static void MultiSwap_Init(CPointer<uint8_t> keyBuf, CPointer<uint32_t> keys)
 		{
 			for (c_int i = 0; i < 12; i++)
 				keys[i] = IntReadWrite.Av_RL32(keyBuf + (i << 2)) | 1;
@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// the other way round
 		/// </summary>
 		/********************************************************************/
-		private static void MultiSwap_Invert_Keys(CPointer<uint32_t> keys)//XX 67
+		private static void MultiSwap_Invert_Keys(CPointer<uint32_t> keys)
 		{
 			for (c_int i = 0; i < 5; i++)
 				keys[i] = Inverse(keys[i]);
@@ -142,7 +142,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static uint32_t MultiSwap_Step(CPointer<uint32_t> keys, uint32_t v)//XX 76
+		private static uint32_t MultiSwap_Step(CPointer<uint32_t> keys, uint32_t v)
 		{
 			v *= keys[0];
 
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static uint32_t MultiSwap_Inv_Step(CPointer<uint32_t> keys, uint32_t v)//XX 88
+		private static uint32_t MultiSwap_Inv_Step(CPointer<uint32_t> keys, uint32_t v)
 		{
 			v -= keys[5];
 
@@ -186,7 +186,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// "MultiSwap" encryption
 		/// </summary>
 		/********************************************************************/
-		private static uint64_t MultiSwap_Enc(CPointer<uint32_t> keys, uint64_t key, uint64_t data)//XX 108
+		private static uint64_t MultiSwap_Enc(CPointer<uint32_t> keys, uint64_t key, uint64_t data)
 		{
 			uint32_t a = (uint32_t)data;
 			uint32_t b = (uint32_t)(data >> 32);
@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// "MultiSwap" decryption
 		/// </summary>
 		/********************************************************************/
-		private static uint64_t MultiSwap_Dec(CPointer<uint32_t> keys, uint64_t key, uint64_t data)//XX 132
+		private static uint64_t MultiSwap_Dec(CPointer<uint32_t> keys, uint64_t key, uint64_t data)
 		{
 			uint32_t c = (uint32_t)(data >> 32);
 			uint32_t tmp = (uint32_t)data;

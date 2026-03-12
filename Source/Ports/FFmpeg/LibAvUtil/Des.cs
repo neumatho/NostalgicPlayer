@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static void Gen_RoundKeys(CPointer<uint64_t> K, uint64_t key)//XX 242
+		internal static void Gen_RoundKeys(CPointer<uint64_t> K, uint64_t key)
 		{
 			// Discard parity bits from key and shuffle it into C and D parts
 			uint64_t CDn = Shuffle(key, pc1_Shuffle, pc1_Shuffle.Length);
@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static uint64_t Des_EncDec(uint64_t @in, CPointer<uint64_t> K, c_int decrypt)//XX 256
+		internal static uint64_t Des_EncDec(uint64_t @in, CPointer<uint64_t> K, c_int decrypt)
 		{
 			// Used to apply round keys in reverse order for decryption
 			decrypt = decrypt != 0 ? 15 : 0;
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Allocate an AVDES context
 		/// </summary>
 		/********************************************************************/
-		public static AvDes Av_Des_Alloc()//XX 275
+		public static AvDes Av_Des_Alloc()
 		{
 			return Mem.Av_MAllocObj<AvDes>();
 		}
@@ -204,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Initializes an AVDES context
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Des_Init(AvDes d, CPointer<uint8_t> key, c_int key_Bits, c_int decrypt)//XX 280
+		public static c_int Av_Des_Init(AvDes d, CPointer<uint8_t> key, c_int key_Bits, c_int decrypt)
 		{
 			if ((key_Bits != 64) && (key_Bits != 192))
 				return Error.EINVAL;
@@ -229,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Encrypts / decrypts using the DES algorithm
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Des_Crypt(AvDes d, CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int count, CPointer<uint8_t> iv, c_int decrypt)//XX 324
+		public static void Av_Des_Crypt(AvDes d, CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int count, CPointer<uint8_t> iv, c_int decrypt)
 		{
 			Av_Des_Crypt_Mac(d, dst, src, count, iv, decrypt, 0);
 		}
@@ -240,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static uint64_t Shuffle(uint64_t @in, CPointer<uint8_t> shuffle, c_int shuffle_Len)//XX 179
+		private static uint64_t Shuffle(uint64_t @in, CPointer<uint8_t> shuffle, c_int shuffle_Len)
 		{
 			uint64_t res = 0;
 
@@ -257,7 +257,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static uint64_t Shuffle_Inv(uint64_t @in, CPointer<uint8_t> shuffle, c_int shuffle_Len)//XX 188
+		private static uint64_t Shuffle_Inv(uint64_t @in, CPointer<uint8_t> shuffle, c_int shuffle_Len)
 		{
 			uint64_t res = 0;
 			shuffle += shuffle_Len - 1;
@@ -278,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static uint32_t F_Func(uint32_t r, uint64_t k)//XX 200
+		private static uint32_t F_Func(uint32_t r, uint64_t k)
 		{
 			uint32_t @out = 0;
 
@@ -310,7 +310,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// it is confusing
 		/// </summary>
 		/********************************************************************/
-		private static uint64_t Key_Shift_Left(uint64_t CDn)//XX 233
+		private static uint64_t Key_Shift_Left(uint64_t CDn)
 		{
 			uint64_t carries = (CDn >> 27) & 0x10000001;
 
@@ -328,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Av_Des_Crypt_Mac(AvDes d, CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int count, CPointer<uint8_t> iv, c_int decrypt, c_int mac)//XX 324
+		private static void Av_Des_Crypt_Mac(AvDes d, CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int count, CPointer<uint8_t> iv, c_int decrypt, c_int mac)
 		{
 			uint64_t iv_Val = iv.IsNotNull ? IntReadWrite.Av_RB64(iv) : 0;
 

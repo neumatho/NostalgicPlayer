@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// with avcodec_parameters_free()
 		/// </summary>
 		/********************************************************************/
-		public static AvCodecParameters AvCodec_Parameters_Alloc()//XX 57
+		public static AvCodecParameters AvCodec_Parameters_Alloc()
 		{
 			AvCodecParameters par = Mem.Av_MAlloczObj<AvCodecParameters>();
 
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// it and write NULL to the supplied pointer
 		/// </summary>
 		/********************************************************************/
-		public static void AvCodec_Parameters_Free(ref AvCodecParameters pPar)//XX 67
+		public static void AvCodec_Parameters_Free(ref AvCodecParameters pPar)
 		{
 			AvCodecParameters par = pPar;
 
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// corresponding fields in src
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Parameters_Copy(AvCodecParameters dst, AvCodecParameters src)//XX 107
+		public static c_int AvCodec_Parameters_Copy(AvCodecParameters dst, AvCodecParameters src)
 		{
 			Codec_Parameters_Reset(dst);
 
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// replaced with duplicates of the corresponding fields in codec
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Parameters_From_Context(AvCodecParameters par, AvCodecContext codec)//XX 138
+		public static c_int AvCodec_Parameters_From_Context(AvCodecParameters par, AvCodecContext codec)
 		{
 			c_int ret;
 
@@ -202,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// have a counterpart in par are not touched
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Parameters_To_Context(AvCodecContext codec, AvCodecParameters par)//XX 205
+		public static c_int AvCodec_Parameters_To_Context(AvCodecContext codec, AvCodecParameters par)
 		{
 			c_int ret;
 
@@ -294,7 +294,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Codec_Parameters_Reset(AvCodecParameters par)//XX 32
+		private static void Codec_Parameters_Reset(AvCodecParameters par)
 		{
 			Mem.Av_FreeP(ref par.ExtraData);
 			Channel_Layout.Av_Channel_Layout_Uninit(par.Ch_Layout);
@@ -327,7 +327,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Codec_Parameters_Copy_Side_Data(ref CPointer<AvPacketSideData> pDst, ref c_int pNb_Dst, CPointer<AvPacketSideData> src, c_int nb_Src)//XX 78
+		private static c_int Codec_Parameters_Copy_Side_Data(ref CPointer<AvPacketSideData> pDst, ref c_int pNb_Dst, CPointer<AvPacketSideData> src, c_int nb_Src)
 		{
 			CPointer<AvPacketSideData> dst;
 			c_int nb_Dst = pNb_Dst;

@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// exists
 		/// </summary>
 		/********************************************************************/
-		public static AvCodecDescriptor AvCodec_Descriptor_Get(AvCodecId id)//XX 3878
+		public static AvCodecDescriptor AvCodec_Descriptor_Get(AvCodecId id)
 		{
 			CPointer<AvCodecDescriptor> ret = CArray.bsearch<AvCodecDescriptor, AvCodecId>(id, codec_Descriptors, Macros.FF_Array_Elems(codec_Descriptors), Descriptor_Compare);
 
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Descriptor_Compare(AvCodecId key, AvCodecDescriptor member)//XX 3870
+		private static c_int Descriptor_Compare(AvCodecId key, AvCodecDescriptor member)
 		{
 			AvCodecId id = key;
 			AvCodecDescriptor desc = member;

@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Iterate over all registered bitstream filters
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvBitStreamFilter> Av_Bsf_Iterate()//XX 79
+		public static IEnumerable<AvBitStreamFilter> Av_Bsf_Iterate()
 		{
 			return bitStream_Filters.Select(x => x.P);
 		}
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// such bitstream filter exists
 		/// </summary>
 		/********************************************************************/
-		public static AvBitStreamFilter Av_Bsf_Get_By_Name(CPointer<char> name)//XX 91
+		public static AvBitStreamFilter Av_Bsf_Get_By_Name(CPointer<char> name)
 		{
 			if (name.IsNull)
 				return null;
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static IEnumerable<AvClass> FF_Bsf_Child_Class_Iterate()//XX 107
+		internal static IEnumerable<AvClass> FF_Bsf_Child_Class_Iterate()
 		{
 			foreach (AvBitStreamFilter f in Av_Bsf_Iterate())
 			{

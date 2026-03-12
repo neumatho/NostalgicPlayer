@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Free an AVIAMFAudioElement and all its contents
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Iamf_Audio_Element_Free(ref AvIamfAudioElement pAudio_Element)//XX 336
+		public static void Av_Iamf_Audio_Element_Free(ref AvIamfAudioElement pAudio_Element)
 		{
 			AvIamfAudioElement audio_Element = pAudio_Element;
 
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Free an AVIAMFMixPresentation and all its contents
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Iamf_Mix_Presentation_Free(ref AvIamfMixPresentation pMix_Presentation)//XX 534
+		public static void Av_Iamf_Mix_Presentation_Free(ref AvIamfMixPresentation pMix_Presentation)
 		{
 			AvIamfMixPresentation mix_Presentation = pMix_Presentation;
 

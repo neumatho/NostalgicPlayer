@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Metadata_Conv(ref AvDictionary pm, CPointer<AvMetadataConv> d_Conv, CPointer<AvMetadataConv> s_Conv)//XX 26
+		public static void FF_Metadata_Conv(ref AvDictionary pm, CPointer<AvMetadataConv> d_Conv, CPointer<AvMetadataConv> s_Conv)
 		{
 			// TODO: use binary search to look up the two conversion tables
 			// if the tables are getting big enough that it would matter speed wise

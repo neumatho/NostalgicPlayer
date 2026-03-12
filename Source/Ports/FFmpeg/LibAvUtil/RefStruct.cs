@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// returned object is initially zeroed
 		/// </summary>
 		/********************************************************************/
-		public static T Av_RefStruct_Alloc_Ext_C<T>(AvRefStructFlag flags, AvRefStructOpaque opaque, UtilFunc.Free2_Cb_Delegate free_Cb) where T : class, IRefCountData, new()//XX 102
+		public static T Av_RefStruct_Alloc_Ext_C<T>(AvRefStructFlag flags, AvRefStructOpaque opaque, UtilFunc.Free2_Cb_Delegate free_Cb) where T : class, IRefCountData, new()
 		{
 			T buf = Mem.Av_MAllocObj<T>();
 
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// `*objp == NULL` is legal and a no-op
 		/// </summary>
 		/********************************************************************/
-		public static void Av_RefStruct_Unref<T>(ref T objP) where T : IRefCount//XX 120
+		public static void Av_RefStruct_Unref<T>(ref T objP) where T : IRefCount
 		{
 			T obj = objP;
 			objP = default;
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// obj
 		/// </summary>
 		/********************************************************************/
-		public static T Av_RefStruct_Ref<T>(T obj) where T : IRefCount//XX 140
+		public static T Av_RefStruct_Ref<T>(T obj) where T : IRefCount
 		{
 			RefCount @ref = Get_RefCount(obj);
 
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// count of src's underlying object) or with NULL otherwise
 		/// </summary>
 		/********************************************************************/
-		public static void Av_RefStruct_Replace<T>(ref T dstP, T src) where T : IRefCount//XX 160
+		public static void Av_RefStruct_Replace<T>(ref T dstP, T src) where T : IRefCount
 		{
 			T dst = dstP;
 
@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvRefStructPool Av_RefStruct_Pool_Alloc_Ext_C<T>(AvRefStructPoolFlag flags, AvRefStructOpaque opaque, UtilFunc.Init_Cb_Delegate init_Cb, UtilFunc.Reset_Cb_Delegate reset_Cb, UtilFunc.Free_Entry_Delegate free_Entry_Cb, UtilFunc.Free_Cb_Delegate free_Cb) where T : class, IRefCountData, new()//XX 340
+		public static AvRefStructPool Av_RefStruct_Pool_Alloc_Ext_C<T>(AvRefStructPoolFlag flags, AvRefStructOpaque opaque, UtilFunc.Init_Cb_Delegate init_Cb, UtilFunc.Reset_Cb_Delegate reset_Cb, UtilFunc.Free_Entry_Delegate free_Entry_Cb, UtilFunc.Free_Cb_Delegate free_Cb) where T : class, IRefCountData, new()
 		{
 			AvRefStructPool pool = Av_RefStruct_Alloc_Ext<AvRefStructPool>(AvRefStructFlag.None, null, RefStruct_Pool_Uninit);
 
@@ -224,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static RefCount Get_RefCount(IRefCount obj)//XX 70
+		private static RefCount Get_RefCount(IRefCount obj)
 		{
 			return (RefCount)obj;
 		}
@@ -236,7 +236,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IRefCountData Get_UserData(IRefCount buf)//XX 84
+		private static IRefCountData Get_UserData(IRefCount buf)
 		{
 			return (IRefCountData)buf;
 		}
@@ -248,7 +248,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void RefCount_Init(IRefCount @ref, AvRefStructOpaque opaque, UtilFunc.Free2_Cb_Delegate free_Cb)//XX 89
+		private static void RefCount_Init(IRefCount @ref, AvRefStructOpaque opaque, UtilFunc.Free2_Cb_Delegate free_Cb)
 		{
 			RefCount ref2 = (RefCount)@ref;
 
@@ -266,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static T Av_RefStruct_Ref_C<T>(T obj) where T : IRefCount//XX 149
+		private static T Av_RefStruct_Ref_C<T>(T obj) where T : IRefCount
 		{
 			// Casting const away here is fine, as it is only supposed
 			// to apply to the user's data and not our bookkeeping data
@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Pool_Free(AvRefStructPool pool)//XX 208
+		private static void Pool_Free(AvRefStructPool pool)
 		{
 			CThread.pthread_mutex_destroy(pool.Mutex);
 
@@ -301,7 +301,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Pool_Free_Entry(AvRefStructPool pool, RefCount @ref)//XX 216
+		private static void Pool_Free_Entry(AvRefStructPool pool, RefCount @ref)
 		{
 			if (pool.Free_Entry_Cb != null)
 				pool.Free_Entry_Cb(pool.Opaque, Get_UserData(@ref));
@@ -318,7 +318,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// in case we would ever introduce weak references
 		/// </summary>
 		/********************************************************************/
-		private static void Pool_Unref(IRefCount @ref)//XX 309
+		private static void Pool_Unref(IRefCount @ref)
 		{
 			AvRefStructPool pool = (AvRefStructPool)Get_UserData(@ref);
 
@@ -333,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void RefStruct_Pool_Uninit(AvRefStructOpaque unused, IRefCount obj)//XX 316
+		private static void RefStruct_Pool_Uninit(AvRefStructOpaque unused, IRefCount obj)
 		{
 			AvRefStructPool pool = (AvRefStructPool)obj;
 

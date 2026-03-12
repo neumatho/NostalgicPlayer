@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Wma_Init(AvCodecContext avCtx, c_int flags2)//XX 79
+		public static c_int FF_Wma_Init(AvCodecContext avCtx, c_int flags2)
 		{
 			WmaCodecContext s = (WmaCodecContext)avCtx.Priv_Data;
 			c_int channels = avCtx.Ch_Layout.Nb_Channels;
@@ -333,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Wma_Total_Gain_To_Bits(c_int total_Gain)//XX 353
+		public static c_int FF_Wma_Total_Gain_To_Bits(c_int total_Gain)
 		{
 			if (total_Gain < 15)
 				return 13;
@@ -354,7 +354,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Wma_End(AvCodecContext avCtx)//XX 367
+		public static c_int FF_Wma_End(AvCodecContext avCtx)
 		{
 			WmaCodecContext s = (WmaCodecContext)avCtx.Priv_Data;
 
@@ -388,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// Decode an uncompressed coefficient
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Wma_Get_Large_Val(GetBitContext gb)//XX 395
+		public static c_int FF_Wma_Get_Large_Val(GetBitContext gb)
 		{
 			// Consumes up to 34 bits
 			c_int n_Bits = 8;
@@ -417,7 +417,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// Decode run level compressed coefficients
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Wma_Run_Level_Decode(AvCodecContext avCtx, GetBitContext gb, CPointer<VlcElem> vlc, CPointer<c_float> level_Table, CPointer<uint16_t> run_Table, c_int version, CPointer<WmaCoef> ptr, c_int offset, c_int num_Coefs, c_int block_Len, c_int frame_Len_Bits, c_int coef_Nb_Bits)//XX 427
+		public static c_int FF_Wma_Run_Level_Decode(AvCodecContext avCtx, GetBitContext gb, CPointer<VlcElem> vlc, CPointer<c_float> level_Table, CPointer<uint16_t> run_Table, c_int version, CPointer<WmaCoef> ptr, c_int offset, c_int num_Coefs, c_int block_Len, c_int frame_Len_Bits, c_int coef_Nb_Bits)
 		{
 			c_uint coef_Mask = (c_uint)block_Len - 1;
 
@@ -495,7 +495,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Init_Coef_Vlc(Vlc vlc, out CPointer<uint16_t> pRun_Table, out CPointer<c_float> pLevel_Table, out CPointer<uint16_t> pInt_Table, CoefVlcTable vlc_Table)//XX 34
+		private static c_int Init_Coef_Vlc(Vlc vlc, out CPointer<uint16_t> pRun_Table, out CPointer<c_float> pLevel_Table, out CPointer<uint16_t> pInt_Table, CoefVlcTable vlc_Table)
 		{
 			pRun_Table = null;
 			pLevel_Table = null;

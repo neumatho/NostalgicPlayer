@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvClass> FF_UrlContext_Child_Class_Iterate()//XX 85
+		public static IEnumerable<AvClass> FF_UrlContext_Child_Class_Iterate()
 		{
 			foreach (UrlProtocol prot in Supported.Url_Protocols)
 			{
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// blacklist
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<UrlProtocol> FFUrl_Get_Protocols(CPointer<char> whitelist, CPointer<char> blacklist)//XX 125
+		public static IEnumerable<UrlProtocol> FFUrl_Get_Protocols(CPointer<char> whitelist, CPointer<char> blacklist)
 		{
 			foreach (UrlProtocol up in Supported.Url_Protocols)
 			{

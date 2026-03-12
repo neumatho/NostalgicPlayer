@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// implementations for encoders without AV_CODEC_CAP_DR1 set
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Default_Get_Encode_Buffer(AvCodecContext avCtx, AvPacket avPkt, c_int flags)//XX 82
+		public static c_int AvCodec_Default_Get_Encode_Buffer(AvCodecContext avCtx, AvPacket avPkt, c_int flags)
 		{
 			if ((avPkt.Size < 0) || (avPkt.Size > (c_int.MaxValue - Defs.Av_Input_Buffer_Padding_Size)))
 				return Error.EINVAL;
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Called when opening the encoder, before the FFCodec.init() call
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FF_Encode_Preinit(AvCodecContext avCtx)//XX 745
+		internal static c_int FF_Encode_Preinit(AvCodecContext avCtx)
 		{
 			throw new NotImplementedException("FF_Encode_Receive_Frame");
 		}
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// avcodec_receive_frame() implementation for encoders
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Encode_Receive_Frame(AvCodecContext avCtx, AvFrame frame)//XX 858
+		public static c_int FF_Encode_Receive_Frame(AvCodecContext avCtx, AvFrame frame)
 		{
 			throw new NotImplementedException("FF_Encode_Receive_Frame");
 		}
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static AvCodecInternal FF_Encode_Internal_Alloc()//XX 881
+		internal static AvCodecInternal FF_Encode_Internal_Alloc()
 		{
 			return Mem.Av_MAlloczObj<EncodeContext>();
 		}

@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// accesses (including vectors if available on the CPU)
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_MAlloc<T>(size_t size) where T : struct//XX 98
+		public static CPointer<T> Av_MAlloc<T>(size_t size) where T : struct
 		{
 			if (size > StdAtomic.Atomic_Load(ref max_Alloc_Size))
 				return null;
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// `size`
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_Realloc<T>(CPointer<T> ptr, size_t size) where T : struct//XX 155
+		public static CPointer<T> Av_Realloc<T>(CPointer<T> ptr, size_t size) where T : struct
 		{
 			if (size > StdAtomic.Atomic_Load(ref max_Alloc_Size))
 				return null;
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Allocate, reallocate, or free a block of memory
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_Realloc_F<T>(CPointer<T> ptr, size_t size) where T : struct//XX 173
+		public static CPointer<T> Av_Realloc_F<T>(CPointer<T> ptr, size_t size) where T : struct
 		{
 			CPointer<T> r = Av_Realloc(ptr, size);
 
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// `size`
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_ReallocP<T>(ref CPointer<T> ptr, size_t size) where T : struct//XX 188
+		public static c_int Av_ReallocP<T>(ref CPointer<T> ptr, size_t size) where T : struct
 		{
 			if (size == 0)
 			{
@@ -193,7 +193,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// The allocated memory will have size `size * nmemb` bytes
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_MAlloc_ArrayObj<T>(size_t nMemb) where T : class, new()//XX 209
+		public static CPointer<T> Av_MAlloc_ArrayObj<T>(size_t nMemb) where T : class, new()
 		{
 			return Av_MAllocObj<T>(nMemb);
 		}
@@ -207,7 +207,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// The allocated memory will have size `size * nmemb` bytes
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_MAlloc_Array<T>(size_t nMemb) where T : struct//XX 209
+		public static CPointer<T> Av_MAlloc_Array<T>(size_t nMemb) where T : struct
 		{
 			return Av_MAlloc<T>(nMemb);
 		}
@@ -220,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// av_malloc() or av_realloc() family
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Free<T>(CPointer<T> ptr)//XX 238
+		public static void Av_Free<T>(CPointer<T> ptr)
 		{
 			CMemory.free(ptr);
 		}
@@ -246,7 +246,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// If `ptr` is `NULL` and `nmemb` > 0, allocate a new block
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_Realloc_ArrayObj<T>(CPointer<T> ptr, size_t nMemb) where T : class, new()//XX 217
+		public static CPointer<T> Av_Realloc_ArrayObj<T>(CPointer<T> ptr, size_t nMemb) where T : class, new()
 		{
 			return Av_ReallocObj(ptr, nMemb);
 		}
@@ -260,7 +260,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// to it to `NULL`
 		/// </summary>
 		/********************************************************************/
-		public static void Av_FreeP<T>(ref CPointer<T> ptr)//XX 247
+		public static void Av_FreeP<T>(ref CPointer<T> ptr)
 		{
 			CPointer<T> val = ptr;
 			ptr.SetToNull();
@@ -294,7 +294,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// all the bytes of the block
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_MAllocz<T>(size_t size) where T : struct//XX 256
+		public static CPointer<T> Av_MAllocz<T>(size_t size) where T : struct
 		{
 			return Av_MAlloc<T>(size);
 		}
@@ -336,7 +336,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// The allocated memory will have size `size * nmemb` bytes
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_CAlloc<T>(size_t nMemb) where T : struct//XX 264
+		public static CPointer<T> Av_CAlloc<T>(size_t nMemb) where T : struct
 		{
 			return Av_MAllocz<T>(nMemb);
 		}
@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Duplicate a string
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_StrDup(CPointer<char> s)//XX 272
+		public static CPointer<char> Av_StrDup(CPointer<char> s)
 		{
 			CPointer<char> ptr = null;
 
@@ -385,7 +385,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Duplicate a buffer with av_malloc()
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_MemDup<T>(CPointer<T> p, size_t size) where T : struct//XX 304
+		public static CPointer<T> Av_MemDup<T>(CPointer<T> p, size_t size) where T : struct
 		{
 			CPointer<T> ptr = null;
 
@@ -443,7 +443,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// leave current buffer untouched
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_DynArray_Add_NoFreeObj<T>(ref CPointer<T> tab_Ptr, ref c_int nb_Ptr, T elem) where T : class, new() //XX 315
+		public static c_int Av_DynArray_Add_NoFreeObj<T>(ref CPointer<T> tab_Ptr, ref c_int nb_Ptr, T elem) where T : class, new()
 		{
 			CPointer<T> tab = tab_Ptr;
 			size_t nb = (size_t)nb_Ptr;
@@ -481,7 +481,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// `NULL` and `*nb_ptr` is set to 0
 		/// </summary>
 		/********************************************************************/
-		public static T Av_DynArray2_AddObj<T>(ref CPointer<T> tab_Ptr, ref c_int nb_Ptr, T elem_Data) where T : class, IDeepCloneable<T>, new() //XX 343
+		public static T Av_DynArray2_AddObj<T>(ref CPointer<T> tab_Ptr, ref c_int nb_Ptr, T elem_Data) where T : class, IDeepCloneable<T>, new()
 		{
 			T tab_Elem_Data = null;
 
@@ -515,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// special handling to avoid memleaks is necessary
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Fast_MAlloc<T>(ref CPointer<T> ptr, ref c_int size, size_t min_Size) where T : struct//XX 557
+		public static void Av_Fast_MAlloc<T>(ref CPointer<T> ptr, ref c_int size, size_t min_Size) where T : struct
 		{
 			c_uint size1 = (c_uint)size;
 
@@ -539,7 +539,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// buffer is not changed or freed
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<T> Av_Fast_ReallocObj<T>(CPointer<T> ptr, ref c_uint size, size_t min_Size) where T : class, new()//XX 497
+		public static CPointer<T> Av_Fast_ReallocObj<T>(CPointer<T> ptr, ref c_uint size, size_t min_Size) where T : class, new()
 		{
 			if (min_Size <= size)
 				return ptr;
@@ -577,7 +577,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Fast_MAlloc<T>(ref CPointer<T> ptr, ref c_uint size, size_t min_Size, bool zero_Realloc) where T : struct//XX 527
+		private static void Fast_MAlloc<T>(ref CPointer<T> ptr, ref c_uint size, size_t min_Size, bool zero_Realloc) where T : struct
 		{
 			CPointer<T> val = ptr;
 

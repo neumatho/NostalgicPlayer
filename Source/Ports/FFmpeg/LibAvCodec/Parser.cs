@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvCodecParserContext Av_Parser_Init(AvCodecId codec_Id)//XX 33
+		public static AvCodecParserContext Av_Parser_Init(AvCodecId codec_Id)
 		{
 			if (codec_Id == AvCodecId.None)
 				return null;
@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// unit
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Fetch_Timestamp(AvCodecParserContext s, c_int off, c_int remove, c_int fuzzy)//XX 85
+		public static void FF_Fetch_Timestamp(AvCodecParserContext s, c_int off, c_int remove, c_int fuzzy)
 		{
 			if (fuzzy == 0)
 			{
@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Parse a packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Parser_Parse2(AvCodecParserContext s, AvCodecContext avCtx, out CPointer<uint8_t> pOutBuf, out c_int pOutBufSize, CPointer<uint8_t> buf, c_int buf_Size, int64_t pts, int64_t dts, int64_t pos)//XX 116
+		public static c_int Av_Parser_Parse2(AvCodecParserContext s, AvCodecContext avCtx, out CPointer<uint8_t> pOutBuf, out c_int pOutBufSize, CPointer<uint8_t> buf, c_int buf_Size, int64_t pts, int64_t dts, int64_t pos)
 		{
 			CPointer<uint8_t> dummy_Buf = new CPointer<uint8_t>(Defs.Av_Input_Buffer_Padding_Size);
 
@@ -222,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Parser_Close(AvCodecParserContext s)//XX 194
+		public static void Av_Parser_Close(AvCodecParserContext s)
 		{
 			if (s != null)
 			{

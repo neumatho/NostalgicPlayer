@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Thread_Init(AvCodecContext avCtx)//XX 72
+		public static c_int FF_Thread_Init(AvCodecContext avCtx)
 		{
 			Validate_Thread_Parameters(avCtx);
 
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Thread_Free(AvCodecContext avCtx)//XX 84
+		public static void FF_Thread_Free(AvCodecContext avCtx)
 		{
 			if ((avCtx.Active_Thread_Type & FFThread.Frame) != 0)
 				PThread_Frame.FF_Frame_Thread_Free(avCtx, avCtx.Thread_Count);
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_PThread_Free(IContext obj, PThread_ThreadInfo threadInfo)//XX 92
+		public static void FF_PThread_Free(IContext obj, PThread_ThreadInfo threadInfo)
 		{
 			Type type = obj.GetType();
 
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_PThread_Init(IContext obj, PThread_ThreadInfo threadInfo)//XX 105
+		public static c_int FF_PThread_Init(IContext obj, PThread_ThreadInfo threadInfo)
 		{
 			FieldInfo fieldInfo;
 

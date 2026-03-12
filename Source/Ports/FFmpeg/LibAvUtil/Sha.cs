@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvSha Av_Sha_Alloc()//XX 46
+		public static AvSha Av_Sha_Alloc()
 		{
 			return Mem.Av_MAlloczObj<AvSha>();
 		}
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Initialize SHA-1 or SHA-2 hashing
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Sha_Init(AvSha ctx, c_int bits)//XX 274
+		public static c_int Av_Sha_Init(AvSha ctx, c_int bits)
 		{
 			ctx.Digest_Len = (uint8_t)(bits >> 5);
 
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Update hash value
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Sha_Update(AvSha ctx, Span<uint8_t> data, size_t len)//XX 315
+		public static void Av_Sha_Update(AvSha ctx, Span<uint8_t> data, size_t len)
 		{
 			c_uint j = (c_uint)(ctx.Count & 63);
 			ctx.Count += len;
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Finish hashing and output digest value
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Sha_Final(AvSha ctx, CPointer<uint8_t> digest)//XX 347
+		public static void Av_Sha_Final(AvSha ctx, CPointer<uint8_t> digest)
 		{
 			uint64_t finalCount = BSwap.Av_Be2Ne64(ctx.Count << 3);
 

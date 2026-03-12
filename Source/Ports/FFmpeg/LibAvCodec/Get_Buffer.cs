@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// implementations for decoders without AV_CODEC_CAP_DR1 set
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Default_Get_Buffer2(AvCodecContext avCtx, AvFrame frame, c_int flags)//XX 253
+		public static c_int AvCodec_Default_Get_Buffer2(AvCodecContext avCtx, AvFrame frame, c_int flags)
 		{
 			c_int ret;
 
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Frame_Pool_Free(AvRefStructOpaque unused, IRefCount obj)//XX 56
+		private static void Frame_Pool_Free(AvRefStructOpaque unused, IRefCount obj)
 		{
 			FramePool pool = (FramePool)obj;
 
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Update_Frame_Pool(AvCodecContext avCtx, AvFrame frame)//XX 65
+		private static c_int Update_Frame_Pool(AvCodecContext avCtx, AvFrame frame)
 		{
 			FramePool pool = avCtx.Internal.Pool;
 			c_int ret;
@@ -220,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Audio_Get_Buffer(AvCodecContext avCtx, AvFrame frame)//XX 172
+		private static c_int Audio_Get_Buffer(AvCodecContext avCtx, AvFrame frame)
 		{
 			FramePool pool = avCtx.Internal.Pool;
 			c_int planes = pool.Planes;
@@ -282,7 +282,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Video_Get_Buffer(AvCodecContext s, AvFrame pic)//XX 217
+		private static c_int Video_Get_Buffer(AvCodecContext s, AvFrame pic)
 		{
 			FramePool pool = s.Internal.Pool;
 			c_int i;

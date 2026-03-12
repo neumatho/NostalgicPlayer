@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers
 		/// <summary>
 		/// 
 		/// </summary>
-		public CPointer<IExecuteArg> Args;//XX
+		public CPointer<IExecuteArg> Args;
 
 		/// <summary>
 		/// 

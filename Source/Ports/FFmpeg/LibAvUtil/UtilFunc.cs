@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// <summary></summary>
 		public delegate void DeviceUninit_Delegate(AvHwDeviceContext ctx);
 		/// <summary></summary>
-		public delegate c_int FramesGetConstraints_Delegate(AvHwDeviceContext ctx, object hwConfig, AvHwFramesConstraints constraints);//XX
+		public delegate c_int FramesGetConstraints_Delegate(AvHwDeviceContext ctx, object hwConfig, AvHwFramesConstraints constraints);
 		/// <summary></summary>
 		public delegate c_int FramesInit_Delegate(AvHwFramesContext ctx);
 		/// <summary></summary>

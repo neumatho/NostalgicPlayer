@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Allocate an AVRC4 context
 		/// </summary>
 		/********************************************************************/
-		public static AvRc4 Av_Rc4_Alloc()//XX 29
+		public static AvRc4 Av_Rc4_Alloc()
 		{
 			return Mem.Av_MAlloczObj<AvRc4>();
 		}
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Initializes an AVRC4 context
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Rc4_Init(AvRc4 r, CPointer<uint8_t> key, c_int key_Bits, c_int decrypt)//XX 34
+		public static c_int Av_Rc4_Init(AvRc4 r, CPointer<uint8_t> key, c_int key_Bits, c_int decrypt)
 		{
 			CPointer<uint8_t> state = r.State;
 			c_int keyLen = key_Bits >> 3;
@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Encrypts / decrypts using the RC4 algorithm
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Rc4_Crypt(AvRc4 r, CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int count, CPointer<uint8_t> iv, c_int decrypt)//XX 55
+		public static void Av_Rc4_Crypt(AvRc4 r, CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int count, CPointer<uint8_t> iv, c_int decrypt)
 		{
 			uint8_t x = (uint8_t)r.X;
 			uint8_t y = (uint8_t)r.Y;

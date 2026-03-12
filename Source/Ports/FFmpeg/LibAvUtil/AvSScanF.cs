@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int Av_SScanF(CPointer<char> @string, string format, object[] results)//XX 961
+		public static c_int Av_SScanF(CPointer<char> @string, string format, object[] results)
 		{
 			return Av_SScanF(@string, format.ToCharPointer(), results);
 		}
@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_SScanF(CPointer<char> @string, CPointer<char> format, object[] results)//XX 961
+		public static c_int Av_SScanF(CPointer<char> @string, CPointer<char> format, object[] results)
 		{
 			c_int ret = FF_VSScanF(@string, format, results);
 
@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static ptrdiff_t ShCnt(FFFile f)//XX 54
+		private static ptrdiff_t ShCnt(FFFile f)
 		{
 			return f.ShCnt + (f.RPos - f.Buf);
 		}
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int FFToRead(FFFile f)//XX 56
+		private static c_int FFToRead(FFFile f)
 		{
 			f.RPos = f.REnd = f.Buf + f.Buf_Size;
 
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static size_t FFString_Read(FFFile f, CPointer<char> buf, size_t len)//XX 62
+		private static size_t FFString_Read(FFFile f, CPointer<char> buf, size_t len)
 		{
 			CPointer<char> src = (CPointer<char>)f.Cookie;
 			size_t k = len + 256;
@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int FFUFlow(FFFile f)//XX 78
+		private static c_int FFUFlow(FFFile f)
 		{
 			CPointer<char> c = new CPointer<char>(1);
 
@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void FFShLim(FFFile f, c_int lim)//XX 85
+		private static void FFShLim(FFFile f, c_int lim)
 		{
 			f.ShLim = lim;
 			f.ShCnt = f.Buf - f.RPos;
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int FFShGetC(FFFile f)//XX 96
+		private static c_int FFShGetC(FFFile f)
 		{
 			c_int c;
 
@@ -218,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void ShLim(FFFile f, c_int lim)//XX 115
+		private static void ShLim(FFFile f, c_int lim)
 		{
 			FFShLim(f, lim);
 		}
@@ -231,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int ShGetC(FFFile f)//XX 116
+		private static c_int ShGetC(FFFile f)
 		{
 			return f.RPos < f.ShEnd ? f.RPos[0, 1] : FFShGetC(f);
 		}
@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void ShUnget(FFFile f)//XX 117
+		private static void ShUnget(FFFile f)
 		{
 			if (f.ShEnd.IsNotNull)
 				f.RPos--;
@@ -257,7 +257,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_ulong_long FFIntScan(FFFile f, c_uint @base, c_int pok, c_ulong_long lim)//XX 138
+		private static c_ulong_long FFIntScan(FFFile f, c_uint @base, c_int pok, c_ulong_long lim)
 		{
 			CPointer<c_uchar> val = new CPointer<c_uchar>(table, 1);
 			c_int c, neg = 0;
@@ -380,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_long_long ScanExp(FFFile f, c_int pok)//XX 214
+		private static c_long_long ScanExp(FFFile f, c_int pok)
 		{
 			c_int x;
 			c_long_long y;
@@ -426,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_double DecFloat(FFFile f, c_int c, c_int bits, c_int eMin, c_int sign, c_int pok)//XX 245
+		private static c_double DecFloat(FFFile f, c_int c, c_int bits, c_int eMin, c_int sign, c_int pok)
 		{
 			uint32_t[] x = new uint32_t[KMax];
 			uint32_t[] th = [ Ld_B1B_Max1, Ld_B1B_Max2 ];
@@ -790,7 +790,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_double HexFloat(FFFile f, c_int bits, c_int eMin, c_int sign, c_int pok)//XX 497
+		private static c_double HexFloat(FFFile f, c_int bits, c_int eMin, c_int sign, c_int pok)
 		{
 			uint32_t x = 0;
 			c_double y = 0;
@@ -955,7 +955,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_double FFFloatScan(FFFile f, c_int prec, c_int pok)//XX 610
+		private static c_double FFFloatScan(FFFile f, c_int prec, c_int pok)
 		{
 			c_int sign = 1;
 			size_t i;
@@ -1098,7 +1098,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Store_Int(object[] results, c_int destIndex, Size size, c_ulong_long i)//XX 704
+		private static void Store_Int(object[] results, c_int destIndex, Size size, c_ulong_long i)
 		{
 			if (destIndex == -1)
 				return;
@@ -1144,7 +1144,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int FF_VFScanF(FFFile f, CPointer<char> fmt, object[] results)//XX 726
+		private static c_int FF_VFScanF(FFFile f, CPointer<char> fmt, object[] results)
 		{
 			c_int width;
 			Size size;
@@ -1558,7 +1558,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int FF_VSScanF(CPointer<char> s, CPointer<char> fmt, object[] results)//XX 951
+		private static c_int FF_VSScanF(CPointer<char> s, CPointer<char> fmt, object[] results)
 		{
 			FFFile f = new FFFile
 			{

@@ -418,7 +418,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// The undefined value can be expressed using the "0:0" string
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Parse_Ratio(out AvRational q, CPointer<char> str, c_int max, c_int log_Offset, IContext log_Ctx)//XX 45
+		public static c_int Av_Parse_Ratio(out AvRational q, CPointer<char> str, c_int max, c_int log_Offset, IContext log_Ctx)
 		{
 			q = new AvRational(0, 0);
 
@@ -448,7 +448,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Parse str and put in width_ptr and height_ptr the detected values
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Parse_Video_Size(out c_int width_Ptr, out c_int height_Ptr, CPointer<char> str)//XX 150
+		public static c_int Av_Parse_Video_Size(out c_int width_Ptr, out c_int height_Ptr, CPointer<char> str)
 		{
 			c_int i;
 			c_int n = (c_int)Macros.FF_Array_Elems(video_Size_Abbrs);
@@ -497,7 +497,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Parse str and store the detected values in *rate
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Parse_Video_Rate(out AvRational rate, CPointer<char> arg)//XX 181
+		public static c_int Av_Parse_Video_Rate(out AvRational rate, CPointer<char> arg)
 		{
 			c_int n = (c_int)Macros.FF_Array_Elems(video_Rate_Abbrs);
 
@@ -537,7 +537,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Put the RGBA values that correspond to color_string in rgba_color
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Parse_Color(CPointer<uint8_t> rgba_Color, CPointer<char> color_String, c_int sLen, IClass log_Ctx)//XX 359
+		public static c_int Av_Parse_Color(CPointer<uint8_t> rgba_Color, CPointer<char> color_String, c_int sLen, IClass log_Ctx)
 		{
 			CPointer<char> color_String2 = new CPointer<char>(128);
 			c_int hex_Offset = 0;
@@ -644,7 +644,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// by av_parse_color()
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<(CPointer<char> Name, CPointer<uint8_t> rgba)> Av_Get_Known_Color_Name()//XX 439
+		public static IEnumerable<(CPointer<char> Name, CPointer<uint8_t> rgba)> Av_Get_Known_Color_Name()
 		{
 			foreach (ColorEntry color in color_Table)
 				yield return new (color.Name.ToCharPointer(), new CPointer<uint8_t>([ color.Rgb_Color[0], color.Rgb_Color[1], color.Rgb_Color[2], 0 ]));
@@ -716,7 +716,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// - `%%`: a literal `%`
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Small_Strptime(CPointer<char> p, CPointer<char> fmt, ref tm dt)//XX 494
+		public static CPointer<char> Av_Small_Strptime(CPointer<char> p, CPointer<char> fmt, ref tm dt)
 		{
 			c_int c, val;
 
@@ -855,7 +855,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Convert the decomposed UTC time in tm to a time_t value
 		/// </summary>
 		/********************************************************************/
-		public static time_t Av_TimeGm(tm tm)//XX 573
+		public static time_t Av_TimeGm(tm tm)
 		{
 			c_int y = tm.tm_Year + 1900;
 			c_int m = tm.tm_Mon + 1;
@@ -881,7 +881,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// microseconds
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Parse_Time(out int64_t timeVal, CPointer<char> timeStr, c_int duration)//XX 592
+		public static c_int Av_Parse_Time(out int64_t timeVal, CPointer<char> timeStr, c_int duration)
 		{
 			int64_t t = 0;
 			time_t now = 0;
@@ -1087,7 +1087,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return 1 if found
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Find_Info_Tag(CPointer<char> arg, c_int arg_Size, CPointer<char> tag1, CPointer<char> info)//XX 756
+		public static c_int Av_Find_Info_Tag(CPointer<char> arg, c_int arg_Size, CPointer<char> tag1, CPointer<char> info)
 		{
 			CPointer<char> tag = new CPointer<char>(128);
 
@@ -1163,7 +1163,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// length of len_max. Return -1 if error
 		/// </summary>
 		/********************************************************************/
-		private static c_int Date_Get_Num(ref CPointer<char> pp, c_int n_Min, c_int n_Max, c_int len_Max)//XX 455
+		private static c_int Date_Get_Num(ref CPointer<char> pp, c_int n_Min, c_int n_Max, c_int len_Max)
 		{
 			CPointer<char> p = pp;
 			c_int val = 0;
@@ -1198,7 +1198,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Date_Get_Month(ref CPointer<char> pp)//XX 479
+		private static c_int Date_Get_Month(ref CPointer<char> pp)
 		{
 			for (c_int i = 0; i < 12; i++)
 			{

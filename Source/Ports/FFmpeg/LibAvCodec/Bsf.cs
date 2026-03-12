@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// it; write NULL into the supplied pointer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Bsf_Free(ref AvBsfContext pCtx)//XX 52
+		public static void Av_Bsf_Free(ref AvBsfContext pCtx)
 		{
 			if (pCtx == null)
 				return;
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// and then call av_bsf_init() before sending any data to the filter
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_Alloc(AvBitStreamFilter filter, out AvBsfContext pCtx)//XX 104
+		public static c_int Av_Bsf_Alloc(AvBitStreamFilter filter, out AvBsfContext pCtx)
 		{
 			pCtx = null;
 
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// have been set
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_Init(AvBsfContext ctx)//XX 149
+		public static c_int Av_Bsf_Init(AvBsfContext ctx)
 		{
 			// Check that the codec is supported
 			if (ctx.Filter.Codec_Ids.IsNotNull)
@@ -220,7 +220,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// when seeking
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Bsf_Flush(AvBsfContext ctx)//XX 190
+		public static void Av_Bsf_Flush(AvBsfContext ctx)
 		{
 			FFBsfContext bsfi = FFBsfContext(ctx);
 
@@ -243,7 +243,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// AVERROR(EAGAIN) or AVERROR_EOF
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_Send_Packet(AvBsfContext ctx, AvPacket pkt)//XX 202
+		public static c_int Av_Bsf_Send_Packet(AvBsfContext ctx, AvPacket pkt)
 		{
 			FFBsfContext bsfi = FFBsfContext(ctx);
 
@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Retrieve a filtered packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_Receive_Packet(AvBsfContext ctx, AvPacket pkt)//XX 230
+		public static c_int Av_Bsf_Receive_Packet(AvBsfContext ctx, AvPacket pkt)
 		{
 			return FF_Bsf(ctx.Filter).Filter(ctx, pkt);
 		}
@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// The reference to packet is moved to provided packet structure
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FF_Bsf_Get_Packet_Ref(AvBsfContext ctx, AvPacket pkt)//XX 256
+		internal static c_int FF_Bsf_Get_Packet_Ref(AvBsfContext ctx, AvPacket pkt)
 		{
 			FFBsfContext bsfi = FFBsfContext(ctx);
 
@@ -321,7 +321,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// or finalized by av_bsf_list_finalize()
 		/// </summary>
 		/********************************************************************/
-		public static AvBsfList Av_Bsf_List_Alloc()//XX 420
+		public static AvBsfList Av_Bsf_List_Alloc()
 		{
 			return Mem.Av_MAlloczObj<AvBsfList>();
 		}
@@ -333,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Free list of bitstream filters
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Bsf_List_Free(ref AvBsfList lst)//XX 425
+		public static void Av_Bsf_List_Free(ref AvBsfList lst)
 		{
 			if (lst == null)
 				return;
@@ -352,7 +352,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Append bitstream filter to the list of bitstream filters
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_List_Append(AvBsfList lst, AvBsfContext bsf)//XX 438
+		public static c_int Av_Bsf_List_Append(AvBsfList lst, AvBsfContext bsf)
 		{
 			return Mem.Av_DynArray_Add_NoFreeObj(ref lst.Bsfs, ref lst.Nb_Bsfs, bsf);
 		}
@@ -371,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// for freeing the structure by av_bsf_list_free()
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_List_Finalize(ref AvBsfList lst, out AvBsfContext bsf)//XX 489
+		public static c_int Av_Bsf_List_Finalize(ref AvBsfList lst, out AvBsfContext bsf)
 		{
 			c_int ret = 0;
 
@@ -411,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// AVBSFContext freshly allocated by av_bsf_alloc()
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_List_Parse_Str(CPointer<char> str, out AvBsfContext bsf_Lst)//XX 526
+		public static c_int Av_Bsf_List_Parse_Str(CPointer<char> str, out AvBsfContext bsf_Lst)
 		{
 			bsf_Lst = null;
 
@@ -454,7 +454,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Get null/pass-through bitstream filter
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Bsf_Get_Null_Filter(out AvBsfContext bsf)//XX 553
+		public static c_int Av_Bsf_Get_Null_Filter(out AvBsfContext bsf)
 		{
 			return Av_Bsf_Alloc(list_Bsf.P, out bsf);
 		}
@@ -478,7 +478,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static FFBitStreamFilter FF_Bsf(AvBitStreamFilter bsf)//XX 36
+		private static FFBitStreamFilter FF_Bsf(AvBitStreamFilter bsf)
 		{
 			return (FFBitStreamFilter)bsf;
 		}
@@ -491,7 +491,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static FFBsfContext FFBsfContext(AvBsfContext ctx)//XX 47
+		private static FFBsfContext FFBsfContext(AvBsfContext ctx)
 		{
 			return (FFBsfContext)ctx;
 		}
@@ -503,7 +503,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<IOptionContext> Bsf_Child_Next(IOptionContext obj)//XX 77
+		private static IEnumerable<IOptionContext> Bsf_Child_Next(IOptionContext obj)
 		{
 			AvBsfContext ctx = (AvBsfContext)obj;
 
@@ -518,7 +518,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Bsf_To_Name(IClass bsf)//XX 85
+		private static CPointer<char> Bsf_To_Name(IClass bsf)
 		{
 			return ((AvBsfContext)bsf).Filter.Name;
 		}
@@ -530,7 +530,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Bsf_List_Init(AvBsfContext bsf)//XX 283
+		private static c_int Bsf_List_Init(AvBsfContext bsf)
 		{
 			BsfListContext lst = (BsfListContext)bsf.Priv_Data;
 			AvCodecParameters cod_Par = bsf.Par_In;
@@ -570,7 +570,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Bsf_List_Filter(AvBsfContext bsf, AvPacket @out)//XX 312
+		private static c_int Bsf_List_Filter(AvBsfContext bsf, AvPacket @out)
 		{
 			BsfListContext lst = (BsfListContext)bsf.Priv_Data;
 			c_int ret, eof = 0;
@@ -629,7 +629,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Bsf_List_Flush(AvBsfContext bsf)//XX 354
+		private static void Bsf_List_Flush(AvBsfContext bsf)
 		{
 			BsfListContext lst = (BsfListContext)bsf.Priv_Data;
 
@@ -646,7 +646,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Bsf_List_Close(AvBsfContext bsf)//XX 363
+		private static void Bsf_List_Close(AvBsfContext bsf)
 		{
 			BsfListContext lst = (BsfListContext)bsf.Priv_Data;
 
@@ -664,7 +664,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Bsf_List_Item_Name(IClass ctx)//XX 374
+		private static CPointer<char> Bsf_List_Item_Name(IClass ctx)
 		{
 			CPointer<char> null_Filter_Name = "null".ToCharPointer();
 			AvBsfContext bsf_Ctx = (AvBsfContext)ctx;
@@ -697,7 +697,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Bsf_List_Append_Internal(AvBsfList lst, CPointer<char> bsf_Name, CPointer<char> options, ref AvDictionary options_Dict)//XX 443
+		private static c_int Bsf_List_Append_Internal(AvBsfList lst, CPointer<char> bsf_Name, CPointer<char> options, ref AvDictionary options_Dict)
 		{
 			AvBitStreamFilter filter = BitStream_Filters.Av_Bsf_Get_By_Name(bsf_Name);
 
@@ -747,7 +747,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Bsf_Parse_Single(CPointer<char> str, AvBsfList bsf_Lst)//XX 515
+		private static c_int Bsf_Parse_Single(CPointer<char> str, AvBsfList bsf_Lst)
 		{
 			CPointer<char> bsf_Options_Str = null;
 

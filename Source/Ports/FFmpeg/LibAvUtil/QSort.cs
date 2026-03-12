@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Av_QSort<T>(CPointer<T> p, c_int num, Sort_Delegate<T> cmp)//XX 33
+		public static void Av_QSort<T>(CPointer<T> p, c_int num, Sort_Delegate<T> cmp)
 		{
 			CPointer<T>[][] stack = ArrayHelper.Initialize2Arrays<CPointer<T>>(64, 2);
 			c_int sp = 1;

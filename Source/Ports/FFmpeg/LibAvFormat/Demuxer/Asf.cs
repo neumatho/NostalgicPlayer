@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// Handles both attached pictures as well as id3 tags
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Asf_Handle_Byte_Array(AvFormatContext s, CPointer<char> name, c_int val_Len)//XX 142
+		public static c_int FF_Asf_Handle_Byte_Array(AvFormatContext s, CPointer<char> name, c_int val_Len)
 		{
 			if (CString.strcmp(name, "WM/Picture") == 0)	// Handle cover art
 				return Asf_Read_Picture(s, val_Len);
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// APIC", but in reality this is only loosely similar
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Picture(AvFormatContext s, c_int len)//XX 51
+		private static c_int Asf_Read_Picture(AvFormatContext s, c_int len)
 		{
 			AvCodecId id = AvCodecId.None;
 			CPointer<char> mimeType = new CPointer<char>(64);
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Id3_Tag(AvFormatContext s, c_int len)//XX 129
+		private static c_int Get_Id3_Tag(AvFormatContext s, c_int len)
 		{
 			Id3v2.FF_Id3v2_Read(s, Id3v2.Default_Magic, out Id3v2ExtraMeta id3V2_Extra_Meta, (c_uint)len);
 

@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// Create an audio sample format converter context
 		/// </summary>
 		/********************************************************************/
-		public static AudioConvert Swri_Audio_Convert_Alloc(AvSampleFormat out_Fmt, AvSampleFormat in_Fmt, c_int channels, CPointer<c_int> ch_Map, c_int flags)//XX 145
+		public static AudioConvert Swri_Audio_Convert_Alloc(AvSampleFormat out_Fmt, AvSampleFormat in_Fmt, c_int channels, CPointer<c_int> ch_Map, c_int flags)
 		{
 			SwrFunc.Conv_Func_Type_Delegate f = fmt_Pair_To_Conv_Functions[(c_int)SampleFmt.Av_Get_Packed_Sample_Fmt(out_Fmt) + ((c_int)AvSampleFormat.Nb * (c_int)SampleFmt.Av_Get_Packed_Sample_Fmt(in_Fmt))];
 
@@ -144,7 +144,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// to NULL
 		/// </summary>
 		/********************************************************************/
-		public static void Swri_Audio_Convert_Free(ref AudioConvert ctx)//XX 190
+		public static void Swri_Audio_Convert_Free(ref AudioConvert ctx)
 		{
 			Mem.Av_FreeP(ref ctx);
 		}
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// Convert between audio sample formats
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swri_Audio_Convert(AudioConvert ctx, AudioData @out, AudioData @in, c_int len)//XX 195
+		public static c_int Swri_Audio_Convert(AudioConvert ctx, AudioData @out, AudioData @in, c_int len)
 		{
 			c_int off = 0;
 			c_int os = (@out.Planar != 0 ? 1 : @out.Ch_Count) * @out.Bps;
@@ -1286,7 +1286,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Cpy1(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)//XX 132
+		private static void Cpy1(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)
 		{
 			CMemory.memcpy(dst, src, (size_t)len);
 		}
@@ -1298,7 +1298,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Cpy2(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)//XX 135
+		private static void Cpy2(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)
 		{
 			CMemory.memcpy(dst, src, (size_t)(2 * len));
 		}
@@ -1310,7 +1310,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Cpy4(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)//XX 138
+		private static void Cpy4(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)
 		{
 			CMemory.memcpy(dst, src, (size_t)(4 * len));
 		}
@@ -1322,7 +1322,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Cpy8(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)//XX 141
+		private static void Cpy8(CPointer<uint8_t> dst, CPointer<uint8_t> src, c_int len)
 		{
 			CMemory.memcpy(dst, src, (size_t)(8 * len));
 		}

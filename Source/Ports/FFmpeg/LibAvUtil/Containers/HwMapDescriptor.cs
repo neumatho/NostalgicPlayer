@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil.Containers
 		/// <summary>
 		/// Hardware-specific private data associated with the mapping
 		/// </summary>
-		public object Priv;//XX
+		public object Priv;
 
 		/********************************************************************/
 		/// <summary>

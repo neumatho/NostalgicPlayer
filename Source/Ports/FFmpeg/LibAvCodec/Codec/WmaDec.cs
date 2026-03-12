@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Wma_Decode_Init(AvCodecContext avCtx)//XX 74
+		private static c_int Wma_Decode_Init(AvCodecContext avCtx)
 		{
 			WmaCodecContext s = (WmaCodecContext)avCtx.Priv_Data;
 
@@ -271,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_float Pow_M1_4(WmaCodecContext s, c_float x)//XX 154
+		private static c_float Pow_M1_4(WmaCodecContext s, c_float x)
 		{
 			c_uint u = BitConverter.SingleToUInt32Bits(x);
 			c_uint e = u >> 23;
@@ -292,7 +292,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Wma_Lsp_To_Curve_Init(WmaCodecContext s, c_int frame_Len)//XX 173
+		private static void Wma_Lsp_To_Curve_Init(WmaCodecContext s, c_int frame_Len)
 		{
 			c_float wDel = (c_float)Math.PI / frame_Len;
 
@@ -330,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// NOTE: We use the same code as Vorbis here
 		/// </summary>
 		/********************************************************************/
-		private static void Wma_Lsp_To_Curve(WmaCodecContext s, CPointer<c_float> @out, out c_float val_Max_Ptr, c_int n, CPointer<c_float> lsp)//XX 205
+		private static void Wma_Lsp_To_Curve(WmaCodecContext s, CPointer<c_float> @out, out c_float val_Max_Ptr, c_int n, CPointer<c_float> lsp)
 		{
 			c_float val_Max = 0;
 
@@ -369,7 +369,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// Vorbis)
 		/// </summary>
 		/********************************************************************/
-		private static void Decode_Exp_Lsp(WmaCodecContext s, c_int ch)//XX 234
+		private static void Decode_Exp_Lsp(WmaCodecContext s, c_int ch)
 		{
 			c_int val;
 
@@ -395,7 +395,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// Decode exponents coded with VLC codes
 		/// </summary>
 		/********************************************************************/
-		private static c_int Decode_Exp_Vlc(WmaCodecContext s, c_int ch)//XX 336
+		private static c_int Decode_Exp_Vlc(WmaCodecContext s, c_int ch)
 		{
 			c_int last_Exp, n;
 			c_float v;
@@ -466,7 +466,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// always 1 (MDCT reconstruction rule)
 		/// </summary>
 		/********************************************************************/
-		private static void Wma_Window(WmaCodecContext s, CPointer<c_float> @out)//XX 395
+		private static void Wma_Window(WmaCodecContext s, CPointer<c_float> @out)
 		{
 			CPointer<c_float> @in = s.Output;
 			c_int block_Len, bSize, n;
@@ -522,7 +522,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Wma_Decode_Block(WmaCodecContext s)//XX 447
+		private static c_int Wma_Decode_Block(WmaCodecContext s)
 		{
 			c_int n, v;
 
@@ -929,7 +929,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// Decode a frame of frame_len samples
 		/// </summary>
 		/********************************************************************/
-		private static c_int Wma_Decode_Frame(WmaCodecContext s, CPointer<CPointer<c_float>> samples, c_int samples_Offset)//XX 791
+		private static c_int Wma_Decode_Frame(WmaCodecContext s, CPointer<CPointer<c_float>> samples, c_int samples_Offset)
 		{
 			// Read each block
 			s.Block_Num = 0;
@@ -965,7 +965,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Wma_Decode_SuperFrame(AvCodecContext avCtx, AvFrame frame, out c_int got_Frame_Ptr, AvPacket avPkt)//XX 829
+		private static c_int Wma_Decode_SuperFrame(AvCodecContext avCtx, AvFrame frame, out c_int got_Frame_Ptr, AvPacket avPkt)
 		{
 			got_Frame_Ptr = 0;
 
@@ -1202,7 +1202,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Flush(AvCodecContext avCtx)//XX 1003
+		private static void Flush(AvCodecContext avCtx)
 		{
 			WmaCodecContext s = (WmaCodecContext)avCtx.Priv_Data;
 

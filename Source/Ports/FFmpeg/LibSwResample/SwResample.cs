@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// context
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swr_Alloc_Set_Opts2(ref SwrContext ps, AvChannelLayout out_Ch_Layout, AvSampleFormat out_Sample_Fmt, c_int out_Sample_Rate, AvChannelLayout in_Ch_Layout, AvSampleFormat in_Sample_Fmt, c_int in_Sample_Rate, c_int log_Offset, IClass log_Ctx)//XX 40
+		public static c_int Swr_Alloc_Set_Opts2(ref SwrContext ps, AvChannelLayout out_Ch_Layout, AvSampleFormat out_Sample_Fmt, c_int out_Sample_Rate, AvChannelLayout in_Ch_Layout, AvSampleFormat in_Sample_Fmt, c_int in_Sample_Rate, c_int log_Offset, IClass log_Ctx)
 		{
 			SwrContext s = ps;
 
@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// Free the given SwrContext and set the pointer to NULL
 		/// </summary>
 		/********************************************************************/
-		public static void Swr_Free(ref SwrContext ss)//XX 119
+		public static void Swr_Free(ref SwrContext ss)
 		{
 			SwrContext s = ss;
 
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// where one tries to support libavresample and libswresample
 		/// </summary>
 		/********************************************************************/
-		public static void Swr_Close(SwrContext s)//XX 134
+		public static void Swr_Close(SwrContext s)
 		{
 			Clear_Context(s);
 		}
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// Note that the context must be configured using the AVOption API
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swr_Init(SwrContext s)//XX 138
+		public static c_int Swr_Init(SwrContext s)
 		{
 			c_int ret;
 			CPointer<char> l1 = new CPointer<char>(1024);
@@ -443,7 +443,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static c_int Swri_Realloc_Audio(AudioData a, c_int count)//XX 400
+		internal static c_int Swri_Realloc_Audio(AudioData a, c_int count)
 		{
 			if ((count < 0) || (count > (c_int.MaxValue / 2 / a.Bps / a.Ch_Count)))
 				return Error.EINVAL;
@@ -486,7 +486,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// Check whether an swr context has been initialized or not
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swr_Is_Initialized(SwrContext s)//XX 713
+		public static c_int Swr_Is_Initialized(SwrContext s)
 		{
 			return s.In_Buffer.Ch_Count != 0 ? 1 : 0;
 		}
@@ -507,7 +507,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// Conversion will run directly without copying whenever possible
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swr_Convert(SwrContext s, CPointer<CPointer<uint8_t>> out_Arg, c_int out_Count, CPointer<CPointer<uint8_t>> in_Arg, c_int in_Count)//XX 717
+		public static c_int Swr_Convert(SwrContext s, CPointer<CPointer<uint8_t>> out_Arg, c_int out_Count, CPointer<CPointer<uint8_t>> in_Arg, c_int in_Count)
 		{
 			const c_int Max_Drop_Step = 16384;
 
@@ -662,7 +662,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Set_AudioData_Fmt(AudioData a, AvSampleFormat fmt)//XX 80
+		private static void Set_AudioData_Fmt(AudioData a, AvSampleFormat fmt)
 		{
 			a.Fmt = fmt;
 			a.Bps = SampleFmt.Av_Get_Bytes_Per_Sample(fmt);
@@ -679,7 +679,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Free_Temp(AudioData a)//XX 88
+		private static void Free_Temp(AudioData a)
 		{
 			Mem.Av_Free(a.Data);
 
@@ -693,7 +693,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Clear_Context(SwrContext s)//XX 93
+		private static void Clear_Context(SwrContext s)
 		{
 			s.In_Buffer_Index = 0;
 			s.In_Buffer_Count = 0;
@@ -731,7 +731,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Copy(AudioData @out, AudioData @in, c_int count)//XX 432
+		private static void Copy(AudioData @out, AudioData @in, c_int count)
 		{
 			if (@out.Planar != 0)
 			{
@@ -749,7 +749,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Fill_AudioData(AudioData @out, CPointer<CPointer<uint8_t>> in_Arg)//XX 445
+		private static void Fill_AudioData(AudioData @out, CPointer<CPointer<uint8_t>> in_Arg)
 		{
 			if (in_Arg.IsNull)
 				CMemory.memset<CPointer<uint8_t>>(@out.Ch, null, (size_t)@out.Ch.Length);
@@ -772,7 +772,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReverseFill_AudioData(AudioData @out, CPointer<CPointer<uint8_t>> in_Arg)//XX 459
+		private static void ReverseFill_AudioData(AudioData @out, CPointer<CPointer<uint8_t>> in_Arg)
 		{
 			if (@out.Planar != 0)
 			{
@@ -790,7 +790,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Buf_Set(AudioData @out, AudioData @in, c_int count)//XX 473
+		private static void Buf_Set(AudioData @out, AudioData @in, c_int count)
 		{
 			if (@in.Planar != 0)
 			{
@@ -811,7 +811,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Resample_(SwrContext s, AudioData out_Param, c_int out_Count, AudioData in_Param, c_int in_Count)//XX 488
+		private static c_int Resample_(SwrContext s, AudioData out_Param, c_int out_Count, AudioData in_Param, c_int in_Count)
 		{
 			throw new NotImplementedException();
 		}
@@ -823,7 +823,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Swr_Convert_Internal(SwrContext s, AudioData @out, c_int out_Count, AudioData @in, c_int in_Count)//XX 583
+		private static c_int Swr_Convert_Internal(SwrContext s, AudioData @out, c_int out_Count, AudioData @in, c_int in_Count)
 		{
 			if (s.Full_Convert != null)
 			{

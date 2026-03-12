@@ -212,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Note the string will be appended to the bprint buffer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Channel_Name_BPrint(AVBPrint bp, AvChannel channel_Id)//XX 86
+		public static void Av_Channel_Name_BPrint(AVBPrint bp, AvChannel channel_Id)
 		{
 			if ((channel_Id >= AvChannel.Ambisonic_Base) && (channel_Id <= AvChannel.Ambisonic_End))
 				BPrint.Av_BPrintf(bp, "AMBI%d", channel_Id - AvChannel.Ambisonic_Base);
@@ -237,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// This is the inverse function of av_channel_from_string()
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Name(CPointer<char> buf, size_t buf_Size, AvChannel channel_Id)//XX 104
+		public static c_int Av_Channel_Name(CPointer<char> buf, size_t buf_Size, AvChannel channel_Id)
 		{
 			if (buf.IsNull && (buf_Size != 0))
 				return Error.EINVAL;
@@ -260,7 +260,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Note the string will be appended to the bprint buffer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Channel_Description_BPrint(AVBPrint bp, AvChannel channel_Id)//XX 119
+		public static void Av_Channel_Description_BPrint(AVBPrint bp, AvChannel channel_Id)
 		{
 			if ((channel_Id >= AvChannel.Ambisonic_Base) && (channel_Id <= AvChannel.Ambisonic_End))
 				BPrint.Av_BPrintf(bp, "ambisonic ACN %d", channel_Id - AvChannel.Ambisonic_Base);
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get a human readable string describing a given channel
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Description(CPointer<char> buf, size_t buf_Size, AvChannel channel_Id)//XX 137
+		public static c_int Av_Channel_Description(CPointer<char> buf, size_t buf_Size, AvChannel channel_Id)
 		{
 			if (buf.IsNull && (buf_Size != 0))
 				return Error.EINVAL;
@@ -304,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// This is the inverse function of av_channel_name()
 		/// </summary>
 		/********************************************************************/
-		public static AvChannel Av_Channel_From_String(CPointer<char> str)//XX 152
+		public static AvChannel Av_Channel_From_String(CPointer<char> str)
 		{
 			c_int i;
 			CPointer<char> endPtr = str;
@@ -351,7 +351,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Custom_Init(AvChannelLayout channel_Layout, c_int nb_Channels)//XX 232
+		public static c_int Av_Channel_Layout_Custom_Init(AvChannelLayout channel_Layout, c_int nb_Channels)
 		{
 			if (nb_Channels <= 0)
 				return Error.EINVAL;
@@ -378,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// which channels are present
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_From_Mask(AvChannelLayout channel_Layout, AvChannelMask mask)//XX 252
+		public static c_int Av_Channel_Layout_From_Mask(AvChannelLayout channel_Layout, AvChannelMask mask)
 		{
 			if (mask == AvChannelMask.None)
 				return Error.EINVAL;
@@ -412,7 +412,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// necessarily untouched
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_From_String(ref AvChannelLayout channel_Layout, CPointer<char> str)//XX 312
+		public static c_int Av_Channel_Layout_From_String(ref AvChannelLayout channel_Layout, CPointer<char> str)
 		{
 			c_int ret;
 			c_int channels = 0, nb_Channels = 0;
@@ -577,7 +577,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// channel count to 0
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Channel_Layout_Uninit(AvChannelLayout channel_Layout)//XX 442
+		public static void Av_Channel_Layout_Uninit(AvChannelLayout channel_Layout)
 		{
 			if (channel_Layout.Order == AvChannelOrder.Custom)
 				Mem.Av_FreeP(ref channel_Layout.U.Map);
@@ -597,7 +597,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// before copy
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Copy(AvChannelLayout dst, AvChannelLayout src)//XX 449
+		public static c_int Av_Channel_Layout_Copy(AvChannelLayout dst, AvChannelLayout src)
 		{
 			Av_Channel_Layout_Uninit(dst);
 
@@ -623,7 +623,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Ambisonic_Order(AvChannelLayout channel_Layout)//XX 485
+		public static c_int Av_Channel_Layout_Ambisonic_Order(AvChannelLayout channel_Layout)
 		{
 			if ((channel_Layout.Order != AvChannelOrder.Ambisonic) && (channel_Layout.Order != AvChannelOrder.Custom))
 				return Error.EINVAL;
@@ -675,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Note the string will be appended to the bprint buffer
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Describe_BPrint(AvChannelLayout channel_Layout, AVBPrint bp)//XX 599
+		public static c_int Av_Channel_Layout_Describe_BPrint(AvChannelLayout channel_Layout, AVBPrint bp)
 		{
 			switch (channel_Layout.Order)
 			{
@@ -768,7 +768,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// the same channel layout, except for opaque pointers
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Describe(AvChannelLayout channel_Layout, CPointer<char> buf, size_t buf_Size)//XX 653
+		public static c_int Av_Channel_Layout_Describe(AvChannelLayout channel_Layout, CPointer<char> buf, size_t buf_Size)
 		{
 			if (buf.IsNull && (buf_Size != 0))
 				return Error.EINVAL;
@@ -792,7 +792,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get the channel with the given index in a channel layout
 		/// </summary>
 		/********************************************************************/
-		public static AvChannel Av_Channel_Layout_Channel_From_Index(AvChannelLayout channel_Layout, c_uint idx)//XX 673
+		public static AvChannel Av_Channel_Layout_Channel_From_Index(AvChannelLayout channel_Layout, c_uint idx)
 		{
 			if (idx >= channel_Layout.Nb_Channels)
 				return AvChannel.None;
@@ -838,7 +838,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// av_channel_from_string()
 		/// </summary>
 		/********************************************************************/
-		public static AvChannel Av_Channel_Layout_Channel_From_String(AvChannelLayout channel_Layout, CPointer<char> str)//XX 702
+		public static AvChannel Av_Channel_Layout_Channel_From_String(AvChannelLayout channel_Layout, CPointer<char> str)
 		{
 			c_int index = Av_Channel_Layout_Index_From_String(channel_Layout, str);
 
@@ -857,7 +857,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// returned
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Index_From_Channel(AvChannelLayout channel_Layout, AvChannel channel)//XX 713
+		public static c_int Av_Channel_Layout_Index_From_Channel(AvChannelLayout channel_Layout, AvChannel channel)
 		{
 			if (channel == AvChannel.None)
 				return Error.EINVAL;
@@ -914,7 +914,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// av_channel_from_string()
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Index_From_String(AvChannelLayout channel_Layout, CPointer<char> str)//XX 747
+		public static c_int Av_Channel_Layout_Index_From_String(AvChannelLayout channel_Layout, CPointer<char> str)
 		{
 			CPointer<char> chName;
 			AvChannel ch = AvChannel.None;
@@ -973,7 +973,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// describe audio data
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Check(AvChannelLayout channel_Layout)//XX 783
+		public static c_int Av_Channel_Layout_Check(AvChannelLayout channel_Layout)
 		{
 			if (channel_Layout.Nb_Channels <= 0)
 				return 0;
@@ -1025,7 +1025,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// channel counts are the same in both
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Compare(AvChannelLayout chl, AvChannelLayout chl1)//XX 809
+		public static c_int Av_Channel_Layout_Compare(AvChannelLayout chl, AvChannelLayout chl1)
 		{
 			// Different channel counts -> not equal
 			if (chl.Nb_Channels != chl1.Nb_Channels)
@@ -1059,7 +1059,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get the default channel layout for a given number of channels
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Channel_Layout_Default(ref AvChannelLayout ch_Layout, c_int nb_Channels)//XX 839
+		public static void Av_Channel_Layout_Default(ref AvChannelLayout ch_Layout, c_int nb_Channels)
 		{
 			for (c_int i = 0; i < (c_int)Macros.FF_Array_Elems(channel_Layout_Map); i++)
 			{
@@ -1081,7 +1081,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Iterate over all standard channel layouts
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvChannelLayout> Av_Channel_Layout_Standard()//XX 852
+		public static IEnumerable<AvChannelLayout> Av_Channel_Layout_Standard()
 		{
 			foreach (Channel_Layout_Name ch_Layout in channel_Layout_Map)
 				yield return ch_Layout.Layout;
@@ -1095,7 +1095,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// layout, without regard for their positions
 		/// </summary>
 		/********************************************************************/
-		public static uint64_t Av_Channel_Layout_Subset(AvChannelLayout channel_Layout, AvChannelMask mask)//XX 865
+		public static uint64_t Av_Channel_Layout_Subset(AvChannelLayout channel_Layout, AvChannelMask mask)
 		{
 			uint64_t ret = 0;
 
@@ -1151,7 +1151,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// untouched
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Channel_Layout_Retype(AvChannelLayout channel_Layout, AvChannelOrder order, AvChannelLayoutRetypeFlag flags)//XX 885
+		public static c_int Av_Channel_Layout_Retype(AvChannelLayout channel_Layout, AvChannelOrder order, AvChannelLayoutRetypeFlag flags)
 		{
 			c_int allow_Lossy = (flags & AvChannelLayoutRetypeFlag.Lossless) == 0 ? 1 : 0;
 			c_int lossy;
@@ -1321,7 +1321,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static bool Chan_Is_Ambi(AvChannel x)//XX 39
+		private static bool Chan_Is_Ambi(AvChannel x)
 		{
 			return (x >= AvChannel.Ambisonic_Base) && (x <= AvChannel.Ambisonic_End);
 		}
@@ -1333,7 +1333,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Channel_List(AvChannelLayout ch_Layout, CPointer<char> str)//XX 265
+		private static c_int Parse_Channel_List(AvChannelLayout ch_Layout, CPointer<char> str)
 		{
 			c_int ret;
 			c_int nb_Channels = 0;
@@ -1398,7 +1398,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Masked_Description(AvChannelLayout channel_Layout, c_int start_Channel)//XX 462
+		private static int64_t Masked_Description(AvChannelLayout channel_Layout, c_int start_Channel)
 		{
 			uint64_t mask = 0;
 
@@ -1422,7 +1422,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Has_Channel_Names(AvChannelLayout channel_Layout)//XX 475
+		private static c_int Has_Channel_Names(AvChannelLayout channel_Layout)
 		{
 			if (channel_Layout.Order != AvChannelOrder.Custom)
 				return 0;
@@ -1443,7 +1443,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvChannelOrder Canonical_Order(AvChannelLayout channel_Layout)//XX 527
+		private static AvChannelOrder Canonical_Order(AvChannelLayout channel_Layout)
 		{
 			c_int has_Known_Channel = 0;
 
@@ -1483,7 +1483,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return a negative error code otherwise
 		/// </summary>
 		/********************************************************************/
-		private static c_int Try_Describe_Ambisonic(AVBPrint bp, AvChannelLayout channel_Layout)//XX 559
+		private static c_int Try_Describe_Ambisonic(AVBPrint bp, AvChannelLayout channel_Layout)
 		{
 			c_int order = Av_Channel_Layout_Ambisonic_Order(channel_Layout);
 

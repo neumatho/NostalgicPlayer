@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int Get_Bits_Count(GetBitContext gb)//XX 250
+		public static c_int Get_Bits_Count(GetBitContext gb)
 		{
 			return gb.Index;
 		}
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint _Get_Bits(GetBitContext s, c_int n)//XX 333
+		public static c_uint _Get_Bits(GetBitContext s, c_int n)
 		{
 			c_uint index = (c_uint)s.Index;
 			c_uint cache = IntReadWrite.Av_RB32(s.Buffer + (index >> 3)) << ((c_int)index & 7);
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Skip_Bits(GetBitContext s, c_int n)//XX 379
+		public static void Skip_Bits(GetBitContext s, c_int n)
 		{
 			s.Index += n;
 		}
@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint Get_Bits1(GetBitContext s)//XX 386
+		public static c_uint Get_Bits1(GetBitContext s)
 		{
 			c_uint index = (c_uint)s.Index;
 			uint8_t result = s.Buffer[index >> 3];
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint Get_Bits_Long(GetBitContext s, c_int n)//XX 419
+		public static c_uint Get_Bits_Long(GetBitContext s, c_int n)
 		{
 			if (n == 0)
 				return 0;
@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int Init_Get_Bits(GetBitContext s, CPointer<uint8_t> buffer, c_int bit_Size)//XX 512
+		public static c_int Init_Get_Bits(GetBitContext s, CPointer<uint8_t> buffer, c_int bit_Size)
 		{
 			c_int ret = 0;
 
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<uint8_t> Align_Get_Bits(GetBitContext s)//XX 555
+		public static CPointer<uint8_t> Align_Get_Bits(GetBitContext s)
 		{
 			c_int n = -Get_Bits_Count(s) & 7;
 
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int Get_Vlc2(GetBitContext s, CPointer<VlcElem> table, c_int bits, c_int max_Depth)//XX 646
+		public static c_int Get_Vlc2(GetBitContext s, CPointer<VlcElem> table, c_int bits, c_int max_Depth)
 		{
 			c_uint re_Index = (c_uint)s.Index;
 			c_uint re_Cache = IntReadWrite.Av_RB32(s.Buffer + (re_Index >> 3)) << ((c_int)re_Index & 7);
@@ -205,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int Get_Bits_Left(GetBitContext gb)//XX 689
+		public static c_int Get_Bits_Left(GetBitContext gb)
 		{
 			return gb.Size_In_Bits - Get_Bits_Count(gb);
 		}

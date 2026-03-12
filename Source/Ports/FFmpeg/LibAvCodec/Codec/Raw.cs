@@ -340,7 +340,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// found
 		/// </summary>
 		/********************************************************************/
-		public static c_uint AvCodec_Pix_Fmt_To_Codec_Tag(AvPixelFormat fmt)//XX 31
+		public static c_uint AvCodec_Pix_Fmt_To_Codec_Tag(AvPixelFormat fmt)
 		{
 			foreach (PixelFormatTag tag in raw_Pix_Fmt_Tags)
 			{
@@ -358,7 +358,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvPixelFormat AvPriv_Pix_Fmt_Find(PixelFormatTagLists list, c_uint fourCC)//XX 78
+		public static AvPixelFormat AvPriv_Pix_Fmt_Find(PixelFormatTagLists list, c_uint fourCC)
 		{
 			PixelFormatTag[] tags = null;
 
@@ -392,7 +392,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvPixelFormat Find_Pix_Fmt(PixelFormatTag[] tags, c_uint fourCC)//XX 67
+		private static AvPixelFormat Find_Pix_Fmt(PixelFormatTag[] tags, c_uint fourCC)
 		{
 			foreach (PixelFormatTag tag in tags)
 			{

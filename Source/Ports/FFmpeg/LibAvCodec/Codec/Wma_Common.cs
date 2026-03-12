@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 		/// Get the samples per frame for this stream
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Wma_Get_Frame_Len_Bits(c_int sample_Rate, c_int version, c_uint decode_Flags)//XX 32
+		public static c_int FF_Wma_Get_Frame_Len_Bits(c_int sample_Rate, c_int version, c_uint decode_Flags)
 		{
 			c_int frame_Len_Bits;
 

@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 	/// </summary>
 	public static class Options_Codec
 	{
-		private static readonly AvClass av_Codec_Context_Class = new AvClass//XX 78
+		private static readonly AvClass av_Codec_Context_Class = new AvClass
 		{
 			Class_Name = "AVCodecContext".ToCharPointer(),
 			Item_Name = Context_To_Name,
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// The resulting struct should be freed with avcodec_free_context()
 		/// </summary>
 		/********************************************************************/
-		public static AvCodecContext AvCodec_Alloc_Context3(AvCodec codec)//XX 149
+		public static AvCodecContext AvCodec_Alloc_Context3(AvCodec codec)
 		{
 			AvCodecContext avCtx = Mem.Av_MAllocObj<AvCodecContext>();
 
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// write NULL to the provided pointer
 		/// </summary>
 		/********************************************************************/
-		public static void AvCodec_Free_Context(ref AvCodecContext pavCtx)//XX 164
+		public static void AvCodec_Free_Context(ref AvCodecContext pavCtx)
 		{
 			AvCodecContext avCtx = pavCtx;
 
@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Context_To_Name(IClass ptr)//XX 42
+		private static CPointer<char> Context_To_Name(IClass ptr)
 		{
 			AvCodecContext avc = (AvCodecContext)ptr;
 
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<IOptionContext> Codec_Child_Next(IOptionContext obj)//XX 51
+		private static IEnumerable<IOptionContext> Codec_Child_Next(IOptionContext obj)
 		{
 			AvCodecContext s = (AvCodecContext)obj;
 
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<AvClass> Codec_Child_Class_Iterate()//XX 59
+		private static IEnumerable<AvClass> Codec_Child_Class_Iterate()
 		{
 			// Find next codec with priv options
 			foreach (AvCodec c in AllCodec.Av_Codec_Iterate())
@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvClassCategory Get_Category(IClass ptr)//XX 69
+		private static AvClassCategory Get_Category(IClass ptr)
 		{
 			AvCodecContext avCtx = (AvCodecContext)ptr;
 
@@ -153,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Init_Context_Defaults(AvCodecContext s, AvCodec codec)//XX 90
+		private static c_int Init_Context_Defaults(AvCodecContext s, AvCodec codec)
 		{
 			FFCodec codec2 = Codec_Internal.FFCodec(codec);
 			AvOptFlag flags = AvOptFlag.None;

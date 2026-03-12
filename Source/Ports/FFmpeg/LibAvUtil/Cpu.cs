@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// application to detect the enabled cpu flags
 		/// </summary>
 		/********************************************************************/
-		public static AvCpuFlag Av_Get_Cpu_Flags()//XX 109
+		public static AvCpuFlag Av_Get_Cpu_Flags()
 		{
 			c_int flags = StdAtomic.Atomic_Load(ref cpu_Flags);
 
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return the number of logical CPU cores present
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Cpu_Count()//XX 221
+		public static c_int Av_Cpu_Count()
 		{
 			c_int nb_Cpus = Environment.ProcessorCount;
 

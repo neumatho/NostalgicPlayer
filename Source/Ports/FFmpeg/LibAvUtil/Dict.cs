@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get number of entries in dictionary
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Count(AvDictionary m)//XX 37
+		public static c_int Av_Dict_Count(AvDictionary m)
 		{
 			return m != null ? m.Count : 0;
 		}
@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// over the dict
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvDictionaryEntry> Av_Dict_Iterate(AvDictionary m)//XX 42
+		public static IEnumerable<AvDictionaryEntry> Av_Dict_Iterate(AvDictionary m)
 		{
 			if (m == null)
 				yield break;
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// cause undefined behavior
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvDictionaryEntry> Av_Dict_Get(AvDictionary m, CPointer<char> key, AvDict flags)//XX 60
+		public static IEnumerable<AvDictionaryEntry> Av_Dict_Get(AvDictionary m, CPointer<char> key, AvDict flags)
 		{
 			c_uint j;
 
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// av_dict_iterate()
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Set(ref AvDictionary pm, CPointer<char> key, CPointer<char> value, AvDict flags)//XX 86
+		public static c_int Av_Dict_Set(ref AvDictionary pm, CPointer<char> key, CPointer<char> value, AvDict flags)
 		{
 			AvDictionary m = pm;
 			AvDictionaryEntry tag = null;
@@ -292,7 +292,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// error
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Set_Int(ref AvDictionary pm, string key, int64_t value, AvDict flags)//XX 177
+		public static c_int Av_Dict_Set_Int(ref AvDictionary pm, string key, int64_t value, AvDict flags)
 		{
 			return Av_Dict_Set_Int(ref pm, key.ToCharPointer(), value, flags);
 		}
@@ -308,7 +308,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// error
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Set_Int(ref AvDictionary pm, CPointer<char> key, int64_t value, AvDict flags)//XX 177
+		public static c_int Av_Dict_Set_Int(ref AvDictionary pm, CPointer<char> key, int64_t value, AvDict flags)
 		{
 			CPointer<char> valueStr = new CPointer<char>(22);
 
@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// in *pm. You may need to manually free the created dictionary
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Parse_String(ref AvDictionary pm, CPointer<char> str, string key_Val_Sep, string pairs_Sep, AvDict flags)//XX 210
+		public static c_int Av_Dict_Parse_String(ref AvDictionary pm, CPointer<char> str, string key_Val_Sep, string pairs_Sep, AvDict flags)
 		{
 			return Av_Dict_Parse_String(ref pm, str, key_Val_Sep.ToCharPointer(), pairs_Sep.ToCharPointer(), flags);
 		}
@@ -345,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// in *pm. You may need to manually free the created dictionary
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Parse_String(ref AvDictionary pm, CPointer<char> str, CPointer<char> key_Val_Sep, CPointer<char> pairs_Sep, AvDict flags)//XX 210
+		public static c_int Av_Dict_Parse_String(ref AvDictionary pm, CPointer<char> str, CPointer<char> key_Val_Sep, CPointer<char> pairs_Sep, AvDict flags)
 		{
 			if (str.IsNull)
 				return 0;
@@ -374,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// keys and values
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Dict_Free(ref AvDictionary pm)//XX 233
+		public static void Av_Dict_Free(ref AvDictionary pm)
 		{
 			AvDictionary m = pm;
 
@@ -401,7 +401,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Note: Metadata is read using the ::AV_DICT_IGNORE_SUFFIX flag
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Copy(ref AvDictionary dst, AvDictionary src, AvDict flags)//XX 247
+		public static c_int Av_Dict_Copy(ref AvDictionary dst, AvDictionary src, AvDict flags)
 		{
 			foreach (AvDictionaryEntry t in Av_Dict_Iterate(src))
 			{
@@ -428,7 +428,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// cannot be the same
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Dict_Get_String(AvDictionary m, out CPointer<char> buffer, char key_Val_Sep, char pairs_Sep)//XX 260
+		public static c_int Av_Dict_Get_String(AvDictionary m, out CPointer<char> buffer, char key_Val_Sep, char pairs_Sep)
 		{
 			c_int cnt = 0;
 			char[] special_Chars = [ pairs_Sep, key_Val_Sep, '\0' ];
@@ -468,7 +468,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Key_Value_Pair(ref AvDictionary pm, ref CPointer<char> buf, CPointer<char> key_Val_Sep, CPointer<char> pairs_Sep, AvDict flags)//XX 186
+		private static c_int Parse_Key_Value_Pair(ref AvDictionary pm, ref CPointer<char> buf, CPointer<char> key_Val_Sep, CPointer<char> pairs_Sep, AvDict flags)
 		{
 			CPointer<char> key = AvString.Av_Get_Token(ref buf, key_Val_Sep);
 			CPointer<char> val = null;

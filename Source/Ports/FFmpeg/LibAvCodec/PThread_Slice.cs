@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Slice_Thread_Free(AvCodecContext avCtx)//XX 69
+		public static void FF_Slice_Thread_Free(AvCodecContext avCtx)
 		{
 			SliceThreadContext c = (SliceThreadContext)avCtx.Internal.Thread_Ctx;
 
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Slice_Thread_Init(AvCodecContext avCtx)//XX 112
+		public static c_int FF_Slice_Thread_Init(AvCodecContext avCtx)
 		{
 			SliceThreadContext c;
 
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Main_Function(IOpaque priv)//XX 51
+		private static void Main_Function(IOpaque priv)
 		{
 			AvCodecContext avCtx = (AvCodecContext)priv;
 			SliceThreadContext c = (SliceThreadContext)avCtx.Internal.Thread_Ctx;
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Worker_Func(IOpaque priv, c_int jobNr, c_int threadNr, c_int nb_Jobs, c_int nb_Threads)//XX 57
+		private static void Worker_Func(IOpaque priv, c_int jobNr, c_int threadNr, c_int nb_Jobs, c_int nb_Threads)
 		{
 			AvCodecContext avCtx = (AvCodecContext)priv;
 			SliceThreadContext c = (SliceThreadContext)avCtx.Internal.Thread_Ctx;
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Thread_Execute(AvCodecContext avCtx, CodecFunc.Execute_Func_Delegate func, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int job_Count)//XX 78
+		private static c_int Thread_Execute(AvCodecContext avCtx, CodecFunc.Execute_Func_Delegate func, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int job_Count)
 		{
 			SliceThreadContext c = (SliceThreadContext)avCtx.Internal.Thread_Ctx;
 
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Thread_Execute2(AvCodecContext avCtx, CodecFunc.Execute2_Func_Delegate func2, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int job_Count)//XX 97
+		private static c_int Thread_Execute2(AvCodecContext avCtx, CodecFunc.Execute2_Func_Delegate func2, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int job_Count)
 		{
 			SliceThreadContext c = (SliceThreadContext)avCtx.Internal.Thread_Ctx;
 

@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// https://en.wikipedia.org/wiki/Binary_GCD_algorithm
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_Gcd(int64_t a, int64_t b)//XX 37
+		public static int64_t Av_Gcd(int64_t a, int64_t b)
 		{
 			if (a == 0)
 				return b;
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// See av_rescale(), av_rescale_q(), av_rescale_q_rnd()
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_Rescale_Rnd(int64_t a, int64_t b, int64_t c, AvRounding rnd)//XX 58
+		public static int64_t Av_Rescale_Rnd(int64_t a, int64_t b, int64_t c, AvRounding rnd)
 		{
 			int64_t r = 0;
 
@@ -153,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// See av_rescale_rnd(), av_rescale_q(), av_rescale_q_rnd()
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_Rescale(int64_t a, int64_t b, int64_t c)//XX 129
+		public static int64_t Av_Rescale(int64_t a, int64_t b, int64_t c)
 		{
 			return Av_Rescale_Rnd(a, b, c, AvRounding.Near_Inf);
 		}
@@ -172,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// See av_rescale(), av_rescale_q(), av_rescale_q_rnd()
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_Rescale_Q_Rnd(int64_t a, AvRational bq, AvRational cq, AvRounding rnd)//XX 134
+		public static int64_t Av_Rescale_Q_Rnd(int64_t a, AvRational bq, AvRational cq, AvRounding rnd)
 		{
 			int64_t b = bq.Num * (int64_t)cq.Den;
 			int64_t c = cq.Num * (int64_t)bq.Den;
@@ -194,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// See av_rescale(), av_rescale_rnd(), av_rescale_q_rnd()
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_Rescale_Q(int64_t a, AvRational bq, AvRational cq)//XX 142
+		public static int64_t Av_Rescale_Q(int64_t a, AvRational bq, AvRational cq)
 		{
 			return Av_Rescale_Q_Rnd(a, bq, cq, AvRounding.Near_Inf);
 		}
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Compare two timestamps each in its own time base
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Compare_Ts(int64_t ts_A, AvRational tb_A, int64_t ts_B, AvRational tb_B)//XX 147
+		public static c_int Av_Compare_Ts(int64_t ts_A, AvRational tb_A, int64_t ts_B, AvRational tb_B)
 		{
 			int64_t a = tb_A.Num * (int64_t)tb_B.Den;
 			int64_t b = tb_B.Num * (int64_t)tb_A.Den;
@@ -234,7 +234,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// integers `a` and `b`
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_Compare_Mod(uint64_t a, uint64_t b, uint64_t mod)//XX 160
+		public static int64_t Av_Compare_Mod(uint64_t a, uint64_t b, uint64_t mod)
 		{
 			int64_t c = (int64_t)((a - b) & (mod - 1));
 
@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// added that no accumulation of rounding errors occurs
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_Add_Stable(AvRational ts_tb, int64_t ts, AvRational inc_tb, int64_t inc)//XX 191
+		public static int64_t Av_Add_Stable(AvRational ts_tb, int64_t ts, AvRational inc_tb, int64_t inc)
 		{
 			if (inc != 1)
 				inc_tb = Rational.Av_Mul_Q(inc_tb, new AvRational((c_int)inc, 1));

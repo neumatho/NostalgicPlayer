@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 	/// </summary>
 	public static class Options_Format
 	{
-		private static readonly AvClass av_Format_Context_Class = new AvClass//XX 128
+		private static readonly AvClass av_Format_Context_Class = new AvClass
 		{
 			Class_Name = "AVFormatContext".ToCharPointer(),
 			Item_Name = Format_To_Name,
@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 			new AvOption()
 		];
 
-		private static readonly AvClass stream_Class = new AvClass()//XX 232
+		private static readonly AvClass stream_Class = new AvClass()
 		{
 			Class_Name = "AVStream".ToCharPointer(),
 			Item_Name = Log.Av_Default_Item_Name,
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Allocate an AVFormatContext
 		/// </summary>
 		/********************************************************************/
-		public static AvFormatContext AvFormat_Alloc_Context()//XX 162
+		public static AvFormatContext AvFormat_Alloc_Context()
 		{
 			FormatContextInternal fci = Mem.Av_MAlloczObj<FormatContextInternal>();
 			if (fci == null)
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// allocation by avformat_new_stream()
 		/// </summary>
 		/********************************************************************/
-		public static AvStream AvFormat_New_Stream(AvFormatContext s, AvCodec c)//XX 244
+		public static AvStream AvFormat_New_Stream(AvFormatContext s, AvCodec c)
 		{
 			if (s.Nb_Streams >= s.Max_Streams)
 			{
@@ -214,7 +214,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Format_To_Name(IClass ptr)//XX 45
+		private static CPointer<char> Format_To_Name(IClass ptr)
 		{
 			AvFormatContext fc = (AvFormatContext)ptr;
 
@@ -233,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<IOptionContext> Format_Next_Child(IOptionContext obj)//XX 53
+		private static IEnumerable<IOptionContext> Format_Next_Child(IOptionContext obj)
 		{
 			AvFormatContext s = (AvFormatContext)obj;
 
@@ -255,7 +255,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static IEnumerable<AvClass> Format_Child_Class_Iterate()//XX 75
+		private static IEnumerable<AvClass> Format_Child_Class_Iterate()
 		{
 			// AvIO
 			yield return AvIo.FF_AvIo_Class;
@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvClassCategory Get_Category(IClass ptr)//XX 121
+		private static AvClassCategory Get_Category(IClass ptr)
 		{
 			AvFormatContext s = (AvFormatContext)ptr;
 
@@ -301,7 +301,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Io_Open_Default(AvFormatContext s, out AvIoContext pb, CPointer<char> url, AvIoFlag flags, ref AvDictionary options)//XX 139
+		private static c_int Io_Open_Default(AvFormatContext s, out AvIoContext pb, CPointer<char> url, AvIoFlag flags, ref AvDictionary options)
 		{
 			return AvIo.FFIo_Open_Whitelist(out pb, url, flags, s.Interrupt_Callback, ref options, s.Protocol_Whitelist, s.Protocol_Blacklist);
 		}
@@ -313,7 +313,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Io_Close2_Default(AvFormatContext s, AvIoContext pb)//XX 157
+		private static c_int Io_Close2_Default(AvFormatContext s, AvIoContext pb)
 		{
 			return AvIo.AvIo_Close(pb);
 		}

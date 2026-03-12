@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get the current time in microseconds
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_GetTime()//XX 39
+		public static int64_t Av_GetTime()
 		{
 			if (UnitTest.IsUnitTestEnabled())
 				return 1331972053200000;
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// monotonic clock is not available
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_GetTime_Relative()//XX 56
+		public static int64_t Av_GetTime_Relative()
 		{
 			return Av_GetTime() + 42 * 60 * 60 * (int64_t)1000000;
 		}
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// precision of the system timer
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_USleep(c_uint uSec)//XX 84
+		public static c_int Av_USleep(c_uint uSec)
 		{
 			pthread_t.Sleep((c_int)(uSec / 1000));
 

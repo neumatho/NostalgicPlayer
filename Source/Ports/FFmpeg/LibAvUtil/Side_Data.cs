@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvSideDataDescriptor Av_Frame_Side_Data_Desc(AvFrameSideDataType type)//XX 62
+		public static AvSideDataDescriptor Av_Frame_Side_Data_Desc(AvFrameSideDataType type)
 		{
 			c_uint t = (c_uint)type;
 
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Frame_Side_Data_Name(AvFrameSideDataType type)//XX 70
+		public static CPointer<char> Av_Frame_Side_Data_Name(AvFrameSideDataType type)
 		{
 			AvSideDataDescriptor desc = Av_Frame_Side_Data_Desc(type);
 
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// an array
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Frame_Side_Data_Remove(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type)//XX 102
+		public static void Av_Frame_Side_Data_Remove(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type)
 		{
 			for (c_int i = nb_Sd - 1; i >= 0; i--)
 			{
@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// the values which the pointers are pointing to
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Frame_Side_Data_Free(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd)//XX 133
+		public static void Av_Frame_Side_Data_Free(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd)
 		{
 			for (c_int i = 0; i < nb_Sd; i++)
 				Free_Side_Data_Entry(ref sd[i]);
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static AvFrameSideData FF_Frame_Side_Data_Add_From_Buf(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, AvBufferRef buf)//XX 173
+		internal static AvFrameSideData FF_Frame_Side_Data_Add_From_Buf(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, AvBufferRef buf)
 		{
 			if (buf == null)
 				return null;
@@ -171,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Add new side data entry to an array
 		/// </summary>
 		/********************************************************************/
-		public static AvFrameSideData Av_Frame_Side_Data_New(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, size_t size, AvFrameSideDataFlag flags)//XX 198
+		public static AvFrameSideData Av_Frame_Side_Data_New(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, size_t size, AvFrameSideDataFlag flags)
 		{
 			AvSideDataDescriptor desc = Av_Frame_Side_Data_Desc(type);
 			AvBufferRef buf = Buffer.Av_Buffer_Alloc(size);
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// AVBufferRef
 		/// </summary>
 		/********************************************************************/
-		public static AvFrameSideData Av_Frame_Side_Data_Add(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, ref AvBufferRef pBuf, AvFrameSideDataFlag flags)//XX 223
+		public static AvFrameSideData Av_Frame_Side_Data_Add(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, ref AvBufferRef pBuf, AvFrameSideDataFlag flags)
 		{
 			AvSideDataDescriptor desc = Av_Frame_Side_Data_Desc(type);
 			AvFrameSideData sd_Dst = null;
@@ -239,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// data, taking a reference towards the contained AVBufferRef
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Frame_Side_Data_Clone(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideData src, AvFrameSideDataFlag flags)//XX 248
+		public static c_int Av_Frame_Side_Data_Clone(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideData src, AvFrameSideDataFlag flags)
 		{
 			AvBufferRef buf = null;
 			AvFrameSideData sd_Dst = null;
@@ -314,7 +314,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Free_Side_Data_Entry(ref AvFrameSideData ptr_Sd)//XX 76
+		private static void Free_Side_Data_Entry(ref AvFrameSideData ptr_Sd)
 		{
 			AvFrameSideData sd = ptr_Sd;
 
@@ -330,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Remove_Side_Data_By_Entry(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideData target)//XX 85
+		private static void Remove_Side_Data_By_Entry(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideData target)
 		{
 			for (c_int i = nb_Sd - 1; i >= 0; i--)
 			{
@@ -355,7 +355,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvFrameSideData Add_Side_Data_From_Buf_Ext(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, AvBufferRef buf, IDataContext data)//XX 142
+		private static AvFrameSideData Add_Side_Data_From_Buf_Ext(ref CPointer<AvFrameSideData> sd, ref c_int nb_Sd, AvFrameSideDataType type, AvBufferRef buf, IDataContext data)
 		{
 			// *nb_sd + 1 needs to fit into an int and a size_t
 			if ((c_uint)nb_Sd >= Macros.FFMin((uint64_t)c_int.MaxValue, size_t.MaxValue))
@@ -389,7 +389,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvFrameSideData Replace_Side_Data_From_Buf(AvFrameSideData dst, AvBufferRef buf, AvFrameSideDataFlag flags)//XX 184
+		private static AvFrameSideData Replace_Side_Data_From_Buf(AvFrameSideData dst, AvBufferRef buf, AvFrameSideDataFlag flags)
 		{
 			if ((flags & AvFrameSideDataFlag.Replace) == 0)
 				return null;
@@ -410,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get a side data entry of a specific type from an array
 		/// </summary>
 		/********************************************************************/
-		private static AvFrameSideData Av_Frame_Side_Data_Get_C(CPointer<AvFrameSideData> sd, c_int nb_Sd, AvFrameSideDataType type)//XX 306
+		private static AvFrameSideData Av_Frame_Side_Data_Get_C(CPointer<AvFrameSideData> sd, c_int nb_Sd, AvFrameSideDataType type)
 		{
 			for (c_int i = 0; i < nb_Sd; i++)
 			{

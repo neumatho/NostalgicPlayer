@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// <summary></summary>
 		public delegate void Flush_Delegate(AvCodecContext avCtx);
 		/// <summary></summary>
-		public delegate c_int Get_Supported_Config_Delegate(AvCodecContext avCtx, AvCodec codec, AvCodecConfig config, c_uint flags, out object out_Configs, out c_int out_Num_Configs);//XX
+		public delegate c_int Get_Supported_Config_Delegate(AvCodecContext avCtx, AvCodec codec, AvCodecConfig config, c_uint flags, out object out_Configs, out c_int out_Num_Configs);
 
 		/// <summary></summary>
 		public delegate c_int Decode_Delegate(AvCodecContext avCtx, AvFrame frame, out c_int got_Frame_Ptr, AvPacket avPkt);

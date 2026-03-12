@@ -305,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// For example, av_exif_get_tag_name(0x112) returns "Orientation"
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Exif_Get_Tag_Name(uint16_t id)//XX 215
+		public static CPointer<char> Av_Exif_Get_Tag_Name(uint16_t id)
 		{
 			for (size_t i = 0; i < Macros.FF_Array_Elems(tag_List); i++)
 			{
@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Otherwise it always fits inside a uint16_t integer
 		/// </summary>
 		/********************************************************************/
-		public static int32_t Av_Exif_Get_Tag_Id(CPointer<char> name)//XX 225
+		public static int32_t Av_Exif_Get_Tag_Id(CPointer<char> name)
 		{
 			if (name.IsNull)
 				return -1;
@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// if it is heap-allocated. Passing NULL is permitted
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Exif_Free(AvExifMetadata ifd)//XX 609
+		public static void Av_Exif_Free(AvExifMetadata ifd)
 		{
 			if (ifd == null)
 				return;
@@ -387,7 +387,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// calling
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Exif_Write(IClass logCtx, AvExifMetadata ifd, out AvBufferRef buffer, AvExifHeaderMode header_Mode)//XX 703
+		public static c_int Av_Exif_Write(IClass logCtx, AvExifMetadata ifd, out AvBufferRef buffer, AvExifHeaderMode header_Mode)
 		{
 			buffer = null;
 
@@ -479,7 +479,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// value, it will call av_exif_free(ifd) before returning
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Exif_Parse_Buffer(IClass logCtx, CPointer<uint8_t> buf, size_t size, out AvExifMetadata ifd, AvExifHeaderMode header_Mode)//XX 764
+		public static c_int Av_Exif_Parse_Buffer(IClass logCtx, CPointer<uint8_t> buf, size_t size, out AvExifMetadata ifd, AvExifHeaderMode header_Mode)
 		{
 			ifd = null;
 
@@ -579,7 +579,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// provided metadata dictionary
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Exif_Ifd_To_Dict(IClass logCtx, AvExifMetadata ifd, ref AvDictionary metadata)//XX 914
+		public static c_int Av_Exif_Ifd_To_Dict(IClass logCtx, AvExifMetadata ifd, ref AvDictionary metadata)
 		{
 			return Exif_Ifd_To_Dict(logCtx, CString.Empty, ifd, ref metadata);
 		}
@@ -598,7 +598,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// If an error occurred, a negative number is returned.
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Exif_Get_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, AvExifFlag flags, out AvExifEntry value)//XX 1051
+		public static c_int Av_Exif_Get_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, AvExifFlag flags, out AvExifEntry value)
 		{
 			return Exif_Get_Entry(logCtx, ifd, id, (flags & AvExifFlag.Recursive) != 0 ? 0 : c_int.MaxValue, out value);
 		}
@@ -615,7 +615,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// If an error occurred, a negative number is returned
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Exif_Remove_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, AvExifFlag flags)//XX 1140
+		public static c_int Av_Exif_Remove_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, AvExifFlag flags)
 		{
 			return Exif_Remove_Entry(logCtx, ifd, id, (flags & AvExifFlag.Recursive) != 0 ? 0 : c_int.MaxValue);
 		}
@@ -631,7 +631,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// i.e. not between 1 and 8 (inclusive)
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Exif_Orientation_To_Matrix(CPointer<int32_t> matrix, c_int orientation)//XX 1194
+		public static c_int Av_Exif_Orientation_To_Matrix(CPointer<int32_t> matrix, c_int orientation)
 		{
 			switch (orientation)
 			{
@@ -701,7 +701,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void TPut16(PutByteContext pb, c_int le, uint16_t value)//XX 238
+		private static void TPut16(PutByteContext pb, c_int le, uint16_t value)
 		{
 			if (le != 0)
 				ByteStream.ByteStream2_Put_LE16(pb, value);
@@ -717,7 +717,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void TPut32(PutByteContext pb, c_int le, uint32_t value)//XX 243
+		private static void TPut32(PutByteContext pb, c_int le, uint32_t value)
 		{
 			if (le != 0)
 				ByteStream.ByteStream2_Put_LE32(pb, value);
@@ -733,7 +733,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void TPut64(PutByteContext pb, c_int le, uint64_t value)//XX 248
+		private static void TPut64(PutByteContext pb, c_int le, uint64_t value)
 		{
 			if (le != 0)
 				ByteStream.ByteStream2_Put_LE64(pb, value);
@@ -748,7 +748,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Read_Values(IClass logCtx, GetByteContext gb, c_int le, AvExifEntry entry)//XX 253
+		private static c_int Exif_Read_Values(IClass logCtx, GetByteContext gb, c_int le, AvExifEntry entry)
 		{
 			switch (entry.Type)
 			{
@@ -904,7 +904,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Exif_Write_Values(PutByteContext pb, c_int le, AvExifEntry entry)//XX 343
+		private static void Exif_Write_Values(PutByteContext pb, c_int le, AvExifEntry entry)
 		{
 			switch (entry.Type)
 			{
@@ -998,7 +998,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// https://web.archive.org/web/20250311155857/https://exiv2.org/makernote.html
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Get_MakerNote_Offset(GetByteContext gb)//XX 434
+		private static c_int Exif_Get_MakerNote_Offset(GetByteContext gb)
 		{
 			if (ByteStream.ByteStream2_Get_Bytes_Left(gb) < Base_Tag_Size)
 				return -1;
@@ -1029,7 +1029,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Decode_Tag(IClass logCtx, GetByteContext gb, c_int le, c_int depth, AvExifEntry entry)//XX 458
+		private static c_int Exif_Decode_Tag(IClass logCtx, GetByteContext gb, c_int le, c_int depth, AvExifEntry entry)
 		{
 			c_int ret = 0, makerNote_Offset = -1;
 
@@ -1124,7 +1124,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Parse_Ifd_List(IClass logCtx, GetByteContext gb, c_int le, c_int depth, out AvExifMetadata ifd)//XX 534
+		private static c_int Exif_Parse_Ifd_List(IClass logCtx, GetByteContext gb, c_int le, c_int depth, out AvExifMetadata ifd)
 		{
 			ifd = null;
 
@@ -1202,7 +1202,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// all at once
 		/// </summary>
 		/********************************************************************/
-		private static void Exif_Free_Entry(AvExifEntry entry)//XX 598
+		private static void Exif_Free_Entry(AvExifEntry entry)
 		{
 			if (entry == null)
 				return;
@@ -1222,7 +1222,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static size_t Exif_Get_Ifd_Size(AvExifMetadata ifd)//XX 627
+		private static size_t Exif_Get_Ifd_Size(AvExifMetadata ifd)
 		{
 			// 6 == 4 + 2; 2-byte entry-count at the beginning
 			// plus 4-byte next-IFD pointer at the end
@@ -1251,7 +1251,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Write_Ifd(IClass logCtx, PutByteContext pb, c_int le, c_int depth, AvExifMetadata ifd)//XX 644
+		private static c_int Exif_Write_Ifd(IClass logCtx, PutByteContext pb, c_int le, c_int depth, AvExifMetadata ifd)
 		{
 			c_int ret, tell2;
 
@@ -1345,7 +1345,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static string Column_Sep(uint32_t i, c_int c)//XX 824
+		private static string Column_Sep(uint32_t i, c_int c)
 		{
 			return i != 0 ? (i % c) != 0 ? ", " : "\n" : string.Empty;
 		}
@@ -1357,7 +1357,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Ifd_To_Dict(IClass logCtx, CPointer<char> prefix, AvExifMetadata ifd, ref AvDictionary metadata)//XX 826
+		private static c_int Exif_Ifd_To_Dict(IClass logCtx, CPointer<char> prefix, AvExifMetadata ifd, ref AvDictionary metadata)
 		{
 			c_int ret = 0;
 			CPointer<char> key = null;
@@ -1502,7 +1502,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Get_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, c_int depth, out AvExifEntry value)//XX 1026
+		private static c_int Exif_Get_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, c_int depth, out AvExifEntry value)
 		{
 			value = null;
 
@@ -1544,7 +1544,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Remove_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, c_int depth)//XX 1105
+		private static c_int Exif_Remove_Entry(IClass logCtx, AvExifMetadata ifd, uint16_t id, c_int depth)
 		{
 			int32_t index = -1;
 			c_int ret = 0;

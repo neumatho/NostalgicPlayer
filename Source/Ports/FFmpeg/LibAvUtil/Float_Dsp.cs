@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Allocate a float DSP context
 		/// </summary>
 		/********************************************************************/
-		public static AvFloatDspContext AvPriv_Float_Dsp_Alloc(c_int bit_Exact)//XX 135
+		public static AvFloatDspContext AvPriv_Float_Dsp_Alloc(c_int bit_Exact)
 		{
 			AvFloatDspContext fDsp = Mem.Av_MAlloczObj<AvFloatDspContext>();
 
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_FMul_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, c_int len)//XX 27
+		private static void Vector_FMul_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 				dst[i] = src0[i] * src1[i];
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_DMul_C(CPointer<c_double> dst, CPointer<c_double> src0, CPointer<c_double> src1, c_int len)//XX 35
+		private static void Vector_DMul_C(CPointer<c_double> dst, CPointer<c_double> src0, CPointer<c_double> src1, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 				dst[i] = src0[i] * src1[i];
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_FMac_Scalar_C(CPointer<c_float> dst, CPointer<c_float> src, c_float mul, c_int len)//XX 43
+		private static void Vector_FMac_Scalar_C(CPointer<c_float> dst, CPointer<c_float> src, c_float mul, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 				dst[i] += src[i] * mul;
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_DMac_Scalar_C(CPointer<c_double> dst, CPointer<c_double> src, c_double mul, c_int len)//XX 51
+		private static void Vector_DMac_Scalar_C(CPointer<c_double> dst, CPointer<c_double> src, c_double mul, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 				dst[i] += src[i] * mul;
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_FMul_Scalar_C(CPointer<c_float> dst, CPointer<c_float> src, c_float mul, c_int len)//XX 59
+		private static void Vector_FMul_Scalar_C(CPointer<c_float> dst, CPointer<c_float> src, c_float mul, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 				dst[i] = src[i] * mul;
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_DMul_Scalar_C(CPointer<c_double> dst, CPointer<c_double> src, c_double mul, c_int len)//XX 67
+		private static void Vector_DMul_Scalar_C(CPointer<c_double> dst, CPointer<c_double> src, c_double mul, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 				dst[i] = src[i] * mul;
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_FMul_Window_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, CPointer<c_float> win, c_int len)//XX 75
+		private static void Vector_FMul_Window_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, CPointer<c_float> win, c_int len)
 		{
 			dst += len;
 			win += len;
@@ -150,7 +150,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_FMul_Add_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, CPointer<c_float> src2, c_int len)//XX 94
+		private static void Vector_FMul_Add_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, CPointer<c_float> src2, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 				dst[i] = (src0[i] * src1[i]) + src2[i];
@@ -163,7 +163,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Vector_FMul_Reverse_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, c_int len)//XX 102
+		private static void Vector_FMul_Reverse_C(CPointer<c_float> dst, CPointer<c_float> src0, CPointer<c_float> src1, c_int len)
 		{
 			src1 += len - 1;
 
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Butterflies_Float_C(CPointer<c_float> v1, CPointer<c_float> v2, c_int len)//XX 112
+		private static void Butterflies_Float_C(CPointer<c_float> v1, CPointer<c_float> v2, c_int len)
 		{
 			for (c_int i = 0; i < len; i++)
 			{
@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_double FF_ScalarProduct_Double_C(CPointer<c_double> v1, CPointer<c_double> v2, size_t len)//XX 124
+		private static c_double FF_ScalarProduct_Double_C(CPointer<c_double> v1, CPointer<c_double> v2, size_t len)
 		{
 			c_double p = 0.0;
 

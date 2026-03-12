@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Initialize a ThreadProgress
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Thread_Progress_Init(ThreadProgress pro, c_int init_Mode)//XX 33
+		public static c_int FF_Thread_Progress_Init(ThreadProgress pro, c_int init_Mode)
 		{
 			StdAtomic.Atomic_Init(ref pro.Progress, init_Mode != 0 ? -1 : c_int.MaxValue);
 
@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// ff_thread_progress_init() failed
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Thread_Progress_Destroy(ThreadProgress pro)//XX 44
+		public static void FF_Thread_Progress_Destroy(ThreadProgress pro)
 		{
 			PThread.FF_PThread_Free(pro, thread_Progress_Fields);
 		}

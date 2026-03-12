@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// component
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Image_Fill_Max_PixSteps(CPointer<c_int> max_PixSteps, CPointer<c_int> max_PixStep_Comps, AVPixFmtDescriptor pixDesc)//XX 35
+		public static void Av_Image_Fill_Max_PixSteps(CPointer<c_int> max_PixSteps, CPointer<c_int> max_PixStep_Comps, AVPixFmtDescriptor pixDesc)
 		{
 			CMemory.memset(max_PixSteps, 0, 4);
 
@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// width for the plane plane
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Image_Get_LineSize(AvPixelFormat pix_Fmt, c_int width, c_int plane)//XX 76
+		public static c_int Av_Image_Get_LineSize(AvPixelFormat pix_Fmt, c_int width, c_int plane)
 		{
 			AVPixFmtDescriptor desc = PixDesc.Av_Pix_Fmt_Desc_Get(pix_Fmt);
 			CPointer<c_int> max_Step = new CPointer<c_int>(4);		// Max pixel step for each plane
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// width width
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Image_Fill_LineSizes(CPointer<c_int> lineSizes, AvPixelFormat pix_Fmt, c_int width)//XX 89
+		public static c_int Av_Image_Fill_LineSizes(CPointer<c_int> lineSizes, AvPixelFormat pix_Fmt, c_int width)
 		{
 			AVPixFmtDescriptor desc = PixDesc.Av_Pix_Fmt_Desc_Get(pix_Fmt);
 			CPointer<c_int> max_Step = new CPointer<c_int>(4);		// Max pixel step for each plane
@@ -151,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// height height
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Image_Fill_Plane_Sizes(CPointer<size_t> sizes, AvPixelFormat pix_Fmt, c_int height, CPointer<ptrdiff_t> lineSizes)//XX 111
+		public static c_int Av_Image_Fill_Plane_Sizes(CPointer<size_t> sizes, AvPixelFormat pix_Fmt, c_int height, CPointer<ptrdiff_t> lineSizes)
 		{
 			c_int[] has_Plane = [ 0, 0, 0, 0 ];
 
@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// and height height
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Image_Fill_Pointers(CPointer<CPointer<uint8_t>> data, AvPixelFormat pix_Fmt, c_int height, CPointer<uint8_t> ptr, CPointer<c_int> lineSizes)//XX 145
+		public static c_int Av_Image_Fill_Pointers(CPointer<CPointer<uint8_t>> data, AvPixelFormat pix_Fmt, c_int height, CPointer<uint8_t> ptr, CPointer<c_int> lineSizes)
 		{
 			CPointer<ptrdiff_t> lineSizes1 = new CPointer<ptrdiff_t>(4);
 			CPointer<size_t> sizes = new CPointer<size_t>(4);
@@ -243,7 +243,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// be addressed with a signed int
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Image_Check_Size2(c_uint w, c_uint h, int64_t max_Pixels, AvPixelFormat pix_Fmt, c_int log_Offset, IClass log_Ctx)//XX 289
+		public static c_int Av_Image_Check_Size2(c_uint w, c_uint h, int64_t max_Pixels, AvPixelFormat pix_Fmt, c_int log_Offset, IClass log_Ctx)
 		{
 			_ImgUtils imgUtils = new _ImgUtils
 			{
@@ -287,7 +287,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// all bytes of the image can be addressed with a signed int
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Image_Check_Size(c_uint w, c_uint h, c_int log_Offset, IClass log_Ctx)//XX 318
+		public static c_int Av_Image_Check_Size(c_uint w, c_uint h, c_int log_Offset, IClass log_Ctx)
 		{
 			return Av_Image_Check_Size2(w, h, int64_t.MaxValue, AvPixelFormat.None, log_Offset, log_Ctx);
 		}
@@ -304,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// will return as valid
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Image_Check_Sar(c_uint w, c_uint h, AvRational sar)//XX 323
+		public static c_int Av_Image_Check_Sar(c_uint w, c_uint h, AvRational sar)
 		{
 			int64_t scaled_Dim;
 
@@ -353,7 +353,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int Image_Get_LineSize(c_int width, c_int plane, c_int max_Step, c_int max_Step_Comp, AVPixFmtDescriptor desc)//XX 54
+		private static c_int Image_Get_LineSize(c_int width, c_int plane, c_int max_Step, c_int max_Step_Comp, AVPixFmtDescriptor desc)
 		{
 			if (desc == null)
 				return Error.EINVAL;
@@ -382,7 +382,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Image_Copy_Plane(CPointer<uint8_t> dst, ptrdiff_t dst_LineSize, CPointer<uint8_t> src, ptrdiff_t src_LineSize, ptrdiff_t byteWidth, c_int height)//XX 344
+		private static void Image_Copy_Plane(CPointer<uint8_t> dst, ptrdiff_t dst_LineSize, CPointer<uint8_t> src, ptrdiff_t src_LineSize, ptrdiff_t byteWidth, c_int height)
 		{
 			if (dst.IsNull || src.IsNull)
 				return;
@@ -403,7 +403,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Image_Copy(CPointer<CPointer<uint8_t>> dst_Data, CPointer<ptrdiff_t> dst_LineSizes, CPointer<CPointer<uint8_t>> src_Data, CPointer<ptrdiff_t> src_LineSizes, AvPixelFormat pix_Fmt, c_int width, c_int height, CopyPlane_Delegate copy_Plane)//XX 381
+		private static void Image_Copy(CPointer<CPointer<uint8_t>> dst_Data, CPointer<ptrdiff_t> dst_LineSizes, CPointer<CPointer<uint8_t>> src_Data, CPointer<ptrdiff_t> src_LineSizes, AvPixelFormat pix_Fmt, c_int width, c_int height, CopyPlane_Delegate copy_Plane)
 		{
 			AVPixFmtDescriptor desc = PixDesc.Av_Pix_Fmt_Desc_Get(pix_Fmt);
 

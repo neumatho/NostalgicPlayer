@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Lcevc_Process(IClass logCtx, AvFrame frame)//XX 281
+		public static c_int FF_Lcevc_Process(IClass logCtx, AvFrame frame)
 		{
 			FrameDecodeData fdd = (FrameDecodeData)frame.Private_Refs;
 			FFLcevcFrame frame_Ctx = (FFLcevcFrame)fdd.Post_Process_Opaque;
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Lcevc_Alloc(out FFLcevcContext pLcevc)//XX 312
+		public static c_int FF_Lcevc_Alloc(out FFLcevcContext pLcevc)
 		{
 			FFLcevcContext lcevc = null;
 
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Lcevc_Unref(IOpaque opaque)//XX 324
+		public static void FF_Lcevc_Unref(IOpaque opaque)
 		{
 			FFLcevcFrame lcevc = (FFLcevcFrame)opaque;
 
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Lcevc_Init(FFLcevcContext lcevc, IClass logCtx)//XX 254
+		private static c_int Lcevc_Init(FFLcevcContext lcevc, IClass logCtx)
 		{
 			lcevc.Initialized = 1;
 

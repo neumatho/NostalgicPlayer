@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint64_t ByteStream_Get_LE64(ref CPointer<uint8_t> b)//XX 91
+		public static uint64_t ByteStream_Get_LE64(ref CPointer<uint8_t> b)
 		{
 			b += 8;
 
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint ByteStream_Get_LE32(ref CPointer<uint8_t> b)//XX 92
+		public static c_uint ByteStream_Get_LE32(ref CPointer<uint8_t> b)
 		{
 			b += 4;
 
@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint ByteStream_Get_LE16(ref CPointer<uint8_t> b)//XX 94
+		public static c_uint ByteStream_Get_LE16(ref CPointer<uint8_t> b)
 		{
 			b += 2;
 
@@ -311,7 +311,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint64_t ByteStream_Get_BE64(ref CPointer<uint8_t> b)//XX 95
+		public static uint64_t ByteStream_Get_BE64(ref CPointer<uint8_t> b)
 		{
 			b += 8;
 
@@ -407,7 +407,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint ByteStream_Get_BE32(ref CPointer<uint8_t> b)//XX 96
+		public static c_uint ByteStream_Get_BE32(ref CPointer<uint8_t> b)
 		{
 			b += 4;
 
@@ -503,7 +503,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint ByteStream_Get_BE16(ref CPointer<uint8_t> b)//XX 98
+		public static c_uint ByteStream_Get_BE16(ref CPointer<uint8_t> b)
 		{
 			b += 2;
 
@@ -599,7 +599,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void ByteStream2_Init(out GetByteContext g, CPointer<uint8_t> buf, c_int buf_Size)//XX 137
+		public static void ByteStream2_Init(out GetByteContext g, CPointer<uint8_t> buf, c_int buf_Size)
 		{
 			g = new GetByteContext();
 
@@ -616,7 +616,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void ByteStream2_Init_Writer(out PutByteContext p, CPointer<uint8_t> buf, c_int buf_Size)//XX 147
+		public static void ByteStream2_Init_Writer(out PutByteContext p, CPointer<uint8_t> buf, c_int buf_Size)
 		{
 			p = new PutByteContext();
 
@@ -634,7 +634,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int ByteStream2_Get_Bytes_Left(GetByteContext g)//XX 158
+		public static c_int ByteStream2_Get_Bytes_Left(GetByteContext g)
 		{
 			return g.Buffer_End - g.Buffer;
 		}
@@ -647,7 +647,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int ByteStream2_Tell(GetByteContext g)//XX 192
+		public static c_int ByteStream2_Tell(GetByteContext g)
 		{
 			return g.Buffer - g.Buffer_Start;
 		}
@@ -660,7 +660,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int ByteStream2_Tell_P(PutByteContext p)//XX 197
+		public static c_int ByteStream2_Tell_P(PutByteContext p)
 		{
 			return p.Buffer - p.Buffer_Start;
 		}
@@ -673,7 +673,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int ByteStream2_Seek(GetByteContext g, c_int offset, SeekOrigin whence)//XX 212
+		public static c_int ByteStream2_Seek(GetByteContext g, c_int offset, SeekOrigin whence)
 		{
 			switch (whence)
 			{
@@ -713,7 +713,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int ByteStream2_Seek_P(PutByteContext p, c_int offset, SeekOrigin whence)//XX 236
+		public static c_int ByteStream2_Seek_P(PutByteContext p, c_int offset, SeekOrigin whence)
 		{
 			p.Eof = 0;
 
@@ -764,7 +764,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint ByteStream2_Get_Buffer<T>(GetByteContext g, CPointer<T> dst, c_uint size) where T : unmanaged//XX 267
+		public static c_uint ByteStream2_Get_Buffer<T>(GetByteContext g, CPointer<T> dst, c_uint size) where T : unmanaged
 		{
 			c_uint size2 = Macros.FFMin((c_uint)(g.Buffer_End - g.Buffer), size);
 			CMemory.memcpy(dst.Cast<T, uint8_t>(), g.Buffer, size2);
@@ -782,7 +782,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_uint ByteStream2_Put_Buffer<T>(PutByteContext p, CPointer<T> src, c_uint size) where T : unmanaged//XX 286
+		public static c_uint ByteStream2_Put_Buffer<T>(PutByteContext p, CPointer<T> src, c_uint size) where T : unmanaged
 		{
 			if (p.Eof != 0)
 				return 0;

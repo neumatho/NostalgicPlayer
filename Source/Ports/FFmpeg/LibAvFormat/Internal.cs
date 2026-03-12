@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static FFFormatContext FFFormatContext(AvFormatContext s)//XX 123
+		public static FFFormatContext FFFormatContext(AvFormatContext s)
 		{
 			return (FFFormatContext)s;
 		}
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static FFStream FFStream(AvStream st)//XX 347
+		public static FFStream FFStream(AvStream st)
 		{
 			return (FFStream)st;
 		}
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static FFStream CFFStream(AvStream st)//XX 352
+		public static FFStream CFFStream(AvStream st)
 		{
 			return (FFStream)st;
 		}

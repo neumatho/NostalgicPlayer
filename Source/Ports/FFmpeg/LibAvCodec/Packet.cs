@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// av_new_packet
 		/// </summary>
 		/********************************************************************/
-		public static AvPacket Av_Packet_Alloc()//XX 64
+		public static AvPacket Av_Packet_Alloc()
 		{
 			AvPacket pkt = Mem.Av_MAllocObj<AvPacket>();
 			if (pkt == null)
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// unreferenced first
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Packet_Free(ref AvPacket pkt)//XX 75
+		public static void Av_Packet_Free(ref AvPacket pkt)
 		{
 			if (pkt == null)
 				return;
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// default values
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_New_Packet(AvPacket pkt, c_int size)//XX 99
+		public static c_int Av_New_Packet(AvPacket pkt, c_int size)
 		{
 			AvBufferRef buf = null;
 
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Reduce packet size, correctly zeroing padding
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Shrink_Packet(AvPacket pkt, c_int size)//XX 114
+		public static void Av_Shrink_Packet(AvPacket pkt, c_int size)
 		{
 			if (pkt.Size <= size)
 				return;
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Increase packet size, correctly zeroing padding
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Grow_Packet(AvPacket pkt, c_int grow_By)//XX 122
+		public static c_int Av_Grow_Packet(AvPacket pkt, c_int grow_By)
 		{
 			if ((c_uint)grow_By > (c_int.MaxValue - (pkt.Size + Defs.Av_Input_Buffer_Padding_Size)))
 				return Error.ENOMEM;
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// All the other fields stay untouched
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Packet_Free_Side_Data(AvPacket pkt)//XX 189
+		public static void Av_Packet_Free_Side_Data(AvPacket pkt)
 		{
 			for (c_int i = 0; i < pkt.Side_Data_Elems; i++)
 				Mem.Av_FreeP(ref pkt.Side_Data[i].Data);
@@ -204,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Wrap an existing array as a packet side data
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Packet_Add_Side_Data(AvPacket pkt, AvPacketSideDataType type, IDataContext data)//XX 198
+		public static c_int Av_Packet_Add_Side_Data(AvPacket pkt, AvPacketSideDataType type, IDataContext data)
 		{
 			c_int elems = pkt.Side_Data_Elems;
 
@@ -245,7 +245,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Allocate new information of a packet
 		/// </summary>
 		/********************************************************************/
-		public static DataBufferContext Av_Packet_New_Side_Data(AvPacket pkt, AvPacketSideDataType type, size_t size)//XX 232
+		public static DataBufferContext Av_Packet_New_Side_Data(AvPacket pkt, AvPacketSideDataType type, size_t size)
 		{
 			if (size > (size_t.MaxValue - Defs.Av_Input_Buffer_Padding_Size))
 				return null;
@@ -265,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Allocate new information of a packet
 		/// </summary>
 		/********************************************************************/
-		public static IDataContext Av_Packet_New_Side_Data(AvPacket pkt, AvPacketSideDataType type, IDataContext data)//XX 232
+		public static IDataContext Av_Packet_New_Side_Data(AvPacket pkt, AvPacketSideDataType type, IDataContext data)
 		{
 			if (data == null)
 				return null;
@@ -289,7 +289,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Get side information from packet
 		/// </summary>
 		/********************************************************************/
-		public static IDataContext Av_Packet_Get_Side_Data(AvPacket pkt, AvPacketSideDataType type)//XX 253
+		public static IDataContext Av_Packet_Get_Side_Data(AvPacket pkt, AvPacketSideDataType type)
 		{
 			for (c_int i = 0; i < pkt.Side_Data_Elems; i++)
 			{
@@ -307,7 +307,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Unpack a dictionary from side_data
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Packet_Unpack_Dictionary(CPointer<char> data, size_t size, ref AvDictionary dict)//XX 353
+		public static c_int Av_Packet_Unpack_Dictionary(CPointer<char> data, size_t size, ref AvDictionary dict)
 		{
 			if ((dict == null) || data.IsNull || (size == 0))
 				return 0;
@@ -346,7 +346,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// beside those related to the packet data (buf, data, size)
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Packet_Copy_Props(AvPacket dst, AvPacket src)//XX 396
+		public static c_int Av_Packet_Copy_Props(AvPacket dst, AvPacket src)
 		{
 			dst.Pts = src.Pts;
 			dst.Dts = src.Dts;
@@ -396,7 +396,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// remaining packet fields to their default values
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Packet_Unref(AvPacket pkt)//XX 433
+		public static void Av_Packet_Unref(AvPacket pkt)
 		{
 			Av_Packet_Free_Side_Data(pkt);
 			Buffer.Av_Buffer_Unref(ref pkt.Opaque_Ref);
@@ -420,7 +420,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// See av_packet_unref
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Packet_Ref(AvPacket dst, AvPacket src)//XX 441
+		public static c_int Av_Packet_Ref(AvPacket dst, AvPacket src)
 		{
 			dst.Buf = null;
 
@@ -474,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// See av_packet_unref
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Packet_Move_Ref(AvPacket dst, AvPacket src)//XX 490
+		public static void Av_Packet_Move_Ref(AvPacket dst, AvPacket src)
 		{
 			src.CopyTo(dst);
 
@@ -491,7 +491,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// writable. Use av_packet_make_writable instead for that purpose
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Packet_Make_RefCounted(AvPacket pkt)//XX 496
+		public static c_int Av_Packet_Make_RefCounted(AvPacket pkt)
 		{
 			if (pkt.Buf != null)
 				return 0;
@@ -516,7 +516,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Append an AVPacket to the list
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvPriv_Packet_List_Put(PacketList packet_Buffer, AvPacket pkt, CodecFunc.Packet_Copy_Delegate copy, FFPacketListFlag flags)//XX 547
+		public static c_int AvPriv_Packet_List_Put(PacketList packet_Buffer, AvPacket pkt, CodecFunc.Packet_Copy_Delegate copy, FFPacketListFlag flags)
 		{
 			PacketListEntry pktl = Mem.Av_MAllocObj<PacketListEntry>();
 			c_uint update_End_Point = 1;
@@ -587,7 +587,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		///       caller owns the packet and must unref it by itself
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvPriv_Packet_List_Get(PacketList pkt_Buffer, AvPacket pkt)//XX 596
+		public static c_int AvPriv_Packet_List_Get(PacketList pkt_Buffer, AvPacket pkt)
 		{
 			PacketListEntry pktl = pkt_Buffer.Head;
 
@@ -612,7 +612,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Wipe the list and unref all the packets in it
 		/// </summary>
 		/********************************************************************/
-		public static void AvPriv_Packet_List_Free(PacketList pkt_Buf)//XX 610
+		public static void AvPriv_Packet_List_Free(PacketList pkt_Buf)
 		{
 			PacketListEntry tmp = pkt_Buf.Head;
 
@@ -634,7 +634,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Wrap existing data as packet side data
 		/// </summary>
 		/********************************************************************/
-		public static AvPacketSideData Av_Packet_Side_Data_Add(ref CPointer<AvPacketSideData> pSd, ref c_int pNb_Sd, AvPacketSideDataType type, IDataContext data, c_int flags)//XX 713
+		public static AvPacketSideData Av_Packet_Side_Data_Add(ref CPointer<AvPacketSideData> pSd, ref c_int pNb_Sd, AvPacketSideDataType type, IDataContext data, c_int flags)
 		{
 			return Packet_Side_Data_Add(ref pSd, ref pNb_Sd, type, data);
 		}
@@ -647,7 +647,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// array, and the array itself
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Packet_Side_Data_Free(ref CPointer<AvPacketSideData> pSd, ref c_int pNb_Sd)//XX 758
+		public static void Av_Packet_Side_Data_Free(ref CPointer<AvPacketSideData> pSd, ref c_int pNb_Sd)
 		{
 			CPointer<AvPacketSideData> sd = pSd;
 			c_int nb_Sd = pNb_Sd;
@@ -665,7 +665,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Get_Packet_Defaults(AvPacket pkt)//XX 54
+		private static void Get_Packet_Defaults(AvPacket pkt)
 		{
 			pkt.Clear();
 
@@ -682,7 +682,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Packet_Alloc(ref AvBufferRef buf, c_int size)//XX 84
+		private static c_int Packet_Alloc(ref AvBufferRef buf, c_int size)
 		{
 			if ((size < 0) || (size >= (c_int.MaxValue - Defs.Av_Input_Buffer_Padding_Size)))
 				return Error.EINVAL;
@@ -704,7 +704,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvPacketSideData Packet_Side_Data_Add(ref CPointer<AvPacketSideData> pSd, ref c_int pNb_Sd, AvPacketSideDataType type, IDataContext data)//XX 680
+		private static AvPacketSideData Packet_Side_Data_Add(ref CPointer<AvPacketSideData> pSd, ref c_int pNb_Sd, AvPacketSideDataType type, IDataContext data)
 		{
 			CPointer<AvPacketSideData> sd = pSd;
 			c_int nb_sd = pNb_Sd;

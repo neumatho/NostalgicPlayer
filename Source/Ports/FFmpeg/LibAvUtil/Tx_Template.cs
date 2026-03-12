@@ -828,7 +828,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private FFTxCodelet Build_Factor_S_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)//XX 506
+		private FFTxCodelet Build_Factor_S_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)
 		{
 			FFTxCodelet def = new FFTxCodelet
 			{
@@ -856,7 +856,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private FFTxCodelet Build_Factor_F_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)//XX 521
+		private FFTxCodelet Build_Factor_F_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)
 		{
 			FFTxCodelet def = new FFTxCodelet
 			{
@@ -884,7 +884,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private FFTxCodelet Build_Sr_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)//XX 604
+		private FFTxCodelet Build_Sr_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)
 		{
 			FFTxCodelet def = new FFTxCodelet
 			{
@@ -912,7 +912,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private FFTxCodelet Build_Comp_Imdct_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)//XX 1521
+		private FFTxCodelet Build_Comp_Imdct_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)
 		{
 			FFTxCodelet def = new FFTxCodelet
 			{
@@ -940,7 +940,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private FFTxCodelet Build_Comp_Mdct_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)//XX 1589
+		private FFTxCodelet Build_Comp_Mdct_Codelet_Def(c_int n, UtilFunc.Av_Tx_Fn f)
 		{
 			FFTxCodelet def = new FFTxCodelet
 			{
@@ -968,7 +968,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private FFTxCodelet Build_Rdft_Codelet_Def(string n, bool inv, UtilFunc.Av_Tx_Fn f)//XX 1716
+		private FFTxCodelet Build_Rdft_Codelet_Def(string n, bool inv, UtilFunc.Av_Tx_Fn f)
 		{
 			FFTxCodelet def = new FFTxCodelet
 			{
@@ -996,7 +996,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private FFTxCodelet Build_Rdft_Half_Codelet_Def(string n, AvTxFlags mode, bool mod2, UtilFunc.Av_Tx_Fn f)//XX 1820
+		private FFTxCodelet Build_Rdft_Half_Codelet_Def(string n, AvTxFlags mode, bool mod2, UtilFunc.Av_Tx_Fn f)
 		{
 			FFTxCodelet def = new FFTxCodelet
 			{
@@ -1037,7 +1037,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Init_Tab(TXSample[] table, c_int len)//XX 70
+		private void FF_Tx_Init_Tab(TXSample[] table, c_int len)
 		{
 			c_double freq = 2 * Math.PI / len;
 			CPointer<TXSample> tab = table;
@@ -1055,7 +1055,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Init_Tab_53()//XX 95
+		private void FF_Tx_Init_Tab_53()
 		{
 			// 5pt, doubled to eliminate AVX lane shuffles
 			ff_Tx_Tab_53[0] = Rescale(TXSample.CreateChecked(CMath.cos(2 * Math.PI / 5)));
@@ -1081,7 +1081,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Init_Tab_7()//XX 114
+		private void FF_Tx_Init_Tab_7()
 		{
 			ff_Tx_Tab_7[0] = Rescale(TXSample.CreateChecked(CMath.cos(2 * Math.PI / 7)));
 			ff_Tx_Tab_7[1] = Rescale(TXSample.CreateChecked(CMath.sin(2 * Math.PI / 7)));
@@ -1098,7 +1098,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Init_Tab_9()//XX 124
+		private void FF_Tx_Init_Tab_9()
 		{
 			ff_Tx_Tab_9[0] = Rescale(TXSample.CreateChecked(CMath.cos(2 * Math.PI / 3)));
 			ff_Tx_Tab_9[1] = Rescale(TXSample.CreateChecked(CMath.sin(2 * Math.PI / 3)));
@@ -1117,7 +1117,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Init_Tabs(c_int len)//XX 148
+		private void FF_Tx_Init_Tabs(c_int len)
 		{
 			c_int factor_2 = IntMath.FF_Ctz(len);
 
@@ -1159,7 +1159,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft3(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 177
+		private void Fft3(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			TXComplex[] tmp = new TXComplex[3];
 			TXSample[] tab = ff_Tx_Tab_53;
@@ -1207,7 +1207,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft5_Decl(CPointer<TXComplex> @out, CPointer<TXComplex> @in, c_int d0, c_int d1, c_int d2, c_int d3, c_int d4, ptrdiff_t stride)//XX 216
+		private void Fft5_Decl(CPointer<TXComplex> @out, CPointer<TXComplex> @in, c_int d0, c_int d1, c_int d2, c_int d3, c_int d4, ptrdiff_t stride)
 		{
 			TXComplex[] z0 = new TXComplex[4];
 			TXComplex[] t = new TXComplex[6];
@@ -1285,7 +1285,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft5(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 251
+		private void Fft5(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			Fft5_Decl(@out, @in, 0, 1, 2, 3, 4, stride);
 		}
@@ -1298,7 +1298,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft5_M1(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 252
+		private void Fft5_M1(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			Fft5_Decl(@out, @in, 0, 6, 12, 3, 9, stride);
 		}
@@ -1311,7 +1311,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft5_M2(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 253
+		private void Fft5_M2(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			Fft5_Decl(@out, @in, 10, 1, 7, 13, 4, stride);
 		}
@@ -1324,7 +1324,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft5_M3(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 254
+		private void Fft5_M3(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			Fft5_Decl(@out, @in, 5, 11, 2, 8, 14, stride);
 		}
@@ -1337,7 +1337,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft7(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 256
+		private void Fft7(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			TXComplex[] t = new TXComplex[6];
 			TXComplex[] z = new TXComplex[3];
@@ -1448,7 +1448,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft9(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 344
+		private void Fft9(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			TXComplex[] t = new TXComplex[16];
 			TXComplex[] w = new TXComplex[4];
@@ -1586,7 +1586,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Fft15(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)//XX 469
+		private void Fft15(CPointer<TXComplex> @out, CPointer<TXComplex> @in, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> tmp = new CPointer<TXComplex>(15);
 
@@ -1605,7 +1605,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Fft_Factor_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 482
+		private c_int FF_Tx_Fft_Factor_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			c_int ret = 0;
 
@@ -1626,7 +1626,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft3(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)//XX 501
+		private void FF_Tx_Fft3(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)
 		{
 			Fft3(dst.ToPointer<TXComplex>(), src.ToPointer<TXComplex>(), stride / Marshal.SizeOf<TXComplex>());
 		}
@@ -1638,7 +1638,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft5(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)//XX 501
+		private void FF_Tx_Fft5(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)
 		{
 			Fft5(dst.ToPointer<TXComplex>(), src.ToPointer<TXComplex>(), stride / Marshal.SizeOf<TXComplex>());
 		}
@@ -1650,7 +1650,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft7(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)//XX 501
+		private void FF_Tx_Fft7(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)
 		{
 			Fft7(dst.ToPointer<TXComplex>(), src.ToPointer<TXComplex>(), stride / Marshal.SizeOf<TXComplex>());
 		}
@@ -1662,7 +1662,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft9(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)//XX 501
+		private void FF_Tx_Fft9(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)
 		{
 			Fft9(dst.ToPointer<TXComplex>(), src.ToPointer<TXComplex>(), stride / Marshal.SizeOf<TXComplex>());
 		}
@@ -1674,7 +1674,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft15(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)//XX 501
+		private void FF_Tx_Fft15(AvTxContext s, IPointer dst, IPointer src, ptrdiff_t stride)
 		{
 			Fft15(dst.ToPointer<TXComplex>(), src.ToPointer<TXComplex>(), stride / Marshal.SizeOf<TXComplex>());
 		}
@@ -1687,7 +1687,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Butterflies<T>(ref TXComplex a0, ref TXComplex a1, ref TXComplex a2, ref TXComplex a3, ref T t1, ref T t2, out T t3, out T t4, ref T t5,  ref T t6) where T : INumber<T> //XX 544
+		private void Butterflies<T>(ref TXComplex a0, ref TXComplex a1, ref TXComplex a2, ref TXComplex a3, ref T t1, ref T t2, out T t3, out T t4, ref T t5,  ref T t6) where T : INumber<T>
 		{
 			T r0 = T.CreateChecked(a0.Re);
 			T i0 = T.CreateChecked(a0.Im);
@@ -1724,7 +1724,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Transform<T>(ref TXComplex a0, ref TXComplex a1, ref TXComplex a2, ref TXComplex a3, TXSample wre, TXSample wim, out T t1, out T t2, out T t3, out T t4, out T t5,  out T t6) where T : INumber<T> //XX 558
+		private void Transform<T>(ref TXComplex a0, ref TXComplex a1, ref TXComplex a2, ref TXComplex a3, TXSample wre, TXSample wim, out T t1, out T t2, out T t3, out T t4, out T t5,  out T t6) where T : INumber<T>
 		{
 			CMul(out t1, out t2, a2.Re, a2.Im, wre, -wim);
 			CMul(out t5, out t6, a3.Re, a3.Im, wre, wim);
@@ -1740,7 +1740,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void FF_Tx_Fft_Sr_Combine(CPointer<TXComplex> z, CPointer<TXSample> cos, c_int len)//XX 566
+		private void FF_Tx_Fft_Sr_Combine(CPointer<TXComplex> z, CPointer<TXSample> cos, c_int len)
 		{
 			c_int o1 = 2 * len;
 			c_int o2 = 4 * len;
@@ -1774,7 +1774,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Fft_Sr_Codelet_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 592
+		private c_int FF_Tx_Fft_Sr_Codelet_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			FF_Tx_Init_Tabs(len);
 
@@ -1788,7 +1788,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft32_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft32_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1809,7 +1809,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft64_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft64_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1830,7 +1830,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft128_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft128_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1851,7 +1851,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft256_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft256_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1872,7 +1872,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft512_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft512_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1893,7 +1893,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft1024_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft1024_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1914,7 +1914,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft2048_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft2048_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1935,7 +1935,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft4096_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft4096_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1956,7 +1956,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft8192_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft8192_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1977,7 +1977,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft16384_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft16384_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -1998,7 +1998,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft32768_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft32768_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2019,7 +2019,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft65536_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft65536_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2040,7 +2040,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft131072_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft131072_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2061,7 +2061,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft262144_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft262144_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2082,7 +2082,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft524288_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft524288_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2103,7 +2103,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft1048576_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft1048576_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2124,7 +2124,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft2097152_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 620
+		private void FF_Tx_Fft2097152_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2145,7 +2145,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft2_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 635
+		private void FF_Tx_Fft2_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2170,7 +2170,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft4_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 647
+		private void FF_Tx_Fft4_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2208,7 +2208,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft8_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 664
+		private void FF_Tx_Fft8_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2243,7 +2243,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft16_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 683
+		private void FF_Tx_Fft16_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2279,7 +2279,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Fft_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 732
+		private c_int FF_Tx_Fft_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			bool is_Inplace = (flags & AvTxFlags.Inplace) != 0;
 
@@ -2312,7 +2312,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Fft_Inplace_Small_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 758
+		private c_int FF_Tx_Fft_Inplace_Small_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			s.Tmp = Mem.Av_MAlloc<TXComplex>((size_t)len);
 
@@ -2331,7 +2331,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 771
+		private void FF_Tx_Fft(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst2 = _dst.ToPointer<TXComplex>();
@@ -2353,7 +2353,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft_Inplace(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 788
+		private void FF_Tx_Fft_Inplace(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2390,7 +2390,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Fft_Init_Naive_Small(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 854
+		private c_int FF_Tx_Fft_Init_Naive_Small(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			c_double phase = s.Inv != 0 ? 2.0 * Math.PI / len : -2.0 * Math.PI / len;
 
@@ -2424,7 +2424,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft_Naive(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 879
+		private void FF_Tx_Fft_Naive(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2464,7 +2464,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft_Naive_Small(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 906
+		private void FF_Tx_Fft_Naive_Small(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
 			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
@@ -2498,7 +2498,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Fft_Pfa_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 956
+		private c_int FF_Tx_Fft_Pfa_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			c_int ps = (flags & AvTxFlags.FF_Preshuffle) != 0 ? 1 : 0;
 			size_t extra_Tmp_Len = 0;
@@ -2634,7 +2634,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft_Pfa(AvTxContext s, IPointer _out, IPointer _in, ptrdiff_t stride)//XX 1066
+		private void FF_Tx_Fft_Pfa(AvTxContext s, IPointer _out, IPointer _in, ptrdiff_t stride)
 		{
 			c_int n = s.Sub[0].Len, m = s.Sub[1].Len, l = s.Len;
 			CPointer<c_int> in_Map = s.Map, out_Map = in_Map + l;
@@ -2668,7 +2668,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Fft_Pfa_Ns(AvTxContext s, IPointer _out, IPointer _in, ptrdiff_t stride)//XX 1090
+		private void FF_Tx_Fft_Pfa_Ns(AvTxContext s, IPointer _out, IPointer _in, ptrdiff_t stride)
 		{
 			c_int n = s.Sub[0].Len, m = s.Sub[1].Len, l = s.Len;
 			CPointer<c_int> in_Map = s.Map, out_Map = in_Map + l;
@@ -2697,7 +2697,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Mdct_Naive_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 1140
+		private c_int FF_Tx_Mdct_Naive_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			s.Scale_D = c_double.CreateChecked((TScaleType)scale);
 			s.Scale_F = (c_float)s.Scale_D;
@@ -2712,7 +2712,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Naive_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1152
+		private void FF_Tx_Mdct_Naive_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXSample> src = _src.ToPointer<TXSample>();
 			CPointer<TXSample> dst = _dst.ToPointer<TXSample>();
@@ -2743,7 +2743,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Naive_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1173
+		private void FF_Tx_Mdct_Naive_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXSample> src = _src.ToPointer<TXSample>();
 			CPointer<TXSample> dst = _dst.ToPointer<TXSample>();
@@ -2784,7 +2784,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Mdct_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 1231
+		private c_int FF_Tx_Mdct_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			FFTxCodeletOptions sub_Opts = new FFTxCodeletOptions
 			{
@@ -2848,7 +2848,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1281
+		private void FF_Tx_Mdct_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXSample> src = _src.ToPointer<TXSample>();
 			CPointer<TXSample> dst = _dst.ToPointer<TXSample>();
@@ -2909,7 +2909,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1320
+		private void FF_Tx_Mdct_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXComplex> z = _dst.Cast<TXSample, TXComplex>();
 			CPointer<TXComplex> exp = s.Exp.ToPointer<TXComplex>();
@@ -2959,7 +2959,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Mdct_Inv_Full_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 1380
+		private c_int FF_Tx_Mdct_Inv_Full_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			TScaleType _scale = (TScaleType)scale;
 
@@ -2983,7 +2983,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Inv_Full(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1400
+		private void FF_Tx_Mdct_Inv_Full(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			c_int len = s.Len << 1;
 			c_int len2 = len >> 1;
@@ -3008,7 +3008,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Mdct_Pfa_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 1433
+		private c_int FF_Tx_Mdct_Pfa_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			FFTxCodeletOptions sub_Opts = new FFTxCodeletOptions
 			{
@@ -3067,7 +3067,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Comp_Imdct_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, c_int N, Fft fft)//XX 1480
+		private void Comp_Imdct_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, c_int N, Fft fft)
 		{
 			CPointer<TXComplex> fft_In = new CPointer<TXComplex>(N);
 			CPointer<TXComplex> z = _dst.Cast<TXSample, TXComplex>();
@@ -3132,7 +3132,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_3xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1480
+		private void FF_Tx_Mdct_Pfa_3xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Imdct_Decl(s, _dst, _src, stride, 3, Fft3);
 		}
@@ -3144,7 +3144,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_5xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1480
+		private void FF_Tx_Mdct_Pfa_5xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Imdct_Decl(s, _dst, _src, stride, 5, Fft5);
 		}
@@ -3156,7 +3156,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_7xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1480
+		private void FF_Tx_Mdct_Pfa_7xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Imdct_Decl(s, _dst, _src, stride, 7, Fft7);
 		}
@@ -3168,7 +3168,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_9xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1480
+		private void FF_Tx_Mdct_Pfa_9xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Imdct_Decl(s, _dst, _src, stride, 9, Fft9);
 		}
@@ -3180,7 +3180,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_15xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1480
+		private void FF_Tx_Mdct_Pfa_15xM_Inv(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Imdct_Decl(s, _dst, _src, stride, 15, Fft15);
 		}
@@ -3192,7 +3192,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Comp_Mdct_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, c_int N, Fft fft)//XX 1542
+		private void Comp_Mdct_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, c_int N, Fft fft)
 		{
 			CPointer<TXComplex> fft_In = new CPointer<TXComplex>(N);
 			CPointer<TXSample> src = _src.ToPointer<TXSample>();
@@ -3260,7 +3260,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_3xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1542
+		private void FF_Tx_Mdct_Pfa_3xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Mdct_Decl(s, _dst, _src, stride, 3, Fft3);
 		}
@@ -3272,7 +3272,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_5xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1542
+		private void FF_Tx_Mdct_Pfa_5xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Mdct_Decl(s, _dst, _src, stride, 5, Fft5);
 		}
@@ -3284,7 +3284,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_7xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1542
+		private void FF_Tx_Mdct_Pfa_7xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Mdct_Decl(s, _dst, _src, stride, 7, Fft7);
 		}
@@ -3296,7 +3296,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_9xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1542
+		private void FF_Tx_Mdct_Pfa_9xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Mdct_Decl(s, _dst, _src, stride, 9, Fft9);
 		}
@@ -3308,7 +3308,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Mdct_Pfa_15xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1542
+		private void FF_Tx_Mdct_Pfa_15xM_Fwd(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Comp_Mdct_Decl(s, _dst, _src, stride, 15, Fft15);
 		}
@@ -3320,7 +3320,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Rdft_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 1609
+		private c_int FF_Tx_Rdft_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			uint64_t r2r = (flags & AvTxFlags.Real_To_Real) != 0 ? 1U : 0U;
 			c_int len4 = Macros.FFAlign(len, 4) / 4;
@@ -3381,7 +3381,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Rdft_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, c_int inv)//XX 1664
+		private void Rdft_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, c_int inv)
 		{
 			c_int len2 = s.Len >> 1;
 			c_int len4 = s.Len >> 2;
@@ -3444,7 +3444,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Rdft_R2C(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1664
+		private void FF_Tx_Rdft_R2C(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Rdft_Decl(s, _dst, _src, stride, 0);
 		}
@@ -3456,7 +3456,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Rdft_C2R(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1664
+		private void FF_Tx_Rdft_C2R(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Rdft_Decl(s, _dst, _src, stride, 1);
 		}
@@ -3468,7 +3468,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Rdft_Half_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, AvTxFlags mode, c_int mod2)//XX 1735
+		private void Rdft_Half_Decl(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride, AvTxFlags mode, c_int mod2)
 		{
 			c_int len = s.Len;
 			c_int len2 = len >> 1;
@@ -3569,7 +3569,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Rdft_R2R(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1735
+		private void FF_Tx_Rdft_R2R(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Rdft_Half_Decl(s, _dst, _src, stride, AvTxFlags.Real_To_Real, 0);
 		}
@@ -3581,7 +3581,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Rdft_R2R_Mod2(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1735
+		private void FF_Tx_Rdft_R2R_Mod2(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Rdft_Half_Decl(s, _dst, _src, stride, AvTxFlags.Real_To_Real, 1);
 		}
@@ -3593,7 +3593,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Rdft_R2I(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1735
+		private void FF_Tx_Rdft_R2I(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Rdft_Half_Decl(s, _dst, _src, stride, AvTxFlags.Real_To_Imaginary, 0);
 		}
@@ -3605,7 +3605,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_Rdft_R2I_Mod2(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1735
+		private void FF_Tx_Rdft_R2I_Mod2(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			Rdft_Half_Decl(s, _dst, _src, stride, AvTxFlags.Real_To_Imaginary, 1);
 		}
@@ -3617,7 +3617,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Dct_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 1840
+		private c_int FF_Tx_Dct_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			TScaleType rsc = (TScaleType)scale;
 
@@ -3666,7 +3666,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_DctII(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1883
+		private void FF_Tx_DctII(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			DoDctII(s, _dst.ToPointer<TXSample>(), _src.ToPointer<TXSample>(), stride);
 		}
@@ -3678,7 +3678,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected virtual void DoDctII(AvTxContext s, CPointer<TXSample> dst, CPointer<TXSample> src, ptrdiff_t stride)//XX 1883
+		protected virtual void DoDctII(AvTxContext s, CPointer<TXSample> dst, CPointer<TXSample> src, ptrdiff_t stride)
 		{
 			c_int len = s.Len;
 			c_int len2 = len >> 1;
@@ -3722,7 +3722,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_DctIII(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 1943
+		private void FF_Tx_DctIII(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			DoDctIII(s, _dst.ToPointer<TXSample>(), _src.ToPointer<TXSample>(), stride);
 		}
@@ -3734,7 +3734,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected virtual void DoDctIII(AvTxContext s, CPointer<TXSample> dst, CPointer<TXSample> src, ptrdiff_t stride)//XX 1943
+		protected virtual void DoDctIII(AvTxContext s, CPointer<TXSample> dst, CPointer<TXSample> src, ptrdiff_t stride)
 		{
 			c_int len = s.Len;
 			c_int len2 = len >> 1;
@@ -3775,7 +3775,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_DcstI_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)//XX 2014
+		private c_int FF_Tx_DcstI_Init(AvTxContext s, FFTxCodelet cd, AvTxFlags flags, FFTxCodeletOptions opts, c_int len, c_int inv, object scale)
 		{
 			TScaleType rsc = (TScaleType)scale;
 
@@ -3809,7 +3809,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_DctI(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 2046
+		private void FF_Tx_DctI(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXSample> dst = _dst.ToPointer<TXSample>();
 			CPointer<TXSample> src = _src.ToPointer<TXSample>();
@@ -3833,7 +3833,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void FF_Tx_DstI(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)//XX 2064
+		private void FF_Tx_DstI(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
 		{
 			CPointer<TXSample> dst = _dst.ToPointer<TXSample>();
 			CPointer<TXSample> src = _src.ToPointer<TXSample>();
@@ -3867,7 +3867,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// being the original
 		/// </summary>
 		/********************************************************************/
-		private c_int FF_Tx_Mdct_Gen_Exp(AvTxContext s, CPointer<c_int> pre_Tab)//XX 2115
+		private c_int FF_Tx_Mdct_Gen_Exp(AvTxContext s, CPointer<c_int> pre_Tab)
 		{
 			c_int off = 0;
 			c_int len4 = s.Len >> 1;

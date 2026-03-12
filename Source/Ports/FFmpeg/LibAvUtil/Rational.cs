@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// This is useful for framerate calculations
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Reduce(out c_int dst_Num, out c_int dst_Den, int64_t num, int64_t den, int64_t max)//XX 35
+		public static c_int Av_Reduce(out c_int dst_Num, out c_int dst_Den, int64_t num, int64_t den, int64_t max)
 		{
 			AvRational a0 = new AvRational(0, 1);
 			AvRational a1 = new AvRational(1, 0);
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Multiply two rationals
 		/// </summary>
 		/********************************************************************/
-		public static AvRational Av_Mul_Q(AvRational b, AvRational c)//XX 80
+		public static AvRational Av_Mul_Q(AvRational b, AvRational c)
 		{
 			Av_Reduce(out b.Num, out b.Den, b.Num * (int64_t)c.Num, b.Den * (int64_t)c.Den, c_int.MaxValue);
 
@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Add two rationals
 		/// </summary>
 		/********************************************************************/
-		public static AvRational Av_Add_Q(AvRational b, AvRational c)//XX 93
+		public static AvRational Av_Add_Q(AvRational b, AvRational c)
 		{
 			Av_Reduce(out b.Num, out b.Den, (b.Num * (int64_t)c.Den) + (c.Num * (int64_t)b.Den), b.Den * (int64_t)c.Den, c_int.MaxValue);
 
@@ -176,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Subtract one rational from another
 		/// </summary>
 		/********************************************************************/
-		public static AvRational Av_Sub_Q(AvRational b, AvRational c)//XX 101
+		public static AvRational Av_Sub_Q(AvRational b, AvRational c)
 		{
 			return Av_Add_Q(b, new AvRational(-c.Num, c.Den));
 		}
@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// (no exceptions were found within 1B random ones)
 		/// </summary>
 		/********************************************************************/
-		public static AvRational Av_D2Q(c_double d, c_int max)//XX 106
+		public static AvRational Av_D2Q(c_double d, c_int max)
 		{
 			if (c_double.IsNaN(d))
 				return new AvRational(0, 0);
@@ -222,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// fixed-point format
 		/// </summary>
 		/********************************************************************/
-		public static uint32_t Av_Q2IntFloat(AvRational q)//XX 150
+		public static uint32_t Av_Q2IntFloat(AvRational q)
 		{
 			c_int sign = 0;
 

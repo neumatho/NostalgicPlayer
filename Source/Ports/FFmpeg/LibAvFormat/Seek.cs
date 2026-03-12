@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// and pts!=dts)
 		/// </summary>
 		/********************************************************************/
-		public static void AvPriv_Update_Cur_Dts(AvFormatContext s, AvStream ref_St, int64_t timestamp)//XX 37
+		public static void AvPriv_Update_Cur_Dts(AvFormatContext s, AvStream ref_St, int64_t timestamp)
 		{
 			for (c_uint i = 0; i < s.Nb_Streams; i++)
 			{
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// too large
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Reduce_Index(AvFormatContext s, c_int stream_Index)//XX 50
+		public static void FF_Reduce_Index(AvFormatContext s, c_int stream_Index)
 		{
 			AvStream st = s.Streams[stream_Index];
 			FFStream sti = Internal.FFStream(st);
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Add_Index_Entry(ref CPointer<AvIndexEntry> index_Entries, ref c_int nb_Index_Entries, ref c_uint index_Entries_Allocated_Size, int64_t pos, int64_t timestamp, c_int size, c_int distance, AvIndex flags)//XX 64
+		public static c_int FF_Add_Index_Entry(ref CPointer<AvIndexEntry> index_Entries, ref c_int nb_Index_Entries, ref c_uint index_Entries_Allocated_Size, int64_t pos, int64_t timestamp, c_int size, c_int distance, AvIndex flags)
 		{
 			AvIndexEntry ie;
 
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// list already contains it
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Add_Index_Entry(AvStream st, int64_t pos, int64_t timestamp, c_int size, c_int distance, AvIndex flags)//XX 122
+		public static c_int Av_Add_Index_Entry(AvStream st, int64_t pos, int64_t timestamp, c_int size, c_int distance, AvIndex flags)
 		{
 			FFStream sti = Internal.FFStream(st);
 			timestamp = Demux.FF_Wrap_Timestamp(st, timestamp);
@@ -152,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Index_Search_Timestamp(CPointer<AvIndexEntry> entries, c_int nb_Entries, int64_t wanted_Timestamp, AvSeekFlag flags)//XX 132
+		public static c_int FF_Index_Search_Timestamp(CPointer<AvIndexEntry> entries, c_int nb_Entries, int64_t wanted_Timestamp, AvSeekFlag flags)
 		{
 			c_int m;
 
@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Get the index for a specific timestamp
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Index_Search_Timestamp(AvStream st, int64_t wanted_Timestamp, AvSeekFlag flags)//XX 245
+		public static c_int Av_Index_Search_Timestamp(AvStream st, int64_t wanted_Timestamp, AvSeekFlag flags)
 		{
 			FFStream sti = Internal.FFStream(st);
 
@@ -224,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// FFInputFormat.read_timestamp()
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Seek_Frame_Binary(AvFormatContext s, c_int stream_Index, int64_t target_Ts, AvSeekFlag flags)//XX 290
+		public static c_int FF_Seek_Frame_Binary(AvFormatContext s, c_int stream_Index, int64_t target_Ts, AvSeekFlag flags)
 		{
 			FFInputFormat avif = Demux.FFIFmt(s.IFormat);
 			int64_t pos_Min = 0, pos_Max = 0;
@@ -301,7 +301,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// and pts!=dts)
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Find_Last_Ts(AvFormatContext s, c_int stream_Index, out int64_t ts, out int64_t pos, FormatFunc.Read_Timestamp_Delegate read_Timestamp_Func)//XX 360
+		public static c_int FF_Find_Last_Ts(AvFormatContext s, c_int stream_Index, out int64_t ts, out int64_t pos, FormatFunc.Read_Timestamp_Delegate read_Timestamp_Func)
 		{
 			ts = 0;
 			pos = 0;
@@ -353,7 +353,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Perform a binary search using read_timestamp()
 		/// </summary>
 		/********************************************************************/
-		public static int64_t FF_Gen_Search(AvFormatContext s, c_int stream_Index, int64_t target_Ts, int64_t pos_Min, int64_t pos_Max, int64_t pos_Limit, int64_t ts_Min, int64_t ts_Max, AvSeekFlag flags, out int64_t ts_Ret, FormatFunc.Read_Timestamp_Delegate read_Timestamp_Func)//XX 398
+		public static int64_t FF_Gen_Search(AvFormatContext s, c_int stream_Index, int64_t target_Ts, int64_t pos_Min, int64_t pos_Max, int64_t pos_Limit, int64_t ts_Min, int64_t ts_Max, AvSeekFlag flags, out int64_t ts_Ret, FormatFunc.Read_Timestamp_Delegate read_Timestamp_Func)
 		{
 			ts_Ret = 0;
 
@@ -473,7 +473,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Seek to the keyframe at timestamp
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Seek_Frame(AvFormatContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)//XX 641
+		public static c_int Av_Seek_Frame(AvFormatContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)
 		{
 			if ((Demux.FFIFmt(s.IFormat).Read_Seek2 != null) && (Demux.FFIFmt(s.IFormat).Read_Seek == null))
 			{
@@ -518,7 +518,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// If flags contain AVSEEK_FLAG_BACKWARD, it is ignored
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvFormat_Seek_File(AvFormatContext s, c_int stream_Index, int64_t min_Ts, int64_t ts, int64_t max_Ts, AvSeekFlag flags)//XX 664
+		public static c_int AvFormat_Seek_File(AvFormatContext s, c_int stream_Index, int64_t min_Ts, int64_t ts, int64_t max_Ts, AvSeekFlag flags)
 		{
 			c_int ret;
 
@@ -623,7 +623,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Read_Timestamp(AvFormatContext s, c_int stream_Index, ref int64_t pPos, int64_t pos_Limit, FormatFunc.Read_Timestamp_Delegate read_Timestamp)//XX 281
+		private static int64_t Read_Timestamp(AvFormatContext s, c_int stream_Index, ref int64_t pPos, int64_t pos_Limit, FormatFunc.Read_Timestamp_Delegate read_Timestamp)
 		{
 			int64_t ts = read_Timestamp(s, stream_Index, ref pPos, pos_Limit);
 
@@ -640,7 +640,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Seek_Frame_Byte(AvFormatContext s, c_int stream_Index, int64_t pos, AvSeekFlag flags)//XX 505
+		private static c_int Seek_Frame_Byte(AvFormatContext s, c_int stream_Index, int64_t pos, AvSeekFlag flags)
 		{
 			FFFormatContext si = Internal.FFFormatContext(s);
 
@@ -666,7 +666,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Seek_Frame_Generic(AvFormatContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)//XX 526
+		private static c_int Seek_Frame_Generic(AvFormatContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)
 		{
 			FFFormatContext si = Internal.FFFormatContext(s);
 			AvStream st = s.Streams[stream_Index];
@@ -777,7 +777,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Seek_Frame_Internal(AvFormatContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)//XX 597
+		private static c_int Seek_Frame_Internal(AvFormatContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)
 		{
 			c_int ret;
 

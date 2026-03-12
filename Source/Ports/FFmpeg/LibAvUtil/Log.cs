@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return the context name
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Default_Item_Name(IClass ptr)//XX 241
+		public static CPointer<char> Av_Default_Item_Name(IClass ptr)
 		{
 			return ((AvClass)ptr).Class_Name;
 		}
@@ -98,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Log_Default_Callback(IClass ptr, c_int level, CPointer<char> fmt, params object[] args)//XX 378
+		public static void Av_Log_Default_Callback(IClass ptr, c_int level, CPointer<char> fmt, params object[] args)
 		{
 			AVBPrint[] part = new AVBPrint[5];
 			CPointer<char> line = new CPointer<char>(Line_Sz);
@@ -203,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// See av_log_set_callback
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Log(IClass avcl, c_int level, CPointer<char> fmt, params object[] args)//XX 442
+		public static void Av_Log(IClass avcl, c_int level, CPointer<char> fmt, params object[] args)
 		{
 			AvClass avc = avcl != null ? (AvClass)avcl : null;
 			UtilFunc.Log_Delegate log_Callback = av_Log_Callback;
@@ -225,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get the current log level
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Log_Get_Level()//XX 470
+		public static c_int Av_Log_Get_Level()
 		{
 			return av_Log_Level;
 		}
@@ -237,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Set the log level
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Log_Set_Level(c_int level)//XX 475
+		public static void Av_Log_Set_Level(c_int level)
 		{
 			av_Log_Level = level;
 		}
@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// See av_log_default_callback
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Log_Set_Callback(UtilFunc.Log_Delegate callback)//XX 490
+		public static void Av_Log_Set_Callback(UtilFunc.Log_Delegate callback)
 		{
 			av_Log_Callback = callback;
 		}
@@ -266,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void AvPriv_Request_Sample(IClass avc, string msg, params object[] args)//XX 509
+		public static void AvPriv_Request_Sample(IClass avc, string msg, params object[] args)
 		{
 			Missing_Feature_Sample(1, avc, msg, args);
 		}
@@ -278,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void AvPriv_Report_Missing_Feature(IClass avc, string msg, params object[] args)//XX 518
+		public static void AvPriv_Report_Missing_Feature(IClass avc, string msg, params object[] args)
 		{
 			Missing_Feature_Sample(0, avc, msg, args);
 		}
@@ -289,7 +289,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Ansi_Fputs(c_int level, c_int tint, CPointer<char> str, c_int local_Use_Color)//XX 189
+		private static void Ansi_Fputs(c_int level, c_int tint, CPointer<char> str, c_int local_Use_Color)
 		{
 			CFile.fputs(str, Console.Error);
 		}
@@ -301,7 +301,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Colored_FPuts(c_int level, c_int tint, CPointer<char> str)//XX 213
+		private static void Colored_FPuts(c_int level, c_int tint, CPointer<char> str)
 		{
 			c_int local_Use_Color = 0;
 
@@ -318,7 +318,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Sanitize(CPointer<char> line)//XX 251
+		private static void Sanitize(CPointer<char> line)
 		{
 			while (line[0] != '\0')
 			{
@@ -336,7 +336,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Category(IClass ptr)//XX 259
+		private static c_int Get_Category(IClass ptr)
 		{
 			AvClass avc = ptr as AvClass;
 
@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Get_Level_Str(c_int level)//XX 272
+		private static CPointer<char> Get_Level_Str(c_int level)
 		{
 			switch (level)
 			{
@@ -399,7 +399,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Item_Name(IClass obj, AvClass cls)//XX 298
+		private static CPointer<char> Item_Name(IClass obj, AvClass cls)
 		{
 			return cls.Item_Name != null ? cls.Item_Name(obj) : Av_Default_Item_Name(obj);
 		}
@@ -411,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Format_Date_Now(AVBPrint bp_Time, c_int include_Date)//XX 303
+		private static void Format_Date_Now(AVBPrint bp_Time, c_int include_Date)
 		{
 			int64_t time_Us = Time.Av_GetTime();
 			int64_t time_Ms = time_Us / 1000;
@@ -433,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Format_Line(IClass avcl, c_int level, CPointer<char> fmt, object[] args, AVBPrint[] part, ref c_int print_Prefix, c_int[] type)//XX 320
+		private static void Format_Line(IClass avcl, c_int level, CPointer<char> fmt, object[] args, AVBPrint[] part, ref c_int print_Prefix, c_int[] type)
 		{
 			AvClass avc = avcl != null ? (AvClass)avcl : null;
 
@@ -490,7 +490,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Missing_Feature_Sample(c_int sample, IClass avc, string msg, params object[] args)//XX 495
+		private static void Missing_Feature_Sample(c_int sample, IClass avc, string msg, params object[] args)
 		{
 			Av_Log(avc, Av_Log_Warning, msg, args);
 			Av_Log(avc, Av_Log_Warning, " is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.\n");

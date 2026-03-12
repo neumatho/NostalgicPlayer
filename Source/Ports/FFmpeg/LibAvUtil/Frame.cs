@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// resulting struct must be freed using av_frame_free()
 		/// </summary>
 		/********************************************************************/
-		public static AvFrame Av_Frame_Alloc()//XX 52
+		public static AvFrame Av_Frame_Alloc()
 		{
 			AvFrame frame = Mem.Av_MAllocObj<AvFrame>();
 
@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// unreferenced first
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Frame_Free(ref AvFrame frame)//XX 64
+		public static void Av_Frame_Free(ref AvFrame frame)
 		{
 			if (frame == null)
 				return;
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		///          behavior can occur in certain cases
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Frame_Get_Buffer(AvFrame frame, c_int align)//XX 206
+		public static c_int Av_Frame_Get_Buffer(AvFrame frame, c_int align)
 		{
 			if ((frame.Format.Pixel < 0) && (frame.Format.Sample < 0))
 				return Error.EINVAL;
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// the data is copied
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Frame_Ref(AvFrame dst, AvFrame src)//XX 278
+		public static c_int Av_Frame_Ref(AvFrame dst, AvFrame src)
 		{
 			dst.Format = src.Format;
 			dst.Width = src.Width;
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Frame properties on dst will be replaced by those from src
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Frame_Replace(AvFrame dst, AvFrame src)//XX 376
+		public static c_int Av_Frame_Replace(AvFrame dst, AvFrame src)
 		{
 			c_int ret = 0;
 
@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// frame fields
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Frame_Unref(AvFrame frame)//XX 496
+		public static void Av_Frame_Unref(AvFrame frame)
 		{
 			if (frame == null)
 				return;
@@ -426,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Add a new side data to a frame from an existing AVBufferRef
 		/// </summary>
 		/********************************************************************/
-		public static AvFrameSideData Av_Frame_New_Side_Data_From_Buf(AvFrame frame, AvFrameSideDataType type, AvBufferRef buf)//XX 638
+		public static AvFrameSideData Av_Frame_New_Side_Data_From_Buf(AvFrame frame, AvFrameSideDataType type, AvBufferRef buf)
 		{
 			return Side_Data.FF_Frame_Side_Data_Add_From_Buf(ref frame.Side_Data, ref frame.Nb_Side_Data, type, buf);
 		}
@@ -438,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Add a new side data to a frame
 		/// </summary>
 		/********************************************************************/
-		public static AvFrameSideData Av_Frame_New_Side_Data(AvFrame frame, AvFrameSideDataType type, IDataContext data)//XX 647
+		public static AvFrameSideData Av_Frame_New_Side_Data(AvFrame frame, AvFrameSideDataType type, IDataContext data)
 		{
 			AvBufferRef buf = Buffer.Av_Buffer_Alloc(data);
 
@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// NULL if there is no side data with such type in this frame
 		/// </summary>
 		/********************************************************************/
-		public static AvFrameSideData Av_Frame_Get_Side_Data(AvFrame frame, AvFrameSideDataType type)//XX 659
+		public static AvFrameSideData Av_Frame_Get_Side_Data(AvFrame frame, AvFrameSideDataType type)
 		{
 			return Side_Data.Av_Frame_Side_Data_Get(frame.Side_Data, frame.Nb_Side_Data, type);
 		}
@@ -476,7 +476,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// the data / extended data arrays), not any other properties
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Frame_Copy(AvFrame dst, AvFrame src)//XX 711
+		public static c_int Av_Frame_Copy(AvFrame dst, AvFrame src)
 		{
 			if (((dst.Format.Pixel != src.Format.Pixel) && (dst.Format.Sample != src.Format.Sample)) || ((dst.Format.Pixel < 0) && (dst.Format.Sample < 0)))
 				return Error.EINVAL;
@@ -496,7 +496,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Remove and free all side data instances of the given type
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Frame_Remove_Side_Data(AvFrame frame, AvFrameSideDataType type)//XX 659
+		public static void Av_Frame_Remove_Side_Data(AvFrame frame, AvFrameSideDataType type)
 		{
 			Side_Data.Av_Frame_Side_Data_Remove(ref frame.Side_Data, ref frame.Nb_Side_Data, type);
 		}
@@ -517,7 +517,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// ignored
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Frame_Apply_Cropping(AvFrame frame, AvFrameCrop flags)//XX 760
+		public static c_int Av_Frame_Apply_Cropping(AvFrame frame, AvFrameCrop flags)
 		{
 			CPointer<size_t> offsets = new CPointer<size_t>(4);
 
@@ -602,7 +602,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Get_Frame_Defaults(AvFrame frame)//XX 31
+		private static void Get_Frame_Defaults(AvFrame frame)
 		{
 			frame.Clear();
 
@@ -631,7 +631,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Video_Buffer(AvFrame frame, c_int align)//XX 75
+		private static c_int Get_Video_Buffer(AvFrame frame, c_int align)
 		{
 			AVPixFmtDescriptor desc = PixDesc.Av_Pix_Fmt_Desc_Get(frame.Format.Pixel);
 			CPointer<ptrdiff_t> lineSizes = new CPointer<ptrdiff_t>(4);
@@ -725,7 +725,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Audio_Buffer(AvFrame frame, c_int align)//XX 146
+		private static c_int Get_Audio_Buffer(AvFrame frame, c_int align)
 		{
 			c_int planar = SampleFmt.Av_Sample_Fmt_Is_Planar(frame.Format.Sample);
 			c_int ret;
@@ -805,7 +805,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Frame_Copy_Props(AvFrame dst, AvFrame src, c_int force_Copy)//XX 220
+		private static c_int Frame_Copy_Props(AvFrame dst, AvFrame src, c_int force_Copy)
 		{
 			dst.Pict_Type = src.Pict_Type;
 			dst.Sample_Aspect_Ratio = src.Sample_Aspect_Ratio;
@@ -883,7 +883,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Frame_Copy_Video(AvFrame dst, AvFrame src)//XX 668
+		private static c_int Frame_Copy_Video(AvFrame dst, AvFrame src)
 		{
 			if ((dst.Width < src.Width) || (dst.Height < src.Height))
 				return Error.EINVAL;
@@ -911,7 +911,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Frame_Copy_Audio(AvFrame dst, AvFrame src)//XX 691
+		private static c_int Frame_Copy_Audio(AvFrame dst, AvFrame src)
 		{
 			c_int planar = SampleFmt.Av_Sample_Fmt_Is_Planar(dst.Format.Sample);
 			c_int channels = dst.Ch_Layout.Nb_Channels;
@@ -938,7 +938,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Calc_Cropping_Offsets(CPointer<size_t> offsets, AvFrame frame, AVPixFmtDescriptor desc)//XX 730
+		private static c_int Calc_Cropping_Offsets(CPointer<size_t> offsets, AvFrame frame, AVPixFmtDescriptor desc)
 		{
 			for (c_int i = 0; frame.Data[i].IsNotNull; i++)
 			{

@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Init a print buffer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrint_Init(out AVBPrint buf, c_uint size_Init, c_uint size_Max)//XX 69
+		public static void Av_BPrint_Init(out AVBPrint buf, c_uint size_Init, c_uint size_Max)
 		{
 			buf = new AVBPrint();
 
@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// with av_bprint_init()
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrint_Init_For_Buffer(out AVBPrint buf, CPointer<char> buffer, c_uint size)//XX 85
+		public static void Av_BPrint_Init_For_Buffer(out AVBPrint buf, CPointer<char> buffer, c_uint size)
 		{
 			if (size == 0)
 			{
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Append a formatted string to a print buffer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrintf(AVBPrint buf, CPointer<char> fmt, params object[] args)//XX 122
+		public static void Av_BPrintf(AVBPrint buf, CPointer<char> fmt, params object[] args)
 		{
 			c_int extra_Len;
 
@@ -158,7 +158,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Append char c n times to a print buffer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrint_Chars(AVBPrint buf, char c, c_uint n)//XX 130
+		public static void Av_BPrint_Chars(AVBPrint buf, char c, c_uint n)
 		{
 			c_uint room;
 
@@ -189,7 +189,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Append data to a print buffer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrint_Append_Data(AVBPrint buf, CPointer<char> data, c_uint size)//XX 148
+		public static void Av_BPrint_Append_Data(AVBPrint buf, CPointer<char> data, c_uint size)
 		{
 			c_uint room;
 
@@ -232,7 +232,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Append a formatted date and time to a print buffer
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrint_Strftime(AVBPrint buf, CPointer<char> fmt, tm tm)//XX 166
+		public static void Av_BPrint_Strftime(AVBPrint buf, CPointer<char> fmt, tm tm)
 		{
 			size_t l = 0;
 
@@ -306,7 +306,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Reset the string to "" but keep internal allocated data
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrint_Clear(AVBPrint buf)//XX 227
+		public static void Av_BPrint_Clear(AVBPrint buf)
 		{
 			if (buf.Len != 0)
 			{
@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// and size fields are still valid
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_BPrint_Finalize(AVBPrint buf, out CPointer<char> ret_Str)//XX 235
+		public static c_int Av_BPrint_Finalize(AVBPrint buf, out CPointer<char> ret_Str)
 		{
 			c_uint real_Size = Macros.FFMin(buf.Len + 1, buf.Size);
 			CPointer<char> str;
@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Escape the content in src and append it to dstbuf
 		/// </summary>
 		/********************************************************************/
-		public static void Av_BPrint_Escape(AVBPrint dstBuf, CPointer<char> src, char[] special_Chars, AvEscapeMode mode, AvEscapeFlag flags)//XX 263
+		public static void Av_BPrint_Escape(AVBPrint dstBuf, CPointer<char> src, char[] special_Chars, AvEscapeMode mode, AvEscapeFlag flags)
 		{
 			CPointer<char> src0 = src;
 
@@ -498,7 +498,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Av_BPrint_Alloc(AVBPrint buf, c_uint room)//XX 36
+		private static c_int Av_BPrint_Alloc(AVBPrint buf, c_uint room)
 		{
 			if (buf.Size == buf.Size_Max)
 				return Error.EIO;

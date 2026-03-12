@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Iterate over all registered muxers
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvOutputFormat> Av_Muxer_Iterate()//XX 592
+		public static IEnumerable<AvOutputFormat> Av_Muxer_Iterate()
 		{
 			foreach (FFOutputFormat f in Supported.Muxer_List)
 			{
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Iterate over all registered demuxers
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvInputFormat> Av_Demuxer_Iterate()//XX 613
+		public static IEnumerable<AvInputFormat> Av_Demuxer_Iterate()
 		{
 			foreach (FFInputFormat f in Supported.Demuxer_List)
 			{

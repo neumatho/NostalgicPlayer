@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Iterate over all registered codecs
 		/// </summary>
 		/********************************************************************/
-		public static IEnumerable<AvCodec> Av_Codec_Iterate()//XX 988
+		public static IEnumerable<AvCodec> Av_Codec_Iterate()
 		{
 			CThread.pthread_once(av_Codec_Static_Init_Done, Av_Codec_Init_Static);
 
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Find a registered encoder with a matching codec ID
 		/// </summary>
 		/********************************************************************/
-		public static AvCodec AvCodec_Find_Encoder(AvCodecId id)//XX 1032
+		public static AvCodec AvCodec_Find_Encoder(AvCodecId id)
 		{
 			return Find_Codec(id, Codec_Internal.FF_Codec_Is_Encoder);
 		}
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Find a registered decoder with a matching codec ID
 		/// </summary>
 		/********************************************************************/
-		public static AvCodec AvCodec_Find_Decoder(AvCodecId id)//XX 1037
+		public static AvCodec AvCodec_Find_Decoder(AvCodecId id)
 		{
 			return Find_Codec(id, Codec_Internal.FF_Codec_Is_Decoder);
 		}
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Find a registered decoder with the specified name
 		/// </summary>
 		/********************************************************************/
-		public static AvCodec AvCodec_Find_Decoder_By_Name(CPointer<char> name)//XX 1065
+		public static AvCodec AvCodec_Find_Decoder_By_Name(CPointer<char> name)
 		{
 			return Find_Codec_By_Name(name, Codec_Internal.FF_Codec_Is_Decoder);
 		}
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvCodecId Remap_Deprecated_Codec_Id(AvCodecId id)//XX 1002
+		private static AvCodecId Remap_Deprecated_Codec_Id(AvCodecId id)
 		{
 			switch (id)
 			{
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvCodec Find_Codec(AvCodecId id, Test_Delegate x)//XX 1011
+		private static AvCodec Find_Codec(AvCodecId id, Test_Delegate x)
 		{
 			AvCodec experimental = null;
 
@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvCodec Find_Codec_By_Name(CPointer<char> name, Test_Delegate x)//XX 1042
+		private static AvCodec Find_Codec_By_Name(CPointer<char> name, Test_Delegate x)
 		{
 			if (name.IsNull)
 				return null;

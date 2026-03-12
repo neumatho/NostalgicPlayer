@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Add a new chapter
 		/// </summary>
 		/********************************************************************/
-		public static AvChapter AvPriv_New_Chapter(AvFormatContext s, int64_t id, AvRational time_Base, int64_t start, int64_t end, CPointer<char> title)//XX 43
+		public static AvChapter AvPriv_New_Chapter(AvFormatContext s, int64_t id, AvRational time_Base, int64_t start, int64_t end, CPointer<char> title)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			AvChapter chapter = null;
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvFormat_Queue_Attached_Pictures(AvFormatContext s)//XX 84
+		public static c_int AvFormat_Queue_Attached_Pictures(AvFormatContext s)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Add an attached pic to an AVStream
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Add_Attached_Pic(AvFormatContext s, AvStream st0, AvIoContext pb, ref AvBufferRef buf, c_int size)//XX 107
+		public static c_int FF_Add_Attached_Pic(AvFormatContext s, AvStream st0, AvIoContext pb, ref AvBufferRef buf, c_int size)
 		{
 			AvStream st = st0;
 			c_int ret;
@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// at end which is always set to 0 and fill it from pb
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Get_ExtraData(IClass logCtx, AvCodecParameters par, AvIoContext pb, c_int size)//XX 326
+		public static c_int FF_Get_ExtraData(IClass logCtx, AvCodecParameters par, AvIoContext pb, c_int size)
 		{
 			c_int ret = Utils_Format.FF_Alloc_ExtraData(par, size);
 

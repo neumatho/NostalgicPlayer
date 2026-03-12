@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// fields with default values
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Get_Packet(AvIoContext s, AvPacket pkt, c_int size)//XX 94
+		public static c_int Av_Get_Packet(AvIoContext s, AvPacket pkt, c_int size)
 		{
 			Packet.Av_Packet_Unref(pkt);
 
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static AvCodecId FF_Codec_Get_Id(CPointer<AvCodecTag> tags, c_uint tag)//XX 139
+		internal static AvCodecId FF_Codec_Get_Id(CPointer<AvCodecTag> tags, c_uint tag)
 		{
 			for (c_int i = 0; i < tags.Length; i++)
 			{
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static AvCodecId FF_Get_Pcm_Codec_Id(c_int bps, c_int flt, c_int be, c_int sFlags)//XX 150
+		internal static AvCodecId FF_Get_Pcm_Codec_Id(c_int bps, c_int flt, c_int be, c_int sFlags)
 		{
 			if ((bps <= 0) || (bps > 64))
 				return AvCodecId.None;
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Previously allocated extradata in par will be freed
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FF_Alloc_ExtraData(AvCodecParameters par, c_int size)//XX 233
+		internal static c_int FF_Alloc_ExtraData(AvCodecParameters par, c_int size)
 		{
 			Mem.Av_FreeP(ref par.ExtraData);
 
@@ -174,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Return the number of bytes read or an error
 		/// </summary>
 		/********************************************************************/
-		private static c_int Append_Packet_Chunked(AvIoContext s, AvPacket pkt, c_int size)//XX 55
+		private static c_int Append_Packet_Chunked(AvIoContext s, AvPacket pkt, c_int size)
 		{
 			c_int orig_Size = pkt.Size;
 			c_int ret;

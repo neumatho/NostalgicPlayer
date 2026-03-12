@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Create slice threading context
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvPriv_SliceThread_Create(out AvSliceThread pCtx, IOpaque priv, UtilFunc.Thread_Worker_Func_Delegate worker_Func, UtilFunc.Thread_Main_Func_Delegate main_Func, c_int nb_Threads)//XX 99
+		public static c_int AvPriv_SliceThread_Create(out AvSliceThread pCtx, IOpaque priv, UtilFunc.Thread_Worker_Func_Delegate worker_Func, UtilFunc.Thread_Main_Func_Delegate main_Func, c_int nb_Threads)
 		{
 			if (nb_Threads == 0)
 			{
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Execute slice threading
 		/// </summary>
 		/********************************************************************/
-		public static void AvPriv_SliceThread_Execute(AvSliceThread ctx, c_int nb_Jobs, c_int execute_Main)//XX 191
+		public static void AvPriv_SliceThread_Execute(AvSliceThread ctx, c_int nb_Jobs, c_int execute_Main)
 		{
 			c_int is_Last = 0;
 
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void AvPriv_SliceThread_Free(ref AvSliceThread pCtx)//XX 226
+		public static void AvPriv_SliceThread_Free(ref AvSliceThread pCtx)
 		{
 			AvSliceThread ctx = pCtx;
 
@@ -246,7 +246,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Run_Jobs(AvSliceThread ctx)//XX 57
+		private static c_int Run_Jobs(AvSliceThread ctx)
 		{
 			c_uint nb_Jobs = (c_uint)ctx.Nb_Jobs;
 			c_uint nb_Active_Threads = (c_uint)ctx.Nb_Active_Threads;
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Thread_Worker(object v)//XX 71
+		private static void Thread_Worker(object v)
 		{
 			WorkerContext w = (WorkerContext)v;
 			AvSliceThread ctx = w.Ctx;

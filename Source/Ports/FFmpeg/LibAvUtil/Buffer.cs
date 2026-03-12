@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// If this function fails, data is left untouched
 		/// </summary>
 		/********************************************************************/
-		public static AvBufferRef Av_Buffer_Create(CPointer<uint8_t> data, size_t size, UtilFunc.Buffer_Free_Delegate free, IOpaque opaque, AvBufferFlag flags)//XX 55
+		public static AvBufferRef Av_Buffer_Create(CPointer<uint8_t> data, size_t size, UtilFunc.Buffer_Free_Delegate free, IOpaque opaque, AvBufferFlag flags)
 		{
 			return Av_Buffer_Create(new DataBufferContext(data, size), free, opaque, flags);
 		}
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// If this function fails, data is left untouched
 		/// </summary>
 		/********************************************************************/
-		public static AvBufferRef Av_Buffer_Create(IDataContext data, UtilFunc.Buffer_Free_Delegate free, IOpaque opaque, AvBufferFlag flags)//XX 55
+		public static AvBufferRef Av_Buffer_Create(IDataContext data, UtilFunc.Buffer_Free_Delegate free, IOpaque opaque, AvBufferFlag flags)
 		{
 			AvBuffer buf = Mem.Av_MAlloczObj<AvBuffer>();
 
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// called directly
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Buffer_Default_Free(IOpaque opaque, IDataContext data)//XX 72
+		public static void Av_Buffer_Default_Free(IOpaque opaque, IDataContext data)
 		{
 			Mem.Av_Free(data);
 		}
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Allocate an AVBuffer of the given size using av_malloc()
 		/// </summary>
 		/********************************************************************/
-		public static AvBufferRef Av_Buffer_Alloc(size_t size)//XX 77
+		public static AvBufferRef Av_Buffer_Alloc(size_t size)
 		{
 			CPointer<uint8_t> data = Mem.Av_MAlloc<uint8_t>(size);
 
@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// initialized to zero
 		/// </summary>
 		/********************************************************************/
-		public static AvBufferRef Av_Buffer_Allocz(size_t size)//XX 93
+		public static AvBufferRef Av_Buffer_Allocz(size_t size)
 		{
 			AvBufferRef ret = Av_Buffer_Alloc(size);
 
@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Create a new reference to an AVBuffer
 		/// </summary>
 		/********************************************************************/
-		public static AvBufferRef Av_Buffer_Ref(AvBufferRef buf)//XX 103
+		public static AvBufferRef Av_Buffer_Ref(AvBufferRef buf)
 		{
 			AvBufferRef ret = Mem.Av_MAlloczObj<AvBufferRef>();
 
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// are no more references to it
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Buffer_Unref(ref AvBufferRef buf)//XX 139
+		public static void Av_Buffer_Unref(ref AvBufferRef buf)
 		{
 			if (buf == null)
 				return;
@@ -183,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// A positive answer is valid until av_buffer_ref() is called on buf
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Buffer_Is_Writable(AvBufferRef buf)//XX 147
+		public static c_int Av_Buffer_Is_Writable(AvBufferRef buf)
 		{
 			if ((buf.Buffer.Flags & AvBufferFlag.ReadOnly) != 0)
 				return 0;
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// avoiding data copy if possible
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Buffer_Make_Writable(ref AvBufferRef pBuf)//XX 165
+		public static c_int Av_Buffer_Make_Writable(ref AvBufferRef pBuf)
 		{
 			AvBufferRef buf = pBuf;
 
@@ -231,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// the data is copied
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Buffer_Realloc(ref AvBufferRef pBuf, size_t size)//XX 183
+		public static c_int Av_Buffer_Realloc(ref AvBufferRef pBuf, size_t size)
 		{
 			AvBufferRef buf = pBuf;
 
@@ -305,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// unreference dst and replace it with a new reference to src
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Buffer_Replace(ref AvBufferRef pDst, AvBufferRef src)//XX 233
+		public static c_int Av_Buffer_Replace(ref AvBufferRef pDst, AvBufferRef src)
 		{
 			AvBufferRef dst = pDst;
 
@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Allocate and initialize a buffer pool
 		/// </summary>
 		/********************************************************************/
-		public static AvBufferPool Av_Buffer_Pool_Init(size_t size, UtilFunc.Alloc_Delegate alloc)//XX 283
+		public static AvBufferPool Av_Buffer_Pool_Init(size_t size, UtilFunc.Alloc_Delegate alloc)
 		{
 			AvBufferPool pool = Mem.Av_MAlloczObj<AvBufferPool>();
 
@@ -374,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// some of the allocated buffers are still in use
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Buffer_Pool_Uninit(ref AvBufferPool pPool)//XX 328
+		public static void Av_Buffer_Pool_Uninit(ref AvBufferPool pPool)
 		{
 			if (pPool == null)
 				return;
@@ -401,7 +401,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// multiple threads
 		/// </summary>
 		/********************************************************************/
-		public static AvBufferRef Av_Buffer_Pool_Get(AvBufferPool pool)//XX 390
+		public static AvBufferRef Av_Buffer_Pool_Get(AvBufferPool pool)
 		{
 			AvBufferRef ret;
 
@@ -439,7 +439,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvBufferRef Buffer_Create(AvBuffer buf, IDataContext data, UtilFunc.Buffer_Free_Delegate free, IOpaque opaque, AvBufferFlag flags)//XX 29
+		private static AvBufferRef Buffer_Create(AvBuffer buf, IDataContext data, UtilFunc.Buffer_Free_Delegate free, IOpaque opaque, AvBufferFlag flags)
 		{
 			buf.Data = data;
 			buf.Free = free != null ? free : Av_Buffer_Default_Free;
@@ -493,7 +493,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Buffer_Replace(ref AvBufferRef dst, bool hasSrc, ref AvBufferRef src)//XX 117
+		private static void Buffer_Replace(ref AvBufferRef dst, bool hasSrc, ref AvBufferRef src)
 		{
 			AvBuffer b = dst.Buffer;
 
@@ -524,7 +524,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Buffer_Pool_Flush(AvBufferPool pool)//XX 302
+		private static void Buffer_Pool_Flush(AvBufferPool pool)
 		{
 			while (pool.Pool != null)
 			{
@@ -544,7 +544,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// all the buffers returned to it
 		/// </summary>
 		/********************************************************************/
-		private static void Buffer_Pool_Free(AvBufferPool pool)//XX 317
+		private static void Buffer_Pool_Free(AvBufferPool pool)
 		{
 			Buffer_Pool_Flush(pool);
 			CThread.pthread_mutex_destroy(pool.Mutex);
@@ -562,7 +562,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Pool_Release_Buffer(IOpaque opaque, IDataContext data)//XX 345
+		private static void Pool_Release_Buffer(IOpaque opaque, IDataContext data)
 		{
 			BufferPoolEntry buf = (BufferPoolEntry)opaque;
 			AvBufferPool pool = buf.Pool;
@@ -586,7 +586,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// it is returned to the pool on free
 		/// </summary>
 		/********************************************************************/
-		private static AvBufferRef Pool_Alloc_Buffer(AvBufferPool pool)//XX 361
+		private static AvBufferRef Pool_Alloc_Buffer(AvBufferPool pool)
 		{
 			AvBufferRef ret = pool.Alloc2 != null ? pool.Alloc2(pool.Opaque, pool.Size) : pool.Alloc(pool.Size);
 

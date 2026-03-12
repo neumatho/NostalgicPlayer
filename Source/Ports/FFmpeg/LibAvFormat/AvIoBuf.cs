@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static void FFIo_Init_Context(FFIoContext ctx, CPointer<c_uchar> buffer, c_int buffer_Size, c_int write_Flag, object opaque, FormatFunc.Read_Packet_Buffer_Delegate read_Packet, FormatFunc.Write_Packet_Buffer_Delegate write_Packet, FormatFunc.Seek_Delegate seek)//XX 50
+		internal static void FFIo_Init_Context(FFIoContext ctx, CPointer<c_uchar> buffer, c_int buffer_Size, c_int write_Flag, object opaque, FormatFunc.Read_Packet_Buffer_Delegate read_Packet, FormatFunc.Write_Packet_Buffer_Delegate write_Packet, FormatFunc.Seek_Delegate seek)
 		{
 			AvIoContext s = ctx.Pub;
 
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static void FFIo_Init_Read_Context(FFIoContext s, CPointer<uint8_t> buffer, c_int buffer_Size)//XX 99
+		internal static void FFIo_Init_Read_Context(FFIoContext s, CPointer<uint8_t> buffer, c_int buffer_Size)
 		{
 			FFIo_Init_Context(s, buffer, buffer_Size, 0, null, null, null, null);
 		}
@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// be later freed with avio_context_free()
 		/// </summary>
 		/********************************************************************/
-		public static AvIoContext Avio_Alloc_Context(CPointer<c_uchar> buffer, c_int buffer_Size, c_int write_Flag, object opaque, FormatFunc.Read_Packet_Buffer_Delegate read_Packet, FormatFunc.Write_Packet_Buffer_Delegate write_Packet, FormatFunc.Seek_Delegate seek)//XX 109
+		public static AvIoContext Avio_Alloc_Context(CPointer<c_uchar> buffer, c_int buffer_Size, c_int write_Flag, object opaque, FormatFunc.Read_Packet_Buffer_Delegate read_Packet, FormatFunc.Write_Packet_Buffer_Delegate write_Packet, FormatFunc.Seek_Delegate seek)
 		{
 			FFIoContext s = Mem.Av_MAllocObj<FFIoContext>();
 
@@ -129,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Free the supplied IO context and everything associated with it
 		/// </summary>
 		/********************************************************************/
-		public static void AvIo_Context_Free(ref AvIoContext pS)//XX 126
+		public static void AvIo_Context_Free(ref AvIoContext pS)
 		{
 			AvIoContext s = pS;
 
@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void AvIo_W8(AvIoContext s, c_int b)//XX 184
+		public static void AvIo_W8(AvIoContext s, c_int b)
 		{
 			s.Buf_Ptr[0, 1] = (c_uchar)b;
 
@@ -166,7 +166,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// valid until the next call that references the same IO context
 		/// </summary>
 		/********************************************************************/
-		internal static void FFIo_Fill(AvIoContext s, c_int b, int64_t count)//XX 192
+		internal static void FFIo_Fill(AvIoContext s, c_int b, int64_t count)
 		{
 			while (count > 0)
 			{
@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// seeks
 		/// </summary>
 		/********************************************************************/
-		public static void AvIo_Flush(AvIoContext s)//XX 228
+		public static void AvIo_Flush(AvIoContext s)
 		{
 			c_int seekBack = s.Write_Flag != 0 ? Macros.FFMin(0, s.Buf_Ptr - s.Buf_Ptr_Max) : 0;
 
@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// fseek() equivalent for AVIOContext
 		/// </summary>
 		/********************************************************************/
-		public static int64_t AvIo_Seek(AvIoContext s, int64_t offset, AvSeek whence)//XX 236
+		public static int64_t AvIo_Seek(AvIoContext s, int64_t offset, AvSeek whence)
 		{
 			FFIoContext ctx = AvIo_Internal.FFIoContext(s);
 			int64_t offset1;
@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Skip given number of bytes forward
 		/// </summary>
 		/********************************************************************/
-		public static int64_t AvIo_Skip(AvIoContext s, int64_t offset)//XX 321
+		public static int64_t AvIo_Skip(AvIoContext s, int64_t offset)
 		{
 			return AvIo_Seek(s, offset, AvSeek.Cur);
 		}
@@ -341,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Get the filesize
 		/// </summary>
 		/********************************************************************/
-		public static int64_t AvIo_Size(AvIoContext s)//XX 326
+		public static int64_t AvIo_Size(AvIoContext s)
 		{
 			FFIoContext ctx = AvIo_Internal.FFIoContext(s);
 
@@ -378,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Similar to feof() but also returns nonzero on read errors
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_FEof(AvIoContext s)//XX 349
+		public static c_int AvIo_FEof(AvIoContext s)
 		{
 			if (s == null)
 				return 0;
@@ -399,7 +399,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_R8(AvIoContext s)//XX 606
+		public static c_int AvIo_R8(AvIoContext s)
 		{
 			if (s.Buf_Ptr >= s.Buf_End)
 				Fill_Buffer(s);
@@ -436,7 +436,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Read size bytes from AVIOContext into buf
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_Read(AvIoContext s, CPointer<c_uchar> buf, c_int size)//XX 615
+		public static c_int AvIo_Read(AvIoContext s, CPointer<c_uchar> buf, c_int size)
 		{
 			c_int size1 = size;
 
@@ -517,7 +517,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Check that exactly size bytes have been read
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FFIo_Read_Size(AvIoContext s, CPointer<c_uchar> buf, c_int size)//XX 665
+		internal static c_int FFIo_Read_Size(AvIoContext s, CPointer<c_uchar> buf, c_int size)
 		{
 			c_int ret = AvIo_Read(s, buf, size);
 
@@ -537,7 +537,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_uint AvIo_RL16(AvIoContext s)//XX 717
+		public static c_uint AvIo_RL16(AvIoContext s)
 		{
 			c_uint val = (c_uint)AvIo_R8(s);
 			val |= (c_uint)AvIo_R8(s) << 8;
@@ -552,7 +552,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_uint AvIo_RL32(AvIoContext s)//XX 733
+		public static c_uint AvIo_RL32(AvIoContext s)
 		{
 			c_uint val = AvIo_RL16(s);
 			val |= AvIo_RL16(s) << 16;
@@ -567,7 +567,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint64_t AvIo_RL64(AvIoContext s)//XX 741
+		public static uint64_t AvIo_RL64(AvIoContext s)
 		{
 			uint64_t val = AvIo_RL32(s);
 			val |= (uint64_t)AvIo_RL32(s) << 32;
@@ -582,7 +582,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_uint AvIo_RB16(AvIoContext s)//XX 749
+		public static c_uint AvIo_RB16(AvIoContext s)
 		{
 			c_uint val = (c_uint)AvIo_R8(s) << 8;
 			val |= (c_uint)AvIo_R8(s);
@@ -597,7 +597,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_uint AvIo_RB24(AvIoContext s)//XX 757
+		public static c_uint AvIo_RB24(AvIoContext s)
 		{
 			c_uint val = AvIo_RB16(s) << 8;
 			val |= (c_uint)AvIo_R8(s);
@@ -612,7 +612,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_uint AvIo_RB32(AvIoContext s)//XX 764
+		public static c_uint AvIo_RB32(AvIoContext s)
 		{
 			c_uint val = AvIo_RB16(s) << 16;
 			val |= AvIo_RB16(s);
@@ -634,7 +634,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// encodings
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_Get_Str(AvIoContext s, c_int maxLen, CPointer<char> buf, c_int bufLen)//XX 869
+		public static c_int AvIo_Get_Str(AvIoContext s, c_int maxLen, CPointer<char> buf, c_int bufLen)
 		{
 			if (bufLen <= 0)
 				return Error.EINVAL;
@@ -669,7 +669,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_Get_Str16LE(AvIoContext pb, c_int maxLen, CPointer<char> buf, c_int bufLen)//XX 906
+		public static c_int AvIo_Get_Str16LE(AvIoContext pb, c_int maxLen, CPointer<char> buf, c_int bufLen)
 		{
 			return Get_Str16(pb, maxLen, buf, bufLen, AvIo_RL16);
 		}
@@ -687,7 +687,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// this guarantee is lost
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FFIo_Ensure_SeekBack(AvIoContext s, int64_t buf_Size)//XX 1026
+		internal static c_int FFIo_Ensure_SeekBack(AvIoContext s, int64_t buf_Size)
 		{
 			c_int max_Buffer_Size = s.Max_Packet_Size != 0 ? s.Max_Packet_Size : Io_Buffer_Size;
 			ptrdiff_t filled = s.Buf_End - s.Buf_Ptr;
@@ -737,7 +737,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FFIo_Limit(AvIoContext s, c_int size)//XX 1064
+		internal static c_int FFIo_Limit(AvIoContext s, c_int size)
 		{
 			FFIoContext ctx = AvIo_Internal.FFIoContext(s);
 
@@ -783,7 +783,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// the function fails
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FFIo_Rewind_With_Probe_Data(AvIoContext s, ref CPointer<c_uchar> bufP, c_int buf_Size)//XX 1151
+		internal static c_int FFIo_Rewind_With_Probe_Data(AvIoContext s, ref CPointer<c_uchar> bufP, c_int buf_Size)
 		{
 			CPointer<uint8_t> buf = bufP;
 
@@ -844,7 +844,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Only meaningful if using a network streaming protocol (e.g. MMS.)
 		/// </summary>
 		/********************************************************************/
-		public static int64_t AvIo_Seek_Time(AvIoContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)//XX 1235
+		public static int64_t AvIo_Seek_Time(AvIoContext s, c_int stream_Index, int64_t timestamp, AvSeekFlag flags)
 		{
 			if (s.Read_Seek == null)
 				return Error.ENOSYS;
@@ -873,7 +873,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Open a write only memory stream
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_Open_Dyn_Buf(out AvIoContext s)//XX 1365
+		public static c_int AvIo_Open_Dyn_Buf(out AvIoContext s)
 		{
 			return Url_Open_Dyn_Buf_Internal(out s, 0);
 		}
@@ -887,7 +887,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Padding of AV_INPUT_BUFFER_PADDING_SIZE is added to the buffer
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvIo_Close_Dyn_Buf(AvIoContext s, out CPointer<uint8_t> pBuffer)//XX 1410
+		public static c_int AvIo_Close_Dyn_Buf(AvIoContext s, out CPointer<uint8_t> pBuffer)
 		{
 			c_int padding = 0;
 
@@ -923,7 +923,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Free a dynamic buffer
 		/// </summary>
 		/********************************************************************/
-		internal static void FFIo_Free_Dyn_Buf(ref AvIoContext s)//XX 1438
+		internal static void FFIo_Free_Dyn_Buf(ref AvIoContext s)
 		{
 			if (s == null)
 				return;
@@ -941,7 +941,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void WriteOut(AvIoContext s, CPointer<uint8_t> data, c_int len)//XX 136
+		private static void WriteOut(AvIoContext s, CPointer<uint8_t> data, c_int len)
 		{
 			FFIoContext ctx = AvIo_Internal.FFIoContext(s);
 
@@ -981,7 +981,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Flush_Buffer(AvIoContext s)//XX 168
+		private static void Flush_Buffer(AvIoContext s)
 		{
 			s.Buf_Ptr_Max = s.Buf_Ptr > s.Buf_Ptr_Max ? s.Buf_Ptr : s.Buf_Ptr_Max;
 
@@ -1009,7 +1009,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Read_Packet_Wrapper(AvIoContext s, CPointer<uint8_t> buf, c_int size)//XX 501
+		private static c_int Read_Packet_Wrapper(AvIoContext s, CPointer<uint8_t> buf, c_int size)
 		{
 			if (s.Read_Packet == null)
 				return Error.EINVAL;
@@ -1026,7 +1026,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Fill_Buffer(AvIoContext s)//XX 514
+		private static void Fill_Buffer(AvIoContext s)
 		{
 			FFIoContext ctx = AvIo_Internal.FFIoContext(s);
 
@@ -1097,7 +1097,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int Get_Str16(AvIoContext pb, c_int maxLen, CPointer<char> buf, c_int bufLen, GetStr16_Read_Delegate read)//XX
+		private static c_int Get_Str16(AvIoContext pb, c_int maxLen, CPointer<char> buf, c_int bufLen, GetStr16_Read_Delegate read)
 		{
 			CPointer<uint8_t> _buf = new CPointer<uint8_t>(bufLen);
 			CPointer<uint8_t> q = _buf;
@@ -1138,7 +1138,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Update_Checksum(AvIoContext s)//XX 1018
+		private static void Update_Checksum(AvIoContext s)
 		{
 			if ((s.Update_Checksum != null) && (s.Buf_Ptr > s.Checksum_Ptr))
 				s.Checksum = s.Update_Checksum(s.Checksum, s.Checksum_Ptr, (c_uint)(s.Buf_Ptr - s.Checksum_Ptr));
@@ -1151,7 +1151,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Set_Buf_Size(AvIoContext s, c_int buf_Size)//XX 1090
+		private static c_int Set_Buf_Size(AvIoContext s, c_int buf_Size)
 		{
 			CPointer<uint8_t> buffer = Mem.Av_MAlloc<uint8_t>((size_t)buf_Size);
 
@@ -1176,7 +1176,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Url_ResetBuf(AvIoContext s, AvIoFlag flags)//XX 1137
+		private static c_int Url_ResetBuf(AvIoContext s, AvIoFlag flags)
 		{
 			if ((flags & AvIoFlag.Write) != 0)
 			{
@@ -1199,7 +1199,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Dyn_Buf_Write(object opaque, CPointer<uint8_t> buf, c_int buf_Size)//XX 1281
+		private static c_int Dyn_Buf_Write(object opaque, CPointer<uint8_t> buf, c_int buf_Size)
 		{
 			DynBuffer d = (DynBuffer)opaque;
 
@@ -1247,7 +1247,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Dyn_Packet_Buf_Write(object opaque, CPointer<uint8_t> buf, c_int buf_Size)//XX 1313
+		private static c_int Dyn_Packet_Buf_Write(object opaque, CPointer<uint8_t> buf, c_int buf_Size)
 		{
 			CPointer<c_uchar> buf1 = new CPointer<c_uchar>(4);
 
@@ -1270,7 +1270,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Dyn_Buf_Seek(object opaque, int64_t offset, AvSeek whence)//XX 1328
+		private static int64_t Dyn_Buf_Seek(object opaque, int64_t offset, AvSeek whence)
 		{
 			DynBuffer d = (DynBuffer)opaque;
 
@@ -1297,7 +1297,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Url_Open_Dyn_Buf_Internal(out AvIoContext s, c_int max_Packet_Size)//XX 1344
+		private static c_int Url_Open_Dyn_Buf_Internal(out AvIoContext s, c_int max_Packet_Size)
 		{
 			FFIoContext pb = new FFIoContext();
 			DynBuffer d = new DynBuffer();

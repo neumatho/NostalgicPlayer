@@ -157,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Get the length of an ID3v2 tag
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Id3v2_Tag_Len(CPointer<uint8_t> buf)//XX 159
+		public static c_int FF_Id3v2_Tag_Len(CPointer<uint8_t> buf)
 		{
 			c_int len =
 				((buf[6] & 0x7f) << 21) +
@@ -180,7 +180,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// supported extra metadata
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Id3v2_Read_Dict(AvIoContext pb, ref AvDictionary metadata, CPointer<char> magic, out Id3v2ExtraMeta extra_Meta)//XX 1136
+		public static void FF_Id3v2_Read_Dict(AvIoContext pb, ref AvDictionary metadata, CPointer<char> magic, out Id3v2ExtraMeta extra_Meta)
 		{
 			Id3v2_Read_Internal(pb, ref metadata, null, magic, out extra_Meta, 0);
 		}
@@ -194,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Data is read from and stored to AVFormatContext
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Id3v2_Read(AvFormatContext s, CPointer<char> magic, out Id3v2ExtraMeta extra_Meta, c_uint max_Search_Size)//XX 1142
+		public static void FF_Id3v2_Read(AvFormatContext s, CPointer<char> magic, out Id3v2ExtraMeta extra_Meta, c_uint max_Search_Size)
 		{
 			Id3v2_Read_Internal(s.Pb, ref s.Metadata, s, magic, out extra_Meta, max_Search_Size);
 		}
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Free memory allocated parsing special (non-text) metadata
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Id3v2_Free_Extra_Meta(ref Id3v2ExtraMeta extra_Meta)//XX 1148
+		public static void FF_Id3v2_Free_Extra_Meta(ref Id3v2ExtraMeta extra_Meta)
 		{
 			Id3v2ExtraMeta current = extra_Meta;
 
@@ -233,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// the ID3v2 header
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Id3v2_Parse_Apic(AvFormatContext s, Id3v2ExtraMeta extra_Meta)//XX 1164
+		public static c_int FF_Id3v2_Parse_Apic(AvFormatContext s, Id3v2ExtraMeta extra_Meta)
 		{
 			for (Id3v2ExtraMeta cur = extra_Meta; cur != null; cur = cur.Next)
 			{
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Create chapters for all CHAP tags found in the ID3v2 header
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Id3v2_Parse_Chapters(AvFormatContext s, Id3v2ExtraMeta cur)//XX 1195
+		public static c_int FF_Id3v2_Parse_Chapters(AvFormatContext s, Id3v2ExtraMeta cur)
 		{
 			AvRational time_Base = new AvRational(1, 1000);
 
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// escaped
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Id3v2_Parse_Priv_Dict(ref AvDictionary metadata, Id3v2ExtraMeta extra_Meta)//XX 1220
+		public static c_int FF_Id3v2_Parse_Priv_Dict(ref AvDictionary metadata, Id3v2ExtraMeta extra_Meta)
 		{
 			AvDict dict_Flags = AvDict.Dont_Overwrite | AvDict.Dont_Strdup_Key | AvDict.Dont_Strdup_Val;
 
@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// with non-printable characters escaped
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Id3v2_Parse_Priv(AvFormatContext s, Id3v2ExtraMeta extra_Meta)//XX 1260
+		public static c_int FF_Id3v2_Parse_Priv(AvFormatContext s, Id3v2ExtraMeta extra_Meta)
 		{
 			return FF_Id3v2_Parse_Priv_Dict(ref s.Metadata, extra_Meta);
 		}
@@ -380,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Get_Size(AvIoContext s, c_int len)//XX 171
+		private static c_uint Get_Size(AvIoContext s, c_int len)
 		{
 			c_int v = 0;
 
@@ -397,7 +397,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Size_To_SyncSafe(c_uint size)//XX 179
+		private static c_uint Size_To_SyncSafe(c_uint size)
 		{
 			return ((size & (0x7f << 0)) >> 0) +
 				   ((size & (0x7f << 8)) >> 1) +
@@ -413,7 +413,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// combination of capital alpha-numerical characters
 		/// </summary>
 		/********************************************************************/
-		private static bool Is_Tag(CPointer<char> buf, c_uint len)//XX 189
+		private static bool Is_Tag(CPointer<char> buf, c_uint len)
 		{
 			if (len == 0)
 				return false;
@@ -435,7 +435,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 0 if not, -1 on error
 		/// </summary>
 		/********************************************************************/
-		private static c_int Check_Tag(AvIoContext s, c_int offset, c_uint len)//XX 207
+		private static c_int Check_Tag(AvIoContext s, c_int offset, c_uint len)
 		{
 			CPointer<char> tag = new CPointer<char>(4);
 
@@ -454,7 +454,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Free GEOB type extra metadata
 		/// </summary>
 		/********************************************************************/
-		private static void Free_GeobTag(IExtraMetadata obj)//XX 224
+		private static void Free_GeobTag(IExtraMetadata obj)
 		{
 			Id3v2ExtraMetaGEOB geob = (Id3v2ExtraMetaGEOB)obj;
 
@@ -474,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// found
 		/// </summary>
 		/********************************************************************/
-		private static c_int Decode_Str(AvFormatContext s, AvIoContext pb, Id3v2Encoding encoding, out CPointer<uint8_t> dst, ref c_int maxRead)//XX 245
+		private static c_int Decode_Str(AvFormatContext s, AvIoContext pb, Id3v2Encoding encoding, out CPointer<uint8_t> dst, ref c_int maxRead)
 		{
 			dst = null;
 
@@ -607,7 +607,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Parse a text tag
 		/// </summary>
 		/********************************************************************/
-		private static void Read_TTag(AvFormatContext s, AvIoContext pb, c_int tagLen, ref AvDictionary metadata, CPointer<char> key)//XX 327
+		private static void Read_TTag(AvFormatContext s, AvIoContext pb, c_int tagLen, ref AvDictionary metadata, CPointer<char> key)
 		{
 			AvDict dict_Flags = AvDict.Dont_Overwrite | AvDict.Dont_Strdup_Val;
 			c_uint genre = c_uint.MaxValue;
@@ -664,7 +664,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Read_Uslt(AvFormatContext s, AvIoContext pb, c_int tagLen, ref AvDictionary metadata)//XX 366
+		private static void Read_Uslt(AvFormatContext s, AvIoContext pb, c_int tagLen, ref AvDictionary metadata)
 		{
 			CPointer<uint8_t> lang = new CPointer<uint8_t>(4);
 			CPointer<uint8_t> descriptor = null;
@@ -715,7 +715,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Parse a comment tag
 		/// </summary>
 		/********************************************************************/
-		private static void Read_Comment(AvFormatContext s, AvIoContext pb, c_int tagLen, ref AvDictionary metadata)//XX 415
+		private static void Read_Comment(AvFormatContext s, AvIoContext pb, c_int tagLen, ref AvDictionary metadata)
 		{
 			string key = "comment";
 			AvDict dict_Flags = AvDict.Dont_Overwrite | AvDict.Dont_Strdup_Val;
@@ -763,7 +763,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void List_Append(Id3v2ExtraMeta new_Elem, ExtraMetaList list)//XX 458
+		private static void List_Append(Id3v2ExtraMeta new_Elem, ExtraMetaList list)
 		{
 			if (list.Tail != null)
 				list.Tail.Next = new_Elem;
@@ -780,7 +780,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Parse GEOB tag into a ID3v2ExtraMetaGEOB struct
 		/// </summary>
 		/********************************************************************/
-		private static void Read_GeobTag(AvFormatContext s, AvIoContext pb, c_int tagLen, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)//XX 470
+		private static void Read_GeobTag(AvFormatContext s, AvIoContext pb, c_int tagLen, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)
 		{
 			if (tagLen < 1)
 				return;
@@ -858,7 +858,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool Is_Number(CPointer<char> str)//XX 539
+		private static bool Is_Number(CPointer<char> str)
 		{
 			while ((str[0] >= '0') && (str[0] <= '9'))
 				str++;
@@ -873,7 +873,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvDictionaryEntry Get_Date_Tag(AvDictionary m, string tag)//XX 546
+		private static AvDictionaryEntry Get_Date_Tag(AvDictionary m, string tag)
 		{
 			AvDictionaryEntry t = Dict.Av_Dict_Get(m, tag, AvDict.Match_Case).FirstOrDefault();
 
@@ -890,7 +890,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Merge_Date(ref AvDictionary m)//XX 555
+		private static void Merge_Date(ref AvDictionary m)
 		{
 			AvDictionaryEntry t;
 			CPointer<char> date = new CPointer<char>(17);
@@ -931,7 +931,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Free_APic(IExtraMetadata obj)//XX 587
+		private static void Free_APic(IExtraMetadata obj)
 		{
 			Id3v2ExtraMetaAPIC apic = (Id3v2ExtraMetaAPIC)obj;
 
@@ -946,7 +946,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void RStrip_Spaces(CPointer<uint8_t> buf)//XX 594
+		private static void RStrip_Spaces(CPointer<uint8_t> buf)
 		{
 			c_int len = (c_int)CString.strlen(buf.Cast<uint8_t, char>());
 			if (len < 0)
@@ -963,7 +963,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Read_APic(AvFormatContext s, AvIoContext pb, c_int tagLen, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)//XX 601
+		private static void Read_APic(AvFormatContext s, AvIoContext pb, c_int tagLen, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)
 		{
 			CPointer<char> mimeType = new CPointer<char>(64);
 			AvCodecId id = AvCodecId.None;
@@ -1072,7 +1072,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Free_Chapter(IExtraMetadata obj)//XX 690
+		private static void Free_Chapter(IExtraMetadata obj)
 		{
 			Id3v2ExtraMetaCHAP chap = (Id3v2ExtraMetaCHAP)obj;
 
@@ -1087,7 +1087,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Read_Chapter(AvFormatContext s, AvIoContext pb, c_int len, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)//XX 697
+		private static void Read_Chapter(AvFormatContext s, AvIoContext pb, c_int len, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)
 		{
 			Id3v2ExtraMeta new_Extra = Mem.Av_MAlloczObj<Id3v2ExtraMeta>();
 
@@ -1154,7 +1154,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Free_Priv(IExtraMetadata obj)//XX 751
+		private static void Free_Priv(IExtraMetadata obj)
 		{
 			Id3v2ExtraMetaPRIV priv = (Id3v2ExtraMetaPRIV)obj;
 
@@ -1169,7 +1169,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Read_Priv(AvFormatContext s, AvIoContext pb, c_int tagLen, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)//XX 758
+		private static void Read_Priv(AvFormatContext s, AvIoContext pb, c_int tagLen, CPointer<char> tag, ref ExtraMetaList extra_Meta, bool isV34)
 		{
 			Id3v2ExtraMeta meta = Mem.Av_MAlloczObj<Id3v2ExtraMeta>();
 
@@ -1211,7 +1211,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Get the corresponding ID3v2EMFunc struct for a tag
 		/// </summary>
 		/********************************************************************/
-		private static Id3v2EmFunc Get_Extra_Meta_Func(CPointer<char> tag, bool isV34)//XX 814
+		private static Id3v2EmFunc Get_Extra_Meta_Func(CPointer<char> tag, bool isV34)
 		{
 			foreach (Id3v2EmFunc f in id3v2_Extra_Meta_Funcs)
 			{
@@ -1229,7 +1229,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Id3v2_Parse(AvIoContext pb, ref AvDictionary metadata, AvFormatContext s, c_int len, uint8_t version, uint8_t flags, ref ExtraMetaList extra_Meta)//XX 828
+		private static void Id3v2_Parse(AvIoContext pb, ref AvDictionary metadata, AvFormatContext s, c_int len, uint8_t version, uint8_t flags, ref ExtraMetaList extra_Meta)
 		{
 			bool isV34;
 			c_uint tLen;
@@ -1506,7 +1506,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Id3v2_Read_Internal(AvIoContext pb, ref AvDictionary metadata, AvFormatContext s, CPointer<char> magic, out Id3v2ExtraMeta extra_MetaP, int64_t max_Search_Size)//XX 1083
+		private static void Id3v2_Read_Internal(AvIoContext pb, ref AvDictionary metadata, AvFormatContext s, CPointer<char> magic, out Id3v2ExtraMeta extra_MetaP, int64_t max_Search_Size)
 		{
 			CPointer<uint8_t> buf = new CPointer<uint8_t>(Header_Size);
 			ExtraMetaList extra_Meta = new ExtraMetaList { Head = null };

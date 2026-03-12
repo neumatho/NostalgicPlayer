@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swri_Get_Dither(SwrContext s, IPointer dst, c_int len, c_uint seed, AvSampleFormat noise_Fmt)//XX 27
+		public static c_int Swri_Get_Dither(SwrContext s, IPointer dst, c_int len, c_uint seed, AvSampleFormat noise_Fmt)
 		{
 			throw new NotImplementedException();
 		}
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swri_Dither_Init(SwrContext s, AvSampleFormat out_Fmt, AvSampleFormat in_Fmt)//XX 80
+		public static c_int Swri_Dither_Init(SwrContext s, AvSampleFormat out_Fmt, AvSampleFormat in_Fmt)
 		{
 			c_double scale = 0;
 

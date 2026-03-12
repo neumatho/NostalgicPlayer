@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Resample_Free(ref ResampleContext cc)//XX 176
+		public static void Resample_Free(ref ResampleContext cc)
 		{
 			ResampleContext c = cc;
 
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static ResampleContext Resample_Init(ResampleContext c, c_int out_Rate, c_int in_Rate, c_int filter_Size, c_int phase_Shift, c_int linear, c_double cutoff0, AvSampleFormat format, SwrFilterType filter_Type, c_double kaiser_Beta, c_double precision, c_int cheby, c_int exact_Rational)//XX 184
+		public static ResampleContext Resample_Init(ResampleContext c, c_int out_Rate, c_int in_Rate, c_int filter_Size, c_int phase_Shift, c_int linear, c_double cutoff0, AvSampleFormat format, SwrFilterType filter_Type, c_double kaiser_Beta, c_double precision, c_int cheby, c_int exact_Rational)
 		{
 			throw new NotImplementedException();
 		}
@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Set_Compensation(ResampleContext c, c_int sample_Delta, c_int compensation_Distance)//XX 328
+		public static c_int Set_Compensation(ResampleContext c, c_int sample_Delta, c_int compensation_Distance)
 		{
 			throw new NotImplementedException();
 		}
@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Multiple_Resample(ResampleContext c, AudioData dst, c_int dst_Size, AudioData src, c_int src_Size, out c_int consumed)//XX 349
+		public static c_int Multiple_Resample(ResampleContext c, AudioData dst, c_int dst_Size, AudioData src, c_int src_Size, out c_int consumed)
 		{
 			throw new NotImplementedException();
 		}
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Get_Delay(SwrContext s, int64_t @base)//XX 408
+		public static int64_t Get_Delay(SwrContext s, int64_t @base)
 		{
 			throw new NotImplementedException();
 		}
@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Get_Out_Samples(SwrContext s, c_int in_Samples)//XX 418
+		public static int64_t Get_Out_Samples(SwrContext s, c_int in_Samples)
 		{
 			throw new NotImplementedException();
 		}
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Resample_Flush(SwrContext s)//XX 437
+		public static c_int Resample_Flush(SwrContext s)
 		{
 			throw new NotImplementedException();
 		}
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Invert_Initial_Buffer(ResampleContext c, AudioData dst, AudioData src, c_int in_Count, ref c_int out_Idx, ref c_int out_Sz)//XX 457
+		public static c_int Invert_Initial_Buffer(ResampleContext c, AudioData dst, AudioData src, c_int in_Count, ref c_int out_Idx, ref c_int out_Sz)
 		{
 			throw new NotImplementedException();
 		}

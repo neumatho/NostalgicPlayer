@@ -949,7 +949,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers
 		/// - encoding: Set by user
 		/// - decoding: Set by user
 		/// </summary>
-		public FFDebug Debug;//XX Skal nok slettes
+		public FFDebug Debug;
 
 		/// <summary>
 		/// Error recognition; may misdetect some more or less valid parts as errors.

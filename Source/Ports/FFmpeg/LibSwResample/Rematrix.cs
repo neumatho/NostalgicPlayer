@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swri_Rematrix_Init(SwrContext s)//XX 454
+		public static c_int Swri_Rematrix_Init(SwrContext s)
 		{
 			throw new NotImplementedException();
 		}
@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Swri_Rematrix_Free(SwrContext s)//XX 562
+		public static void Swri_Rematrix_Free(SwrContext s)
 		{
 			Mem.Av_FreeP(ref s.Native_Matrix);
 		}
@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Swri_Rematrix(SwrContext s, AudioData @out, AudioData @in, c_int len, c_int mustCopy)//XX 567
+		public static c_int Swri_Rematrix(SwrContext s, AudioData @out, AudioData @in, c_int len, c_int mustCopy)
 		{
 			throw new NotImplementedException();
 		}

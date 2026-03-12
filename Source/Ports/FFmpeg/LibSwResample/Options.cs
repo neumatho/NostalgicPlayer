@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Context_To_Name(IClass ptr)//XX 129
+		private static CPointer<char> Context_To_Name(IClass ptr)
 		{
 			return "SWR".ToCharPointer();
 		}

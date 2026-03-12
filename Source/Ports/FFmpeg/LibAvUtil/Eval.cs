@@ -221,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Free a parsed expression previously created with av_expr_parse()
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Expr_Free(AvExpr e)//XX 358
+		public static void Av_Expr_Free(AvExpr e)
 		{
 			if (e == null)
 				return;
@@ -241,7 +241,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Parse an expression
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Expr_Parse(out AvExpr expr, CPointer<char> s, CPointer<CPointer<char>> const_Names, CPointer<CPointer<char>> func1_Names, CPointer<UtilFunc.Func1_Delegate> funcs1, CPointer<CPointer<char>> func2_Names, CPointer<UtilFunc.Func2_Delegate> funcs2, c_int log_Offset, IContext log_Ctx)//XX 710
+		public static c_int Av_Expr_Parse(out AvExpr expr, CPointer<char> s, CPointer<CPointer<char>> const_Names, CPointer<CPointer<char>> func1_Names, CPointer<UtilFunc.Func1_Delegate> funcs1, CPointer<CPointer<char>> func2_Names, CPointer<UtilFunc.Func2_Delegate> funcs2, c_int log_Offset, IContext log_Ctx)
 		{
 			expr = null;
 
@@ -318,7 +318,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Evaluate a previously parsed expression
 		/// </summary>
 		/********************************************************************/
-		public static c_double Av_Expr_Eval(AvExpr e, CPointer<c_double> const_Values, IOpaque opaque)//XX 792
+		public static c_double Av_Expr_Eval(AvExpr e, CPointer<c_double> const_Values, IOpaque opaque)
 		{
 			Parser p = new Parser
 			{
@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static bool Is_Identifier_Char(char c)//XX 146
+		private static bool Is_Identifier_Char(char c)
 		{
 			return ((c_uint)(c - '0') <= 9U) || ((c_uint)(c - 'a') <= 25U) || ((c_uint)(c - 'A') <= 25U) || (c == '_');
 		}
@@ -374,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool StrMatch(CPointer<char> s, CPointer<char> prefix)//XX 148
+		private static bool StrMatch(CPointer<char> s, CPointer<char> prefix)
 		{
 			c_int i;
 
@@ -421,7 +421,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_double Eval_Expr(Parser p, AvExpr e)//XX 186
+		private static c_double Eval_Expr(Parser p, AvExpr e)
 		{
 			uint64_t Compute_Next_Random()
 			{
@@ -749,7 +749,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Primary(out AvExpr e, Parser p)//XX 369
+		private static c_int Parse_Primary(out AvExpr e, Parser p)
 		{
 			e = null;
 
@@ -1019,7 +1019,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvExpr Make_Eval_Expr(AvExpr.ExprType type, c_int value, AvExpr p0, AvExpr p1)//XX 530
+		private static AvExpr Make_Eval_Expr(AvExpr.ExprType type, c_int value, AvExpr p0, AvExpr p1)
 		{
 			AvExpr e = Mem.Av_MAlloczObj<AvExpr>();
 			if (e == null)
@@ -1040,7 +1040,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Pow(out AvExpr e, Parser p, out c_int sign)//XX 542
+		private static c_int Parse_Pow(out AvExpr e, Parser p, out c_int sign)
 		{
 			sign = (p.S[0] == '+' ? 1 : 0) - (p.S[0] == '-' ? 1 : 0);
 			p.S += sign & 1;
@@ -1055,7 +1055,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_dB(out AvExpr e, Parser p, out c_int sign)//XX 549
+		private static c_int Parse_dB(out AvExpr e, Parser p, out c_int sign)
 		{
 			// Do not filter out the negative sign when parsing a dB value.
 			// For example, -3dB is not the same as -(3dB)
@@ -1081,7 +1081,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Factor(out AvExpr e, Parser p)//XX 564
+		private static c_int Parse_Factor(out AvExpr e, Parser p)
 		{
 			e = null;
 
@@ -1129,7 +1129,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Term(out AvExpr e, Parser p)//XX 591
+		private static c_int Parse_Term(out AvExpr e, Parser p)
 		{
 			e = null;
 
@@ -1171,7 +1171,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_SubExpr(out AvExpr e, Parser p)//XX 615
+		private static c_int Parse_SubExpr(out AvExpr e, Parser p)
 		{
 			e = null;
 
@@ -1212,7 +1212,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Expr(out AvExpr e, Parser p)//XX 639
+		private static c_int Parse_Expr(out AvExpr e, Parser p)
 		{
 			e = null;
 
@@ -1261,7 +1261,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool Verify_Expr(AvExpr e)//XX 669
+		private static bool Verify_Expr(AvExpr e)
 		{
 			if (e == null)
 				return false;

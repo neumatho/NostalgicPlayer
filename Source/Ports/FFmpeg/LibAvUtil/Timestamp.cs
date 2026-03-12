@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<char> Av_Ts_Make_String(CPointer<char> buf, int64_t ts)//XX 43
+		public static CPointer<char> Av_Ts_Make_String(CPointer<char> buf, int64_t ts)
 		{
 			if (ts == UtilConstants.Av_NoPts_Value)
 				CString.snprintf(buf, Av_Ts_Max_String_Size, "NOPTS");
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<char> Av_Ts2Str(int64_t ts)//XX 54
+		public static CPointer<char> Av_Ts2Str(int64_t ts)
 		{
 			return Av_Ts_Make_String(new CPointer<char>(Av_Ts_Max_String_Size), ts);
 		}
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<char> Av_Ts_Make_Time_String(CPointer<char> buf, int64_t ts, AvRational tb)//XX 73
+		public static CPointer<char> Av_Ts_Make_Time_String(CPointer<char> buf, int64_t ts, AvRational tb)
 		{
 			return Av_Ts_Make_Time_String2(buf, ts, tb);
 		}
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static CPointer<char> Av_Ts2TimeStr(int64_t ts, AvRational tb)//XX 83
+		public static CPointer<char> Av_Ts2TimeStr(int64_t ts, AvRational tb)
 		{
 			return Av_Ts_Make_Time_String(new CPointer<char>(Av_Ts_Max_String_Size), ts, tb);
 		}

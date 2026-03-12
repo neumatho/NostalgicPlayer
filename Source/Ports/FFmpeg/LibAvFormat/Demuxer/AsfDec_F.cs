@@ -29,14 +29,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		private const c_int Asf_Max_Streams = 127;
 		private const c_int Frame_Header_Size = 6;
 
-		private static readonly AvOption[] options =//XX 121
+		private static readonly AvOption[] options =
 		[
 			new AvOption("no_resync_search", "Don't try to resynchronize by looking for a certain optional start code", nameof(AsfContext.No_Resync_Search), AvOptionType.Bool, new AvOption.DefaultValueUnion { I64 = 0 }, 0, 1, AvOptFlag.Decoding_Param),
 			new AvOption("export_xmp", "Export full XMP metadata", nameof(AsfContext.Export_Xmp), AvOptionType.Bool, new AvOption.DefaultValueUnion { I64 = 0 }, 0, 1, AvOptFlag.Decoding_Param),
 			new AvOption()
 		];
 
-		private static readonly AvClass asf_Class = new AvClass//XX 127
+		private static readonly AvClass asf_Class = new AvClass
 		{
 			Class_Name = "asf_demuxer".ToCharPointer(),
 			Item_Name = Log.Av_Default_Item_Name,
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// <summary>
 		/// 
 		/// </summary>
-		public static readonly FFInputFormat FF_Asf_Demuxer = new FFInputFormat//XX 1624
+		public static readonly FFInputFormat FF_Asf_Demuxer = new FFInputFormat
 		{
 			Name = "asf".ToCharPointer(),
 			Long_Name = "ASF (Advanced / Active Streaming Format)".ToCharPointer(),
@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Print_Guid(FF_Asf_Guid g)//XX 157
+		private static void Print_Guid(FF_Asf_Guid g)
 		{
 		}
 
@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Probe(AvProbeData pd)//XX 196
+		private static c_int Asf_Probe(AvProbeData pd)
 		{
 			// Check file header
 			if (RiffDec.FF_GuidCmp(pd.Buf, Asf_Tags.FF_Asf_Header) == 0)
@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// "Metadata Object" and "Metadata Library Object"
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Value(AvIoContext pb, AsfDataType type, c_int type2_Size)//XX 207
+		private static c_int Get_Value(AvIoContext pb, AsfDataType type, c_int type2_Size)
 		{
 			switch (type)
 			{
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Get_Tag(AvFormatContext s, CPointer<char> key, AsfDataType type, c_int len, c_int type2_Size)//XX 223
+		private static void Get_Tag(AvFormatContext s, CPointer<char> key, AsfDataType type, c_int len, c_int type2_Size)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			CPointer<char> value = null;
@@ -216,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_File_Properties(AvFormatContext s)//XX 277
+		private static c_int Asf_Read_File_Properties(AvFormatContext s)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			AvIoContext pb = s.Pb;
@@ -250,7 +250,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Stream_Properties(AvFormatContext s, int64_t size)//XX 301
+		private static c_int Asf_Read_Stream_Properties(AvFormatContext s, int64_t size)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			AvIoContext pb = s.Pb;
@@ -474,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Ext_Stream_Properties(AvFormatContext s)//XX 476
+		private static c_int Asf_Read_Ext_Stream_Properties(AvFormatContext s)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			AvIoContext pb = s.Pb;
@@ -547,7 +547,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Content_Desc(AvFormatContext s)//XX 536
+		private static c_int Asf_Read_Content_Desc(AvFormatContext s)
 		{
 			AvIoContext pb = s.Pb;
 
@@ -573,7 +573,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Ext_Content_Desc(AvFormatContext s)//XX 555
+		private static c_int Asf_Read_Ext_Content_Desc(AvFormatContext s)
 		{
 			AvIoContext pb = s.Pb;
 			AsfContext asf = (AsfContext)s.Priv_Data;
@@ -621,7 +621,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Language_List(AvFormatContext s)//XX 589
+		private static c_int Asf_Read_Language_List(AvFormatContext s)
 		{
 			AvIoContext pb = s.Pb;
 			AsfContext asf = (AsfContext)s.Priv_Data;
@@ -653,7 +653,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Metadata(AvFormatContext s)//XX 609
+		private static c_int Asf_Read_Metadata(AvFormatContext s)
 		{
 			AvIoContext pb = s.Pb;
 			AsfContext asf = (AsfContext)s.Priv_Data;
@@ -714,7 +714,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Marker(AvFormatContext s)//XX 658
+		private static c_int Asf_Read_Marker(AvFormatContext s)
 		{
 			AvIoContext pb = s.Pb;
 			AsfContext asf = (AsfContext)s.Priv_Data;
@@ -761,7 +761,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Header(AvFormatContext s)//XX 698
+		private static c_int Asf_Read_Header(AvFormatContext s)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			AvIoContext pb = s.Pb;
@@ -966,7 +966,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Do_2Bits<T>(AvIoContext pb, ref c_int rSize, c_int bits, out T var, T defVal) where T : INumber<T> //XX 860
+		private static void Do_2Bits<T>(AvIoContext pb, ref c_int rSize, c_int bits, out T var, T defVal) where T : INumber<T>
 		{
 			switch (bits & 3)
 			{
@@ -1006,7 +1006,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// Load a single ASF packet into the demuxer
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Get_Packet(AvFormatContext s, AvIoContext pb)//XX 885
+		private static c_int Asf_Get_Packet(AvFormatContext s, AvIoContext pb)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			uint32_t packet_Length, padSize;
@@ -1164,7 +1164,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Frame_Header(AvFormatContext s, AvIoContext pb)//XX 1007
+		private static c_int Asf_Read_Frame_Header(AvFormatContext s, AvIoContext pb)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			c_int rSize = 1;
@@ -1340,7 +1340,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// loaded with asf_get_packet())
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Parse_Packet(AvFormatContext s, AvIoContext pb, AvPacket pkt)//XX 1136
+		private static c_int Asf_Parse_Packet(AvFormatContext s, AvIoContext pb, AvPacket pkt)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			AsfStream asf_St = null;
@@ -1623,7 +1623,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Packet(AvFormatContext s, AvPacket pkt)//XX 1367
+		private static c_int Asf_Read_Packet(AvFormatContext s, AvPacket pkt)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 
@@ -1650,7 +1650,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// information from previous reads
 		/// </summary>
 		/********************************************************************/
-		private static void Asf_Reset_Header(AvFormatContext s)//XX 1387
+		private static void Asf_Reset_Header(AvFormatContext s)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 
@@ -1693,7 +1693,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Skip_To_Key(AvFormatContext s)//XX 1420
+		private static void Skip_To_Key(AvFormatContext s)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 
@@ -1716,7 +1716,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Close(AvFormatContext s)//XX 1435
+		private static c_int Asf_Read_Close(AvFormatContext s)
 		{
 			Asf_Reset_Header(s);
 
@@ -1730,7 +1730,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Asf_Read_Pts(AvFormatContext s, c_int stream_Index, ref int64_t pPos, int64_t pos_Limit)//XX 1442
+		private static int64_t Asf_Read_Pts(AvFormatContext s, c_int stream_Index, ref int64_t pPos, int64_t pos_Limit)
 		{
 			FFFormatContext si = Internal.FFFormatContext(s);
 			AsfContext asf = (AsfContext)s.Priv_Data;
@@ -1798,7 +1798,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Build_Simple_Index(AvFormatContext s, c_int stream_Index)//XX 1500
+		private static c_int Asf_Build_Simple_Index(AvFormatContext s, c_int stream_Index)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			int64_t current_Pos = AvIoBuf.AvIo_Tell(s.Pb);
@@ -1886,7 +1886,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Demuxer
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Asf_Read_Seek(AvFormatContext s, c_int stream_Index, int64_t pts, AvSeekFlag flags)//XX 1568
+		private static c_int Asf_Read_Seek(AvFormatContext s, c_int stream_Index, int64_t pts, AvSeekFlag flags)
 		{
 			AsfContext asf = (AsfContext)s.Priv_Data;
 			AvStream st = s.Streams[stream_Index];

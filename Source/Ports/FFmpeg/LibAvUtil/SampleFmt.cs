@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// recognized
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> Av_Get_Sample_Fmt_Name(AvSampleFormat sample_Fmt)//XX 51
+		public static CPointer<char> Av_Get_Sample_Fmt_Name(AvSampleFormat sample_Fmt)
 		{
 			if ((sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb))
 				return null;
@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// AV_SAMPLE_FMT_NONE on error
 		/// </summary>
 		/********************************************************************/
-		public static AvSampleFormat Av_Get_Sample_Fmt(CPointer<char> name)//XX 58
+		public static AvSampleFormat Av_Get_Sample_Fmt(CPointer<char> name)
 		{
 			for (c_int i = 0; i < (c_int)AvSampleFormat.Nb; i++)
 			{
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// returned is the same as the input
 		/// </summary>
 		/********************************************************************/
-		public static AvSampleFormat Av_Get_Packed_Sample_Fmt(AvSampleFormat sample_Fmt)//XX 77
+		public static AvSampleFormat Av_Get_Packed_Sample_Fmt(AvSampleFormat sample_Fmt)
 		{
 			if ((sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb))
 				return AvSampleFormat.None;
@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// returned is the same as the input
 		/// </summary>
 		/********************************************************************/
-		public static AvSampleFormat Av_Get_Planar_Sample_Fmt(AvSampleFormat sample_Fmt)//XX 86
+		public static AvSampleFormat Av_Get_Planar_Sample_Fmt(AvSampleFormat sample_Fmt)
 		{
 			if ((sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb))
 				return AvSampleFormat.None;
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return number of bytes per sample
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Get_Bytes_Per_Sample(AvSampleFormat sample_Fmt)//XX 108
+		public static c_int Av_Get_Bytes_Per_Sample(AvSampleFormat sample_Fmt)
 		{
 			return (sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb) ? 0 : sample_Fmt_Info[(c_int)sample_Fmt].Bits >> 3;
 		}
@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Check if the sample format is planar
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Sample_Fmt_Is_Planar(AvSampleFormat sample_Fmt)//XX 114
+		public static c_int Av_Sample_Fmt_Is_Planar(AvSampleFormat sample_Fmt)
 		{
 			if ((sample_Fmt < 0) || (sample_Fmt >= AvSampleFormat.Nb))
 				return 0;
@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Get the required buffer size for the given audio parameters
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Samples_Get_Buffer_Size(CPointer<c_int> lineSize, c_int nb_Channels, c_int nb_Samples, AvSampleFormat sample_Fmt, c_int align)//XX 121
+		public static c_int Av_Samples_Get_Buffer_Size(CPointer<c_int> lineSize, c_int nb_Channels, c_int nb_Samples, AvSampleFormat sample_Fmt, c_int align)
 		{
 			c_int sample_Size = Av_Get_Bytes_Per_Sample(sample_Fmt);
 			c_int planar = Av_Sample_Fmt_Is_Planar(sample_Fmt);
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Copy samples from src to dst
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Samples_Copy(CPointer<CPointer<uint8_t>> dst, CPointer<CPointer<uint8_t>> src, c_int dst_Offset, c_int src_Offset, c_int nb_Samples, c_int nb_Channels, AvSampleFormat sample_Fmt)//XX 222
+		public static c_int Av_Samples_Copy(CPointer<CPointer<uint8_t>> dst, CPointer<CPointer<uint8_t>> src, c_int dst_Offset, c_int src_Offset, c_int nb_Samples, c_int nb_Channels, AvSampleFormat sample_Fmt)
 		{
 			c_int planar = Av_Sample_Fmt_Is_Planar(sample_Fmt);
 			c_int planes = planar != 0 ? nb_Channels : 1;

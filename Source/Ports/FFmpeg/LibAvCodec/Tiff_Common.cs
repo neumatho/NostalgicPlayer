@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// value is the array index + 1 within ifd_tags[]
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Tis_Ifd(c_uint tag)//XX 33
+		public static c_int FF_Tis_Ifd(c_uint tag)
 		{
 			for (c_int i = 0; i < (c_int)Macros.FF_Array_Elems(ifd_Tags); i++)
 			{
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Reads a short from the bytestream using given endianness
 		/// </summary>
 		/********************************************************************/
-		public static c_uint FF_TGet_Short(GetByteContext gb, c_int le)//XX 45
+		public static c_uint FF_TGet_Short(GetByteContext gb, c_int le)
 		{
 			return le != 0 ? ByteStream.ByteStream2_Get_LE16(gb) : ByteStream.ByteStream2_Get_BE16(gb);
 		}
@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Reads a long from the bytestream using given endianness
 		/// </summary>
 		/********************************************************************/
-		public static c_uint FF_TGet_Long(GetByteContext gb, c_int le)//XX 51
+		public static c_uint FF_TGet_Long(GetByteContext gb, c_int le)
 		{
 			return le != 0 ? ByteStream.ByteStream2_Get_LE32(gb) : ByteStream.ByteStream2_Get_BE32(gb);
 		}
@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Reads a double from the bytestream using given endianness
 		/// </summary>
 		/********************************************************************/
-		public static c_double FF_TGet_Double(GetByteContext gb, c_int le)//XX 57
+		public static c_double FF_TGet_Double(GetByteContext gb, c_int le)
 		{
 			uint64_t i = le != 0 ? ByteStream.ByteStream2_Get_LE64(gb) : ByteStream.ByteStream2_Get_BE64(gb);
 
@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// accordingly
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_TDecode_Header(GetByteContext gb, out c_int le, out c_int ifd_Offset)//XX 162
+		public static c_int FF_TDecode_Header(GetByteContext gb, out c_int le, out c_int ifd_Offset)
 		{
 			le = 0;
 			ifd_Offset = 0;

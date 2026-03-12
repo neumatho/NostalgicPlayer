@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Extract the rotation component of the transformation matrix
 		/// </summary>
 		/********************************************************************/
-		public static c_double Av_Display_Rotation_Get(CPointer<int32_t> matrix)//XX 35
+		public static c_double Av_Display_Rotation_Get(CPointer<int32_t> matrix)
 		{
 			c_double[] scale = new c_double[2];
 
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// rotation by the specified angle (in degrees)
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Display_Rotation_Set(CPointer<int32_t> matrix, c_double angle)//XX 51
+		public static void Av_Display_Rotation_Set(CPointer<int32_t> matrix, c_double angle)
 		{
 			c_double radians = -angle * Math.PI / 180.0;
 			c_double c = CMath.cos(radians);
@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Flip the input matrix horizontally and/or vertically
 		/// </summary>
 		/********************************************************************/
-		public static void Av_Display_Matrix_Flip(CPointer<int32_t> matrix, c_int hFlip, c_int vFlip)//XX 66
+		public static void Av_Display_Matrix_Flip(CPointer<int32_t> matrix, c_int hFlip, c_int vFlip)
 		{
 			c_int[] flip = [ 1 - (2 * (hFlip != 0 ? 1 : 0)), 1 - (2 * (vFlip != 0 ? 1 : 0)), 1 ];
 
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_double Conv_Fp(int32_t x)//XX 30
+		private static c_double Conv_Fp(int32_t x)
 		{
 			return ((c_double)x / (1 << 16));
 		}
@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int32_t Conv_Db(c_double x)//XX 33
+		private static int32_t Conv_Db(c_double x)
 		{
 			return (int32_t)(x * (1 << 16));
 		}

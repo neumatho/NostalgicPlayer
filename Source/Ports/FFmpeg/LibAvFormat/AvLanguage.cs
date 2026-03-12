@@ -728,7 +728,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// codespace is guessed
 		/// </summary>
 		/********************************************************************/
-		public static CPointer<char> FF_Convert_Lang_To(CPointer<char> lang, AvLangCodespace target_Codespace)//XX 741
+		public static CPointer<char> FF_Convert_Lang_To(CPointer<char> lang, AvLangCodespace target_Codespace)
 		{
 			CPointer<LangEntry> entry = null;
 			c_int nb_Codespaces = (c_int)Macros.FF_Array_Elems(lang_Table_Counts);
@@ -764,7 +764,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Lang_Table_Compare(CPointer<char> lhs, LangEntry rhs)//XX 736
+		private static c_int Lang_Table_Compare(CPointer<char> lhs, LangEntry rhs)
 		{
 			return CString.strcmp(lhs, rhs.Str);
 		}

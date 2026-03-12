@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvInteger Av_Add_I(AvInteger a, AvInteger b)//XX 36
+		public static AvInteger Av_Add_I(AvInteger a, AvInteger b)
 		{
 			c_int carry = 0;
 
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvInteger Av_Sub_I(AvInteger a, AvInteger b)//XX 46
+		public static AvInteger Av_Sub_I(AvInteger a, AvInteger b)
 		{
 			c_int carry = 0;
 
@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// bit which is 1, or 0 if all bits are 0
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Log2_I(AvInteger a)//XX 56
+		public static c_int Av_Log2_I(AvInteger a)
 		{
 			for (c_int i = Av_Integer_Size - 1; i >= 0; i--)
 			{
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvInteger Av_Mul_I(AvInteger a, AvInteger b)//XX 66
+		public static AvInteger Av_Mul_I(AvInteger a, AvInteger b)
 		{
 			AvInteger @out = new AvInteger();
 
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return 0 if a==b, 1 if a›b and -1 if a‹b
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Cmp_I(AvInteger a, AvInteger b)//XX 87
+		public static c_int Av_Cmp_I(AvInteger a, AvInteger b)
 		{
 			c_int v = (int16_t)a.V[Av_Integer_Size - 1] - (int16_t)b.V[Av_Integer_Size - 1];
 
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Bitwise shift
 		/// </summary>
 		/********************************************************************/
-		public static AvInteger Av_Shr_I(AvInteger a, c_int s)//XX 99
+		public static AvInteger Av_Shr_I(AvInteger a, c_int s)
 		{
 			AvInteger @out = new AvInteger();
 
@@ -168,7 +168,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return a % b
 		/// </summary>
 		/********************************************************************/
-		public static AvInteger Av_Mod_I(out AvInteger quot, AvInteger a, AvInteger b)//XX 113
+		public static AvInteger Av_Mod_I(out AvInteger quot, AvInteger a, AvInteger b)
 		{
 			quot = new AvInteger();
 
@@ -210,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Return a/b
 		/// </summary>
 		/********************************************************************/
-		public static AvInteger Av_Div_I(AvInteger a, AvInteger b)//XX 143
+		public static AvInteger Av_Div_I(AvInteger a, AvInteger b)
 		{
 			Av_Mod_I(out AvInteger quot, a, b);
 
@@ -224,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Convert the given int64_t to an AVInteger
 		/// </summary>
 		/********************************************************************/
-		public static AvInteger Av_Int2I(int64_t a)//XX 149
+		public static AvInteger Av_Int2I(int64_t a)
 		{
 			AvInteger @out = new AvInteger();
 
@@ -246,7 +246,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// the least significant 64 bits will be used
 		/// </summary>
 		/********************************************************************/
-		public static int64_t Av_I2Int(AvInteger a)//XX 160
+		public static int64_t Av_I2Int(AvInteger a)
 		{
 			uint64_t @out = a.V[3];
 

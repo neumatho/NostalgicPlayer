@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// use as encryption keys and similar
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Random_Bytes(CPointer<uint8_t> buf, size_t len)//XX 159
+		public static c_int Av_Random_Bytes(CPointer<uint8_t> buf, size_t len)
 		{
 			try
 			{
@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// platform
 		/// </summary>
 		/********************************************************************/
-		public static uint32_t Av_Get_Random_Seed()//XX 196
+		public static uint32_t Av_Get_Random_Seed()
 		{
 			uint8_t[] seed = new uint8_t[4];
 
@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static uint32_t Get_Generic_Seed()//XX 75
+		internal static uint32_t Get_Generic_Seed()
 		{
 			AvSha sha = new AvSha();
 			clock_t last_t = 0;

@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// overflow
 		/// </summary>
 		/********************************************************************/
-		internal static int64_t FF_Wrap_Timestamp(AvStream st, int64_t timestamp)//XX 68
+		internal static int64_t FF_Wrap_Timestamp(AvStream st, int64_t timestamp)
 		{
 			return Wrap_Timestamp(st, timestamp);
 		}
@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// opened. The stream must be closed with avformat_close_input()
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvFormat_Open_Input(ref AvFormatContext ps, CPointer<char> fileName, AvInputFormat fmt, AvDictionary options)//XX 221
+		public static c_int AvFormat_Open_Input(ref AvFormatContext ps, CPointer<char> fileName, AvInputFormat fmt, AvDictionary options)
 		{
 			AvFormatContext s = ps;
 			AvDictionary tmp = null;
@@ -314,7 +314,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// contents and set *s to NULL
 		/// </summary>
 		/********************************************************************/
-		public static void AvFormat_Close_Input(ref AvFormatContext ps)//XX 367
+		public static void AvFormat_Close_Input(ref AvFormatContext ps)
 		{
 			if (ps == null)
 				return;
@@ -344,7 +344,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Read a transport packet from a media file
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Read_Packet(AvFormatContext s, AvPacket pkt)//XX 619
+		public static c_int FF_Read_Packet(AvFormatContext s, AvPacket pkt)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			c_int err;
@@ -452,7 +452,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// you do not decompress the payload
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_Read_Frame(AvFormatContext s, AvPacket pkt)//XX 1534
+		public static c_int Av_Read_Frame(AvFormatContext s, AvPacket pkt)
 		{
 			FFFormatContext si = Internal.FFFormatContext(s);
 			c_int genPts = (s.Flags & AvFmtFlag.GenPts) != 0 ? 1 : 0;
@@ -592,7 +592,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		///       need
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvFormat_Find_Stream_Info(AvFormatContext ic, CPointer<AvDictionary> options)//XX 2512
+		public static c_int AvFormat_Find_Stream_Info(AvFormatContext ic, CPointer<AvDictionary> options)
 		{
 			FFFormatContext si = Internal.FFFormatContext(ic);
 			c_int count = 0, ret = 0, err;
@@ -1265,7 +1265,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Wrap_Timestamp(AvStream st, int64_t timestamp)//XX 53
+		private static int64_t Wrap_Timestamp(AvStream st, int64_t timestamp)
 		{
 			FFStream sti = Internal.CFFStream(st);
 
@@ -1287,7 +1287,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvCodec Find_Probe_Decoder(AvFormatContext s, AvStream st, AvCodecId codec_Id)//XX 73
+		private static AvCodec Find_Probe_Decoder(AvFormatContext s, AvStream st, AvCodecId codec_Id)
 		{
 			// Other parts of the code assume this decoder to be used for h264,
 			// so force it if possible
@@ -1318,7 +1318,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Set_Codec_From_Probe_Data(AvFormatContext s, AvStream st, AvProbeData pd)//XX 103
+		private static c_int Set_Codec_From_Probe_Data(AvFormatContext s, AvStream st, AvProbeData pd)
 		{
 			AvInputFormat fmt = Format.Av_Probe_Input_Format3(pd, true, out c_int score);
 			FFStream sti = Internal.FFStream(st);
@@ -1356,7 +1356,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Init_Input(AvFormatContext s, CPointer<char> fileName, ref AvDictionary options)//XX 158
+		private static c_int Init_Input(AvFormatContext s, CPointer<char> fileName, ref AvDictionary options)
 		{
 			AvProbeData pd = new AvProbeData { FileName = fileName };
 			c_int score = AvProbe.Score_Retry;
@@ -1394,7 +1394,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Update_Stream_AvCtx(AvFormatContext s)//XX 189
+		private static c_int Update_Stream_AvCtx(AvFormatContext s)
 		{
 			for (c_uint i = 0; i < s.Nb_Streams; i++)
 			{
@@ -1433,7 +1433,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static bool Is_Id3v2_Format(AvInputFormat fmt)//XX 217
+		private static bool Is_Id3v2_Format(AvInputFormat fmt)
 		{
 			return (FFIFmt(fmt).Flags_Internal & FFInFmtFlag.Id3V2_Auto) != 0;
 		}
@@ -1445,7 +1445,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Force_Codec_Ids(AvFormatContext s, AvStream st)//XX 392
+		private static void Force_Codec_Ids(AvFormatContext s, AvStream st)
 		{
 			switch (st.CodecPar.Codec_Type)
 			{
@@ -1490,7 +1490,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Probe_Codec(AvFormatContext s, AvStream st, AvPacket pkt)//XX 414
+		private static c_int Probe_Codec(AvFormatContext s, AvStream st, AvPacket pkt)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFStream sti = Internal.FFStream(st);
@@ -1569,7 +1569,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Update_Wrap_Reference(AvFormatContext s, AvStream st, c_int stream_Index, AvPacket pkt)//XX 467
+		private static c_int Update_Wrap_Reference(AvFormatContext s, AvStream st, c_int stream_Index, AvPacket pkt)
 		{
 			FFStream sti = Internal.FFStream(st);
 			int64_t @ref = pkt.Dts;
@@ -1663,7 +1663,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Update_Timestamps(AvFormatContext s, AvStream st, AvPacket pkt)//XX 535
+		private static void Update_Timestamps(AvFormatContext s, AvStream st, AvPacket pkt)
 		{
 			FFStream sti = Internal.FFStream(st);
 
@@ -1699,7 +1699,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// packet if corrupt)
 		/// </summary>
 		/********************************************************************/
-		private static c_int Handle_New_Packet(AvFormatContext s, AvPacket pkt, c_int allow_Passthrough)//XX 567
+		private static c_int Handle_New_Packet(AvFormatContext s, AvPacket pkt, c_int allow_Passthrough)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 
@@ -1750,7 +1750,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Return the frame duration in seconds. Return 0 if not available
 		/// </summary>
 		/********************************************************************/
-		private static void Compute_Frame_Duration(AvFormatContext s, out c_int pNum, out c_int pDen, AvStream st, AvCodecParserContext pc, AvPacket pkt)//XX 686
+		private static void Compute_Frame_Duration(AvFormatContext s, out c_int pNum, out c_int pDen, AvStream st, AvCodecParserContext pc, AvPacket pkt)
 		{
 			FFStream sti = Internal.FFStream(st);
 			AvRational codec_FrameRate = sti.AvCtx.FrameRate;
@@ -1828,7 +1828,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool Has_Decode_Delay_Been_Guessed(AvStream st)//XX 749
+		private static bool Has_Decode_Delay_Been_Guessed(AvStream st)
 		{
 			FFStream sti = Internal.FFStream(st);
 
@@ -1853,7 +1853,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static PacketListEntry Get_Next_Pkt(AvFormatContext s, AvStream st, PacketListEntry pktl)//XX 768
+		private static PacketListEntry Get_Next_Pkt(AvFormatContext s, AvStream st, PacketListEntry pktl)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFFormatContext si = fci.Fc;
@@ -1874,7 +1874,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Select_From_Pts_Buffer(AvStream st, CPointer<int64_t> pts_Buffer, int64_t dts)//XX 780
+		private static int64_t Select_From_Pts_Buffer(AvStream st, CPointer<int64_t> pts_Buffer, int64_t dts)
 		{
 			FFStream sti = Internal.FFStream(st);
 
@@ -1938,7 +1938,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// re-ordering the pts of the packets in a window
 		/// </summary>
 		/********************************************************************/
-		private static void Update_Dts_From_Pts(AvFormatContext s, c_int stream_Index, PacketListEntry pkt_Buffer)//XX 828
+		private static void Update_Dts_From_Pts(AvFormatContext s, c_int stream_Index, PacketListEntry pkt_Buffer)
 		{
 			AvStream st = s.Streams[stream_Index];
 			c_int delay = Internal.FFStream(st).AvCtx.Has_B_Frames;
@@ -1972,7 +1972,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Update_Initial_Timestamps(AvFormatContext s, c_int stream_Index, int64_t dts, int64_t pts, AvPacket pkt)//XX 853
+		private static void Update_Initial_Timestamps(AvFormatContext s, c_int stream_Index, int64_t dts, int64_t pts, AvPacket pkt)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFFormatContext si = fci.Fc;
@@ -2030,7 +2030,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Update_Initial_Durations(AvFormatContext s, AvStream st, c_int stream_Index, int64_t duration)//XX 907
+		private static void Update_Initial_Durations(AvFormatContext s, AvStream st, c_int stream_Index, int64_t duration)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFFormatContext si = fci.Fc;
@@ -2108,7 +2108,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Compute_Pkt_Fields(AvFormatContext s, AvStream st, AvCodecParserContext pc, AvPacket pkt, int64_t next_Dts, int64_t next_Pts)//XX 967
+		private static void Compute_Pkt_Fields(AvFormatContext s, AvStream st, AvCodecParserContext pc, AvPacket pkt, int64_t next_Dts, int64_t next_Pts)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFFormatContext si = fci.Fc;
@@ -2303,7 +2303,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Parse a packet, add all split parts to parse_queue
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Packet(AvFormatContext s, AvPacket pkt, c_int stream_Index, bool flush)//XX 1162
+		private static c_int Parse_Packet(AvFormatContext s, AvPacket pkt, c_int stream_Index, bool flush)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFFormatContext si = fci.Fc;
@@ -2441,7 +2441,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Ts_To_Samples(AvStream st, int64_t ts)//XX 1286
+		private static int64_t Ts_To_Samples(AvStream st, int64_t ts)
 		{
 			return Mathematics.Av_Rescale(ts, st.Time_Base.Num * st.CodecPar.Sample_Rate, st.Time_Base.Den);
 		}
@@ -2453,7 +2453,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Codec_Close(FFStream sti)//XX 1291
+		private static c_int Codec_Close(FFStream sti)
 		{
 			AvCodecParameters par_Tmp = null;
 			AvCodec new_Codec = sti.AvCtx.Codec_Id != sti.Pub.CodecPar.Codec_Id ? AllCodec.AvCodec_Find_Decoder(sti.Pub.CodecPar.Codec_Id) : sti.AvCtx.Codec;
@@ -2509,7 +2509,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Read_Frame_Internal(AvFormatContext s, AvPacket pkt)//XX 1340
+		private static c_int Read_Frame_Internal(AvFormatContext s, AvPacket pkt)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
 			FFFormatContext si = fci.Fc;
@@ -2741,7 +2741,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Return TRUE if the stream has accurate duration in any stream
 		/// </summary>
 		/********************************************************************/
-		private static bool Has_Duration(AvFormatContext ic)//XX 1634
+		private static bool Has_Duration(AvFormatContext ic)
 		{
 			for (c_uint i = 0; i < ic.Nb_Streams; i++)
 			{
@@ -2766,7 +2766,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Also computes the global bitrate if possible
 		/// </summary>
 		/********************************************************************/
-		private static void Update_Stream_Timings(AvFormatContext ic)//XX 1651
+		private static void Update_Stream_Timings(AvFormatContext ic)
 		{
 			int64_t fileSize;
 
@@ -2881,7 +2881,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Fill_All_Stream_Timings(AvFormatContext ic)//XX 1745
+		private static void Fill_All_Stream_Timings(AvFormatContext ic)
 		{
 			Update_Stream_Timings(ic);
 
@@ -2907,7 +2907,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Estimate_Timings_From_Bit_Rate(AvFormatContext ic)//XX 1762
+		private static void Estimate_Timings_From_Bit_Rate(AvFormatContext ic)
 		{
 			FFFormatContext si = Internal.FFFormatContext(ic);
 			c_int show_Warning = 0;
@@ -2980,7 +2980,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// Only usable for MPEG-PS streams
 		/// </summary>
 		/********************************************************************/
-		private static void Estimate_Timings_From_Pts(AvFormatContext ic, int64_t old_Offset)//XX 1820
+		private static void Estimate_Timings_From_Pts(AvFormatContext ic, int64_t old_Offset)
 		{
 			FFFormatContext si = Internal.FFFormatContext(ic);
 			AvPacket pkt = si.Pkt;
@@ -3162,7 +3162,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Duration_Estimate_Name(AvDurationEstimationMethod method)//XX 1968
+		private static CPointer<char> Duration_Estimate_Name(AvDurationEstimationMethod method)
 		{
 			return duration_Name[(c_int)method].ToCharPointer();
 		}
@@ -3174,7 +3174,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Estimate_Timings(AvFormatContext ic, int64_t old_Offset)//XX 1973
+		private static void Estimate_Timings(AvFormatContext ic, int64_t old_Offset)
 		{
 			int64_t file_Size;
 
@@ -3234,7 +3234,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Determinable_Frame_Size(AvCodecContext avCtx)//XX 2022
+		private static c_int Determinable_Frame_Size(AvCodecContext avCtx)
 		{
 			switch (avCtx.Codec_Id)
 			{
@@ -3255,7 +3255,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool Has_Codec_Parameters(AvStream st, out CPointer<char> errMsg_Ptr)//XX 2035
+		private static bool Has_Codec_Parameters(AvStream st, out CPointer<char> errMsg_Ptr)
 		{
 			FFStream sti = Internal.CFFStream(st);
 			AvCodecContext avCtx = sti.AvCtx;
@@ -3354,7 +3354,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// negative error
 		/// </summary>
 		/********************************************************************/
-		private static c_int Try_Decode_Frame(AvFormatContext s, AvStream st, AvPacket pkt, ref AvDictionary options)//XX 2084
+		private static c_int Try_Decode_Frame(AvFormatContext s, AvStream st, AvPacket pkt, ref AvDictionary options)
 		{
 			FFStream sti = Internal.FFStream(st);
 			AvCodecContext avCtx = sti.AvCtx;
@@ -3504,7 +3504,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Compute_Chapters_End(AvFormatContext s)//XX 2196
+		private static c_int Compute_Chapters_End(AvFormatContext s)
 		{
 			int64_t max_Time = 0;
 
@@ -3555,7 +3555,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Get_Std_FrameRate(c_int i)//XX 2233
+		private static c_int Get_Std_FrameRate(c_int i)
 		{
 			if (i < (30 * 12))
 				return (i + 1) * 1001;
@@ -3594,7 +3594,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// needs to detect as well
 		/// </summary>
 		/********************************************************************/
-		private static c_int Tb_Unreliable(AvFormatContext ic, AvStream st)//XX 2257
+		private static c_int Tb_Unreliable(AvFormatContext ic, AvStream st)
 		{
 			FFStream sti = Internal.FFStream(st);
 			AvCodecDescriptor desc = sti.Codec_Desc;
@@ -3623,7 +3623,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void FF_Rfps_Calculate(AvFormatContext ic)//XX 2343
+		private static void FF_Rfps_Calculate(AvFormatContext ic)
 		{
 			for (c_uint i = 0; i < ic.Nb_Streams; i++)
 			{
@@ -3700,7 +3700,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Extract_ExtraData_Check(AvStream st)//XX 2407
+		private static c_int Extract_ExtraData_Check(AvStream st)
 		{
 			AvBitStreamFilter f = BitStream_Filters.Av_Bsf_Get_By_Name("extract_extradata".ToCharPointer());
 
@@ -3726,7 +3726,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Extract_ExtraData_Init(AvStream st)//XX 2423
+		private static c_int Extract_ExtraData_Init(AvStream st)
 		{
 			FFStream sti = Internal.FFStream(st);
 
@@ -3778,7 +3778,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Extract_ExtraData(FFFormatContext si, AvStream st, AvPacket pkt)//XX 2463
+		private static c_int Extract_ExtraData(FFFormatContext si, AvStream st, AvPacket pkt)
 		{
 			FFStream sti = Internal.FFStream(st);
 			AvPacket pkt_Ref = si.Parse_Pkt;

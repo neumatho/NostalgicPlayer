@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Called by decoders to get the next packet for decoding
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Decode_Get_Packet(AvCodecContext avCtx, AvPacket pkt)//XX 245
+		public static c_int FF_Decode_Get_Packet(AvCodecContext avCtx, AvPacket pkt)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// directly
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FF_Decode_Receive_Frame_Internal(AvCodecContext avCtx, AvFrame frame)//XX 608
+		internal static c_int FF_Decode_Receive_Frame_Internal(AvCodecContext avCtx, AvFrame frame)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// avcodec_open2() before packets may be fed to the decoder
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Send_Packet(AvCodecContext avCtx, AvPacket avPkt)//XX 704
+		public static c_int AvCodec_Send_Packet(AvCodecContext avCtx, AvPacket avPkt)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -183,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// avcodec_receive_frame() implementation for decoders
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FF_Decode_Receive_Frame(AvCodecContext avCtx, AvFrame frame)//XX 791
+		internal static c_int FF_Decode_Receive_Frame(AvCodecContext avCtx, AvFrame frame)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			c_int ret;
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// avcodec_open2() before packets may be fed to the decoder
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Decode_Subtitle2(AvCodecContext avCtx, out AvSubtitle sub, out c_int got_Sub_Ptr, AvPacket avPkt)//XX 909
+		public static c_int AvCodec_Decode_Subtitle2(AvCodecContext avCtx, out AvSubtitle sub, out c_int got_Sub_Ptr, AvPacket avPkt)
 		{
 			throw new NotImplementedException("AvCodec_Decode_Subtitle2");
 		}
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// by the pix_fmt_list parameter
 		/// </summary>
 		/********************************************************************/
-		public static AvPixelFormat AvCodec_Default_Get_Format(AvCodecContext avCtx, CPointer<AvPixelFormat> fmt)//XX 980
+		public static AvPixelFormat AvCodec_Default_Get_Format(AvCodecContext avCtx, CPointer<AvPixelFormat> fmt)
 		{
 			AvCodecHwConfig config;
 			c_int n;
@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_HwAccel_Uninit(AvCodecContext avCtx)//XX 1191
+		public static void FF_HwAccel_Uninit(AvCodecContext avCtx)
 		{
 			if ((avCtx.HwAccel != null) && (HwAccel_Internal.FFHwAccel(avCtx.HwAccel).Uninit != null))
 				HwAccel_Internal.FFHwAccel(avCtx.HwAccel).Uninit(avCtx);
@@ -375,7 +375,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Set various frame properties from the provided packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Decode_Frame_Props_From_Pkt(AvCodecContext avCtx, AvFrame frame, AvPacket pkt)//XX 1524
+		public static c_int FF_Decode_Frame_Props_From_Pkt(AvCodecContext avCtx, AvFrame frame, AvPacket pkt)
 		{
 			SideDataMap[] sd =
 			[
@@ -426,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Set various frame properties from the provided packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Decode_Frame_Props(AvCodecContext avCtx, AvFrame frame)//XX 1566
+		public static c_int FF_Decode_Frame_Props(AvCodecContext avCtx, AvFrame frame)
 		{
 			c_int ret = Side_Data_Map(frame, avCtx.Coded_Side_Data.Array, (c_int)avCtx.Coded_Side_Data.Count, AvCodec_.FF_Sd_Global_Map);
 
@@ -489,7 +489,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// returned
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Attach_Decode_Data(AvFrame frame)//XX 1643
+		public static c_int FF_Attach_Decode_Data(AvFrame frame)
 		{
 			RefStruct.Av_RefStruct_Unref(ref frame.Private_Refs);
 
@@ -512,7 +512,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// get_buffer() directly
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Get_Buffer(AvCodecContext avCtx, AvFrame frame, c_int flags)//XX 1720
+		public static c_int FF_Get_Buffer(AvCodecContext avCtx, AvFrame frame, c_int flags)
 		{
 			FFHwAccel hwAccel = HwAccel_Internal.FFHwAccel(avCtx.HwAccel);
 			c_int override_Dimensions = 1;
@@ -621,7 +621,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static c_int FF_Decode_Preinit(AvCodecContext avCtx)//XX 1963
+		internal static c_int FF_Decode_Preinit(AvCodecContext avCtx)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -760,7 +760,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static AvCodecInternal FF_Decode_Internal_Alloc()//XX 2313
+		internal static AvCodecInternal FF_Decode_Internal_Alloc()
 		{
 			return Mem.Av_MAlloczObj<DecodeContext>();
 		}
@@ -772,7 +772,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static void FF_Decode_Internal_Sync(AvCodecContext dst, AvCodecContext src)//XX 2318
+		internal static void FF_Decode_Internal_Sync(AvCodecContext dst, AvCodecContext src)
 		{
 			DecodeContext src_Dc = Decode_Ctx(src.Internal);
 			DecodeContext dst_Dc = Decode_Ctx(dst.Internal);
@@ -790,7 +790,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Decode_Flush_Buffers(AvCodecContext avCtx)//XX 2295
+		public static void FF_Decode_Flush_Buffers(AvCodecContext avCtx)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -814,7 +814,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		///
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Decode_Internal_Uninit(AvCodecContext avCtx)//XX 2328
+		public static void FF_Decode_Internal_Uninit(AvCodecContext avCtx)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -829,7 +829,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static DecodeContext Decode_Ctx(AvCodecInternal avci)//XX 103
+		private static DecodeContext Decode_Ctx(AvCodecInternal avci)
 		{
 			return (DecodeContext)avci;
 		}
@@ -841,7 +841,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Apply_Param_Change(AvCodecContext avCtx, AvPacket avPkt)//XX 108
+		private static c_int Apply_Param_Change(AvCodecContext avCtx, AvPacket avPkt)
 		{
 			c_int ret;
 
@@ -927,7 +927,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Extract_Packet_Props(AvCodecInternal avci, AvPacket pkt)//XX 169
+		private static c_int Extract_Packet_Props(AvCodecInternal avci, AvPacket pkt)
 		{
 			c_int ret = 0;
 
@@ -946,7 +946,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Decode_Bsfs_Init(AvCodecContext avCtx)//XX 180
+		private static c_int Decode_Bsfs_Init(AvCodecContext avCtx)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			FFCodec codec = Codec_Internal.FFCodec(avCtx.Codec);
@@ -996,7 +996,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Decode_Get_Packet(AvCodecContext avCtx, AvPacket pkt)//XX 220
+		private static c_int Decode_Get_Packet(AvCodecContext avCtx, AvPacket pkt)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 
@@ -1035,7 +1035,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// wrap around, in which case the output will as well
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Guess_Correct_Pts(DecodeContext dc, int64_t reordered_Pts, int64_t dts)//XX 287
+		private static int64_t Guess_Correct_Pts(DecodeContext dc, int64_t reordered_Pts, int64_t dts)
 		{
 			int64_t pts = UtilConstants.Av_NoPts_Value;
 
@@ -1070,7 +1070,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Discard_Samples(AvCodecContext avCtx, AvFrame frame, ref int64_t discarded_Samples)//XX 313
+		private static c_int Discard_Samples(AvCodecContext avCtx, AvFrame frame, ref int64_t discarded_Samples)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			uint32_t discard_Padding = 0;
@@ -1199,7 +1199,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int Decode_Simple_Internal(AvCodecContext avCtx, AvFrame frame, ref int64_t discarded_Samples)//XX 411
+		private static c_int Decode_Simple_Internal(AvCodecContext avCtx, AvFrame frame, ref int64_t discarded_Samples)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -1301,7 +1301,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Detect_ColorSpace(AvCodecContext avCtx, AvFrame frame)//XX 551
+		private static c_int Detect_ColorSpace(AvCodecContext avCtx, AvFrame frame)
 		{
 			return 0;
 		}
@@ -1313,7 +1313,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Fill_Frame_Props(AvCodecContext avCtx, AvFrame frame)//XX 557
+		private static c_int Fill_Frame_Props(AvCodecContext avCtx, AvFrame frame)
 		{
 			if (frame.Color_Primaries == AvColorPrimaries.Unspecified)
 				frame.Color_Primaries = avCtx.Color_Primaries;
@@ -1368,7 +1368,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Decode_Simple_Receive_Frame(AvCodecContext avCtx, AvFrame frame)//XX 592
+		private static c_int Decode_Simple_Receive_Frame(AvCodecContext avCtx, AvFrame frame)
 		{
 			int64_t discarded_Samples = 0;
 
@@ -1393,7 +1393,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Decode_Receive_Frame_Internal(AvCodecContext avCtx, AvFrame frame)//XX 644
+		private static c_int Decode_Receive_Frame_Internal(AvCodecContext avCtx, AvFrame frame)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -1467,7 +1467,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Apply_Cropping(AvCodecContext avCtx, AvFrame frame)//XX 737
+		private static c_int Apply_Cropping(AvCodecContext avCtx, AvFrame frame)
 		{
 			// Make sure we are noisy about decoders returning invalid cropping data
 			if ((frame.Crop_Left >= (c_int.MaxValue - frame.Crop_Right)) || (frame.Crop_Top >= (c_int.MaxValue - frame.Crop_Bottom)) ||
@@ -1496,7 +1496,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Make sure frames returned to the caller are valid
 		/// </summary>
 		/********************************************************************/
-		private static c_int Frame_Validate(AvCodecContext avCtx, AvFrame frame)//XX 765
+		private static c_int Frame_Validate(AvCodecContext avCtx, AvFrame frame)
 		{
 			if ((frame.Buf[0] == null) || ((frame.Format.Pixel < 0) && (frame.Format.Sample < 0)))
 				goto Fail;
@@ -1535,7 +1535,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvPacketSideData Packet_Side_Data_Get(CPointer<AvPacketSideData> sd, c_int nb_Sd, AvPacketSideDataType type)//XX 1342
+		private static AvPacketSideData Packet_Side_Data_Get(CPointer<AvPacketSideData> sd, c_int nb_Sd, AvPacketSideDataType type)
 		{
 			for (c_int i = 0; i < nb_Sd; i++)
 			{
@@ -1553,7 +1553,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Side_Data_Stereo3D_Merge(AvFrameSideData sd_Frame, AvPacketSideData sd_Pkt)//XX 1358
+		private static c_int Side_Data_Stereo3D_Merge(AvFrameSideData sd_Frame, AvPacketSideData sd_Pkt)
 		{
 			c_int ret = Buffer.Av_Buffer_Make_Writable(ref sd_Frame.Buf);
 
@@ -1593,7 +1593,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Side_Data_Exif_Parse(AvFrame dst, AvPacketSideData sd_Pkt)//XX 1394
+		private static c_int Side_Data_Exif_Parse(AvFrame dst, AvPacketSideData sd_Pkt)
 		{
 			AvFrameSideData sd_Frame;
 			AvBufferRef buf = null;
@@ -1687,7 +1687,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Side_Data_Map(AvFrame dst, CPointer<AvPacketSideData> sd_Src, c_int nb_Sd_Src, CPointer<SideDataMap> map)//XX 1466
+		private static c_int Side_Data_Map(AvFrame dst, CPointer<AvPacketSideData> sd_Src, c_int nb_Sd_Src, CPointer<SideDataMap> map)
 		{
 			for (c_int i = 0; map[i].Packet < AvPacketSideDataType.Nb; i++)
 			{
@@ -1749,7 +1749,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Add_Metadata_From_Side_Data(AvPacket avPkt, AvFrame frame)//XX 1512
+		private static c_int Add_Metadata_From_Side_Data(AvPacket avPkt, AvFrame frame)
 		{
 			AvDictionary frame_Md = frame.Metadata;
 
@@ -1765,7 +1765,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Validate_AvFrame_Allocation(AvCodecContext avCtx, AvFrame frame)//XX 1611
+		private static void Validate_AvFrame_Allocation(AvCodecContext avCtx, AvFrame frame)
 		{
 			if (avCtx.Codec_Type == AvMediaType.Video)
 			{
@@ -1798,7 +1798,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Decode_Data_Free(AvRefStructOpaque unused, IRefCount obj)//XX 1632
+		private static void Decode_Data_Free(AvRefStructOpaque unused, IRefCount obj)
 		{
 			FrameDecodeData fdd = (FrameDecodeData)obj;
 
@@ -1816,7 +1816,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Update_Frame_Props(AvCodecContext avCtx, AvFrame frame)//XX 1659
+		private static void Update_Frame_Props(AvCodecContext avCtx, AvFrame frame)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -1840,7 +1840,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Attach_Post_Process_Data(AvCodecContext avCtx, AvFrame frame)//XX 1675
+		private static c_int Attach_Post_Process_Data(AvCodecContext avCtx, AvFrame frame)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 			DecodeContext dc = Decode_Ctx(avci);
@@ -1899,7 +1899,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Progress_Frame_Pool_Init_Cb(AvRefStructOpaque opaque, IOpaque obj)//XX 1930
+		private static c_int Progress_Frame_Pool_Init_Cb(AvRefStructOpaque opaque, IOpaque obj)
 		{
 			AvCodecContext avCtx = (AvCodecContext)opaque.Nc;
 			ProgressInternal progress = (ProgressInternal)obj;
@@ -1924,7 +1924,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Progress_Frame_Pool_Reset_Cb(AvRefStructOpaque unused, IOpaque obj)//XX 1947
+		private static void Progress_Frame_Pool_Reset_Cb(AvRefStructOpaque unused, IOpaque obj)
 		{
 			ProgressInternal progress = (ProgressInternal)obj;
 
@@ -1940,7 +1940,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Progress_Frame_Pool_Free_Entry_Cb(AvRefStructOpaque opaque, IOpaque obj)//XX 1955
+		private static void Progress_Frame_Pool_Free_Entry_Cb(AvRefStructOpaque opaque, IOpaque obj)
 		{
 			ProgressInternal progress = (ProgressInternal)obj;
 

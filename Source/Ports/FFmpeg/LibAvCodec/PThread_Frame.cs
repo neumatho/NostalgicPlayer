@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Parameters are the same as FFCodec.receive_frame
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Thread_Receive_Frame(AvCodecContext avCtx, AvFrame frame)//XX 561
+		public static c_int FF_Thread_Receive_Frame(AvCodecContext avCtx, AvFrame frame)
 		{
 			FrameThreadContext fCtx = (FrameThreadContext)avCtx.Internal.Thread_Ctx;
 			c_int ret = 0;
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// update_thread_context() method, or call ff_thread_get_buffer()
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Thread_Finish_Setup(AvCodecContext avCtx)//XX 666
+		public static void FF_Thread_Finish_Setup(AvCodecContext avCtx)
 		{
 			if ((avCtx.Active_Thread_Type & FFThread.Frame) == 0)
 				return;
@@ -186,7 +186,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Frame_Thread_Free(AvCodecContext avCtx, c_int thread_Count)//XX 744
+		public static void FF_Frame_Thread_Free(AvCodecContext avCtx, c_int thread_Count)
 		{
 			FrameThreadContext fCtx = (FrameThreadContext)avCtx.Internal.Thread_Ctx;
 			FFCodec codec = Codec_Internal.FFCodec(avCtx.Codec);
@@ -264,7 +264,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Frame_Thread_Init(AvCodecContext avCtx)//XX 909
+		public static c_int FF_Frame_Thread_Init(AvCodecContext avCtx)
 		{
 			c_int thread_Count = avCtx.Thread_Count;
 			FFCodec codec = Codec_Internal.FFCodec(avCtx.Codec);
@@ -351,7 +351,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// threads
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Thread_Get_Packet(AvCodecContext avCtx, AvPacket pkt)//XX 1094
+		public static c_int FF_Thread_Get_Packet(AvCodecContext avCtx, AvPacket pkt)
 		{
 			PerThreadContext p = (PerThreadContext)avCtx.Internal.Thread_Ctx;
 
@@ -371,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int HwAccel_Serial(AvCodecContext avCtx)//XX 157
+		private static c_int HwAccel_Serial(AvCodecContext avCtx)
 		{
 			return (avCtx.HwAccel != null) && ((HwAccel_Internal.FFHwAccel(avCtx.HwAccel).Caps_Internal & HwAccelCap.Thread_Safe) == 0) ? 1 : 0;
 		}
@@ -383,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Async_Lock(FrameThreadContext fCtx)//XX 162
+		private static void Async_Lock(FrameThreadContext fCtx)
 		{
 			CThread.pthread_mutex_lock(fCtx.Async_Mutex);
 
@@ -402,7 +402,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Async_Unlock(FrameThreadContext fCtx)//XX 171
+		private static void Async_Unlock(FrameThreadContext fCtx)
 		{
 			CThread.pthread_mutex_lock(fCtx.Async_Mutex);
 
@@ -419,7 +419,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Thread_Set_Name(PerThreadContext p)//XX 180
+		private static void Thread_Set_Name(PerThreadContext p)
 		{
 		}
 
@@ -430,7 +430,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Get a free frame to decode into
 		/// </summary>
 		/********************************************************************/
-		private static AvFrame Decoded_Frames_Get_Free(DecodedFrames df)//XX 192
+		private static AvFrame Decoded_Frames_Get_Free(DecodedFrames df)
 		{
 			if (df.Nb_F == df.Nb_F_Allocated)
 			{
@@ -459,7 +459,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Decoded_Frames_Pop(DecodedFrames df, AvFrame dst)//XX 213
+		private static void Decoded_Frames_Pop(DecodedFrames df, AvFrame dst)
 		{
 			AvFrame tmp_Frame = df.F[0];
 
@@ -476,7 +476,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Decoded_Frames_Free(DecodedFrames df)//XX 228
+		private static void Decoded_Frames_Free(DecodedFrames df)
 		{
 			for (size_t i = 0; i < df.Nb_F_Allocated; i++)
 				Frame.Av_Frame_Free(ref df.F[i]);
@@ -497,7 +497,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// returns before calling it
 		/// </summary>
 		/********************************************************************/
-		private static void Frame_Worker_Thread(object arg)//XX 244
+		private static void Frame_Worker_Thread(object arg)
 		{
 			PerThreadContext p = (PerThreadContext)arg;
 			AvCodecContext avCtx = p.AvCtx;
@@ -598,7 +598,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// reference thread's context
 		/// </summary>
 		/********************************************************************/
-		private static c_int Update_Context_From_Thread(AvCodecContext dst, AvCodecContext src, c_int for_User)//XX 346
+		private static c_int Update_Context_From_Thread(AvCodecContext dst, AvCodecContext src, c_int for_User)
 		{
 			FFCodec codec = Codec_Internal.FFCodec(dst.Codec);
 			c_int err = 0;
@@ -732,7 +732,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// user
 		/// </summary>
 		/********************************************************************/
-		private static c_int Update_Context_From_User(AvCodecContext dst, AvCodecContext src)//XX 467
+		private static c_int Update_Context_From_User(AvCodecContext dst, AvCodecContext src)
 		{
 			dst.Flags = src.Flags;
 
@@ -769,7 +769,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Submit_Packet(PerThreadContext p, AvCodecContext user_AvCtx, AvPacket in_Pkt)//XX 497
+		private static c_int Submit_Packet(PerThreadContext p, AvCodecContext user_AvCtx, AvPacket in_Pkt)
 		{
 			FrameThreadContext fCtx = p.Parent;
 			PerThreadContext prev_Thread = fCtx.Prev_Thread;
@@ -846,7 +846,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Waits for all threads to finish
 		/// </summary>
 		/********************************************************************/
-		private static void Park_Frame_Worker_Threads(FrameThreadContext fCtx, c_int thread_Count)//XX 712
+		private static void Park_Frame_Worker_Threads(FrameThreadContext fCtx, c_int thread_Count)
 		{
 			Async_Unlock(fCtx);
 
@@ -875,7 +875,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Init_Thread(PerThreadContext p, ref c_int threads_To_Free, FrameThreadContext fCtx, AvCodecContext avCtx, FFCodec codec, c_int first)//XX 812
+		private static c_int Init_Thread(PerThreadContext p, ref c_int threads_To_Free, FrameThreadContext fCtx, AvCodecContext avCtx, FFCodec codec, c_int first)
 		{
 			c_int err;
 

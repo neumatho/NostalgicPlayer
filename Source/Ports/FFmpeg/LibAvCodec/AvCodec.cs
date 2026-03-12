@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Default_Execute(AvCodecContext c, CodecFunc.Execute_Func_Delegate func, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int count)//XX 74
+		public static c_int AvCodec_Default_Execute(AvCodecContext c, CodecFunc.Execute_Func_Delegate func, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int count)
 		{
 			for (size_t i = 0; i < (size_t)count; i++)
 			{
@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Default_Execute2(AvCodecContext c, CodecFunc.Execute2_Func_Delegate func, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int count)//XX 88
+		public static c_int AvCodec_Default_Execute2(AvCodecContext c, CodecFunc.Execute2_Func_Delegate func, CPointer<IExecuteArg> arg, CPointer<c_int> ret, c_int count)
 		{
 			for (c_int i = 0; i < count; i++)
 			{
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// before calling this function.
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Open2(AvCodecContext avCtx, AvCodec codec, ref AvDictionary options)//XX 145
+		public static c_int AvCodec_Open2(AvCodecContext avCtx, AvCodec codec, ref AvDictionary options)
 		{
 			c_int ret = 0;
 
@@ -401,7 +401,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// remain valid
 		/// </summary>
 		/********************************************************************/
-		public static void AvCodec_Flush_Buffers(AvCodecContext avCtx)//XX 380
+		public static void AvCodec_Flush_Buffers(AvCodecContext avCtx)
 		{
 			AvCodecInternal avci = avCtx.Internal;
 
@@ -430,7 +430,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Free all allocated data in the given subtitle struct
 		/// </summary>
 		/********************************************************************/
-		public static void AvSubtitle_Free(AvSubtitle sub)//XX 412
+		public static void AvSubtitle_Free(AvSubtitle sub)
 		{
 			for (c_int i = 0; i < sub.Num_Rects; i++)
 			{
@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Codec_Close(AvCodecContext avCtx)//XX 434
+		public static void FF_Codec_Close(AvCodecContext avCtx)
 		{
 			if (AvCodec_Is_Open(avCtx))
 			{
@@ -526,7 +526,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void AvCodec_String(CPointer<char> buf, c_int buf_Size, AvCodecContext enc, c_int encode)//XX 504
+		public static void AvCodec_String(CPointer<char> buf, c_int buf_Size, AvCodecContext enc, c_int encode)
 		{
 			c_int new_Line = 0;
 			CPointer<char> separator = enc.Dump_Separator.IsNotNull ? enc.Dump_Separator : ", ".ToCharPointer();
@@ -735,7 +735,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool AvCodec_Is_Open(AvCodecContext s)//XX 703
+		public static bool AvCodec_Is_Open(AvCodecContext s)
 		{
 			return s.Internal != null;
 		}
@@ -748,7 +748,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// AV_CODEC_FLAG_RECON_FRAME flag is used)
 		/// </summary>
 		/********************************************************************/
-		public static c_int AvCodec_Receive_Frame(AvCodecContext avCtx, AvFrame frame)//XX 708
+		public static c_int AvCodec_Receive_Frame(AvCodecContext avCtx, AvFrame frame)
 		{
 			Frame.Av_Frame_Unref(frame);
 
@@ -767,7 +767,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Lock_AvCodec(FFCodec codec)//XX 103
+		private static void Lock_AvCodec(FFCodec codec)
 		{
 			if (((codec.Caps_Internal & FFCodecCap.Not_Init_Threadsafe) != 0) && (codec.Init != null))
 				CThread.pthread_mutex_lock(codec_Mutex);
@@ -780,7 +780,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Unlock_AvCodec(FFCodec codec)//XX 109
+		private static void Unlock_AvCodec(FFCodec codec)
 		{
 			if (((codec.Caps_Internal & FFCodecCap.Not_Init_Threadsafe) != 0) && (codec.Init != null))
 				CThread.pthread_mutex_unlock(codec_Mutex);
@@ -793,7 +793,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int64_t Get_Bit_Rate(AvCodecContext ctx)//XX 115
+		private static int64_t Get_Bit_Rate(AvCodecContext ctx)
 		{
 			int64_t bit_Rate;
 
@@ -844,7 +844,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static CPointer<char> Unknown_If_Null(CPointer<char> str)//XX 499
+		private static CPointer<char> Unknown_If_Null(CPointer<char> str)
 		{
 			return str.IsNotNull ? str : "unknown".ToCharPointer();
 		}

@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Get_Guid(AvIoContext s, out FF_Asf_Guid g)//XX 33
+		public static c_int FF_Get_Guid(AvIoContext s, out FF_Asf_Guid g)
 		{
 			g = new FF_Asf_Guid(new uint8_t[16]);
 			
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// "big_endian" values are needed for RIFX file format
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Get_Wav_Header(AvFormatContext s, AvIoContext pb, AvCodecParameters par, c_int size, c_int big_Endian)//XX 95
+		public static c_int FF_Get_Wav_Header(AvFormatContext s, AvIoContext pb, AvCodecParameters par, c_int size, c_int big_Endian)
 		{
 			c_int id, channels = 0, ret;
 			uint64_t bitRate = 0;
@@ -227,7 +227,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static AvCodecId FF_Wav_Codec_Get_Id(c_uint tag, c_int bps)//XX 207
+		public static AvCodecId FF_Wav_Codec_Get_Id(c_uint tag, c_int bps)
 		{
 			AvCodecId id = Utils_Format.FF_Codec_Get_Id(Riff.FF_Codec_Wav_Tags, tag);
 
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static AvCodecId FF_Codec_Guid_Get_Id(CPointer<AvCodecGuid> guids, FF_Asf_Guid guid)//XX 45
+		private static AvCodecId FF_Codec_Guid_Get_Id(CPointer<AvCodecGuid> guids, FF_Asf_Guid guid)
 		{
 			for (c_int i = 0; i < guids.Length; i++)
 			{
@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// structure
 		/// </summary>
 		/********************************************************************/
-		private static void Parse_WaveFormatEx(IClass logCtx, AvIoContext pb, AvCodecParameters par)//XX 62
+		private static void Parse_WaveFormatEx(IClass logCtx, AvIoContext pb, AvCodecParameters par)
 		{
 			c_int bps = (c_int)AvIoBuf.AvIo_RL16(pb);
 

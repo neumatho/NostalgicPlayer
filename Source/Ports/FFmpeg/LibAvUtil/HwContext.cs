@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// av_hwframe_transfer_data()
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_HwFrame_Transfer_Get_Formats(AvBufferRef hwFrame_Ref, AvHwFrameTransferDirection dir, out CPointer<AvPixelFormat> formats, c_int flags)//XX 386
+		public static c_int Av_HwFrame_Transfer_Get_Formats(AvBufferRef hwFrame_Ref, AvHwFrameTransferDirection dir, out CPointer<AvPixelFormat> formats, c_int flags)
 		{
 			formats = null;
 
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// destination frame is unspecified
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_HwFrame_Transfer_Data(AvFrame dst, AvFrame src, c_int flags)//XX 448
+		public static c_int Av_HwFrame_Transfer_Data(AvFrame dst, AvFrame src, c_int flags)
 		{
 			c_int ret;
 
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// Allocate a new frame attached to the given AVHWFramesContext
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_HwFrame_Get_Buffer(AvBufferRef hwFrame_Ref, AvFrame frame, c_int flags)//XX 506
+		public static c_int Av_HwFrame_Get_Buffer(AvBufferRef hwFrame_Ref, AvFrame frame, c_int flags)
 		{
 			FFHwFramesContext ctxI = (FFHwFramesContext)hwFrame_Ref.Data;
 			AvHwFramesContext ctx = ctxI.P;
@@ -250,7 +250,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// the caller - those will be preserved as they were
 		/// </summary>
 		/********************************************************************/
-		public static c_int Av_HwFrame_Map(AvFrame dst, AvFrame src, c_int flags)//XX 793
+		public static c_int Av_HwFrame_Map(AvFrame dst, AvFrame src, c_int flags)
 		{
 			AvBufferRef orig_Dst_Frames = dst.Hw_Frames_Ctx;
 			AvPixelFormat orig_Dst_Fmt = dst.Format.Pixel;
@@ -335,7 +335,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Transfer_Data_Alloc(AvFrame dst, AvFrame src, c_int flags)//XX 398
+		private static c_int Transfer_Data_Alloc(AvFrame dst, AvFrame src, c_int flags)
 		{
 			c_int ret = 0;
 

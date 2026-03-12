@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Build VLC decoding tables suitable for use with get_vlc2()
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Vlc_Init_Sparse<TBits, TCodes, TSymbols>(Vlc vlc, c_int nb_Bits, c_int nb_Codes, CPointer<TBits> bits, CPointer<TCodes> codes, CPointer<TSymbols> symbols, VlcInit flags) where TBits : INumber<TBits> where TCodes : INumber<TCodes> where TSymbols : INumber<TSymbols> //XX 250
+		public static c_int FF_Vlc_Init_Sparse<TBits, TCodes, TSymbols>(Vlc vlc, c_int nb_Bits, c_int nb_Codes, CPointer<TBits> bits, CPointer<TCodes> codes, CPointer<TSymbols> symbols, VlcInit flags) where TBits : INumber<TBits> where TCodes : INumber<TCodes> where TSymbols : INumber<TSymbols>
 		{
 			VlcCode[] localBuf = ArrayHelper.InitializeArray<VlcCode>(LocalBuf_Elems);
 			CPointer<VlcCode> buf = localBuf;
@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// sorted according to "left nodes in the corresponding tree first"
 		/// </summary>
 		/********************************************************************/
-		public static c_int FF_Vlc_Init_From_Lengths<TLens, TSymbols>(Vlc vlc, c_int nb_Bits, c_int nb_Codes, CPointer<TLens> lens, CPointer<TSymbols> symbols, c_int offset, VlcInit flags, IClass logCtx) where TLens : INumber<TLens> where TSymbols : INumber<TSymbols>//XX 306
+		public static c_int FF_Vlc_Init_From_Lengths<TLens, TSymbols>(Vlc vlc, c_int nb_Bits, c_int nb_Codes, CPointer<TLens> lens, CPointer<TSymbols> symbols, c_int offset, VlcInit flags, IClass logCtx) where TLens : INumber<TLens> where TSymbols : INumber<TSymbols>
 		{
 			VlcCode[] localBuf = ArrayHelper.InitializeArray<VlcCode>(LocalBuf_Elems);
 			CPointer<VlcCode> buf = localBuf;
@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FF_Vlc_Free(Vlc vlc)//XX 580
+		public static void FF_Vlc_Free(Vlc vlc)
 		{
 			Mem.Av_FreeP(ref vlc.Table);
 		}
@@ -221,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Get_Data<T>(out T v, CPointer<T> table, c_int i)//XX 41
+		private static void Get_Data<T>(out T v, CPointer<T> table, c_int i)
 		{
 			CPointer<T> ptr = table + i;
 
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Alloc_Table(Vlc vlc, c_int size, c_int use_Static)//XX 60
+		private static c_int Alloc_Table(Vlc vlc, c_int size, c_int use_Static)
 		{
 			c_int index = vlc.Table_Size;
 
@@ -273,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static uint32_t BitSwap_32(uint32_t x)//XX 82
+		private static uint32_t BitSwap_32(uint32_t x)
 		{
 			return ((uint32_t)Reverse.ff_Reverse[x & 0xff] << 24) |
 				   ((uint32_t)Reverse.ff_Reverse[(x >> 8) & 0xff] << 16) |
@@ -288,7 +288,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Vlc_Common_Init(Vlc vlc, c_int nb_Bits, c_int nb_Codes, ref CPointer<VlcCode> buf, VlcInit flags)//XX 98
+		private static c_int Vlc_Common_Init(Vlc vlc, c_int nb_Bits, c_int nb_Codes, ref CPointer<VlcCode> buf, VlcInit flags)
 		{
 			vlc.Bits = nb_Bits;
 			vlc.Table_Size = 0;
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Compare_VlcSpec(VlcCode a, VlcCode b)//XX 118
+		private static c_int Compare_VlcSpec(VlcCode a, VlcCode b)
 		{
 			VlcCode sa = a, sb = b;
 
@@ -331,7 +331,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// Build VLC decoding tables suitable for use with get_vlc()
 		/// </summary>
 		/********************************************************************/
-		private static c_int Build_Table(Vlc vlc, c_int table_Nb_Bits, c_int nb_Codes, CPointer<VlcCode> codes, VlcInit flags)//XX 138
+		private static c_int Build_Table(Vlc vlc, c_int table_Nb_Bits, c_int nb_Codes, CPointer<VlcCode> codes, VlcInit flags)
 		{
 			if (table_Nb_Bits > 30)
 				return Error.EINVAL;
@@ -462,7 +462,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Vlc_Common_End(Vlc vlc, c_int nb_Bits, c_int nb_Codes, CPointer<VlcCode> codes, VlcInit flags, CPointer<VlcCode> localBuf)//XX 229
+		private static c_int Vlc_Common_End(Vlc vlc, c_int nb_Bits, c_int nb_Codes, CPointer<VlcCode> codes, VlcInit flags, CPointer<VlcCode> localBuf)
 		{
 			c_int ret = Build_Table(vlc, nb_Bits, nb_Codes, codes, flags);
 
