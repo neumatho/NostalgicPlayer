@@ -33,6 +33,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 
 		private readonly IMainWindowApi mainWindowApi;
 		private readonly IAgentManager agentManager;
+		private readonly IMixerConfigurationFactory mixerConfigurationFactory;
 		private readonly SoundSettings soundSettings;
 
 		private readonly Lock outputAgentLock = new Lock();
@@ -55,10 +56,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			// Remember the arguments
 			this.agentManager = agentManager;
 			this.mainWindowApi = mainWindowApi;
+			this.mixerConfigurationFactory = mixerConfigurationFactory;
 			this.soundSettings = soundSettings;
-
-			mixerConfiguration = mixerConfigurationFactory.Create();
-			mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
 
 			// Initialize the loader
 			loadedFiles = new List<ModuleItem>();
@@ -297,6 +296,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					}
 
 					// Setup player settings
+					CreateMixerConfiguration();
 					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, soundSettings.SurroundMode, soundSettings.DisableCenterSpeaker, mixerConfiguration);
 
 					// Initialize the module
@@ -778,6 +778,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Create mixer configuration
+		/// </summary>
+		/********************************************************************/
+		private void CreateMixerConfiguration()
+		{
+			mixerConfiguration = mixerConfigurationFactory.Create();
+			mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will show an error message to the user
