@@ -671,6 +671,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		public bool[] GetEnabledChannels()
 		{
+			EnsureMixerConfiguration();
+
 			return mixerConfiguration.ChannelsEnabled;
 		}
 
@@ -683,6 +685,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		public void EnableChannels(bool enabled, int startChannel, int stopChannel = -1)
 		{
+			EnsureMixerConfiguration();
+
 			if (stopChannel == -1)
 				mixerConfiguration.ChannelsEnabled[startChannel] = enabled;
 			else
