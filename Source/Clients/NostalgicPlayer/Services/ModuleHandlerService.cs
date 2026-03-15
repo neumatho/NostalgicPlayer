@@ -296,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					}
 
 					// Setup player settings
-					CreateMixerConfiguration();
+					EnsureMixerConfiguration();
 					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, soundSettings.SurroundMode, soundSettings.DisableCenterSpeaker, mixerConfiguration);
 
 					// Initialize the module
@@ -783,10 +783,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Create mixer configuration
 		/// </summary>
 		/********************************************************************/
-		private void CreateMixerConfiguration()
+		private void EnsureMixerConfiguration()
 		{
-			mixerConfiguration = mixerConfigurationFactory.Create();
-			mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
+			if (mixerConfiguration == null)
+			{
+				mixerConfiguration = mixerConfigurationFactory.Create();
+				mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
+			}
 		}
 
 
