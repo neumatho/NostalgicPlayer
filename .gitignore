@@ -11,3 +11,4 @@ BundleArtifacts
 launchSettings.json
 *.cache
 /Source/Ports/Tests/LibSidPlayFp.Test/Vice/VICE-testprogs
+.claude
