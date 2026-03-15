@@ -267,6 +267,18 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		{
 			return 0;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds a handler to be called when a sample stops or repeats
+		/// </summary>
+		/********************************************************************/
+		public IChannel.InterruptHandler Interrupt
+		{
+			get; set;
+		}
 		#endregion
 	}
 }

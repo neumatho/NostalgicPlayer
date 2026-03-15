@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 
@@ -17,7 +18,15 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// The maximum number of channels supported
 		/// </summary>
-		public const int MaxNumberOfChannels = 64;
+		const int MaxNumberOfChannels = 64;
+
+		/// <summary>
+		/// The handler interface for the Interrupt method.
+		///
+		/// The result contains the new sample to use. If the result is null,
+		/// the channel is muted
+		/// </summary>
+		delegate InterruptResult InterruptHandler();
 
 		/// <summary>
 		/// Will start to play the buffer in the channel. Only use this if
@@ -167,5 +176,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Returns new sample position if set
 		/// </summary>
 		int GetSamplePosition();
+
+		/// <summary>
+		/// Holds a handler to be called when a sample stops or repeats
+		/// </summary>
+		InterruptHandler Interrupt { get; set; }
 	}
 }

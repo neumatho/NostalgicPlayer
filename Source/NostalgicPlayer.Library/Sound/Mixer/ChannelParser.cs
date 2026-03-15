@@ -34,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			ushort? ccVolume = null;
 			uint? ccFrequency = null;
 
+			voiceInfo.Interrupt = Interrupt;
+
 			VoiceFlag voiceInfoFlags = voiceInfo.Flags;
 			SampleFlag sampleInfoFlags = voiceInfo.SampleInfo.Flags;
 
@@ -218,7 +220,12 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				}
 
 				if ((flags & ChannelFlag.VirtualTrig) != 0)
+				{
 					ccNoteKicked = true;
+
+					if (sampleInfo.Loop != null)
+						ccLooping = true;
+				}
 			}
 
 			// Store the flags back

@@ -264,6 +264,39 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 						sampleData = vsi.Sample.SampleData;
 					}
 
+					bool HandleInterrupt()
+					{
+						if (vnf.Interrupt == null)
+							return false;
+
+						InterruptResult result = vnf.Interrupt();
+						if (result != null)
+						{
+							vsi.Sample.SampleData = result.NewSampleAddress;
+							vsi.Sample.Start = result.StartOffset;
+							vsi.Sample.Length = result.Length;
+
+							sampleData = result.NewSampleAddress;
+							vnf.Current = (long)result.StartOffset << FracBits;
+							idxEnd = result.Length != 0 ? ((long)(result.StartOffset + result.Length) << FracBits) - 1 : 0;
+
+							long maxIdx = ((long)sampleData.Length << FracBits) - 1;
+							if (idxEnd > maxIdx)
+								idxEnd = maxIdx;
+
+							idxLoopStart = vnf.Current;
+							idxLoopEnd = idxEnd;
+						}
+						else
+						{
+							// Stop playing this sample
+							vnf.Current = 0;
+							vnf.Active = false;
+						}
+
+						return true;
+					}
+
 					// The sample is playing forward
 					if (vsi.Loop != null)
 					{
@@ -271,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 						{
 							if (vnf.NewSampleInfo != null)
 								SetNewSample();
-							else
+							else if (!HandleInterrupt())
 							{
 								// Loop sample
 								//
@@ -310,7 +343,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 						{
 							if (vnf.NewSampleInfo != null)
 								SetNewSample();
-							else
+							else if (!HandleInterrupt())
 							{
 								// Stop playing this sample
 								vnf.Current = 0;
