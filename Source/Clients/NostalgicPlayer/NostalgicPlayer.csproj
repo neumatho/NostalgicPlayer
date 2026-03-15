@@ -129,6 +129,7 @@
     <ProjectReference Include="..\..\Agents\Players\SoundMon\SoundMon.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Synthesis\Synthesis.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Tfmx\Tfmx.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\VoodooSupremeSynthesizer\VoodooSupremeSynthesizer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Xmp\Xmp.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\AudioIff\AudioIff.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\Flac\Flac.csproj" />

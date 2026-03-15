@@ -247,6 +247,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | UltraTracker | .ult | | Xmp |
 | Unic Tracker | .unic | ProWizard | ModTracker |
 | Unis 669 | .669 | | Xmp |
+| Voodoo Supreme Synthesizer | .vss | | Voodoo Supreme Synthesizer |
 | Wanton Packer | .wnp | ProWizard | ModTracker |
 | Windows Media Audio 1 | .wma | | FFMpeg |
 | Windows Media Audio 2 | .wma | | FFMpeg |

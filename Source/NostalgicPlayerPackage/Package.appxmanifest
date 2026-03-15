@@ -1374,6 +1374,14 @@
             <uap:DisplayName>Windows Media Audio</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="vssfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-vss">.vss</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Voodoo Supreme Synthesizer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

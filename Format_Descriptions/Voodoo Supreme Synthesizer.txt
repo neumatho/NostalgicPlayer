@@ -1,0 +1,194 @@
+The file is contains this information, but it can be in any order, except for
+the footer, which is always the last one.
+
+Sample data
+Tracks
+Offsets
+Different structures
+Footer
+
+
+Footer:
+
+Search for the VSS0 mark between the last 64 bytes in the file
+
+   0      4      Mark (VSS0)
+   4      4      Number of subsongs (NSS)
+   8  NSS*4      Subsong offset table. Add this number to the offset of the
+                 mark to find the offset to the subsong structure (and start
+                 of other structures)
+
+
+Sample data:
+
+A big block with all the sample data. First comes 2 bytes with the length of
+the samples, then the sample data itself.
+
+
+Track data:
+
+When an argument is an offset, you take the argument and multiply with 4 and
+add this to the start offset of the offset table for the current subsong.
+
+00-7F xx    Note. xx is how many ticks to wait until reading next track
+            command
+81 xx       Gosub to track. Plays the track at offset xx from offset table
+82          Return. Continue right after the last gosub
+83 xx yy    Start loop. xx is the loop count. yy not used
+84          Loop. Goto right after the last "start loop" if count has not
+            reached 0
+85 xx yy    Set sample 1 at offset xx and sample 2 at offset yy
+86 xx       Use volume envelope table at offset xx
+87 xx       Use period command table at offset xx
+88 xx yy    Use waveform at offset xx and mode yy
+89 xx yy zz Portamento. xx = start note. yy = stop note. zz = number of
+            ticks to do the slide
+8A xx       Set note transpose to xx
+8B xx       Go to track at offset xx. End of track
+8C xx       Set reset flags to xx
+8D xx       Set waveform mask to xx
+FF xx       Note cut. Stops the current playing note. xx is how many ticks
+            to wait until reading next track command
+
+
+Offsets:
+
+A list of signed offsets to either tracks or others structures / tables.
+
+
+Here is a description of the different structures.
+
+
+Subsong structure:
+
+   0      4      Offset to voice 0 track data
+   4      4      Offset to voice 1 track data
+   8      4      Offset to voice 2 track data
+   C      4      Offset to voice 3 track data
+
+
+Volume envelope table:
+
+The envelope table contains different values or special markers. The markers
+are:
+
+88 xx Jump to position xx
+
+If not a marker, the point data is as the following:
+
+xx yy If yy = 0:
+        xx = volume level
+      If yy <> 0:
+	    xx = Delta value
+		yy = Speed
+
+
+Period command table:
+
+This table contains different commands:
+
+7E xx ?
+7F xx Set the current period one octave up. Set tick counter to xx
+FE xx Set the current period one octave down. Set tick counter to xx
+FF xx Jump to position xx
+
+
+Waveform command table:
+
+The content of the table depends on the mode set.
+
+
+Internal player structures:
+
+ 70C  C8 Global structure
+1214  C0 Period table
+12D4  34 Frequency ratio table
+1308  50 Voice 1 track stack
+1358  50 Voice 2 track stack
+13A8  50 Voice 3 track stack
+13F8  50 Voice 4 track stack
+1448
+144C  42 Voice 1 structure
+148E  42 Voice 2 structure
+14D0  42 Voice 3 structure
+1512  42 Voice 4 structure
+1554   2 Bits 0-3 indicate if a voice has looped. 15 means end of song
+1556   4 Play count?
+155A   4 Pointer to offsets
+155E   4 Pointer to empty sample (256 bytes)
+
+
+Global structure:
+
+ 0  4 Pointer to some random data
+ 4  4 First subsong number (usually 0)
+ 8  4 Current subsong
+ C  4 Last subsong number
+10  4 Pointer to VVS0 mark in file
+14  4 Pointer to offsets
+18  4 Pointer to start of track for voice 1
+1C  4 Pointer to start of track for voice 2
+20  4 Pointer to start of track for voice 3
+24  4 Pointer to start of track for voice 4
+28  4 Pointer to voice 1 old interrupt handler
+2C  4 Pointer to voice 2 old interrupt handler
+30  4 Pointer to voice 3 old interrupt handler
+34  4 Pointer to voice 4 old interrupt handler
+38  4 Pointer to voice 1 synthesis audio buffer (2 * 32 bytes)
+3C  4 Pointer to voice 2 synthesis audio buffer (2 * 32 bytes)
+40  4 Pointer to voice 3 synthesis audio buffer (2 * 32 bytes)
+44  4 Pointer to voice 4 synthesis audio buffer (2 * 32 bytes)
+48  1 Flags
+      0 = Channels allocated
+	  1 = Audio buffer allocated
+	  2 = Interrupt handlers has been set
+	  
+Voice structure:
+
+ 0  4 Pointer to sample 1 data
+ 4  4 Pointer to sample 2 data
+ 8  1 Audio buffer offset to buffer to fill with new data
+ 9  1 Current position in waveform
+ A  1 Increment value for waveform
+ B  1 Start waveform position
+ C  4 Pointer to synthesis audio buffer
+10  1 Waveform mask
+11  1 Waveform tick counter
+12  4 Hardware address
+16  4 Current pointer to track data
+1A  1 Ticks left before reading next track command
+1B  1 Current volume level
+1C  2 Note period
+1E  4 Current track stack pointer
+22  4 Pointer to volume envelope data
+26  4 Pointer to period command data
+2A  1 Envelope reset flags
+      5 = Don't reset waveform command
+      6 = Don't reset period command
+      7 = Don't reset volume envelope
+2B  1 Portamento increment. Bit 7 indicate direction
+2C  1 Portamento delay
+2D  1 Ticks left for the portamento
+2E  1 Volume envelope tick counter
+2F  1 Period command tick counter
+30  1 Ticks left for the portamento delay
+31  1 Note transpose
+32  1 Volume envelope position
+33  1 Period command position
+34  1 Period command
+35  1 Waveform command position
+36  4 Pointer to waveform command data
+3A  1 Synthesis mode flags
+      0 = Frequency based length for frequency mapped playback
+      1 = Stop sample
+      5 = Frequency mapped playback
+      6 = XOR ring modulation
+      7 = Morphing
+
+      If no bits is set -> ring modulation
+3B  1 Morph speed
+3C  2 Target period
+3E  1 Final output volume
+3F  1 Volume envelope delta value
+40  1 Master volume
+41
