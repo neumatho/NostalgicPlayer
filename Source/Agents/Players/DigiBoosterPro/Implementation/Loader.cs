@@ -475,7 +475,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 					if ((flags & EnvelopeFlag.Loop) != 0)
 					{
-						if ((b[6] <= mEnv.NumberOfSections) && (b[5] <= b[6]))
+						if ((b[6] <= mEnv.NumberOfSections) && (b[5] < b[6]))
 						{
 							mEnv.LoopFirst = b[5];
 							mEnv.LoopLast = b[6];
@@ -508,6 +508,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 							if ((val < 0) || (val > 64))
 								error = Error.Data_Corrupted;
+						}
+						else
+						{
+							pos = 0;
+							val = 0;
 						}
 					}
 					else
@@ -917,6 +922,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 							case 4:
 							{
 								error = Read_Sample_Data_32Bit(sampleNumber, dc, ms, moduleStream);
+								break;
+							}
+
+							default:
+							{
+								error = Error.Data_Corrupted;
 								break;
 							}
 						}

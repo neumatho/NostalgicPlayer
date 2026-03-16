@@ -996,7 +996,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 					if (mSyn.Module.CreatorVersion == Constants.Creator_DigiBooster_2)
 					{
-						if (mt.Porta3Target >= mt.Pitch)
+						int16_t portaTarget = (int16_t)(mt.Porta3Target * 4);
+
+						if (portaTarget >= mt.Pitch)
 							mt.Porta3Delta += (int16_t)(parameter * 4);
 						else
 							mt.Porta3Delta -= (int16_t)(parameter * 4);
@@ -1192,9 +1194,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 				case Effect.SetGlobalVolume:
 				{
-					mSyn.GlobalVolume = parameter;
-					if (mSyn.GlobalVolume > 0x40)
-						mSyn.GlobalVolume = 0x40;
+					if (mSyn.GlobalVolume <= 0x40)
+						mSyn.GlobalVolume = parameter;
 
 					break;
 				}
