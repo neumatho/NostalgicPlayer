@@ -17,7 +17,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
@@ -28,6 +27,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -1596,7 +1596,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm();
+				moduleInfoWindow = formCreatorService.GetFormInstance<ModuleInfoWindowForm>();
 				moduleInfoWindow.Disposed += (o, args) => { moduleInfoWindow = null; };
 				moduleInfoWindow.Show();
 			}
@@ -3282,7 +3282,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			if (mainWindowSettings.OpenModuleInformationWindow)
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm();
+				moduleInfoWindow = formCreatorService.GetFormInstance<ModuleInfoWindowForm>();
 				moduleInfoWindow.Show();
 			}
 
