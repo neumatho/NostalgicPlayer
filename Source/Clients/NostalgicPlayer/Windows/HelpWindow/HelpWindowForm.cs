@@ -4,16 +4,15 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 {
 	/// <summary>
 	/// This shows the help documentation
 	/// </summary>
 	public partial class HelpWindowForm : WindowFormBase
 	{
-		private readonly WebBrowser webBrowser;
+		private WebBrowser webBrowser;
 
 		/********************************************************************/
 		/// <summary>
@@ -23,22 +22,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		public HelpWindowForm()
 		{
 			InitializeComponent();
+		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeForm()
+		{
 			// Add the browser control
 			webBrowser = new WebBrowser();
 			webBrowser.Dock = DockStyle.Fill;
 			Controls.Add(webBrowser);
 
-			if (!DesignMode)
-			{
-				InitializeWindow();
+			InitializeWindow();
 
-				// Load window settings
-				LoadWindowSettings("HelpWindow");
+			// Load window settings
+			LoadWindowSettings("HelpWindow");
 
-				// Set the title of the window
-				Text = Resources.IDS_HELP_TITLE;
-			}
+			// Set the title of the window
+			Text = Resources.IDS_HELP_TITLE;
 		}
 
 

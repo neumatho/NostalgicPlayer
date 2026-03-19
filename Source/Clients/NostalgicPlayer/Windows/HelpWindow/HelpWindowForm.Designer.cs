@@ -1,5 +1,5 @@
 ﻿
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 {
 	partial class HelpWindowForm
 	{
