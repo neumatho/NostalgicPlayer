@@ -17,7 +17,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
@@ -29,6 +28,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.OpenUrlWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -2766,7 +2766,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else
 			{
-				sampleInfoWindow = new SampleInfoWindowForm();
+				sampleInfoWindow = formCreatorService.GetFormInstance<SampleInfoWindowForm>();
 				sampleInfoWindow.Disposed += (o, args) => { sampleInfoWindow = null; };
 				sampleInfoWindow.Show();
 			}
@@ -3294,7 +3294,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			if (mainWindowSettings.OpenSampleInformationWindow)
 			{
-				sampleInfoWindow = new SampleInfoWindowForm();
+				sampleInfoWindow = formCreatorService.GetFormInstance<SampleInfoWindowForm>();
 				sampleInfoWindow.Show();
 			}
 

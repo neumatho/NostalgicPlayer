@@ -6,7 +6,7 @@
 using System.Windows.Forms;
 using Krypton.Toolkit;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 {
 	/// <summary>
 	/// This class overrides some method in the DataGrid control
