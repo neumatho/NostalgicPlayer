@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using Krypton.Toolkit;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.OpenUrlWindow
 {
 	/// <summary>
 	/// This shows the open URL window
@@ -22,12 +22,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow
 		public OpenUrlWindowForm()
 		{
 			InitializeComponent();
+		}
 
-			if (!DesignMode)
-			{
-				// Set the title of the window
-				Text = Resources.IDS_OPENURL_TITLE;
-			}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeForm()
+		{
+			// Set the title of the window
+			Text = Resources.IDS_OPENURL_TITLE;
 		}
 
 

@@ -1,4 +1,4 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.OpenUrlWindow
 {
 	partial class OpenUrlWindowForm
 	{

@@ -17,7 +17,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
@@ -29,6 +28,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -1443,7 +1443,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void Menu_File_OpenUrl_Click(object sender, EventArgs e)
 		{
-			using (OpenUrlWindowForm dialog = new OpenUrlWindowForm())
+			using (OpenUrlWindowForm dialog = formCreatorService.GetFormInstance<OpenUrlWindowForm>())
 			{
 				DialogResult result = dialog.ShowDialog(this);
 				if ((result != DialogResult.Cancel) && (!string.IsNullOrEmpty(dialog.GetUrl())))
