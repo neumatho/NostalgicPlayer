@@ -37,12 +37,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// InitializeForm() on it while resolving dependencies
 		/// </summary>
 		/********************************************************************/
-		public T GetFormInstance<T>() where T : Form, new()
+		public T GetFormInstance<T>(params object[] extraArguments) where T : Form, new()
 		{
 			T form = new T();
 
 			CallInitializeMethod(form, "InitializeBaseForm");
-			CallInitializeMethod(form, "InitializeForm");
+			CallInitializeMethod(form, "InitializeForm", extraArguments);
 
 			controlInitializerService.InitializeControls(form.Controls);
 
@@ -55,16 +55,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Try to find the given method and call it
 		/// </summary>
 		/********************************************************************/
-		private void CallInitializeMethod(Form form, string methodName)
+		private void CallInitializeMethod(Form form, string methodName, params object[] extraArguments)
 		{
 			MethodInfo initializeMethod = form.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
 
 			if (initializeMethod != null)
 			{
 				ParameterInfo[] parameters = initializeMethod.GetParameters();
-				object[] arguments = parameters.Select(p => applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
+				object[] arguments = parameters.Skip(extraArguments.Length).Select(p => applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
 
-				initializeMethod.Invoke(form, arguments);
+				initializeMethod.Invoke(form, extraArguments.Union(arguments).ToArray());
 			}
 		}
 		#endregion

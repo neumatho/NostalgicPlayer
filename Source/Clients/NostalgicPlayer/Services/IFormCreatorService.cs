@@ -16,6 +16,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Will create a new instance of the window type given and call
 		/// InitializeForm() on it while resolving dependencies
 		/// </summary>
-		T GetFormInstance<T>() where T : Form, new();
+		T GetFormInstance<T>(params object[] extraArguments) where T : Form, new();
 	}
 }

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -20,6 +19,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWindow;
@@ -725,7 +725,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				}
 				else
 				{
-					agentSettingsWindow = new AgentSettingsWindowForm(agentInfo);
+					agentSettingsWindow = formCreatorService.GetFormInstance<AgentSettingsWindowForm>(agentInfo);
 					agentSettingsWindow.Disposed += (o, args) => { openAgentSettings.Remove(agentInfo.TypeId); };
 					agentSettingsWindow.Show();
 
@@ -774,7 +774,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				}
 				else
 				{
-					agentDisplayWindow = new AgentDisplayWindowForm(agentInfo);
+					agentDisplayWindow = formCreatorService.GetFormInstance<AgentDisplayWindowForm>(agentInfo);
 					agentDisplayWindow.Disposed += (o, args) => { openAgentDisplays.Remove(agentInfo.TypeId); };
 					agentDisplayWindow.Show();
 
