@@ -475,7 +475,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 					if ((flags & EnvelopeFlag.Loop) != 0)
 					{
-						if ((b[6] <= mEnv.NumberOfSections) && (b[5] < b[6]))
+						if ((b[6] <= mEnv.NumberOfSections) && (b[5] <= b[6]))	// TNE: b[5] <= b[6], added equal so Dead Ahead - Part M H Variations.dbm can be loaded
 						{
 							mEnv.LoopFirst = b[5];
 							mEnv.LoopLast = b[6];
