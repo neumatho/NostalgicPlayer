@@ -300,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Sdft(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Sdft(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			return 0;
 		}
@@ -312,15 +312,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Titl(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Titl(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			byte[] buf = new byte[Constants.Xmp_Name_Size];
 
 			size = size > Constants.Xmp_Name_Size - 1 ? Constants.Xmp_Name_Size - 1 : size;
-			size = (c_int)f.Hio_Read(buf, 1, (size_t)size);
+			size = (uint32)f.Hio_Read(buf, 1, size);
 
-			mod.Name = encoder.GetString(buf, 0, size);
+			mod.Name = encoder.GetString(buf, 0, (int)size);
 
 			return 0;
 		}
@@ -332,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_DSmp_Cnt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_DSmp_Cnt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -349,7 +349,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_PBod_Cnt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_PBod_Cnt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_DSmp(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_DSmp(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -417,9 +417,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (data.Sinaria)
 				fineTune = (int8)(f.Hio_Read8S() << 4);
 
-			sub.Vol = f.Hio_Read8() / 2 + 1;
+			sub.Vol = (f.Hio_Read8() / 2) + 1;
 			f.Hio_Read32L();
-			sub.Pan = 0x80;
+			sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 			sub.Sid = i;
 
 			c_int sRate = f.Hio_Read16L();
@@ -444,7 +444,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_PBod(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_PBod(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -797,7 +797,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Song(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Song(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -814,9 +814,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Subchunk loader based on OpenMPT LoadPSM.cpp
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Song_2(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Song_2(Module_Data m, uint32 _size, Hio f, object parm)
 		{
 			byte[] buf = new byte[20];
+			c_int size = (c_int)_size;
 
 			f.Hio_Read(buf, 1, 9);
 			f.Hio_Read16L();
@@ -836,12 +837,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if (magic == Magic_OPLH)
 				{
-					if (Subchunk_Oplh(m, subchunk_Size, f, parm) < 0)
+					if (Subchunk_Oplh(m, (uint32)subchunk_Size, f, parm) < 0)
 						return -1;
 				}
 				else if (magic == Magic_PPAN)
 				{
-					if (Subchunk_Ppan(m, subchunk_Size, f, parm) < 0)
+					if (Subchunk_Ppan(m, (uint32)subchunk_Size, f, parm) < 0)
 						return -1;
 				}
 				else
@@ -858,11 +859,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Subchunk_Oplh(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Subchunk_Oplh(Module_Data m, uint32 _size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
 			c_int first_Order_Chunk = c_int.MaxValue;
+			c_int size = (c_int)_size;
 
 			// First two bytes = Number of chunks that follow
 			c_int num_Chunks = f.Hio_Read16L();
@@ -1021,9 +1023,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Sinaria channel panning table
 		/// </summary>
 		/********************************************************************/
-		private c_int Subchunk_Ppan(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Subchunk_Ppan(Module_Data m, uint32 _size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
+			c_int size = (c_int)_size;
 
 			for (c_int i = 0; (i < Constants.Xmp_Max_Channels) && (size > 0); i++)
 			{

@@ -319,6 +319,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		/********************************************************************/
 		/// <summary>
+		/// Some formats explicitly allow more than 256 rows (e.g. OctaMED).
+		/// This function allows those formats to work without disrupting
+		/// the sanity check for other formats
+		/// </summary>
+		/********************************************************************/
+		public c_int LibXmp_Alloc_Pattern_Tracks_Long(Xmp_Module mod, c_int num, c_int rows)
+		{
+			// Sanity check
+			if ((rows <= 0) || (rows > 32768))
+				return -1;
+
+			if (LibXmp_Alloc_Pattern(mod, num) < 0)
+				return -1;
+
+			mod.Xxp[num].Rows = rows;
+
+			if (LibXmp_Alloc_Tracks_In_Pattern(mod, num) < 0)
+				return -1;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/

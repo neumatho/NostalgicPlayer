@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	/// </summary>
 	internal class Scan
 	{
-		private const c_int VBlank_Time_Threshold = 480000;		// 8 minutes
+		private const c_double VBlank_Time_Threshold = 480000.0;		// 8 minutes
 
 		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (m.Compare_VBlank && ((p.Flags & Xmp_Flags.VBlank) == 0) && (p.Scan[0].Time >= VBlank_Time_Threshold))
 				Compare_VBlank_Scan();
 
-			if (p.Scan[0].Time < 0)
+			if (p.Scan[0].Time < 0.0)
 				return -1;
 
 			while (true)
@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					temp_Ep[seq] = (uint8)ep;
 					p.Scan[seq].Time = Scan_Module(ep, seq);
 
-					if (p.Scan[seq].Time > 0)
+					if (p.Scan[seq].Time > 0.0)
 						seq++;
 				}
 				else
@@ -128,8 +128,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			// Now place entry points in the public accessible array
 			for (i = 0; i < m.Num_Sequences; i++)
 			{
+				// API still uses integers for time...
+				c_double time = p.Scan[i].Time;
+				Common.Clamp(ref time, 0.0, c_int.MaxValue);
+
 				m.Seq_Data[i].Entry_Point = temp_Ep[i];
-				m.Seq_Data[i].Duration = p.Scan[i].Time;
+				m.Seq_Data[i].Duration = (c_int)time;
 			}
 
 			// Wipe the remaining entries so the player doesn't think they're
@@ -158,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Scan_Module(c_int ep, c_int chain)
+		private c_double Scan_Module(c_int ep, c_int chain)
 		{
 			Player_Data p = ctx.P;
 			Module_Data m = ctx.M;
@@ -167,11 +171,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int pDelay = 0;
 			Pattern_Loop[] loop = ArrayHelper.InitializeArray<Pattern_Loop>(Constants.Xmp_Max_Channels);
 			c_int pat;
-			c_double time_calc;
 
 			// Was 255, but Global trash goes to 318.
+			// Real Tracker supports up to 999 rows, increasing again from 512
 			// Higher limit for MEDs, defiance.crybaby.5 has blocks with 2048+ rows
-			c_int row_Limit = Common.Is_Player_Mode_Med(m) ? 3200 : 512;
+			c_int row_Limit = Common.Is_Player_Mode_Med(m) ? 3200 : 1024;
 
 			if (mod.Len == 0)
 				return 0;
@@ -199,8 +203,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Loop_Start = -1;
 			f.Loop_Count = 0;
 			f.Loop_Active_Num = 0;
-
-			c_int line_Jump = 0;
+			f.Jump = -1;
+			f.JumpLine = 0;
 
 			c_int gvl = mod.Gvl;
 			c_int bpm = mod.Bpm;
@@ -235,10 +239,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			//
 			// CM: Fixed by using different "sequences" for each loop or subsong.
 			//     Each sequence has its entry point. Sequences don't overlap.
-			c_int ord2 = -1;
 			c_int ord = ep - 1;
 
-			c_int gVol_Memory = 0, break_Row = 0, row_Count = 0, row_Count_Total = 0, frame_Count = 0;
+			c_int gVol_Memory = 0, row_Count = 0, row_Count_Total = 0, frame_Count = 0;
 			c_int orders_Since_Last_Valid = 0;
 			bool any_Valid = false;
 			c_double start_Time = 0.0, time = 0.0;
@@ -309,8 +312,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					continue;
 				}
 
-				if (break_Row >= mod.Xxp[pat].Rows)
-					break_Row = 0;
+				if (f.JumpLine >= mod.Xxp[pat].Rows)
+					f.JumpLine = 0;
 
 				// Changing patterns may reset loop vars
 				if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Pattern_Reset))
@@ -326,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 
 				// Loops can cross pattern boundaries, so check if we're not looping
-				if ((m.Scan_Cnt[ord][break_Row] != 0) && !inside_Loop)
+				if ((m.Scan_Cnt[ord][f.JumpLine] != 0) && !inside_Loop)
 					break;
 
 				// Only update pattern information if we weren't here before. This also
@@ -339,20 +342,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					info.Gvl = gvl;
 					info.Bpm = bpm;
 					info.Speed = speed;
-
-					// TODO: double ord_data::time
-					time_calc = time + m.Time_Factor * frame_Count * base_Time / bpm;
-					info.Time = time_calc > c_int.MaxValue ? c_int.MaxValue : (c_int)time_calc;
-
+					info.Time = time + (m.Time_Factor * frame_Count * base_Time / bpm);
 					info.St26_Speed = st26_Speed;
+					info.Start_Row = f.JumpLine;
 				}
 
 				if ((info.Start_Row == 0) && (ord != 0))
 				{
 					if (ord == ep)
-						start_Time = time + m.Time_Factor * frame_Count * base_Time / bpm;
-
-					info.Start_Row = break_Row;
+						start_Time = time + (m.Time_Factor * frame_Count * base_Time / bpm);
 				}
 
 				// Get tracks in advance to speed up the event parsing loop
@@ -361,10 +359,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				c_int last_Row = mod.Xxp[pat].Rows;
 
-				row = break_Row;
-				break_Row = 0;
-
-				for (; row < last_Row; row++, row_Count++, row_Count_Total++)
+				for (row = f.JumpLine, f.JumpLine = 0; row < last_Row; row++, row_Count++, row_Count_Total++)
 				{
 					// Prevent crashes caused by large softmixer frames
 					if (bpm < Constants.Xmp_Min_Bpm)
@@ -384,7 +379,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					if (row_Count_Total > row_Limit)
 						goto End_Module;
 
-					if ((f.Loop_Active_Num == 0) && (line_Jump == 0) && (m.Scan_Cnt[ord][row] != 0))
+					if ((f.Loop_Active_Num == 0) && (m.Scan_Cnt[ord][row] != 0))
 					{
 						row_Count--;
 						goto End_Module;
@@ -400,7 +395,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						goto End_Module;
 
 					pDelay = 0;
-					line_Jump = 0;
 
 					for (c_int chn = 0; chn < mod.Chn; chn++)
 					{
@@ -681,26 +675,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							parm = (f1 == Effects.Fx_It_Break) ? p1 : p2;
 							lib.player.LibXmp_Process_Pattern_Break(f, parm);
-
-							// TODO: Fully replace these variables with f
-							if (f.PBreak)
-							{
-								break_Row = f.JumpLine;
-								last_Row = 0;
-							}
 						}
 
 						if ((f1 == Effects.Fx_Jump) || (f2 == Effects.Fx_Jump))
 						{
 							lib.player.LibXmp_Process_Pattern_Jump(f, (f1 == Effects.Fx_Jump) ? p1 : p2);
 
-							// TODO: Fully replace these variables with f
 							if (f.PBreak)
 							{
-								ord2 = f.Jump;
-								break_Row = f.JumpLine;
-								last_Row = 0;
-
 								// Prevent infinite loop, see OpenMPT PatLoop-Various.xm
 								inside_Loop = false;
 							}
@@ -711,29 +693,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							parm = (f1 == Effects.Fx_Break) ? p1 : p2;
 							parm = 10 * Common.Msn(parm) + Common.Lsn(parm);
 							lib.player.LibXmp_Process_Pattern_Break(f, parm);
-
-							// TODO: Fully replace these variables with f
-							if (f.PBreak)
-							{
-								break_Row = f.JumpLine;
-								last_Row = 0;
-							}
 						}
 
 						// Archimedes line jump
 						if ((f1 == Effects.Fx_Line_Jump) || (f2 == Effects.Fx_Line_Jump))
-						{
 							lib.player.LibXmp_Process_Line_Jump(f, ord, (f1 == Effects.Fx_Line_Jump ? p1 : p2));
-
-							// Don't set order if preceded by jump or break.
-							// TODO: Fully replace these variables with f
-							if (last_Row > 0)
-								ord2 = ord;
-
-							break_Row = f.JumpLine;
-							last_Row = 0;
-							line_Jump = 1;
-						}
 
 						if ((f1 == Effects.Fx_Extended) || (f2 == Effects.Fx_Extended))
 						{
@@ -747,10 +711,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							if ((parm >> 4) == Effects.Ex_Pattern_Loop)
 							{
-								// QUIRK_FT2BUGS may set break_row
-								f.JumpLine = break_Row;
 								lib.player.LibXmp_Process_Pattern_Loop(f, chn, row, Common.Lsn(parm));
-								break_Row = f.JumpLine;
 
 								// Attempt to detect the inside of a loop
 								// TODO: This won't detect all cases
@@ -760,6 +721,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 									inside_Loop = true;
 							}
 						}
+
+						// OctaMED pattern delay
+						if (f1 == Effects.Fx_Patt_Delay)
+							pDelay += p1;
+
+						if (f2 == Effects.Fx_Patt_Delay)
+							pDelay += p2;
 					}
 
 					if (pDelay > 0)
@@ -772,6 +740,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						// -1 as it will be incremented immediately by the loop
 						row = f.Loop_Dest - 1;
 						f.Loop_Dest = -1;
+					}
+
+					if (f.PBreak)
+					{
+						f.PBreak = false;
+						last_Row = 0;
 					}
 
 					if (st26_Speed != 0)
@@ -788,13 +762,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					}
 				}
 
-				if ((break_Row != 0) && (pDelay != 0))
-					break_Row++;
+				if ((f.JumpLine != 0) && (pDelay != 0))
+					f.JumpLine++;
 
-				if (ord2 >= 0)
+				if (f.Jump >= 0)
 				{
-					ord = ord2 - 1;
-					ord2 = -1;
+					ord = f.Jump - 1;
+					f.Jump = -1;
 				}
 
 				frame_Count += row_Count * speed;
@@ -802,7 +776,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				row_Count = 0;
 			}
 
-			row = break_Row;
+			row = f.JumpLine;
 
 			End_Module:
 			// Sanity check
@@ -822,10 +796,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			time -= start_Time;
 			frame_Count += row_Count * speed;
 
-			// TODO: double ord_data::time
-			time_calc = time + m.Time_Factor * frame_Count * base_Time / bpm;
-
-			return time_calc > c_int.MaxValue ? c_int.MaxValue : (c_int)time_calc;
+			return time + (m.Time_Factor * frame_Count * base_Time / bpm);
 		}
 
 
@@ -838,7 +809,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private void Reset_Scan_Data()
 		{
 			for (c_int i = 0; i < Constants.Xmp_Max_Mod_Length; i++)
-				ctx.M.Xxo_Info[i].Time = -1;
+				ctx.M.Xxo_Info[i].Time = -1.0;
 
 			Array.Fill(ctx.P.Sequence_Control, (uint8)Constants.No_Sequence, 0, Constants.Xmp_Max_Mod_Length);
 		}

@@ -27,8 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region Stm_Instrument_Header
 		private class Stm_Instrument_Header
 		{
-			public readonly uint8[] Name = new uint8[12];		// ASCIIZ instrument name
-			public uint8 Id;									// Id=0
+			public readonly uint8[] Name = new uint8[13];		// Instrument name in 8.3 format (ASCIIZ)
 			public uint8 IDisk;									// Instrument disk
 			public uint16 Rsvd1;								// Reserved
 			public uint16 Length;								// Sample length
@@ -89,6 +88,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		#endregion
 
+		// STM tempo is calculated based on the mix buffer size, which requires knowing
+		// the mix rate of ST2. This is the highest mix rate in released versions
+		private const c_int Stm_Mix_Rate = 23863;
+
 		private const c_int Stm_Type_Song = 0x01;
 		private const c_int Stm_Type_Module = 0x02;
 
@@ -131,6 +134,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Fx_None,
 			Fx_None,
 			Fx_None
+		];
+
+		private static readonly uint8[] speed_Factor =
+		[
+			140, 50, 25, 15, 10, 7, 6, 4, 3, 3, 2, 2, 2, 2, 1, 1
 		];
 
 		/********************************************************************/
@@ -243,7 +251,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				mod.Chn = 4;
 				mod.Pat = sfh.Sub.V2.Patterns;
-				mod.Spd = (version < 221) ? Ports.LibXmp.Common.Lsn(sfh.Sub.V2.Tempo / 10) : Ports.LibXmp.Common.Msn(sfh.Sub.V2.Tempo);
+
+				Stm_Convert_Tempo(out mod.Spd, out mod.Bpm, sfh.Sub.V2.Tempo, version);
+
 				mod.Ins = 31;
 				mod.Len = (version == 200) ? 64 : 128;
 			}
@@ -280,15 +290,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				mod.Chn = sfh.Sub.V1.Channels;
 				mod.Pat = sfh.Sub.V1.PatNum;
-				mod.Spd = (version != 100) ? Ports.LibXmp.Common.Lsn(sfh.Sub.V1.Tempo / 10) : Ports.LibXmp.Common.Lsn(sfh.Sub.V1.Tempo);
+
+				Stm_Convert_Tempo(out mod.Spd, out mod.Bpm, sfh.Sub.V1.Tempo, version);
+
 				mod.Ins = sfh.Sub.V1.InsNum;
 				mod.Len = sfh.Sub.V1.OrdNum;
 			}
 
 			for (i = 0; i < mod.Ins; i++)
 			{
-				f.Hio_Read(sfh.Ins[i].Name, 12, 1);	// Instrument name
-				sfh.Ins[i].Id = f.Hio_Read8();					// Id=0
+				f.Hio_Read(sfh.Ins[i].Name, 13, 1);	// Instrument name
 				sfh.Ins[i].IDisk = f.Hio_Read8();				// Instrument disk
 				sfh.Ins[i].Rsvd1 = f.Hio_Read16L();				// Reserved
 				sfh.Ins[i].Length = f.Hio_Read16L();			// Sample length
@@ -334,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				mod.Xxs[i].Flg = mod.Xxs[i].Lpe > 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
 				mod.Xxi[i].Sub[0].Vol = sfh.Ins[i].Volume;
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxi[i].Sub[0].Sid = i;
 
 				if (mod.Xxs[i].Len > 0)
@@ -409,7 +420,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						else if (b == 255)
 							@event.Note = 0;
 						else
-							@event.Note = (byte)(1 + Ports.LibXmp.Common.Lsn(b) + 12 * (3 + Ports.LibXmp.Common.Msn(b)));
+							@event.Note = (byte)(1 + Ports.LibXmp.Common.Lsn(b) + (12 * (3 + Ports.LibXmp.Common.Msn(b))));
 
 						b = f.Hio_Read8();
 						@event.Vol = (byte)(b & 0x07);
@@ -431,9 +442,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						switch (@event.FxT)
 						{
+							case Effects.Fx_Break:
+							{
+								// ST2 always breaks to row 0
+								@event.FxP = 0;
+								break;
+							}
+
 							case Effects.Fx_Speed:
 							{
-								@event.FxP = (byte)((version < 221) ? Ports.LibXmp.Common.Lsn(@event.FxP / 10) : Ports.LibXmp.Common.Msn(@event.FxP));
+								if (@event.FxP != 0)
+								{
+									Stm_Convert_Tempo(out c_int spd, out c_int bpm, @event.FxP, version);
+
+									@event.FxT = Effects.Fx_S3M_Speed;
+									@event.FxP = (byte)spd;
+
+									if (version >= 110)
+									{
+										@event.F2T = Effects.Fx_S3M_Bpm;
+										@event.F2P = (byte)bpm;
+									}
+								}
+								else
+								{
+									// A00 is a no-op
+									@event.FxT = @event.FxP = 0;
+								}
+
 								break;
 							}
 
@@ -475,9 +511,70 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			m.Quirk |= Quirk_Flag.VsAll | Quirk_Flag.St3;
+			m.Flow_Mode = FlowMode_Flag.Mode_ST2;
 			m.Read_Event_Type = Read_Event.St3;
 
 			return 0;
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Following cs127's research fairly closely here out of necessity.
+		/// Notes:
+		/// - maximum effective BPM is 125.
+		/// - divisor may be negative.
+		/// - the potentially negative quotient of this division may be
+		///   modified, thus the mix rate can not be optimized out.
+		/// - TODO: tempo effects take effect the next tick, not the current
+		///   tick.
+		/// - TODO: tempos 1E, 1F, and 05-0F result in BPMs lower than
+		///   XMP_MIN_BPM
+		/// </summary>
+		/********************************************************************/
+		private c_int Stm_Calculate_Bpm(c_int spd, c_int tempo_Factor)
+		{
+			c_int divisor = 50 - ((speed_Factor[spd] * tempo_Factor) >> 4);
+
+			// Safety check; 0 should not be possible
+			c_int tick_Frames = divisor != 0 ? Stm_Mix_Rate / divisor : -1;
+			tick_Frames = (c_int)((c_uint)tick_Frames & 0xffff);
+
+			// TODO: BPMs can be non-integer
+			return ((Stm_Mix_Rate * 5) + (tick_Frames /* round */)) / (tick_Frames * 2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Stm_Convert_Tempo(out c_int spd, out c_int bpm, c_uint tempo, c_int version)
+		{
+			if (version >= 221)
+			{
+				spd = (c_int)Ports.LibXmp.Common.Msn(tempo);
+				bpm = Stm_Calculate_Bpm(spd, (c_int)Ports.LibXmp.Common.Lsn(tempo));
+			}
+			else if (version >= 110)
+			{
+				// TODO: ST <2.2 behavior unclear. ST 2.2+ imports higher
+				// speeds (effect speed is modulo 16) and then reads the
+				// speed factor table out-of-bounds
+				spd = (c_int)(tempo / 10);
+				bpm = Stm_Calculate_Bpm(Math.Min(spd, 15), (c_int)(tempo % 10));
+			}
+			else
+			{
+				spd = (c_int)tempo;
+				bpm = 125;
+			}
+
+			spd = Math.Max(spd, 1);
+			bpm = Math.Max(bpm, Constants.Xmp_Min_Bpm);
+		}
+		#endregion
 	}
 }

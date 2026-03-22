@@ -35,6 +35,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		#endregion
 
+		private const int Gal4_Samp_16Bit = 1 << 2;
+		private const int Gal4_Samp_Loop = 1 << 3;
+		private const int Gal4_Samp_Loop_BiDir = 1 << 4;
+		private const int Gal4_Samp_Set_Panning = 1 << 5;
+
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;
 		private readonly bool testMode;
@@ -253,7 +258,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				for (c_int i = 0; i < mod.Chn; i++)
 					mod.Xxc[i].Pan = 0x80;
 
-				m.Quirk |= Quirk_Flag.Ft2;
+				// TODO: JJ2 1.20 shareware does not support fine slides from
+				// converted XMs. Should be tested with converted S3Ms, though
+				m.Quirk |= Quirk_Flag.FineFx;
 				m.Read_Event_Type = Read_Event.Ft2;
 			}
 			finally
@@ -272,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Main(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Main(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			byte[] buf = new byte[64];
@@ -310,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Ordr(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Ordr(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -331,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Patt_Cnt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Patt_Cnt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -350,7 +357,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Inst_Cnt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Inst_Cnt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -379,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Patt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Patt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Xmp_Event dummy = new Xmp_Event();
@@ -463,7 +470,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Inst(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Inst(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -476,13 +483,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((i >= mod.Ins) || (mod.Xxi[i].Nsm != 0))
 				return -1;
 
-			f.Hio_Read(buf, 1, 28);
-			mod.Xxi[i].Name = encoder.GetString(buf.AsSpan());
+			Xmp_Instrument xxi = mod.Xxi[i];
+			Xmp_Envelope aei = xxi.Aei;
+			Xmp_Envelope pei = xxi.Pei;
 
-			mod.Xxi[i].Nsm = f.Hio_Read8();
+			f.Hio_Read(buf, 1, 28);
+			xxi.Name = encoder.GetString(buf.AsSpan());
+
+			xxi.Nsm = f.Hio_Read8();
 
 			for (c_int j = 0; j < 108; j++)
-				mod.Xxi[i].Map[j].Ins = f.Hio_Read8();
+				xxi.Map[j].Ins = f.Hio_Read8();
 
 			f.Hio_Seek(11, SeekOrigin.Current);		// Unknown
 
@@ -497,130 +508,128 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			c_int val = f.Hio_Read8();			// PV envelopes flags
 
 			if ((Ports.LibXmp.Common.Lsn(val) & 0x01) != 0)
-				mod.Xxi[i].Aei.Flg |= Xmp_Envelope_Flag.On;
+				aei.Flg |= Xmp_Envelope_Flag.On;
 
 			if ((Ports.LibXmp.Common.Lsn(val) & 0x02) != 0)
-				mod.Xxi[i].Aei.Flg |= Xmp_Envelope_Flag.Sus;
+				aei.Flg |= Xmp_Envelope_Flag.Sus;
 
 			if ((Ports.LibXmp.Common.Lsn(val) & 0x04) != 0)
-				mod.Xxi[i].Aei.Flg |= Xmp_Envelope_Flag.Loop;
+				aei.Flg |= Xmp_Envelope_Flag.Loop;
 
 			if ((Ports.LibXmp.Common.Msn(val) & 0x01) != 0)
-				mod.Xxi[i].Pei.Flg |= Xmp_Envelope_Flag.On;
+				pei.Flg |= Xmp_Envelope_Flag.On;
 
 			if ((Ports.LibXmp.Common.Msn(val) & 0x02) != 0)
-				mod.Xxi[i].Pei.Flg |= Xmp_Envelope_Flag.Sus;
+				pei.Flg |= Xmp_Envelope_Flag.Sus;
 
 			if ((Ports.LibXmp.Common.Msn(val) & 0x04) != 0)
-				mod.Xxi[i].Pei.Flg |= Xmp_Envelope_Flag.Loop;
+				pei.Flg |= Xmp_Envelope_Flag.Loop;
 
 			val = f.Hio_Read8();				// PV envelopes points
-			mod.Xxi[i].Aei.Npt = Ports.LibXmp.Common.Lsn(val) + 1;
-			mod.Xxi[i].Pei.Npt = Ports.LibXmp.Common.Msn(val) + 1;
+			aei.Npt = Ports.LibXmp.Common.Lsn(val) + 1;
+			pei.Npt = Ports.LibXmp.Common.Msn(val) + 1;
 
 			val = f.Hio_Read8();				// PV envelopes sustain point
-			mod.Xxi[i].Aei.Sus = Ports.LibXmp.Common.Lsn(val);
-			mod.Xxi[i].Pei.Sus = Ports.LibXmp.Common.Msn(val);
+			aei.Sus = Ports.LibXmp.Common.Lsn(val);
+			pei.Sus = Ports.LibXmp.Common.Msn(val);
 
 			val = f.Hio_Read8();				// PV envelopes loop start
-			mod.Xxi[i].Aei.Lps = Ports.LibXmp.Common.Lsn(val);
-			mod.Xxi[i].Pei.Lps = Ports.LibXmp.Common.Msn(val);
+			aei.Lps = Ports.LibXmp.Common.Lsn(val);
+			pei.Lps = Ports.LibXmp.Common.Msn(val);
 
 			val = f.Hio_Read8();				// PV envelopes loop end
-			mod.Xxi[i].Aei.Lpe = Ports.LibXmp.Common.Lsn(val);
-			mod.Xxi[i].Pei.Lpe = Ports.LibXmp.Common.Msn(val);
+			aei.Lpe = Ports.LibXmp.Common.Lsn(val);
+			pei.Lpe = Ports.LibXmp.Common.Msn(val);
 
-			if ((mod.Xxi[i].Aei.Npt <= 0) || (mod.Xxi[i].Aei.Npt > Math.Min(10, Constants.Xmp_Max_Env_Points)))
-				mod.Xxi[i].Aei.Flg &= ~Xmp_Envelope_Flag.On;
+			if ((aei.Npt <= 0) || (aei.Npt > Math.Min(10, Constants.Xmp_Max_Env_Points)))
+				aei.Flg &= ~Xmp_Envelope_Flag.On;
 
-			if ((mod.Xxi[i].Pei.Npt <= 0) || (mod.Xxi[i].Pei.Npt > Math.Min(10, Constants.Xmp_Max_Env_Points)))
-				mod.Xxi[i].Pei.Flg &= ~Xmp_Envelope_Flag.On;
+			if ((pei.Npt <= 0) || (pei.Npt > Math.Min(10, Constants.Xmp_Max_Env_Points)))
+				pei.Flg &= ~Xmp_Envelope_Flag.On;
 
 			if (f.Hio_Read(buf, 1, 30) < 30)		// Volume envelope points
 				return -1;
 
-			for (c_int j = 0; j < mod.Xxi[i].Aei.Npt; j++)
+			for (c_int j = 0; j < aei.Npt; j++)
 			{
 				if (j >= 10)
 					break;
 
-				mod.Xxi[i].Aei.Data[j * 2] = (c_short)(DataIo.ReadMem16L(buf + j * 3) / 16);
-				mod.Xxi[i].Aei.Data[j * 2 + 1] = buf[j * 3 + 2];
+				aei.Data[j * 2] = (c_short)(DataIo.ReadMem16L(buf + (j * 3)) / 16);
+				aei.Data[(j * 2) + 1] = buf[(j * 3) + 2];
 			}
 
 			if (f.Hio_Read(buf, 1, 30) < 30)		// Pan envelope points
 				return -1;
 
-			for (c_int j = 0; j < mod.Xxi[i].Pei.Npt; j++)
+			for (c_int j = 0; j < pei.Npt; j++)
 			{
 				if (j >= 10)
 					break;
 
-				mod.Xxi[i].Pei.Data[j * 2] = (c_short)(DataIo.ReadMem16L(buf + j * 3) / 16);
-				mod.Xxi[i].Pei.Data[j * 2 + 1] = buf[j * 3 + 2];
+				pei.Data[j * 2] = (c_short)(DataIo.ReadMem16L(buf + (j * 3)) / 16);
+				pei.Data[(j * 2) + 1] = buf[(j * 3) + 2];
 			}
 
 			f.Hio_Read8();		// Fadeout - 0x80->0x02 0x310->0x0c
 			f.Hio_Read8();		// Unknown
 
-			if (mod.Xxi[i].Nsm == 0)
+			if (xxi.Nsm == 0)
 				return 0;
 
-			if (lib.common.LibXmp_Alloc_SubInstrument(mod, i, mod.Xxi[i].Nsm) < 0)
+			if (lib.common.LibXmp_Alloc_SubInstrument(mod, i, xxi.Nsm) < 0)
 				return -1;
 
-			for (c_int j = 0; j < mod.Xxi[i].Nsm; j++, data.SNum++)
+			for (c_int j = 0; j < xxi.Nsm; j++, data.SNum++)
 			{
+				Xmp_SubInstrument sub = xxi.Sub[j];
+				Xmp_Sample xxs = mod.Xxs[data.SNum];
+
 				f.Hio_Read32B();	// SAMP
 				f.Hio_Read32B();	// Size
 
 				f.Hio_Read(buf, 1, 28);
-				mod.Xxs[data.SNum].Name = encoder.GetString(buf.AsSpan());
+				xxs.Name = encoder.GetString(buf.AsSpan());
 
-				mod.Xxi[i].Sub[j].Pan = f.Hio_Read8() * 4;
-
-				if (mod.Xxi[i].Sub[j].Pan == 0)		// Not sure about this
-					mod.Xxi[i].Sub[j].Pan = 0x80;
-
-				mod.Xxi[i].Sub[j].Vol = f.Hio_Read8();
+				c_int pan = f.Hio_Read8();
+				sub.Vol = f.Hio_Read8();
 
 				c_int flags = f.Hio_Read8();
 				f.Hio_Read8();      // Unknown - 0x80
 
-				mod.Xxi[i].Sub[j].Vwf = vwf;
-				mod.Xxi[i].Sub[j].Vde = vde;
-				mod.Xxi[i].Sub[j].Vra = vra;
-				mod.Xxi[i].Sub[j].Vsw = vsw;
-				mod.Xxi[i].Sub[j].Sid = data.SNum;
+				sub.Pan = (flags & Gal4_Samp_Set_Panning) != 0 ? Math.Min(pan * 4, 255) : Constants.Xmp_Inst_No_Default_Pan;
+				sub.Vwf = vwf;
+				sub.Vde = vde;
+				sub.Vra = vra;
+				sub.Vsw = vsw;
+				sub.Sid = data.SNum;
 
-				mod.Xxs[data.SNum].Len = (c_int)f.Hio_Read32L();
-				mod.Xxs[data.SNum].Lps = (c_int)f.Hio_Read32L();
-				mod.Xxs[data.SNum].Lpe = (c_int)f.Hio_Read32L();
+				xxs.Len = (c_int)f.Hio_Read32L();
+				xxs.Lps = (c_int)f.Hio_Read32L();
+				xxs.Lpe = (c_int)f.Hio_Read32L();
 
-				mod.Xxs[data.SNum].Flg = Xmp_Sample_Flag.None;
+				xxs.Flg = Xmp_Sample_Flag.None;
 
-				if ((flags & 0x04) != 0)
-					mod.Xxs[data.SNum].Flg |= Xmp_Sample_Flag._16Bit;
+				if ((flags & Gal4_Samp_16Bit) != 0)
+					xxs.Flg |= Xmp_Sample_Flag._16Bit;
 
-				if ((flags & 0x08) != 0)
-					mod.Xxs[data.SNum].Flg |= Xmp_Sample_Flag.Loop;
+				if ((flags & Gal4_Samp_Loop) != 0)
+					xxs.Flg |= Xmp_Sample_Flag.Loop;
 
-				if ((flags & 0x10) != 0)
-					mod.Xxs[data.SNum].Flg |= Xmp_Sample_Flag.Loop_BiDir;
+				if ((flags & Gal4_Samp_Loop_BiDir) != 0)
+					xxs.Flg |= Xmp_Sample_Flag.Loop_BiDir;
 
 				c_int sRate = (c_int)f.Hio_Read32L();
 				c_int finetune = 0;
-				lib.period.LibXmp_C2Spd_To_Note(sRate, out mod.Xxi[i].Sub[j].Xpo, out mod.Xxi[i].Sub[j].Fin);
-				mod.Xxi[i].Sub[j].Fin += finetune;
+				lib.period.LibXmp_C2Spd_To_Note(sRate, out sub.Xpo, out sub.Fin);
+				sub.Fin += finetune;
 
 				f.Hio_Read32L();	// 0x00000000
 				f.Hio_Read32L();	// Unknown
 
-				if (mod.Xxs[data.SNum].Len > 1)
+				if (xxs.Len > 1)
 				{
-					c_int sNum = data.SNum;
-
-					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, mod.Xxs[sNum], null, sNum) < 0)
+					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, xxs, null, data.SNum) < 0)
 						return -1;
 				}
 			}

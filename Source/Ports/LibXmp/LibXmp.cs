@@ -398,6 +398,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Xmp_Set_Tempo_Factor_Relative(c_double val)
+		{
+			return control.Xmp_Set_Tempo_Factor_Relative(val);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_double Xmp_Get_Tempo_Factor()
+		{
+			return control.Xmp_Get_Tempo_Factor();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_double Xmp_Get_Tempo_Factor_Relative()
+		{
+			return control.Xmp_Get_Tempo_Factor_Relative();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Stop the currently playing module
 		/// </summary>
 		/********************************************************************/
@@ -428,6 +464,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		public c_int Xmp_Seek_Time(c_int time)
 		{
 			return control.Xmp_Seek_Time(time);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Xmp_Seek_Time_Frame(c_int time)
+		{
+			return control.Xmp_Seek_Time_Frame(time);
 		}
 
 

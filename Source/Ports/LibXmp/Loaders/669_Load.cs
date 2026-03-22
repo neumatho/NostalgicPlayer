@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				xxs.Flg = xxs.Lpe != 0 ? Xmp_Sample_Flag.Loop : 0;	// 1 == Forward loop
 
 				sub.Vol = 0x40;
-				sub.Pan = 0x80;
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;
 
 				if (xxs.Len > 0)

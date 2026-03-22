@@ -140,8 +140,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		};
 
 		private const uint8 None = 0xff;
-		private const uint8 Fx_Imf_FPorta_Up = 0xfe;
-		private const uint8 Fx_Imf_FPorta_Dn = 0xfd;
 
 		// Effect conversion table
 		private static readonly uint8[] fx =
@@ -166,8 +164,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Effects.Fx_NSlide_Dn,
 			Effects.Fx_Porta_Up,
 			Effects.Fx_Porta_Dn,
-			Fx_Imf_FPorta_Up,
-			Fx_Imf_FPorta_Dn,
+			Effects.Fx_Imf_FPorta_Up,
+			Effects.Fx_Imf_FPorta_Dn,
 			Effects.Fx_Flt_CutOff,
 			Effects.Fx_Flt_Resn,
 			Effects.Fx_Offset,
@@ -308,7 +306,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			mod.Trk = mod.Pat * mod.Chn;
 
-			CMemory.memcpy<uint8>(mod.Xxo, ih.Pos, (size_t)mod.Len);
+			CMemory.memcpy(mod.Xxo, ih.Pos, (size_t)mod.Len);
 
 			for (i = 0; i < mod.Len; i++)
 			{
@@ -360,11 +358,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						switch (n)
 						{
-							case 255:
-							case 160:		// ?!
+							case 255:		// No note
+							{
+								n = 0;
+								break;
+							}
+
+							case 160:		// Key off
 							{
 								n = Constants.Xmp_Key_Off;
-								break;		// Key off
+								break;
 							}
 
 							default:
@@ -506,7 +509,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					sub.Sid = smp_Num;
 					sub.Vol = @is.Vol;
-					sub.Pan = (@is.Flg & Imf_Sample_Flag.DefPan) != 0 ? @is.Pan : -1;
+					sub.Pan = (@is.Flg & Imf_Sample_Flag.DefPan) != 0 ? @is.Pan : Constants.Xmp_Inst_No_Default_Pan;
 					xxs.Len = (c_int)@is.Len;
 					xxs.Lps = (c_int)@is.Lps;
 					xxs.Lpe = (c_int)@is.Lpe;
@@ -542,7 +545,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
-			m.Quirk |= Quirk_Flag.Filter | Quirk_Flag.St3 | Quirk_Flag.ArpMem;
+			m.Quirk |= Quirk_Flag.Filter | Quirk_Flag.Marker | Quirk_Flag.RstChn | Quirk_Flag.ArpMem;
 			m.Flow_Mode = FlowMode_Flag.Mode_Orpheus;
 			m.Read_Event_Type = Read_Event.St3;
 
@@ -572,30 +575,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			switch (fxT = fx[fxT])
 			{
-				case Fx_Imf_FPorta_Up:
-				{
-					fxT = Effects.Fx_Porta_Up;
-
-					if (fxP < 0x30)
-						fxP = (uint8)(Ports.LibXmp.Common.Lsn(fxP >> 2) | 0xe0);
-					else
-						fxP = (uint8)(Ports.LibXmp.Common.Lsn(fxP >> 4) | 0xf0);
-
-					break;
-				}
-
-				case Fx_Imf_FPorta_Dn:
-				{
-					fxT = Effects.Fx_Porta_Dn;
-
-					if (fxP < 0x30)
-						fxP = (uint8)(Ports.LibXmp.Common.Lsn(fxP >> 2) | 0xe0);
-					else
-						fxP = (uint8)(Ports.LibXmp.Common.Lsn(fxP >> 4) | 0xf0);
-
-					break;
-				}
-
 				// Extended effects
 				case Effects.Fx_Extended:
 				{

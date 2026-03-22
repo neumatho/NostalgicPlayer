@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				smp_Ptr[i] = (c_int)f.Hio_Read32L();
 				mod.Xxs[i].Len = (c_int)f.Hio_Read32L();
 				mod.Xxi[i].Sub[0].Vol = (c_int)(0xff - f.Hio_Read32L());
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxs[i].Lps = (c_int)f.Hio_Read32L();
 				mod.Xxs[i].Lpe = mod.Xxs[i].Lps + (c_int)f.Hio_Read32L();
 

@@ -73,6 +73,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_uint Msn(c_uint x)
+		{
+			return (x & 0xf0) >> 4;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_uint Lsn(c_uint x)
+		{
+			return x & 0x0f;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Clamp<T>(ref T x, T a, T b) where T : INumber<T>
 		{
 			if (x < a)

@@ -627,9 +627,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				Xmp_SubInstrument sub = xxi.Sub[0];
 
-				f.Hio_Seek(start + pp_Ins[i] * 16, SeekOrigin.Begin);
+				f.Hio_Seek(start + (pp_Ins[i] * 16), SeekOrigin.Begin);
 
-				sub.Pan = 0x80;
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;
 
 				if (f.Hio_Read(buf, 1, 80) != 80)

@@ -16,8 +16,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private const c_float Freq_Param_Mult = 128.0f / (24.0f * 256.0f);
 
 		// LUT for 2 * damping factor
-		private static readonly c_float[] resonance_Table = new c_float[128]
-		{
+		//
+		// Formula for the table:
+		//
+		//    resonance_table[i] = pow(10.0, -((24.0 / 128.0) * i) / 20.0);
+		// or
+		//    resonance_table[i] = pow(10.0, -3.0 * i / 320.0);
+		private static readonly c_float[] resonance_Table =
+		[
 			1.0000000000000000f, 0.9786446094512940f, 0.9577452540397644f, 0.9372922182083130f,
 			0.9172759056091309f, 0.8976871371269226f, 0.8785166740417481f, 0.8597555756568909f,
 			0.8413951396942139f, 0.8234267830848694f, 0.8058421611785889f, 0.7886331081390381f,
@@ -50,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			0.0817523002624512f, 0.0800064504146576f, 0.0782978758215904f, 0.0766257941722870f,
 			0.0749894231557846f, 0.0733879879117012f, 0.0718207582831383f, 0.0702869966626167f,
 			0.0687859877943993f, 0.0673170387744904f, 0.0658794566988945f, 0.0644725710153580f,
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -70,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				fc = fs / 2.0f;
 
 			c_float r = fs / (2.0f * 3.14159265358979f * fc);
-			c_float d = resonance_Table[res >> 1] * (r + 1.0f) - 1.0f;
+			c_float d = (resonance_Table[res >> 1] * (r + 1.0f)) - 1.0f;
 			c_float e = r * r;
 
 			c_float fg = 1.0f / (1.0f + d + e);

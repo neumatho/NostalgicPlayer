@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Drawing.Imaging.Effects;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -167,6 +168,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			xc.Arpeggio.Val[0] = 0;
 			xc.Arpeggio.Count = 0;
 			xc.Arpeggio.Size = 1;
+
+			// Reset toneporta--each libxmp_process_fx may add to the rate
+			if (is_TonePorta)
+				xc.Porta.Slide = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Set_Channel_Volume(Channel_Data xc, c_int vol)
+		{
+			if (vol >= 0)
+			{
+				xc.Volume = vol;
+				Set(xc, Channel_Flag.New_Vol);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Set_Channel_Pan(Channel_Data xc, c_int pan)
+		{
+			// TODO: LIQ supports surround for default panning, unclear if it works.
+			// TODO: Imago Orpheus only temporarily sets channel panning for
+			//       instrument numbers with no note
+			if (pan >= 0)
+			{
+				xc.Pan.Val = pan;
+				xc.Pan.Surround = false;
+			}
 		}
 
 
@@ -215,10 +255,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// specified by combining a note and a portamento effect."
 		/// </summary>
 		/********************************************************************/
-		private void Set_Period_Ft2(c_int note, Xmp_SubInstrument sub, Channel_Data xc, bool is_TonePorta)
+		private void Set_Period_Ft2(c_int key, c_int note, Xmp_SubInstrument sub, Channel_Data xc, bool is_TonePorta)
 		{
-			if ((note > 0) && is_TonePorta)
-				xc.Porta.Target = lib.period.LibXmp_Note_To_Period(note, xc.FineTune, xc.Per_Adj);
+			if (Is_Valid_Note(key - 1) && is_TonePorta)
+			{
+				// Toneporta target updates even for invalid instruments, using
+				// the default transpose +0 (ft2_invalid_porta_target.xm)
+				c_int n = key - 1;
+
+				if (sub != null)
+				{
+					n += ctx.M.Mod.Xxi[xc.Ins].Map[key - 1].Xpo;
+					n += sub.Xpo;
+				}
+
+				xc.Porta.Target = lib.period.LibXmp_Note_To_Period(n, xc.FineTune, xc.Per_Adj);
+			}
 
 			if ((sub != null) && (note >= 0))
 			{
@@ -300,7 +352,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int note = -1;
 			bool is_TonePorta = false;
 			bool is_Retrig = false;
-			bool use_Ins_Vol = false;
 
 			if (Is_TonePorta(e.FxT) || Is_TonePorta(e.F2T))
 				is_TonePorta = true;
@@ -309,20 +360,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				is_Retrig = true;
 
 			// Check instrument
+			if (Is_Valid_Note(e.Note - 1) && !is_TonePorta)
+				xc.Key = e.Note - 1;
+
 			if (e.Ins != 0)
 			{
 				c_int ins = e.Ins - 1;
-				use_Ins_Vol = true;
 
 				Set(xc, Channel_Flag.New_Ins);
 				xc.FadeOut = 0x10000;		// For painlance.mod pat 0 ch 3 echo
+
+				// TODO: FunkTracker instruments probably don't reset
+				// effects, investigate: fnk_note_vslide_cancel.fnk
+
 				xc.Per_Flags = Channel_Flag.None;
 				xc.Offset.Val = 0;
 				Reset_Note(xc, Note_Flag.Release | Note_Flag.FadeOut);
 
 				if (Is_Valid_Instrument(mod, ins))
 				{
-					sub = Get_SubInstrument(ins, e.Note - 1);
+					sub = Get_SubInstrument(ins, xc.Key);
 
 					if (sub != null)
 					{
@@ -336,22 +393,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							xc.FineTune = sub.Fin;
 							xc.Ins = ins;
 						}
-					}
 
-					if (is_TonePorta)
-					{
-						// Get new instrument volume
-						if (sub != null)
+						// Dennis Lindroos: instrument volume
+						// is not used on split channels
+						if ((xc.Split == 0) && (e.Note != Constants.Xmp_Key_Off))
 						{
-							// Dennis Lindroos: Instrument volume
-							// is not used on split channels
-							if (xc.Split == 0)
-								xc.Volume = sub.Vol;
-
-							use_Ins_Vol = false;
+							Set_Channel_Volume(xc, sub.Vol);
+							Set_Channel_Pan(xc, sub.Pan);
 						}
 					}
-					else
+
+					if (!is_TonePorta)
 					{
 						xc.Ins = ins;
 						xc.Ins_Fade = mod.Xxi[ins].Rls;
@@ -383,14 +435,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				Set(xc, Channel_Flag.New_Note);
 
+				// FunkTracker - new notes cancel persistent volume slide.
+				// Farandole Composer notes are always paired with volume,
+				// so this doesn't notably affect it
+				Reset_Per(xc, Channel_Flag.Vol_Slide);
+
 				if (e.Note == Constants.Xmp_Key_Off)
 				{
 					Set_Note(xc, Note_Flag.Release);
-					use_Ins_Vol = false;
 				}
 				else if (!is_TonePorta && Is_Valid_Note(e.Note - 1))
 				{
-					xc.Key = e.Note - 1;
 					Reset_Note(xc, Note_Flag.End);
 
 					sub = Get_SubInstrument(xc.Ins, xc.Key);
@@ -415,7 +470,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					else
 					{
 						xc.Flags = Channel_Flag.None;
-						use_Ins_Vol = false;
 						note = xc.Key;
 					}
 				}
@@ -440,6 +494,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				xc.Smp = sub.Sid;
 			}
 
+			// sub is now the currently playing subinstrument, which may not be
+			// related to e->ins if there is active toneporta!
 			sub = Get_SubInstrument(xc.Ins, xc.Key);
 
 			Set_Effect_Defaults(note, sub, xc, is_TonePorta);
@@ -447,11 +503,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				Reset_Envelopes(xc);
 
 			// Process new volume
+			Set_Channel_Volume(xc, e.Vol - 1);
+
 			if (e.Vol != 0)
 			{
-				xc.Volume = e.Vol - 1;
-				Set(xc, Channel_Flag.New_Vol);
-				Reset_Per(xc, Channel_Flag.Vol_Slide);		// FIXME: Should this be for FAR only?
+				// Farandole Composer - volume resets slide to volume
+				Reset_Per(xc, Channel_Flag.Vol_Slide);
 			}
 
 			// Secondary effect handled first
@@ -484,9 +541,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				Reset(xc, Channel_Flag.Offset);
 			}
 
-			if (use_Ins_Vol && !Test(xc, Channel_Flag.New_Vol) && (xc.Split == 0))
-				xc.Volume = sub.Vol;
-
 			return 0;
 		}
 
@@ -516,7 +570,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Xmp_Module mod = m.Mod;
 			Channel_Data xc = p.Xc_Data[chn];
 			Xmp_SubInstrument sub;
-			bool k00 = false;
 			Xmp_Event ev = new Xmp_Event();
 
 			// From the OpenMPT DelayCombination.xm test case:
@@ -529,299 +582,212 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			ev.CopyFrom(e);
 
-			// From OpenMPT TremorReset.xm test case:
-			// "Even if a tremor effect muted the sample on a previous row, volume
-			// commands should be able to override this effect."
-			if (ev.Vol != 0)
-				xc.Tremor.Count &= ~0x80;
-
 			xc.Flags = Channel_Flag.None;
 			c_int note = -1;
 			c_int key = ev.Note;
-			c_int ins = ev.Ins;
-			bool new_Invalid_Ins = false;
 			bool is_TonePorta = false;
-			bool use_Ins_Vol = false;
+			bool is_Delayed = false;
 
-			// From the OpenMPT key_off.xm test case:
-			// "Key off at tick 0 (K00) is very dodgy command. If there is a note
-			// next to it, the note is ignored. If there is a volume column
-			// command or instrument next to it and the current instrument has
-			// no volume envelope, the note is faded out instead of being cut."
-			if ((ev.FxT == Effects.Fx_Keyoff) && (ev.FxP == 0))
+			// Delay has a few bizarre hacks that need to be supported
+			if ((ev.FxT == Effects.Fx_Extended) && (Common.Msn(ev.FxP) == Effects.Ex_Delay) && (Common.Lsn(ev.FxP) != 0))
 			{
-				k00 = true;
-				key = 0;
+				// No note + delay -> note memory (ft2_delay_note_memory.xm).
+				// Combined with ins# memory, effectively causes a retrigger
+				key = key != 0 ? key : xc.Key_Memory != 0 ? xc.Key_Memory : xc.Key + 1;
 
-				if ((ins != 0) || (ev.Vol != 0) || (ev.F2T != 0))
-				{
-					if (Is_Valid_Instrument(mod, xc.Ins) && ((~mod.Xxi[xc.Ins].Aei.Flg & Xmp_Envelope_Flag.On) != 0))
-					{
-						Set_Note(xc, Note_Flag.FadeOut);
-						ev.FxT = 0;
-					}
-				}
+				// Key off + no ins# + delay + volume column pan -> ignore pan
+				// (OpenMPT PanOff.xm) (ft2_delay_volume_column.xm)
+				if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs) && (key == Constants.Xmp_Key_Off) && (ev.Ins == 0) && (ev.F2T == Effects.Fx_SetPan))
+					ev.F2T = ev.F2P = 0;
+
+				is_Delayed = true;
 			}
 
 			if (Is_TonePorta(ev.FxT) || Is_TonePorta(ev.F2T))
+			{
 				is_TonePorta = true;
 
-			// Check instrument
-
-			// Ignore invalid instruments. The last instrument, invalid or
-			// not, is preserved in channel data (see read_event() below).
-			// Fixes stray delayed notes in forgotten_city.xm
-			if ((ins > 0) && !Is_Valid_Instrument(mod, ins - 1))
-				ins = 0;
-
-			// FT2: Retrieve old instrument volume
-			if (ins != 0)
-			{
-				if ((key == 0) || (key >= Constants.Xmp_Key_Off))
-				{
-					// Previous instrument
-					sub = Get_SubInstrument(xc.Ins, xc.Key);
-
-					// No note
-					if (sub != null)
-					{
-						c_int pan = mod.Xxc[chn].Pan - 128;
-						xc.Volume = sub.Vol;
-
-						if (!Common.Has_Quirk(m, Quirk_Flag.FtMod))
-							xc.Pan.Val = pan + ((sub.Pan - 128) * (128 - Math.Abs(pan))) / 128 + 128;
-
-						xc.Ins_Fade = mod.Xxi[xc.Ins].Rls;
-						Set(xc, Channel_Flag.New_Vol);
-					}
-				}
+				// Mx + 3xx/5xy applies toneporta for both commands, but 3xx
+				// uses the rate from the volume slot (ft2_double_toneporta.xm,
+				// OpenMPT TonePortamentoMemory.xm)
+				if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs) && (ev.FxT == Effects.Fx_TonePorta) && Is_TonePorta(ev.F2T))
+					ev.FxP = 0;
 			}
 
-			// Do this regardless if the instrument is invalid or not -- unless
-			// XM keyoff is used. Fixes xyce-dans_la_rue.xm chn 0 patterns 0E/0F and
-			// chn 10 patterns 0D/0E, see https://github.com/libxmp/libxmp/issues/152
-			// for details
-			if ((ev.Ins != 0) && (key != Constants.Xmp_Key_Fade))
+			// FT2 deletes K00 and, if there is no volume fx toneporta, overwrites
+			// the note with keyoff (ft2_k00_is_note_off.xm, OpenMPT key_off.xm,
+			// ft2_envelope_reset.xm)
+			if ((ev.FxT == Effects.Fx_Keyoff) && (ev.FxP == 0))
+			{
+				ev.FxT = 0;
+
+				if (!is_TonePorta)
+					key = Constants.Xmp_Key_Off;
+			}
+
+			// Check instrument
+			// 
+			// Only update instrument/sample on new valid note + no toneporta/K00.
+			// Lamb/forgotten city.xm relies heavily on quirks here
+			if (ev.Ins != 0)
 			{
 				Set(xc, Channel_Flag.New_Ins);
-				use_Ins_Vol = true;
-				xc.Per_Flags = Channel_Flag.None;
+				xc.Per_Flags = Channel_Flag.None;	// For posterity; not used by XM
+			}
 
-				Reset_Note(xc, Note_Flag.Release | Note_Flag.SusExit);
-				if (!k00)
-					Reset_Note(xc, Note_Flag.FadeOut);
+			if (Is_Valid_Note(key - 1) && !is_TonePorta)
+			{
+				Xmp_Instrument xxi = null;
 
-				xc.FadeOut = 0x10000;
+				// Note w/o instrument loads the last referenced instrument
+				c_int ins = ev.Ins != 0 ? ev.Ins : xc.Old_Ins;
+				c_int smp = -1;
+				c_int n = key - 1;
 
+				// Updates on note + !toneporta + !K00 and is unaffected by
+				// out-of-range transposition checks (ft2_note_range.xm)
+				xc.Key_Memory = key;
+
+				// Unused instruments have fade 0x80, no envelopes, no vibrato.
+				// Unused samples have volume 0, pan 0x80, transpose 0, no data
+				// libxmp represents unused/invalid instruments/samples as -1
+				// (test_player_ft2_note_off_after_invalid_ins)
 				if (Is_Valid_Instrument(mod, ins - 1))
 				{
-					if (!is_TonePorta)
-						xc.Ins = ins - 1;
+					xxi = mod.Xxi[ins - 1];
+					sub = lib.player.Get_SubInstrument(ins - 1, key - 1);
+
+					if (sub != null)
+					{
+						n += xxi.Map[key - 1].Xpo;
+						n += sub.Xpo;
+						smp = sub.Sid;
+					}
+				}
+
+				// TODO: out-of-range notes update envelopes, no ins.# req
+
+				// Fade update requires ins.# (ft2_instrument_fade_update.xm).
+				// Out-of-range notes update (ft2_note_range_instrument_fade.xm)
+				if (ev.Ins != 0)
+					xc.Ins_Fade = xxi != null ? xxi.Rls : 0x80 /* FT2 default */ << 1 /* conv */;
+
+				// Valid notes update the instrument, sample, key, and note.
+				// Note B-(-1) updates key/instrument/sample, but not the note.
+				// Notes >A#9, <B-(-1) act as if the key does not exist at all.
+				// (ft2_note_range.xm, OpenMPT NoteLimit.xm/NoteLimit2.xm)
+				if ((n >= Constants.Ft2_Note_Bn1) && (n <= Constants.Ft2_Note_As9))
+				{
+					if (n >= Constants.Ft2_Note_C0)
+						xc.Note = n;
+
+					xc.Key = key - 1;
+					xc.Ins = Is_Valid_Instrument(mod, ins - 1) ? ins - 1 : -1;
+					xc.Smp = Is_Valid_Sample(mod, smp) ? smp : -1;
+				}
+				else
+					key = 0;
+			}
+
+			// Get the new instrument. If the instrument/key wasn't updated, this
+			// is equivalent to FT2 retaining the previous instrument/sample
+			sub = Get_SubInstrument(xc.Ins, xc.Key);
+
+			// Check note
+			//
+			// Do not send a new note for toneporta (Quazar/funky stars.xm pos 5
+			// ch 9, Mark Birch/comic bakery remix.xm pos 1 ch 3)
+			if (key != 0)
+				Set(xc, Channel_Flag.New_Note);
+
+			if (Is_Valid_Note(key - 1) && !is_TonePorta)
+			{
+				Reset_Note(xc, Note_Flag.End);
+
+				// Send note even if the current sample is invalid.
+				// Playing with an active invalid sample cuts the channel:
+				// invalid instrument, valid instrument with invalid subins, or
+				// zero-length sample (test_player_ft2_invalid_ins_defaults)
+				Set_Patch(chn, xc.Ins, xc.Smp, xc.Note);
+
+				note = xc.Note;
+			}
+
+			// Check key off/envelopes
+
+			if (key != 0)
+				Set(xc, Channel_Flag.New_Note);
+
+			if (key == Constants.Xmp_Key_Off)
+			{
+				Xmp_Envelope env = null;
+
+				if (Is_Valid_Instrument(mod, xc.Ins))
+					env = mod.Xxi[xc.Ins].Aei;
+
+				if ((env != null) && ((env.Flg & Xmp_Envelope_Flag.On) != 0))
+				{
+					if (Sustain_Check(env, xc.V_Idx))
+					{
+						// See OpenMPT EnvOff.xm. In certain
+						// cases a release event is effective
+						// only in the next frame
+						Set_Note(xc, Note_Flag.SusExit);
+					}
+					else
+						Set_Note(xc, Note_Flag.Release);
 				}
 				else
 				{
-					new_Invalid_Ins = true;
-
-					// If no note is set FT2 doesn't cut on invalid
-					// instruments (it keeps playing the previous one).
-					// If a note is set it cuts the current sample
-					xc.Flags = Channel_Flag.None;
-
-					if (is_TonePorta)
-						key = 0;
+					// No volume envelope -> cut volume to 0
+					// (ft2_note_off_fade.xm, OpenMPT NoteOffVolume.xm)
+					Set_Channel_Volume(xc, 0);
 				}
 
-				xc.Tremor.Count = 0x20;
+				// Keyoff always begins fadeout (ft2_note_off_fade.xm)
+				Set_Note(xc, Note_Flag.FadeOut);
 			}
 
-			// Check note
-			if (ins != 0)
+			if (((ev.Ins != 0) && (key != Constants.Xmp_Key_Off)) || is_Delayed)
 			{
-				if ((key > 0) && (key < Constants.Xmp_Key_Off))
-				{
-					// Retrieve volume when we have note
-					// and only if we have instrument, otherwise we're in
-					// case 1: new note and no instrument
-
-					// Current instrument
-					sub = Get_SubInstrument(xc.Ins, key - 1);
-					if (sub != null)
-					{
-						c_int pan = mod.Xxc[chn].Pan - 128;
-						xc.Volume = sub.Vol;
-
-						if (!Common.Has_Quirk(m, Quirk_Flag.FtMod))
-							xc.Pan.Val = pan + ((sub.Pan - 128) * (128 - Math.Abs(pan))) / 128 + 128;
-
-						xc.Ins_Fade = mod.Xxi[xc.Ins].Rls;
-					}
-					else
-						xc.Volume = 0;
-
-					Set(xc, Channel_Flag.New_Vol);
-				}
-			}
-
-			if (key != 0)
-			{
-				Set(xc, Channel_Flag.New_Note);
-
-				if (key == Constants.Xmp_Key_Off)
-				{
-					bool env_On = false;
-					bool vol_Set = (ev.Vol != 0) || (ev.FxT == Effects.Fx_VolSet);
-					bool delay_Fx = (ev.FxT == Effects.Fx_Extended) && (ev.FxP == 0xd0);
-					Xmp_Envelope env = null;
-
-					// OpenMPT NoteOffVolume.xm:
-					// "If an instrument has no volume envelope, a note-off
-					// command should cut the sample completely - unless
-					// there is a volume command next it. This applies to
-					// both volume commands (volume and effect column)."
-					//
-					// ...and unless we have a keyoff+delay without setting
-					// an instrument. See OffDelay.xm
-					if (Is_Valid_Instrument(mod, xc.Ins))
-					{
-						env = mod.Xxi[xc.Ins].Aei;
-
-						if ((env.Flg & Xmp_Envelope_Flag.On) != 0)
-							env_On = true;
-					}
-
-					if (env_On || (!vol_Set && ((ev.Ins == 0) || !delay_Fx)))
-					{
-						if (Sustain_Check(env, xc.V_Idx))
-						{
-							// See OpenMPT EnvOff.xm. In certain
-							// cases a release event is effective
-							// only in the next frame
-							Set_Note(xc, Note_Flag.SusExit);
-						}
-						else
-							Set_Note(xc, Note_Flag.Release);
-
-						use_Ins_Vol = false;
-					}
-					else
-						Set_Note(xc, Note_Flag.FadeOut);
-
-					// See OpenMPT keyoff+instr.xm, pattern 2 row 0x40
-					if (env_On && (ev.FxT == Effects.Fx_Extended) && ((ev.FxP >> 4) == Effects.Ex_Delay))
-					{
-						// See OpenMPT OffDelay.xm test case
-						if ((ev.FxP & 0xf) != 0)
-							Reset_Note(xc, Note_Flag.Release | Note_Flag.SusExit);
-					}
-				}
-				else if (key == Constants.Xmp_Key_Fade)
-				{
-					// Handle keyoff + instrument case (NoteOff2.xm)
-					Set_Note(xc, Note_Flag.FadeOut);
-				}
-				else if (is_TonePorta)
-				{
-					// Set key to 0 so we can have the tone portamento from
-					// the original note (see funky_stars.xm pos 5 ch 9)
-					key = 0;
-
-					// And do the same if there's no keyoff (see comic
-					// bakery remix.xm pos 1 ch 3)
-				}
-
-				if ((ev.Ins == 0) && !Is_Valid_Instrument(mod, xc.Old_Ins - 1))
-					new_Invalid_Ins = true;
-
-				if (new_Invalid_Ins)
-					lib.virt.LibXmp_Virt_ResetChannel(chn);
-			}
-
-			// Check note range -- from the OpenMPT test NoteLimit.xm:
-			// "I think one of the first things Fasttracker 2 does when parsing a
-			// pattern cell is calculating the “real” note (i.e. pattern note +
-			// sample transpose), and if this “real” note falls out of its note
-			// range, it is ignored completely (wiped from its internal channel
-			// memory). The instrument number next it, however, is not affected
-			// and remains in the memory."
-			sub = null;
-
-			if (Is_Valid_Note(key - 1))
-			{
-				c_int k = key - 1;
-				sub = Get_SubInstrument(xc.Ins, k);
-
-				if (!new_Invalid_Ins && (sub != null))
-				{
-					c_int transp = mod.Xxi[xc.Ins].Map[k].Xpo;
-					c_int k2 = k + sub.Xpo + transp;
-
-					if ((k2 < 12) || (k2 > 130))
-					{
-						key = 0;
-						Reset(xc, Channel_Flag.New_Note);
-					}
-				}
-			}
-
-			if (Is_Valid_Note(key - 1))
-			{
-				xc.Key = --key;
+				// Reset release/fadeout for instrument numbers with no keyoff/K00
+				// (xyce-dans_la_rue.xm chn 0 pat. 0E/0F, chn 10 pat. 0D/0E;
+				// ft2_k00_defaults.xm; ft2_note_off_sustain.xm), and on
+				// delayed rows (ft2_delay_envelope_*.xm, ft2_note_off_fade.xm,
+				// OpenMPT NoteOff.xm). Other cases like note w/o ins# don't
+				// reset fadeout (Cave Story - Last Battle.xm pos 11 chn 2,
+				// ft2_note_no_fadeout_reset.xm)
 				xc.FadeOut = 0x10000;
-				Reset_Note(xc, Note_Flag.End);
+				Reset_Note(xc, Note_Flag.FadeOut);
+				Reset_Note(xc, Note_Flag.Release | Note_Flag.SusExit);
 
 				if (sub != null)
 				{
-					if ((~mod.Xxi[xc.Ins].Aei.Flg & Xmp_Envelope_Flag.On) != 0)
-						Reset_Note(xc, Note_Flag.Release | Note_Flag.FadeOut);
+					// Only reset envelopes with a valid active instrument
+					// (ft2_envelope_invalid_ins.xm)
+					// (Ghidorah/olympic dance.xm pos 10)
+					// (Jeroen Tel/letting go.xm pos 4 chn 20)
+					Reset_Envelopes(xc);
 				}
 
-				if (!new_Invalid_Ins && (sub != null))
-				{
-					c_int transp = mod.Xxi[xc.Ins].Map[key].Xpo;
-
-					note = key + sub.Xpo + transp;
-					c_int smp = sub.Sid;
-
-					if (!Is_Valid_Sample(mod, smp))
-						smp = -1;
-
-					if ((smp >= 0) && (smp < mod.Smp))
-					{
-						Set_Patch(chn, xc.Ins, smp, note);
-						xc.Smp = smp;
-					}
-				}
-				else
-				{
-					xc.Flags = Channel_Flag.None;
-					use_Ins_Vol = false;
-				}
+				// Tremor count resets with fadeout (ft2_tremor_reset.xm)
+				xc.Tremor.Count = Tremor_Flag.Suppress;
 			}
 
-			sub = Get_SubInstrument(xc.Ins, xc.Key);
-
+			// TODO: this function needs checking, probably split
 			Set_Effect_Defaults(note, sub, xc, is_TonePorta);
 
-			if ((ins != 0) && (sub != null) && !k00)
+			if (ev.Ins != 0)
 			{
-				// Reset envelopes on new instrument, see olympic.xm pos 10
-				// But make sure we have an instrument set, see Letting go
-				// pos 4 chn 20
-				Reset_Envelopes(xc);
+				// Any ins.#: use active sample for defaults. Invalid samples
+				// have volume 0 panning 0x80 (ft2_invalid_ins_defaults.xm).
+				// Works on lines with K00 (ft2_k00_defaults.xm)
+				Set_Channel_Volume(xc, sub != null ? sub.Vol : 0);
+				Set_Channel_Pan(xc, sub != null ? sub.Pan : 0x80);
 			}
 
 			// Process new volume
-			if (ev.Vol != 0)
-			{
-				xc.Volume = ev.Vol - 1;
-				Set(xc, Channel_Flag.New_Vol);
-
-				if (Test_Note(xc, Note_Flag.End))	// m5v-nine.xm
-				{
-					xc.FadeOut = 0x10000;			// OpenMPT NoteOff.xm
-					Reset_Note(xc, Note_Flag.Release | Note_Flag.FadeOut);
-				}
-			}
+			Set_Channel_Volume(xc, ev.Vol - 1);
 
 			// FT2: Always reset sample offset
 			xc.Offset.Val = 0;
@@ -829,36 +795,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			// Secondary effect handled first
 			LibXmp_Process_Fx(xc, chn, ev, 1);
 			LibXmp_Process_Fx(xc, chn, ev, 0);
-			Set_Period_Ft2(note, sub, xc, is_TonePorta);
+			Set_Period_Ft2(key, note, sub, xc, is_TonePorta);
 
-			if (sub == null)
-				return 0;
+			// TODO: Modplug, MT2, rstST process some FX every tick (affects toneporta memory)
+
+			if (Test(xc, Channel_Flag.New_Vol))
+			{
+				// Tremor is reset by ins# without keyoff or by delay rows.
+				// Other events that set volume (volume column/Cxx, keyoff+ins#)
+				// also temporarily override tremor, but don't reset it.
+				// (Tremor likely just overwrites the channel volume in FT2.)
+				// (ft2_tremor_reset.xm, OpenMPT TremorRecover.xm)
+				xc.Tremor.Count |= Tremor_Flag.Suppress;
+			}
 
 			if (note >= 0)
 			{
-				xc.Note = note;
-
-				// From the OpenMPT test cases (3xx-no-old-samp.xm):
-				// "An offset effect that points beyond the sample end should
-				// stop playback on this channel."
-				//
-				// ... except in Skale Tracker (and possibly others), so make this a
-				// FastTracker2 quirk. See Armada Tanks game.it (actually an XM).
-				// Reported by Vladislav Suschikh
-				if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs) && (xc.Offset.Val >= mod.Xxs[sub.Sid].Len))
-					lib.virt.LibXmp_Virt_ResetChannel(chn);
-				else
+				// Sample offset requires valid note + 9xx + !toneporta
+				// (Decibelter/Cosmic 'Wegian Mamas.xm pattern 4 channel 8).
+				// In FT2, memory is set ONLY in these cases, and offsets past
+				// the end of the sample cut. (Skale Tracker is different, so
+				// limit this to QUIRK_FT2BUGS; reported by Vladislav Suschikh.)
+				// (ft2_offset_memory.xm, OpenMPT 3xx-no-old-samp.xm/porta-offset.xm)
+				if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs) && Test(xc, Channel_Flag.Offset))
 				{
-					// (From Decibelter - Cosmic 'Wegian Mamas.xm p04 ch7)
-					// We retrigger the sample only if we have a new note
-					// without tone portamento, otherwise we won't play
-					// sweeps and loops correctly
-					lib.virt.LibXmp_Virt_VoicePos(chn, xc.Offset.Val);
-				}
-			}
+					xc.Offset.Memory = (xc.Offset.Val & 0xff00) >> 8;
 
-			if (use_Ins_Vol && !Test(xc, Channel_Flag.New_Vol))
-				xc.Volume = sub.Vol;
+					if (!Is_Valid_Sample(mod, xc.Smp) || (xc.Offset.Val >= mod.Xxs[xc.Smp].Len))
+						lib.virt.LibXmp_Virt_ResetChannel(chn);
+				}
+
+				lib.virt.LibXmp_Virt_VoicePos(chn, xc.Offset.Val);
+			}
 
 			return 0;
 		}
@@ -882,7 +850,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int note = -1;
 			bool not_Same_Ins = false;
 			bool is_TonePorta = false;
-			bool use_Ins_Vol = false;
 
 			if (Is_TonePorta(e.FxT) || Is_TonePorta(e.F2T))
 				is_TonePorta = true;
@@ -891,11 +858,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				is_TonePorta = false;
 
 			// Check instrument
+			if (Is_Valid_Note(e.Note - 1) && !is_TonePorta)
+				xc.Key = e.Note - 1;
+
 			if (e.Ins != 0)
 			{
 				c_int ins = e.Ins - 1;
 				Set(xc, Channel_Flag.New_Ins);
-				use_Ins_Vol = true;
 				xc.FadeOut = 0x10000;
 				xc.Per_Flags = Channel_Flag.None;
 				xc.Offset.Val = 0;
@@ -903,7 +872,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				if (Is_Valid_Instrument(mod, ins))
 				{
-					// Valid ins
 					if (xc.Ins != ins)
 					{
 						not_Same_Ins = true;
@@ -913,25 +881,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							xc.Ins = ins;
 							xc.Ins_Fade = mod.Xxi[ins].Rls;
 						}
-						else
-						{
-							// Get new instrument volume
-							sub = Get_SubInstrument(ins, e.Note - 1);
-							if (sub != null)
-							{
-								xc.Volume = sub.Vol;
-								use_Ins_Vol = false;
-							}
-						}
+					}
+
+					// Get new instrument volume
+					sub = Get_SubInstrument(ins, xc.Key);
+
+					if ((sub != null) && (e.Note != Constants.Xmp_Key_Off))
+					{
+						Set_Channel_Volume(xc, sub.Vol);
+						Set_Channel_Pan(xc, sub.Pan);
 					}
 				}
 				else
 				{
-					// Invalid ins
-
 					// Ignore invalid instruments
 					xc.Flags = Channel_Flag.None;
-					use_Ins_Vol = false;
 				}
 			}
 
@@ -943,7 +907,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (e.Note == Constants.Xmp_Key_Off)
 				{
 					Set_Note(xc, Note_Flag.Release);
-					use_Ins_Vol = false;
 				}
 				else if (is_TonePorta)
 				{
@@ -954,7 +917,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 				else if (Is_Valid_Note(e.Note - 1))
 				{
-					xc.Key = e.Note - 1;
 					Reset_Note(xc, Note_Flag.End);
 
 					sub = Get_SubInstrument(xc.Ins, xc.Key);
@@ -976,13 +938,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						}
 					}
 					else
-					{
 						xc.Flags = Channel_Flag.None;
-						use_Ins_Vol = false;
-					}
 				}
 			}
 
+			// sub is now the currently playing subinstrument, which may not be
+			// related to e->ins if there is active toneporta!
 			sub = Get_SubInstrument(xc.Ins, xc.Key);
 
 			Set_Effect_Defaults(note, sub, xc, is_TonePorta);
@@ -990,16 +951,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				Reset_Envelopes(xc);
 
 			// Process new volume
-			if (e.Vol != 0)
-			{
-				xc.Volume = e.Vol - 1;
-				Set(xc, Channel_Flag.New_Vol);
-			}
+			Set_Channel_Volume(xc, e.Vol - 1);
 
 			// Secondary effect handled first
 			LibXmp_Process_Fx(xc, chn, e, 1);
 			LibXmp_Process_Fx(xc, chn, e, 0);
 			Set_Period(note, sub, xc, is_TonePorta);
+
+			// TODO: Orpheus processes some FX every tick (affects toneporta memory);
+			// toneporta is additive only if both values are the same (otherwise,
+			// use the value from slot 2)
 
 			if (sub == null)
 				return 0;
@@ -1009,9 +970,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				xc.Note = note;
 				lib.virt.LibXmp_Virt_VoicePos(chn, xc.Offset.Val);
 			}
-
-			if (use_Ins_Vol && !Test(xc, Channel_Flag.New_Vol))
-				xc.Volume = sub.Vol;
 
 			if (Common.Has_Quirk(m, Quirk_Flag.St3Bugs) && Test(xc, Channel_Flag.New_Vol))
 				xc.Volume = xc.Volume * p.GVol / m.VolBase;
@@ -1031,19 +989,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			if ((to > 0) && (to != from))
 				p.Xc_Data[to].CopyFrom(p.Xc_Data[from]);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Has_Note_Event(Xmp_Event e)
-		{
-			return (e.Note != 0) && (e.Note <= Constants.Xmp_Max_Keys);
 		}
 
 
@@ -1175,7 +1120,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			// Notes with unmapped instruments are ignored
 			if (ev.Ins != 0)
 			{
-				if ((ev.Ins <= mod.Ins) && Has_Note_Event(ev))
+				if ((ev.Ins <= mod.Ins) && Is_Valid_Note(ev.Note - 1))
 				{
 					c_int ins = ev.Ins - 1;
 
@@ -1188,7 +1133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			}
 			else
 			{
-				if (Has_Note_Event(ev))
+				if (Is_Valid_Note(ev.Note - 1))
 				{
 					c_int ins = xc.Old_Ins - 1;
 
@@ -1549,11 +1494,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (note >= 0)
 				{
 					// Reset pan, see OpenMPT PanReset.it
-					if (sub.Pan >= 0)
-					{
-						xc.Pan.Val = sub.Pan;
-						xc.Pan.Surround = false;
-					}
+					Set_Channel_Pan(xc, sub.Pan);
 
 					if (Test_Note(xc, Note_Flag.Cut))
 						Reset_Envelopes(xc);
@@ -1568,15 +1509,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((ev.Vol != 0) && (!Test_Note(xc, Note_Flag.Cut) || (ev.Ins != 0)))
 			{
 				// Do this even for XMP_KEY_OFF (see OpenMPT NoteOffInstr.it row 4)
-				xc.Volume = ev.Vol - 1;
-				Set(xc, Channel_Flag.New_Vol);
+				Set_Channel_Volume(xc, ev.Vol - 1);
 			}
 
 			// IT: Always reset sample offset
 			xc.Offset.Val &= ~0xffff;
 
 			// According to Storlek test 25, Impulse Tracker handles the volume
-			// column effects after the standard effects
+			// column effects after the standard effects.
+			// TODO: IT updates toneporta memory on first tick but reloads memory
+			// to use for the rate for both channels every tick afterward.
+			// TODO: Modplug processes some FX every tick (affects toneporta memory)
 			LibXmp_Process_Fx(xc, chn, ev, 0);
 			LibXmp_Process_Fx(xc, chn, ev, 1);
 			Set_Period(note, sub, xc, is_TonePorta);
@@ -1605,7 +1548,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		private c_int Read_Event_Med(Xmp_Event e, c_int chn)
 		{
-			return 0;
+			throw new NotImplementedException();
 		}
 
 
@@ -1617,7 +1560,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		private c_int Read_Event_SMix(Xmp_Event e, c_int chn)
 		{
-			return 0;
+			throw new NotImplementedException();
 		}
 
 

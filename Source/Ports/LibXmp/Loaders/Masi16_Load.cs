@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				c_int fineTune = buf[60];
 				sub.Vol = buf[61];
 				uint16 c2Spd = DataIo.ReadMem16L(buf + 62);
-				sub.Pan = 0x80;
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = num;
 
 				xxs.Flg = (flags & 0x80) != 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;

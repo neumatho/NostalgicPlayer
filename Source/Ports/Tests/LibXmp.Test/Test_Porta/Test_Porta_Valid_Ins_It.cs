@@ -4,8 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Porta
 {
@@ -25,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Porta
 		// PT4b2           Cont    NewVol  NewVol  Cut     <=
 		// MED             Cont    NewVol  NewVol  Cut     <=
 		// FT2             Cont    OldVol  OldVol  OldVol
-		// PT3.15             Cont    NewVol  NewVol  Cont
+		// ST3             Cont    NewVol  NewVol  Cont
 		// IT(s)           Cont    NewVol  NewVol  Cont
 		// IT(i) @         Cont    NewVol  NewVol  Cont
 		// DT32            Cont    NewVol  NewVol  Cut
@@ -42,40 +44,45 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Porta
 			Xmp_Context ctx = GetContext(opaque);
 			Player_Data p = ctx.P;
 
-			Create_Simple_Module(opaque, 2, 2);
-			Set_Instrument_Volume(opaque, 0, 0, 22);
-			Set_Instrument_Volume(opaque, 1, 0, 33);
-			New_Event(opaque, 0, 0, 0, 60, 1, 44, 0x0f, 2, 0, 0);
-			New_Event(opaque, 0, 1, 0, 50, 2, 0, 0x03, 4, 0, 0);
+			Create_Read_Event_Test_Module(opaque, 2);
+			New_Event(opaque, 0, 0, 0, Key_C5, Ins_0, 0, 0x00, 0, 0, 0);
+			New_Event(opaque, 0, 1, 0, 0, 0, 0, Effects.Fx_VolSet, Set_Vol, Effects.Fx_SetPan, Set_Pan);
+			New_Event(opaque, 0, 2, 0, Key_D4, Ins_1, 0, Effects.Fx_TonePorta, 4, 0, 0);
 			Set_Quirk(opaque, Quirk_Flag.It, Read_Event.It);
 
-			opaque.Xmp_Start_Player(44100, 0);
+			opaque.Xmp_Start_Player(Constants.Xmp_Min_SRate, 0);
 
 			// Row 0
 			opaque.Xmp_Play_Frame();
 
+			Channel_Data xc = p.Xc_Data[0];
 			c_int voc = Map_Channel(p, 0);
 			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
-			Assert.AreEqual(59, vi.Note, "Set note");
-			Assert.AreEqual(0, vi.Ins, "Set instrument");
-			Assert.AreEqual(43 * 16, vi.Vol, "Set volume");
-			Assert.AreEqual(0, vi.Pos0, "Sample position");
+			Check_New(xc, vi, Key_C5, Ins_0, Ins_0_Sub_0_Vol, Ins_0_Sub_0_Pan, Ins_0_Fade, "row 0");
 
 			opaque.Xmp_Play_Frame();
 
-			// Row 1: Valid instrument with tone portamento (IT)
+			// Row 1: Set non-default volume and pan
+			opaque.Xmp_Play_Frame();
+
+			Check_On(xc, vi, Key_C5, Ins_0, Set_Vol, Set_Pan, Ins_0_Fade, "row 1");
+
+			opaque.Xmp_Play_Frame();
+
+			// Row 2: Valid instrument with tone portamento (IT)
 			//
 			// When a new valid instrument, different from the current instrument
 			// is played with tone portamento, IT keeps playing the current
 			// sample but sets the volume to the new instrument's default volume
+			// FIXME: either the description or the behavior here is wrong;
+			// libxmp is playing a new note with the new instrument
 			opaque.Xmp_Play_Frame();
 
-			Assert.AreEqual(1, vi.Ins, "Not new instrument");
-			Assert.AreEqual(49, vi.Note, "Not new note");
-			Assert.AreEqual(33 * 16, vi.Vol, "Not new volume");
-			Assert.AreEqual(0, vi.Pos0, "Sample didn't reset");
+			Check_New(xc, vi, Key_D4, Ins_1, Ins_1_Sub_0_Vol, Ins_1_Sub_0_Pan, Ins_1_Fade, "row 2");
+
+			opaque.Xmp_Play_Frame();
 
 			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();

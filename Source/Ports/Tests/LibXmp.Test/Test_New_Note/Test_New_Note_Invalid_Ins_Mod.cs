@@ -4,8 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_New_Note
 {
@@ -49,35 +51,66 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_New_Note
 			Xmp_Context ctx = GetContext(opaque);
 			Player_Data p = ctx.P;
 
-			Create_Simple_Module(opaque, 2, 2);
-			Set_Instrument_Volume(opaque, 0, 0, 22);
-			Set_Instrument_Volume(opaque, 1, 0, 33);
-			New_Event(opaque, 0, 0, 0, 60, 1, 44, 0x0f, 2, 0, 0);
-			New_Event(opaque, 0, 1, 0, 50, 3, 0, 0x00, 0, 0, 0);
+			Create_Read_Event_Test_Module(opaque, 2);
+			New_Event(opaque, 0, 0, 0, Key_C5, Ins_0, 0, 0x00, 0, 0, 0);
+			New_Event(opaque, 0, 1, 0, 0, 0, 0, Effects.Fx_VolSet, Set_Vol, Effects.Fx_SetPan, Set_Pan);
+			New_Event(opaque, 0, 2, 0, Key_D4, Ins_Inval, 0, 0x00, 0, 0, 0);
+			New_Event(opaque, 0, 3, 0, Key_C4, 0, 0, 0x00, 0, 0, 0);
+			New_Event(opaque, 0, 4, 0, Key_C5, Ins_0, 0, 0x00, 0, 0, 0);
+			New_Event(opaque, 0, 5, 0, Key_B5, Ins_1, 0, 0x00, 0, 0, 0);
 
-			opaque.Xmp_Start_Player(44100, 0);
+			opaque.Xmp_Start_Player(Constants.Xmp_Min_SRate, 0);
 
 			// Row 0
 			opaque.Xmp_Play_Frame();
 
+			Channel_Data xc = p.Xc_Data[0];
 			c_int voc = Map_Channel(p, 0);
 			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
-			Assert.AreEqual(59, vi.Note, "Set note");
-			Assert.AreEqual(0, vi.Ins, "Set instrument");
-			Assert.AreEqual(43 * 16, vi.Vol, "Set volume");
-			Assert.AreEqual(0, vi.Pos0, "Sample position");
+			Check_New(xc, vi, Key_C5, Ins_0, Ins_0_Sub_0_Vol, Ins_0_Sub_0_Pan, Ins_0_Fade, "row 0");
 
 			opaque.Xmp_Play_Frame();
 
-			// Row 1: Invalid instrument with new note (PT 3.15)
+			// Row 1: Set non-default volume and pan
+			opaque.Xmp_Play_Frame();
+
+			Check_On(xc, vi, Key_C5, Ins_0, Set_Vol, Set_Pan, Ins_0_Fade, "row 1");
+
+			opaque.Xmp_Play_Frame();
+
+			// Row 2: Invalid instrument with new note (PT 3.15)
 			//
 			// When a new invalid instrument and a new note is set, PT3.15 cuts
 			// the currently playing sample
 			opaque.Xmp_Play_Frame();
 
-			Assert.AreEqual(0, vi.Vol, "Didn't cut sample");
+			Check_Off(xc, vi, "row 2");
+
+			opaque.Xmp_Play_Frame();
+
+			// Row 3: FIXME: restarts the old note, seems wrong? (PT 3.15)
+			opaque.Xmp_Play_Frame();
+
+			/*Check_Off(xc, vi, "row 3");*/
+
+			opaque.Xmp_Play_Frame();
+
+			// Row 4
+			opaque.Xmp_Play_Frame();
+
+			Check_New(xc, vi, Key_C5, Ins_0, Ins_0_Sub_0_Vol, Ins_0_Sub_0_Pan, Ins_0_Fade, "row 4");
+
+			opaque.Xmp_Play_Frame();
+
+			// Row 5: Invalid subinstrument with new note (PT 3.15)
+			//
+			// An invalid subinstrument of a valid instrument also cuts.
+			// MOD doesn't support this feature; it is provided for other formats
+			opaque.Xmp_Play_Frame();
+
+			// FIXME: what is consistency? check_off(xc, vi, "row 5");
 
 			opaque.Xmp_Play_Frame();
 

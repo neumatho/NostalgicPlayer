@@ -154,6 +154,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const uint8 Fx_Med_Retrig = 0x93;
 
 		/// <summary>
+		/// IMF effects
+		/// </summary>
+		public const uint8 Fx_Imf_FPorta_Dn = 0x9a;		// IMF 1/16th fine porta down, 1xx/2xx mem
+		public const uint8 Fx_Imf_FPorta_Up = 0x9b;		// IMF 1/16th fine porta up, 1xx/2xx mem
+
+		/// <summary>
 		/// PTM effects
 		/// </summary>
 		public const uint8 Fx_NSlide_Dn = 0x9c;			// IMF/PTM note slide down

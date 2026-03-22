@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Ports.LibXmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
+using Path = System.IO.Path;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 {

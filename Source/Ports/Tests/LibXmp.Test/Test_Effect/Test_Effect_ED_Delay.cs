@@ -34,10 +34,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			New_Event(opaque, 0, 3, 0, 63, 2, 0, 0, 0, 0x0e, 0xd3);
 			New_Event(opaque, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0);
 			New_Event(opaque, 0, 5, 0, 0, 0, 0, 0, 0, 0x0e, 0xd1);
-			New_Event(opaque, 0, 6, 0, 0, 0, 0, 0, 0, 0x0e, 0xd1);
-			New_Event(opaque, 0, 7, 0, 0, 0, 0, 0, 0, 0x0e, 0xd0);
+			New_Event(opaque, 0, 6, 0, 0, 0, 0, 0x0e, 0xd1, 0, 0);
+			New_Event(opaque, 0, 7, 0, 0, 0, 0, 0x0e, 0xd0, 0, 0);
 			New_Event(opaque, 0, 8, 0, 0, 3, 0, 0, 0, 0, 0);
-			New_Event(opaque, 0, 9, 0, 0, 0, 0, 0, 0, 0x0e, 0xd1);
+			New_Event(opaque, 0, 9, 0, 0, 0, 0, 0x0e, 0xd1, 0, 0);
 
 			opaque.Xmp_Start_Player(44100, 0);
 
@@ -103,9 +103,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			Assert.AreEqual(61, vi.Note, "Row 5 frame 1");
 			Assert.AreNotEqual(0, vi.Pos0, "Sample position");
 
-			Set_Quirk(opaque, Quirk_Flag.RtDelay, Read_Event.Ft2);
+			Set_Quirk(opaque, Quirk_Flag.None, Read_Event.Ft2);
 
-			// Row 6: In retrig mode
+			// Row 6: Fasttracker 2 delay has note memory, causing strange
+			// knock-on effects such as retriggering (effect slot 1 only)
 			opaque.Xmp_Play_Frame();
 			Assert.AreEqual(61, vi.Note, "Row 6 frame 0");
 			Assert.AreNotEqual(0, vi.Pos0, "Sample position");

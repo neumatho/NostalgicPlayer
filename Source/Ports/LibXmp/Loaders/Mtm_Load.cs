@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				sub.Vol = mih.Volume;
 				sub.Fin = (int8)(mih.FineTune << 4);
-				sub.Pan = 0x80;
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;
 
 				lib.common.LibXmp_Instrument_Name(mod, i, mih.Name, 22, encoder);
@@ -257,6 +257,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					if (e.FxT > Effects.Fx_Speed)
 						e.FxT = e.FxP = 0;
+
+					// Break is hex (Sybaris/odyssey.mtm pos 14, 30)
+					if (e.FxT == Effects.Fx_Break)
+						e.FxT = Effects.Fx_It_Break;
 
 					// See tempo mode detection below
 					if (e.FxT == Effects.Fx_Speed)

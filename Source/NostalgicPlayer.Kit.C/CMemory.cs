@@ -49,6 +49,19 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T mallocObj<T>() where T : class, new()
+		{
+			return new T();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> calloc<T>(size_t size) where T : struct
 		{
 			return new CPointer<T>(size);
@@ -126,6 +139,18 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void free<T>(CPointer<T> ptr)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void free<T>(T ptr)
 		{
 		}
 

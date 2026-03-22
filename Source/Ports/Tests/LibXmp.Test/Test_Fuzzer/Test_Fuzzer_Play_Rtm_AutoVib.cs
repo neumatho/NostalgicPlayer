@@ -22,6 +22,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 		/// played offset so that both channels should be synchronized.
 		///
 		/// This previously caused out-of-bounds array accesses in lfo.c
+		///
+		/// NOTE: Hex edited to have initial panning values that match
+		/// libxmp's old misinterpreted values
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]

@@ -218,6 +218,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				xxs.Lpe = (c_int)DataIo.ReadMem24L(pos + 3);
 				xtra.C5Spd = DataIo.ReadMem16L(pos + 14);
 				sub.Vol = pos[12];
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;
 
 				// The Sound Blaster driver will only loop if both the
@@ -397,10 +398,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 
 				// Tone portamento
+				case 0x03:
+				{
+					Xmf_Insert_Effect(@event, Effects.Fx_Ult_TPorta, param, chn);
+					break;
+				}
+
 				// Vibrato
 				// Set volume
 				// Break
-				case 0x03:
 				case 0x04:
 				case 0x0c:
 				case 0x0d:
@@ -415,7 +421,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case 0x06:
 				{
 					if (effect == 0x05)
-						Xmf_Insert_Effect(@event, Effects.Fx_TonePorta, 0, chn ^ 1);
+						Xmf_Insert_Effect(@event, Effects.Fx_Ult_TPorta, 0, chn ^ 1);
 
 					if (effect == 0x06)
 						Xmf_Insert_Effect(@event, Effects.Fx_Vibrato, 0, chn ^ 1);

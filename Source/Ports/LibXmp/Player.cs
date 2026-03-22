@@ -77,19 +77,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		#endregion
 
 		// Values for multi-retrig
-		private static readonly Retrig_Control[] rVal = new Retrig_Control[]
-		{
+		private static readonly Retrig_Control[] rVal =
+		[
 			new Retrig_Control( 0, 1, 1), new Retrig_Control( -1, 1, 1), new Retrig_Control(-2, 1, 1), new Retrig_Control(-4, 1, 1),
 			new Retrig_Control(-8, 1, 1), new Retrig_Control(-16, 1, 1), new Retrig_Control( 0, 2, 3), new Retrig_Control( 0, 1, 2),
 			new Retrig_Control( 0, 1, 1), new Retrig_Control(  1, 1, 1), new Retrig_Control( 2, 1, 1), new Retrig_Control( 4, 1, 1),
 			new Retrig_Control( 8, 1, 1), new Retrig_Control( 16, 1, 1), new Retrig_Control( 0, 3, 2), new Retrig_Control( 0, 2, 1),
 			new Retrig_Control (0, 0, 1)
-		};
+		];
 
 		private static readonly c_int[] invLoop_Table =
-		{
+		[
 			0, 5, 6, 7, 8, 10, 11, 13, 16, 19, 22, 26, 32, 43, 64, 128
-		};
+		];
 
 		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;
@@ -175,7 +175,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Delay = 0;
 			f.RowDelay = RowDelay_Flag.None;
 			f.RowDelay_Set = RowDelay_Flag.None;
-			f.Jump_In_Pat = -1;
+			f.Force_Reposition = false;
+
+			if (f.Loop != null)
+			{
+				for (c_int i = 0; i < ctx.M.Mod.Chn; i++)
+				{
+					f.Loop[i].Start = 0;
+					f.Loop[i].Count = 0;
+				}
+			}
 		}
 
 
@@ -205,6 +214,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (lib.mixer.LibXmp_Mixer_On(rate, format, m.C4Rate) < 0)
 				return -(c_int)Xmp_Error.Internal;
 
+			p.Time_Factor_Relative = 1.0;
 			p.Master_Vol = 100;
 			p.GVol = m.VolBase;
 			p.Pos = p.Ord = 0;
@@ -215,17 +225,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Sequence = 0;
 
 			// Set default volume and mute status
-			for (c_int i = 0; i < mod.Chn; i++)
+			for (c_int i = 0; i < Constants.Xmp_Max_Channels; i++)
 			{
-				if ((mod.Xxc[i].Flg & Xmp_Channel_Flag.Mute) != 0)
+				if ((i < mod.Chn) && (mod.Xxc[i].Flg & Xmp_Channel_Flag.Mute) != 0)
 					p.Channel_Mute[i] = true;
+				else
+					p.Channel_Mute[i] = false;
 
-				p.Channel_Vol[i] = 100;
-			}
-
-			for (c_int i = mod.Chn; i < Constants.Xmp_Max_Channels; i++)
-			{
-				p.Channel_Mute[i] = false;
 				p.Channel_Vol[i] = 100;
 			}
 
@@ -333,9 +339,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			lib.mixer.LibXmp_Mixer_Prepare_Frame();
 
 			// Check reposition
-			if (p.Ord != p.Pos)
+			if ((p.Ord != p.Pos) || f.Force_Reposition)
 			{
 				c_int start = m.Seq_Data[p.Sequence].Entry_Point;
+				f.Force_Reposition = false;
 
 				if (p.Pos == -2)					// Set by xmp_module_stop
 					return -(c_int)Xmp_Error.End;	// That's all folks
@@ -353,7 +360,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (p.Pos > p.Scan[p.Sequence].Ord)
 					f.End_Point = 0;
 
-				f.JumpLine = 0;
 				f.Jump = -1;
 
 				p.Ord = p.Pos - 1;
@@ -362,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (p.Ord < start)
 					p.Ord = start - 1;
 
-				Next_Order();
+				Next_Order(-1);
 
 				Update_From_Ord_Info();
 
@@ -561,17 +567,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			else
 				info.Num_Rows = 0;
 
+			// API still uses integers for time...
+			c_double current_Time = p.Current_Time;
+			c_double total_Time = p.Scan[p.Sequence].Time;
+			Common.Clamp(ref current_Time, 0.0, c_int.MaxValue);
+			Common.Clamp(ref total_Time, 0.0, c_int.MaxValue);
+
 			info.Row = p.Row;
 			info.Frame = p.Frame;
 			info.Speed = p.Speed;
 			info.Bpm = p.Bpm;
-			info.Total_Time = p.Scan[p.Sequence].Time;
+			info.Total_Time = (c_int)total_Time;
 			info.Frame_Time = (c_int)(LibXmp_Get_Frame_Time() * 1000.0);
-			info.Time = (c_int)p.Current_Time;
+			info.Time = (c_int)current_Time;
 			info.Buffer = s.Buffer;
 			info.BufferRear = s.BufferRear;
 
-			info.Total_Size = Constants.Xmp_Max_FrameSize;
+			info.Total_Size = s.Total_Size;
 			info.Buffer_Size = s.TickSize;
 
 			if ((~s.Format & Xmp_Format.Mono) != 0)
@@ -1456,7 +1468,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Player_Data p = ctx.P;
 			Channel_Data xc = p.Xc_Data[chn];
-			Module_Data m = ctx.M;
 
 			// Tempo affects delay and must be computed first
 			if (((e.FxT == Effects.Fx_Speed) && (e.FxP < 0x20)) || (e.FxT == Effects.Fx_S3M_Speed))
@@ -1507,18 +1518,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (e.Ins != 0)
 				xc.Delayed_Ins = e.Ins;
 
-			if (Common.Has_Quirk(m, Quirk_Flag.RtDelay))
-			{
-				if ((e.Vol == 0) && (e.F2T == 0) && (e.Ins == 0) && (e.Note != Constants.Xmp_Key_Off))
-					xc.Delayed_Event.Vol = (byte)(xc.Volume + 1);
-
-				if (e.Note == 0)
-					xc.Delayed_Event.Note = (byte)(xc.Key + 1);
-
-				if (e.Ins == 0)
-					xc.Delayed_Event.Ins = (byte)xc.Old_Ins;
-			}
-
 			return 1;
 		}
 
@@ -1535,50 +1534,39 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Xmp_Module mod = m.Mod;
 			Player_Data p = ctx.P;
 			Flow_Control f = p.Flow;
-			Xmp_Event ev = new Xmp_Event();
+			Xmp_Event @event;
+			Xmp_Event tmp = new Xmp_Event();
 
 			for (c_int chn = 0; chn < mod.Chn; chn++)
 			{
+				Channel_Data xc = p.Xc_Data[chn];
 				c_int num_Rows = mod.Xxt[Common.Track_Num(m, pat, chn)].Rows;
 
 				if (row < num_Rows)
-					ev.CopyFrom(Common.Event(m, pat, chn, row));
+					@event = Common.Event(m, pat, chn, row);
 				else
-					ev.Clear();
-
-				if (ev.Note == Constants.Xmp_Key_Off)
 				{
-					bool env_On = false;
-					c_int ins = ev.Ins - 1;
-
-					if (Is_Valid_Instrument(mod, ins) && ((mod.Xxi[ins].Aei.Flg & Xmp_Envelope_Flag.On) != 0))
-						env_On = true;
-
-					if ((ev.FxT == Effects.Fx_Extended) && (Common.Msn(ev.FxP) == Effects.Ex_Delay))
-					{
-						if ((ev.Ins != 0) && ((Common.Lsn(ev.FxP) != 0) || env_On))
-						{
-							if (Common.Lsn(ev.FxP) != 0)
-								ev.Note = 0;
-
-							ev.FxP = ev.FxT = 0;
-						}
-					}
+					tmp.Clear();
+					@event = tmp;
 				}
 
-				if (Check_Delay(ev, chn) == 0)
+				if (Common.Is_Player_Mode_Ft2(m))
+				{
+					// Reset Kxx, even if delayed (ft2_kxx.xm)
+					xc.KeyOff = 0;
+
+					// Reset tremor, even if delayed (ft2_tremor_delay.xm)
+					Reset(xc, Channel_Flag.Tremor);
+				}
+
+				if (Check_Delay(@event, chn) == 0)
 				{
 					// rowdelay_set bit 1 is set only in the first tick of the row
 					// event if the delay causes the tick count resets to 0. We test
 					// it to read row events only in the start of the row. (see the
 					// OpenMPT test case FineVolColSlide.it)
 					if ((f.RowDelay_Set == RowDelay_Flag.None) || (((f.RowDelay_Set & RowDelay_Flag.First_Frame) != 0) && (f.RowDelay > 0)))
-					{
-						LibXmp_Read_Event(ev, chn);
-
-						if (m.Extra is IModuleHoldHack moduleHoldHack)
-							moduleHoldHack.Hold_Hack(pat, chn, row);
-					}
+						LibXmp_Read_Event(@event, chn);
 				}
 				else
 				{
@@ -1631,29 +1619,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Player_Data p = ctx.P;
 			Channel_Data xc = p.Xc_Data[chn];
 
-			if ((xc.Tremor.Count & 0x80) != 0)
+			if (Test(xc, Channel_Flag.Tremor) && (p.Frame != 0))
 			{
-				if (Test(xc, Channel_Flag.Tremor) && (p.Frame != 0))
+				xc.Tremor.Count &= ~Tremor_Flag.Suppress;
+
+				if (xc.Tremor.Count == 0)
 				{
-					xc.Tremor.Count &= ~0x20;
-
-					if (xc.Tremor.Count == 0x80)
-					{
-						// End of down cycle, set up counter for up
-						xc.Tremor.Count = xc.Tremor.Up | 0xc0;
-					}
-					else if (xc.Tremor.Count == 0xc0)
-					{
-						// End of up cycle, set up counter for down
-						xc.Tremor.Count = xc.Tremor.Down | 0x80;
-					}
-					else
-						xc.Tremor.Count--;
+					// End of down cycle, set up counter for up
+					xc.Tremor.Count = xc.Tremor.Up | Tremor_Flag.On;
 				}
-
-				if ((xc.Tremor.Count & 0xe0) == 0x80)
-					finalVol = 0;
+				else if (xc.Tremor.Count == Tremor_Flag.On)
+				{
+					// End of up cycle, set up counter for down
+					xc.Tremor.Count = xc.Tremor.Down;
+				}
+				else
+					xc.Tremor.Count--;
 			}
+
+			if ((xc.Tremor.Count & (Tremor_Flag.On | Tremor_Flag.Suppress)) == 0)
+				finalVol = 0;
 
 			return finalVol;
 		}
@@ -1675,9 +1660,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (xc.Tremor.Count == 0)
 				{
 					// End of down cycle, set up counter for up
-					xc.Tremor.Count = xc.Tremor.Up | 0x80;
+					xc.Tremor.Count = xc.Tremor.Up | Tremor_Flag.On;
 				}
-				else if (xc.Tremor.Count == 0x80)
+				else if (xc.Tremor.Count == Tremor_Flag.On)
 				{
 					// End of up cycle, set up counter for down
 					xc.Tremor.Count = xc.Tremor.Down;
@@ -1685,11 +1670,57 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				xc.Tremor.Count--;
 
-				if ((~xc.Tremor.Count & 0x80) != 0)
+				if ((~xc.Tremor.Count & Tremor_Flag.On) != 0)
 					finalVol = 0;
 			}
 
 			return finalVol;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle delayed keyoff effects. This should only be performed
+		/// once on the tick where Kxx activates (ft2_note_off_fade.xm)
+		/// </summary>
+		/********************************************************************/
+		private void Delayed_KeyOff(c_int chn)
+		{
+			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+			Channel_Data xc = p.Xc_Data[chn];
+
+			Xmp_Instrument instrument = lib.sMix.LibXmp_Get_Instrument(xc.Ins);
+
+			switch (m.Read_Event_Type)
+			{
+				case Read_Event.Ft2:
+				{
+					// Ignore if frame >= speed (ft2_kxx.xm)
+					if (p.Frame >= p.Speed)
+						break;
+
+					// See read_event_ft2 for more notes on keyoff
+					if ((instrument.Aei.Flg & Xmp_Envelope_Flag.On) != 0)
+						Set_Note(xc, Note_Flag.Release);
+					else
+						xc.Volume = 0;
+
+					Set_Note(xc, Note_Flag.FadeOut);
+					break;
+				}
+
+				default:
+				{
+					// TODO: compatibility for old behavior (see process_volume)
+					// until keyoff can be tested everywhere else.
+					// Orpheus: keyoff clears the note, xx>speed works with delay.
+					// RT2: keyoff clears the note, xx>speed acts like 0
+					Set_Note(xc, Note_Flag.Release);
+					break;
+				}
+			}
 		}
 
 
@@ -1736,7 +1767,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						fade = true;
 				}
 			}
-			else
+			else if (!Common.Is_Player_Mode_Ft2(m))
 			{
 				if ((~instrument.Aei.Flg & Xmp_Envelope_Flag.On) != 0)
 				{
@@ -2394,6 +2425,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						// Don't retrig on cut
 						lib.virt.LibXmp_Virt_VoicePos(chn, 0);
+
+						if (m.Extra is IModuleHoldRetrigger moduleHoldRetrigger)
+							moduleHoldRetrigger.Hold_Retrigger(xc);
 					}
 					else
 						Set_Note(xc, Note_Flag.End);
@@ -2417,7 +2451,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (xc.KeyOff != 0)
 			{
 				if (--xc.KeyOff == 0)
-					Set_Note(xc, Note_Flag.Release);
+					Delayed_KeyOff(chn);
 			}
 
 			lib.virt.LibXmp_Virt_Release(chn, Test_Note(xc, Note_Flag.Sample_Release));
@@ -2470,7 +2504,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Next_Order()
+		private void Next_Order(c_int last_Ord)
 		{
 			Player_Data p = ctx.P;
 			Flow_Control f = p.Flow;
@@ -2500,6 +2534,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					// This might be a marker, so delay updating global
 					// volume until an actual pattern is found
 					reset_GVol = true;
+
+					// Module restart should always reset the play time
+					last_Ord = -1;
 				}
 			}
 			while (mod.Xxo[p.Ord] >= mod.Pat);
@@ -2507,8 +2544,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (reset_GVol)
 				p.GVol = m.Xxo_Info[p.Ord].Gvl;
 
-			// Archimedes line jump -- don't reset time tracking
-			if (f.Jump_In_Pat != p.Ord)
+			// Bxx+Dxx within same position, Archimedes line jump,
+			// etc. should not reset time tracking
+			if (last_Ord != p.Ord)
 				p.Current_Time = m.Xxo_Info[p.Ord].Time;
 
 			f.Num_Rows = mod.Xxp[mod.Xxo[p.Ord]].Rows;
@@ -2536,8 +2574,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 			}
 
-			f.Jump_In_Pat = -1;
-
 			// Reset persistent effects at new pattern
 			if (Common.Has_Quirk(m, Quirk_Flag.PerPat))
 			{
@@ -2557,6 +2593,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Player_Data p = ctx.P;
 			Flow_Control f = p.Flow;
+			c_int last_Ord = p.Ord;
 
 			p.Frame = 0;
 			f.Delay = 0;
@@ -2573,7 +2610,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					f.Jump = -1;
 				}
 
-				Next_Order();
+				Next_Order(last_Ord);
 			}
 			else
 			{
@@ -2593,7 +2630,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				// Check end of pattern
 				if (p.Row >= f.Num_Rows)
-					Next_Order();
+					Next_Order(last_Ord);
 			}
 		}
 

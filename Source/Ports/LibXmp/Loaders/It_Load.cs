@@ -248,6 +248,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static readonly uint32 Magic_IMPI = Common.Magic4('I', 'M', 'P', 'I');
 		private static readonly uint32 Magic_IMPS = Common.Magic4('I', 'M', 'P', 'S');
 
+		// Bits 0, 1, 2 add 1 byte each. Bit 3 adds 2 bytes
+		private static readonly	c_int[] bytes_In_Packed_Event =
+		[
+			0, 1, 1, 2, 1, 2, 2, 3, 2, 3, 3, 4, 3, 4, 4, 5
+		];
+
 		private const c_int Temp_Buffer_Len = 65536;
 
 		private const uint8 Fx_None = 0xff;
@@ -446,8 +452,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			for (c_int i = 0; i < 64; i++)
 			{
 				Xmp_Channel xxc = mod.Xxc[i];
+				c_int pan = ifh.ChPan[i] & 0x7f;
 
-				if (ifh.ChPan[i] == 100)		// Surround -> center
+				if (pan == 100)		// Surround -> center
 					xxc.Flg |= Xmp_Channel_Flag.Surround;
 
 				if ((ifh.ChPan[i] & 0x80) != 0)	// Channel mute
@@ -455,7 +462,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((ifh.Flags & It_Flag.Stereo) != 0)
 				{
-					xxc.Pan = ifh.ChPan[i] * 0x80 >> 5;
+					xxc.Pan = (pan * 0x80) >> 5;
 					if (xxc.Pan > 0xff)
 						xxc.Pan = 0xff;
 				}
@@ -592,10 +599,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					goto Err4;
 
 				CPointer<uint8> pos = patBuf;
+				CPointer<uint8> end = patBuf + pat_Len;
 
 				c_int row = 0;
 
-				while ((row < num_Rows) && (--pat_Len >= 0))
+				while ((row < num_Rows) && (pos < end))
 				{
 					c_int b = pos[0, 1];
 					if (f.Hio_Error() != 0)
@@ -614,36 +622,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					if ((b & 0x80) != 0)
 					{
-						if (pat_Len < 1)
+						if (pos >= end)
 							break;
 
-						mask[c] = pos[0, 1];
-						pat_Len--;
+						// The high nibble is not required to
+						// calculate the event size
+						mask[c] = (uint8)(pos[0, 1] & 0x0f);
 					}
 
-					if ((mask[c] & 0x01) != 0)
-					{
-						pos++;
-						pat_Len--;
-					}
-
-					if ((mask[c] & 0x02) != 0)
-					{
-						pos++;
-						pat_Len--;
-					}
-
-					if ((mask[c] & 0x04) != 0)
-					{
-						pos++;
-						pat_Len--;
-					}
-
-					if ((mask[c] & 0x08) != 0)
-					{
-						pos += 2;
-						pat_Len -= 2;
-					}
+					// Skip packed event
+					pos += bytes_In_Packed_Event[mask[c]];
 				}
 			}
 
@@ -997,10 +985,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			else if ((b >= 193) && (b <= 202))	// G
 			{
 				uint8[] val =
-				{
+				[
 					0x00, 0x01, 0x04, 0x08, 0x10,
 					0x20, 0x40, 0x60, 0x80, 0xff
-				};
+				];
 
 				@event.F2T = Effects.Fx_TonePorta;
 				@event.F2P = val[b - 193];
@@ -1279,8 +1267,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private c_int Load_Old_It_Instrument(Xmp_Instrument xxi, Hio f)
 		{
-			c_int[] inst_Map = new c_int[120];
-			c_int[] inst_RMap = new c_int[Constants.Xmp_Max_Keys];
+			uint8[] inst_Map = new uint8[255];
+			uint8[] inst_RMap = new uint8[Constants.Xmp_Max_Keys];
 			It_Instrument1_Header i1h = new It_Instrument1_Header();
 			c_int j, k;
 			CPointer<uint8> buf = new CPointer<uint8>(64);
@@ -1355,28 +1343,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			// See how many different instruments we have
-			for (j = 0; j < 120; j++)
-				inst_Map[j] = -1;
+			Array.Fill(inst_Map, (uint8)0xff);
 
 			for (k = j = 0; j < Constants.Xmp_Max_Keys; j++)
 			{
-				c_int c = j < 120 ? i1h.Keys[j * 2 + 1] - 1 : -1;
+				c_int c = j < 120 ? i1h.Keys[(j * 2) + 1] - 1 : -1;
 
-				if ((c < 0) || (c >= 120))
+				if (c < 0)
 				{
 					xxi.Map[j].Ins = 0;
 					xxi.Map[j].Xpo = 0;
 					continue;
 				}
 
-				if (inst_Map[c] == -1)
+				if (inst_Map[c] == 0xff)
 				{
-					inst_Map[c] = k;
-					inst_RMap[k] = c;
+					inst_Map[c] = (uint8)k;
+					inst_RMap[k] = (uint8)c;
 					k++;
 				}
 
-				xxi.Map[j].Ins = (byte)inst_Map[c];
+				xxi.Map[j].Ins = inst_Map[c];
 				xxi.Map[j].Xpo = (sbyte)(i1h.Keys[j * 2] - j);
 			}
 
@@ -1397,7 +1384,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					sub.Nna = (Xmp_Inst_Nna)i1h.Nna;
 					sub.Dct = i1h.Dnc != 0 ? Xmp_Inst_Dct.Note : Xmp_Inst_Dct.Off;
 					sub.Dca = Xmp_Inst_Dca.Cut;
-					sub.Pan = -1;
+					sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				}
 			}
 
@@ -1413,8 +1400,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private c_int Load_New_It_Instrument(Xmp_Instrument xxi, Hio f)
 		{
-			c_int[] inst_Map = new c_int[120];
-			c_int[] inst_RMap = new c_int[Constants.Xmp_Max_Keys];
+			uint8[] inst_Map = new uint8[255];
+			uint8[] inst_RMap = new uint8[Constants.Xmp_Max_Keys];
 			It_Instrument2_Header i2h = new It_Instrument2_Header();
 			It_Envelope env = new It_Envelope();
 			Xmp_Inst_Dca[] dca2Nna = { Xmp_Inst_Dca.Cut, Xmp_Inst_Dca.Off, Xmp_Inst_Dca.Fade, Xmp_Inst_Dca.Fade /* Northern Sky (cj-north.it) has this... */ };
@@ -1480,7 +1467,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((xxi.Pei.Flg & Xmp_Envelope_Flag.On) != 0)
 			{
 				for (j = 0; j < xxi.Pei.Npt; j++)
-					xxi.Pei.Data[j * 2 + 1] += 32;
+					xxi.Pei.Data[(j * 2) + 1] += 32;
 			}
 
 			if (((xxi.Aei.Flg & Xmp_Envelope_Flag.On) != 0) && (xxi.Aei.Npt == 0))
@@ -1498,40 +1485,39 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				for (j = 0; j < env.Num; j++)
 				{
-					xxi.Fei.Data[j * 2 + 1] += 32;
-					xxi.Fei.Data[j * 2 + 1] *= 4;
+					xxi.Fei.Data[(j * 2) + 1] += 32;
+					xxi.Fei.Data[(j * 2) + 1] *= 4;
 				}
 			}
 			else
 			{
 				// Pitch envelope is *50 to get fine interpolation
 				for (j = 0; j < env.Num; j++)
-					xxi.Fei.Data[j * 2 + 1] *= 50;
+					xxi.Fei.Data[(j * 2) + 1] *= 50;
 			}
 
 			// See how many different instruments we have
-			for (j = 0; j < 120; j++)
-				inst_Map[j] = -1;
+			Array.Fill(inst_Map, (uint8)0xff);
 
 			for (k = j = 0; j < 120; j++)
 			{
-				c_int c = i2h.Keys[j * 2 + 1] - 1;
+				c_int c = i2h.Keys[(j * 2) + 1] - 1;
 
-				if ((c < 0) || (c >= 120))
+				if (c < 0)
 				{
 					xxi.Map[j].Ins = 0xff;	// No sample
 					xxi.Map[j].Xpo = 0;
 					continue;
 				}
 
-				if (inst_Map[c] == -1)
+				if (inst_Map[c] == 0xff)
 				{
-					inst_Map[c] = k;
-					inst_RMap[k] = c;
+					inst_Map[c] = (uint8)k;
+					inst_RMap[k] = (uint8)c;
 					k++;
 				}
 
-				xxi.Map[j].Ins = (byte)inst_Map[c];
+				xxi.Map[j].Ins = inst_Map[c];
 				xxi.Map[j].Xpo = (sbyte)(i2h.Keys[j * 2] - j);
 			}
 
@@ -1552,7 +1538,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					sub.Nna = (Xmp_Inst_Nna)i2h.Nna;
 					sub.Dct = (Xmp_Inst_Dct)i2h.Dct;
 					sub.Dca = dca2Nna[i2h.Dca];
-					sub.Pan = (i2h.Dfp & 0x80) != 0 ? -1 : i2h.Dfp * 4;
+					sub.Pan = (i2h.Dfp & 0x80) != 0 ? Constants.Xmp_Inst_No_Default_Pan : i2h.Dfp * 4;
 					sub.Ifc = i2h.Ifc;
 					sub.Ifr = i2h.Ifr;
 					sub.Rvv = (i2h.Rp << 8) | i2h.Rv;
@@ -1596,7 +1582,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private CPointer<byte> Unpack_It_Sample(Xmp_Sample xxs, It_Sample_Header ish, CPointer<byte> tmpBuf, Hio f)
+		private CPointer<uint8> Unpack_It_Sample(Xmp_Sample xxs, It_Sample_Header ish, CPointer<uint8> tmpBuf, Hio f)
 		{
 			c_int bytes = xxs.Len;
 			c_int channels = 1;
@@ -1610,7 +1596,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				channels = 2;
 			}
 
-			CPointer<uint8> decBuf = CMemory.calloc<byte>((size_t)bytes);
+			CPointer<uint8> decBuf = CMemory.calloc<uint8>((size_t)bytes);
 			if (decBuf == null)
 				return null;
 
@@ -1720,7 +1706,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				// Create an instrument for each sample
 				mod.Xxi[i].Vol = 64;
 				mod.Xxi[i].Sub[0].Vol = ish.Vol;
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxi[i].Sub[0].Sid = i;
 				mod.Xxi[i].Nsm = xxs.Len != 0 ? 1 : 0;
 
@@ -1755,7 +1741,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if ((ish.Dfp & 0x80) != 0)
 							sub.Pan = (ish.Dfp & 0x7f) * 4;
 						else if (sample_Mode)
-							sub.Pan = -1;
+							sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 					}
 				}
 			}
@@ -1865,8 +1851,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			CPointer<uint8> pos = patBuf;
+			CPointer<uint8> end = patBuf + pat_Len;
 
-			while ((r < num_Rows) && (--pat_Len >= 0))
+			while ((r < num_Rows) && (pos < end))
 			{
 				uint8 b = pos[0, 1];
 
@@ -1880,7 +1867,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((b & 0x80) != 0)
 				{
-					if (pat_Len < 1)
+					if (pos >= end)
 						break;
 
 					mask[c] = pos[0, 1];
@@ -1898,9 +1885,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				else
 					@event = Ports.LibXmp.Common.Event(m, i, c, r);
 
+				if ((mask[c] & 0x0f) == 0)
+					goto Skip_Packed_Event;
+
 				if ((mask[c] & 0x01) != 0)
 				{
-					if (pat_Len < 1)
+					if (pos >= end)
 						break;
 
 					b = pos[0, 1];
@@ -1938,33 +1928,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					}
 
 					lastEvent[c].Note = @event.Note = b;
-					pat_Len--;
 				}
 
 				if ((mask[c] & 0x02) != 0)
 				{
-					if (pat_Len < 1)
+					if (pos >= end)
 						break;
 
 					b = pos[0, 1];
 					lastEvent[c].Ins = @event.Ins = b;
-					pat_Len--;
 				}
 
 				if ((mask[c] & 0x04) != 0)
 				{
-					if (pat_Len < 1)
+					if (pos >= end)
 						break;
 
 					b = pos[0, 1];
 					lastEvent[c].Vol = @event.Vol = b;
 					Xlat_VolFx(@event);
-					pat_Len--;
 				}
 
 				if ((mask[c] & 0x08) != 0)
 				{
-					if (pat_Len < 2)
+					if (pos >= (end - 1))
 						break;
 
 					b = pos[0, 1];
@@ -1980,9 +1967,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						lastEvent[c].FxT = @event.FxT;
 						lastEvent[c].FxP = @event.FxP;
 					}
-
-					pat_Len -= 2;
 				}
+
+Skip_Packed_Event:
+				if ((mask[c] & 0xf0) == 0)
+					continue;
 
 				if ((mask[c] & 0x10) != 0)
 					@event.Note = lastEvent[c].Note;

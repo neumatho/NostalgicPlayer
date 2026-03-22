@@ -3,18 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
-
-namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Iff
+namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Iff_Info
+	internal static class Tremor_Flag
 	{
-		public delegate c_int Loader_Delegate(Module_Data m, c_int size, Hio f, object parm);
-
-		public readonly byte[] Id = new byte[4];
-		public Loader_Delegate Loader;
+		public const c_int Suppress = 0x40;		// Ignore tremor state until next update (FT2)
+		public const c_int On = 0x80;
 	}
 }

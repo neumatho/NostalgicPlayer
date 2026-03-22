@@ -79,11 +79,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		ItVPor = (1 << 11),
 
 		/// <summary>
-		/// Flag for multichannel mods
-		/// </summary>
-		FtMod = (1 << 12),
-
-		/// <summary>
 		/// Enable invert loop
 		/// </summary>
 		InvLoop = (1 << 13),
@@ -144,11 +139,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		S3MRtg = (1 << 24),
 
 		/// <summary>
-		/// Delay effect retrigs instrument
-		/// </summary>
-		RtDelay = (1 << 25),
-
-		/// <summary>
 		/// FT2 bug compatibility
 		/// </summary>
 		Ft2Bugs = (1 << 26),
@@ -180,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 
 		// Format quirks
 		St3 = S3MLoop | VolPdn | FineFx | S3MRtg | Marker | RstChn,
-		Ft2 = RtDelay | FineFx,
+		Ft2 = None,
 		It = S3MLoop | FineFx | VibAll | EnvFade | ItVPor | KeyOff | Virtual | Filter | RstChn | IgStPor | S3MRtg | Marker
 	}
 }

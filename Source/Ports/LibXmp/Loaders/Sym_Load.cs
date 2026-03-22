@@ -316,7 +316,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						xxs.Flg |= Xmp_Sample_Flag.SLoop;
 
 					xxi.Sub[0].Vol = f.Hio_Read8();
-					xxi.Sub[0].Pan = 0x80;
+					xxi.Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 
 					// Finetune adjusted comparing DSym and S3M versions
 					// of "inside out"

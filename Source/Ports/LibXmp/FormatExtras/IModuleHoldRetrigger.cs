@@ -3,13 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
+
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal interface IModuleHoldHack : IModuleExtra
+	internal interface IModuleHoldRetrigger : IModuleExtra
 	{
-		void Hold_Hack(c_int pat, c_int chn, c_int row);
+		void Hold_Retrigger(Channel_Data xc);
 	}
 }

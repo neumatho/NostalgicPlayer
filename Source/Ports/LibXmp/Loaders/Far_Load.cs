@@ -277,14 +277,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						uint8 vol = pos[0, 1];
 						uint8 fxb = pos[0, 1];
 
+						// The instrument number is completely ignored if no note is
+						// present; whatever note is playing will continue
 						if (note != 0)
+						{
 							@event.Note = (byte)(note + 48);
-
-						if ((@event.Note != 0) || (ins != 0))
 							@event.Ins = (byte)(ins + 1);
+						}
 
 						if ((vol >= 0x01) && (vol <= 0x10))
-							@event.Vol = (byte)((vol - 1) * 16 + 1);
+							@event.Vol = (byte)(((vol - 1) * 16) + 1);
+						else if ((note != 0) || (vol != 0))
+						{
+							// aurora.far contains note+ins without volume. Most are
+							// after break positions, but one is played in order 16.
+							// This is invalid and sets the volume to zero.
+							// Volumes greater than 0x10 (f) also usually seem to be
+							// treated as zero (OOB table read?)
+							@event.Vol = 1;
+						}
 
 						Far_Translate_Effect(@event, Ports.LibXmp.Common.Msn(fxb), Ports.LibXmp.Common.Lsn(fxb), vol);
 					}
@@ -366,6 +377,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				mod.Xxs[i].Flg |= fih.LoopMode != 0 ? Xmp_Sample_Flag.Loop : 0;
 				mod.Xxi[i].Sub[0].Vol = 0xff;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxi[i].Sub[0].Sid = i;
 
 				lib.common.LibXmp_Instrument_Name(mod, i, fih.Name, 32, encoder);

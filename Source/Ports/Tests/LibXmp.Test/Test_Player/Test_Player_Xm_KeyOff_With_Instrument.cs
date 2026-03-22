@@ -56,8 +56,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			New_Event(opaque, 0, 0, 0, 60, 1, 0, Effects.Fx_Speed, 2, 0, 0);
 			New_Event(opaque, 0, 1, 0, 0, 0, 0, Effects.Fx_VolSlide, 8, 0, 0);
 			New_Event(opaque, 0, 2, 0, 0, 0, 0, Effects.Fx_VolSlide, 8, 0, 0);
-			New_Event(opaque, 0, 3, 0, Constants.Xmp_Key_Fade, 1, 0, 0, 0, 0, 0);
-			New_Event(opaque, 0, 40, 0, Constants.Xmp_Key_Fade, 2, 0, 0, 0, 0, 0);
+			New_Event(opaque, 0, 3, 0, Constants.Xmp_Key_Off, 1, 0, 0, 0, 0, 0);
+			New_Event(opaque, 0, 40, 0, Constants.Xmp_Key_Off, 2, 0, 0, 0, 0, 0);
 			Set_Quirk(opaque, Quirk_Flag.Ft2, Read_Event.Ft2);
 
 			opaque.Xmp_Start_Player(44100, 0);

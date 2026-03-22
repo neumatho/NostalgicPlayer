@@ -88,6 +88,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// </summary>
 		Loop_Shared_Break = (1 << 13),
 
+		/// <summary>
+		/// TODO: Bxx Dxx jumps, then breaks (IMF, TT)
+		/// </summary>
+		Jump_Then_Break = (1 << 29),
+
+		/// <summary>
+		/// TODO: Jump queues next position (ST2)
+		/// </summary>
+		Jump_Queued = (1 << 30),
+
+		/// <summary>
+		/// Jump doesn't set break row to 0 (ST3/IT)
+		/// </summary>
+		Jump_No_Row_Set = (1 << 31),
+
 		Mode_Generic = None,
 		Loop_Global = (Loop_Global_Target | Loop_Global_Count),
 
@@ -97,27 +112,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		// Scream Tracker 3. No S3Ms seem to rely on the earlier behavior mode.
 		// 3.01b has a bug where the end advancement sets the target to the same line
 		// instead of the next line; there's no way to make use of this without getting
-		// stuck, so it's not simulated
-		Mode_ST3_301 = (Loop_Global | Loop_Pattern_Reset | Loop_End_Advances | Loop_Init_SameRow),
-		Mode_ST3_321 = (Loop_Global | Loop_Pattern_Reset | Loop_End_Advances | Loop_No_Break_Jump),
+		// stuck, so it's not simulated.
+		// ST2 has an entirely different behavior for pattern jump where, instead of
+		// immediately jumping, it queues the next position to be loaded after a break
+		// or the end of the current pattern
+		Mode_ST2 = (Jump_Queued),
+		Mode_ST3_301 = (Loop_Global | Loop_Pattern_Reset | Loop_End_Advances | Loop_Init_SameRow | Jump_No_Row_Set),
+		Mode_ST3_321 = (Loop_Global | Loop_Pattern_Reset | Loop_End_Advances | Loop_No_Break_Jump | Jump_No_Row_Set),
 
 		// Impulse Tracker. Not clear if anything relies on the old behavior type.
 		// IT loops were global pre-1.04, and loop jumps override any prior break/jump.
 		// IT 2.00+ loop jumps also delay any following break, but not pattern jumps.
 		// IT 2.10+ reintroduced ST3's loop target advancement
-		Mode_IT_100 = (Loop_Global | Loop_Unset_Break | Loop_Unset_Jump),
-		Mode_IT_104 = (Loop_Unset_Break | Loop_Unset_Jump),
+		Mode_IT_100 = (Loop_Global | Loop_Unset_Break | Loop_Unset_Jump | Jump_No_Row_Set),
+		Mode_IT_104 = (Loop_Unset_Break | Loop_Unset_Jump | Jump_No_Row_Set),
 		Mode_IT_200 = (Mode_IT_104 | Loop_Delay_Break),
 		Mode_IT_210 = (Mode_IT_200 | Loop_End_Advances),
 
 		// Modplug Tracker/early OpenMPT
-		Mode_MPT_116 = (Loop_One_At_A_Time | Loop_No_Break_Jump),
+		Mode_MPT_116 = (Loop_One_At_A_Time | Loop_No_Break_Jump | Jump_No_Row_Set),
 
 		// Imago Orpheus. Pattern Jump actually does not reset target/count, but all
 		// other forms of pattern change do. Unclear if anything relies on it.
 		// An XAx jump will set the destination row of a prior Txx jump.
-		// An XAx jump will cancel a prior Uxx break on the same row
-		Mode_Orpheus = (Loop_Pattern_Reset | Loop_Shared_Break | Loop_Unset_Break),
+		// An XAx jump will cancel a prior Uxx break on the same row.
+		// Txx unsets a prior Uxx (normal); Txx followed by Uyy jumps and then
+		// breaks to the next pattern after position X
+		Mode_Orpheus = (Loop_Pattern_Reset | Loop_Shared_Break | Loop_Unset_Break | Jump_Then_Break),
 
 		// Liquid Tracker uses generic MOD loops with an added behavior where
 		// the end of a loop will cancel any other jump in the row that preceded it.

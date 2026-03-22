@@ -10,6 +10,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 	/// </summary>
 	internal interface IChannelProcessFx : IChannelExtra
 	{
-		void Process_Fx(c_int chn, uint8 note, uint8 fxT, uint8 fxP, c_int fNum);
+		void Process_Fx(c_int chn, uint8 note, uint8 ins, uint8 fxT, uint8 fxP, c_int fNum);
 	}
 }

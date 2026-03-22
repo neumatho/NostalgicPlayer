@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					return -1;
 
 				for (c_int i = 0; i < pan_Len; i++)
-					mod.Xxc[i].Pan = 0x80 + 2 * (int8)buf[i];
+					mod.Xxc[i].Pan = 0x80 + (2 * (int8)buf[i]);
 			}
 
 			if (ver >= 0x0d)
@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				mod.Xxi[i].Nsm = 1;
 				mod.Xxi[i].Sub[0].Sid = i;
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 
 				if (ver >= 0x0a)
 					mod.Xxs[i].Len = (c_int)f.Hio_Read32L();

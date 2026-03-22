@@ -31,8 +31,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private const c_int Loop_Prologue = 1;
 		private const c_int Loop_Epilogue = 2;
 
-		private delegate void Mix_Fp(Mixer_Voice vi, CPointer<int32> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R);
-
 		#region Loop_Data class
 		private class Loop_Data
 		{
@@ -66,10 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;
 
-		private readonly Mix_Fp[] nearest_Mixers;
-		private readonly Mix_Fp[] linear_Mixers;
-		private readonly Mix_Fp[] spline_Mixers;
-
+		// Interface to NostalgicPlayer visualizations
 		private VisualizerChannel[] visualizerChannels;
 
 		/********************************************************************/
@@ -81,66 +76,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			lib = libXmp;
 			this.ctx = ctx;
-
-			nearest_Mixers = new Mix_Fp[]
-			{
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null
-			};
-
-			linear_Mixers = new Mix_Fp[]
-			{
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null,
-				null
-			};
-
-			spline_Mixers = new Mix_Fp[]
-			{
-				Mix_All.LibXmp_Mix_MonoOut_Mono_8Bit_Spline,
-				Mix_All.LibXmp_Mix_MonoOut_Mono_16Bit_Spline,
-				Mix_All.LibXmp_Mix_MonoOut_Stereo_8Bit_Spline,
-				Mix_All.LibXmp_Mix_MonoOut_Stereo_16Bit_Spline,
-				Mix_All.LibXmp_Mix_StereoOut_Mono_8Bit_Spline,
-				Mix_All.LibXmp_Mix_StereoOut_Mono_16Bit_Spline,
-				Mix_All.LibXmp_Mix_StereoOut_Stereo_8Bit_Spline,
-				Mix_All.LibXmp_Mix_StereoOut_Stereo_16Bit_Spline,
-				Mix_All.LibXmp_Mix_MonoOut_Mono_8Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_MonoOut_Mono_16Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_MonoOut_Stereo_8Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_MonoOut_Stereo_16Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_StereoOut_Mono_8Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_StereoOut_Mono_16Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_StereoOut_Stereo_8Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_StereoOut_Stereo_16Bit_Spline_Filter,
-			};
 		}
 
 
@@ -206,32 +141,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int vol, vol_L, vol_R, voc, uSmp;
 			c_int prev_L, prev_R = 0;
 			CPointer<c_int> buf_Pos;
-			Mix_Fp mix_Fn;
-			Mix_Fp[] mixerSet;
+			Mix_All.Mixer_Fp mix_Fn;
+			Mix_All.Mixer_Fp[] mixerSet;
 
 			switch (s.Interp)
 			{
 				case Xmp_Interp.Nearest:
 				{
-					mixerSet = nearest_Mixers;
+					mixerSet = Mix_All.libXmp_Nearest_Mixers;
 					break;
 				}
 
 				case Xmp_Interp.Linear:
 				{
-					mixerSet = linear_Mixers;
+					mixerSet = Mix_All.libXmp_Linear_Mixers;
 					break;
 				}
 
 				case Xmp_Interp.Spline:
 				{
-					mixerSet = spline_Mixers;
+					mixerSet = Mix_All.libXmp_Spline_Mixers;
 					break;
 				}
 
 				default:
 				{
-					mixerSet = linear_Mixers;
+					mixerSet = Mix_All.libXmp_Linear_Mixers;
 					break;
 				}
 			}
@@ -531,8 +466,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((~s.Format & Xmp_Format.Mono) != 0)
 				size *= 2;
 
-			if (size > Constants.Xmp_Max_FrameSize)
-				size = Constants.Xmp_Max_FrameSize;
+			if (size > s.Total_Size)
+				size = s.Total_Size;
 
 			if ((s.Format & Xmp_Format._8Bit) != 0)
 				DownMix_Int_8Bit(s.Buffer, s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x80 : 0);
@@ -915,25 +850,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Mixer_Data s = ctx.S;
 
-			s.Buffer = new int8[Constants.Xmp_Max_FrameSize * sizeof(int16)];
+			// This should be equivalent to the XMP_MAX_FRAMESIZE calculation
+			c_int total_Size = 2 * LibXmp_Mixer_Get_TickSize(rate, Constants.Default_Time_Factor * 2, Constants.Pal_Rate, Constants.Xmp_Min_Bpm);
+			if (total_Size < 0)
+				goto Err;
+
+			// These allocations were made with a fixed framesize based on the rate
+			// 49170 for a long time, so make that the minimum size for now
+			Common.Clamp(ref total_Size, 5 * 49170 * 2 / 20, Constants.Xmp_Max_FrameSize);
+
+			s.Buffer = new int8[total_Size * sizeof(int16)];
 			if (s.Buffer.IsNull)
 				goto Err;
 
-			s.Buf32 = new int32[Constants.Xmp_Max_FrameSize];
+			s.Buf32 = new int32[total_Size];
 			if (s.Buf32.IsNull)
 				goto Err1;
 
 			if (s.EnableSurround == Surround.RealChannels)
 			{
-				s.BufferRear = new int8[Constants.Xmp_Max_FrameSize * sizeof(int16)];
+				s.BufferRear = new int8[total_Size * sizeof(int16)];
 				if (s.BufferRear.IsNull)
 					goto Err2;
 
-				s.Buf32Rear = new int32[Constants.Xmp_Max_FrameSize];
+				s.Buf32Rear = new int32[total_Size];
 				if (s.Buf32Rear.IsNull)
 					goto Err3;
 			}
 
+			s.Total_Size = total_Size;
 			s.Freq = rate;
 			s.Format = format;
 			s.Amplify = Constants.Default_Amplify;
@@ -1439,11 +1384,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Module_Data m = ctx.M;
 			Mixer_Data s = ctx.S;
 
-			s.TickSize = LibXmp_Mixer_Get_TickSize(s.Freq, m.Time_Factor, m.RRate, p.Bpm);
+			s.TickSize = LibXmp_Mixer_Get_TickSize(s.Freq, m.Time_Factor * p.Time_Factor_Relative, m.RRate, p.Bpm);
 
 			// Protect the mixer from broken values caused by xmp_set_tempo_factor
-			if ((s.TickSize < 0) || (s.TickSize > (Constants.Xmp_Max_FrameSize / 2)))
-				s.TickSize = Constants.Xmp_Max_FrameSize / 2;
+			if ((s.TickSize < 0) || (s.TickSize > (s.Total_Size / 2)))
+				s.TickSize = s.Total_Size / 2;
 
 			c_int byteLen = s.TickSize;
 			if ((~s.Format & Xmp_Format.Mono) != 0)

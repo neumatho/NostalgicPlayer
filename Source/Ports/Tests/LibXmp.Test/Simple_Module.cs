@@ -60,19 +60,30 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 
 			for (c_int i = 0; i < mod.Ins; i++)
 			{
-				mod.Xxi[i].Nsm = 1;
-				opaque.common.LibXmp_Alloc_SubInstrument(mod, i, 1);
+				Xmp_Instrument xxi = mod.Xxi[i];
 
-				mod.Xxi[i].Sub[0].Pan = 0x80;
-				mod.Xxi[i].Sub[0].Vol = 0x40;
-				mod.Xxi[i].Sub[0].Sid = i;
+				// Give each instrument two subinstruments mapped to the
+				// same sample. By default, only the first will be used
+				xxi.Nsm = 2;
+				opaque.common.LibXmp_Alloc_SubInstrument(mod, i, 2);
 
-				mod.Xxs[i].Len = 10000;
-				mod.Xxs[i].Lps = 0;
-				mod.Xxs[i].Lpe = 10000;
-				mod.Xxs[i].Flg = Xmp_Sample_Flag.Loop;
-				mod.Xxs[i].Data = CMemory.calloc<uint8>(11000);
-				mod.Xxs[i].Data += 4;
+				for (c_int j = 0; j < xxi.Nsm; j++)
+				{
+					Xmp_SubInstrument sub = xxi.Sub[j];
+
+					sub.Pan = -1;
+					sub.Vol = 0x40;
+					sub.Sid = i;
+				}
+
+				Xmp_Sample xxs = mod.Xxs[i];
+
+				xxs.Len = 10000;
+				xxs.Lps = 0;
+				xxs.Lpe = 10000;
+				xxs.Flg = Xmp_Sample_Flag.Loop;
+				xxs.Data = CMemory.calloc<uint8>(11000);
+				xxs.Data += 4;
 			}
 
 			// End of module creation
@@ -141,6 +152,22 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 			Xmp_Module mod = m.Mod;
 
 			mod.Xxi[ins].Sub[sub].Vol = vol;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected void Set_Instrument_Panning(Ports.LibXmp.LibXmp opaque, c_int ins, c_int sub, c_int pan)
+		{
+			Xmp_Context ctx = GetContext(opaque);
+			Module_Data m = ctx.M;
+			Xmp_Module mod = m.Mod;
+
+			mod.Xxi[ins].Sub[sub].Pan = pan;
 		}
 
 

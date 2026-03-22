@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -192,6 +193,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return;
 
 			p.Pos = -2;
+			lib.player.LibXmp_Reset_Flow();
 		}
 
 
@@ -210,6 +212,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			p.Loop_Count = 0;
 			p.Pos = -1;
+			lib.player.LibXmp_Reset_Flow();
 		}
 
 
@@ -237,8 +240,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (lib.scan.LibXmp_Get_Sequence(i) != p.Sequence)
 					continue;
 
-				c_int t = m.Xxo_Info[i].Time;
-				if (time >= t)
+				// TODO: using rounding to preserve compatibility with
+				// the old (bad) int conversion here until this API
+				// function can be fixed or replaced
+				c_double t = m.Xxo_Info[i].Time;
+				Common.Clamp(ref t, 0.0, c_int.MaxValue);
+
+				if (time >= (c_int)t)
 				{
 					Set_Position(i, 1);
 					break;
@@ -247,6 +255,65 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (i < 0)
 				lib.Xmp_Set_Position(0);
+
+			// Get the correct start row + force the next xmp_play_frame call to
+			// do a reposition, which updates properties such as BPM and global
+			// volume and normally doesn't happen within the same position:
+			c_int pos = p.Pos >= 0 ? p.Pos : m.Seq_Data[p.Sequence].Entry_Point;
+
+			Ord_Data oInfo = m.Xxo_Info[pos];
+			p.Flow.JumpLine = oInfo.Start_Row;
+			p.Flow.Force_Reposition = true;
+
+			// For the first p->current_time + libxmp_get_frame_time check
+			// in xmp_seek_time_frame:
+			p.Current_Time = oInfo.Time;
+			p.Bpm = oInfo.Bpm;
+
+			return p.Pos < 0 ? 0 : p.Pos;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Xmp_Seek_Time_Frame(c_int time)
+		{
+			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+
+			c_int ret = Xmp_Seek_Time(time);
+			if (ret < 0)
+				return ret;
+
+			// set_position/xmp_set_position doesn't actually complete the seek;
+			// may need to play frames from the start of the new position until
+			// the player is at the closest frame to the requested time.
+			// TODO: it may be possible to get closer times for xmp_play_buffer
+			// users
+			c_double max_Time = m.Seq_Data[p.Sequence].Duration - 0.1;
+			c_double t = Math.Min(time, max_Time);
+
+			// Try to find the correct frame (this may take a while).
+			// TODO: temporarily put the mixer in a lower rate?
+			for (c_int i = 0; i < (1 << 13); i++)
+			{
+				c_double prev = p.Current_Time;
+
+				// TODO: the actual BPM isn't known until mid-frame
+				if ((p.Current_Time + lib.player.LibXmp_Get_Frame_Time()) > t)
+					break;
+
+				if ((lib.player.Xmp_Play_Frame() < 0) || (p.Current_Time < prev))
+					break;
+			}
+
+			// Force an xmp_play_buffer refresh so the new (wrong) frame data
+			// doesn't confuse the caller:
+			lib.player.Xmp_Play_Buffer(null, 0, 0);
 
 			return p.Pos < 0 ? 0 : p.Pos;
 		}
@@ -341,6 +408,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						s.Amplify = val;
 						ret = 0;
 					}
+
 					break;
 				}
 
@@ -351,6 +419,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						s.Mix = val;
 						ret = 0;
 					}
+
 					break;
 				}
 
@@ -363,6 +432,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						s.Interp = v;
 						ret = 0;
 					}
+
 					break;
 				}
 
@@ -407,6 +477,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						p.Master_Vol = val;
 						ret = 0;
 					}
+
 					break;
 				}
 
@@ -418,6 +489,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						m.DefPan = val;
 						ret = 0;
 					}
+
 					break;
 				}
 
@@ -641,22 +713,84 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (ctx.State < Xmp_State.Playing)
 				return -(c_int)Xmp_Error.State;
 
-			if ((val < 0.0) || (c_double.IsNaN(val)))
+			if ((val < 0.0) || c_double.IsNaN(val))
 				return -1;
 
 			val *= 10;
 
 			// s->freq can change between xmp_start_player calls and p->bpm can
 			// change during playback, so repeat these checks in the mixer
-			c_int tickSize = lib.mixer.LibXmp_Mixer_Get_TickSize(s.Freq, val, m.RRate, p.Bpm);
+			c_int tickSize = lib.mixer.LibXmp_Mixer_Get_TickSize(s.Freq, val * p.Time_Factor_Relative, m.RRate, p.Bpm);
 
-			// ticksize is in frames, XMP_MAX_FRAMESIZE is in frames * 2
-			if ((tickSize < 0) || (tickSize > (Constants.Xmp_Max_FrameSize / 2)))
+			// ticksize is in frames, s->total_size is in frames * 2
+			if ((tickSize < 0) || (tickSize > (s.Total_Size / 2)))
 				return -1;
 
 			m.Time_Factor = val;
 
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Xmp_Set_Tempo_Factor_Relative(c_double val)
+		{
+			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+			Mixer_Data s = ctx.S;
+
+			// This function relies on values initialized by xmp_start_player
+			// and will behave in an undefined manner if called prior
+			if (ctx.State < Xmp_State.Playing)
+				return -(c_int)Xmp_Error.State;
+
+			if ((val < 0.0) || c_double.IsNaN(val))
+				return -1;
+
+			c_int tickSize = lib.mixer.LibXmp_Mixer_Get_TickSize(s.Freq, m.Time_Factor * val, m.RRate, p.Bpm);
+
+			// ticksize is in frames, s->total_size is in frames * 2
+			if ((tickSize < 0) || (tickSize > (s.Total_Size / 2)))
+				return -1;
+
+			p.Time_Factor_Relative = val;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_double Xmp_Get_Tempo_Factor()
+		{
+			if (ctx.State < Xmp_State.Loaded)
+				return -1.0 * (c_double)Xmp_Error.State;
+
+			return ctx.M.Time_Factor * 0.1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_double Xmp_Get_Tempo_Factor_Relative()
+		{
+			if (ctx.State < Xmp_State.Playing)
+				return -1.0 * (c_double)Xmp_Error.State;
+
+			return ctx.P.Time_Factor_Relative;
 		}
 
 		#region Private methods

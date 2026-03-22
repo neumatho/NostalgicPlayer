@@ -153,28 +153,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			OggMod
 		}
 
-		private readonly Format format;
-		private readonly LibXmp lib;
-		private readonly Encoding encoder;
-
-		/// <summary></summary>
-		public static readonly Format_Loader LibXmp_Loader_Xm = new Format_Loader
-		{
-			Id = Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD"),
-			Name = "FastTracker II",
-			Description = "This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.\nFastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994.",
-			Create = Create_Xm
-		};
-
-		/// <summary></summary>
-		public static readonly Format_Loader LibXmp_Loader_OggMod = new Format_Loader
-		{
-			Id = Guid.Parse("F1878ED9-37B8-4D5F-9AFE-46B6A9C195DF"),
-			Name = "OggMod",
-			Description = "This format is the same as FastTracker 2, except that the samples are packed with Ogg-Vorbis. This make the modules smaller. The tool was created by Neil Graham.",
-			Create = Create_OggMod
-		};
-
 		private const uint8 Xm_Event_Packing = 0x80;
 		private const uint8 Xm_Event_Pack_Mask = 0x7f;
 		private const uint8 Xm_Event_Note_Follows = 0x01;
@@ -196,6 +174,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		// Ogg
 		private const uint Magic_Oggs = 0x4f676753;
+
+		private readonly Format format;
+		private readonly LibXmp lib;
+		private readonly Encoding encoder;
+
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Xm = new Format_Loader
+		{
+			Id = Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD"),
+			Name = "FastTracker II",
+			Description = "This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.\nFastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994.",
+			Create = Create_Xm
+		};
+
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_OggMod = new Format_Loader
+		{
+			Id = Guid.Parse("F1878ED9-37B8-4D5F-9AFE-46B6A9C195DF"),
+			Name = "OggMod",
+			Description = "This format is the same as FastTracker 2, except that the samples are packed with Ogg-Vorbis. This make the modules smaller. The tool was created by Neil Graham.",
+			Create = Create_OggMod
+		};
 
 		/********************************************************************/
 		/// <summary>
@@ -269,7 +269,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Xmp_Module mod = m.Mod;
 			Xm_File_Header xfh = new Xm_File_Header();
 			bool claims_Ft2 = false;
+			bool is_Mpt_Old = false;
 			bool is_Mpt_116 = false;
+			bool mpt_Ins_Headers = false;
 			CPointer<byte> buf = new CPointer<byte>(80);
 
 			if (f.Hio_Read(buf, 80, 1) != 1)
@@ -341,14 +343,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			string tracker_Name = Encoding.Latin1.GetString(xfh.Tracker).TrimEnd(' ', '\0');
 
-			// OpenMPT accurately emulates weird FT2 bugs
 			if (tracker_Name.StartsWith("FastTracker v2.00"))
 			{
 				m.Quirk |= Quirk_Flag.Ft2Bugs;
 				claims_Ft2 = true;
 			}
-			else if (tracker_Name.StartsWith("OpenMPT "))
+			else if (tracker_Name.StartsWith("Fasttracker II clone"))
 				m.Quirk |= Quirk_Flag.Ft2Bugs;
+			else if (tracker_Name.StartsWith("OpenMPT "))
+			{
+				// OpenMPT accurately emulates weird FT2 bugs
+				m.Quirk |= Quirk_Flag.Ft2Bugs;
+			}
 
 			if (xfh.HeaderSz == 0x0113)
 			{
@@ -366,7 +372,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (tracker_Name.StartsWith("MED2XM by J.Pynnone"))
 			{
 				if (mod.Bpm <= 10)
-					mod.Bpm = 125 * (0x35 - mod.Bpm * 2) / 33;
+					mod.Bpm = 125 * (0x35 - (mod.Bpm * 2)) / 33;
 
 				m.Quirk &= ~Quirk_Flag.Ft2Bugs;
 			}
@@ -375,7 +381,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				tracker_Name = "old ModPlug Tracker";
 				m.Quirk &= ~Quirk_Flag.Ft2Bugs;
-				is_Mpt_116 = true;
+				is_Mpt_Old = true;
+			}
+
+			if (tracker_Name.StartsWith("Skale Tracker") || tracker_Name.StartsWith("Sk@le Tracker"))
+			{
+				// Skale Tracker allows Dxx Byy to jump to row X
+				m.Flow_Mode |= FlowMode_Flag.Jump_No_Row_Set;
 			}
 
 			lib.common.LibXmp_Set_Type(m, string.Format("{0} XM {1}.{2:D2}", tracker_Name, xfh.Version >> 8, xfh.Version & 0xff));
@@ -387,7 +399,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// XM 1.02/1.03 has a different patterns and instruments order
 			if (xfh.Version <= 0x0103)
 			{
-				if (Load_Instruments(m, xfh.Version, f) < 0)
+				if (Load_Instruments(m, xfh.Version, out mpt_Ins_Headers, f) < 0)
 					return -1;
 
 				if (Load_Patterns(m, xfh.Version, f) < 0)
@@ -398,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (Load_Patterns(m, xfh.Version, f) < 0)
 					return -1;
 				
-				if (Load_Instruments(m, xfh.Version, f) < 0)
+				if (Load_Instruments(m, xfh.Version, out mpt_Ins_Headers, f) < 0)
 					return -1;
 			}
 
@@ -441,42 +453,48 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					if (m.Comment == null)
 					{
-						byte[] c = new byte[sz + 1];
-						sz = (uint32)f.Hio_Read(c, 1, sz);
+						if (sz <= f.Hio_Size())
+						{
+							byte[] c = new byte[sz + 1];
+							sz = (uint32)f.Hio_Read(c, 1, sz);
 
-						m.Comment = encoder.GetString(c, 0, (int)sz);
+							m.Comment = encoder.GetString(c, 0, (int)sz);
 
-						// Translate linefeeds
-						m.Comment = m.Comment.Replace('\u266a', '\n');
+							// Translate linefeeds
+							m.Comment = m.Comment.Replace('\u266a', '\n');
+
+							sz = 0;
+						}
 					}
 				}
 				else if ((ext == magicMidi) || (ext == magicPnam) || (ext == magicCnam) || (ext == magicChFx) || (ext == magicXtpm))
 				{
 					known = true;
-
-					if (sz != 0)
-						f.Hio_Seek((c_long)sz, SeekOrigin.Current);
 				}
 				else
 				{
 					if ((ext & magicFx) == magicFx)
 						known = true;
-
-					if (sz != 0)
-						f.Hio_Seek((c_long)sz, SeekOrigin.Current);
 				}
 
 				if (known && claims_Ft2)
 					is_Mpt_116 = true;
 
+				if ((sz != 0) && (f.Hio_Seek(sz, SeekOrigin.Current) < 0))
+					break;
+
 				if (ext == magicXtpm)
 					break;
 			}
 
+			if (claims_Ft2 && mpt_Ins_Headers)
+				is_Mpt_116 = true;
+
 			if (is_Mpt_116)
-			{
 				lib.common.LibXmp_Set_Type(m, string.Format("ModPlug Tracker 1.16 XM {0}.{1:D2}", xfh.Version >> 8, xfh.Version & 0xff));
 
+			if (is_Mpt_116 || is_Mpt_Old)
+			{
 				m.Quirk &= ~Quirk_Flag.Ft2Bugs;
 				m.Flow_Mode = FlowMode_Flag.Mode_MPT_116;
 				m.MVolBase = 48;
@@ -636,13 +654,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						@event.FxT = 0;
 
 					if (@event.Note == 0x61)
-					{
-						// See OpenMPT keyoff+instr.xm test case
-						if ((@event.FxT == 0x0e) && (Ports.LibXmp.Common.Msn(@event.FxP) == 0x0d))
-							@event.Note = Constants.Xmp_Key_Off;
-						else
-							@event.Note = @event.Ins != 0 ? Constants.Xmp_Key_Fade : Constants.Xmp_Key_Off;
-					}
+						@event.Note = Constants.Xmp_Key_Off;
 					else if (@event.Note > 0)
 						@event.Note += 12;
 
@@ -782,34 +794,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						{
 							@event.F2T = Effects.Fx_TonePorta;
 							@event.F2P = (byte)((@event.Vol - 0xf0) << 4);
-
-							// From OpenMPT TonePortamentoMemory.xm:
-							// "Another nice bug (...) is the combination of both
-							// portamento commands (Mx and 3xx) in the same cell:
-							// The 3xx parameter is ignored completely, and the Mx
-							// parameter is doubled. (M2 3FF is the same as M4 000)
-							if ((@event.FxT ==Effects.Fx_TonePorta) || (@event.FxT == Effects.Fx_Tone_VSlide))
-							{
-								if (@event.FxT == Effects.Fx_TonePorta)
-									@event.FxT = 0;
-								else
-									@event.FxT = Effects.Fx_VolSlide;
-
-								@event.FxP = 0;
-
-								if (@event.F2P < 0x80)
-									@event.F2P <<= 1;
-								else
-									@event.F2P = 0xff;
-							}
-
-							// From OpenMPT porta-offset.xm:
-							// "If there is a portamento command next to an offset
-							// command, the offset command is ignored completely. In
-							// particular, the offset parameter is not memorized."
-							if ((@event.FxT == Effects.Fx_Offset) && (@event.F2T == Effects.Fx_TonePorta))
-								@event.FxT = @event.FxP = 0;
-
 							break;
 						}
 					}
@@ -970,7 +954,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Load_Instruments(Module_Data m, c_int version, Hio f)
+		private c_int Load_Instruments(Module_Data m, c_int version, out bool mpt_Ins_Headers, Hio f)
 		{
 			Xmp_Module mod = m.Mod;
 			Xm_Instrument_Header xih = new Xm_Instrument_Header();
@@ -978,6 +962,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Xm_Sample_Header[] xsh = ArrayHelper.InitializeArray<Xm_Sample_Header>(Xm_Max_Samples_Per_Inst);
 			c_int sample_Num = 0;
 			CPointer<uint8> buf = new CPointer<uint8>(208);
+
+			mpt_Ins_Headers = false;
 
 			// ESTIMATED value! We don't know the actual value at this point
 			mod.Smp = Constants.Max_Samples;
@@ -1013,6 +999,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((xih.Samples > Xm_Max_Samples_Per_Inst) || ((xih.Samples > 0) && (xih.Sh_Size > 0x100)))
 					return -1;
+
+				// Yet another Modplug Tracker tell: it saves huge zero-filled
+				// instrument headers for unused instruments
+				if ((xih.Size == 0x107) && (xih.Samples == 0) && (xih.Sh_Size == 0))
+					mpt_Ins_Headers = true;
 
 				lib.common.LibXmp_Instrument_Name(mod, i, xih.Name, 22, encoder);
 

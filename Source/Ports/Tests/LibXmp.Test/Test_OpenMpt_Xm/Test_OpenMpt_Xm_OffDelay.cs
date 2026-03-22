@@ -18,11 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_Xm
 		/// Note Delays combined with anything else are a lot of fun! Note
 		/// Off combined with a Note Delay will cause envelopes to retrigger!
 		/// And that is actually all it does if there is an envelope. No fade
-		/// out, no nothing.
-		/// 
-		/// Claudio's note -- I didn't implement the envelope retrigger
-		/// thing, but the test works nonetheless. Maybe I'm doing something
-		/// wrong?
+		/// out, no nothing
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]

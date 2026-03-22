@@ -78,8 +78,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Virt.Virt_Channel[vi.Root].Count--;
 			p.Virt.Virt_Channel[vi.Chn].Map = Free;
 
-			vi.Clear();
-			vi.Chn = vi.Root = Free;
+			Do_Virt_ResetVoice(vi);
 		}
 
 
@@ -177,9 +176,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (c_int i = 0; i < p.Virt.MaxVoc; i++)
 			{
 				Mixer_Voice vi = p.Virt.Voice_Array[i];
-				vi.Clear();
-				vi.Chn = Free;
-				vi.Root = Free;
+				Do_Virt_ResetVoice(vi);
 			}
 
 			for (c_int i = 0; i < p.Virt.Virt_Channels; i++)
@@ -218,17 +215,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (voc < 0)
 				return;
 
-			lib.mixer.LibXmp_Mixer_SetVol(voc, 0);
-			lib.mixer.LibXmp_Mixer_ResetChannel(voc);
-
-			p.Virt.Virt_Used--;
-			p.Virt.Virt_Channel[p.Virt.Voice_Array[voc].Root].Count--;
-			p.Virt.Virt_Channel[chn].Map = Free;
-
-			Mixer_Voice vi = p.Virt.Voice_Array[voc];
-			vi.Clear();
-
-			vi.Chn = vi.Root = Free;
+			LibXmp_Virt_ResetVoice(voc, true);
 		}
 
 
@@ -594,6 +581,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Do_Virt_ResetVoice(Mixer_Voice vi)
+		{
+			// Preserve anticlick decay state through note cut
+			c_int anticlick_L = vi.SLeft;
+			c_int anticlick_R = vi.SRight;
+			Mixer_Flag flags = vi.Flags & Mixer_Flag.AntiClick;
+
+			vi.Clear();
+
+			vi.SLeft = anticlick_L;
+			vi.SRight = anticlick_R;
+			vi.Flags = flags;
+			vi.Chn = vi.Root = Free;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 

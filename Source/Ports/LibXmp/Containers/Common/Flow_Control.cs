@@ -43,8 +43,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// </summary>
 		public c_int Loop_Active_Num;
 
-		public c_int Jump_In_Pat;
-
 		public Pattern_Loop[] Loop;
 
 		public c_int Num_Rows;
@@ -55,6 +53,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// </summary>
 		public RowDelay_Flag RowDelay;
 		public RowDelay_Flag RowDelay_Set;
+		public bool Force_Reposition;
 
 		/********************************************************************/
 		/// <summary>

@@ -161,8 +161,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.PBreak = true;
 			f.Jump = fxP;
 
-			// Effect B resets effect D in lower channels
-			f.JumpLine = 0;
+			if (!Common.Has_Flow_Mode(m, FlowMode_Flag.Jump_No_Row_Set))
+			{
+				// Effect B resets effect D in lower channels.
+				// This does not apply to ST3, IT, ModPlug
+				f.JumpLine = 0;
+			}
 		}
 
 
@@ -208,7 +212,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			}
 
 			f.JumpLine = fxP;
-			f.Jump_In_Pat = ord;
 		}
 	}
 }

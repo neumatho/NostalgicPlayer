@@ -17,6 +17,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	/// </summary>
 	internal static class Mix_All
 	{
+		public delegate void Mixer_Fp(Mixer_Voice vi, CPointer<int32> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R);
+
+		public static readonly Mixer_Fp[] libXmp_Nearest_Mixers;
+		public static readonly Mixer_Fp[] libXmp_Linear_Mixers;
+		public static readonly Mixer_Fp[] libXmp_Spline_Mixers;
+
 		// The following lut settings are PRECOMPUTED. If you plan on changing these
 		// settings, you MUST also regenerate the arrays
 		private const c_int Spline_QuantBits = 14;
@@ -30,6 +36,76 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		// compare the WAV output of OpenMPT env-flt-max.it and filter-reset.it
 		private const int64 Filter_Min = -65536 * (1 << PreAmp_Bits);
 		private const int64 Filter_Max = 65535 * (1 << PreAmp_Bits);
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		static Mix_All()
+		{
+			libXmp_Nearest_Mixers =
+			[
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null
+			];
+
+			libXmp_Linear_Mixers =
+			[
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null
+			];
+
+			libXmp_Spline_Mixers =
+			[
+				LibXmp_Mix_MonoOut_Mono_8Bit_Spline,
+				LibXmp_Mix_MonoOut_Mono_16Bit_Spline,
+				LibXmp_Mix_MonoOut_Stereo_8Bit_Spline,
+				LibXmp_Mix_MonoOut_Stereo_16Bit_Spline,
+				LibXmp_Mix_StereoOut_Mono_8Bit_Spline,
+				LibXmp_Mix_StereoOut_Mono_16Bit_Spline,
+				LibXmp_Mix_StereoOut_Stereo_8Bit_Spline,
+				LibXmp_Mix_StereoOut_Stereo_16Bit_Spline,
+				LibXmp_Mix_MonoOut_Mono_8Bit_Spline_Filter,
+				LibXmp_Mix_MonoOut_Mono_16Bit_Spline_Filter,
+				LibXmp_Mix_MonoOut_Stereo_8Bit_Spline_Filter,
+				LibXmp_Mix_MonoOut_Stereo_16Bit_Spline_Filter,
+				LibXmp_Mix_StereoOut_Mono_8Bit_Spline_Filter,
+				LibXmp_Mix_StereoOut_Mono_16Bit_Spline_Filter,
+				LibXmp_Mix_StereoOut_Stereo_8Bit_Spline_Filter,
+				LibXmp_Mix_StereoOut_Stereo_16Bit_Spline_Filter,
+			];
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>

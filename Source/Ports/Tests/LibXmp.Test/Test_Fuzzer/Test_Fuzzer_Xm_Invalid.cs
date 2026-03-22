@@ -35,6 +35,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_Xm_Invalid_InstSize.xm", opaque);
 			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load (invalid_instsize)");
 
+			// This input caused slow loads in the XM loader from allocating a
+			// buffer from a junk MPT text chunk. This should load instantly
+			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_Xm_Invalid_Comment_Length.xm", opaque);
+			Assert.AreEqual(0, ret, "Module load (invalid_comment_length)");
+
 			opaque.Xmp_Free_Context();
 		}
 	}

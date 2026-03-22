@@ -142,6 +142,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			c_int i;
 			Fnk_Header ffh = new Fnk_Header();
 			uint8[] ev = new uint8[3];
+			c_int allow_Panning = 1;
 
 			f.Hio_Read(ffh.Marker, 4, 1);
 			f.Hio_Read(ffh.Info, 4, 1);
@@ -188,7 +189,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			mod.Len = i;
-			CMemory.memcpy<uint8>(mod.Xxo, ffh.Order, (size_t)mod.Len);
+			CMemory.memcpy(mod.Xxo, ffh.Order, (size_t)mod.Len);
 
 			mod.Spd = 4;
 			mod.Bpm = 125;
@@ -198,6 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// unreliable. It used to store the (GUS) sample memory requirement
 			if ((ffh.Fmt[0] == 'F') && (ffh.Fmt[1] == '2'))
 			{
+				// TODO: 16-bit sample precision (bit 0)
 				if ((((int8)ffh.Info[3] >> 1) & 0x40) != 0)
 					mod.Bpm -= (ffh.Info[3] >> 1) & 0x3f;
 				else
@@ -206,22 +208,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				lib.common.LibXmp_Set_Type(m, "FunktrackerGOLD");
 			}
 			else if ((ffh.Fmt[0] == 'F') && ((ffh.Fmt[1] == 'v') || (ffh.Fmt[1] == 'k')))
+			{
+				// "Fk**" for fixed channeling or
+				// "Fv**" for variable channeling
+				// 
+				// Translated: Fk** has fixed 669 panning, Fv** has GUS panning
 				lib.common.LibXmp_Set_Type(m, "Funktracker");
+
+				if (ffh.Fmt[1] == 'k')
+					allow_Panning = 0;
+			}
 			else
 			{
 				mod.Chn = 8;
+				allow_Panning = 0;
 				lib.common.LibXmp_Set_Type(m, "Funktracker DOS32");
 			}
 
 			if (mod.Chn == 0)
 			{
-				mod.Chn = (ffh.Fmt[2] < '0') || (ffh.Fmt[2] > '9') || (ffh.Fmt[3] < '0') || (ffh.Fmt[3] > '9') ? 8 : (ffh.Fmt[2] - '0') * 10 + (ffh.Fmt[3] - '0');
+				mod.Chn = (ffh.Fmt[2] < '0') || (ffh.Fmt[2] > '9') || (ffh.Fmt[3] < '0') || (ffh.Fmt[3] > '9') ? 8 : ((ffh.Fmt[2] - '0') * 10) + (ffh.Fmt[3] - '0');
 
 				// Sanity check
 				if ((mod.Chn <= 0) || (mod.Chn > Constants.Xmp_Max_Channels))
 					return -1;
 			}
 
+			// TODO: Switch to time factor, verify whether or not this is DOS only
 			mod.Bpm = 4 * mod.Bpm / 5;
 			mod.Trk = mod.Chn * mod.Pat;
 
@@ -243,6 +256,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (mod.Xxs[i].Lps == -1)
 					mod.Xxs[i].Lps = 0;
 
+				// TODO: GUS driver *only* seems to cut loop length by 64;
+				// this needs further investigation
 				mod.Xxs[i].Lpe = (c_int)ffh.Fih[i].Length;
 				mod.Xxs[i].Flg = (c_int)ffh.Fih[i].Loop_Start != -1 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
 
@@ -292,7 +307,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			for (i = 0; i < mod.Chn; i++)
-				mod.Xxc[i].Pan = 0x80;
+				mod.Xxc[i].Pan = allow_Panning != 0 ? 0x80 : Common.DefPan(m, (i % 2) * 0xff);
 
 			m.VolBase = 0xff;
 			m.Quirk = Quirk_Flag.VsAll;
@@ -308,21 +323,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private void Fnk_Translate_Event(Xmp_Event @event, uint8[] ev, Fnk_Header ffh)
 		{
-			switch (ev[0] >> 2)
-			{
-				case 0x3f:
-				case 0x3e:
-				case 0x3d:
-					break;
+			c_int note = ev[0] >> 2;
 
-				default:
-				{
-					@event.Note = (byte)(37 + (ev[0] >> 2));
-					@event.Ins = (byte)(1 + Ports.LibXmp.Common.Msn(ev[1]) + ((ev[0] & 0x03) << 4));
-					@event.Vol = ffh.Fih[@event.Ins - 1].Volume;
-					break;
-				}
-			}
+			// 0x3f - "null slot": load command only
+			// 0x3e - "sample-only slot": load instrument and command only
+			// 0x3d - "reload sample attrs": load instrument and command only,
+			//        TODO: naming seems completely backwards--this event is supposed
+			//        to NOT load most sample fields like volume/pan from the new ins
+			//        (fnk_smpl_setpan.fnk row 28 plays wrong)?
+			if (note < 0x3d)
+				@event.Note = (byte)(37 + note);
+
+			if (note < 0x3f)
+				@event.Ins = (byte)(1 + Ports.LibXmp.Common.Msn(ev[1]) + ((ev[0] & 0x03) << 4));
 
 			switch (Ports.LibXmp.Common.Lsn(ev[1]))
 			{
@@ -354,8 +367,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					break;
 				}
 
+				// TODO: 0x04 Vibrato Fanin
+				// TODO: 0x05 Vibrato Fanout
+
 				case 0x06:
 				{
+					// TODO: This effect is implemented complely wrong
+					// supposed to be gXY -> every (X+1) ticks, decrease by table[Y]
 					@event.FxT = Effects.Fx_Per_VSld_Up;
 					@event.FxP = (byte)(ev[2] << 1);
 					break;
@@ -363,10 +381,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				case 0x07:
 				{
+					// TODO: This effect is implemented complely wrong
+					// supposed to be hXY -> every (X+1) ticks, decrease by table[Y]
 					@event.FxT = Effects.Fx_Per_VSld_Dn;
 					@event.FxP = (byte)(ev[2] << 1);
 					break;
 				}
+
+				// TODO: 0x08 Volume porta
+				// TODO: 0x09 Decaying reverb
+				// TODO: 0x0a Tremolo
 
 				case 0x0b:
 				{
@@ -374,6 +398,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					@event.FxP = ev[2];
 					break;
 				}
+
+				// TODO: 0x0c Sample offset
 
 				case 0x0d:
 				{
@@ -392,6 +418,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					switch (Ports.LibXmp.Common.Msn(ev[2]))
 					{
+						// TODO: 0x0 Misc Control
+
 						case 0x1:
 						{
 							@event.FxT = Effects.Fx_Extended;
@@ -399,12 +427,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 
+						// TODO: 0x2 Real frequency adjust ?????
 						case 0x2:
 						{
 							@event.FxT = Effects.Fx_Extended;
 							@event.FxP = (byte)((Effects.Ex_Delay << 4) | Ports.LibXmp.Common.Lsn(ev[2]));
 							break;
 						}
+
+						// TODO: 0x3 Set Arpeggio Speed
+						// TODO: 0x4 Fine Port Up
+						// TODO: 0x5 Fine Port Down
+						// TODO: 0x6 Fine Volume Slide Up
+						// TODO: 0x7 Fine Volume Slide Down
+						// TODO: 0x8 Volume Crest
+						// TODO: 0x9 Volume Trough
+						// TODO: 0xa Set Master Volume
+						// TODO: 0xb Expand Loop
+						// TODO: 0xc Collapse Loop
 
 						case 0xd:
 						{
@@ -415,6 +455,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						case 0xe:
 						{
+							// TODO: This doesn't work on a line with note 0x3f?
 							@event.FxT = Effects.Fx_SetPan;
 							@event.FxP = (byte)(8 + (Ports.LibXmp.Common.Lsn(ev[2]) << 4));
 							break;

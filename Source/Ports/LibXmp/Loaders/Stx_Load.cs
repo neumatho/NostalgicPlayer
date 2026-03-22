@@ -302,7 +302,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				mod.Xxs[i].Flg = mod.Xxs[i].Lpe > 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
 				mod.Xxi[i].Sub[0].Vol = sih.Vol;
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxi[i].Sub[0].Sid = i;
 				mod.Xxi[i].Nsm = 1;
 

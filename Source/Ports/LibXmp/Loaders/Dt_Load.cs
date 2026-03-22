@@ -516,11 +516,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_D_T_(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_D_T_(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
-			c_int name_Len = size - 14;
+			uint32 name_Len = size - 14;
 
 			if ((size < 14) || (size > 142))
 				return -1;
@@ -570,10 +570,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			Ports.LibXmp.Common.Clamp(ref name_Len, 0, Constants.Xmp_Name_Size);
+			name_Len = Math.Min(name_Len, Constants.Xmp_Name_Size);
 			byte[] name = new byte[name_Len + 1];
 			f.Hio_Read(name, (size_t)name_Len, 1);
-			mod.Name = encoder.GetString(name, 0, name_Len);
+			mod.Name = encoder.GetString(name, 0, (int)name_Len);
 
 			lib.common.LibXmp_Set_Type(m, "Digital Tracker DTM");
 
@@ -587,7 +587,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_S_Q_(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_S_Q_(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			c_int i, maxPat;
@@ -625,7 +625,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Vers(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Vers(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Local_Data data = (Local_Data)parm;
 
@@ -646,7 +646,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Sv19(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Sv19(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -694,7 +694,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Patt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Patt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -758,7 +758,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Inst(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Inst(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -795,7 +795,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				c_int fine = (int8)(buf[8] << 4);	// Finetune
 
 				mod.Xxi[i].Sub[0].Vol = buf[9];
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 
 				c_int repStart = (c_int)DataIo.ReadMem32B(buf + 10);
 				c_int repLen = (c_int)DataIo.ReadMem32B(buf + 14);
@@ -893,7 +893,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Dapt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Dapt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -973,7 +973,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Dait(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Dait(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -1008,7 +1008,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Text(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Text(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			if ((size < 12) || ((size & 1) != 0) || !string.IsNullOrEmpty(m.Comment))
 				return 0;

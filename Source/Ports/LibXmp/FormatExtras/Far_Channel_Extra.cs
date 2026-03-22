@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Process_Fx(c_int chn, uint8 note, uint8 fxT, uint8 fxP, c_int fNum)
+		public void Process_Fx(c_int chn, uint8 note, uint8 ins, uint8 fxT, uint8 fxP, c_int fNum)
 		{
 			Xmp_Module mod = ctx.M.Mod;
 			Far_Module_Extra.Far_Module_Extra_Info me = (Far_Module_Extra.Far_Module_Extra_Info)ctx.M.Extra.Module_Extras;

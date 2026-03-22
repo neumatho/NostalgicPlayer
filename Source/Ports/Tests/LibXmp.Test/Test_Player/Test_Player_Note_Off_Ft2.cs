@@ -78,10 +78,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 
 			Assert.AreEqual(59, vi.Note, "Not same note");
 			Assert.AreEqual(0, vi.Ins, "Not same instrument");
-			Assert.AreEqual(21, vi.Vol / 16, "Didn't follow envelope + fadeout");
+			Assert.AreEqual(16, vi.Vol / 16, "Didn't follow envelope + fadeout");
 
 			opaque.Xmp_Play_Frame();
-			Assert.AreEqual(32, vi.Vol / 16, "Didn't follow envelope");
+			Assert.AreEqual(22, vi.Vol / 16, "Didn't follow envelope");
 
 			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();

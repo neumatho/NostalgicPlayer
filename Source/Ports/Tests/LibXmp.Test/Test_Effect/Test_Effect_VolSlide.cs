@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			32, 32, 32, 32,		// Set 32
 			32, 30, 28, 26,		// Down 2
 			26, 29, 32, 35,		// Up 3
-			35, 38, 41, 44		// Memory
+			35, 35, 35, 35		// Should not have memory
 		];
 
 		/********************************************************************/
@@ -73,11 +73,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			// Play it
 			opaque.Xmp_Start_Player(44100, 0);
 
-			for (c_int i = 0; i < 16 * 4; i++)
+			for (c_uint i = 0; i < vals_VS.Length; i++)
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
-				Assert.AreEqual(vals_VS[i], info.Channel_Info[0].Volume, "Volume slide error");
+				Assert.AreEqual(vals_VS[i], info.Channel_Info[0].Volume, $"Volume slide error {i}");
 			}
 
 			opaque.Xmp_Release_Module();

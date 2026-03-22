@@ -4,8 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_No_Note
 {
@@ -37,18 +39,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_No_Note
 		// Cont    = Continue playing sample
 		// Cut     = Stop playing sample
 		//
-		//   * Protracker 1.3/2.3 switches to new sample in the line after the new
-		//     instrument event. The new instrument is not played from start (i.e. a
-		//     short transient sample may not be played). This behaviour is NOT
-		//     emulated by the current version of xmp.
-		//
-		//     00 C-2 03 A0F  <=  Play instrument 03 and slide volume down
-		//     01 --- 02 000  <=  Set volume of instrument 02, playing instrument 03
-		//     02 --- 00 000  <=  Switch to instrument 02 (weird!)
-		//
-		//     00 C-2 03 000  <=  Play instrument 03
-		//     01 A-3 02 308  <=  Start portamento with instrument 03
-		//     02 --- 00 xxx  <=  Switch to instrument 02 (weird!)
+		//   * Protracker 1.3/2.3 queues sample changes immediately, but they don't take
+		//     effect until the current playing sample completes its loop. This is
+		//     supported by libxmp, as it shouldn't significantly hurt PT3 compatibility
 		//
 		//   # Don't reset envelope
 
@@ -64,40 +57,43 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_No_Note
 			Xmp_Context ctx = GetContext(opaque);
 			Player_Data p = ctx.P;
 
-			Create_Simple_Module(opaque, 2, 2);
-			Set_Instrument_Volume(opaque, 0, 0, 22);
-			Set_Instrument_Volume(opaque, 1, 0, 33);
-			New_Event(opaque, 0, 0, 0, 60, 1, 44, 0x0f, 2, 0, 0);
-			New_Event(opaque, 0, 1, 0, 0, 2, 0, 0x00, 0, 0, 0);
+			Create_Read_Event_Test_Module(opaque, 2);
+			New_Event(opaque, 0, 0, 0, Key_C5, Ins_0, 0, 0x00, 0, 0, 0);
+			New_Event(opaque, 0, 1, 0, 0, 0, 0, Effects.Fx_VolSet, Set_Vol, Effects.Fx_SetPan, Set_Pan);
+			New_Event(opaque, 0, 2, 0, 0, Ins_1, 0, 0x00, 0, 0, 0);
 			Set_Quirk(opaque, Quirk_Flag.St3, Read_Event.St3);
 
-			opaque.Xmp_Start_Player(44100, 0);
+			opaque.Xmp_Start_Player(Constants.Xmp_Min_SRate, 0);
 
 			// Row 0
 			opaque.Xmp_Play_Frame();
 
+			Channel_Data xc = p.Xc_Data[0];
 			c_int voc = Map_Channel(p, 0);
 			Assert.IsGreaterThanOrEqualTo(0, voc, "Virtual map");
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
-			Assert.AreEqual(59, vi.Note, "Set note");
-			Assert.AreEqual(0, vi.Ins, "Set instrument");
-			Assert.AreEqual(43 * 16, vi.Vol, "Set volume");
-			Assert.AreEqual(0, vi.Pos0, "Sample position");
+			Check_New(xc, vi, Key_C5, Ins_0, Ins_0_Sub_0_Vol, Ins_0_Sub_0_Pan, Ins_0_Fade, "row 0");
 
 			opaque.Xmp_Play_Frame();
 
-			// Row 1: Valid instrument with no note (ST3)
+			// Row 1: Set non-default volume and pan
+			opaque.Xmp_Play_Frame();
+
+			Check_On(xc, vi, Key_C5, Ins_0, Set_Vol, Set_Pan, Ins_0_Fade, "row 1");
+
+			opaque.Xmp_Play_Frame();
+
+			// Row 2: Valid instrument with no note (ST3)
 			//
 			// When a new valid instrument, different from the current instrument
 			// and no note is set, ST3 keeps playing the current sample but
 			// sets the volume to the new instrument's default volume
 			opaque.Xmp_Play_Frame();
 
-			Assert.AreEqual(0, vi.Ins, "Not original instrument");
-			Assert.AreEqual(59, vi.Note, "Not same note");
-			Assert.AreEqual(33 * 16, vi.Vol, "Not new volume");
-			Assert.AreNotEqual(0, vi.Pos0, "Sample reset");
+			Check_On(xc, vi, Key_C5, -1/*FIXME: desync, should be Ins_0*/, Ins_1_Sub_0_Vol, Ins_1_Sub_0_Pan, Ins_1_Fade, "row 2");
+
+			opaque.Xmp_Play_Frame();
 
 			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();

@@ -174,10 +174,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void LibXmp_Extras_Process_Fx(Channel_Data xc, c_int chn, uint8 note, uint8 fxT, uint8 fxP, c_int fNum)
+		public void LibXmp_Extras_Process_Fx(Channel_Data xc, c_int chn, uint8 note, uint8 ins, uint8 fxT, uint8 fxP, c_int fNum)
 		{
 			if (xc.Extra is IChannelProcessFx channelProcessFx)
-				channelProcessFx.Process_Fx(chn, note, fxT, fxP, fNum);
+				channelProcessFx.Process_Fx(chn, note, ins, fxT, fxP, fNum);
 		}
 		#endregion
 	}

@@ -75,8 +75,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		#region EnvelopePoint
 		private class EnvelopePoint
 		{
-			public c_long X;
-			public c_long Y;
+			public int32 X;
+			public int32 Y;
 		}
 		#endregion
 
@@ -145,7 +145,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		#endregion
 
+		private const uint16 Rtmm_Flag_Linear_Table = 1 << 0;
+		private const uint16 Rtmm_Flag_Track_Names = 1 << 1;
+
+		private const uint16 RtEnv_Flag_Enable = 1 << 0;
+		private const uint16 RtEnv_Flag_Sustain = 1 << 1;
+		private const uint16 RtEnv_Flag_Loop = 1 << 2;
+
+		private const uint16 Rtin_Flag_Default_Pan = 1 << 0;
+		private const uint16 Rtin_Flag_Mute_Samples = 1 << 1;
+
+		private const uint16 Rtsm_Flag_16_Bit = 1 << 1;
+		private const uint16 Rtsm_Flag_Delta_Coding = 1 << 2;
+
+		private const uint8 Rtsm_Loop_On = 1;
+		private const uint8 Rtsm_Loop_Bidir = 2;
+
 		private const int Max_Samp = 1024;
+
+		private const uint8 Fx_None = 0xff;
+		private const uint8 Fx_Extended_It = 0xfe;
+		private const uint8 Fx_Porta_Up_Mod = 0xf1;
+		private const uint8 Fx_Porta_Dn_Mod = 0xf2;
+		private const uint8 Fx_Tone_VSlide_Mod = 0xf5;
+		private const uint8 Fx_Vibra_VSlide_Mod = 0xf6;
+		private const uint8 Fx_VolSlide_Mod = 0xfa;
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;
@@ -158,6 +182,64 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Description = "Tracker created by Arnaud Hasenfratz.",
 			Create = Create
 		};
+
+		/// <summary>
+		/// MOD effects and S3M effects have separate effects memory.
+		///
+		/// TODO: Axy/5xy/6xy have shared memory and dxy/kxy have shared memory.
+		/// Additionally, dxy will set the Axy memory if the dxy slide is NOT fine,
+		/// but Axy will never set the memory of dxy. Effects memory is positional,
+		/// i.e. effect 1 and effect 2 of a given channel have their own memory slots.
+		/// Simulating this would be a lot of work for a format that was barely used,
+		/// so just strip "fine" effects from Axy/5xy/6xy and let the two sets share
+		/// memory for now.
+		///
+		/// TODO: 1xx has separate memory from fxx; 2xx has separate memory from exx
+		/// </summary>
+		private static readonly uint8[] rtm_Fx =
+		[
+			Effects.Fx_Arpeggio,		// 0 Arpeggio (MOD)
+			Fx_Porta_Up_Mod,			// 1 Portamento up (MOD)
+			Fx_Porta_Dn_Mod,			// 2 Portamento down (MOD)
+			Effects.Fx_TonePorta,		// 3 Toneporta
+			Effects.Fx_Vibrato,			// 4 Vibrato
+			Fx_Tone_VSlide_Mod,			// 5 Toneporta + volume slide (MOD)
+			Fx_Vibra_VSlide_Mod,		// 6 Vibrato + volume slide (MOD)
+			Effects.Fx_Tremolo,			// 7 Tremolo
+			Effects.Fx_SetPan,			// 8 Set panning (S3M)
+			Effects.Fx_Offset,			// 9 Sample offset
+			Fx_VolSlide_Mod,			// A Volume slide (MOD)
+			Effects.Fx_Jump,			// B Position jump
+			Effects.Fx_VolSet,			// C Set volume
+			Effects.Fx_Break,			// D Pattern break
+			Effects.Fx_Extended,		// E Extended effects (MOD)
+			Effects.Fx_Speed,			// F Set speed/tempo
+			Effects.Fx_GlobalVol,		// G Set global volume
+			Effects.Fx_GVol_Slide,		// H Global volume slide
+			Fx_None,					// I
+			Fx_None,					// J
+			Effects.Fx_Keyoff,			// K Key off
+			Effects.Fx_EnvPos,			// L Set volume envelope position
+			Fx_None,					// M Select MIDI controller
+			Fx_None,					// N
+			Fx_None,					// O
+			Effects.Fx_PanSlide,		// P Panning slide
+			Fx_None,					// Q
+			Effects.Fx_Multi_Retrig,	// R Retrig + volume slide
+			Fx_Extended_It,				// SA Set high sample offset
+			Effects.Fx_Tremor,			// T Tremor
+			Fx_None,					// U
+			Fx_None,					// V Set MIDI controller value
+			Fx_None,					// W
+			Effects.Fx_Xf_Porta,		// X Extra fine porta
+			Fx_None,					// Y
+			Fx_None,					// Z
+			Effects.Fx_VolSlide,		// d Volume slide (S3M)
+			Effects.Fx_Porta_Up,		// f Portamento up (S3M)
+			Effects.Fx_Porta_Dn,		// e Portamento down (S3M)
+			Effects.Fx_Vibra_VSlide,	// k Vibrato + volume slide (S3M)
+			Effects.Fx_S3M_Speed,		// a Set speed (S3M)
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -238,7 +320,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Read(composer, 1, 32);
 			composer[32] = 0;
 
-			rh.Flags = f.Hio_Read16L();		// Bit 0: Linear table, Bit 1: Track names
+			rh.Flags = f.Hio_Read16L();
 			rh.NTrack = f.Hio_Read8();
 			rh.NInstr = f.Hio_Read8();
 			rh.NPosition = f.Hio_Read16L();
@@ -277,10 +359,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Bpm = rh.Tempo;
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
-			m.Period_Type = (rh.Flags & 0x01) != 0 ? Containers.Common.Period.Linear : Containers.Common.Period.Amiga;
+			m.Period_Type = (rh.Flags & Rtmm_Flag_Linear_Table) != 0 ? Containers.Common.Period.Linear : Containers.Common.Period.Amiga;
 
 			for (c_int i = 0; i < mod.Chn; i++)
-				mod.Xxc[i].Pan = rh.Panning[i] & 0xff;
+				mod.Xxc[i].Pan = Rtm_Convert_Pan(rh.Panning[i]);
 
 			if (lib.common.LibXmp_Init_Pattern(mod) < 0)
 				return -1;
@@ -300,12 +382,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				rp.DataSize = f.Hio_Read32L();
 
 				// Sanity check
-				if ((rp.NTrack > rh.NTrack) || (rp.NRows > 256))
+				if ((rp.NTrack > rh.NTrack) || (rp.NRows > 999))
 					return -1;
 
 				offset += (c_int)(42 + oh.HeaderSize + rp.DataSize);
 
-				if (lib.common.LibXmp_Alloc_Pattern_Tracks(mod, i, rp.NRows) < 0)
+				if (lib.common.LibXmp_Alloc_Pattern_Tracks_Long(mod, i, rp.NRows) < 0)
 					return -1;
 
 				for (c_int r = 0; r < rp.NRows; r++)
@@ -358,6 +440,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						if ((c & 0x40) != 0)	// Read parameter 2
 							@event.F2P = f.Hio_Read8();
+
+						if ((c & 0x18) != 0)
+							Rtm_Translate_Effect(ref @event.FxT, ref @event.FxP);
+
+						if ((c & 0x60) != 0)
+							Rtm_Translate_Effect(ref @event.F2T, ref @event.F2P);
 					}
 				}
 			}
@@ -389,7 +477,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 
 				ri.NSample = f.Hio_Read8();
-				ri.Flags = f.Hio_Read16L();		// Bit 0: Default panning enabled
+				ri.Flags = f.Hio_Read16L();
 
 				if (f.Hio_Read(ri.Table, 1, 120) != 120)
 					return -1;
@@ -409,7 +497,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				ri.VolumeEnv.Sustain = f.Hio_Read8();
 				ri.VolumeEnv.LoopStart = f.Hio_Read8();
 				ri.VolumeEnv.LoopEnd = f.Hio_Read8();
-				ri.VolumeEnv.Flags = f.Hio_Read16L();	// Bit 0: Enable, 1: Sus, 2: Loop
+				ri.VolumeEnv.Flags = f.Hio_Read16L();
 
 				ri.PanningEnv.NPoint = f.Hio_Read8();
 
@@ -451,6 +539,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 
 				xxi.Nsm = ri.NSample;
+				xxi.Vol = (~ri.Flags & Rtin_Flag_Mute_Samples) != 0 ? m.VolBase : 0;
 
 				if (xxi.Nsm > 16)
 					xxi.Nsm = 16;
@@ -467,12 +556,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				xxi.Aei.Sus = ri.VolumeEnv.Sustain;
 				xxi.Aei.Lps = ri.VolumeEnv.LoopStart;
 				xxi.Aei.Lpe = ri.VolumeEnv.LoopEnd;
-				xxi.Aei.Flg = (Xmp_Envelope_Flag)ri.VolumeEnv.Flags;
+				xxi.Aei.Flg = Rtm_Convert_Envelope_Flags(ri.VolumeEnv.Flags);
 				xxi.Pei.Npt = ri.PanningEnv.NPoint;
 				xxi.Pei.Sus = ri.PanningEnv.Sustain;
 				xxi.Pei.Lps = ri.PanningEnv.LoopStart;
 				xxi.Pei.Lpe = ri.PanningEnv.LoopEnd;
-				xxi.Pei.Flg = (Xmp_Envelope_Flag)ri.PanningEnv.Flags;
+				xxi.Pei.Flg = Rtm_Convert_Envelope_Flags(ri.PanningEnv.Flags);
 
 				for (c_int j = 0; j < xxi.Aei.Npt; j++)
 				{
@@ -490,6 +579,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				for (c_int j = 0; j < xxi.Nsm; j++, smpNum++)
 				{
 					Xmp_SubInstrument sub = xxi.Sub[j];
+					Sample_Flag flags = Sample_Flag.None;
 
 					if (Read_Object_Header(f, oh, "RTSM") < 0)
 						return -1;
@@ -507,8 +597,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					lib.period.LibXmp_C2Spd_To_Note((c_int)rs.BaseFreq, out sub.Xpo, out sub.Fin);
 					sub.Xpo += 48 - rs.BaseNote;
-					sub.Vol = rs.DefaultVolume * rs.BaseVolume / 0x40;
-					sub.Pan = 0x80 + rs.Panning * 2;
+					sub.Vol = rs.DefaultVolume;
+					sub.Gvl = rs.BaseVolume;
+					sub.Pan = (ri.Flags & Rtin_Flag_Default_Pan) != 0 ? Rtm_Convert_Pan(rs.Panning) : -1;
 
 					// Autovibrato oddities:
 					// Wave:  TODO: 0 sine, 1 square, 2 ramp down, 3 ramp up
@@ -540,9 +631,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					xxs.Lps = (c_int)rs.LoopBegin;
 					xxs.Lpe = (c_int)rs.LoopEnd;
 
-					xxs.Flg = Xmp_Sample_Flag.None;
-
-					if ((rs.Flags & 0x02) != 0)
+					if ((rs.Flags & Rtsm_Flag_16_Bit) != 0)
 					{
 						xxs.Flg |= Xmp_Sample_Flag._16Bit;
 						xxs.Len >>= 1;
@@ -550,10 +639,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						xxs.Lpe >>= 1;
 					}
 
-					xxs.Flg |= (rs.Loop & 0x03) != 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
-					xxs.Flg |= rs.Loop == 2 ? Xmp_Sample_Flag.Loop_BiDir : Xmp_Sample_Flag.None;
+					if ((rs.Flags & Rtsm_Flag_Delta_Coding) != 0)
+						flags |= Sample_Flag.Diff;
 
-					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Diff, xxs, null, smpNum) < 0)
+					// Any non-zero enables looping
+					if (rs.Loop >= Rtsm_Loop_On)
+						xxs.Flg |= Xmp_Sample_Flag.Loop;
+
+					// Only RTSM_LOOP_BIDIR enables; only works for GUS?
+					if (rs.Loop == Rtsm_Loop_Bidir)
+						xxs.Flg |= Xmp_Sample_Flag.Loop_BiDir;
+
+					if (Sample.LibXmp_Load_Sample(m, f, flags, xxs, null, smpNum) < 0)
 						return -1;
 				}
 			}
@@ -562,13 +659,168 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (lib.common.LibXmp_Realloc_Samples(m, smpNum) < 0)
 				return -1;
 
-			m.Quirk |= Quirk_Flag.Ft2;
+			m.Quirk |= Quirk_Flag.FineFx | Quirk_Flag.InsVol;
 			m.Read_Event_Type = Read_Event.Ft2;
 
 			return 0;
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Rtm_Translate_Effect(ref uint8 fxt, ref uint8 fxp)
+		{
+			if (fxt >= rtm_Fx.Length)
+			{
+				fxt = fxp = 0;
+				return;
+			}
+
+			fxt = rtm_Fx[fxt];
+
+			switch (fxt)
+			{
+				case Fx_None:
+				{
+					fxt = fxp = 0;
+					break;
+				}
+
+				// Set panning (S3M)
+				case Effects.Fx_SetPan:
+				{
+					if (fxp == 0xa4)
+					{
+						fxt = Effects.Fx_Surround;
+						fxp = 1;
+					}
+					else
+					{
+						c_int p = fxp << 1;
+						fxp = (uint8)Math.Min(p, 255);
+					}
+
+					break;
+				}
+
+				// Volume slide (MOD)
+				// Toneporta + volslide (MOD)
+				// Vibrato + volslide (MOD)
+				case Fx_VolSlide_Mod:
+				case Fx_Tone_VSlide_Mod:
+				case Fx_Vibra_VSlide_Mod:
+				{
+					// TODO: this format has very strange memory quirks that
+					// are not emulated, see above
+					fxt &= 0x0f;
+
+					// Disable fine effects
+					if ((Ports.LibXmp.Common.Lsn(fxp) != 0) && (Ports.LibXmp.Common.Msn(fxp) != 0))
+						fxp &= 0xf0;
+
+					break;
+				}
+
+				// Portamento up (MOD)
+				// Portamento down (MOD)
+				case Fx_Porta_Up_Mod:
+				case Fx_Porta_Dn_Mod:
+				{
+					// TODO: 1xx has separate memory from fxx,
+					// 2xx has separate memory from exx.
+					// Clamp down values that would be interpreted as fine.
+					// Values this high are essentially indistinguishable
+					fxt &= 0x0f;
+					fxp = Math.Min(fxp, (uint8)0xdf);
+					break;
+				}
+
+				// Extended effects (MOD)
+				case Effects.Fx_Extended:
+				{
+					switch (Ports.LibXmp.Common.Msn(fxp))
+					{
+						// Not implemented
+						case 0x0:
+						case 0xf:
+						{
+							fxt = fxp = 0;
+							break;
+						}
+
+						// Set vibrato control
+						// Set tremolo control
+						case Effects.Ex_Vibrato_Wf:
+						case Effects.Ex_Tremolo_Wf:
+						{
+							// TODO: 0=sine, 1=ramp-up, 2=ramp-down
+							break;
+						}
+					}
+
+					break;
+				}
+
+				// Extended effects (IT)
+				case Fx_Extended_It:
+				{
+					switch (Ports.LibXmp.Common.Msn(fxp))
+					{
+						// Set high sample offset
+						case 0xa:
+						{
+							fxt = Effects.Fx_HiOffset;
+							fxp = Ports.LibXmp.Common.Lsn(fxp);
+							break;
+						}
+
+						// Not implemented
+						default:
+						{
+							fxt = fxp = 0;
+							break;
+						}
+					}
+
+					break;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert Real Tracker -64..64 pan values into xmp 0..255 pan
+		/// values
+		/// </summary>
+		/********************************************************************/
+		private c_int Rtm_Convert_Pan(int8 pan)
+		{
+			c_int v = ((c_int)pan << 1) + 0x80;
+			Ports.LibXmp.Common.Clamp(ref v, 0, 255);
+
+			return v;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private Xmp_Envelope_Flag Rtm_Convert_Envelope_Flags(uint16 flags)
+		{
+			// RTM envelope flags are XM compatible
+			return (Xmp_Envelope_Flag)(flags & (RtEnv_Flag_Enable | RtEnv_Flag_Sustain | RtEnv_Flag_Loop));
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 

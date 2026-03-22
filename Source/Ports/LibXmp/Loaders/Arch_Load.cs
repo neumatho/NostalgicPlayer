@@ -300,10 +300,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case 0x15:
 				{
 					// Jump to line 10*x+y in same pattern. (10*x+y>63 ignored)
-					if ((Ports.LibXmp.Common.Msn(e.FxP) * 10 + Ports.LibXmp.Common.Lsn(e.FxP)) < 64)
+					if (((Ports.LibXmp.Common.Msn(e.FxP) * 10) + Ports.LibXmp.Common.Lsn(e.FxP)) < 64)
 					{
 						e.FxT = Effects.Fx_Line_Jump;
-						e.FxP = (byte)(Ports.LibXmp.Common.Msn(e.FxP) * 10 + Ports.LibXmp.Common.Lsn(e.FxP));
+						e.FxP = (byte)((Ports.LibXmp.Common.Msn(e.FxP) * 10) + Ports.LibXmp.Common.Lsn(e.FxP));
 					}
 					else
 						e.FxT = e.FxP = 0;
@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Tinf(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Tinf(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Local_Data data = (Local_Data)parm;
 
@@ -367,7 +367,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Mvox(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Mvox(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -391,7 +391,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Ster(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Ster(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -415,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Mnam(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Mnam(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			byte[] buf = new byte[32];
@@ -444,7 +444,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Anam(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Anam(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			byte[] buf = new byte[32];
@@ -473,7 +473,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Mlen(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Mlen(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -495,7 +495,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Pnum(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Pnum(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -519,7 +519,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Plen(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Plen(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Local_Data data = (Local_Data)parm;
 
@@ -536,7 +536,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Sequ(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Sequ(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -553,7 +553,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Patt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Patt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -612,7 +612,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Samp(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Samp(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -693,7 +693,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Read32L();    // 0x00000000
 
 			mod.Xxi[i].Sub[0].Sid = i;
-			mod.Xxi[i].Sub[0].Pan = 0x80;
+			mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 
 			m.Vol_Table = VolTable.LibXmp_Arch_Vol_Table;
 			m.VolBase = 0xff;

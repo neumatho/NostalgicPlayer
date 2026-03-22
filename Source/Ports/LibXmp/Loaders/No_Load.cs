@@ -230,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				mod.Xxs[i].Flg = mod.Xxs[i].Lpe > 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
 				mod.Xxi[i].Sub[0].Fin = 0;
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxi[i].Sub[0].Sid = i;
 
 				lib.period.LibXmp_C2Spd_To_Note(c2Spd, out mod.Xxi[i].Sub[0].Xpo, out mod.Xxi[i].Sub[0].Fin);
@@ -349,6 +349,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						@event.FxT = Effects.Fx_SetPan;
 						@event.FxP = (byte)(value * 0xff / 64);
 					}
+
 					break;
 				}
 
@@ -412,6 +413,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -459,6 +461,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 			}

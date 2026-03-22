@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				mod.Xxi[i].Sub[0].Vol = f.Hio_Read16B() >> 4;
 				f.Hio_Read8();			// Vol L
 				f.Hio_Read8();          // Vol R
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 
 				c_int flags = f.Hio_Read8();
 				mod.Xxs[i].Flg = (flags & 0x03) != 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;

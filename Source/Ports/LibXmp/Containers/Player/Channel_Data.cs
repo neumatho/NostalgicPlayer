@@ -294,6 +294,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 		public c_int Delayed_Ins;
 
 		/// <summary>
+		/// Previous key (XM)
+		/// </summary>
+		public c_int Key_Memory;
+
+		/// <summary>
 		/// Period
 		/// </summary>
 		public c_int Info_Period;

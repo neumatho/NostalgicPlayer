@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 
 			#pragma warning disable MSTEST0032
 			Assert.AreEqual(4000, Constants.Xmp_Min_SRate, "Min sample rate value");
-			Assert.AreEqual(49170, Constants.Xmp_Max_SRate, "Max sample rate value");
+			Assert.AreEqual(768000, Constants.Xmp_Max_SRate, "Max sample rate value");
 			#pragma warning restore MSTEST0032
 
 			// Valid sampling rates

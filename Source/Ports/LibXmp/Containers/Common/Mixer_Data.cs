@@ -64,6 +64,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public CPointer<int32> Buf32Rear;
 
 		/// <summary>
+		/// Allocated samples (not frames) in buffers
+		/// </summary>
+		public c_int Total_Size;
+
+		/// <summary>
 		/// Default softmixer voices number
 		/// </summary>
 		public c_int NumVoc;

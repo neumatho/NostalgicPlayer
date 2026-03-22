@@ -258,7 +258,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				for (c_int i = 0; i < mod.Chn; i++)
 					mod.Xxc[i].Pan = data.Chn_Pan[i] * 2;
 
-				m.Quirk |= Quirk_Flag.Ft2;
+				// TODO: JJ2 1.24 Secret Files shareware does not support fine slides
+				// from converted XMs. Should be tested with converted S3Ms, though
+				m.Quirk |= Quirk_Flag.FineFx;
 				m.Read_Event_Type = Read_Event.Ft2;
 			}
 			finally
@@ -278,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Init(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Init(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -320,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Ordr(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Ordr(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -340,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Patt_Cnt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Patt_Cnt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -359,7 +361,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Inst_Cnt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Inst_Cnt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 
@@ -385,7 +387,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Patt(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Patt(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Xmp_Event dummy = new Xmp_Event();
@@ -469,7 +471,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Inst(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Inst(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			byte[] buf = new byte[29];
@@ -482,19 +484,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (mod.Xxi[i].Nsm != 0)
 				return -1;
 
+			Xmp_Instrument xxi = mod.Xxi[i];
+
 			f.Hio_Read(buf, 1, 28);
-			mod.Xxi[i].Name = encoder.GetString(buf);
+			xxi.Name = encoder.GetString(buf);
 
 			f.Hio_Seek(290, SeekOrigin.Current);	// Sample/note map, envelopes
-			mod.Xxi[i].Nsm = f.Hio_Read16L();
+			xxi.Nsm = f.Hio_Read16L();
 
-			if (mod.Xxi[i].Nsm == 0)
+			if (xxi.Nsm == 0)
 				return 0;
 
-			if (lib.common.LibXmp_Alloc_SubInstrument(mod, i, mod.Xxi[i].Nsm) < 0)
+			if (lib.common.LibXmp_Alloc_SubInstrument(mod, i, xxi.Nsm) < 0)
 				return -1;
 
 			// FIXME: Currently reading only the first sample
+			Xmp_SubInstrument sub = xxi.Sub[0];
+			Xmp_Sample xxs = mod.Xxs[i];
 
 			f.Hio_Read32B();	// RIFF
 			f.Hio_Read32B();	// Size
@@ -504,47 +510,47 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Read32B();	// Unknown - usually 0x40000000
 
 			f.Hio_Read(buf, 1, 28);
-			mod.Xxs[i].Name = encoder.GetString(buf);
+			xxs.Name = encoder.GetString(buf);
 
 			f.Hio_Read32B();	// Unknown - 0x0000
 			f.Hio_Read8();      // Unknown - 0x00
 
-			mod.Xxi[i].Sub[0].Sid = i;
-			mod.Xxi[i].Vol = f.Hio_Read8();
-			mod.Xxi[i].Sub[0].Pan = 0x80;
-			mod.Xxi[i].Sub[0].Vol = (f.Hio_Read16L() + 1) / 512;
+			sub.Sid = i;
+			xxi.Vol = f.Hio_Read8();
+			sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
+			sub.Vol = (f.Hio_Read16L() + 1) / 512;
 
 			c_int flags = f.Hio_Read16L();
 			f.Hio_Read16L();	// Unknown - 0x0080
 
-			mod.Xxs[i].Len = (c_int)f.Hio_Read32L();
-			mod.Xxs[i].Lps = (c_int)f.Hio_Read32L();
-			mod.Xxs[i].Lpe = (c_int)f.Hio_Read32L();
+			xxs.Len = (c_int)f.Hio_Read32L();
+			xxs.Lps = (c_int)f.Hio_Read32L();
+			xxs.Lpe = (c_int)f.Hio_Read32L();
 
-			mod.Xxs[i].Flg = Xmp_Sample_Flag.None;
+			xxs.Flg = Xmp_Sample_Flag.None;
 			bool has_Unsigned_Sample = false;
 
 			if ((flags & 0x04) != 0)
-				mod.Xxs[i].Flg |= Xmp_Sample_Flag._16Bit;
+				xxs.Flg |= Xmp_Sample_Flag._16Bit;
 
 			if ((flags & 0x08) != 0)
-				mod.Xxs[i].Flg |= Xmp_Sample_Flag.Loop;
+				xxs.Flg |= Xmp_Sample_Flag.Loop;
 
 			if ((flags & 0x10) != 0)
-				mod.Xxs[i].Flg |= Xmp_Sample_Flag.Loop | Xmp_Sample_Flag.Loop_BiDir;
+				xxs.Flg |= Xmp_Sample_Flag.Loop | Xmp_Sample_Flag.Loop_BiDir;
 
 			if ((~flags & 0x80) != 0)
 				has_Unsigned_Sample = true;
 
 			c_int sRate = (c_int)f.Hio_Read32L();
 			c_int finetune = 0;
-			lib.period.LibXmp_C2Spd_To_Note(sRate, out mod.Xxi[i].Sub[0].Xpo, out mod.Xxi[i].Sub[0].Fin);
-			mod.Xxi[i].Sub[0].Fin += finetune;
+			lib.period.LibXmp_C2Spd_To_Note(sRate, out sub.Xpo, out sub.Fin);
+			sub.Fin += finetune;
 
 			f.Hio_Read32L();	// 0x00000000
 			f.Hio_Read32L();	// Unknown
 
-			if (mod.Xxs[i].Len > 1)
+			if (xxs.Len > 1)
 			{
 				if (Sample.LibXmp_Load_Sample(m, f, has_Unsigned_Sample ? Sample_Flag.Uns : Sample_Flag.None, mod.Xxs[i], null, i) < 0)
 					return -1;

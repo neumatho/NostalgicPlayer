@@ -61,6 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			DigitalTracker,
 			Octalyser,
 			FlexTrax,
+			SoftwareVisions,
 
 			TestOnly
 		}
@@ -80,6 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			ModsGrave,
 			ScreamTracker3,
 			OpenMpt,
+			SoftwareVisions,
 			Unknown_Conv,
 			ConvertedSt,
 			Converted,
@@ -123,7 +125,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			new Mod_Magic("TDZ4", true, InternalFormat.TakeTracker, 4),		// TakeTracker 4ch
 			new Mod_Magic("FA04", true, InternalFormat.DigitalTracker, 4),	// Atari Falcon
 			new Mod_Magic("FA06", true, InternalFormat.DigitalTracker, 6),	// Atari Falcon
-			new Mod_Magic("FA08", true, InternalFormat.DigitalTracker, 8)	// Atari Falcon
+			new Mod_Magic("FA08", true, InternalFormat.DigitalTracker, 8),	// Atari Falcon
+			new Mod_Magic(".M.K", true, InternalFormat.SoftwareVisions, 4)	// Software Visions DMF
 		];
 
 		private readonly ExternalFormat format;
@@ -207,6 +210,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Name = "FlexTrax",
 			Description = "This player is from the Atari Falcon and uses the standard MOD file format. However, it has added some extra information at the end of the file which contains DSP parameters, such as reverb and delay. The editor was written by Thomas Bergström.\n\nThis player does not support the extra features at the moment.",
 			Create = Create_FlexTrax
+		};
+
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_SoftwaveVisions = new Format_Loader
+		{
+			Id = Guid.Parse("D1574958-459E-4A13-8318-2FF8F4F8F3F2"),
+			Name = "Software Visions",
+			Description = "This format is used by Software Visions in the game Apocalypse Abyss and for their 1995 Catalog.",
+			Create = Create_SoftwaveVisions
 		};
 
 		/// <summary></summary>
@@ -332,6 +344,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
+		private static IFormatLoader Create_SoftwaveVisions(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.SoftwareVisions);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
 		private static IFormatLoader Create_TestOnly(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.TestOnly);
@@ -350,6 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public c_int Test(Hio f, out string t, c_int start)
 		{
 			c_int i;
+			CPointer<uint8> pat_Buf = new CPointer<uint8>(1024);
 
 			t = null;
 
@@ -382,6 +407,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			detected = mod_Magic[i].Flag;
+			InternalFormat id = mod_Magic[i].Id;
+			c_int smp_Size = 0;
 
 			// Sanity check to prevent loading NoiseRunner and other module
 			// formats with valid magic at offset 1080 (e.g. His Master's Noise)
@@ -389,21 +416,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			for (i = 0; i < 31; i++)
 			{
-				f.Hio_Seek(22, SeekOrigin.Current);		// Instrument name
+				f.Hio_Read(pat_Buf, 1, 30);
 
-				// OpenMPT can create mods with large samples
-				f.Hio_Read16B();	// Sample size
+				if (id == InternalFormat.SoftwareVisions)
+					Flip_Word_Bytes(pat_Buf + 22, 8);
+
+				smp_Size += DataIo.ReadMem16B(pat_Buf + 22) << 1;	// Sample size
 
 				// Chris Spiegel tells me that sandman.mod has 0x20 in finetune
-				uint8 x = f.Hio_Read8();
+				uint8 x = pat_Buf[24];
 				if (((x & 0xf0) != 0) && (x != 0x20))	// Test finetune
 					return -1;
 
-				if (f.Hio_Read8() > 0x40)		// Test volume
+				if (pat_Buf[25] > 0x40)		// Test volume
 					return -1;
-
-				f.Hio_Read16B();		// Loop start
-				f.Hio_Read16B();		// Loop size
 			}
 
 			// The following checks are only relevant for filtering out atypical
@@ -421,17 +447,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			// Get file size
 			c_long size = f.Hio_Size();
-			c_int smp_Size = 0;
-
-			f.Hio_Seek(start + 20, SeekOrigin.Begin);
-
-			// Get sample sizes
-			for (i = 0; i < 31; i++)
-			{
-				f.Hio_Seek(22, SeekOrigin.Current);
-				smp_Size += 2 * f.Hio_Read16B();	// Length in 16-bit words
-				f.Hio_Seek(6, SeekOrigin.Current);
-			}
 
 			// Get number of patterns
 			c_int num_Pat = 0;
@@ -451,16 +466,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			num_Pat++;
 
 			// See if module size matches UNIC
-			if ((start + 1084 + num_Pat * 0x300 + smp_Size) == size)
+			if ((start + 1084 + (num_Pat * 0x300) + smp_Size) == size)
 				return -1;
 
 			// Validate pattern data in an attempt to catch UNICs with MOD size
-			uint8[] pat_Buf = new uint8[1024];
 			c_int count;
 
 			for (count = i = 0; i < num_Pat; i++)
 			{
-				f.Hio_Seek(start + 1084 + 1024 * i, SeekOrigin.Begin);
+				f.Hio_Seek(start + 1084 + (1024 * i), SeekOrigin.Begin);
 
 				if (f.Hio_Read(pat_Buf, 1024, 1) == 0)
 					return -1;
@@ -493,7 +507,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Xmp_Module mod = m.Mod;
 			Mod_Header mh = new Mod_Header();
-			uint8[] magic = new uint8[8];
+			CPointer<uint8> magic = new CPointer<uint8>(8);
 			uint8[] pat_High_Fxx = new uint8[256];
 			out_Of_Range = false;
 			bool sameRow_Fxx = false;	// Speed + BPM set on same row
@@ -508,37 +522,55 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Chn = channels;
 			m.Period_Type = Containers.Common.Period.ModRng;
 
-			f.Hio_Read(mh.Name, 20, 1);
+			CPointer<uint8> patBuf = CMemory.malloc<uint8>(1084);
+			if (patBuf.IsNull)
+				return -1;
 
-			for (c_int i = 0; i < 31; i++)
+			if (f.Hio_Read(patBuf, 1, 1084) < 1084)
 			{
-				f.Hio_Read(mh.Ins[i].Name, 22, 1);		// Instrument name
-				mh.Ins[i].Size = f.Hio_Read16B();					// Length in 16-bit words
-				mh.Ins[i].FineTune = f.Hio_Read8S();                // Finetune (signed nibble)
-				mh.Ins[i].Volume = f.Hio_Read8S();                  // Linear playback volume
-				mh.Ins[i].Loop_Start = f.Hio_Read16B();             // Loop start in 16-bit words
-				mh.Ins[i].Loop_Size = f.Hio_Read16B();				// Loop size in 16-bit words
+				CMemory.free(patBuf);
+				return -1;
 			}
 
-			mh.Len = f.Hio_Read8();
-			mh.Restart = f.Hio_Read8();
-
-			f.Hio_Read(mh.Order, 128, 1);
-			f.Hio_Read(magic, 1, 4);
-
-			if (f.Hio_Error() != 0)
-				return -1;
+			CMemory.memset<uint8_t>(magic, 0, (size_t)magic.Length);
+			CMemory.memcpy(magic, patBuf + 1080, 4);
 
 			// Digital Tracker MODs have an extra four bytes after the magic.
 			// These are always 00h 40h 00h 00h and can probably be ignored
 			if (tracker_Id == InternalFormat.DigitalTracker)
 				f.Hio_Read32B();
 
+			// For unknown reasons, the first 2108 bytes of Software Visions DMF MODs
+			// (ModEdit M.K. used in Apocalypse Abyss and Software Visions Catalog)
+			// are word-flipped to little endian
+			if (tracker_Id == InternalFormat.SoftwareVisions)
+				Flip_Word_Bytes(patBuf, 1084);
+
+			CMemory.memcpy(mh.Name, patBuf, 20);
+
+			for (c_int i = 0; i < 31; i++)
+			{
+				CPointer<uint8> pos = patBuf + 20 + (i * 30);
+
+				CMemory.memcpy(mh.Ins[i].Name, pos, 22);	// Instrument name
+				mh.Ins[i].Size = DataIo.ReadMem16B(pos + 22);					// Length in 16-bit words
+				mh.Ins[i].FineTune = (int8)pos[24];								// Finetune (signed nibble)
+				mh.Ins[i].Volume = (int8)pos[25];								// Linear playback volume
+				mh.Ins[i].Loop_Start = DataIo.ReadMem16B(pos + 26);			// Loop start in 16-bit words
+				mh.Ins[i].Loop_Size = DataIo.ReadMem16B(pos + 28);			// Loop size in 16-bit words
+			}
+
+			mh.Len = patBuf[950];
+			mh.Restart = patBuf[951];
+
+			CMemory.memcpy(mh.Order, patBuf + 952, 128);
+			CMemory.free(patBuf);
+
 			lib.common.LibXmp_Copy_Adjust(out mod.Name, mh.Name, 20, encoder);
 
 			mod.Len = mh.Len;
 
-			CMemory.memcpy<byte>(mod.Xxo, mh.Order, 128);
+			CMemory.memcpy(mod.Xxo, mh.Order, 128);
 
 			if ((mh.Restart < 0x7f) && (mh.Restart != 0x78) && (mh.Restart < mod.Len))
 			{
@@ -581,7 +613,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				xxs.Flg = ((mh.Ins[i].Loop_Size > 1) && (xxs.Lpe >= 4)) ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
 				sub.Fin = (int8)(mh.Ins[i].FineTune << 4);
 				sub.Vol = mh.Ins[i].Volume;
-				sub.Pan = 0x80;
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;
 
 				lib.common.LibXmp_Instrument_Name(mod, i, mh.Ins[i].Name, 22, encoder);
@@ -599,23 +631,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			// Load and convert patterns
-			CPointer<uint8> patBuf = CMemory.malloc<uint8>((size_t)(64 * 4 * mod.Chn));
+			patBuf = CMemory.malloc<uint8>((size_t)(64 * 4 * mod.Chn));
 			if (patBuf.IsNull)
 				return -1;
 
 			for (c_int i = 0; i < mod.Pat; i++)
 			{
+				c_int patLen = 64 * 4 * mod.Chn;
+
 				if (lib.common.LibXmp_Alloc_Pattern_Tracks(mod, i, 64) < 0)
 				{
 					CMemory.free(patBuf);
 					return -1;
 				}
 
-				if (f.Hio_Read(patBuf, (size_t)(64 * 4 * mod.Chn), 1) < 1)
+				if (f.Hio_Read(patBuf, 1, (size_t)patLen) < (size_t)patLen)
 				{
 					CMemory.free(patBuf);
 					return -1;
 				}
+
+				// First pattern of Software Vision DMF is word flipped (see above)
+				if ((tracker_Id == InternalFormat.SoftwareVisions) && (i == 0))
+					Flip_Word_Bytes(patBuf, (size_t)patLen);	// Should be 1024
 
 				CPointer<uint8> mod_Event = patBuf;
 
@@ -787,6 +825,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (detected)
 						m.Flow_Mode = FlowMode_Flag.Mode_Octalyser;
 
+					// TODO: hexadecimal pattern break parameter
 					break;
 				}
 
@@ -813,6 +852,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				{
 					tracker = "Scream Tracker";
 					m.Period_Type = Containers.Common.Period.Amiga;
+					break;
+				}
+
+				case InternalFormat.SoftwareVisions:
+				{
+					tracker = "Software Visions DMF";
 					break;
 				}
 
@@ -850,10 +895,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (out_Of_Range)
 				m.Period_Type = Containers.Common.Period.Amiga;
 
-			if (tracker_Id == InternalFormat.ModsGrave)
+			if ((tracker_Id == InternalFormat.ModsGrave) || (tracker_Id == InternalFormat.SoftwareVisions))
 				lib.common.LibXmp_Set_Type(m, tracker);
 			else
-				lib.common.LibXmp_Set_Type(m, string.Format("{0} {1}", tracker, Encoding.Latin1.GetString(magic, 0, 4)));
+				lib.common.LibXmp_Set_Type(m, string.Format("{0} {1}", tracker, Encoding.Latin1.GetString(magic.ToArray(), 0, 4)));
 
 			// Load samples
 			for (c_int i = 0; i < mod.Smp; i++)
@@ -890,7 +935,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			else if ((tracker_Id == InternalFormat.FastTracker) || (tracker_Id == InternalFormat.FastTracker2) || (tracker_Id == InternalFormat.TakeTracker) || (tracker_Id == InternalFormat.ModsGrave) || (mod.Chn > 4))
 			{
 				m.C4Rate = Constants.C4_Ntsc_Rate;
-				m.Quirk |= Quirk_Flag.Ft2 | Quirk_Flag.FtMod;
+				m.Quirk |= Quirk_Flag.Ft2;
 				m.Read_Event_Type = Read_Event.Ft2;
 				m.Period_Type = Containers.Common.Period.Amiga;
 			}
@@ -916,6 +961,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				default:
 					return false;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Flip_Word_Bytes(CPointer<uint8> buf, size_t bytes)
+		{
+			for (size_t i = 0; i < bytes; i += 2)
+			{
+				uint8_t t = buf[i];
+				buf[i] = buf[i + 1];
+				buf[i + 1] = t;
 			}
 		}
 
@@ -1202,6 +1264,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.FlexTrax:
 					return ExternalFormat.FlexTrax;
 
+				case InternalFormat.SoftwareVisions:
+					return ExternalFormat.SoftwareVisions;
+
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
 				case InternalFormat.ConvertedSt:
@@ -1242,56 +1307,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			channels = 0;
 			restartPosition = 0;
 
-			f.Hio_Seek(start + 20, SeekOrigin.Begin);
+			CPointer<uint8_t> patBuf = CMemory.malloc<uint8_t>(1084);
+			if (patBuf.IsNull)
+				return InternalFormat.NotRecognized;
 
-			for (c_int i = 0; i < 31; i++)
+			f.Hio_Seek(start, SeekOrigin.Begin);
+
+			if (f.Hio_Read(patBuf, 1, 1084) < 1084)
 			{
-				f.Hio_Seek(22, SeekOrigin.Current);
-
-				// Mod's Grave WOW files are converted from 669s and have default
-				// finetune and volume
-				uint16 size = f.Hio_Read16B();
-				uint8 finetune = f.Hio_Read8();
-				uint8 volume = f.Hio_Read8();
-
-				if ((size != 0) && ((finetune != 0) || (volume != 64)))
-					maybe_Wow = false;
-
-				if (size >= 0x8000)
-					has_Big_Samples = true;
-
-				smp_Size += 2 * size;
-
-				f.Hio_Seek(4, SeekOrigin.Current);
+				CMemory.free(patBuf);
+				return InternalFormat.NotRecognized;
 			}
-
-			f.Hio_Seek(start + 951, SeekOrigin.Begin);
-			uint8 restart = f.Hio_Read8();
-
-			c_int pat = 0;
-
-			for (c_int i = 0; i < 128; i++)
-			{
-				uint8 x = f.Hio_Read8();
-
-				if (x > 0x7f)
-					break;
-
-				if (x > pat)
-					pat = x;
-			}
-
-			pat++;
-
-			// Mod's Grave WOW files always have a 0 restart byte; 6692WOW implements
-			// 669 repeating by inserting a pattern jump and ignores this byte
-			if (restart != 0)
-				maybe_Wow = false;
-
-			f.Hio_Seek(start + 1080, SeekOrigin.Begin);
 
 			CPointer<byte> magic = new CPointer<byte>(4);
-			f.Hio_Read(magic, 1, 4);
+			CMemory.memcpy(magic, patBuf + 1080, 4);
 			mkMark = CMemory.strncmp(magic, "M.K.", 4) == 0;
 
 			for (c_int i = 0; i < mod_Magic.Length; i++)
@@ -1305,21 +1334,70 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
+			// Enable timing detection for M.K. and M!K! modules
 			if (trackerId == InternalFormat.ProTracker)
 				needs_Timing_Detection = true;
 
 			if (channels == 0)
 			{
 				if ((CMemory.strncmp(magic + 2, "CH", 2) == 0) && char.IsDigit((char)magic[0]) && char.IsDigit((char)magic[1]))
-					channels = (magic[0] - '0') * 10 + magic[1] - '0';
+					channels = ((magic[0] - '0') * 10) + magic[1] - '0';
 				else if ((CMemory.strncmp(magic + 1, "CHN", 3) == 0) && char.IsDigit((char)magic[0]))
 					channels = magic[0] - '0';
 				else
+				{
+					CMemory.free(patBuf);
 					return InternalFormat.NotRecognized;
+				}
 
 				trackerId = (channels & 1) != 0 ? InternalFormat.TakeTracker : InternalFormat.FastTracker2;
 				detected = true;
 			}
+
+			if (trackerId == InternalFormat.SoftwareVisions)
+				Flip_Word_Bytes(patBuf, 1084);
+
+			for (c_int i = 0; i < 31; i++)
+			{
+				CPointer<uint8_t> pos = patBuf + 20 + (i * 30);
+
+				// Mod's Grave WOW files are converted from 669s and have default
+				// finetune and volume
+				uint16 size = DataIo.ReadMem16B(pos + 22);
+				uint8 finetune = pos[24];
+				uint8 volume = pos[25];
+
+				if ((size != 0) && ((finetune != 0) || (volume != 64)))
+					maybe_Wow = false;
+
+				if (size >= 0x8000)
+					has_Big_Samples = true;
+
+				smp_Size += 2 * size;
+			}
+
+			uint8 restart = patBuf[951];
+
+			// Mod's Grave WOW files always have a 0 restart byte; 6692WOW implements
+			// 669 repeating by inserting a pattern jump and ignores this byte
+			if (restart != 0)
+				maybe_Wow = false;
+
+			c_int pat = 0;
+
+			for (c_int i = 0; i < 128; i++)
+			{
+				uint8 x = patBuf[952 + i];
+
+				if (x > 0x7f)
+					break;
+
+				if (x > pat)
+					pat = x;
+			}
+
+			pat++;
+			CMemory.free(patBuf);
 
 			if (has_Big_Samples)
 			{
@@ -1331,6 +1409,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// Experimental tracker-detection routine
 			if (detected)
 				goto Skip_Test;
+
+			f.Hio_Seek(start + 1080, SeekOrigin.Begin);
 
 			// Test for Flextrax modules
 			//
@@ -1348,7 +1428,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (pos < 0)
 					return InternalFormat.NotRecognized;
 
-				f.Hio_Seek(start + 0x43c + pat * 4 * channels * 0x40 + smp_Size, SeekOrigin.Begin);
+				f.Hio_Seek(start + 0x43c + (pat * 4 * channels * 0x40) + smp_Size, SeekOrigin.Begin);
 				c_int num_Read = (c_int)f.Hio_Read(idBuffer, 1, 4);
 				f.Hio_Seek(pos, SeekOrigin.Begin);
 
@@ -1376,7 +1456,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// Worst case if there are still issues with this, OpenMPT validates later
 			// patterns in potential WOW files (where sample data would be located in a
 			// regular M.K. MOD) to rule out false positives
-			if ((CMemory.strncmp(magic, "M.K.", 4) == 0) && maybe_Wow && ((0x43c + pat * 32 * 0x40 + smp_Size) == (fileSize & ~1)))
+			if ((CMemory.strncmp(magic, "M.K.", 4) == 0) && maybe_Wow && ((0x43c + (pat * 32 * 0x40) + smp_Size) == (fileSize & ~1)))
 			{
 				channels = 8;
 				trackerId = InternalFormat.ModsGrave;
@@ -1389,7 +1469,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Skip_Test:
 			if ((trackerId is InternalFormat.ProTracker or InternalFormat.NoiseTracker or InternalFormat.Probably_NoiseTracker or InternalFormat.SoundTracker or InternalFormat.Unknown) || mkMark)
 			{
-				CPointer<uint8> patBuf = CMemory.malloc<uint8>((size_t)(64 * 4 * channels));
+				patBuf = CMemory.malloc<uint8>((size_t)(64 * 4 * channels));
 				out_Of_Range = false;
 				bool sameRow_Fxx = false;
 
@@ -1397,7 +1477,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				for (c_int i = 0; i < pat; i++)
 				{
-					if (f.Hio_Read(patBuf, (size_t)(64 * 4 * channels), 1) < 1)
+					c_int patLen = 64 * 4 * channels;
+
+					if (f.Hio_Read(patBuf, 1, (size_t)patLen) < (size_t)patLen)
 						break;
 
 					CPointer<uint8> mod_Event = patBuf;

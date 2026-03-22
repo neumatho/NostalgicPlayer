@@ -135,7 +135,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (panMap[i] == 255)
 				{
 					panMap[i] = 8;
-					mod.Xxc[i].Vol = 0;
 					mod.Xxc[i].Flg |= Xmp_Channel_Flag.Mute;
 				}
 				else if (panMap[i] == 16)
@@ -195,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				c_int pan = f.Hio_Read8();
 
 				mod.Xxi[i].Sub[0].Vol = vol > 0x40 ? 0x40 : vol;
-				mod.Xxi[i].Sub[0].Pan = pan > 15 ? 0x80 : 0x80 + (pan - 8) * 16;
+				mod.Xxi[i].Sub[0].Pan = pan > 15 ? Constants.Xmp_Inst_No_Default_Pan : 0x80 + ((pan - 8) * 16);
 				lib.period.LibXmp_C2Spd_To_Note(c4Spd, out mod.Xxi[i].Sub[0].Xpo, out mod.Xxi[i].Sub[0].Fin);
 
 				mod.Xxi[i].Sub[0].Sid = i;
@@ -353,7 +352,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									@event.FxP = f.Hio_Read8();
 									len--;
 
-									Fix_Effect(ref @event.FxT, ref @event.FxP);
+									Gdm_Translate_Effect(ref @event.FxT, ref @event.FxP);
 									break;
 								}
 
@@ -363,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									@event.F2P = f.Hio_Read8();
 									len--;
 
-									Fix_Effect(ref @event.F2T, ref @event.F2P);
+									Gdm_Translate_Effect(ref @event.F2T, ref @event.F2P);
 									break;
 								}
 
@@ -406,7 +405,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Fix_Effect(ref uint8 fxT, ref uint8 fxP)
+		private void Gdm_Translate_Effect(ref uint8 fxT, ref uint8 fxP)
 		{
 			switch (fxT)
 			{
@@ -494,6 +493,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 								fxT = Effects.Fx_VolSlide;
 								fxP = (byte)((l << 4) | 0xf);
 							}
+
 							break;
 						}
 
@@ -505,9 +505,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 								fxT = Effects.Fx_VolSlide;
 								fxP = (byte)(l | 0xf0);
 							}
+
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -585,6 +587,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							break;
 						}
 					}
+
 					break;
 				}
 

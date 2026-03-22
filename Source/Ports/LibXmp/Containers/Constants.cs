@@ -31,9 +31,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const c_int Max_Instruments = 255;
 		public const c_int Max_Patterns = 256;
 
-		public const c_int Xmp_Mark_Skip = 0xfe;		// S3M/IT (QUIRK_MARKER) skip position
-		public const c_int Xmp_Mark_End = 0xff;		// S3M/IT (QUIRK_MARKER) end position
-
 		// Mixer
 		public const c_double C4_Period = 428.0;
 
@@ -52,6 +49,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const c_double Max_Period_L = 0x1e00;
 		public const c_int Min_Note_Mod = 48;
 		public const c_int Max_Note_Mod = 83;
+		public const c_int Ft2_Note_Bn1 = 11;			// FT2 B-(-1)
+		public const c_int Ft2_Note_C0 = 12;			// FT2 C-0
+		public const c_int Ft2_Note_As9 = 130;			// FT2 A#9
 
 		// Xmp
 		public const c_int Xmp_Name_Size = 64;			// Size of module name and type
@@ -64,9 +64,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const c_int Xmp_Max_Env_Points = 32;		// Max number of envelope points
 		public const c_int Xmp_Max_Mod_Length = 256;	// Max number of patterns in module
 		public const c_int Xmp_Max_Channels = 64;		// Max number of channels in module
-		public const c_int Xmp_Max_SRate = 49170;		// Max sampling rate (Hz)
+		public const c_int Xmp_Max_SRate = 768000;		// Max sampling rate (Hz)
 		public const c_int Xmp_Min_SRate = 4000;		// Min sampling rate (Hz)
 		public const c_int Xmp_Min_Bpm = 20;			// Min BPM
+
+		public const c_int Xmp_Inst_No_Default_Pan = -1;
+
+		public const c_int Xmp_Mark_Skip = 0xfe;		// S3M/IT only: skip position
+		public const c_int Xmp_Mark_End = 0xff;			// S3M/IT only: end position
 
 		// frame rate = (50 * bpm / 125) Hz
 		// frame size = (sampling rate * channels * size) / frame rate

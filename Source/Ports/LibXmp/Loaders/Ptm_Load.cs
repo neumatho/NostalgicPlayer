@@ -273,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 
 				sub.Vol = pih.Vol;
-				sub.Pan = 0x80;
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;
 				pih.Magic = 0;
 
@@ -371,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							// Break (hex parameter)
 							case 0x0d:
 							{
-								@event.FxP = Effects.Fx_It_Break;
+								@event.FxT = Effects.Fx_It_Break;
 								break;
 							}
 
@@ -471,9 +471,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			m.Quirk |= Quirk_Flag.St3;
 
 			// Has none of ST3's loop quirks; loop jumps unset prior break.
-			// TODO: There is an obscure bug where loop jumps take precedence over
-			// position jumps *ONLY WHEN THE PLAYER IS AT SPEED 1*.
-			// TODO: Jumps are always to row 0
+			// TODO: pattern jump is handled every tick, causing some strange bugs:
+			// - At speed 1, loop jump unsets position jump (FLOW_LOOP_UNSET_JUMP),
+			//   but at higher speeds, position jump overwrites the loop jump.
+			// - At speed 1, Bxx Dyy jumps to pattern X at row Y, but at higher
+			//   speeds, position jump overwrites the break row with 0
 			m.Flow_Mode = FlowMode_Flag.Loop_Global | FlowMode_Flag.Loop_Unset_Break;
 			m.Read_Event_Type = Read_Event.St3;
 

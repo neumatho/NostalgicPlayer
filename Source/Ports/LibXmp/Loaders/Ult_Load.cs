@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				// TODO: Add logarithmic volume support
 				mod.Xxi[i].Sub[0].Vol = uih.Volume;
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxi[i].Sub[0].Sid = i;
 
 				lib.common.LibXmp_Instrument_Name(mod, i, uih.Name, 24, encoder);

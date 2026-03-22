@@ -272,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			CMemory.free(data.PackInfo);
 
-			m.Quirk |= Quirk_Flag.Ft2 | Quirk_Flag.KeyOff;
+			m.Quirk |= Quirk_Flag.FineFx | Quirk_Flag.KeyOff;
 			m.Read_Event_Type = Read_Event.Ft2;
 			m.Module_Flags = Xmp_Module_Flags.Uses_Tracks;
 
@@ -685,7 +685,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_In(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_In(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -739,7 +739,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Pa(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Pa(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -785,7 +785,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_P0(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_P0(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -828,7 +828,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Tr(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Tr(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -1007,7 +1007,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Ii(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Ii(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -1070,7 +1070,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if ((~x & 0x40) != 0)
 						sub.Vol = 0xff;
 
-					mod.Xxi[i].Sub[j].Pan = f.Hio_Read8() << 1;
+					sub.Pan = f.Hio_Read8() << 1;
 
 					x = f.Hio_Read8();				// Pan envelope
 
@@ -1078,7 +1078,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						data.P_Index[i] = (x & 0x80) != 0 ? x & 0x3f : -1;
 
 					if ((~x & 0x40) != 0)
-						sub.Pan = 0x80;
+						sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 
 					x = f.Hio_Read16L();
 
@@ -1108,7 +1108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Is(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Is(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -1187,7 +1187,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_I0(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_I0(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -1244,7 +1244,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				xxs.Lpe = xxs.Lps + xxs.Lpe;
 
 				sub.Vol = f.Hio_Read8();		// Volume
-				sub.Pan = 0x80;
+				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 
 				m.Xtra[i].C5Spd = c5Spd;
 
@@ -1271,7 +1271,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Sa(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Sa(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Xmp_Module mod = m.Mod;
 			Local_Data data = (Local_Data)parm;
@@ -1279,7 +1279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			CPointer<uint8> smpBuf = null, buf;
 			c_int smpBuf_Alloc = -1;
 
-			c_int left = (c_int)(f.Hio_Size() - f.Hio_Tell());
+			c_long left = f.Hio_Size() - f.Hio_Tell();
 
 			// Sanity check
 			if (data.Has_Sa || !data.Has_Is || data.PackInfo.IsNull)
@@ -1445,7 +1445,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Ve(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Ve(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Local_Data data = (Local_Data)parm;
 
@@ -1481,7 +1481,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Pe(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Pe(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Local_Data data = (Local_Data)parm;
 
@@ -1517,7 +1517,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Get_Chunk_Fe(Module_Data m, c_int size, Hio f, object parm)
+		private c_int Get_Chunk_Fe(Module_Data m, uint32 size, Hio f, object parm)
 		{
 			Local_Data data = (Local_Data)parm;
 

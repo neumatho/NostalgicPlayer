@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				mod.Xxi[i].Sub[0].Fin = (int8)(insBuf[22] << 4);
 				mod.Xxi[i].Sub[0].Vol = insBuf[23];
 				mod.Xxi[i].Sub[0].Xpo = (int8)insBuf[24];
-				mod.Xxi[i].Sub[0].Pan = 0x80;
+				mod.Xxi[i].Sub[0].Pan = Constants.Xmp_Inst_No_Default_Pan;
 				mod.Xxi[i].Sub[0].Sid = i;
 
 				mod.Xxs[i].Len = (c_int)DataIo.ReadMem32L(insBuf + 25);

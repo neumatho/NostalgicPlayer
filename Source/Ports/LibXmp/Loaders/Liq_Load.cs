@@ -653,7 +653,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				sub.Vol = li.Vol;
 				sub.Gvl = li.Gvl;
-				sub.Pan = li.Pan;
+				// TODO: 66 = surround
+				sub.Pan = li.Pan <= 64 ? Math.Min(li.Pan * 4, 255) : Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;
 
 				lib.common.LibXmp_Instrument_Name(mod, i, li.Name, 30, encoder);

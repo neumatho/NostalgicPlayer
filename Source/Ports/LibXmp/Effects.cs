@@ -74,6 +74,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Effect_Memory_Get(Module_Data md, Channel_Data xc, out c_int p, c_int m)
+		{
+			if (Common.Has_Quirk(md, Quirk_Flag.St3Bugs))
+				p = xc.Vol.Memory;
+			else
+				p = m;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Effect_Memory_SetOnly(Module_Data md, Channel_Data xc, ref uint8 p, ref c_int m)
 		{
 			Effect_Memory__(ref p, ref m);
@@ -234,21 +250,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Do_Fx_SetPan(Channel_Data xc, uint8 fxP, Module_Data m, Xmp_Event e, c_int fNum)
 		{
-			// From OpenMPT PanOff.xm:
-			// "Another chapter of weird FT2 bugs: Note-Off + Note Delay
-			//  + Volume Column Panning = Panning effect is ignored
-			if (!Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs)	// If not FT2
-				|| (fNum == 0)								// or not vol column
-				|| (e.Note != Constants.Xmp_Key_Off)		// or not keyoff
-				|| (e.FxT != Effects.Fx_Extended)			// or not delay
-				|| (Common.Msn(e.FxP) != Effects.Ex_Delay))
-			{
-				xc.Pan.Val = fxP;
-				xc.Pan.Surround = false;
-			}
-
-			xc.Rpv = 0;		// storlek_20: set pan overrides random pan
+			xc.Pan.Val = fxP;
 			xc.Pan.Surround = false;
+			xc.Rpv = 0;		// storlek_20: set pan overrides random pan
 		}
 
 
@@ -344,6 +348,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						xc.Arpeggio.Val[2] = (sbyte)Common.Lsn(fxP);
 						xc.Arpeggio.Size = 3;
 					}
+
 					break;
 				}
 
@@ -362,6 +367,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						xc.Arpeggio.Val[2] = (sbyte)Common.Lsn(fxP);
 						xc.Arpeggio.Size = 3;
 					}
+
 					break;
 				}
 
@@ -375,6 +381,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						xc.Arpeggio.Val[3] = (sbyte)-Common.Msn(fxP);
 						xc.Arpeggio.Size = 4;
 					}
+
 					break;
 				}
 
@@ -387,6 +394,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						xc.Arpeggio.Val[2] = 0;
 						xc.Arpeggio.Size = 3;
 					}
+
 					break;
 				}
 
@@ -424,6 +432,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						if (Common.Has_Quirk(m, Quirk_Flag.UniSld))
 							xc.Porta.Memory = fxP;
 					}
+
 					break;
 				}
 
@@ -465,6 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						if (Common.Has_Quirk(m, Quirk_Flag.UniSld))
 							xc.Porta.Memory = fxP;
 					}
+
 					break;
 				}
 
@@ -478,7 +488,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						if (Common.Has_Quirk(m, Quirk_Flag.UniSld))		// IT compatible Gxx off
 							xc.Freq.Memory = fxP;
 
-						xc.Porta.Slide = fxP;
+						xc.Porta.Slide += fxP;
 					}
 
 					if (Common.Has_Quirk(m, Quirk_Flag.IgStPor))
@@ -519,6 +529,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Toneporta + vol slide
 				case Effects.Fx_Tone_VSlide:
 				{
+					Effect_Memory_Get(m, xc, out l, xc.Porta.Memory);
+					xc.Porta.Slide += l;
+
 					if (!Is_Valid_Instrument(mod, xc.Ins))
 						break;
 
@@ -557,7 +570,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Set sample offset
 				case Effects.Fx_Offset:
 				{
-					Effect_Memory(m, xc, ref fxP, ref xc.Offset.Memory);
+					if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs))
+					{
+						// FT2: only set memory when offset activates, see
+						// read_event_ft2 (ft2_offset_memory.xm)
+						fxP = (byte)(fxP != 0 ? fxP : xc.Offset.Memory);
+					}
+					else
+						Effect_Memory(m, xc, ref fxP, ref xc.Offset.Memory);
+
 					Set(xc, Channel_Flag.Offset);
 
 					if (note != 0)
@@ -610,8 +631,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							goto case Effects.Fx_VolSlide;
 					}
 
-					Set(xc, Channel_Flag.Vol_Slide);
-
 					// Skaven's 2nd reality (S3M) has volslide parameter D7 => pri
 					// down. Other trackers only compute volumes if the other
 					// parameter is 0, Fall from sky.xm has 2C => do nothing.
@@ -619,6 +638,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					// of Sounds.xm
 					if (fxP != 0)
 					{
+						Set(xc, Channel_Flag.Vol_Slide);
+
 						xc.Vol.Memory = fxP;
 
 						h = Common.Msn(fxP);
@@ -626,7 +647,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						if (fxP != 0)
 						{
-							if (Common.Has_Quirk(m, Quirk_Flag.VolPdn))
+							// Imago Orpheus uses (x - y).
+							// TODO: a less hacky way of detecting this
+							// (READ_EVENT_ORPHEUS or quirk) would be nice.
+							// (test_effect_finefx_imf)
+							if (m.Flow_Mode == FlowMode_Flag.Mode_Orpheus)
+								xc.Vol.Slide = h - l;
+							else if (Common.Has_Quirk(m, Quirk_Flag.VolPdn))
 								xc.Vol.Slide = l != 0 ? -l : h;
 							else
 								xc.Vol.Slide = h != 0 ? h : -l;
@@ -644,20 +671,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							xc.Vol.FSlide = xc.Vol.Slide;
 						}
 					}
+
 					break;
 				}
 
-				// Secondary volume slide
+				// Secondary volume slide (no memory)
 				case Effects.Fx_VolSlide_2:
 				{
-					Set(xc, Channel_Flag.Vol_Slide_2);
-
 					if (fxP != 0)
 					{
+						Set(xc, Channel_Flag.Vol_Slide_2);
+
 						h = Common.Msn(fxP);
 						l = Common.Lsn(fxP);
 						xc.Vol.Slide2 = h != 0 ? h : -l;
 					}
+
 					break;
 				}
 
@@ -827,6 +856,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -936,6 +966,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						p.Bpm = fxP;
 					}
+
 					break;
 				}
 
@@ -946,6 +977,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						f.RowDelay = (RowDelay_Flag)fxP;
 						f.RowDelay_Set = RowDelay_Flag.On | RowDelay_Flag.First_Frame;
 					}
+
 					break;
 				}
 
@@ -1053,6 +1085,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						if (fxP != 0)
 							goto case Effects.Fx_GVol_Slide;
 					}
+
 					break;
 				}
 
@@ -1130,6 +1163,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							xc.Pan.FSlide = 0;
 						}
 					}
+
 					break;
 				}
 
@@ -1161,9 +1195,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					xc.Tremor.Up = Common.Msn(fxP);
 					xc.Tremor.Down = Common.Lsn(fxP);
 
-					if (Common.Is_Player_Mode_Ft2(m))
-						xc.Tremor.Count |= 0x80;
-					else
+					if (!Common.Is_Player_Mode_Ft2(m))
 					{
 						if (xc.Tremor.Up == 0)
 							xc.Tremor.Up++;
@@ -1200,6 +1232,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -1268,6 +1301,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						else
 							xc.TrackVol.Slide = h != 0 ? h : -l;
 					}
+
 					break;
 				}
 
@@ -1377,6 +1411,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -1416,6 +1451,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						xc.Macro.Target = fxP;
 						xc.Macro.Slide = (fxP - xc.Macro.Val) / ctx.P.Speed;
 					}
+
 					break;
 				}
 
@@ -1507,6 +1543,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						else
 							p.St26_Speed = Common.Msn(fxP);
 					}
+
 					break;
 				}
 
@@ -1568,6 +1605,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						xc.Vol.FSlide = h != 0 ? h : -l;
 					}
+
+					break;
+				}
+
+				// IMF 1/16th precision fine slide down
+				case Effects.Fx_Imf_FPorta_Dn:
+				{
+					Effect_Memory(m, xc, ref fxP, ref xc.Freq.Memory);
+
+					if (fxP != 0)
+					{
+						Set(xc, Channel_Flag.Fine_Bend);
+						xc.Freq.FSlide = 0.0625 * fxP;
+					}
+
+					break;
+				}
+
+				// IMF 1/16th precision fine slide up
+				case Effects.Fx_Imf_FPorta_Up:
+				{
+					Effect_Memory(m, xc, ref fxP, ref xc.Freq.Memory);
+
+					if (fxP != 0)
+					{
+						Set(xc, Channel_Flag.Fine_Bend);
+						xc.Freq.FSlide = -0.0625 * fxP;
+					}
+
 					break;
 				}
 
@@ -1893,7 +1959,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				default:
 				{
-					lib.extras.LibXmp_Extras_Process_Fx(xc, chn, note, fxT, fxP, fNum);
+					lib.extras.LibXmp_Extras_Process_Fx(xc, chn, note, e.Ins, fxT, fxP, fNum);
 					break;
 				}
 			}
