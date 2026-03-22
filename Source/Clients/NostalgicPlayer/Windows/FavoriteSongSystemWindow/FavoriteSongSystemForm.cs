@@ -53,8 +53,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 			this.mainWindowApi = mainWindowApi;
 			this.database = database;
 
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("FavoriteSongSystemWindow");
 			settings = new FavoriteSongSystemWindowSettings(allWindowSettings);

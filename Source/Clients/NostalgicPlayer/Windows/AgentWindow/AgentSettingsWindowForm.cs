@@ -47,8 +47,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 			// Remember the arguments
 			this.agentInfo = agentInfo;
 
-			InitializeWindow();
-
 			// Set the title of the window
 			Text = string.Format(Resources.IDS_AGENTSETTINGS_TITLE, agentInfo.TypeName);
 

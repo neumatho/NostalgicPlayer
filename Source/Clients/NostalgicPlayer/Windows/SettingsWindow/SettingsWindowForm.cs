@@ -60,8 +60,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow
 			navigator.Button.CloseButtonDisplay = ButtonDisplay.Hide;
 			navigator.Button.ContextButtonDisplay = ButtonDisplay.Hide;
 
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("SettingsWindow");
 			windowSettings = new SettingsWindowSettings(allWindowSettings);

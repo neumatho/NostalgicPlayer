@@ -93,8 +93,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 
 			samplePlayQueue = new Queue<PlaySampleInfo>();
 
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("SampleInfoWindow");
 			settings = new SampleInfoWindowSettings(allWindowSettings);

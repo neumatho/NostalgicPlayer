@@ -33,7 +33,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// </summary>
 		private IMainWindowApi mainWindowApi;
 
-		private OptionSettings optionSettings;
 		private WindowSettings windowSettings;
 
 		/********************************************************************/
@@ -45,9 +44,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/********************************************************************/
 		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings)
 		{
+			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 			allWindowSettings = settings;
-			this.optionSettings = optionSettings;
+
+			// Set how the window should act in the task bar and task switcher
+			if (!optionSettings.SeparateWindows)
+			{
+				Owner = mainWindowApi.Form;
+				ShowInTaskbar = false;
+			}
+			else
+				ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
 		}
 
 
@@ -71,25 +79,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 			}
 
 			windowSettings.Maximized = WindowState == FormWindowState.Maximized;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Call this to initialize the window with basis settings
-		/// </summary>
-		/********************************************************************/
-		protected void InitializeWindow()
-		{
-			// Set how the window should act in the task bar and task switcher
-			if (!optionSettings.SeparateWindows)
-			{
-				Owner = mainWindowApi.Form;
-				ShowInTaskbar = false;
-			}
-			else
-				ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
 		}
 
 

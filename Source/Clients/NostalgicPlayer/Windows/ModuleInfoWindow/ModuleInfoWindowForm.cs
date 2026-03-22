@@ -102,8 +102,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 
 			animationLock = new Lock();
 
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("ModuleInfoWindow");
 			settings = new ModuleInfoWindowSettings(allWindowSettings);

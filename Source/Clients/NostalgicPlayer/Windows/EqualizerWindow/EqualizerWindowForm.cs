@@ -61,7 +61,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			Text = Resources.IDS_SETTINGS_MIXER_EQUALIZER;
 
 			// Initialize the window
-			InitializeWindow();
 			LoadWindowSettings(WindowSettingsName);
 
 			// Load settings into control

@@ -40,8 +40,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 			webBrowser.Dock = DockStyle.Fill;
 			Controls.Add(webBrowser);
 
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("HelpWindow");
 

@@ -51,8 +51,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 			moduleHandler = moduleHandlerService;
 			this.agentManager = agentManager;
 
-			InitializeWindow();
-
 			// Set the title of the window
 			Text = string.Format(Resources.IDS_AGENTDISPLAY_TITLE, agentInfo.TypeName);
 

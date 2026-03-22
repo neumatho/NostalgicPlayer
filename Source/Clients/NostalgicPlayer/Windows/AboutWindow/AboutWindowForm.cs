@@ -88,8 +88,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 
 			Font = FontPalette.GetRegularFont(9.0f);
 
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("AboutWindow");
 

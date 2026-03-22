@@ -104,8 +104,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			searchModeComboBox.Items.AddRange(Resources.IDS_MODLIBRARY_SEARCHMODE_FILENAME_AND_PATH,
 				Resources.IDS_MODLIBRARY_SEARCHMODE_FILENAME_ONLY, Resources.IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY);
 
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("ModLibraryWindow");
 

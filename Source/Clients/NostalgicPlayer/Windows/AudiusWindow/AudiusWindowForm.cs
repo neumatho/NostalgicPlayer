@@ -44,8 +44,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		public void InitializeForm(IPictureDownloaderFactory pictureDownloaderFactory)
 		{
-			InitializeWindow();
-
 			// Load window settings
 			LoadWindowSettings("AudiusWindow");
 
