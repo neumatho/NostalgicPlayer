@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 	/// </summary>
 	internal class CoreAudioWorker : OutputAgentBase, IAgentSettingsRegistrar, IAudioSessionEventsHandler, IMMNotificationClient
 	{
-		private const int MaxSampleRate = 48000;
+		private const int MaxSampleRate = 768000;
 
 		/// <summary>
 		/// Playback State
