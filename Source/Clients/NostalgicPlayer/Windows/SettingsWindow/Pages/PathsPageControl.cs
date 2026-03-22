@@ -6,26 +6,40 @@
 using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 {
 	/// <summary>
-	/// Holds all the controls for the Options tab
+	/// Holds all the controls for the Paths tab
 	/// </summary>
-	public partial class OptionsPageControl : UserControl, ISettingsPage
+	public partial class PathsPageControl : UserControl, IDependencyInjectionControl, ISettingsPage
 	{
-		private OptionSettings optionSettings;
+		private PathSettings pathSettings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OptionsPageControl()
+		public PathsPageControl()
 		{
 			InitializeComponent();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(PathSettings pathSettings)
+		{
+			// Remember the arguments
+			this.pathSettings = pathSettings;
 		}
 
 		#region ISettingsPage implementation
@@ -36,7 +50,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void InitSettings(ISettings windowSettings)
 		{
-			optionSettings = DependencyInjection.Container.GetInstance<OptionSettings>();
 		}
 
 
@@ -59,24 +72,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void ReadSettings()
 		{
-			// General
-			addJumpCheckBox.Checked = optionSettings.AddJump;
-			addToListCheckBox.Checked = optionSettings.AddToList;
-			rememberListCheckBox.Checked = optionSettings.RememberList;
-			rememberListPositionCheckBox.Checked = optionSettings.RememberListPosition;
-			rememberModulePositionCheckBox.Checked = optionSettings.RememberModulePosition;
-			showListNumberCheckBox.Checked = optionSettings.ShowListNumber;
-			showFullPathCheckBox.Checked = optionSettings.ShowFullPath;
-
-			tooltipsCheckBox.Checked = optionSettings.ToolTips;
-			showNameInTitleCheckBox.Checked = optionSettings.ShowNameInTitle;
-			separateWindowsCheckBox.Checked = optionSettings.SeparateWindows;
-			showWindowsInTaskBarCheckBox.Checked = optionSettings.ShowWindowsInTaskBar;
-
-			useDatabaseCheckBox.Checked = optionSettings.UseDatabase;
-			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
-			removeUnknownCheckBox.Checked = optionSettings.RemoveUnknownModules;
-			extractPlayingTimeCheckBox.Checked = optionSettings.ExtractPlayingTime;
+			startScanTextBox.Text = pathSettings.StartScan;
+			moduleTextBox.Text = pathSettings.Modules;
+			listTextBox.Text = pathSettings.ModuleList;
+			modLibraryTextBox.Text = pathSettings.ModLibrary;
 		}
 
 
@@ -100,25 +99,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void WriteSettings()
 		{
-			// General
-			optionSettings.AddJump = addJumpCheckBox.Checked;
-			optionSettings.AddToList = addToListCheckBox.Checked;
-			optionSettings.RememberList = rememberListCheckBox.Checked;
-			optionSettings.RememberListPosition = rememberListPositionCheckBox.Checked;
-			optionSettings.RememberModulePosition = rememberModulePositionCheckBox.Checked;
-			optionSettings.ShowListNumber = showListNumberCheckBox.Checked;
-			optionSettings.ShowFullPath = showFullPathCheckBox.Checked;
-
-			optionSettings.ToolTips = tooltipsCheckBox.Checked;
-			optionSettings.ShowNameInTitle = showNameInTitleCheckBox.Checked;
-			optionSettings.SeparateWindows = separateWindowsCheckBox.Checked;
-			optionSettings.ShowWindowsInTaskBar = showWindowsInTaskBarCheckBox.Checked;
-
-			optionSettings.UseDatabase = useDatabaseCheckBox.Checked;
-			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
-			optionSettings.RemoveUnknownModules = removeUnknownCheckBox.Checked;
-			optionSettings.ExtractPlayingTime = extractPlayingTimeCheckBox.Checked;
-
+			pathSettings.StartScan = startScanTextBox.Text;
+			pathSettings.Modules = moduleTextBox.Text;
+			pathSettings.ModuleList = listTextBox.Text;
+			pathSettings.ModLibrary = modLibraryTextBox.Text;
 		}
 
 
@@ -158,48 +142,77 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the user change the remember list
+		/// Is called when the user clicked the start scan button
 		/// </summary>
 		/********************************************************************/
-		private void RememberListCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void StartScanButton_Click(object sender, EventArgs e)
 		{
-			rememberListPanel.Enabled = rememberListCheckBox.Checked;
+			string newDirectory = SelectDirectory(startScanTextBox.Text);
+			if (!string.IsNullOrEmpty(newDirectory))
+				startScanTextBox.Text = newDirectory;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the user change the remember module
+		/// Is called when the user clicked the module button
 		/// </summary>
 		/********************************************************************/
-		private void RememberListPositionCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void ModuleButton_Click(object sender, EventArgs e)
 		{
-			rememberModulePositionCheckBox.Enabled = rememberListPositionCheckBox.Checked;
+			string newDirectory = SelectDirectory(moduleTextBox.Text);
+			if (!string.IsNullOrEmpty(newDirectory))
+				moduleTextBox.Text = newDirectory;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the user change the separate windows
+		/// Is called when the user clicked the list module button
 		/// </summary>
 		/********************************************************************/
-		private void SeparateWindows_CheckedChanged(object sender, EventArgs e)
+		private void ListButton_Click(object sender, EventArgs e)
 		{
-			windowPanel.Enabled = separateWindowsCheckBox.Checked;
+			string newDirectory = SelectDirectory(listTextBox.Text);
+			if (!string.IsNullOrEmpty(newDirectory))
+				listTextBox.Text = newDirectory;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the user change the scan files
+		/// Is called when the user clicked the module library button
 		/// </summary>
 		/********************************************************************/
-		private void ScanFiles_CheckedChanged(object sender, EventArgs e)
+		private void ModLibraryButton_Click(object sender, EventArgs e)
 		{
-			scanFilesPanel.Enabled = scanFilesCheckBox.Checked;
+			string newDirectory = SelectDirectory(modLibraryTextBox.Text);
+			if (!string.IsNullOrEmpty(newDirectory))
+				modLibraryTextBox.Text = newDirectory;
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Show a directory chooser and return the path. Null if no path
+		/// has been selected
+		/// </summary>
+		/********************************************************************/
+		private string SelectDirectory(string startDirectory)
+		{
+			using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+			{
+				dialog.SelectedPath = startDirectory;
+
+				if (dialog.ShowDialog() == DialogResult.OK)
+					return dialog.SelectedPath;
+			}
+
+			return null;
 		}
 		#endregion
 	}

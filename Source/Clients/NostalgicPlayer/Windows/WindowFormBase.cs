@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
@@ -36,23 +35,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 
 		private OptionSettings optionSettings;
 		private WindowSettings windowSettings;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		protected WindowFormBase()//XX skal slettes når alle forms kører DI
-		{
-			if (DependencyInjection.Container != null)
-			{
-				mainWindowApi = DependencyInjection.Container.GetInstance<IMainWindowApi>();
-				allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
-				optionSettings = DependencyInjection.Container.GetInstance<OptionSettings>();
-			}
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>

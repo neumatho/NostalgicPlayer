@@ -8,31 +8,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages.AgentLists
 {
 	/// <summary>
 	/// Handle the players / converters tab
 	/// </summary>
 	public class PlayersListUserControl : AgentsListUserControl
 	{
-		private readonly IAgentManager agentManager;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public PlayersListUserControl()
-		{
-			agentManager = DependencyInjection.Container?.GetInstance<IAgentManager>();
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will return all agents of the main and extra types

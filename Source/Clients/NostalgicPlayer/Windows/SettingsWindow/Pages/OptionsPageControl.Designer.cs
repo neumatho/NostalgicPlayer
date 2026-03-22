@@ -1,5 +1,5 @@
 ﻿
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 {
 	partial class OptionsPageControl
 	{

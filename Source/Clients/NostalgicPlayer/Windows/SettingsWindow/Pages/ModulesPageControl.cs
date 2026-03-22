@@ -8,15 +8,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 {
 	/// <summary>
 	/// Holds all the controls for the Modules tab
 	/// </summary>
-	public partial class ModulesPageControl : UserControl, ISettingsPage
+	public partial class ModulesPageControl : UserControl, IDependencyInjectionControl, ISettingsPage
 	{
 		private class ModuleInfoOrderListBoxItem
 		{
@@ -39,6 +38,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		public ModulesPageControl()
 		{
 			InitializeComponent();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(ModuleSettings moduleSettings)
+		{
+			// Remember the arguments
+			this.moduleSettings = moduleSettings;
 
 			// Add items to the combo controls
 			moduleErrorComboBox.Items.AddRange(
@@ -71,7 +85,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void InitSettings(ISettings windowSettings)
 		{
-			moduleSettings = DependencyInjection.Container.GetInstance<ModuleSettings>();
 		}
 
 

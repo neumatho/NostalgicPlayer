@@ -17,7 +17,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
@@ -29,6 +28,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -68,7 +68,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		// Settings
 		private ISettings userSettings;
-		private ISettingsService settingsService;//XX skal slettes
 		private OptionSettings optionSettings;
 		private ModuleSettings moduleSettings;
 		private PathSettings pathSettings;
@@ -120,7 +119,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private readonly Lock processingEndReached = new Lock();
 
 		// Other windows
-		private MainWindowApiAdapter mainWindowApiAdapter;//XX Skal slettes
 		private HelpWindowForm helpWindow = null;
 		private AboutWindowForm aboutWindow = null;
 		private SettingsWindowForm settingsWindow = null;
@@ -152,7 +150,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
@@ -160,7 +158,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			this.playlistFactory = playlistFactory;
 
 			userSettings = settings;
-			this.settingsService = settingsService;
 			this.moduleSettings = moduleSettings;
 			this.optionSettings = optionSettings;
 			this.pathSettings = pathSettings;
@@ -170,7 +167,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleHandler = moduleHandlerService;
 
 			// Initialize the adapter with the created form
-			this.mainWindowApiAdapter = mainWindowApiAdapter;
 			mainWindowApiAdapter.Initialize(this);
 
 			// Disable escape key closing
@@ -1470,7 +1466,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				settingsWindow.Activate();
 			else
 			{
-				settingsWindow = new SettingsWindowForm();
+				settingsWindow = formCreatorService.GetFormInstance<SettingsWindowForm>();
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}

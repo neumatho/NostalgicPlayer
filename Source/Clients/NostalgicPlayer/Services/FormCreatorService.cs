@@ -41,10 +41,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		{
 			T form = new T();
 
+			controlInitializerService.InitializeControls(form.Controls);
+
 			CallInitializeMethod(form, "InitializeBaseForm");
 			CallInitializeMethod(form, "InitializeForm", extraArguments);
-
-			controlInitializerService.InitializeControls(form.Controls);
 
 			return form;
 		}
