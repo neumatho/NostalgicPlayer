@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		public static readonly string[] FileExtensions =
 		[
 			"gdm", "xm", "oxm", "s3m", "it", "669", "amf", "far", "imf", "stm", "stx", "ult", "mtm", "mod", "wow", "flx", "ptm", "musx",
-			"xmf", "dsym", "rtm", "liq", "mgt", "mdl", "psm", "fnk", "dtm", "j2b", "coco"
+			"xmf", "dsym", "rtm", "liq", "mgt", "mdl", "psm", "fnk", "dtm", "j2b", "coco", "dmf"
 		];
 
 

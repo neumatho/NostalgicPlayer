@@ -207,6 +207,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | SidMon 2.0 | .sd2 / .sid2 / .sid | | SidMon 2.0 |
 | SidPlay | .sid / .c64 / .mus / .str / .prg | | SidPlay |
 | SKYT Packer | .skt / .skyt | ProWizard | ModTracker |
+| Software Visions | .dtm | | Xmp |
 | Sonic Arranger | .sa / .sonic | | Sonic Arranger |
 | Sonic Arranger (Final) | .sa / .sonic | Module Converter | Sonic Arranger |
 | Sound Control 3.x | .sc / sct | | Sound Control |

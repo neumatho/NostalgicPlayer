@@ -1382,6 +1382,14 @@
             <uap:DisplayName>Voodoo Supreme Synthesizer</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dmffile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dmf">.dmf</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Software Visions</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
