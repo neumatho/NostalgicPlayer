@@ -398,6 +398,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 		}
 		#endregion
 
+		/********************************************************************/
+		/// <summary>
+		/// Convert invalid characters
+		/// </summary>
+		/********************************************************************/
+		public static string FixFileName(string fileName)
+		{
+			return fileName.Replace('?', '!').Replace('<', '!').Replace('>', '!');
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -709,7 +719,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 			if (instrumentNumber != -1)
 				return instrumentNumber;
 
-			string instrumentFileName = $"{instrName.Replace('?', '!')}.instr";
+			string instrumentFileName = FixFileName($"{instrName}.instr");
 			string instrumentPath = string.Empty;
 
 			using (ModuleStream instrumentStream = fileInfo.Loader?.TryOpenExternalFileInInstruments(instrumentFileName, out instrumentPath))

@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 				SampleName = sampleName
 			};
 
-			string sampleFileName = $"{sampleName.Replace('?', '!')}.ss";
+			string sampleFileName = IffSmusWorker.FixFileName($"{sampleName}.ss");
 			string samplePath = Path.Combine(instrumentPath, sampleFileName);
 
 			using (ModuleStream sampleStream = fileInfo.Loader?.OpenExtraFileByFileName(samplePath, true))
