@@ -1194,8 +1194,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 				case Effect.SetGlobalVolume:
 				{
-					if (mSyn.GlobalVolume <= 0x40)
-						mSyn.GlobalVolume = parameter;
+					// TNE: Some modules, e.g. Acid Plague.dbm set a
+					// global volume too high
+					mSyn.GlobalVolume = parameter;
+					if (mSyn.GlobalVolume > 0x40)
+						mSyn.GlobalVolume = 0x40;
 
 					break;
 				}
