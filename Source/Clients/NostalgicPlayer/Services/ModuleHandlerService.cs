@@ -441,7 +441,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					lock (outputAgentLock)
 					{
 						// Flush the output agent if required
-						if ((outputAgent.SupportFlags & OutputSupportFlag.FlushMe) != 0)
+						if ((outputAgent != null) && (outputAgent.SupportFlags & OutputSupportFlag.FlushMe) != 0)
 						{
 							outputAgent.Shutdown();
 
@@ -969,8 +969,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 						{
 							if (showError && !string.IsNullOrEmpty(errorMessage))
 								mainWindowApi.ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
-
-							outputAgent = null;
 
 							return false;
 						}
