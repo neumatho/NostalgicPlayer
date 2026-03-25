@@ -32,6 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
 		private static readonly DecompressorPair[] decompressors =
 		[
 			new DecompressorPair { First = CrunchManiaDecompressor.DetectHeader, Second = CrunchManiaDecompressor.Create },
+			new DecompressorPair { First = PackIceDecompressor.DetectHeader, Second = PackIceDecompressor.Create },
 			new DecompressorPair { First = MmcmpDecompressor.DetectHeader, Second = MmcmpDecompressor.Create },
 			new DecompressorPair { First = PowerPackerDecompressor.DetectHeader, Second = PowerPackerDecompressor.Create },
 			new DecompressorPair { First = XpkMain.DetectHeader, Second = XpkMain.Create },

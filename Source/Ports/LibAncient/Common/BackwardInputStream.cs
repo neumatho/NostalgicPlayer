@@ -36,6 +36,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 		#region IInputStream implementation
 		/********************************************************************/
 		/// <summary>
+		/// Indicate if the buffer has been read or not
+		/// </summary>
+		/********************************************************************/
+		public bool Eof => currentOffset == endOffset;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the current position
 		/// </summary>
 		/********************************************************************/
@@ -124,6 +133,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 
 			return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public size_t Available => currentOffset - endOffset;
 		#endregion
 	}
 }

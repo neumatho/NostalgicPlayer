@@ -11,6 +11,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 	internal interface IInputStream
 	{
 		/// <summary>
+		/// Indicate if the buffer has been read or not
+		/// </summary>
+		bool Eof { get; }
+
+		/// <summary>
 		/// Return the current position
 		/// </summary>
 		size_t GetOffset();
@@ -39,5 +44,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 		/// Read a 32-bit integer in little-endian format
 		/// </summary>
 		uint32_t ReadLE32();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		size_t Available { get; }
 	}
 }

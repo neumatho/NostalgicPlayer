@@ -17,6 +17,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient
         /// <summary></summary>
         Mmcmp,
         /// <summary></summary>
+        PackIce,
+        /// <summary></summary>
         PowerPacker,
         /// <summary></summary>
         StoneCracker,
@@ -25,13 +27,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient
         /// <summary></summary>
         Xpk_Bzp2,
         /// <summary></summary>
+        Xpk_Duke,
+        /// <summary></summary>
         Xpk_Lhlb,
         /// <summary></summary>
         Xpk_Mash,
         /// <summary></summary>
         Xpk_Nuke,
-        /// <summary></summary>
-        Xpk_Duke,
         /// <summary></summary>
         Xpk_Rake,
         /// <summary></summary>

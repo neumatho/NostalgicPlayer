@@ -106,5 +106,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 
 			return ret;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public size_t Available => (inputStream.Available * 8U) + bufLength;
 	}
 }

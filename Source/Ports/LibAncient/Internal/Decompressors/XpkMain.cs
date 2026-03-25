@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new static Decompressor Create(Buffer packedData, bool exactSizeKnown)
+		public static new Decompressor Create(Buffer packedData, bool exactSizeKnown)
 		{
 			return new XpkMain(packedData);
 		}

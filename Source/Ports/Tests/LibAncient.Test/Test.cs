@@ -52,6 +52,31 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
+		public void Test_PackIce()
+		{
+//XX			VerifyFile("test_C1_113.ice", "test_C1.raw");
+//			VerifyFile("test_C1_211.ice", "test_C1.raw");
+			VerifyFile("test_C1_22.ice", "test_C1.raw");
+			VerifyFile("test_C1_231.ice", "test_C1.raw");
+			VerifyFile("test_C1_24.ice", "test_C1.raw");
+			VerifyFile("test_neo_211p.ice", "test_neo.raw");
+			VerifyFile("test_neo_22p.ice", "test_neo.raw");
+			VerifyFile("test_neo_231p.ice", "test_neo.raw");
+			VerifyFile("test_neo_234p.ice", "test_neo.raw");
+			VerifyFile("test_neo2_234p.ice", "test_neo2.raw");		// Half height picture
+			VerifyFile("test_C1_she.ice", "test_C1.raw");
+			VerifyFile("test_C1_tmm.ice", "test_C1.raw");
+			VerifyFile("test_C1_tsm.ice", "test_C1.raw");
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
 		public void Test_Mmcmp()
 		{
 			VerifyFile("test_C2.mmcmp122", "test_C2.xm", true);

@@ -68,6 +68,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Common
 			return offsets[@base] + bitReader(bitLengths[@base]);
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint32_t DecodeCascade(BitReader bitReader)
+		{
+			for (uint32_t i = 0; i < offsets.Length; i++)
+			{
+				if (bitLengths[i] == 0)		// Not valid in this context
+					throw new DecompressionException();
+
+				uint32_t tmp = bitReader(bitLengths[i]);
+
+				if ((i == (offsets.Length - 1)) || (tmp != ((1 << bitLengths[i]) - 1)))
+					return offsets[i] - i + tmp;
+			}
+
+			throw new DecompressionException();
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>

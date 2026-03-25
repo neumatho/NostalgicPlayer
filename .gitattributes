@@ -16,6 +16,7 @@
 *.gal5 filter=lfs diff=lfs merge=lfs -text
 *.gdm filter=lfs diff=lfs merge=lfs -text
 *.gif filter=lfs diff=lfs merge=lfs -text
+*.ice filter=lfs diff=lfs merge=lfs -text
 *.ico filter=lfs diff=lfs merge=lfs -text
 *.imf filter=lfs diff=lfs merge=lfs -text
 *.it filter=lfs diff=lfs merge=lfs -text
