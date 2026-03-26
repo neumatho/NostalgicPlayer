@@ -48,14 +48,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 			this.mainWindowApi = mainWindowApi;
 			allWindowSettings = settings;
 
-			// Set how the window should act in the task bar and task switcher
-			if (!optionSettings.SeparateWindows)
+			// Set how the window should act in the task bar and task switcher.
+			// Only apply to child windows - the main window (where mainWindowApi.Form
+			// is not yet initialized) should always keep its default ShowInTaskbar = true
+			if (mainWindowApi.Form != null)
 			{
-				Owner = mainWindowApi.Form;
-				ShowInTaskbar = false;
+				if (!optionSettings.SeparateWindows)
+				{
+					Owner = mainWindowApi.Form;
+					ShowInTaskbar = false;
+				}
+				else
+					ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
 			}
-			else
-				ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
 		}
 
 
