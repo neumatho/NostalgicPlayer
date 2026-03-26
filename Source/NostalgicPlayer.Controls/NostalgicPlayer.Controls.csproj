@@ -10,7 +10,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>A collection of themed custom controls</Description>
-    <Version>3.1.0</Version>
+    <Version>3.3.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
