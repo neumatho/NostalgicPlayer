@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// This is used to ensure that the agent is compatible with the
 		/// current version of NostalgicPlayer
 		/// </summary>
-		public const int NostalgicPlayer_Current_Version = (3 << 16) + (3 << 8) + 0;
+		const int NostalgicPlayer_Current_Version = (3 << 16) + (3 << 8) + 1;
 
 		/// <summary>
 		/// Return the NostalgicPlayer_Current_Version constant defined above
