@@ -48,6 +48,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/********************************************************************/
 		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings)
 		{
+			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 			allWindowSettings = settings;
 
@@ -94,7 +95,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
-			allWindowSettings = DependencyInjection.Container.GetInstance<ISettings>();
 			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);
