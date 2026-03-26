@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.IO;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -16,15 +17,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	public class SettingsService : ISettingsService, IDisposable
 	{
 		private readonly ISettings settings;
+		private readonly IPlatformPath platformPath;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsService(ISettingsFactory settingsFactory)
+		public SettingsService(ISettingsFactory settingsFactory, IPlatformPath platformPath)
 		{
 			settings = settingsFactory.CreateSettings();
+			this.platformPath = platformPath;
 
 			settings.LoadSettings("Settings");
 			FixSettings();
@@ -71,6 +74,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		private void FixSettings()
 		{
+			// An error in 3.3.0 created an .ini file. Delete that if it exists
+			string fileToDelete = Path.Combine(platformPath.SettingsPath, ".ini");
+			if (File.Exists(fileToDelete))
+				File.Delete(fileToDelete);
+
 			int version = settings.GetIntEntry("General", "Version", 1);
 
 			if (version == 1)

@@ -150,14 +150,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettings settings, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
 			this.agentManager = agentManager;
 			this.playlistFactory = playlistFactory;
 
-			userSettings = settings;
+			userSettings = settingsService.Settings;
 			this.moduleSettings = moduleSettings;
 			this.optionSettings = optionSettings;
 			this.pathSettings = pathSettings;
