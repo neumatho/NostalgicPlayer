@@ -173,6 +173,27 @@ namespace Polycode.NostalgicPlayer.External.Homepage.Clients
 					sr.Dispose();
 					sr = new StringReader(historyHtml.Substring(index));
 				}
+				else if ((trimmedLine == "<li>") || (trimmedLine.StartsWith("<li class=")))
+				{
+					index += line.Length + 1;
+
+					line = sr.ReadLine();
+					if (line == null)
+						break;
+
+					currentBullet = new HistoryBulletModel
+					{
+						BulletText = line.Trim()
+					};
+
+					bullets.Add(currentBullet);
+
+					index += line.Length + 1;
+				}
+				else if (trimmedLine == "</li>")
+				{
+					index += line.Length + 1;
+				}
 				else if (trimmedLine.StartsWith("<li>"))
 				{
 					int bulletEnd = trimmedLine.IndexOf("</li>", 4);
@@ -180,7 +201,7 @@ namespace Polycode.NostalgicPlayer.External.Homepage.Clients
 						break;
 
 					string bullet = trimmedLine.Substring(4, bulletEnd - 4);
-					bullet = bullet.Replace("&quot;", "\"").Replace("<i>", string.Empty).Replace("</i>", string.Empty);
+					bullet = bullet.Replace("&quot;", "\"").Replace("&lt;", "<").Replace("&gt;", ">").Replace("<i>", string.Empty).Replace("</i>", string.Empty);
 
 					currentBullet = new HistoryBulletModel
 					{
