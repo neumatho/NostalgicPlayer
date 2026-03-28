@@ -8,9 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using SharpCompress.Archives;
 using SharpCompress.Archives.Tar;
+using IArchive = Polycode.NostalgicPlayer.Kit.Interfaces.IArchive;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archives
 {
@@ -20,9 +21,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 	internal class TarArchive : IArchive
 	{
 		private readonly string agentName;
-		private readonly SharpCompress.Archives.Tar.TarArchive archive;
+		private readonly SharpCompress.Archives.IArchive archive;
 
-		private readonly List<TarArchiveEntry> entries;
+		private readonly List<IArchiveEntry> entries;
 
 		/********************************************************************/
 		/// <summary>
@@ -33,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		{
 			this.agentName = agentName;
 
-			archive = SharpCompress.Archives.Tar.TarArchive.Open(archiveStream);
+			archive = SharpCompress.Archives.Tar.TarArchive.OpenArchive(archiveStream);
 
 			// Make a copy of all the entries. For some reason, then the last
 			// entry disappear sometimes in the original collection
@@ -49,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		public ArchiveStream OpenEntry(string entryName)
 		{
 			entryName = entryName.Replace('\\', '/');
-			TarArchiveEntry entry = entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
+			IArchiveEntry entry = entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
 			if (entry == null)
 			{
 				entryName = entryName.Replace('/', '\\');

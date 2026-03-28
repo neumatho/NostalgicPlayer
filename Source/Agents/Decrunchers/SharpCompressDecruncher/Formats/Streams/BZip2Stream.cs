@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/********************************************************************/
 		protected override Stream OpenCrunchedDataStream()
 		{
-			return new SharpCompress.Compressors.BZip2.BZip2Stream(wrapperStream, CompressionMode.Decompress, false);
+			return SharpCompress.Compressors.BZip2.BZip2Stream.Create(wrapperStream, CompressionMode.Decompress, false);
 		}
 		#endregion
 	}

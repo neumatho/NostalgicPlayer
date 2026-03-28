@@ -9,10 +9,12 @@ using System.IO;
 using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using SharpCompress.Archives;
 using SharpCompress.Archives.Rar;
+using SharpCompress.Readers;
 using SharpCompress.Readers.Rar;
+using IArchive = Polycode.NostalgicPlayer.Kit.Interfaces.IArchive;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archives
 {
@@ -22,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 	internal class RarArchive : IArchive
 	{
 		private readonly string agentName;
-		private readonly SharpCompress.Archives.Rar.RarArchive archive;
+		private readonly IRarArchive archive;
 
 		private readonly ReaderStream archiveStream;
 
@@ -35,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		{
 			this.agentName = agentName;
 
-			archive = SharpCompress.Archives.Rar.RarArchive.Open(archiveStream);
+			archive = SharpCompress.Archives.Rar.RarArchive.OpenArchive(archiveStream);
 			this.archiveStream = archiveStream;
 		}
 
@@ -51,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 			{
 				// Solid Rar archives is only supported through the reader, so use that
 				archiveStream.Seek(0, SeekOrigin.Begin);
-				RarReader reader = RarReader.Open(archiveStream);
+				IReader reader = RarReader.OpenReader(archiveStream);
 
 				while (reader.MoveToNextEntry())
 				{
@@ -62,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 				throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
 			}
 
-			RarArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
+			IArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
 			if (entry == null)
 				throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
 

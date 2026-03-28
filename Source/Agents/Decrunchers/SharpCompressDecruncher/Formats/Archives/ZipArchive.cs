@@ -8,9 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
+using IArchive = Polycode.NostalgicPlayer.Kit.Interfaces.IArchive;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archives
 {
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 	internal class ZipArchive : IArchive
 	{
 		private readonly string agentName;
-		private readonly SharpCompress.Archives.Zip.ZipArchive archive;
+		private readonly SharpCompress.Archives.IArchive archive;
 
 		/********************************************************************/
 		/// <summary>
@@ -31,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		{
 			this.agentName = agentName;
 
-			archive = SharpCompress.Archives.Zip.ZipArchive.Open(archiveStream);
+			archive = SharpCompress.Archives.Zip.ZipArchive.OpenArchive(archiveStream);
 		}
 
 		#region IArchive implementation
@@ -43,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		public ArchiveStream OpenEntry(string entryName)
 		{
 			entryName = entryName.Replace('\\', '/');
-			ZipArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
+			IArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
 			if (entry == null)
 			{
 				entryName = entryName.Replace('/', '\\');
