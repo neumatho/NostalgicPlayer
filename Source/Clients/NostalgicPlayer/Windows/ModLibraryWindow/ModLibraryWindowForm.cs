@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Timer = System.Windows.Forms.Timer;
 
@@ -31,6 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		private IMainWindowApi mainWindow;
 		private IPlatformPath platformPath;
+		private PathSettings pathSettings;
 
 		private readonly ModLibraryData data = new();
 
@@ -72,10 +72,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IMainWindowApi mainWindow, IPlatformPath platformPath)
+		public void InitializeForm(IMainWindowApi mainWindow, IPlatformPath platformPath, PathSettings pathSettings)
 		{
 			this.mainWindow = mainWindow;
 			this.platformPath = platformPath;
+			this.pathSettings = pathSettings;
 
 			Disposed += ModLibraryWindowForm_Disposed;
 
@@ -1674,7 +1675,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		private string GetCurrentModLibraryPath()
 		{
-			PathSettings pathSettings = DependencyInjection.Container.GetInstance<PathSettings>();
 			return pathSettings.ModLibrary ?? string.Empty;
 		}
 
