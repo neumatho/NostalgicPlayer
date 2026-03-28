@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources.ModLand;
+using Polycode.NostalgicPlayer.Controls.Composition;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Kit.Gui.Composition;
 using Polycode.NostalgicPlayer.Library.Application;
@@ -37,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			container.RegisterExternal();
 			container.RegisterPlatform();
 			container.RegisterGuiKit();
+			container.RegisterControls();
 
 			RegisterSettings(container);
 			RegisterFactories(container);

@@ -13,6 +13,7 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
