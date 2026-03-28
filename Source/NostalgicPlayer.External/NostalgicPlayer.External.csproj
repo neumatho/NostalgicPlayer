@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RestSharp" Version="113.1.0" />
+    <PackageReference Include="RestSharp" Version="114.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.5" />
   </ItemGroup>
 
