@@ -226,7 +226,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			}
 
 			// Now we can just return what we have
-			buffer = MemoryMarshal.Cast<bwWord, Flac__byte>(bw.Buffer);
+			buffer = MemoryMarshal.Cast<bwWord, Flac__byte>(bw.Buffer.AsSpan());
 			bytes = (Constants.Flac__Bytes_Per_Word * bw.Words) + (bw.Bits >> 3);
 
 			return true;

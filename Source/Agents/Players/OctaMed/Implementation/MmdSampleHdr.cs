@@ -153,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 								if (sixtBit)
 								{
-									Span<short> buf16 = MemoryMarshal.Cast<sbyte, short>(buf);
+									Span<short> buf16 = MemoryMarshal.Cast<sbyte, short>(buf.AsSpan());
 									length /= 2;
 
 									if ((type & InstrDeltaCode) != 0)
@@ -164,13 +164,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 										for (int cnt2 = 1; cnt2 < length; cnt2++)
 										{
 											prev += sampleDataStream.Read_B_INT16();
-											buf16[cnt2 * channels + chCnt] = prev;
+											buf16[(cnt2 * channels) + chCnt] = prev;
 										}
 									}
 									else
 									{
 										for (int cnt2 = 0; cnt2 < length; cnt2++)
-											buf16[cnt2 * channels + chCnt] = sampleDataStream.Read_B_INT16();
+											buf16[(cnt2 * channels) + chCnt] = sampleDataStream.Read_B_INT16();
 									}
 								}
 								else
@@ -183,18 +183,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 										for (int cnt2 = 1; cnt2 < length; cnt2++)
 										{
 											prev += sampleDataStream.Read_INT8();
-											buf[cnt2 * channels + chCnt] = prev;
+											buf[(cnt2 * channels) + chCnt] = prev;
 										}
 									}
 									else
 									{
 										for (int cnt2 = 0; cnt2 < length; cnt2++)
-											buf[cnt2 * channels + chCnt] = sampleDataStream.Read_INT8();
+											buf[(cnt2 * channels) + chCnt] = sampleDataStream.Read_INT8();
 									}
 								}
 							}
 						}
 					}
+
 					break;
 				}
 			}

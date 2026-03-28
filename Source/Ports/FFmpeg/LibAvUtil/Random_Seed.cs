@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Polycode.NostalgicPlayer.Kit.C;
@@ -150,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				get_Generic_Seed_Buffer[111] += (uint8_t)Timer.Av_Read_Time();
 
 			Sha.Av_Sha_Init(sha, 160);
-			Sha.Av_Sha_Update(sha, MemoryMarshal.Cast<uint32_t, uint8_t>(get_Generic_Seed_Buffer), (size_t)(get_Generic_Seed_Buffer.Length * 4));
+			Sha.Av_Sha_Update(sha, MemoryMarshal.Cast<uint32_t, uint8_t>(get_Generic_Seed_Buffer.AsSpan()), (size_t)(get_Generic_Seed_Buffer.Length * 4));
 			Sha.Av_Sha_Final(sha, digest);
 
 			return IntReadWrite.Av_RB32(digest) + IntReadWrite.Av_RB32(digest + 16);

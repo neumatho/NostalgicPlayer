@@ -636,7 +636,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		private void GenerateNoiseWaveform()
 		{
 			uint noiseValue = playingInfo.LastNoiseValue;
-			Span<uint> waveform = MemoryMarshal.Cast<sbyte, uint>(waveforms[0]);
+			Span<uint> waveform = MemoryMarshal.Cast<sbyte, uint>(waveforms[0].AsSpan());
 
 			for (int i = 0; i < 16; i++)
 			{

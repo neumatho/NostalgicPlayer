@@ -417,7 +417,7 @@ namespace Polycode.NostalgicPlayer.Agent.Streamer.MpegStreamer
 		/********************************************************************/
 		private int LoadData(int[] outputBuffer, int count)
 		{
-			Span<byte> outBuf = MemoryMarshal.Cast<int, byte>(outputBuffer);
+			Span<byte> outBuf = MemoryMarshal.Cast<int, byte>(outputBuffer.AsSpan());
 			int total = 0;
 			int todo = count;
 

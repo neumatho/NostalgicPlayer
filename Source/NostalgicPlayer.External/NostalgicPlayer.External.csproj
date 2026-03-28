@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.External</RootNamespace>
     <DocumentationFile>bin\NostalgicPlayer.External.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="RestSharp" Version="113.1.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.10" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.5" />
   </ItemGroup>
 
   <ItemGroup>

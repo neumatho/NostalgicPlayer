@@ -793,7 +793,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			short x1, x2, x3, x4;
 
-			Span<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
+			ReadOnlySpan<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
 			Span<short> dest = new Span<short>(outputBuffer.ToPointer(), samplesLeft * 2);
 
 			int remain = samplesLeft & 3;
@@ -843,7 +843,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			float x1, x2, x3, x4;
 
-			Span<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
+			ReadOnlySpan<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
 			Span<float> dest = new Span<float>(outputBuffer.ToPointer(), samplesLeft * 4);
 
 			int remain = samplesLeft & 3;

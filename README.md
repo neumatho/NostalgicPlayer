@@ -36,7 +36,7 @@ In the Clients folder, you can find two different clients that use the player. *
 
 # Visual Studio
 
-To load the solution and project files, you need to use at least Visual Studio Community 2022 (it is free) and .NET 9 framework.
+To load the solution and project files, you need to use at least Visual Studio Community 2026 (it is free) and .NET 10 framework.
 
 # Formats supported
 

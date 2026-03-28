@@ -750,8 +750,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		private void Conv_S32_To_U32(OutBuffer buf)
 		{
-			Span<int32_t> sSamples = MemoryMarshal.Cast<c_uchar, int32_t>(buf.Data);
-			Span<uint32_t> uSamples = MemoryMarshal.Cast<c_uchar, uint32_t>(buf.Data);
+			Span<int32_t> sSamples = MemoryMarshal.Cast<c_uchar, int32_t>(buf.Data.AsSpan());
+			Span<uint32_t> uSamples = MemoryMarshal.Cast<c_uchar, uint32_t>(buf.Data.AsSpan());
 			size_t count = buf.Fill / sizeof(int32_t);
 
 			for (c_int i = 0; i < (c_int)count; ++i)
@@ -767,8 +767,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		private void Conv_S16_To_U16(OutBuffer buf)
 		{
-			Span<int16_t> sSamples = MemoryMarshal.Cast<c_uchar, int16_t>(buf.Data);
-			Span<uint16_t> uSamples = MemoryMarshal.Cast<c_uchar, uint16_t>(buf.Data);
+			Span<int16_t> sSamples = MemoryMarshal.Cast<c_uchar, int16_t>(buf.Data.AsSpan());
+			Span<uint16_t> uSamples = MemoryMarshal.Cast<c_uchar, uint16_t>(buf.Data.AsSpan());
 			size_t count = buf.Fill / sizeof(int16_t);
 
 			for (c_int i = 0; i < (c_int)count; ++i)
@@ -784,8 +784,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		private void Conv_S16_To_S32(OutBuffer buf)
 		{
-			Span<int16_t> @in = MemoryMarshal.Cast<c_uchar, int16_t>(buf.Data);
-			Span<int32_t> @out = MemoryMarshal.Cast<c_uchar, int32_t>(buf.Data);
+			Span<int16_t> @in = MemoryMarshal.Cast<c_uchar, int16_t>(buf.Data.AsSpan());
+			Span<int32_t> @out = MemoryMarshal.Cast<c_uchar, int32_t>(buf.Data.AsSpan());
 			size_t count = buf.Fill / sizeof(int16_t);
 
 			if (buf.Size < count * sizeof(int32_t))

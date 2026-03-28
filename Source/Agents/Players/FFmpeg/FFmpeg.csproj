@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.FFmpeg</RootNamespace>
     <DocumentationFile>bin\FFmpeg.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>

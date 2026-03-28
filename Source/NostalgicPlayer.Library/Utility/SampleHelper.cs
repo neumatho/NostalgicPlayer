@@ -26,9 +26,9 @@ namespace Polycode.NostalgicPlayer.Library.Utility
 				return ((sbyte[])sample).AsSpan((int)offset);
 
 			if (type == typeof(short))
-				return MemoryMarshal.Cast<short, sbyte>((short[])sample).Slice((int)offset);
+				return MemoryMarshal.Cast<short, sbyte>(((short[])sample).AsSpan()).Slice((int)offset);
 
-			return MemoryMarshal.Cast<byte, sbyte>((byte[])sample).Slice((int)offset);
+			return MemoryMarshal.Cast<byte, sbyte>(((byte[])sample).AsSpan()).Slice((int)offset);
 		}
 
 
@@ -46,9 +46,9 @@ namespace Polycode.NostalgicPlayer.Library.Utility
 				return ((short[])sample).AsSpan((int)offset);
 
 			if (type == typeof(sbyte))
-				return MemoryMarshal.Cast<sbyte, short>((sbyte[])sample).Slice((int)offset);
+				return MemoryMarshal.Cast<sbyte, short>(((sbyte[])sample).AsSpan()).Slice((int)offset);
 
-			return MemoryMarshal.Cast<byte, short>((byte[])sample).Slice((int)offset);
+			return MemoryMarshal.Cast<byte, short>(((byte[])sample).AsSpan()).Slice((int)offset);
 		}
 	}
 }

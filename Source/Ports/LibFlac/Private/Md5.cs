@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/********************************************************************/
 		public void Flac__Md5Update(Flac__byte[] buf, uint32_t len)
 		{
-			Span<Flac__byte> inByte = MemoryMarshal.Cast<Flac__uint32, Flac__byte>(ctx.In);
+			Span<Flac__byte> inByte = MemoryMarshal.Cast<Flac__uint32, Flac__byte>(ctx.In.AsSpan());
 			Span<Flac__byte> spanBuf;
 
 			// Update byte count
@@ -128,7 +128,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/********************************************************************/
 		public Flac__byte[] Flac__Md5Final()
 		{
-			Span<Flac__byte> inByte = MemoryMarshal.Cast<Flac__uint32, Flac__byte>(ctx.In);
+			Span<Flac__byte> inByte = MemoryMarshal.Cast<Flac__uint32, Flac__byte>(ctx.In.AsSpan());
 
 			int count = (int)ctx.Bytes[0] & 0x3f;	// Number of bytes in @in
 			int p = count;

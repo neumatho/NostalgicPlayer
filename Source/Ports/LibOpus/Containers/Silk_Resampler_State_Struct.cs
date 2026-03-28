@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 			private readonly opus_int32[] data = new opus_int32[Constants.Silk_Resampler_Max_Fir_Order];
 
 			public Span<opus_int32> i32 => data;
-			public Span<opus_int16> i16 => MemoryMarshal.Cast<opus_int32, opus_int16>(data).Slice(0, Constants.Silk_Resampler_Max_Fir_Order);
+			public Span<opus_int16> i16 => MemoryMarshal.Cast<opus_int32, opus_int16>(data.AsSpan()).Slice(0, Constants.Silk_Resampler_Max_Fir_Order);
 
 			/********************************************************************/
 			/// <summary>

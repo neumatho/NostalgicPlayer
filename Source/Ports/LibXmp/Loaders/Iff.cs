@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		private const c_long Iff_Max_Chunk_Size = 0x800000;
 
-		private Iff_Data data;
+		private readonly Iff_Data data;
 
 		/********************************************************************/
 		/// <summary>

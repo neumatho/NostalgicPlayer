@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.IffSmus</RootNamespace>
     <DocumentationFile>bin\IffSmus.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>

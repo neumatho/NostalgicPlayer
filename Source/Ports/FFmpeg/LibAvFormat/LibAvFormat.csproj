@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat</RootNamespace>
     <DocumentationFile>bin\LibAvFormat.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>

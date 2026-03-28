@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx</RootNamespace>
     <DocumentationFile>bin\Iff8Svx.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>

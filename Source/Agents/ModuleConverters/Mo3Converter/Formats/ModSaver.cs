@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			{
 				if ((sampleInfo.SampleData != null) && sampleInfo.SampleHeader.Flags.HasFlag(SampleInfoFlag._16Bit))
 				{
-					Span<short> source = MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData);
+					ReadOnlySpan<short> source = MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData);
 					byte[] dest = new byte[source.Length];
 
 					for (int i = 0; i < source.Length; i++)

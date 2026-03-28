@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		private scale_func_t[] scale;
 
 		private int oldRandomValue = 0;
-		private int fastForwardFactor = 1;
+		private const int FastForwardFactor = 1;
 
 		// Mixer settings
 		private readonly short[][] sampleBuffers = new short[2][];
@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			while (
 				(i < sampCount) &&
 				(sampleIndex < sampleCount) &&			// Handle whatever output the SID has generated so far
-				(i + fastForwardFactor < sampCount)		// Are there enough samples to generate the next one?
+				(i + FastForwardFactor < sampCount)		// Are there enough samples to generate the next one?
 			)
 			{
 				// This is a crude boxcar low-pass filter to
@@ -149,14 +149,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 					int_least32_t sample = 0;
 					short[] buffer = chips[k].Buffer();
 
-					for (int j = 0; j < fastForwardFactor; j++)
+					for (int j = 0; j < FastForwardFactor; j++)
 						sample += buffer[i + j];
 
-					iSamples[k] = sample / fastForwardFactor;
+					iSamples[k] = sample / FastForwardFactor;
 				}
 
 				// Increment i to mark we ate some samples, finish the boxcar thing
-				i += fastForwardFactor;
+				i += FastForwardFactor;
 
 				int channels = stereo ? 2 : 1;
 				for (uint ch = 0; ch < channels; ch++)

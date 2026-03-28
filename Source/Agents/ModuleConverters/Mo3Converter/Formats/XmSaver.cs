@@ -657,7 +657,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 						{
 							if ((sampleInfo.SampleHeader.Flags & SampleInfoFlag._16Bit) != 0)
 							{
-								Span<ushort> sampleData = MemoryMarshal.Cast<byte, ushort>(sampleInfo.SampleData);
+								Span<ushort> sampleData = MemoryMarshal.Cast<byte, ushort>(sampleInfo.SampleData.AsSpan());
 
 								ushort previousSample = sampleData[0];
 

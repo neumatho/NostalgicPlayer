@@ -229,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 
 			if (_16Bit)
 			{
-				Span<ushort> span = MemoryMarshal.Cast<byte, ushort>(sampleData);
+				Span<ushort> span = MemoryMarshal.Cast<byte, ushort>(sampleData.AsSpan());
 				int length = span.Length;
 
 				for (; length-- != 0;)
@@ -261,9 +261,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 
 				if ((sampleInfo.SampleHeader.Flags & SampleInfoFlag._16Bit) != 0)
 				{
-					Span<short> sampleData = MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData);
-					Span<short> leftSpan = MemoryMarshal.Cast<byte, short>(leftChannel);
-					Span<short> rightSpan = MemoryMarshal.Cast<byte, short>(rightChannel);
+					ReadOnlySpan<short> sampleData = MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData);
+					Span<short> leftSpan = MemoryMarshal.Cast<byte, short>(leftChannel.AsSpan());
+					Span<short> rightSpan = MemoryMarshal.Cast<byte, short>(rightChannel.AsSpan());
 
 					for (int i = 0, j = 0; i < leftSpan.Length; i++, j += 2)
 					{

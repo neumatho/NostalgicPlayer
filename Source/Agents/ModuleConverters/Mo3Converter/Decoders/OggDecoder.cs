@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 			if ((sampleInfo.SampleHeader.Flags & SampleInfoFlag._16Bit) == 0)
 			{
 				sampleInfo.SampleData = new byte[decodedBuffer.Length];
-				Span<sbyte> pcm8 = MemoryMarshal.Cast<byte, sbyte>(sampleInfo.SampleData);
+				Span<sbyte> pcm8 = MemoryMarshal.Cast<byte, sbyte>(sampleInfo.SampleData.AsSpan());
 
 				for (int i = 0; i < decodedBuffer.Length; i++)
 					pcm8[i] = (sbyte)(decodedBuffer[i] >> 8);
@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 			else
 			{
 				sampleInfo.SampleData = new byte[decodedBuffer.Length * 2];
-				decodedBuffer.CopyTo(MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData));
+				decodedBuffer.CopyTo(MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData.AsSpan()));
 			}
 
 			return true;

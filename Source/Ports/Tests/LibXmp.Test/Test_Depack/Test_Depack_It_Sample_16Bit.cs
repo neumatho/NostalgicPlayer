@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Depack
 				Hio f = Hio.Hio_Open_File(stream);
 				Assert.IsNotNull(f, "Can't open data file");
 
-				c_int ret = Sample.ItSex_Decompress16(f, MemoryMarshal.Cast<uint8, int16>(dest), 4646, tmp, tmp.Length, false);
+				c_int ret = Sample.ItSex_Decompress16(f, MemoryMarshal.Cast<uint8, int16>(dest.AsSpan()), 4646, tmp, tmp.Length, false);
 				Assert.AreEqual(0, ret, "Decompression fail");
 
 				if (Is_Big_Endian())

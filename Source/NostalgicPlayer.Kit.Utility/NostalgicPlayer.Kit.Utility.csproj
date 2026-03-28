@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Kit.Utility</RootNamespace>
     <DocumentationFile>bin\NostalgicPlayer.Kit.Utility.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>

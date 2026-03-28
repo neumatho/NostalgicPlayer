@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_int sample_T_Size = Marshal.SizeOf(default(SAMPLE_T));
 
 			c_uchar[] samples_Byte = new c_uchar[8 * 64 * sample_T_Size];
-			Span<SAMPLE_T> samples_Tmp = MemoryMarshal.Cast<c_uchar, SAMPLE_T>(samples_Byte);
+			Span<SAMPLE_T> samples_Tmp = MemoryMarshal.Cast<c_uchar, SAMPLE_T>(samples_Byte.AsSpan());
 			Span<SAMPLE_T> tmp1 = samples_Tmp;
 			int tmp1Offset = 0;
 
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_int ret = DoSynth(bandPtr, 0, fr, true, write_Sample);
 			fr.Buffer.Data = samples;
 
-			Span<SAMPLE_T> samplesSpan = MemoryMarshal.Cast<c_uchar, SAMPLE_T>(samples);
+			Span<SAMPLE_T> samplesSpan = MemoryMarshal.Cast<c_uchar, SAMPLE_T>(samples.AsSpan());
 			int samplesOffset = (int)pnt / sample_T_Size;
 
 			for (size_t i = 0; i < (fr.Buffer.Fill / (size_t)(2 * sample_T_Size)); i++)
@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_int sample_T_Size = Marshal.SizeOf(default(SAMPLE_T));
 
 			size_t pnt1 = fr.Buffer.Fill;
-			Span<SAMPLE_T> samples = MemoryMarshal.Cast<c_uchar, SAMPLE_T>(fr.Buffer.Data);
+			Span<SAMPLE_T> samples = MemoryMarshal.Cast<c_uchar, SAMPLE_T>(fr.Buffer.Data.AsSpan());
 			int samplesOffset = (int)pnt1 / sample_T_Size;
 
 			c_int ret = DoSynth(bandPtr, 0, fr, true, write_Sample);

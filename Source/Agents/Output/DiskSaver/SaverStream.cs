@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				byte[] newBuffer = new byte[framesCount * 2 * OutputInfo.BytesPerSample];
 
 				Span<int> source = MemoryMarshal.Cast<byte, int>(buffer.AsSpan(offsetInBytes, countInSamples * OutputInfo.BytesPerSample));
-				Span<int> dest = MemoryMarshal.Cast<byte, int>(newBuffer);
+				Span<int> dest = MemoryMarshal.Cast<byte, int>(newBuffer.AsSpan());
 
 				int channelsToSkip = OutputInfo.Channels - 2;
 				int sourceOffset = 0;
