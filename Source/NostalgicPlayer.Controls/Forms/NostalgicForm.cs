@@ -68,7 +68,21 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		private CaptionButton hoverButton = CaptionButton.None;
 		private CaptionButton pressButton = CaptionButton.None;
 
+		private IThemeManager themeManager;
+
 		#region Initialize
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		/// </summary>
+		/********************************************************************/
+		public void InitializeNostalgicForm(IThemeManager themeManager)
+		{
+			this.themeManager = themeManager;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Dispose different stuff
@@ -96,6 +110,9 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
+			if (DesignMode && (themeManager == null))
+				themeManager = new ThemeManager();
+
 			InitializeTheme();
 
 			isActive = ActiveForm == this;
@@ -118,7 +135,6 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void InitializeTheme()
 		{
-			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
 			themeManager.ThemeChanged += ThemeChanged;
 
 			SetupTheme(themeManager.CurrentTheme);
@@ -133,7 +149,6 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void CleanupTheme()
 		{
-			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
 			themeManager.ThemeChanged -= ThemeChanged;
 		}
 
