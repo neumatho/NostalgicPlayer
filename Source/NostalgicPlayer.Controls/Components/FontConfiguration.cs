@@ -6,7 +6,6 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Components
@@ -16,8 +15,10 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 	/// standard font size and/or style
 	/// </summary>
 	[ToolboxItem(true)]
-	public partial class FontConfiguration : Component
+	public partial class FontConfiguration : Component, IDependencyInjectionControl
 	{
+		private IThemeManager themeManager;
+
 		private FontType fontType = FontType.Regular;
 		private FontStyle fontStyle = FontStyle.Regular;
 		private int relativeFontSize = 0;
@@ -46,6 +47,22 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 		public FontConfiguration(IContainer container) : this()
 		{
 			container.Add(this);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeComponent(IThemeManager themeManager)
+		{
+			this.themeManager = themeManager;
+
+			DefineFont();
 		}
 
 		#region Properties
@@ -156,20 +173,21 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 		/********************************************************************/
 		private void DefineFont()
 		{
-			font?.Dispose();
-			font = null;
-
-			IThemeManager themeManager = ThemeManagerFactory.GetThemeManager();
-
-			if ((FontSize != 0) || (FontStyle != FontStyle.Regular) || (FontType != FontType.Regular))
+			if (themeManager != null)
 			{
-				IFonts standardFonts = themeManager.CurrentTheme.StandardFonts;
-				Font baseFont = FontType == FontType.Monospace ? standardFonts.MonospaceFont : standardFonts.RegularFont;
+				font?.Dispose();
+				font = null;
 
-				font = new Font(baseFont.FontFamily, baseFont.Size + FontSize, fontStyle, GraphicsUnit.Point);
+				if ((FontSize != 0) || (FontStyle != FontStyle.Regular) || (FontType != FontType.Regular))
+				{
+					IFonts standardFonts = themeManager.CurrentTheme.StandardFonts;
+					Font baseFont = FontType == FontType.Monospace ? standardFonts.MonospaceFont : standardFonts.RegularFont;
+
+					font = new Font(baseFont.FontFamily, baseFont.Size + FontSize, fontStyle, GraphicsUnit.Point);
+				}
+
+				themeManager.RefreshControls();
 			}
-
-			themeManager.RefreshControls();
 		}
 		#endregion
 	}
