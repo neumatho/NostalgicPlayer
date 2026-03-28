@@ -3,9 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
@@ -41,6 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		{
 			T form = new T();
 
+			CallComponentInitializeMethod(form);
 			controlInitializerService.InitializeControls(form.Controls);
 
 			CallInitializeMethod(form, "InitializeBaseForm");
@@ -50,6 +54,41 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Check to see if the form has a component collection. If so,
+		/// call initialize on them
+		/// </summary>
+		/********************************************************************/
+		private void CallComponentInitializeMethod(Form form)
+		{
+			FieldInfo field = form.GetType().GetField("components", BindingFlags.NonPublic | BindingFlags.Instance);
+
+			if (field != null)
+			{
+				if (field.GetValue(form) is IContainer container)
+				{
+					foreach (Component component in container.Components)
+					{
+						if (component is IDependencyInjectionControl diComponent)
+						{
+							MethodInfo initializeMethod = diComponent.GetType().GetMethod("InitializeComponent", BindingFlags.Public | BindingFlags.Instance);
+
+							if (initializeMethod != null)
+							{
+								ParameterInfo[] parameters = initializeMethod.GetParameters();
+								object[] arguments = parameters.Select(p => applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
+
+								initializeMethod.Invoke(diComponent, arguments);
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Try to find the given method and call it
