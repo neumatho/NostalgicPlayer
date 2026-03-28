@@ -167,11 +167,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 					voice.SampleStartOffset = (uint)((temp1 - temp2) * formatData.SampleData.LengthOfOctaveOne);
 					voice.SampleLengthInWords = (ushort)((formatData.SampleData.LengthOfOctaveOne * temp1) / 2);
 
+					if ((voice.SampleStartOffset + (voice.SampleLengthInWords * 2)) > voice.SampleData.Length)
+						voice.SampleLengthInWords = (ushort)((voice.SampleData.Length - voice.SampleStartOffset) / 2);
+
 					if (formatData.SampleData.LengthOfOctaveOne != formatData.SampleData.LoopLengthOfOctaveOne)
 					{
 						playInfo.LoopSampleData = voice.SampleData;
 						playInfo.LoopStart = (uint)(voice.SampleStartOffset + formatData.SampleData.LoopLengthOfOctaveOne * temp1);
 						playInfo.LoopLengthInWords = (ushort)(((formatData.SampleData.LengthOfOctaveOne - formatData.SampleData.LoopLengthOfOctaveOne) * temp1) / 2);
+
+						if ((playInfo.LoopStart + (playInfo.LoopLengthInWords * 2)) > playInfo.LoopSampleData.Length)
+							playInfo.LoopLengthInWords = (ushort)((playInfo.LoopSampleData.Length - playInfo.LoopStart) / 2);
 					}
 					else
 					{
