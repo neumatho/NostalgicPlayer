@@ -3,29 +3,25 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using SimpleInjector;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme
+namespace Polycode.NostalgicPlayer.Controls.Composition
 {
 	/// <summary>
-	/// Factory class for theme manager
+	/// Register all classes/interfaces into the dependency injection container
 	/// </summary>
-	public static class ThemeManagerFactory
+	public static class CompositionRoot
 	{
-		private static IThemeManager themeManager;
-
 		/********************************************************************/
 		/// <summary>
-		/// Create a new instance of the theme manager if not created already
-		/// and return the instance
+		/// Register all client specific classes into the container
 		/// </summary>
 		/********************************************************************/
-		public static IThemeManager GetThemeManager()
+		public static void RegisterControls(this Container container)
 		{
-			if (themeManager == null)
-				themeManager = new ThemeManager();
-
-			return themeManager;
+			container.RegisterSingleton<IThemeManager, ThemeManager>();
 		}
 	}
 }
