@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
+namespace Polycode.NostalgicPlayer.Controls
 {
 	/// <summary>
 	/// Controls which uses dependency injection need to derive

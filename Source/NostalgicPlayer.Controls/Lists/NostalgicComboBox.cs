@@ -10,8 +10,8 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Designer;
-using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 
 namespace Polycode.NostalgicPlayer.Controls.Lists
 {
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			if (DesignMode)
-				SetTheme(ThemeManagerFactory.GetThemeManager().CurrentTheme);
+				SetTheme(new StandardTheme());
 
 			UpdateFont();
 

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Controls.Forms;
-using Polycode.NostalgicPlayer.Controls.Theme;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Purple;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -37,6 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		private IMainWindowApi mainWindowApi;
 
 		private WindowSettings windowSettings;
+		private IThemeManager themeManager;
 
 		/********************************************************************/
 		/// <summary>
@@ -45,11 +46,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings)
+		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings, IThemeManager themeManager)
 		{
+			InitializeNostalgicForm(themeManager);
+
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 			allWindowSettings = settings;
+			this.themeManager = themeManager;
 
 			// Set how the window should act in the task bar and task switcher.
 			// Only apply to child windows - the main window (where mainWindowApi.Form
@@ -199,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 					case Keys.F12:
 					{
 						theme = !theme;
-						ThemeManagerFactory.GetThemeManager().SwitchTheme(theme ? new PurpleTheme() : new StandardTheme());
+						themeManager.SwitchTheme(theme ? new PurpleTheme() : new StandardTheme());
 
 						return true;
 					}

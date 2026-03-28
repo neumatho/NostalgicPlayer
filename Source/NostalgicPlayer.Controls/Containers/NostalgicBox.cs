@@ -8,8 +8,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Native;
-using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 
 namespace Polycode.NostalgicPlayer.Controls.Containers
 {
@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			if (DesignMode)
-				SetTheme(ThemeManagerFactory.GetThemeManager().CurrentTheme);
+				SetTheme(new StandardTheme());
 
 			base.OnHandleCreated(e);
 		}
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		/********************************************************************/
 		private void DrawCustomNonClient()
 		{
-			if (!IsHandleCreated)
+			if (!IsHandleCreated || (colors == null))
 				return;
 
 			// Draw border in non-client area
