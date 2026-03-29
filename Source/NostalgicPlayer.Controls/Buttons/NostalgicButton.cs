@@ -325,11 +325,12 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
+			Font font = GetFont();
 			StateColors stateColors = GetColors();
 
 			ClearBackground(g);
 			DrawBackground(g, ClientRectangle, stateColors);
-			DrawText(g, ClientRectangle, stateColors);
+			DrawText(g, ClientRectangle, font, stateColors);
 			DrawFocus(g, ClientRectangle);
 		}
 
@@ -391,6 +392,18 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		#endregion
 
 		#region Drawing
+		/********************************************************************/
+		/// <summary>
+		/// Return the font to use
+		/// </summary>
+		/********************************************************************/
+		private Font GetFont()
+		{
+			return fontConfiguration?.Font ?? fonts.RegularFont;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the colors to use for the current state
@@ -518,10 +531,8 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/// Draw the button text
 		/// </summary>
 		/********************************************************************/
-		private void DrawText(Graphics g, Rectangle rect, StateColors stateColors)
+		private void DrawText(Graphics g, Rectangle rect, Font font, StateColors stateColors)
 		{
-			Font font = fontConfiguration?.Font ?? fonts.RegularFont;
-
 			int y = ((rect.Height - font.Height) / 2) - 1;
 
 			TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
