@@ -17,6 +17,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardBoxColors boxColors = new StandardBoxColors();
 		private static readonly StandardButtonColors buttonColors = new StandardButtonColors();
 		private static readonly StandardComboBoxColors comboBoxColors = new StandardComboBoxColors();
+		private static readonly StandardTextBoxColors textBoxColors = new StandardTextBoxColors();
 		private static readonly StandardDataGridViewColors dataGridViewColors = new StandardDataGridViewColors();
 		private static readonly StandardScrollBarColors scrollBarColors = new StandardScrollBarColors();
 
@@ -96,6 +97,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public IComboBoxColors ComboBoxColors => comboBoxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by text boxes
+		/// </summary>
+		/********************************************************************/
+		public ITextBoxColors TextBoxColors => textBoxColors;
 
 
 
