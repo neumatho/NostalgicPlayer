@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly Color hoverBackgroundColor = normalBackgroundColor;
 		private static readonly Color hoverTextColor = normalTextColor;
 
-		private static readonly Color focusedBorderColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color focusedBorderColor = Color.FromArgb(90, 100, 205);
 		private static readonly Color focusedBackgroundColor = normalBackgroundColor;
 		private static readonly Color focusedTextColor = normalTextColor;
 
