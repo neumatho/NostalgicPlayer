@@ -14,6 +14,9 @@ namespace Polycode.NostalgicPlayer.Controls.Native
 	internal static class User32
 	{
 		[DllImport("user32.dll")]
+		public static extern bool HideCaret(IntPtr hWnd);
+
+		[DllImport("user32.dll")]
 		public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
 		[DllImport("user32.dll")]
