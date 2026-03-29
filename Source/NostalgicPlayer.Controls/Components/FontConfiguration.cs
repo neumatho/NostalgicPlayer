@@ -177,18 +177,21 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 			if (DesignMode && (themeManager == null))
 				themeManager = new ThemeManager();
 
-			font?.Dispose();
-			font = null;
-
-			if ((FontSize != 0) || (FontStyle != FontStyle.Regular) || (FontType != FontType.Regular))
+			if (themeManager != null)
 			{
-				IFonts standardFonts = themeManager.CurrentTheme.StandardFonts;
-				Font baseFont = FontType == FontType.Monospace ? standardFonts.MonospaceFont : standardFonts.RegularFont;
+				font?.Dispose();
+				font = null;
 
-				font = new Font(baseFont.FontFamily, baseFont.Size + FontSize, fontStyle, GraphicsUnit.Point);
+				if ((FontSize != 0) || (FontStyle != FontStyle.Regular) || (FontType != FontType.Regular))
+				{
+					IFonts standardFonts = themeManager.CurrentTheme.StandardFonts;
+					Font baseFont = FontType == FontType.Monospace ? standardFonts.MonospaceFont : standardFonts.RegularFont;
+
+					font = new Font(baseFont.FontFamily, baseFont.Size + FontSize, fontStyle, GraphicsUnit.Point);
+				}
+
+				themeManager.RefreshControls();
 			}
-
-			themeManager.RefreshControls();
 		}
 		#endregion
 	}
