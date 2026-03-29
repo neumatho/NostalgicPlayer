@@ -6,6 +6,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Components
@@ -173,21 +174,21 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 		/********************************************************************/
 		private void DefineFont()
 		{
-			if (themeManager != null)
+			if (DesignMode && (themeManager == null))
+				themeManager = new ThemeManager();
+
+			font?.Dispose();
+			font = null;
+
+			if ((FontSize != 0) || (FontStyle != FontStyle.Regular) || (FontType != FontType.Regular))
 			{
-				font?.Dispose();
-				font = null;
+				IFonts standardFonts = themeManager.CurrentTheme.StandardFonts;
+				Font baseFont = FontType == FontType.Monospace ? standardFonts.MonospaceFont : standardFonts.RegularFont;
 
-				if ((FontSize != 0) || (FontStyle != FontStyle.Regular) || (FontType != FontType.Regular))
-				{
-					IFonts standardFonts = themeManager.CurrentTheme.StandardFonts;
-					Font baseFont = FontType == FontType.Monospace ? standardFonts.MonospaceFont : standardFonts.RegularFont;
-
-					font = new Font(baseFont.FontFamily, baseFont.Size + FontSize, fontStyle, GraphicsUnit.Point);
-				}
-
-				themeManager.RefreshControls();
+				font = new Font(baseFont.FontFamily, baseFont.Size + FontSize, fontStyle, GraphicsUnit.Point);
 			}
+
+			themeManager.RefreshControls();
 		}
 		#endregion
 	}
