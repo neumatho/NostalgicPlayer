@@ -236,7 +236,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			if ((e.RowIndex >= 0) && (e.ColumnIndex >= 0))
 			{
-				DrawColumnCell(g, e.CellBounds, GetCellColors(e.State), e.CellStyle?.Alignment ?? DataGridViewContentAlignment.TopLeft, e.Value);
+				DrawColumnCell(g, e.CellBounds, GetFont(), GetCellColors(e.State), e.CellStyle?.Alignment ?? DataGridViewContentAlignment.TopLeft, e.Value);
 				e.Handled = true;
 			}
 			else if ((e.RowIndex == -1) && (e.ColumnIndex >= 0))
@@ -666,6 +666,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		#region Drawing
 		/********************************************************************/
 		/// <summary>
+		/// Return the font to use
+		/// </summary>
+		/********************************************************************/
+		private Font GetFont()
+		{
+			return Font;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the colors to use for the current state
 		/// </summary>
 		/********************************************************************/
@@ -834,10 +846,10 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw a single column cell
 		/// </summary>
 		/********************************************************************/
-		private void DrawColumnCell(Graphics g, Rectangle rect, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
+		private void DrawColumnCell(Graphics g, Rectangle rect, Font font, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
 		{
 			DrawColumnCellBackground(g, rect, cellStateColors);
-			DrawColumnCellText(g, rect, cellStateColors, alignment, value);
+			DrawColumnCellText(g, rect, font, cellStateColors, alignment, value);
 		}
 
 
@@ -872,7 +884,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw a single column cell text
 		/// </summary>
 		/********************************************************************/
-		private void DrawColumnCellText(Graphics g, Rectangle rect, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
+		private void DrawColumnCellText(Graphics g, Rectangle rect, Font font, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
 		{
 			if (value != null)
 			{
@@ -881,8 +893,6 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 				if (!string.IsNullOrEmpty(text))
 				{
 					g.SmoothingMode = SmoothingMode.AntiAlias;
-
-					Font font = Font;
 
 					Rectangle textRect = new Rectangle(rect.X + 1, rect.Y + 1, rect.Width - 1, rect.Height - 1);
 
