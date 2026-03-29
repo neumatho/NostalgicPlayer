@@ -3,127 +3,143 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// A simple purple themed test implementation of ITheme
+	/// Different colors used by text box
 	/// </summary>
-	public class PurpleTheme : ITheme, IDisposable
+	internal class PurpleTextBoxColors : ITextBoxColors
 	{
-		private StandardFonts standardFonts;
-		private static readonly PurpleFormColors formColors = new PurpleFormColors();
-		private static readonly PurpleBoxColors boxColors = new PurpleBoxColors();
-		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
-		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
-		private static readonly PurpleTextBoxColors textBoxColors = new PurpleTextBoxColors();
-		private static readonly PurpleDataGridViewColors dataGridViewColors = new PurpleDataGridViewColors();
-		private static readonly PurpleScrollBarColors scrollBarColors = new PurpleScrollBarColors();
+		private static readonly Color selectedTextBackgroundColor = Color.FromArgb(180, 125, 185);
+		private static readonly Color selectedTextColor = Color.FromArgb(255, 255, 255);
+
+		private readonly IInputControlColors inputControlColors = new PurpleInputControlColors();
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		///
 		/// </summary>
 		/********************************************************************/
-		public PurpleTheme()
-		{
-			standardFonts = new StandardFonts();
-		}
+		public Color NormalBorderColor => inputControlColors.NormalBorderColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Cleanup
+		///
 		/// </summary>
 		/********************************************************************/
-		public void Dispose()
-		{
-			standardFonts.Dispose();
-			standardFonts = null;
-		}
+		public Color NormalBackgroundColor => inputControlColors.NormalBackgroundColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a unique ID for the theme
+		///
 		/// </summary>
 		/********************************************************************/
-		public Guid Id => new Guid("A4F0D3C0-5D2E-44A2-9CF1-8A1C6D2E0B12");
+		public Color NormalTextColor => inputControlColors.NormalTextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of standard fonts
+		///
 		/// </summary>
 		/********************************************************************/
-		public IFonts StandardFonts => standardFonts;
+		public Color HoverBorderColor => inputControlColors.HoverBorderColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by forms
+		///
 		/// </summary>
 		/********************************************************************/
-		public IFormColors FormColors => formColors;
+		public Color HoverBackgroundColor => inputControlColors.HoverBackgroundColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by box
+		///
 		/// </summary>
 		/********************************************************************/
-		public IBoxColors BoxColors => boxColors;
+		public Color HoverTextColor => inputControlColors.HoverTextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by buttons
+		///
 		/// </summary>
 		/********************************************************************/
-		public IButtonColors ButtonColors => buttonColors;
+		public Color FocusedBorderColor => inputControlColors.FocusedBorderColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by combo boxes
+		///
 		/// </summary>
 		/********************************************************************/
-		public IComboBoxColors ComboBoxColors => comboBoxColors;
+		public Color FocusedBackgroundColor => inputControlColors.FocusedBackgroundColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by text boxes
+		///
 		/// </summary>
 		/********************************************************************/
-		public ITextBoxColors TextBoxColors => textBoxColors;
+		public Color FocusedTextColor => inputControlColors.FocusedTextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by DataGridView
+		///
 		/// </summary>
 		/********************************************************************/
-		public IDataGridViewColors DataGridViewColors => dataGridViewColors;
+		public Color DisabledBorderColor => inputControlColors.DisabledBorderColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by scroll bars
+		///
 		/// </summary>
 		/********************************************************************/
-		public IScrollBarColors ScrollBarColors => scrollBarColors;
+		public Color DisabledBackgroundColor => inputControlColors.DisabledBackgroundColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTextColor => inputControlColors.DisabledTextColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color SelectedTextBackgroundColor => selectedTextBackgroundColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color SelectedTextColor => selectedTextColor;
 	}
 }
