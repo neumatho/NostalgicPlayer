@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	/// </summary>
 	public class ControlInitializerService : IControlInitializerService
 	{
-		private readonly IApplicationContext _applicationContext;
+		private readonly IApplicationContext applicationContext;
 
 		/********************************************************************/
 		/// <summary>
@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		public ControlInitializerService(IApplicationContext applicationContext)
 		{
-			_applicationContext = applicationContext;
+			this.applicationContext = applicationContext;
 		}
 
 
@@ -52,8 +52,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		public void InitializeSingleControl(Control control)
 		{
-			if (control is IDependencyInjectionControl)
-				CallControlInitializeMethod(control as IDependencyInjectionControl);
+			if (control is IDependencyInjectionControl diControl)
+				CallControlInitializeMethod(diControl);
 
 			InitializeControls(control.Controls);
 		}
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			if (initializeMethod != null)
 			{
 				ParameterInfo[] parameters = initializeMethod.GetParameters();
-				object[] arguments = parameters.Select(p => _applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
+				object[] arguments = parameters.Select(p => applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
 
 				initializeMethod.Invoke(control, arguments);
 			}
