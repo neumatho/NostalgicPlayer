@@ -316,6 +316,17 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 		/********************************************************************/
 		/// <summary>
+		/// Don't do anything, we have all painting in OnPaint
+		/// </summary>
+		/********************************************************************/
+		protected override void OnPaintBackground(PaintEventArgs e)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Paint the whole control
 		/// </summary>
 		/********************************************************************/
