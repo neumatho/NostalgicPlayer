@@ -3,14 +3,22 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
+using System;
+using System.Runtime.InteropServices;
+
+namespace Polycode.NostalgicPlayer.Controls.Native
 {
 	/// <summary>
-	/// Controls which uses dependency injection need to derive
-	/// from this interface. Furthermore, they need to implement
-	/// a InitializeControl() method
+	/// 
 	/// </summary>
-	public interface IDependencyInjectionControl
+	[StructLayout(LayoutKind.Sequential)]
+	// ReSharper disable InconsistentNaming
+	internal struct TRACKMOUSEEVENT
 	{
+		public uint cbSize;
+		public uint dwFlags;
+		public IntPtr hwndTrack;
+		public uint dwHoverTime;
 	}
+	// ReSharper restore InconsistentNaming
 }
