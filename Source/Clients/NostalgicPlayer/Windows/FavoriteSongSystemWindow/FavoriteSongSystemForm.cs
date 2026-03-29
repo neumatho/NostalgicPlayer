@@ -155,7 +155,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 
 				case FavoriteSongSystemWindowSettings.WhatToShow.TopX:
 				{
-					list = list.OrderByDescending(sortMethod1).ThenByDescending(sortMethod2).Take(int.Parse(otherNumberTextBox.Text));
+					if (!int.TryParse(otherNumberTextBox.Text, out int number))
+						number = 0;
+
+					list = list.OrderByDescending(sortMethod1).ThenByDescending(sortMethod2).Take(number);
 					break;
 				}
 
@@ -179,7 +182,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 
 				case FavoriteSongSystemWindowSettings.WhatToShow.BottomX:
 				{
-					list = list.OrderBy(sortMethod1).ThenBy(sortMethod2).Take(int.Parse(otherNumberTextBox.Text));
+					if (!int.TryParse(otherNumberTextBox.Text, out int number))
+						number = 0;
+
+					list = list.OrderBy(sortMethod1).ThenBy(sortMethod2).Take(number);
 					break;
 				}
 			}
