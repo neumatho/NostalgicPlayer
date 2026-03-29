@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow;
@@ -130,6 +131,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
+
+		// System media transport controls
+		private SystemMediaTransportControlsService smtcService;
 
 		/********************************************************************/
 		/// <summary>
@@ -1079,6 +1083,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleHandler.EndReached += ModuleHandler_EndReached;
 			moduleHandler.ModuleInfoChanged += ModuleHandler_ModuleInfoChanged;
 			moduleHandler.PlayerFailed += ModuleHandler_PlayerFailed;
+
+			// Initialize SMTC
+			smtcService = new SystemMediaTransportControlsService();
+			smtcService.Initialize(Handle);
+			smtcService.PlayRequested += SmtcService_PlayRequested;
+			smtcService.PauseRequested += SmtcService_PauseRequested;
+			smtcService.StopRequested += SmtcService_StopRequested;
+			smtcService.NextRequested += SmtcService_NextRequested;
+			smtcService.PreviousRequested += SmtcService_PreviousRequested;
 		}
 
 		#region Keyboard shortcuts
@@ -1425,7 +1438,89 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				// Save or delete the database
 				SaveDatabase();
+
+				// Dispose SMTC service
+				smtcService?.Dispose();
 			}
+		}
+		#endregion
+
+		#region SMTC events
+		/********************************************************************/
+		/// <summary>
+		/// Handle play request from SMTC
+		/// </summary>
+		/********************************************************************/
+		private void SmtcService_PlayRequested(object sender, EventArgs e)
+		{
+			BeginInvoke(() =>
+			{
+				if (pauseCheckButton.Checked)
+					pauseCheckButton.PerformClick();
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle pause request from SMTC
+		/// </summary>
+		/********************************************************************/
+		private void SmtcService_PauseRequested(object sender, EventArgs e)
+		{
+			BeginInvoke(() =>
+			{
+				if (!pauseCheckButton.Checked)
+					pauseCheckButton.PerformClick();
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle stop request from SMTC
+		/// </summary>
+		/********************************************************************/
+		private void SmtcService_StopRequested(object sender, EventArgs e)
+		{
+			BeginInvoke(() =>
+			{
+				ejectButton.PerformClick();
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle next request from SMTC
+		/// </summary>
+		/********************************************************************/
+		private void SmtcService_NextRequested(object sender, EventArgs e)
+		{
+			BeginInvoke(() =>
+			{
+				if (moduleListControl.Items.Count > 1)
+					nextModuleButton.PerformClick();
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle previous request from SMTC
+		/// </summary>
+		/********************************************************************/
+		private void SmtcService_PreviousRequested(object sender, EventArgs e)
+		{
+			BeginInvoke(() =>
+			{
+				if (moduleListControl.Items.Count > 1)
+					previousModuleButton.PerformClick();
+			});
 		}
 		#endregion
 
@@ -2507,6 +2602,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				// Stop the timers
 				StopTimers();
+
+				// Update SMTC to paused
+				smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Paused);
 			}
 			else
 			{
@@ -2515,6 +2613,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				// Start the timers again
 				StartTimers(false);
+
+				// Update SMTC to playing
+				smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Playing);
 			}
 		}
 
@@ -3674,6 +3775,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				// Do we need to remove any previous items
 				if (randomList.Count > (moduleListControl.Items.Count / 3))
 					randomList.RemoveAt(0);
+
+				// Update SMTC metadata and playback status
+				smtcService?.UpdateMetadata(playItem, moduleHandler.StaticModuleInformation, 
+					moduleHandler.PlayingModuleInformation.CurrentSong + 1, 
+					moduleHandler.StaticModuleInformation.MaxSongNumber);
+				smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Playing);
 			}
 		}
 
@@ -4269,6 +4376,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			// Update the other windows
 			RefreshWindows(false);
+
+			// Clear SMTC metadata and set stopped status
+			smtcService?.ClearMetadata();
+			smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Stopped);
 		}
 
 
