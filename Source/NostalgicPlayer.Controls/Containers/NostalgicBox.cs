@@ -95,6 +95,30 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Check if the control is in design mode by walking up the parent
+		/// chain. This is needed because DesignMode returns false for child
+		/// controls that are not directly sited on the designer
+		/// </summary>
+		/********************************************************************/
+		private bool IsInDesignMode()
+		{
+			Control ctrl = this;
+
+			while (ctrl != null)
+			{
+				if (ctrl.Site?.DesignMode == true)
+					return true;
+
+				ctrl = ctrl.Parent;
+			}
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will recalculate the client area of the form
 		/// </summary>
 		/********************************************************************/
@@ -127,9 +151,9 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 				Marshal.StructureToPtr(rect, m.LParam, false);
 			}
 		}
+		#endregion
 
-
-
+		#region Drawing
 		/********************************************************************/
 		/// <summary>
 		/// Will draw the title bar and border of the form
@@ -170,34 +194,10 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		/********************************************************************/
 		private void DrawBorder(Graphics g)
 		{
-			using (Pen borderPen = new Pen(colors.BorderColor, 1))
+			using (Pen borderPen = new Pen(colors.BorderColor, BorderWidth))
 			{
 				g.DrawRectangle(borderPen, 0, 0, Width - 1, Height - 1);
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Check if the control is in design mode by walking up the parent
-		/// chain. This is needed because DesignMode returns false for child
-		/// controls that are not directly sited on the designer
-		/// </summary>
-		/********************************************************************/
-		private bool IsInDesignMode()
-		{
-			Control ctrl = this;
-
-			while (ctrl != null)
-			{
-				if (ctrl.Site?.DesignMode == true)
-					return true;
-
-				ctrl = ctrl.Parent;
-			}
-
-			return false;
 		}
 		#endregion
 	}
