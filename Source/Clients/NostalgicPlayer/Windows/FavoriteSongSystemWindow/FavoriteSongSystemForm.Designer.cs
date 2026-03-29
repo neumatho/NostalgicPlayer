@@ -31,14 +31,13 @@
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FavoriteSongSystemForm));
 			favoriteDataGridView = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicDataGridView();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			addButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			removeButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			resetButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			showComboBox = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicComboBox();
-			otherNumberTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox();
+			otherNumberTextBox = new Polycode.NostalgicPlayer.Controls.Input.NostalgicTextBox();
 			toolTip = new System.Windows.Forms.ToolTip(components);
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).BeginInit();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
@@ -54,13 +53,6 @@
 			favoriteDataGridView.TabIndex = 0;
 			favoriteDataGridView.SelectionChanged += FavoriteDataGridView_SelectionChanged;
 			favoriteDataGridView.MouseDoubleClick += FavoriteDataGridView_MouseDoubleClick;
-			// 
-			// fontPalette
-			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// addButton
 			// 
@@ -123,12 +115,12 @@
 			// 
 			otherNumberTextBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			otherNumberTextBox.Enabled = false;
-			otherNumberTextBox.Location = new System.Drawing.Point(290, 201);
+			otherNumberTextBox.Location = new System.Drawing.Point(290, 200);
+			otherNumberTextBox.Multiline = false;
 			otherNumberTextBox.Name = "otherNumberTextBox";
-			otherNumberTextBox.Palette = fontPalette;
-			otherNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			otherNumberTextBox.Size = new System.Drawing.Size(30, 20);
+			otherNumberTextBox.Size = new System.Drawing.Size(30, 21);
 			otherNumberTextBox.TabIndex = 4;
+			otherNumberTextBox.Text = "";
 			otherNumberTextBox.TextChanged += OtherNumberTextBox_TextChanged;
 			// 
 			// FavoriteSongSystemForm
@@ -148,7 +140,6 @@
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).EndInit();
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
 			ResumeLayout(false);
-			PerformLayout();
 
 		}
 
@@ -159,9 +150,8 @@
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton removeButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton resetButton;
 		private NostalgicPlayer.Controls.Lists.NostalgicComboBox showComboBox;
-		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox otherNumberTextBox;
+		private NostalgicPlayer.Controls.Input.NostalgicTextBox otherNumberTextBox;
 		private System.Windows.Forms.ToolTip toolTip;
-		private Kit.Gui.Components.FontPalette fontPalette;
 		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
 	}
 }
