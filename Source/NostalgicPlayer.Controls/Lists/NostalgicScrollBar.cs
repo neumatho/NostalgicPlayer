@@ -574,6 +574,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 		/********************************************************************/
 		/// <summary>
+		/// Draw the background
+		/// </summary>
+		/********************************************************************/
+		protected override void OnPaintBackground(PaintEventArgs e)
+		{
+			DrawBackground(e.Graphics);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -585,7 +597,6 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			Graphics g = e.Graphics;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
-			DrawBackground(g);
 			DrawArrows(g);
 			DrawThumb(g);
 		}
