@@ -54,8 +54,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 		[TestMethod]
 		public void Test_PackIce()
 		{
-//XX			VerifyFile("test_C1_113.ice", "test_C1.raw");
-//			VerifyFile("test_C1_211.ice", "test_C1.raw");
+			VerifyFile("test_C1_113.ice", "test_C1.raw");
+			VerifyFile("test_C1_211.ice", "test_C1.raw");
 			VerifyFile("test_C1_22.ice", "test_C1.raw");
 			VerifyFile("test_C1_231.ice", "test_C1.raw");
 			VerifyFile("test_C1_24.ice", "test_C1.raw");
