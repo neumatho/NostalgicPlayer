@@ -224,10 +224,11 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
+			Font font = GetFont();
 			StateColors stateColors = GetColors();
 
 			DrawBackground(g, ClientRectangle, stateColors);
-			DrawText(g, ClientRectangle, stateColors);
+			DrawText(g, ClientRectangle, font, stateColors);
 			DrawDropDownButton(g, ClientRectangle, stateColors);
 			DrawFocus(g, ClientRectangle);
 		}
@@ -272,6 +273,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			if (e.Index < 0)
 				return;
 
+			Font font = GetFont();
 			DropDownStateColors stateColors = GetDropDownColors(e.State);
 
 			Graphics g = e.Graphics;
@@ -279,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
 			DrawDropDownBackground(g, e.Bounds, stateColors);
-			DrawDropDownItemText(g, e.Bounds, stateColors, e.Index);
+			DrawDropDownItemText(g, e.Bounds, font, stateColors, e.Index);
 
 			base.OnDrawItem(e);
 		}
@@ -310,6 +312,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		#endregion
 
 		#region Drawing
+		/********************************************************************/
+		/// <summary>
+		/// Return the font to use
+		/// </summary>
+		/********************************************************************/
+		private Font GetFont()
+		{
+			return Font;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the colors to use for the current state
@@ -428,12 +442,10 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw the selected item text
 		/// </summary>
 		/********************************************************************/
-		private void DrawText(Graphics g, Rectangle rect, StateColors stateColors)
+		private void DrawText(Graphics g, Rectangle rect, Font font, StateColors stateColors)
 		{
 			if (SelectedIndex < 0)
 				return;
-
-			Font font = Font;
 
 			string text = GetItemText(SelectedItem);
 
@@ -560,10 +572,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw the dropdown item text
 		/// </summary>
 		/********************************************************************/
-		private void DrawDropDownItemText(Graphics g, Rectangle rect, DropDownStateColors stateColors, int itemIndex)
+		private void DrawDropDownItemText(Graphics g, Rectangle rect, Font font, DropDownStateColors stateColors, int itemIndex)
 		{
-			Font font = Font;
-
 			string text = GetItemText(Items[itemIndex]);
 
 			TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
