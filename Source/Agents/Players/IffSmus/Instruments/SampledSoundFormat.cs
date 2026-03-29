@@ -348,6 +348,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 						multiOctaveInfo[i].LoopLength = (uint)((formatData.SampleData.LengthOfOctaveOne - formatData.SampleData.LoopLengthOfOctaveOne) * temp1);
 					}
 
+					if ((multiOctaveInfo[i].SampleOffset + multiOctaveInfo[i].Length) >= formatData.SampleData.SampleData.Length)
+						multiOctaveInfo[i].Length = (uint)(formatData.SampleData.SampleData.Length - multiOctaveInfo[i].SampleOffset);
+
 					allSamples.Add(formatData.SampleData.SampleData.AsSpan((int)multiOctaveInfo[i].SampleOffset, (int)multiOctaveInfo[i].Length).ToArray());
 				}
 
