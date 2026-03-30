@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			if (DesignMode && (themeManager == null))
+			if (DesignerHelper.IsInDesignMode(this) && (themeManager == null))
 				themeManager = new ThemeManager();
 
 			InitializeTheme();
