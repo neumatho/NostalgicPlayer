@@ -235,13 +235,14 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
+			Rectangle rect = ClientRectangle;
 			Font font = GetFont();
 			StateColors stateColors = GetColors();
 
-			DrawBackground(g, ClientRectangle, stateColors);
-			DrawText(g, ClientRectangle, font, stateColors);
-			DrawDropDownButton(g, ClientRectangle, stateColors);
-			DrawFocus(g, ClientRectangle);
+			DrawBackground(g, rect, stateColors);
+			DrawText(g, rect, font, stateColors);
+			DrawDropDownButton(g, rect, stateColors);
+			DrawFocus(g, rect);
 		}
 
 
