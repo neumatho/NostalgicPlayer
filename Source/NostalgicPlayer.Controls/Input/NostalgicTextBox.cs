@@ -358,11 +358,12 @@ namespace Polycode.NostalgicPlayer.Controls.Input
 		{
 			Graphics g = e.Graphics;
 
+			Rectangle rect = ClientRectangle;
 			Font font = GetFont();
 			StateColors stateColors = GetColors();
 
-			DrawBackground(g, ClientRectangle, stateColors);
-			DrawTextContent(g, ClientRectangle, font, stateColors);
+			DrawBackground(g, rect, stateColors);
+			DrawTextContent(g, rect, font, stateColors);
 		}
 		#endregion
 
