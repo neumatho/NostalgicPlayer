@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Controls.Input
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			if (DesignMode)
+			if (DesignerHelper.IsInDesignMode(this))
 				SetTheme(new StandardTheme());
 
 			base.OnHandleCreated(e);
