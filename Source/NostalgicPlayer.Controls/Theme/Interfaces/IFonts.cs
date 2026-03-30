@@ -20,5 +20,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 
 		/// <summary></summary>
 		Font MonospaceFont { get; }
+
+		/// <summary></summary>
+		Font TabFont { get; }
 	}
 }

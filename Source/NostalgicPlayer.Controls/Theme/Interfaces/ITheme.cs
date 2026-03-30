@@ -56,5 +56,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by scroll bars
 		/// </summary>
 		IScrollBarColors ScrollBarColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by tab controls
+		/// </summary>
+		ITabColors TabColors { get; }
 	}
 }
