@@ -20,6 +20,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardTextBoxColors textBoxColors = new StandardTextBoxColors();
 		private static readonly StandardDataGridViewColors dataGridViewColors = new StandardDataGridViewColors();
 		private static readonly StandardScrollBarColors scrollBarColors = new StandardScrollBarColors();
+		private static readonly StandardTabColors tabColors = new StandardTabColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -124,5 +125,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public IScrollBarColors ScrollBarColors => scrollBarColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by tab controls
+		/// </summary>
+		/********************************************************************/
+		public ITabColors TabColors => tabColors;
 	}
 }
