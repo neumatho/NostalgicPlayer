@@ -520,7 +520,6 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
 			Font font = GetFont();
-			Rectangle rect = ClientRectangle;
 
 			ClearBackground(g);
 			DrawBackground(g);
