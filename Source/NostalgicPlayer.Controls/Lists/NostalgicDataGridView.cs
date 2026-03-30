@@ -219,15 +219,6 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		}
 		#endregion
 
-		#region Helper methods
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		internal bool IsInDesignMode => DesignMode;
-		#endregion
-
 		#region Handlers
 		/********************************************************************/
 		/// <summary>
