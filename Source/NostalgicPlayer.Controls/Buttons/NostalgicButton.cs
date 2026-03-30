@@ -336,13 +336,14 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
+			Rectangle rect = ClientRectangle;
 			Font font = GetFont();
 			StateColors stateColors = GetColors();
 
 			ClearBackground(g);
-			DrawBackground(g, ClientRectangle, stateColors);
-			DrawText(g, ClientRectangle, font, stateColors);
-			DrawFocus(g, ClientRectangle);
+			DrawBackground(g, rect, stateColors);
+			DrawText(g, rect, font, stateColors);
+			DrawFocus(g, rect);
 		}
 
 
