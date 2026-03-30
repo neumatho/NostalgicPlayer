@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 	/// <summary>
 	/// This shows the module information
 	/// </summary>
-	public partial class ModuleInfoWindowForm : WindowFormBase
+	public partial class ModuleInfoWindowForm : WindowFormBase2
 	{
 		private IMainWindowApi mainWindowApi;
 		private IModuleHandlerService moduleHandler;
@@ -56,10 +56,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			Text = Resources.IDS_MODULE_INFO_TITLE;
 
 			// Set the tab titles
-			navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Info].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
-			navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
-			navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Text = Resources.IDS_MODULE_INFO_TAB_LYRICS;
-			navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Text = Resources.IDS_MODULE_INFO_TAB_PICTURES;
+			tabControl.Pages[(int)ModuleSettings.ModuleInfoTab.Info].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
+			tabControl.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
+			tabControl.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Text = Resources.IDS_MODULE_INFO_TAB_LYRICS;
+			tabControl.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Text = Resources.IDS_MODULE_INFO_TAB_PICTURES;
 
 			// Initialize all pages
 			infoPageControl.InitControl(mainWindowApi, settings);
