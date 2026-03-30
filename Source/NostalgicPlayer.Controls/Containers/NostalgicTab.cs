@@ -292,7 +292,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			if (IsInDesignMode())
+			if (DesignerHelper.IsInDesignMode(this))
 				SetTheme(new StandardTheme());
 
 			base.OnHandleCreated(e);
@@ -553,30 +553,6 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		#endregion
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Check if the control is in design mode by walking up the parent
-		/// chain. This is needed because DesignMode returns false for child
-		/// controls that are not directly sited on the designer
-		/// </summary>
-		/********************************************************************/
-		private bool IsInDesignMode()
-		{
-			Control ctrl = this;
-
-			while (ctrl != null)
-			{
-				if (ctrl.Site?.DesignMode == true)
-					return true;
-
-				ctrl = ctrl.Parent;
-			}
-
-			return false;
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Return whether a page should be shown in the tab strip
