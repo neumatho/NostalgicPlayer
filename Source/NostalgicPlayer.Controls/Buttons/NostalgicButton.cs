@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			if (DesignMode)
+			if (DesignerHelper.IsInDesignMode(this))
 				SetTheme(new StandardTheme());
 
 			base.OnHandleCreated(e);

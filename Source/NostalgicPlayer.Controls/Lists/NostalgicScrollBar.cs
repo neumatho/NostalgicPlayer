@@ -312,7 +312,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			if (DesignMode)
+			if (DesignerHelper.IsInDesignMode(this))
 				SetTheme(new StandardTheme());
 
 			UpdateRectangles();
