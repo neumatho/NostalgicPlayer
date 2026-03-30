@@ -1,4 +1,5 @@
 ﻿
+
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 {
 	partial class ModuleInfoWindowForm
@@ -32,22 +33,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModuleInfoWindowForm));
 			infoPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.InfoPageControl();
-			navigator = new Krypton.Navigator.KryptonNavigator();
-			navigatorInfoPage = new Krypton.Navigator.KryptonPage();
-			navigatorCommentPage = new Krypton.Navigator.KryptonPage();
+			tabControl = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTab();
+			tabInfoPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
+			tabCommentPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			commentPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.CommentPageControl();
 			navigatorLyricsPage = new Krypton.Navigator.KryptonPage();
 			lyricsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.LyricsPageControl();
 			navigatorPicturesPage = new Krypton.Navigator.KryptonPage();
 			picturesPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.PicturesPageControl();
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
-			((System.ComponentModel.ISupportInitialize)navigatorInfoPage).BeginInit();
-			navigatorInfoPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)navigatorCommentPage).BeginInit();
-			navigatorCommentPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)navigatorLyricsPage).BeginInit();
-			navigatorLyricsPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)tabControl).BeginInit();
+			tabControl.SuspendLayout();
+			tabInfoPage.SuspendLayout();
+			tabCommentPage.SuspendLayout();
+			tabLyricsPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)navigatorPicturesPage).BeginInit();
 			navigatorPicturesPage.SuspendLayout();
 			SuspendLayout();
@@ -60,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			infoPageControl.Size = new System.Drawing.Size(282, 158);
 			infoPageControl.TabIndex = 0;
 			// 
-			// navigator
+			// tabControl
 			// 
 			navigator.AllowPageReorder = false;
 			navigator.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -89,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			navigator.Size = new System.Drawing.Size(284, 184);
 			navigator.TabIndex = 1;
 			// 
-			// navigatorInfoPage
+			// tabInfoPage
 			// 
 			navigatorInfoPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
 			navigatorInfoPage.Controls.Add(infoPageControl);
@@ -102,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			navigatorInfoPage.ToolTipTitle = "Page ToolTip";
 			navigatorInfoPage.UniqueName = "c99656c653d3472bb30017074959420b";
 			// 
-			// navigatorCommentPage
+			// tabCommentPage
 			// 
 			navigatorCommentPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
 			navigatorCommentPage.Controls.Add(commentPageControl);
@@ -123,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			commentPageControl.Size = new System.Drawing.Size(282, 158);
 			commentPageControl.TabIndex = 0;
 			// 
-			// navigatorLyricsPage
+			// tabLyricsPage
 			// 
 			navigatorLyricsPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
 			navigatorLyricsPage.Controls.Add(lyricsPageControl);
@@ -174,21 +173,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			// 
 			// ModuleInfoWindowForm
 			// 
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			ClientSize = new System.Drawing.Size(300, 200);
-			Controls.Add(navigator);
+			Controls.Add(tabControl);
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(316, 239);
 			Name = "ModuleInfoWindowForm";
 			FormClosed += ModuleInfoWindowForm_FormClosed;
-			((System.ComponentModel.ISupportInitialize)navigator).EndInit();
-			((System.ComponentModel.ISupportInitialize)navigatorInfoPage).EndInit();
-			navigatorInfoPage.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)navigatorCommentPage).EndInit();
-			navigatorCommentPage.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)navigatorLyricsPage).EndInit();
-			navigatorLyricsPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)tabControl).EndInit();
+			tabControl.ResumeLayout(false);
+			tabInfoPage.ResumeLayout(false);
+			tabCommentPage.ResumeLayout(false);
+			tabLyricsPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)navigatorPicturesPage).EndInit();
 			navigatorPicturesPage.ResumeLayout(false);
 			ResumeLayout(false);
@@ -196,11 +192,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 
 		#endregion
 		private Pages.InfoPageControl infoPageControl;
-		private Krypton.Navigator.KryptonNavigator navigator;
-		private Krypton.Navigator.KryptonPage navigatorInfoPage;
-		private Krypton.Navigator.KryptonPage navigatorCommentPage;
+		private NostalgicPlayer.Controls.Containers.NostalgicTab tabControl;
+		private NostalgicPlayer.Controls.Containers.NostalgicTabPage tabInfoPage;
+		private NostalgicPlayer.Controls.Containers.NostalgicTabPage tabCommentPage;
 		private Pages.CommentPageControl commentPageControl;
-		private Krypton.Navigator.KryptonPage navigatorLyricsPage;
+		private NostalgicPlayer.Controls.Containers.NostalgicTabPage tabLyricsPage;
 		private Pages.LyricsPageControl lyricsPageControl;
 		private Krypton.Navigator.KryptonPage navigatorPicturesPage;
 		private Pages.PicturesPageControl picturesPageControl;
