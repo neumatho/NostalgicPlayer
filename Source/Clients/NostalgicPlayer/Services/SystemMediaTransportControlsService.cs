@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	/// <summary>
 	/// Manages Windows System Media Transport Controls integration
 	/// </summary>
-	public class SystemMediaTransportControlsService : IDisposable
+	public class SystemMediaTransportControlsService : ISystemMediaTransportControlsService
 	{
 		private SystemMediaTransportControls smtc;
 		private bool disposed;
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			{
 				SystemMediaTransportControlsDisplayUpdater updater = smtc.DisplayUpdater;
 				updater.Type = MediaPlaybackType.Music;
-				updater.AppMediaId = "NostalgicPlayer";
+				updater.AppMediaId = Resources.IDS_SMTC_APP_MEDIA_ID;
 
 				// Get title
 				string title = staticInfo?.Title;
@@ -152,9 +152,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 				string album = staticInfo?.PlayerAgentInfo?.AgentName;
 
 				// Update properties
-				string displayTitle = title ?? "Unknown";
+				string displayTitle = title ?? Resources.IDS_SMTC_UNKNOWN_TITLE;
 				if (maxSongs > 1)
-					displayTitle += $" ({currentSong}/{maxSongs})";
+					displayTitle = string.Format(Resources.IDS_SMTC_SONG_FORMAT, displayTitle, currentSong, maxSongs);
 
 				updater.MusicProperties.Title = displayTitle;
 				updater.MusicProperties.Artist = artist ?? string.Empty;

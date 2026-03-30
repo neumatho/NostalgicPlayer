@@ -86,6 +86,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			container.RegisterSingleton<IControlInitializerService, ControlInitializerService>();
 			container.RegisterSingleton<IFileScannerService, FileScannerService>();
 			container.RegisterSingleton<IModuleHandlerService, ModuleHandlerService>();
+			container.RegisterSingleton<ISystemMediaTransportControlsService, SystemMediaTransportControlsService>();
 		}
 
 

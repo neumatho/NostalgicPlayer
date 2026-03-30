@@ -4671,5 +4671,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ResourceManager.GetString("IDS_TIP_MAIN_VOLUME", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to NostalgicPlayer.
+        /// </summary>
+        internal static string IDS_SMTC_APP_MEDIA_ID {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_APP_MEDIA_ID", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string IDS_SMTC_UNKNOWN_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_UNKNOWN_TITLE", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ({1}/{2}).
+        /// </summary>
+        internal static string IDS_SMTC_SONG_FORMAT {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_SONG_FORMAT", resourceCulture);
+            }
+        }
     }
 }

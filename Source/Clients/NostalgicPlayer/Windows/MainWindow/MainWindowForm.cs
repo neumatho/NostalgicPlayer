@@ -66,6 +66,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private IFormCreatorService formCreatorService;
 		private IFileScannerService fileScanner;
 		private IModuleHandlerService moduleHandler;
+		private ISystemMediaTransportControlsService systemMediaTransportControlsService;
 
 		// Settings
 		private ISettings userSettings;
@@ -154,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService, ISystemMediaTransportControlsService systemMediaTransportControlsService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
@@ -169,6 +170,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			this.formCreatorService = formCreatorService;
 			fileScanner = fileScannerService;
 			moduleHandler = moduleHandlerService;
+			this.systemMediaTransportControlsService = systemMediaTransportControlsService;
 
 			// Initialize the adapter with the created form
 			mainWindowApiAdapter.Initialize(this);
