@@ -41,6 +41,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color NormalCellBackgroundStopColor { get; }
 		/// <summary></summary>
 		Color NormalCellTextColor { get; }
+		/// <summary></summary>
+		Color NormalCellLinkColor { get; }
 
 		/// <summary></summary>
 		Color SelectedCellBackgroundStartColor { get; }
@@ -50,5 +52,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color SelectedCellBackgroundStopColor { get; }
 		/// <summary></summary>
 		Color SelectedCellTextColor { get; }
+		/// <summary></summary>
+		Color SelectedCellLinkColor { get; }
 	}
 }
