@@ -182,21 +182,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		private void PictureGroup_Resize(object sender, EventArgs e)
 		{
-			lock (animationLock)
+			if (animationLock != null)
 			{
-				// Replace the next/previous buttons
-				int newYPos = ((pictureBox.Height - previousPictureButton.Height) / 2) + pictureBox.Location.Y;
-				previousPictureButton.Location = new Point(8, newYPos);
-				nextPictureButton.Location = new Point(pictureGroup.Width - nextPictureButton.Width - 8, newYPos);
-
-				// Resize picture and label
-				if (pictures != null)
+				lock (animationLock)
 				{
-					if (currentPictureBitmap != null)
-						CreateAllPictureBitmaps(pictureIndex, ref currentPictureBitmap, ref currentLabelBitmap);
+					// Replace the next/previous buttons
+					int newYPos = ((pictureBox.Height - previousPictureButton.Height) / 2) + pictureBox.Location.Y;
+					previousPictureButton.Location = new Point(8, newYPos);
+					nextPictureButton.Location = new Point(pictureGroup.Width - nextPictureButton.Width - 8, newYPos);
 
-					if (newPictureBitmap != null)
-						CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+					// Resize picture and label
+					if (pictures != null)
+					{
+						if (currentPictureBitmap != null)
+							CreateAllPictureBitmaps(pictureIndex, ref currentPictureBitmap, ref currentLabelBitmap);
+
+						if (newPictureBitmap != null)
+							CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+					}
 				}
 			}
 		}
