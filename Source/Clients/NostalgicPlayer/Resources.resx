@@ -1781,4 +1781,13 @@ This will delete the local database file and clear all data from memory.</value>
   <data name="IDS_MODLIBRARY_RELOAD" xml:space="preserve">
     <value>Reload</value>
   </data>
+  <data name="IDS_SMTC_APP_MEDIA_ID" xml:space="preserve">
+    <value>NostalgicPlayer</value>
+  </data>
+  <data name="IDS_SMTC_UNKNOWN_TITLE" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="IDS_SMTC_SONG_FORMAT" xml:space="preserve">
+    <value>{0} ({1}/{2})</value>
+  </data>
 </root>
