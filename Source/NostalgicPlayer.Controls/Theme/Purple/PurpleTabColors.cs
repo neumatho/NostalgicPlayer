@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 	internal class PurpleTabColors : ITabColors
 	{
 		private static readonly Color borderColor = Color.FromArgb(140, 125, 160);
-		private static readonly Color backgroundColor = Color.FromArgb(250, 248, 252);
+		private static readonly Color backgroundColor = Color.FromArgb(225, 220, 230);
 
 		private static readonly Color normalTabBackgroundStartColor = Color.FromArgb(230, 225, 235);
 		private static readonly Color normalTabBackgroundStopColor = Color.FromArgb(210, 200, 230);
