@@ -133,9 +133,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
 
-		// System media transport controls
-		private SystemMediaTransportControlsService smtcService;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -1087,13 +1084,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleHandler.PlayerFailed += ModuleHandler_PlayerFailed;
 
 			// Initialize SMTC
-			smtcService = new SystemMediaTransportControlsService();
-			smtcService.Initialize(Handle);
-			smtcService.PlayRequested += SmtcService_PlayRequested;
-			smtcService.PauseRequested += SmtcService_PauseRequested;
-			smtcService.StopRequested += SmtcService_StopRequested;
-			smtcService.NextRequested += SmtcService_NextRequested;
-			smtcService.PreviousRequested += SmtcService_PreviousRequested;
+			systemMediaTransportControlsService.Initialize(Handle);
+			systemMediaTransportControlsService.PlayRequested += SmtcService_PlayRequested;
+			systemMediaTransportControlsService.PauseRequested += SmtcService_PauseRequested;
+			systemMediaTransportControlsService.StopRequested += SmtcService_StopRequested;
+			systemMediaTransportControlsService.NextRequested += SmtcService_NextRequested;
+			systemMediaTransportControlsService.PreviousRequested += SmtcService_PreviousRequested;
 		}
 
 		#region Keyboard shortcuts
@@ -1441,8 +1437,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				// Save or delete the database
 				SaveDatabase();
 
+				// Unsubscribe SMTC events
+				systemMediaTransportControlsService.PlayRequested -= SmtcService_PlayRequested;
+				systemMediaTransportControlsService.PauseRequested -= SmtcService_PauseRequested;
+				systemMediaTransportControlsService.StopRequested -= SmtcService_StopRequested;
+				systemMediaTransportControlsService.NextRequested -= SmtcService_NextRequested;
+				systemMediaTransportControlsService.PreviousRequested -= SmtcService_PreviousRequested;
+
 				// Dispose SMTC service
-				smtcService?.Dispose();
+				systemMediaTransportControlsService?.Dispose();
 			}
 		}
 		#endregion
@@ -2606,7 +2609,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				StopTimers();
 
 				// Update SMTC to paused
-				smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Paused);
+				systemMediaTransportControlsService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Paused);
 			}
 			else
 			{
@@ -2617,7 +2620,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				StartTimers(false);
 
 				// Update SMTC to playing
-				smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Playing);
+				systemMediaTransportControlsService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Playing);
 			}
 		}
 
@@ -3779,10 +3782,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					randomList.RemoveAt(0);
 
 				// Update SMTC metadata and playback status
-				smtcService?.UpdateMetadata(playItem, moduleHandler.StaticModuleInformation, 
+				systemMediaTransportControlsService?.UpdateMetadata(playItem, moduleHandler.StaticModuleInformation, 
 					moduleHandler.PlayingModuleInformation.CurrentSong + 1, 
 					moduleHandler.StaticModuleInformation.MaxSongNumber);
-				smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Playing);
+				systemMediaTransportControlsService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Playing);
 			}
 		}
 
@@ -4380,8 +4383,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			RefreshWindows(false);
 
 			// Clear SMTC metadata and set stopped status
-			smtcService?.ClearMetadata();
-			smtcService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Stopped);
+			systemMediaTransportControlsService?.ClearMetadata();
+			systemMediaTransportControlsService?.UpdatePlaybackStatus(global::Windows.Media.MediaPlaybackStatus.Stopped);
 		}
 
 
