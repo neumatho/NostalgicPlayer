@@ -84,8 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			// 
 			// InfoPageControl
 			// 
-			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			Controls.Add(infoGroup);
 			Name = "InfoPageControl";
 			Size = new System.Drawing.Size(282, 158);

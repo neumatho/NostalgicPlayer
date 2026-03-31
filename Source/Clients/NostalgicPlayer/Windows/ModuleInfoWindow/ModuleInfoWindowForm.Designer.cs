@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModuleInfoWindowForm));
 			infoPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.InfoPageControl();
 			navigator = new Krypton.Navigator.KryptonNavigator();
@@ -39,6 +40,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			lyricsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.LyricsPageControl();
 			navigatorPicturesPage = new Krypton.Navigator.KryptonPage();
 			picturesPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.PicturesPageControl();
+			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
 			((System.ComponentModel.ISupportInitialize)navigatorInfoPage).BeginInit();
 			navigatorInfoPage.SuspendLayout();
@@ -55,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			infoPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			infoPageControl.Location = new System.Drawing.Point(0, 0);
 			infoPageControl.Name = "infoPageControl";
-			infoPageControl.Size = new System.Drawing.Size(282, 157);
+			infoPageControl.Size = new System.Drawing.Size(282, 158);
 			infoPageControl.TabIndex = 0;
 			// 
 			// navigator
@@ -80,6 +82,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			navigator.Owner = null;
 			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorInfoPage, navigatorCommentPage, navigatorLyricsPage, navigatorPicturesPage });
+			navigator.Palette = fontPalette;
+			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			navigator.SelectedIndex = 0;
 			navigator.Size = new System.Drawing.Size(284, 184);
@@ -93,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			navigatorInfoPage.LastVisibleSet = true;
 			navigatorInfoPage.MinimumSize = new System.Drawing.Size(50, 50);
 			navigatorInfoPage.Name = "navigatorInfoPage";
-			navigatorInfoPage.Size = new System.Drawing.Size(282, 157);
+			navigatorInfoPage.Size = new System.Drawing.Size(282, 158);
 			navigatorInfoPage.Text = "";
 			navigatorInfoPage.ToolTipTitle = "Page ToolTip";
 			navigatorInfoPage.UniqueName = "c99656c653d3472bb30017074959420b";
@@ -161,6 +165,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			picturesPageControl.Size = new System.Drawing.Size(282, 158);
 			picturesPageControl.TabIndex = 0;
 			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
+			// 
 			// ModuleInfoWindowForm
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -193,5 +204,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 		private Pages.LyricsPageControl lyricsPageControl;
 		private Krypton.Navigator.KryptonPage navigatorPicturesPage;
 		private Pages.PicturesPageControl picturesPageControl;
+		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

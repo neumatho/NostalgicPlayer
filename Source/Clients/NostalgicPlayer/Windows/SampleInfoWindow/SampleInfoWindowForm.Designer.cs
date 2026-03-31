@@ -33,34 +33,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SampleInfoWindowForm));
 			navigator = new Krypton.Navigator.KryptonNavigator();
 			navigatorInstrumentPage = new Krypton.Navigator.KryptonPage();
-			instrumentGroup = new Krypton.Toolkit.KryptonGroup();
-			instrumentDataGridView = new Krypton.Toolkit.KryptonDataGridView();
-			monoFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			instrumentPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pages.InstrumentPageControl();
 			navigatorSamplePage = new Krypton.Navigator.KryptonPage();
-			saveFormatLabel = new Krypton.Toolkit.KryptonLabel();
+			samplePageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pages.SamplePageControl();
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			saveFormatComboBox = new Krypton.Toolkit.KryptonComboBox();
-			saveButton = new Krypton.Toolkit.KryptonButton();
-			polyphonyLabel = new Krypton.Toolkit.KryptonLabel();
-			sampleGroup = new Krypton.Toolkit.KryptonGroup();
-			sampleDataGridView = new SampleInfoSamplesListControl();
-			octaveLabel = new Krypton.Toolkit.KryptonLabel();
-			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
 			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
 			((System.ComponentModel.ISupportInitialize)navigatorInstrumentPage).BeginInit();
 			navigatorInstrumentPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)instrumentGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)instrumentGroup.Panel).BeginInit();
-			instrumentGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)instrumentDataGridView).BeginInit();
 			((System.ComponentModel.ISupportInitialize)navigatorSamplePage).BeginInit();
 			navigatorSamplePage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)saveFormatComboBox).BeginInit();
-			((System.ComponentModel.ISupportInitialize)sampleGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)sampleGroup.Panel).BeginInit();
-			sampleGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)sampleDataGridView).BeginInit();
-			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
 			SuspendLayout();
 			// 
 			// navigator
@@ -96,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			// navigatorInstrumentPage
 			// 
 			navigatorInstrumentPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorInstrumentPage.Controls.Add(instrumentGroup);
+			navigatorInstrumentPage.Controls.Add(instrumentPageControl);
 			navigatorInstrumentPage.Flags = 65534;
 			navigatorInstrumentPage.LastVisibleSet = true;
 			navigatorInstrumentPage.MinimumSize = new System.Drawing.Size(50, 50);
@@ -106,61 +87,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			navigatorInstrumentPage.ToolTipTitle = "Page ToolTip";
 			navigatorInstrumentPage.UniqueName = "5d888e6082d44d78aac10a8a0c09a21e";
 			// 
-			// instrumentGroup
+			// instrumentPageControl
 			// 
-			instrumentGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			instrumentGroup.Location = new System.Drawing.Point(8, 8);
-			instrumentGroup.Name = "instrumentGroup";
-			// 
-			// 
-			// 
-			instrumentGroup.Panel.Controls.Add(instrumentDataGridView);
-			instrumentGroup.Size = new System.Drawing.Size(414, 130);
-			instrumentGroup.TabIndex = 0;
-			// 
-			// instrumentDataGridView
-			// 
-			instrumentDataGridView.AllowUserToAddRows = false;
-			instrumentDataGridView.AllowUserToDeleteRows = false;
-			instrumentDataGridView.AllowUserToOrderColumns = true;
-			instrumentDataGridView.AllowUserToResizeRows = false;
-			instrumentDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			instrumentDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			instrumentDataGridView.Location = new System.Drawing.Point(0, 0);
-			instrumentDataGridView.MultiSelect = false;
-			instrumentDataGridView.Name = "instrumentDataGridView";
-			instrumentDataGridView.Palette = monoFontPalette;
-			instrumentDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			instrumentDataGridView.ReadOnly = true;
-			instrumentDataGridView.RowHeadersVisible = false;
-			instrumentDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			instrumentDataGridView.ShowCellErrors = false;
-			instrumentDataGridView.ShowEditingIcon = false;
-			instrumentDataGridView.ShowRowErrors = false;
-			instrumentDataGridView.Size = new System.Drawing.Size(412, 128);
-			instrumentDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			instrumentDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
-			instrumentDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			instrumentDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right;
-			instrumentDataGridView.TabIndex = 0;
-			// 
-			// monoFontPalette
-			// 
-			monoFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			monoFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			monoFontPalette.ThemeName = "";
-			monoFontPalette.UseKryptonFileDialogs = true;
-			monoFontPalette.UseMonospaceOnGrid = true;
+			instrumentPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			instrumentPageControl.Location = new System.Drawing.Point(0, 0);
+			instrumentPageControl.Name = "instrumentPageControl";
+			instrumentPageControl.Size = new System.Drawing.Size(430, 146);
+			instrumentPageControl.TabIndex = 0;
 			// 
 			// navigatorSamplePage
 			// 
 			navigatorSamplePage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorSamplePage.Controls.Add(saveFormatLabel);
-			navigatorSamplePage.Controls.Add(saveFormatComboBox);
-			navigatorSamplePage.Controls.Add(saveButton);
-			navigatorSamplePage.Controls.Add(polyphonyLabel);
-			navigatorSamplePage.Controls.Add(sampleGroup);
-			navigatorSamplePage.Controls.Add(octaveLabel);
+			navigatorSamplePage.Controls.Add(samplePageControl);
 			navigatorSamplePage.Flags = 65534;
 			navigatorSamplePage.LastVisibleSet = true;
 			navigatorSamplePage.MinimumSize = new System.Drawing.Size(50, 50);
@@ -170,17 +108,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			navigatorSamplePage.ToolTipTitle = "Page ToolTip";
 			navigatorSamplePage.UniqueName = "6f932f4ccf4b4441a28afbd3a888c881";
 			// 
-			// saveFormatLabel
+			// samplePageControl
 			// 
-			saveFormatLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			saveFormatLabel.Location = new System.Drawing.Point(123, 125);
-			saveFormatLabel.Name = "saveFormatLabel";
-			saveFormatLabel.Palette = fontPalette;
-			saveFormatLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(saveFormatLabel, "IDS_SAMPLE_INFO_SAMP_SAVEFORMAT");
-			saveFormatLabel.Size = new System.Drawing.Size(69, 16);
-			saveFormatLabel.TabIndex = 3;
-			saveFormatLabel.Values.Text = "Save format";
+			samplePageControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			samplePageControl.Location = new System.Drawing.Point(0, 0);
+			samplePageControl.Name = "samplePageControl";
+			samplePageControl.Size = new System.Drawing.Size(430, 146);
+			samplePageControl.TabIndex = 0;
 			// 
 			// fontPalette
 			// 
@@ -188,102 +122,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
 			fontPalette.UseKryptonFileDialogs = true;
-			// 
-			// saveFormatComboBox
-			// 
-			saveFormatComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			saveFormatComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			saveFormatComboBox.DropDownWidth = 120;
-			saveFormatComboBox.IntegralHeight = false;
-			saveFormatComboBox.Location = new System.Drawing.Point(198, 123);
-			saveFormatComboBox.Name = "saveFormatComboBox";
-			saveFormatComboBox.Palette = fontPalette;
-			saveFormatComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			saveFormatComboBox.Size = new System.Drawing.Size(160, 19);
-			saveFormatComboBox.TabIndex = 4;
-			saveFormatComboBox.SelectedIndexChanged += SaveFormatComboBox_SelectedIndexChanged;
-			// 
-			// saveButton
-			// 
-			saveButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			saveButton.Enabled = false;
-			saveButton.Location = new System.Drawing.Point(362, 121);
-			saveButton.Name = "saveButton";
-			saveButton.Palette = fontPalette;
-			saveButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(saveButton, "IDS_SAMPLE_INFO_SAMP_SAVE");
-			saveButton.Size = new System.Drawing.Size(60, 21);
-			saveButton.TabIndex = 5;
-			saveButton.Values.Text = "Save";
-			saveButton.Click += SaveButton_Click;
-			// 
-			// polyphonyLabel
-			// 
-			polyphonyLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-			polyphonyLabel.Location = new System.Drawing.Point(75, 125);
-			polyphonyLabel.Name = "polyphonyLabel";
-			polyphonyLabel.Palette = fontPalette;
-			polyphonyLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			polyphonyLabel.Size = new System.Drawing.Size(16, 16);
-			polyphonyLabel.TabIndex = 2;
-			polyphonyLabel.Values.Text = "?";
-			// 
-			// sampleGroup
-			// 
-			sampleGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			sampleGroup.Location = new System.Drawing.Point(8, 8);
-			sampleGroup.Name = "sampleGroup";
-			// 
-			// 
-			// 
-			sampleGroup.Panel.Controls.Add(sampleDataGridView);
-			sampleGroup.Size = new System.Drawing.Size(414, 108);
-			sampleGroup.TabIndex = 1;
-			// 
-			// sampleDataGridView
-			// 
-			sampleDataGridView.AllowUserToAddRows = false;
-			sampleDataGridView.AllowUserToDeleteRows = false;
-			sampleDataGridView.AllowUserToOrderColumns = true;
-			sampleDataGridView.AllowUserToResizeRows = false;
-			sampleDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			sampleDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			sampleDataGridView.GridStyles.StyleDataCells = Krypton.Toolkit.GridStyle.Sheet;
-			sampleDataGridView.Location = new System.Drawing.Point(0, 0);
-			sampleDataGridView.MultiSelect = false;
-			sampleDataGridView.Name = "sampleDataGridView";
-			sampleDataGridView.Palette = monoFontPalette;
-			sampleDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			sampleDataGridView.ReadOnly = true;
-			sampleDataGridView.RowHeadersVisible = false;
-			sampleDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			sampleDataGridView.ShowCellErrors = false;
-			sampleDataGridView.ShowEditingIcon = false;
-			sampleDataGridView.ShowRowErrors = false;
-			sampleDataGridView.Size = new System.Drawing.Size(412, 106);
-			sampleDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			sampleDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
-			sampleDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			sampleDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right;
-			sampleDataGridView.TabIndex = 0;
-			sampleDataGridView.SelectionChanged += SampleDataGridView_SelectionChanged;
-			sampleDataGridView.KeyDown += SamplesDataGridView_KeyDown;
-			sampleDataGridView.KeyUp += SamplesDataGridView_KeyUp;
-			// 
-			// octaveLabel
-			// 
-			octaveLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-			octaveLabel.Location = new System.Drawing.Point(4, 125);
-			octaveLabel.Name = "octaveLabel";
-			octaveLabel.Palette = fontPalette;
-			octaveLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			octaveLabel.Size = new System.Drawing.Size(16, 16);
-			octaveLabel.TabIndex = 1;
-			octaveLabel.Values.Text = "?";
-			// 
-			// controlResource
-			// 
-			controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
 			// 
 			// SampleInfoWindowForm
 			// 
@@ -294,25 +132,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(464, 227);
 			Name = "SampleInfoWindowForm";
-			Palette = fontPalette;
-			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			FormClosed += SampleInfoWindowForm_FormClosed;
 			((System.ComponentModel.ISupportInitialize)navigator).EndInit();
 			((System.ComponentModel.ISupportInitialize)navigatorInstrumentPage).EndInit();
 			navigatorInstrumentPage.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)instrumentGroup.Panel).EndInit();
-			instrumentGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)instrumentGroup).EndInit();
-			((System.ComponentModel.ISupportInitialize)instrumentDataGridView).EndInit();
 			((System.ComponentModel.ISupportInitialize)navigatorSamplePage).EndInit();
 			navigatorSamplePage.ResumeLayout(false);
-			navigatorSamplePage.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)saveFormatComboBox).EndInit();
-			((System.ComponentModel.ISupportInitialize)sampleGroup.Panel).EndInit();
-			sampleGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)sampleGroup).EndInit();
-			((System.ComponentModel.ISupportInitialize)sampleDataGridView).EndInit();
-			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -320,17 +145,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 		private Krypton.Navigator.KryptonNavigator navigator;
 		private Krypton.Navigator.KryptonPage navigatorInstrumentPage;
 		private Krypton.Navigator.KryptonPage navigatorSamplePage;
-		private Krypton.Toolkit.KryptonGroup instrumentGroup;
-		private Krypton.Toolkit.KryptonDataGridView instrumentDataGridView;
-		private Krypton.Toolkit.KryptonGroup sampleGroup;
-		private SampleInfoSamplesListControl sampleDataGridView;
-		private Krypton.Toolkit.KryptonLabel octaveLabel;
-		private Krypton.Toolkit.KryptonLabel polyphonyLabel;
-		private Krypton.Toolkit.KryptonButton saveButton;
-		private Kit.Gui.Designer.ControlResource controlResource;
-		private Krypton.Toolkit.KryptonComboBox saveFormatComboBox;
-		private Krypton.Toolkit.KryptonLabel saveFormatLabel;
+		private Pages.InstrumentPageControl instrumentPageControl;
+		private Pages.SamplePageControl samplePageControl;
 		private Kit.Gui.Components.FontPalette fontPalette;
-		private Kit.Gui.Components.FontPalette monoFontPalette;
 	}
 }
