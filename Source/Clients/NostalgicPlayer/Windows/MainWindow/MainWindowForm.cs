@@ -16,7 +16,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow;
@@ -1092,6 +1091,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			systemMediaTransportControlsService.PreviousRequested += SmtcService_PreviousRequested;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Remove event handlers
+		/// </summary>
+		/********************************************************************/
+		private void RemoveHandlers()
+		{
+			// Unsubscribe SMTC events
+			systemMediaTransportControlsService.PlayRequested -= SmtcService_PlayRequested;
+			systemMediaTransportControlsService.PauseRequested -= SmtcService_PauseRequested;
+			systemMediaTransportControlsService.StopRequested -= SmtcService_StopRequested;
+			systemMediaTransportControlsService.NextRequested -= SmtcService_NextRequested;
+			systemMediaTransportControlsService.PreviousRequested -= SmtcService_PreviousRequested;
+		}
+
 		#region Keyboard shortcuts
 		/********************************************************************/
 		/// <summary>
@@ -1428,6 +1444,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				StopAndFreeModule();
 				moduleHandler.FreeAllModules();
 
+				// Cleanup event handlers
+				RemoveHandlers();
+
 				// Close all windows
 				CloseWindows();
 
@@ -1436,16 +1455,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				// Save or delete the database
 				SaveDatabase();
-
-				// Unsubscribe SMTC events
-				systemMediaTransportControlsService.PlayRequested -= SmtcService_PlayRequested;
-				systemMediaTransportControlsService.PauseRequested -= SmtcService_PauseRequested;
-				systemMediaTransportControlsService.StopRequested -= SmtcService_StopRequested;
-				systemMediaTransportControlsService.NextRequested -= SmtcService_NextRequested;
-				systemMediaTransportControlsService.PreviousRequested -= SmtcService_PreviousRequested;
-
-				// Dispose SMTC service
-				systemMediaTransportControlsService?.Dispose();
 			}
 		}
 		#endregion

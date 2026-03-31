@@ -4,11 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Runtime.InteropServices;
 using Windows.Media;
-using WinRT.Interop;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
@@ -19,7 +16,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	public class SystemMediaTransportControlsService : ISystemMediaTransportControlsService
 	{
 		private SystemMediaTransportControls smtc;
-		private bool disposed;
 
 		/// <summary>
 		/// Raised when the user presses the play button in system media controls
@@ -74,6 +70,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Dispose resources
+		/// </summary>
+		/********************************************************************/
+		public void Dispose()
+		{
+			if (smtc != null)
+			{
+				smtc.ButtonPressed -= Smtc_ButtonPressed;
+				smtc.IsEnabled = false;
+				smtc = null;
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Handle SMTC button presses
@@ -90,6 +105,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 						PauseRequested?.Invoke(this, EventArgs.Empty);
 					else
 						PlayRequested?.Invoke(this, EventArgs.Empty);
+
 					break;
 				}
 
@@ -113,6 +129,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Update playback status
@@ -123,6 +141,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			if (smtc != null)
 				smtc.PlaybackStatus = status;
 		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -172,6 +192,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			}
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Clear the media information
@@ -190,26 +212,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			catch (Exception)
 			{
 				// Ignore errors
-			}
-		}
-
-		/********************************************************************/
-		/// <summary>
-		/// Dispose resources
-		/// </summary>
-		/********************************************************************/
-		public void Dispose()
-		{
-			if (!disposed)
-			{
-				if (smtc != null)
-				{
-					smtc.ButtonPressed -= Smtc_ButtonPressed;
-					smtc.IsEnabled = false;
-					smtc = null;
-				}
-
-				disposed = true;
 			}
 		}
 	}
