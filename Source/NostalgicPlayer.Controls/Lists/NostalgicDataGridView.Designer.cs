@@ -100,8 +100,7 @@
 			// 
 			// NostalgicDataGridView
 			// 
-			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			Controls.Add(nostalgicBox);
 			Name = "NostalgicDataGridView";
 			((System.ComponentModel.ISupportInitialize)nostalgicDataGridViewInternal).EndInit();

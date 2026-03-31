@@ -64,6 +64,27 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
+		/// Return the client area minus the border, so anchoring and
+		/// docking calculations use the correct size
+		/// </summary>
+		/********************************************************************/
+		public override Rectangle DisplayRectangle
+		{
+			get
+			{
+				Rectangle rect = base.DisplayRectangle;
+
+				if (!IsHandleCreated)
+					return new Rectangle(rect.X, rect.Y, rect.Width - (2 * BorderWidth), rect.Height - (2 * BorderWidth));
+
+				return rect;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Process Windows messages to handle non-client area
 		/// </summary>
 		/********************************************************************/
