@@ -28,48 +28,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/// </summary>
 		private void InitializeComponent()
 		{
-			lyricsGroup = new Krypton.Toolkit.KryptonGroup();
-			moduleInfoLyricsReadOnlyTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.ReadOnlyTextBox();
-			((System.ComponentModel.ISupportInitialize)lyricsGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)lyricsGroup.Panel).BeginInit();
-			lyricsGroup.Panel.SuspendLayout();
+			lyricsText = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicText();
 			SuspendLayout();
 			// 
-			// lyricsGroup
+			// lyricsText
 			// 
-			lyricsGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			lyricsGroup.Location = new System.Drawing.Point(8, 8);
-			lyricsGroup.Name = "lyricsGroup";
-			// 
-			// 
-			// 
-			lyricsGroup.Panel.Controls.Add(moduleInfoLyricsReadOnlyTextBox);
-			lyricsGroup.Size = new System.Drawing.Size(266, 142);
-			lyricsGroup.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			lyricsGroup.TabIndex = 0;
-			// 
-			// moduleInfoLyricsReadOnlyTextBox
-			// 
-			moduleInfoLyricsReadOnlyTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			moduleInfoLyricsReadOnlyTextBox.Location = new System.Drawing.Point(0, 0);
-			moduleInfoLyricsReadOnlyTextBox.Name = "moduleInfoLyricsReadOnlyTextBox";
-			moduleInfoLyricsReadOnlyTextBox.Size = new System.Drawing.Size(266, 142);
-			moduleInfoLyricsReadOnlyTextBox.TabIndex = 0;
+			lyricsText.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			lyricsText.Location = new System.Drawing.Point(8, 8);
+			lyricsText.Name = "lyricsText";
+			lyricsText.Size = new System.Drawing.Size(266, 142);
+			lyricsText.TabIndex = 0;
 			// 
 			// LyricsPageControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			Controls.Add(lyricsGroup);
+			Controls.Add(lyricsText);
 			Name = "LyricsPageControl";
 			Size = new System.Drawing.Size(282, 158);
-			((System.ComponentModel.ISupportInitialize)lyricsGroup.Panel).EndInit();
-			lyricsGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)lyricsGroup).EndInit();
 			ResumeLayout(false);
 		}
 
 		#endregion
-		private Krypton.Toolkit.KryptonGroup lyricsGroup;
-		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.ReadOnlyTextBox moduleInfoLyricsReadOnlyTextBox;
+		private Polycode.NostalgicPlayer.Controls.Lists.NostalgicText lyricsText;
 	}
 }
