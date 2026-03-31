@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 	internal class StandardTabColors : ITabColors
 	{
 		private static readonly Color borderColor = Color.FromArgb(133, 158, 191);
-		private static readonly Color backgroundColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color backgroundColor = Color.FromArgb(240, 240, 240);
 
 		private static readonly Color normalTabBackgroundStartColor = Color.FromArgb(225, 237, 250);
 		private static readonly Color normalTabBackgroundStopColor = Color.FromArgb(208, 223, 238);

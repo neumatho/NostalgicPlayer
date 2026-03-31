@@ -14,14 +14,19 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 	internal class StandardDataGridViewColors : IDataGridViewColors
 	{
 		private static readonly Color backgroundColor = Color.FromArgb(255, 255, 255);
+
 		private static readonly Color normalHeaderBorderColor = Color.FromArgb(133, 158, 191);
 		private static readonly Color normalHeaderBackgroundStartColor = Color.FromArgb(244, 249, 255);
 		private static readonly Color normalHeaderBackgroundStopColor = Color.FromArgb(218, 231, 245);
 		private static readonly Color normalHeaderTextColor = Color.FromArgb(30, 57, 91);
+
 		private static readonly Color pressedHeaderBorderColor = Color.FromArgb(133, 158, 191);
 		private static readonly Color pressedHeaderBackgroundStartColor = Color.FromArgb(198, 211, 225);
 		private static readonly Color pressedHeaderBackgroundStopColor = Color.FromArgb(244, 249, 255);
 		private static readonly Color pressedHeaderTextColor = Color.FromArgb(30, 57, 91);
+
+		private static readonly Color normalCellLinkColor = Color.FromArgb(0, 102, 204);
+		private static readonly Color selectedCellLinkColor = Color.FromArgb(0, 102, 204);
 
 		private readonly IListItemColors listColors = new StandardListColors();
 
@@ -147,6 +152,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public Color NormalCellLinkColor => normalCellLinkColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public Color SelectedCellBackgroundStartColor => listColors.SelectedBackgroundStartColor;
 
 
@@ -175,5 +189,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public Color SelectedCellTextColor => listColors.SelectedTextColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color SelectedCellLinkColor => selectedCellLinkColor;
 	}
 }
