@@ -9,19 +9,19 @@ using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Platform.Native;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
+namespace Polycode.NostalgicPlayer.Controls.Lists
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class ReadOnlyTextBox : UserControl
+	public partial class NostalgicText : UserControl
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ReadOnlyTextBox()
+		public NostalgicText()
 		{
 			InitializeComponent();
 
@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 		/// Calculate the size of the scrollbar thumb
 		/// </summary>
 		/********************************************************************/
-		private void AdjustScrollBar(ScrollBar scrollBar, int max, int visible)
+		private void AdjustScrollBar(NostalgicScrollBar scrollBar, int max, int visible)
 		{
 			scrollBar.Maximum = Math.Max(max - 1 - 1, 0);
 			scrollBar.LargeChange = Math.Max(visible - 1, 1);
