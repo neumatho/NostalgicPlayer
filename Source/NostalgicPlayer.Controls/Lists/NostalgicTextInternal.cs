@@ -3,24 +3,23 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
+namespace Polycode.NostalgicPlayer.Controls.Lists
 {
 	/// <summary>
 	/// This control will render some text lines tight together
 	/// </summary>
-	public partial class TextControl : UserControl
+	internal partial class NostalgicTextInternal : UserControl
 	{
 		private readonly Color textColor = Color.FromArgb(30, 57, 91);
 
-		private ReadOnlyTextBox owner;
-		private VScrollBar vScrollBar;
-		private HScrollBar hScrollBar;
+		private NostalgicText owner;
+		private NostalgicVScrollBar vScrollBar;
+		private NostalgicHScrollBar hScrollBar;
 
 		private string[] lines;
 
@@ -29,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public TextControl()
+		public NostalgicTextInternal()
 		{
 			InitializeComponent();
 
@@ -62,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 		/// Set the owner of this control
 		/// </summary>
 		/********************************************************************/
-		public void SetControls(ReadOnlyTextBox readOnlyTextBox, VScrollBar vScrollBar, HScrollBar hScrollBar)
+		public void SetControls(NostalgicText readOnlyTextBox, NostalgicVScrollBar vScrollBar, NostalgicHScrollBar hScrollBar)
 		{
 			owner = readOnlyTextBox;
 			this.vScrollBar = vScrollBar;
