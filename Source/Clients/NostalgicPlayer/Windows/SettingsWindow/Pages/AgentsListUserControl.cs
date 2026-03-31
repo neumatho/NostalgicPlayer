@@ -426,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 		{
 			base.OnHandleCreated(e);
 
-			if (cachedEnableCheckColumn.HasValue)
+			if (!IsInDesignMode() && cachedEnableCheckColumn.HasValue)
 				SetEnableCheckColumn(cachedEnableCheckColumn.Value);
 		}
 		#endregion
@@ -479,6 +479,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Check if the control is in design mode by walking up the parent
+		/// chain. This is needed because DesignMode returns false for child
+		/// controls that are not directly sited on the designer
+		/// </summary>
+		/********************************************************************/
+		private bool IsInDesignMode()
+		{
+			Control ctrl = this;
+
+			while (ctrl != null)
+			{
+				if (ctrl.Site?.DesignMode == true)
+					return true;
+
+				ctrl = ctrl.Parent;
+			}
+
+			return false;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Set the enable check column value. If the handle is created,
