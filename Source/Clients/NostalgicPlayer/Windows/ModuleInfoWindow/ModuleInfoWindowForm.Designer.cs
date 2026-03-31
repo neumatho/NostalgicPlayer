@@ -30,25 +30,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModuleInfoWindowForm));
 			infoPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.InfoPageControl();
 			tabControl = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTab();
 			tabInfoPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			tabCommentPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			commentPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.CommentPageControl();
-			navigatorLyricsPage = new Krypton.Navigator.KryptonPage();
-			lyricsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.LyricsPageControl();
-			navigatorPicturesPage = new Krypton.Navigator.KryptonPage();
+			tabPicturesPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			picturesPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.PicturesPageControl();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			tabLyricsPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
+			lyricsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.LyricsPageControl();
 			((System.ComponentModel.ISupportInitialize)tabControl).BeginInit();
 			tabControl.SuspendLayout();
 			tabInfoPage.SuspendLayout();
 			tabCommentPage.SuspendLayout();
+			tabPicturesPage.SuspendLayout();
 			tabLyricsPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)navigatorPicturesPage).BeginInit();
-			navigatorPicturesPage.SuspendLayout();
 			SuspendLayout();
 			// 
 			// infoPageControl
@@ -56,120 +53,85 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			infoPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			infoPageControl.Location = new System.Drawing.Point(0, 0);
 			infoPageControl.Name = "infoPageControl";
-			infoPageControl.Size = new System.Drawing.Size(282, 158);
+			infoPageControl.Size = new System.Drawing.Size(282, 157);
 			infoPageControl.TabIndex = 0;
 			// 
 			// tabControl
 			// 
-			navigator.AllowPageReorder = false;
-			navigator.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			navigator.Button.ButtonDisplayLogic = Krypton.Navigator.ButtonDisplayLogic.Context;
-			navigator.Button.CloseButtonAction = Krypton.Navigator.CloseButtonAction.RemovePageAndDispose;
-			navigator.Button.CloseButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
-			navigator.Button.ContextButtonAction = Krypton.Navigator.ContextButtonAction.SelectPage;
-			navigator.Button.ContextButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
-			navigator.Button.ContextMenuMapImage = Krypton.Navigator.MapKryptonPageImage.Small;
-			navigator.Button.ContextMenuMapText = Krypton.Navigator.MapKryptonPageText.TextTitle;
-			navigator.Button.NextButtonAction = Krypton.Navigator.DirectionButtonAction.ModeAppropriateAction;
-			navigator.Button.NextButtonDisplay = Krypton.Navigator.ButtonDisplay.Logic;
-			navigator.Button.PreviousButtonAction = Krypton.Navigator.DirectionButtonAction.ModeAppropriateAction;
-			navigator.Button.PreviousButtonDisplay = Krypton.Navigator.ButtonDisplay.Logic;
-			navigator.ControlKryptonFormFeatures = false;
-			navigator.Location = new System.Drawing.Point(8, 8);
-			navigator.Name = "navigator";
-			navigator.NavigatorMode = Krypton.Navigator.NavigatorMode.BarTabGroup;
-			navigator.Owner = null;
-			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
-			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorInfoPage, navigatorCommentPage, navigatorLyricsPage, navigatorPicturesPage });
-			navigator.Palette = fontPalette;
-			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			navigator.SelectedIndex = 0;
-			navigator.Size = new System.Drawing.Size(284, 184);
-			navigator.TabIndex = 1;
+			tabControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			tabControl.Controls.Add(tabInfoPage);
+			tabControl.Controls.Add(tabCommentPage);
+			tabControl.Controls.Add(tabLyricsPage);
+			tabControl.Controls.Add(tabPicturesPage);
+			tabControl.Location = new System.Drawing.Point(8, 8);
+			tabControl.Name = "tabControl";
+			tabControl.SelectedIndex = 0;
+			tabControl.Size = new System.Drawing.Size(284, 184);
+			tabControl.TabIndex = 1;
 			// 
 			// tabInfoPage
 			// 
-			navigatorInfoPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorInfoPage.Controls.Add(infoPageControl);
-			navigatorInfoPage.Flags = 65534;
-			navigatorInfoPage.LastVisibleSet = true;
-			navigatorInfoPage.MinimumSize = new System.Drawing.Size(50, 50);
-			navigatorInfoPage.Name = "navigatorInfoPage";
-			navigatorInfoPage.Size = new System.Drawing.Size(282, 158);
-			navigatorInfoPage.Text = "";
-			navigatorInfoPage.ToolTipTitle = "Page ToolTip";
-			navigatorInfoPage.UniqueName = "c99656c653d3472bb30017074959420b";
+			tabInfoPage.BackColor = System.Drawing.Color.Transparent;
+			tabInfoPage.Controls.Add(infoPageControl);
+			tabInfoPage.Location = new System.Drawing.Point(1, 24);
+			tabInfoPage.MinimumSize = new System.Drawing.Size(50, 50);
+			tabInfoPage.Name = "tabInfoPage";
+			tabInfoPage.Size = new System.Drawing.Size(282, 157);
+			tabInfoPage.TabIndex = 0;
 			// 
 			// tabCommentPage
 			// 
-			navigatorCommentPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorCommentPage.Controls.Add(commentPageControl);
-			navigatorCommentPage.Flags = 65534;
-			navigatorCommentPage.LastVisibleSet = true;
-			navigatorCommentPage.MinimumSize = new System.Drawing.Size(50, 50);
-			navigatorCommentPage.Name = "navigatorCommentPage";
-			navigatorCommentPage.Size = new System.Drawing.Size(282, 158);
-			navigatorCommentPage.Text = "";
-			navigatorCommentPage.ToolTipTitle = "Page ToolTip";
-			navigatorCommentPage.UniqueName = "a6135a5732ce46a98b44f9d9f3bed53f";
+			tabCommentPage.BackColor = System.Drawing.Color.Transparent;
+			tabCommentPage.Controls.Add(commentPageControl);
+			tabCommentPage.Location = new System.Drawing.Point(1, 24);
+			tabCommentPage.MinimumSize = new System.Drawing.Size(50, 50);
+			tabCommentPage.Name = "tabCommentPage";
+			tabCommentPage.Size = new System.Drawing.Size(282, 157);
+			tabCommentPage.TabIndex = 1;
 			// 
 			// commentPageControl
 			// 
 			commentPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			commentPageControl.Location = new System.Drawing.Point(0, 0);
 			commentPageControl.Name = "commentPageControl";
-			commentPageControl.Size = new System.Drawing.Size(282, 158);
+			commentPageControl.Size = new System.Drawing.Size(282, 157);
 			commentPageControl.TabIndex = 0;
 			// 
-			// tabLyricsPage
+			// tabPicturesPage
 			// 
-			navigatorLyricsPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorLyricsPage.Controls.Add(lyricsPageControl);
-			navigatorLyricsPage.Flags = 65534;
-			navigatorLyricsPage.LastVisibleSet = true;
-			navigatorLyricsPage.MinimumSize = new System.Drawing.Size(50, 50);
-			navigatorLyricsPage.Name = "navigatorLyricsPage";
-			navigatorLyricsPage.Size = new System.Drawing.Size(282, 158);
-			navigatorLyricsPage.Text = "";
-			navigatorLyricsPage.ToolTipTitle = "Page ToolTip";
-			navigatorLyricsPage.UniqueName = "c12067c426fe41ada484078b6b2d957f";
-			// 
-			// lyricsPageControl
-			// 
-			lyricsPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			lyricsPageControl.Location = new System.Drawing.Point(0, 0);
-			lyricsPageControl.Name = "lyricsPageControl";
-			lyricsPageControl.Size = new System.Drawing.Size(282, 158);
-			lyricsPageControl.TabIndex = 0;
-			// 
-			// navigatorPicturesPage
-			// 
-			navigatorPicturesPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorPicturesPage.Controls.Add(picturesPageControl);
-			navigatorPicturesPage.Flags = 65534;
-			navigatorPicturesPage.LastVisibleSet = true;
-			navigatorPicturesPage.MinimumSize = new System.Drawing.Size(50, 50);
-			navigatorPicturesPage.Name = "navigatorPicturesPage";
-			navigatorPicturesPage.Size = new System.Drawing.Size(282, 158);
-			navigatorPicturesPage.Text = "";
-			navigatorPicturesPage.ToolTipTitle = "Page ToolTip";
-			navigatorPicturesPage.UniqueName = "3facf91c879c4e6b8ef9b543ed9630a2";
+			tabPicturesPage.BackColor = System.Drawing.Color.Transparent;
+			tabPicturesPage.Controls.Add(picturesPageControl);
+			tabPicturesPage.Location = new System.Drawing.Point(1, 24);
+			tabPicturesPage.MinimumSize = new System.Drawing.Size(50, 50);
+			tabPicturesPage.Name = "tabPicturesPage";
+			tabPicturesPage.Size = new System.Drawing.Size(282, 157);
+			tabPicturesPage.TabIndex = 3;
 			// 
 			// picturesPageControl
 			// 
 			picturesPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			picturesPageControl.Location = new System.Drawing.Point(0, 0);
 			picturesPageControl.Name = "picturesPageControl";
-			picturesPageControl.Size = new System.Drawing.Size(282, 158);
+			picturesPageControl.Size = new System.Drawing.Size(282, 157);
 			picturesPageControl.TabIndex = 0;
 			// 
-			// fontPalette
+			// tabLyricsPage
 			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
+			tabLyricsPage.BackColor = System.Drawing.Color.Transparent;
+			tabLyricsPage.Controls.Add(lyricsPageControl);
+			tabLyricsPage.Location = new System.Drawing.Point(1, 24);
+			tabLyricsPage.MinimumSize = new System.Drawing.Size(50, 50);
+			tabLyricsPage.Name = "tabLyricsPage";
+			tabLyricsPage.Size = new System.Drawing.Size(282, 157);
+			tabLyricsPage.TabIndex = 2;
+			// 
+			// lyricsPageControl
+			// 
+			lyricsPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			lyricsPageControl.Location = new System.Drawing.Point(0, 0);
+			lyricsPageControl.Name = "lyricsPageControl";
+			lyricsPageControl.Size = new System.Drawing.Size(282, 157);
+			lyricsPageControl.TabIndex = 0;
 			// 
 			// ModuleInfoWindowForm
 			// 
@@ -184,9 +146,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			tabControl.ResumeLayout(false);
 			tabInfoPage.ResumeLayout(false);
 			tabCommentPage.ResumeLayout(false);
+			tabPicturesPage.ResumeLayout(false);
 			tabLyricsPage.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)navigatorPicturesPage).EndInit();
-			navigatorPicturesPage.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
@@ -198,8 +159,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 		private Pages.CommentPageControl commentPageControl;
 		private NostalgicPlayer.Controls.Containers.NostalgicTabPage tabLyricsPage;
 		private Pages.LyricsPageControl lyricsPageControl;
-		private Krypton.Navigator.KryptonPage navigatorPicturesPage;
+		private NostalgicPlayer.Controls.Containers.NostalgicTabPage tabPicturesPage;
 		private Pages.PicturesPageControl picturesPageControl;
-		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }
