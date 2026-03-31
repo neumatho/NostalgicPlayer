@@ -25,6 +25,13 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color NormalTabTextColor { get; }
 
 		/// <summary></summary>
+		Color HoverTabBackgroundStartColor { get; }
+		/// <summary></summary>
+		Color HoverTabBackgroundStopColor { get; }
+		/// <summary></summary>
+		Color HoverTabTextColor { get; }
+
+		/// <summary></summary>
 		Color SelectedTabBackgroundStartColor { get; }
 		/// <summary></summary>
 		Color SelectedTabBackgroundStopColor { get; }
