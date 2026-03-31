@@ -50,6 +50,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			public Color BackgroundMiddleColor { get; init; }
 			public Color BackgroundStopColor { get; init; }
 			public Color TextColor { get; init; }
+			public Color LinkColor { get; init; }
 		}
 
 		/********************************************************************/
@@ -77,16 +78,14 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			ScrollBars = ScrollBars.None;
 		}
 
-		#region Designer properties
+		#region Properties
 		/********************************************************************/
 		/// <summary>
 		/// Set the FontConfiguration component to use for this control
 		/// </summary>
 		/********************************************************************/
-		[Category("Appearance")]
-		[Description("Which font configuration to use if you want to change the default font.")]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
 		public FontConfiguration UseFont
 		{
 			get => fontConfiguration;
@@ -99,6 +98,20 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 				Invalidate();
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public bool AllowUserToSelectRows
+		{
+			get; set;
+		} = true;
 		#endregion
 
 		#region Public methods
@@ -160,6 +173,22 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		#endregion
 
 		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// This is overridden and do not call the base method, which means
+		/// nothing can be selected
+		/// </summary>
+		/********************************************************************/
+		protected override void SetSelectedRowCore(int rowIndex, bool selected)
+		{
+			if (!AllowUserToSelectRows)
+				return;
+
+			base.SetSelectedRowCore(rowIndex, selected);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -236,7 +265,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			if ((e.RowIndex >= 0) && (e.ColumnIndex >= 0))
 			{
-				DrawColumnCell(g, e.CellBounds, GetFont(), GetCellColors(e.State), e.CellStyle?.Alignment ?? DataGridViewContentAlignment.TopLeft, e.Value);
+				bool isLink = Rows[e.RowIndex].Cells[e.ColumnIndex] is DataGridViewLinkCell;
+				DrawColumnCell(g, e.CellBounds, GetFont(), GetCellColors(e.State), e.CellStyle?.Alignment ?? DataGridViewContentAlignment.TopLeft, e.Value, isLink);
 				e.Handled = true;
 			}
 			else if ((e.RowIndex == -1) && (e.ColumnIndex >= 0))
@@ -719,7 +749,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 					BackgroundStartColor = colors.SelectedCellBackgroundStartColor,
 					BackgroundMiddleColor = colors.SelectedCellBackgroundMiddleColor,
 					BackgroundStopColor = colors.SelectedCellBackgroundStopColor,
-					TextColor = colors.SelectedCellTextColor
+					TextColor = colors.SelectedCellTextColor,
+					LinkColor = colors.SelectedCellLinkColor
 				};
 			}
 
@@ -728,7 +759,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 				BackgroundStartColor = colors.NormalCellBackgroundStartColor,
 				BackgroundMiddleColor = colors.NormalCellBackgroundMiddleColor,
 				BackgroundStopColor = colors.NormalCellBackgroundStopColor,
-				TextColor = colors.NormalCellTextColor
+				TextColor = colors.NormalCellTextColor,
+				LinkColor = colors.NormalCellLinkColor
 			};
 		}
 
@@ -846,10 +878,19 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw a single column cell
 		/// </summary>
 		/********************************************************************/
-		private void DrawColumnCell(Graphics g, Rectangle rect, Font font, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
+		private void DrawColumnCell(Graphics g, Rectangle rect, Font font, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value, bool isLink = false)
 		{
 			DrawColumnCellBackground(g, rect, cellStateColors);
-			DrawColumnCellText(g, rect, font, cellStateColors, alignment, value);
+
+			if (isLink)
+			{
+				using (Font linkFont = new Font(font, FontStyle.Underline))
+				{
+					DrawColumnCellText(g, rect, linkFont, cellStateColors.LinkColor, alignment, value);
+				}
+			}
+			else
+				DrawColumnCellText(g, rect, font, cellStateColors.TextColor, alignment, value);
 		}
 
 
@@ -884,7 +925,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw a single column cell text
 		/// </summary>
 		/********************************************************************/
-		private void DrawColumnCellText(Graphics g, Rectangle rect, Font font, CellStateColors cellStateColors, DataGridViewContentAlignment alignment, object value)
+		private void DrawColumnCellText(Graphics g, Rectangle rect, Font font, Color textColor, DataGridViewContentAlignment alignment, object value)
 		{
 			if (value != null)
 			{
@@ -955,7 +996,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 						}
 					}
 
-					TextRenderer.DrawText(g, text, font, textRect, cellStateColors.TextColor, flags);
+					TextRenderer.DrawText(g, text, font, textRect, textColor, flags);
 				}
 			}
 		}
