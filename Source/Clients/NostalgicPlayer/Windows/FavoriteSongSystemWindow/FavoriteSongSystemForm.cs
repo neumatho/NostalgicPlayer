@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
@@ -202,9 +201,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 
 				row.Cells.AddRange(
 				[
-					new KryptonDataGridViewTextBoxCell { Value = pos },
-					new KryptonDataGridViewTextBoxCell { Value = fileName },
-					new KryptonDataGridViewTextBoxCell { Value = pair.Value.ListenCount }
+					new DataGridViewTextBoxCell { Value = pos },
+					new DataGridViewTextBoxCell { Value = fileName },
+					new DataGridViewTextBoxCell { Value = pair.Value.ListenCount }
 				]);
 
 				row.Tag = pair.Key;
