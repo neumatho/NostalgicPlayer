@@ -1,6 +1,6 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
+﻿namespace Polycode.NostalgicPlayer.Controls.Lists
 {
-	partial class ReadOnlyTextBox
+	partial class NostalgicText
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -28,28 +28,22 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			controlGroup = new Krypton.Toolkit.KryptonGroup();
-			textControl = new TextControl();
-			textHScrollBar = new System.Windows.Forms.HScrollBar();
-			textVScrollBar = new System.Windows.Forms.VScrollBar();
-			((System.ComponentModel.ISupportInitialize)controlGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).BeginInit();
-			controlGroup.Panel.SuspendLayout();
+			controlGroup = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
+			textControl = new NostalgicTextInternal();
+			textHScrollBar = new NostalgicHScrollBar();
+			textVScrollBar = new NostalgicVScrollBar();
+			controlGroup.SuspendLayout();
 			SuspendLayout();
 			// 
 			// controlGroup
 			// 
+			controlGroup.Controls.Add(textControl);
+			controlGroup.Controls.Add(textHScrollBar);
+			controlGroup.Controls.Add(textVScrollBar);
 			controlGroup.Dock = System.Windows.Forms.DockStyle.Fill;
 			controlGroup.Location = new System.Drawing.Point(0, 0);
 			controlGroup.Name = "controlGroup";
-			// 
-			// 
-			// 
-			controlGroup.Panel.Controls.Add(textControl);
-			controlGroup.Panel.Controls.Add(textHScrollBar);
-			controlGroup.Panel.Controls.Add(textVScrollBar);
 			controlGroup.Size = new System.Drawing.Size(339, 216);
-			controlGroup.StateCommon.Back.Color1 = System.Drawing.SystemColors.Control;
 			controlGroup.TabIndex = 0;
 			// 
 			// textControl
@@ -82,23 +76,21 @@
 			textVScrollBar.TabIndex = 1;
 			textVScrollBar.ValueChanged += TextVScrollBar_ValueChanged;
 			// 
-			// ReadOnlyTextBox
+			// NostalgicText
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			Controls.Add(controlGroup);
-			Name = "ReadOnlyTextBox";
+			Name = "NostalgicText";
 			Size = new System.Drawing.Size(339, 216);
-			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).EndInit();
-			controlGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)controlGroup).EndInit();
+			controlGroup.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
 		#endregion
 
-		private Krypton.Toolkit.KryptonGroup controlGroup;
-		private TextControl textControl;
-		private System.Windows.Forms.VScrollBar textVScrollBar;
-		private System.Windows.Forms.HScrollBar textHScrollBar;
+		private Controls.Containers.NostalgicBox controlGroup;
+		private NostalgicTextInternal textControl;
+		private NostalgicVScrollBar textVScrollBar;
+		private NostalgicHScrollBar textHScrollBar;
 	}
 }
