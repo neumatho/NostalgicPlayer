@@ -85,18 +85,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 				ModuleInfoFloating floatingInfo = moduleHandler.PlayingModuleInformation;
 
 				infoPageControl.RefreshControl(isPlaying, staticInfo, floatingInfo);
-				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Visible = commentPageControl.RefreshControl(isPlaying, staticInfo);
-				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Visible = lyricsPageControl.RefreshControl(isPlaying, staticInfo);
-				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Visible = picturesPageControl.RefreshControl(isPlaying, staticInfo);
+				tabControl.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Visible = commentPageControl.RefreshControl(isPlaying, staticInfo);
+				tabControl.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Visible = lyricsPageControl.RefreshControl(isPlaying, staticInfo);
+				tabControl.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Visible = picturesPageControl.RefreshControl(isPlaying, staticInfo);
 
 				// Find out which tab to activate
 				if (onLoad)
 				{
 					foreach (ModuleSettings.ModuleInfoTab tab in moduleSettings.ModuleInfoActivateTabOrder)
 					{
-						if (navigator.Pages[(int)tab].Visible)
+						if (tabControl.Pages[(int)tab].Visible)
 						{
-							navigator.SelectedIndex = (int)tab;
+							tabControl.SelectedIndex = (int)tab;
 							break;
 						}
 					}
@@ -141,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			// Check for different keyboard shortcuts
 			Keys key = keyData & Keys.KeyCode;
 
-			if (navigator.SelectedIndex == (int)ModuleSettings.ModuleInfoTab.Pictures)
+			if (tabControl.SelectedIndex == (int)ModuleSettings.ModuleInfoTab.Pictures)
 			{
 				if (picturesPageControl.ProcessKey(key))
 					return true;
