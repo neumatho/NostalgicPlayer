@@ -20,6 +20,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color normalTabBackgroundStopColor = Color.FromArgb(208, 223, 238);
 		private static readonly Color normalTabTextColor = Color.FromArgb(30, 57, 91);
 
+		private static readonly Color hoverTabBackgroundStartColor = Color.FromArgb(255, 237, 123);
+		private static readonly Color hoverTabBackgroundStopColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color hoverTabTextColor = Color.FromArgb(30, 57, 91);
+
 		private static readonly Color selectedTabBackgroundStartColor = Color.FromArgb(255, 225, 112);
 		private static readonly Color selectedTabBackgroundStopColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color selectedTabTextColor = Color.FromArgb(30, 57, 91);
@@ -66,6 +70,33 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public Color NormalTabTextColor => normalTabTextColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color HoverTabBackgroundStartColor => hoverTabBackgroundStartColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color HoverTabBackgroundStopColor => hoverTabBackgroundStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color HoverTabTextColor => hoverTabTextColor;
 
 
 
