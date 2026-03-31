@@ -93,6 +93,23 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[DefaultValue(true)]
+		[Category("Behavior")]
+		[Description("Indicates whether users can select any rows")]
+		public bool AllowUserToSelectRows
+		{
+			get => nostalgicDataGridViewInternal.AllowUserToSelectRows;
+
+			set => nostalgicDataGridViewInternal.AllowUserToSelectRows = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]
 		public DataGridViewColumnCollection Columns => nostalgicDataGridViewInternal.Columns;
@@ -118,6 +135,33 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]
 		public DataGridViewSelectedRowCollection SelectedRows => nostalgicDataGridViewInternal.SelectedRows;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public int RowCount => nostalgicDataGridViewInternal.RowCount;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public DataGridViewCell this[int columnIndex, int rowIndex]
+		{
+			get => nostalgicDataGridViewInternal[columnIndex, rowIndex];
+
+			set => nostalgicDataGridViewInternal[columnIndex, rowIndex] = value;
+		}
 		#endregion
 
 		#region Redirected events
@@ -162,6 +206,28 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			if (MouseDoubleClick != null)
 				MouseDoubleClick(this, e);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public event DataGridViewCellEventHandler CellContentClick;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected void OnCellContentClick(DataGridViewCellEventArgs e)
+		{
+			if (CellContentClick != null)
+				CellContentClick(this, e);
+		}
 		#endregion
 
 		#region Designer properties
@@ -191,6 +257,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		public void AutoResizeRows()
 		{
 			nostalgicDataGridViewInternal.AutoResizeRows();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void InvalidateRow(int rowIndex)
+		{
+			nostalgicDataGridViewInternal.InvalidateRow(rowIndex);
 		}
 
 
@@ -240,6 +318,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		private void MouseDoubleClickHandler(object sender, MouseEventArgs e)
 		{
 			OnMouseDoubleClick(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void CellContentClickHandler(object sender, DataGridViewCellEventArgs e)
+		{
+			OnCellContentClick(e);
 		}
 		#endregion
 

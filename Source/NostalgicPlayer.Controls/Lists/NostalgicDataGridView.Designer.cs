@@ -58,6 +58,7 @@
 			nostalgicDataGridViewInternal.ShowRowErrors = false;
 			nostalgicDataGridViewInternal.Size = new System.Drawing.Size(148, 148);
 			nostalgicDataGridViewInternal.TabIndex = 0;
+			nostalgicDataGridViewInternal.CellContentClick += CellContentClickHandler;
 			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
 			nostalgicDataGridViewInternal.MouseDoubleClick += MouseDoubleClickHandler;
 			// 
