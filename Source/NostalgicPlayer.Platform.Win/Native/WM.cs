@@ -3,18 +3,19 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-using System.Runtime.InteropServices;
-
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Native
+namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
-	/// Holds needed dll calls to kernel32.dll
+	/// Different Windows messages
 	/// </summary>
-	public static class Kernel32
+	// ReSharper disable InconsistentNaming
+	public enum WM : uint
 	{
 		/// <summary></summary>
-		[DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = true)]
-		public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
+		SETREDRAW = 0x000B,
+
+		/// <summary></summary>
+		MOUSEWHEEL = 0x020A
 	}
+	// ReSharper restore InconsistentNaming
 }

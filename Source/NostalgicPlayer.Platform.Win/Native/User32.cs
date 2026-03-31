@@ -6,7 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Native
+namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
 	/// Holds needed dll calls to user32.dll

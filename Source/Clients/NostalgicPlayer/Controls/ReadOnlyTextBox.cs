@@ -7,7 +7,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
+using Polycode.NostalgicPlayer.Platform.Native;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 {
