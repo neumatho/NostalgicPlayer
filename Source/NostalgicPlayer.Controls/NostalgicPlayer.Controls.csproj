@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
