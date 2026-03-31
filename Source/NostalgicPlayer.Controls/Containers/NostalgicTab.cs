@@ -221,6 +221,9 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		// True between BeginInit/EndInit - suppresses rebuilds
 		private bool isInitializing;
 
+		// Visible index of the tab the mouse is currently over, or -1
+		private int hoverVisibleIndex = -1;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -425,6 +428,44 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			}
 
 			base.OnMouseDown(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Track hover state as the mouse moves over tab headers
+		/// </summary>
+		/********************************************************************/
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			int newHover = GetVisibleTabIndexAtPoint(e.Location);
+
+			if (newHover != hoverVisibleIndex)
+			{
+				hoverVisibleIndex = newHover;
+				Invalidate();
+			}
+
+			base.OnMouseMove(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear hover state when the mouse leaves the control
+		/// </summary>
+		/********************************************************************/
+		protected override void OnMouseLeave(EventArgs e)
+		{
+			if (hoverVisibleIndex != -1)
+			{
+				hoverVisibleIndex = -1;
+				Invalidate();
+			}
+
+			base.OnMouseLeave(e);
 		}
 
 
@@ -676,6 +717,16 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 					BackgroundStartColor = colors.SelectedTabBackgroundStartColor,
 					BackgroundStopColor = colors.SelectedTabBackgroundStopColor,
 					TextColor = colors.SelectedTabTextColor
+				};
+			}
+
+			if (visibleIndex == hoverVisibleIndex)
+			{
+				return new TabStateColors
+				{
+					BackgroundStartColor = colors.HoverTabBackgroundStartColor,
+					BackgroundStopColor = colors.HoverTabBackgroundStopColor,
+					TextColor = colors.HoverTabTextColor
 				};
 			}
 
