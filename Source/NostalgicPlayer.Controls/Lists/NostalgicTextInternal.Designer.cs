@@ -1,6 +1,6 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
+﻿namespace Polycode.NostalgicPlayer.Controls.Lists
 {
-	partial class TextControl
+	partial class NostalgicTextInternal
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -30,11 +30,10 @@
 		{
 			SuspendLayout();
 			// 
-			// TextControl
+			// NostalgicTextInternal
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			BackColor = System.Drawing.Color.IndianRed;
-			Name = "TextControl";
+			Name = "NostalgicTextInternal";
 			ResumeLayout(false);
 		}
 
