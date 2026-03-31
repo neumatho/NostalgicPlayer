@@ -166,6 +166,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 			foreach (IThemeControl control in FindThemedControls(Controls))
 				control.SetTheme(theme);
+
+			BackColor = colors.FormBackgroundColor;
 		}
 
 
@@ -386,7 +388,6 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void SetFormProperties()
 		{
-			BackColor = colors.FormBackgroundColor;
 			AutoScaleMode = AutoScaleMode.None;
 		}
 
