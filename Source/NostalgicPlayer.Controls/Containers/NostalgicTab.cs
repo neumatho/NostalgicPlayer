@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
+using Polycode.NostalgicPlayer.Platform.Native;
 
 namespace Polycode.NostalgicPlayer.Controls.Containers
 {
@@ -409,14 +410,18 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Handle tab clicks ourselves so hidden tabs cannot be selected
+		/// Intercept mouse clicks before the native tab control processes
+		/// them. This prevents the native control from selecting hidden
+		/// tabs or changing internal state when clicking beside a tab
 		/// </summary>
 		/********************************************************************/
-		protected override void OnMouseDown(MouseEventArgs e)
+		protected override void WndProc(ref Message m)
 		{
-			if (e.Button == MouseButtons.Left)
+			if ((WM)m.Msg == WM.LBUTTONDOWN)
 			{
-				int clickedVisible = GetVisibleTabIndexAtPoint(e.Location);
+				Point pt = new Point((int)(m.LParam & 0xffff), (int)(m.LParam >> 16) & 0xffff);
+
+				int clickedVisible = GetVisibleTabIndexAtPoint(pt);
 
 				if (clickedVisible >= 0)
 				{
@@ -425,9 +430,14 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 					if (realIndex != SelectedIndex)
 						SelectedIndex = realIndex;
 				}
+
+				Focus();
+
+				OnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, pt.X, pt.Y, 0));
+				return;
 			}
 
-			base.OnMouseDown(e);
+			base.WndProc(ref m);
 		}
 
 
@@ -510,7 +520,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		{
 			Keys key = keyData & Keys.KeyCode;
 
-			if ((key == Keys.Left) || (key == Keys.Right))
+			if (Focused && ((key == Keys.Left) || (key == Keys.Right)))
 			{
 				int currentVisible = visibleTabIndices.IndexOf(SelectedIndex);
 
@@ -524,6 +534,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 						newVisible = currentVisible < visibleTabIndices.Count - 1 ? currentVisible + 1 : 0;
 
 					SelectedIndex = visibleTabIndices[newVisible];
+					Focus();
 				}
 
 				return true;
