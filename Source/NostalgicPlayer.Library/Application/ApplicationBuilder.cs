@@ -8,6 +8,7 @@ using Polycode.NostalgicPlayer.Kit.Composition;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Composition;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Library.Application
@@ -116,6 +117,7 @@ namespace Polycode.NostalgicPlayer.Library.Application
 
 			Register(context);
 
+			context.Container.RegisterLibrary();
 			context.Container.RegisterKit();
 
 			if (configure != null)

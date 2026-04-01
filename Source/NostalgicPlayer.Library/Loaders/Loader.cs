@@ -35,6 +35,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		}
 
 		private readonly IAgentManager agentManager;
+		private readonly IPlayerFactory playerFactory;
 
 		private string source;
 		private IPlayerAgent playerAgent;
@@ -59,6 +60,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		public Loader()
 		{
 			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+			playerFactory = DependencyInjection.Container.GetInstance<IPlayerFactory>();
 
 			PlayerAgentInfo = null;
 			playerAgent = null;
@@ -772,7 +774,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 			if (result)
 			{
-				Player = playerAgent is IModulePlayerAgent ? new ModulePlayer() : playerAgent is ISamplePlayerAgent ? new SamplePlayer() : null;
+				Player = playerFactory.GetPlayer(playerAgent);
 
 				moduleSize = loader.ModuleSize;
 				crunchedSize = loader.CrunchedSize;

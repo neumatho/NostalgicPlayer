@@ -10,7 +10,6 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
@@ -37,9 +36,9 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModulePlayer()
+		public ModulePlayer(IAgentManager agentManager)
 		{
-			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+			this.agentManager = agentManager;
 
 			// Initialize member variables
 			StaticModuleInformation = new ModuleInfoStatic();
