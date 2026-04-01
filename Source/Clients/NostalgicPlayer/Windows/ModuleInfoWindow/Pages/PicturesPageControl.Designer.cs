@@ -64,7 +64,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			// previousPictureButton
 			// 
 			previousPictureButton.BackColor = System.Drawing.Color.Transparent;
-			previousPictureButton.Image = Resources.IDB_PREVIOUS_PICTURE;
 			previousPictureButton.Location = new System.Drawing.Point(8, 45);
 			previousPictureButton.Name = "previousPictureButton";
 			previousPictureButton.Size = new System.Drawing.Size(24, 24);
@@ -75,7 +74,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			// nextPictureButton
 			// 
 			nextPictureButton.BackColor = System.Drawing.Color.Transparent;
-			nextPictureButton.Image = Resources.IDB_NEXT_PICTURE;
 			nextPictureButton.Location = new System.Drawing.Point(234, 45);
 			nextPictureButton.Name = "nextPictureButton";
 			nextPictureButton.Size = new System.Drawing.Size(24, 24);

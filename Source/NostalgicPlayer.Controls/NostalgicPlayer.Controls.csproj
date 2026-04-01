@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
+    <PackageReference Include="Svg.Skia" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
