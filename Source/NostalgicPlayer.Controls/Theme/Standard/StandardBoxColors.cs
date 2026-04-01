@@ -13,7 +13,17 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 	/// </summary>
 	internal class StandardBoxColors : IBoxColors
 	{
+		private static readonly Color backgroundColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color borderColor = Color.FromArgb(133, 158, 191);
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color BackgroundColor => backgroundColor;
+
+
 
 		/********************************************************************/
 		/// <summary>
