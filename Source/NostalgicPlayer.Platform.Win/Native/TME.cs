@@ -3,21 +3,21 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Runtime.InteropServices;
+using System;
 
-namespace Polycode.NostalgicPlayer.Controls.Native
+namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
 	// ReSharper disable InconsistentNaming
-	internal struct RECT
+	[Flags]
+	public enum TME : uint
 	{
-		public int Left;
-		public int Top;
-		public int Right;
-		public int Bottom;
+		/// <summary></summary>
+		LEAVE = 0x00000002,
+		/// <summary></summary>
+		NONCLIENT = 0x00000010
 	}
 	// ReSharper restore InconsistentNaming
 }
