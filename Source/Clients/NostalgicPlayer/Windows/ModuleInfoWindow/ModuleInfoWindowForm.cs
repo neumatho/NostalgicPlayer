@@ -63,7 +63,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 
 			// Initialize all pages
 			infoPageControl.InitControl(mainWindowApi, settings);
-			picturesPageControl.InitControl();
 
 			// Make sure that the content is up-to date
 			RefreshWindow(false);

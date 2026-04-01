@@ -10,8 +10,9 @@ using System.Drawing.Text;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 using Polycode.NostalgicPlayer.Library.Containers;
 
@@ -20,8 +21,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class PicturesPageControl : UserControl
+	public partial class PicturesPageControl : UserControl, IDependencyInjectionControl
 	{
+		private IThemeManager themeManager;
+
 		private PictureInfo[] pictures;
 		private int pictureIndex;
 		private int nextPictureIndex;
@@ -72,10 +75,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		/// <summary>
 		/// Initialize the control
+		///
+		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitControl()
+		public void InitializeControl(IThemeManager themeManager)
 		{
+			this.themeManager = themeManager;
+
 			animationLock = new Lock();
 		}
 
@@ -189,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 					// Replace the next/previous buttons
 					int newYPos = ((pictureBox.Height - previousPictureButton.Height) / 2) + pictureBox.Location.Y;
 					previousPictureButton.Location = new Point(8, newYPos);
-					nextPictureButton.Location = new Point(pictureGroup.Width - nextPictureButton.Width - 8, newYPos);
+					nextPictureButton.Location = new Point(picturePanel.Width - nextPictureButton.Width - 8, newYPos);
 
 					// Resize picture and label
 					if (pictures != null)
@@ -380,12 +387,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			if (pictureIndex <= nextPictureIndex)
 			{
 				currentXPos = 0;
-				newXPos = pictureGroup.Width;
+				newXPos = picturePanel.Width;
 			}
 			else
 			{
 				currentXPos = 0;
-				newXPos = -pictureGroup.Width;
+				newXPos = -picturePanel.Width;
 			}
 
 			animationRunning = true;
@@ -446,21 +453,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			labelBitmap?.Dispose();
 			labelBitmap = new Bitmap(pictureLabelPictureBox.Width, pictureLabelPictureBox.Height);
 
-			using (Font font = FontPalette.GetRegularFont())
+			Font font = themeManager.CurrentTheme.StandardFonts.RegularFont;
+			string labelToDraw = description.EllipsisLine(picturePanel.Handle, pictureLabelPictureBox.Width, font, out int newWidth);
+
+			using (Graphics g = Graphics.FromImage(labelBitmap))
 			{
-				string labelToDraw = description.EllipsisLine(pictureGroup.Handle, pictureLabelPictureBox.Width, font, out int newWidth);
+				g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-				using (Graphics g = Graphics.FromImage(labelBitmap))
+				Color color = themeManager.CurrentTheme.LabelColors.TextColor;
+
+				using (Brush brush = new SolidBrush(color))
 				{
-					g.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-					Color color = fontPalette.GetDefaultFontColor();
-
-					using (Brush brush = new SolidBrush(color))
-					{
-						int x = (labelBitmap.Width - newWidth) / 2;
-						g.DrawString(labelToDraw, font, brush, x, 4);
-					}
+					int x = (labelBitmap.Width - newWidth) / 2;
+					g.DrawString(labelToDraw, font, brush, x, 4);
 				}
 			}
 		}
@@ -529,17 +534,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 				{
 					// EaseOutCubic
 					double pos = 1.0 - Math.Pow(1 - easePosition, 3.0);
-					int posDiff = (int)(pos * pictureGroup.Width);
+					int posDiff = (int)(pos * picturePanel.Width);
 
 					if (pictureIndex <= nextPictureIndex)
 					{
 						currentXPos = -posDiff;
-						newXPos = pictureGroup.Width - posDiff;
+						newXPos = picturePanel.Width - posDiff;
 					}
 					else
 					{
 						currentXPos = posDiff;
-						newXPos = -(pictureGroup.Width - posDiff);
+						newXPos = -(picturePanel.Width - posDiff);
 					}
 
 					easePosition += EaseIncrement;
