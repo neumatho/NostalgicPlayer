@@ -33,13 +33,16 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// agent
 		/// </summary>
 		/********************************************************************/
-		public IPlayer GetPlayer(IPlayerAgent playerAgent)
+		public IPlayer GetPlayer(IAgentWorker agent)
 		{
-			if (playerAgent is IModulePlayerAgent)
+			if (agent is IModulePlayerAgent)
 				return applicationContext.Container.GetInstance<IModulePlayer>();
 
-			if (playerAgent is ISamplePlayerAgent)
+			if (agent is ISamplePlayerAgent)
 				return applicationContext.Container.GetInstance<ISamplePlayer>();
+
+			if (agent is IStreamerAgent)
+				return applicationContext.Container.GetInstance<IStreamingPlayer>();
 
 			return null;
 		}

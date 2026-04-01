@@ -16,6 +16,6 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// Return a new instance of the player to use based on the given
 		/// agent
 		/// </summary>
-		IPlayer GetPlayer(IPlayerAgent playerAgent);
+		IPlayer GetPlayer(IAgentWorker agent);
 	}
 }

@@ -36,6 +36,7 @@ namespace Polycode.NostalgicPlayer.Library.Composition
 
 			container.Register<IModulePlayer, ModulePlayer>();
 			container.Register<ISamplePlayer, SamplePlayer>();
+			container.Register<IStreamingPlayer, StreamingPlayer>();
 		}
 	}
 }

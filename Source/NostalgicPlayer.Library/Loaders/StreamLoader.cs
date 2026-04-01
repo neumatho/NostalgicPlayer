@@ -30,6 +30,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		private const int MaxNumberOfRedirects = 10;
 
 		private readonly IAgentManager agentManager;
+		private readonly IPlayerFactory playerFactory;
 
 		private Uri uri;
 		private IStreamerAgent streamerAgent;
@@ -50,6 +51,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		public StreamLoader()
 		{
 			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+			playerFactory = DependencyInjection.Container.GetInstance<IPlayerFactory>();
 
 			Player = null;
 			PlayerAgentInfo = null;
@@ -390,7 +392,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				formatDescription = PlayerAgentInfo.TypeDescription;
 			}
 
-			Player = new StreamingPlayer();
+			Player = playerFactory.GetPlayer(streamerAgent);
 		}
 		#endregion
 	}
