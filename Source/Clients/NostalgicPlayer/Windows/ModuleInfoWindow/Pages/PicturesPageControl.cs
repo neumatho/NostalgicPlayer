@@ -8,9 +8,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
@@ -24,6 +26,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 	public partial class PicturesPageControl : UserControl, IDependencyInjectionControl
 	{
 		private IThemeManager themeManager;
+
+		private bool themeHasChanged;
 
 		private PictureInfo[] pictures;
 		private int pictureIndex;
@@ -82,8 +86,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		public void InitializeControl(IThemeManager themeManager)
 		{
 			this.themeManager = themeManager;
+			themeManager.ThemeChanged += ThemeManagerOnThemeChanged;
 
 			animationLock = new Lock();
+			themeHasChanged = false;
 		}
 
 
@@ -95,7 +101,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		public void CleanupControl()
 		{
+			themeManager.ThemeChanged -= ThemeManagerOnThemeChanged;
+
 			CleanupPictures();
+			CleanupPictureButtons();
 		}
 
 
@@ -158,6 +167,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		}
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes
+		/// </summary>
+		/********************************************************************/
+		private void ThemeManagerOnThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			lock (animationLock)
+			{
+				if (!animationRunning)
+					UpdateThemedControls();
+				else
+					themeHasChanged = true;
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the user clicks on the previous picture button
@@ -253,6 +280,67 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Load an SVG resource and convert it to bitmap
+		/// </summary>
+		/********************************************************************/
+		private Bitmap GetResourceBitmap(string resourceName)
+		{
+			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.{resourceName}.svg"))
+			{
+				return SvgHelper.ConvertToBitmap(stream, themeManager.CurrentTheme.LabelColors.TextColor, 24, 24);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// When the theme has changed, update themed custom controls
+		/// </summary>
+		/********************************************************************/
+		private void UpdateThemedControls()
+		{
+			InitializePictureButtons();
+
+			if (currentLabelBitmap != null)
+				CreateLabelBitmap(pictures[pictureIndex].Description, ref currentLabelBitmap);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will render the picture button images
+		/// </summary>
+		/********************************************************************/
+		private void InitializePictureButtons()
+		{
+			CleanupPictureButtons();
+
+			previousPictureButton.Image = GetResourceBitmap("PreviousPicture");
+			nextPictureButton.Image = GetResourceBitmap("NextPicture");
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will cleanup the picture button images
+		/// </summary>
+		/********************************************************************/
+		private void CleanupPictureButtons()
+		{
+			nextPictureButton.Image?.Dispose();
+			nextPictureButton.Image = null;
+
+			previousPictureButton.Image?.Dispose();
+			previousPictureButton.Image = null;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will prepare the pictures for the first appearance
@@ -583,6 +671,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 					pictureIndex = nextPictureIndex;
 
 					ShowHideArrows();
+
+					if (themeHasChanged)
+					{
+						UpdateThemedControls();
+						themeHasChanged = false;
+					}
 				}
 				else
 				{
