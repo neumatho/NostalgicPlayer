@@ -13,7 +13,17 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 	/// </summary>
 	internal class PurpleBoxColors : IBoxColors
 	{
+		private static readonly Color backgroundColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color borderColor = Color.FromArgb(140, 125, 160);
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color BackgroundColor => backgroundColor;
+
+
 
 		/********************************************************************/
 		/// <summary>
