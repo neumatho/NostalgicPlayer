@@ -6,50 +6,39 @@
 namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
-	/// Different Windows messages
+	/// Different hittest results
 	/// </summary>
 	// ReSharper disable InconsistentNaming
-	public enum WM : uint
+	public enum HT : uint
 	{
 		/// <summary></summary>
-		SIZE = 0x0005,
+		NOWHERE = 0,
 		/// <summary></summary>
-		ACTIVATE = 0x0006,
+		CAPTION = 2,
 		/// <summary></summary>
-		SETREDRAW = 0x000B,
+		SYSMENU = 3,
 		/// <summary></summary>
-		SETTEXT = 0x000C,
+		MINBUTTON = 8,
 		/// <summary></summary>
-		SYSCOLORCHANGE = 0x0015,
+		MAXBUTTON = 9,
 		/// <summary></summary>
-		SETICON = 0x0080,
+		LEFT = 10,
 		/// <summary></summary>
-		NCCALCSIZE = 0x0083,
+		RIGHT = 11,
 		/// <summary></summary>
-		NCHITTEST = 0x0084,
+		TOP = 12,
 		/// <summary></summary>
-		NCPAINT = 0x0085,
+		TOPLEFT = 13,
 		/// <summary></summary>
-		NCACTIVATE = 0x0086,
+		TOPRIGHT = 14,
 		/// <summary></summary>
-		NCMOUSEMOVE = 0x00a0,
+		BOTTOM = 15,
 		/// <summary></summary>
-		NCLBUTTONDOWN = 0x00A1,
+		BOTTOMLEFT = 16,
 		/// <summary></summary>
-		NCLBUTTONUP = 0x00A2,
+		BOTTOMRIGHT = 17,
 		/// <summary></summary>
-		LBUTTONDOWN = 0x0201,
-		/// <summary></summary>
-		MOUSEWHEEL = 0x020A,
-		/// <summary></summary>
-		NCMOUSELEAVE = 0x02A2,
-
-		// Undocumented messages used by UxTheme to draw themed captions/frames
-
-		/// <summary></summary>
-		NCUAHDRAWCAPTION = 0x00AE,
-		/// <summary></summary>
-		NCUAHDRAWFRAME = 0x00AF
+		CLOSE = 20
 	}
 	// ReSharper restore InconsistentNaming
 }
