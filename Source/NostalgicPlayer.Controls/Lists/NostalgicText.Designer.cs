@@ -28,23 +28,23 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			controlGroup = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
+			controlBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			textControl = new NostalgicTextInternal();
 			textHScrollBar = new NostalgicHScrollBar();
 			textVScrollBar = new NostalgicVScrollBar();
-			controlGroup.SuspendLayout();
+			controlBox.SuspendLayout();
 			SuspendLayout();
 			// 
-			// controlGroup
+			// controlBox
 			// 
-			controlGroup.Controls.Add(textControl);
-			controlGroup.Controls.Add(textHScrollBar);
-			controlGroup.Controls.Add(textVScrollBar);
-			controlGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-			controlGroup.Location = new System.Drawing.Point(0, 0);
-			controlGroup.Name = "controlGroup";
-			controlGroup.Size = new System.Drawing.Size(339, 216);
-			controlGroup.TabIndex = 0;
+			controlBox.Controls.Add(textControl);
+			controlBox.Controls.Add(textHScrollBar);
+			controlBox.Controls.Add(textVScrollBar);
+			controlBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			controlBox.Location = new System.Drawing.Point(0, 0);
+			controlBox.Name = "controlBox";
+			controlBox.Size = new System.Drawing.Size(339, 216);
+			controlBox.TabIndex = 0;
 			// 
 			// textControl
 			// 
@@ -79,16 +79,16 @@
 			// NostalgicText
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			Controls.Add(controlGroup);
+			Controls.Add(controlBox);
 			Name = "NostalgicText";
 			Size = new System.Drawing.Size(339, 216);
-			controlGroup.ResumeLayout(false);
+			controlBox.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
 		#endregion
 
-		private Controls.Containers.NostalgicBox controlGroup;
+		private Controls.Containers.NostalgicBox controlBox;
 		private NostalgicTextInternal textControl;
 		private NostalgicVScrollBar textVScrollBar;
 		private NostalgicHScrollBar textHScrollBar;
