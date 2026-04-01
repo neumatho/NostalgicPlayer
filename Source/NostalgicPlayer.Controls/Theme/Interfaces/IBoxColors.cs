@@ -13,6 +13,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 	public interface IBoxColors
 	{
 		/// <summary></summary>
+		Color BackgroundColor { get; }
+		/// <summary></summary>
 		Color BorderColor { get; }
 	}
 }
