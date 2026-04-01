@@ -23,16 +23,18 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 	{
 		private readonly IApplicationContext context;
 		private readonly IAgentManager agentManager;
+		private readonly ILoaderFactory loaderFactory;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ConsoleApplication(IApplicationContext appContext, IAgentManager agentManager)
+		public ConsoleApplication(IApplicationContext appContext, IAgentManager agentManager, ILoaderFactory loaderFactory)
 		{
 			context = appContext;
 			this.agentManager = agentManager;
+			this.loaderFactory = loaderFactory;
 		}
 
 
@@ -76,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/********************************************************************/
 		private LoaderBase LoadFile(string fileName)
 		{
-			Loader loader = new Loader();
+			Loader loader = loaderFactory.CreateLoader();
 
 			if (!loader.Load(fileName, out string errorMessage))
 			{
@@ -97,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/********************************************************************/
 		private LoaderBase LoadStream(string url)
 		{
-			StreamLoader streamLoader = new StreamLoader();
+			StreamLoader streamLoader = loaderFactory.CreateStreamLoader();
 
 			if (!streamLoader.Load(url, out string errorMessage))
 			{

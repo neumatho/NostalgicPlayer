@@ -12,7 +12,6 @@ using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Players;
@@ -57,10 +56,10 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Loader()
+		public Loader(IAgentManager agentManager, IPlayerFactory playerFactory)
 		{
-			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
-			playerFactory = DependencyInjection.Container.GetInstance<IPlayerFactory>();
+			this.agentManager = agentManager;
+			this.playerFactory = playerFactory;
 
 			PlayerAgentInfo = null;
 			playerAgent = null;

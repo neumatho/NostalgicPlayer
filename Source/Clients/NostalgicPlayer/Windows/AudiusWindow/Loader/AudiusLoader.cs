@@ -16,9 +16,11 @@ using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Loaders;
+using Polycode.NostalgicPlayer.Library.Players;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader
 {
 	/// <summary>
 	/// Loader class that helps start an Audius streaming
@@ -62,9 +64,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusLoader()
+		public AudiusLoader(IAgentManager agentManager, IPlayerFactory playerFactory, IAudiusClientFactory audiusClientFactory) : base(agentManager, playerFactory)
 		{
-			clientFactory = DependencyInjection.Container.GetInstance<IAudiusClientFactory>();
+			clientFactory = audiusClientFactory;
 		}
 
 		#region LoaderBase overrides

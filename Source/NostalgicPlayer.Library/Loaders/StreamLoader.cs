@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Players;
@@ -48,10 +47,10 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public StreamLoader()
+		public StreamLoader(IAgentManager agentManager, IPlayerFactory playerFactory)
 		{
-			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
-			playerFactory = DependencyInjection.Container.GetInstance<IPlayerFactory>();
+			this.agentManager = agentManager;
+			this.playerFactory = playerFactory;
 
 			Player = null;
 			PlayerAgentInfo = null;

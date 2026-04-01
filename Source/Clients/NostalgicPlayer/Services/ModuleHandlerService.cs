@@ -33,6 +33,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 
 		private readonly IMainWindowApi mainWindowApi;
 		private readonly IAgentManager agentManager;
+		private readonly ILoaderFactory loaderFactory;
 		private readonly IMixerConfigurationFactory mixerConfigurationFactory;
 		private readonly SoundSettings soundSettings;
 
@@ -51,11 +52,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleHandlerService(IAgentManager agentManager, IMainWindowApi mainWindowApi, IMixerConfigurationFactory mixerConfigurationFactory, SoundSettings soundSettings)
+		public ModuleHandlerService(IAgentManager agentManager, IMainWindowApi mainWindowApi, ILoaderFactory loaderFactory, IMixerConfigurationFactory mixerConfigurationFactory, SoundSettings soundSettings)
 		{
 			// Remember the arguments
 			this.agentManager = agentManager;
 			this.mainWindowApi = mainWindowApi;
+			this.loaderFactory = loaderFactory;
 			this.mixerConfigurationFactory = mixerConfigurationFactory;
 			this.soundSettings = soundSettings;
 
@@ -277,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					string source = listItem.ListItem.Source;
 
 					// Create new loader
-					item.Loader = listItem.ListItem.CreateLoader();
+					item.Loader = listItem.ListItem.CreateLoader(loaderFactory);
 
 					// Load the module
 					if (!item.Loader.Load(source, out string errorMessage))

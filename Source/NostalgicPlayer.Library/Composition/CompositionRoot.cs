@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
 using SimpleInjector;
 
@@ -21,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Library.Composition
 		public static void RegisterLibrary(this Container container)
 		{
 			RegisterPlayers(container);
+			RegisterLoaders(container);
 		}
 
 
@@ -37,6 +39,21 @@ namespace Polycode.NostalgicPlayer.Library.Composition
 			container.Register<IModulePlayer, ModulePlayer>();
 			container.Register<ISamplePlayer, SamplePlayer>();
 			container.Register<IStreamingPlayer, StreamingPlayer>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all loaders
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterLoaders(Container container)
+		{
+			container.RegisterSingleton<ILoaderFactory, LoaderFactory>();
+
+			container.Register<Loader>();
+			container.Register<StreamLoader>();
 		}
 	}
 }

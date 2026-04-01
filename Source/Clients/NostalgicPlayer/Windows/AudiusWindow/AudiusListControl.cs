@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External.Download;
 
@@ -26,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		private IMainWindowApi mainWindowApi;
 		private IControlInitializerService controlInitializerService;
 		private IPictureDownloader pictureDownloader;
+		private IAudiusLoaderFactory audiusLoaderFactory;
 
 		/********************************************************************/
 		/// <summary>
@@ -48,10 +50,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeControl(IMainWindowApi mainWindowApi, IControlInitializerService controlInitializerService)
+		public void InitializeControl(IMainWindowApi mainWindowApi, IControlInitializerService controlInitializerService, IAudiusLoaderFactory audiusLoaderFactory)
 		{
 			this.mainWindowApi = mainWindowApi;
 			this.controlInitializerService = controlInitializerService;
+			this.audiusLoaderFactory = audiusLoaderFactory;
 		}
 
 		#region Public methods
@@ -122,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 							((IAudiusMusicListItem)listItem).PlayTracks += MusicListItem_PlayTracks;
 							((IAudiusMusicListItem)listItem).AddTracks += MusicListItem_AddTracks;
 						}
-						else if (item is AudiusProfileListItem profileItem)
+						else if (item is AudiusProfileListItem)
 						{
 							listItem = new AudiusProfileListItemControl();
 
@@ -374,7 +377,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		private ModuleListItem CreateModuleListItem(AudiusMusicListItem item)
 		{
-			return new ModuleListItem(new AudiusModuleListItem(item.Title, item.ItemId))
+			return new ModuleListItem(new AudiusModuleListItem(item.Title, item.ItemId, audiusLoaderFactory))
 			{
 				Duration = item.Duration
 			};

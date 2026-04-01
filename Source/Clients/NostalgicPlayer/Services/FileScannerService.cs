@@ -38,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		private readonly IModuleDatabase database;
 		private readonly IPlaylistFactory playlistFactory;
 		private readonly IMainWindowApi mainWindowApi;
+		private readonly ILoaderFactory loaderFactory;
 
 		private ManualResetEvent shutdownEvent;
 		private AutoResetEvent breakEvent;
@@ -51,12 +52,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScannerService(IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, OptionSettings optionSettings, IMainWindowApi mainWindowApi)
+		public FileScannerService(IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, OptionSettings optionSettings, IMainWindowApi mainWindowApi, ILoaderFactory loaderFactory)
 		{
 			database = moduleDatabase;
 			this.playlistFactory = playlistFactory;
 			settings = optionSettings;
 			this.mainWindowApi = mainWindowApi;
+			this.loaderFactory = loaderFactory;
 
 			// Create event used to tell the thread to stop
 			shutdownEvent = new ManualResetEvent(false);
@@ -421,7 +423,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		private Loader FindPlayer(string fileName)
 		{
-			Loader loader = new Loader();
+			Loader loader = loaderFactory.CreateLoader();
 
 			if (loader.FindPlayer(fileName, out string _))
 				return loader;

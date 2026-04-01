@@ -7,6 +7,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Library.Application;
@@ -69,6 +70,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		{
 			container.RegisterSingleton<IProgressCallbackFactory, ProgressCallbackFactory>();
 			container.RegisterSingleton<IMixerConfigurationFactory, MixerConfigurationFactory>();
+			container.RegisterSingleton<IAudiusLoaderFactory, AudiusLoaderFactory>();
 		}
 
 

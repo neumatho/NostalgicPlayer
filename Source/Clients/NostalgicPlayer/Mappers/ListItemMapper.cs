@@ -6,6 +6,8 @@
 using System;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
@@ -85,7 +87,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 
 				case PlaylistFileInfo.FileType.Audius:
 				{
-					item = new AudiusModuleListItem(fileInfo.DisplayName, fileInfo.Source);
+					IAudiusLoaderFactory audiusLoaderFactory = DependencyInjection.Container.GetInstance<IAudiusLoaderFactory>();
+
+					item = new AudiusModuleListItem(fileInfo.DisplayName, fileInfo.Source, audiusLoaderFactory);
 					break;
 				}
 

@@ -3,57 +3,49 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
-using Polycode.NostalgicPlayer.Library.Loaders;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
+namespace Polycode.NostalgicPlayer.Library.Loaders
 {
 	/// <summary>
-	/// This class holds a list item pointing to a file
+	/// Factory implementation to create new instances of the right loader
 	/// </summary>
-	public class SingleFileModuleListItem : IModuleListItem
+	internal class LoaderFactory : ILoaderFactory
 	{
+		private readonly IApplicationContext applicationContext;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileModuleListItem(string fullFileName)
+		public LoaderFactory(IApplicationContext applicationContext)
 		{
-			Source = fullFileName;
-		}
-
-		#region IModuleListItem implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return the name which is shown in the list
-		/// </summary>
-		/********************************************************************/
-		public string DisplayName => Path.GetFileName(Source);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the full path to the file
-		/// </summary>
-		/********************************************************************/
-		public string Source
-		{
-			get;
+			this.applicationContext = applicationContext;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Create the loader to use to load this item
+		/// Create new instance of the normal loader
 		/// </summary>
 		/********************************************************************/
-		public LoaderBase CreateLoader(ILoaderFactory loaderFactory)
+		public Loader CreateLoader()
 		{
-			return loaderFactory.CreateLoader();
+			return applicationContext.Container.GetInstance<Loader>();
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create new instance of the stream loader
+		/// </summary>
+		/********************************************************************/
+		public StreamLoader CreateStreamLoader()
+		{
+			return applicationContext.Container.GetInstance<StreamLoader>();
+		}
 	}
 }

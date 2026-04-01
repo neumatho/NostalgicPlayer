@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Library.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
@@ -13,15 +13,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 	/// </summary>
 	public class AudiusModuleListItem : IStreamModuleListItem
 	{
+		private readonly IAudiusLoaderFactory audiusLoaderFactory;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusModuleListItem(string displayName, string trackId)
+		public AudiusModuleListItem(string displayName, string trackId, IAudiusLoaderFactory audiusLoaderFactory)
 		{
 			DisplayName = displayName;
 			Source = trackId;
+
+			this.audiusLoaderFactory = audiusLoaderFactory;
 		}
 
 		#region IModuleListItem implementation
@@ -54,9 +58,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 		/// Create the loader to use to load this item
 		/// </summary>
 		/********************************************************************/
-		public LoaderBase CreateLoader()
+		public LoaderBase CreateLoader(ILoaderFactory loaderFactory)
 		{
-			return new AudiusLoader();
+			return audiusLoaderFactory.CreateAudiusLoader();
 		}
 		#endregion
 	}

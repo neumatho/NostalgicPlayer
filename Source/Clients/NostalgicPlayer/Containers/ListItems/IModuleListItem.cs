@@ -25,6 +25,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 		/// <summary>
 		/// Create the loader to use to load this item
 		/// </summary>
-		LoaderBase CreateLoader();
+		LoaderBase CreateLoader(ILoaderFactory loaderFactory);
 	}
 }
