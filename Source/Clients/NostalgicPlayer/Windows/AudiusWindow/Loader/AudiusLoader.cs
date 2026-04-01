@@ -15,7 +15,6 @@ using Polycode.NostalgicPlayer.External.Audius.Models.Tracks;
 using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
@@ -27,46 +26,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader
 	/// </summary>
 	public class AudiusLoader : StreamLoader, IMetadata, IStreamSeek
 	{
-		private static readonly IPictureDownloader pictureDownloader;
-
 		private readonly IAudiusClientFactory clientFactory;
-
-		/********************************************************************/
-		/// <summary>
-		/// Static constructor - initialize the picture downloader
-		/// </summary>
-		/********************************************************************/
-		static AudiusLoader()
-		{
-			IPictureDownloaderFactory factory = DependencyInjection.Container.GetInstance<IPictureDownloaderFactory>();
-			pictureDownloader = factory.Create();
-			pictureDownloader.SetMaxNumberInCache(5);
-
-			AppDomain.CurrentDomain.ProcessExit += AudiusLoader_Dtor;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Destructor - dispose the picture downloader
-		/// </summary>
-		/********************************************************************/
-		static void AudiusLoader_Dtor(object sender, EventArgs e)
-		{
-			pictureDownloader.Dispose();
-		}
-
-
+		private readonly IPictureDownloader pictureDownloader;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AudiusLoader(IAgentManager agentManager, IPlayerFactory playerFactory, IAudiusClientFactory audiusClientFactory) : base(agentManager, playerFactory)
+		public AudiusLoader(IAgentManager agentManager, IPlayerFactory playerFactory, IAudiusClientFactory audiusClientFactory, IPictureDownloader pictureDownloader) : base(agentManager, playerFactory)
 		{
 			clientFactory = audiusClientFactory;
+			this.pictureDownloader = pictureDownloader;
 		}
 
 		#region LoaderBase overrides
