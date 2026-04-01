@@ -293,16 +293,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_NEXT_PICTURE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_NEXT_PICTURE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_NEXT_SONG {
             get {
                 object obj = ResourceManager.GetObject("IDB_NEXT_SONG", resourceCulture);
@@ -356,16 +346,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_PREVIOUS_MODULE {
             get {
                 object obj = ResourceManager.GetObject("IDB_PREVIOUS_MODULE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_PREVIOUS_PICTURE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_PREVIOUS_PICTURE", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
