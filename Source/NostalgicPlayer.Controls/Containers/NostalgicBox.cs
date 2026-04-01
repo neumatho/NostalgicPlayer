@@ -4,12 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Controls.Native;
+using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
+using Polycode.NostalgicPlayer.Platform.Native;
 
 namespace Polycode.NostalgicPlayer.Controls.Containers
 {
@@ -22,6 +24,8 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 		private IBoxColors colors;
 
+		private bool useBackgroundColor;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -31,6 +35,30 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		{
 			SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
 		}
+
+		#region Designer properties
+		/********************************************************************/
+		/// <summary>
+		/// Set the FontConfiguration component to use for this control
+		/// </summary>
+		/********************************************************************/
+		[Category("Appearance")]
+		[Description("Indicate if the background should be transparent or have a color.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(false)]
+		public bool UseBackgroundColor
+		{
+			get => useBackgroundColor;
+
+			set
+			{
+				useBackgroundColor = value;
+
+				SetBackgroundColor();
+				Invalidate();
+			}
+		}
+		#endregion
 
 		#region Initialize
 		/********************************************************************/
@@ -57,7 +85,21 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		{
 			colors = theme.BoxColors;
 
+			SetBackgroundColor();
 			DrawCustomNonClient();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Update the background color
+		/// </summary>
+		/********************************************************************/
+		private void SetBackgroundColor()
+		{
+			if (colors != null)
+				BackColor = useBackgroundColor ? colors.BackgroundColor : Color.Transparent;
 		}
 		#endregion
 
@@ -194,6 +236,58 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			using (Pen borderPen = new Pen(colors.BorderColor, BorderWidth))
 			{
 				g.DrawRectangle(borderPen, 0, 0, Width - 1, Height - 1);
+			}
+		}
+		#endregion
+
+		#region Designer filtering (hide properties from PropertyGrid)
+		/********************************************************************/
+		/// <summary>
+		/// Register a provider that filters properties for the designer
+		/// </summary>
+		/********************************************************************/
+		static NostalgicBox()
+		{
+			TypeDescriptor.AddProvider(new NostalgicTabTypeDescriptionProvider(), typeof(NostalgicBox));
+		}
+
+		/// <summary>
+		/// Filter out properties we do not want to show in the designer
+		/// </summary>
+		private sealed class NostalgicTabTypeDescriptionProvider : TypeDescriptionProvider
+		{
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(Panel));
+
+			private static readonly string[] propertiesToHide =
+			[
+				nameof(BackColor),
+				nameof(BackgroundImage),
+				nameof(BackgroundImageLayout),
+				nameof(BorderStyle),
+				nameof(Font),
+				nameof(ForeColor),
+				nameof(RightToLeft)
+			];
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public NostalgicTabTypeDescriptionProvider() : base(parent)
+			{
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
+			{
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance), propertiesToHide);
 			}
 		}
 		#endregion

@@ -3,22 +3,25 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Runtime.InteropServices;
 
-namespace Polycode.NostalgicPlayer.Controls.Native
+namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential)]
 	// ReSharper disable InconsistentNaming
-	internal struct TRACKMOUSEEVENT
+	public struct RECT
 	{
-		public uint cbSize;
-		public uint dwFlags;
-		public IntPtr hwndTrack;
-		public uint dwHoverTime;
+		/// <summary></summary>
+		public int Left;
+		/// <summary></summary>
+		public int Top;
+		/// <summary></summary>
+		public int Right;
+		/// <summary></summary>
+		public int Bottom;
 	}
 	// ReSharper restore InconsistentNaming
 }
