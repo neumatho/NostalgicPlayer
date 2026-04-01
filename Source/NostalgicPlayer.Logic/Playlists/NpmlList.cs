@@ -32,99 +32,9 @@ namespace Polycode.NostalgicPlayer.Logic.Playlists
 		/********************************************************************/
 		public IEnumerable<PlaylistFileInfo> LoadList(string directory, Stream stream, string fileExtension)
 		{
-			// Make sure the file position is at the beginning of the file
-			stream.Seek(0, SeekOrigin.Begin);
+			HashSet<string> alreadyTakenLists = new HashSet<string>();
 
-			using (StreamReader sr = new StreamReader(stream, leaveOpen: true))
-			{
-				// Skip the header
-				sr.ReadLine();
-
-				// Get the version
-				string version = sr.ReadLine();
-				if (version != "1")
-					throw new InvalidDataException(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_VERSION, version));
-
-				string path = null;
-				PlaylistFileInfo.FileType mode = PlaylistFileInfo.FileType.Plain;
-
-				while (!sr.EndOfStream)
-				{
-					string line = sr.ReadLine();
-
-					if (!string.IsNullOrEmpty(line))
-					{
-						switch (line)
-						{
-							// "Path" command
-							case "@*Path*@":
-							{
-								path = sr.ReadLine();
-								mode = PlaylistFileInfo.FileType.Plain;
-								break;
-							}
-
-							// "Archive" command
-							case "@*Archive*@":
-							{
-								path = sr.ReadLine();
-								mode = PlaylistFileInfo.FileType.Archive;
-								break;
-							}
-
-							// "URL" command
-							case "@*URL*@":
-							{
-								mode = PlaylistFileInfo.FileType.Url;
-								break;
-							}
-
-							// "Audius" command
-							case "@*Audius*@":
-							{
-								mode = PlaylistFileInfo.FileType.Audius;
-								break;
-							}
-
-							case "@*Names*@":
-								break;
-
-							default:
-							{
-								// If not a command, it's the source, e.g. a file name or URL
-								PlaylistFileInfo fileInfo = null;
-
-								switch (mode)
-								{
-									case PlaylistFileInfo.FileType.Plain:
-									case PlaylistFileInfo.FileType.Archive:
-									{
-										fileInfo = ParseFileLine(line, path, directory, mode);
-										break;
-									}
-
-									case PlaylistFileInfo.FileType.Url:
-									{
-										fileInfo = ParseStreamLine(line);
-										break;
-									}
-
-									case PlaylistFileInfo.FileType.Audius:
-									{
-										fileInfo = ParseAudiusLine(line);
-										break;
-									}
-								}
-
-								if (fileInfo != null)
-									yield return fileInfo;
-
-								break;
-							}
-						}
-					}
-				}
-			}
+			return LoadSingleList(directory, stream, alreadyTakenLists);
 		}
 
 
@@ -256,6 +166,138 @@ namespace Polycode.NostalgicPlayer.Logic.Playlists
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will load a single list
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<PlaylistFileInfo> LoadSingleList(string directory, Stream stream, HashSet<string> alreadyTakenLists)
+		{
+			// Make sure the file position is at the beginning of the file
+			stream.Seek(0, SeekOrigin.Begin);
+
+			using (StreamReader sr = new StreamReader(stream, leaveOpen: true))
+			{
+				// Skip the header
+				sr.ReadLine();
+
+				// Get the version
+				string version = sr.ReadLine();
+				if (version != "1")
+					throw new InvalidDataException(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_VERSION, version));
+
+				string path = null;
+				PlaylistFileInfo.FileType mode = PlaylistFileInfo.FileType.Plain;
+				bool listMode = false;
+
+				while (!sr.EndOfStream)
+				{
+					string line = sr.ReadLine();
+
+					if (!string.IsNullOrEmpty(line))
+					{
+						switch (line)
+						{
+							// "Path" command
+							case "@*Path*@":
+							{
+								path = sr.ReadLine();
+								mode = PlaylistFileInfo.FileType.Plain;
+								listMode = false;
+								break;
+							}
+
+							// "Archive" command
+							case "@*Archive*@":
+							{
+								path = sr.ReadLine();
+								mode = PlaylistFileInfo.FileType.Archive;
+								listMode = false;
+								break;
+							}
+
+							// "URL" command
+							case "@*URL*@":
+							{
+								mode = PlaylistFileInfo.FileType.Url;
+								listMode = false;
+								break;
+							}
+
+							// "Audius" command
+							case "@*Audius*@":
+							{
+								mode = PlaylistFileInfo.FileType.Audius;
+								listMode = false;
+								break;
+							}
+
+							// "Lists" command
+							case "@*Lists*@":
+							{
+								listMode = true;
+								break;
+							}
+
+							case "@*Names*@":
+								break;
+
+							default:
+							{
+								// If not a command, it's the source, e.g. a file name or URL
+								PlaylistFileInfo fileInfo = null;
+
+								if (listMode)
+								{
+									PlaylistFileInfo listFileInfo = ParseFileLine(line, path, directory, PlaylistFileInfo.FileType.Plain);
+
+									if (alreadyTakenLists.Add(listFileInfo.Source))
+									{
+										using (FileStream fs = new FileStream(listFileInfo.Source, FileMode.Open, FileAccess.Read))
+										{
+											foreach (PlaylistFileInfo fi in LoadSingleList(Path.GetDirectoryName(listFileInfo.Source), fs, alreadyTakenLists))
+												yield return fi;
+										}
+									}
+								}
+								else
+								{
+									switch (mode)
+									{
+										case PlaylistFileInfo.FileType.Plain:
+										case PlaylistFileInfo.FileType.Archive:
+										{
+											fileInfo = ParseFileLine(line, path, directory, mode);
+											break;
+										}
+
+										case PlaylistFileInfo.FileType.Url:
+										{
+											fileInfo = ParseStreamLine(line);
+											break;
+										}
+
+										case PlaylistFileInfo.FileType.Audius:
+										{
+											fileInfo = ParseAudiusLine(line);
+											break;
+										}
+									}
+								}
+
+								if (fileInfo != null)
+									yield return fileInfo;
+
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Parse file line
