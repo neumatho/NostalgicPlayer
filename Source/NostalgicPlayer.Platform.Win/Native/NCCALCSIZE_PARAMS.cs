@@ -4,18 +4,25 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Runtime.InteropServices;
 
-namespace Polycode.NostalgicPlayer.Controls.Native
+namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
 	/// 
 	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
 	// ReSharper disable InconsistentNaming
-	[Flags]
-	internal enum TME : uint
+	public struct NCCALCSIZE_PARAMS
 	{
-		LEAVE = 0x00000002,
-		NONCLIENT = 0x00000010
+		/// <summary></summary>
+		public RECT rgrc0;
+		/// <summary></summary>
+		public RECT rgrc1;
+		/// <summary></summary>
+		public RECT rgrc2;
+		/// <summary></summary>
+		public IntPtr lppos;
 	}
 	// ReSharper restore InconsistentNaming
 }
