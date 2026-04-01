@@ -61,5 +61,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by tab controls
 		/// </summary>
 		ITabColors TabColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by label controls
+		/// </summary>
+		ILabelColors LabelColors { get; }
 	}
 }

@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleDataGridViewColors dataGridViewColors = new PurpleDataGridViewColors();
 		private static readonly PurpleScrollBarColors scrollBarColors = new PurpleScrollBarColors();
 		private static readonly PurpleTabColors tabColors = new PurpleTabColors();
+		private static readonly PurpleLabelColors labelColors = new PurpleLabelColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -135,5 +136,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public ITabColors TabColors => tabColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by label controls
+		/// </summary>
+		/********************************************************************/
+		public ILabelColors LabelColors => labelColors;
 	}
 }
