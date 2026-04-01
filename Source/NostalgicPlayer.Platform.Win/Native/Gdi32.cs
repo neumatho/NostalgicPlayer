@@ -3,28 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Controls.Native
+using System;
+using System.Runtime.InteropServices;
+
+namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
-	/// Different hittest results
+	/// Holds needed dll calls to gdi32.dll
 	/// </summary>
-	// ReSharper disable InconsistentNaming
-	internal enum HT : uint
+	public static class Gdi32
 	{
-		NOWHERE = 0,
-		CAPTION = 2,
-		SYSMENU = 3,
-		MINBUTTON = 8,
-		MAXBUTTON = 9,
-		LEFT = 10,
-		RIGHT = 11,
-		TOP = 12,
-		TOPLEFT = 13,
-		TOPRIGHT = 14,
-		BOTTOM = 15,
-		BOTTOMLEFT = 16,
-		BOTTOMRIGHT = 17,
-		CLOSE = 20
+		/// <summary></summary>
+		[DllImport("gdi32.dll")]
+		public static extern IntPtr CreateRoundRectRgn(int x1, int y1, int x2, int y2, int w, int h);
 	}
-	// ReSharper restore InconsistentNaming
 }

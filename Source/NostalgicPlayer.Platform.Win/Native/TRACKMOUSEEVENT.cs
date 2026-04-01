@@ -4,19 +4,25 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Runtime.InteropServices;
 
-namespace Polycode.NostalgicPlayer.Controls.Native
+namespace Polycode.NostalgicPlayer.Platform.Native
 {
 	/// <summary>
 	/// 
 	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
 	// ReSharper disable InconsistentNaming
-	[Flags]
-	internal enum RDW : uint
+	public struct TRACKMOUSEEVENT
 	{
-		INVALIDATE = 0x0001,
-		NOCHILDREN = 0x0040,
-		FRAME = 0x0400,
+		/// <summary></summary>
+		public uint cbSize;
+		/// <summary></summary>
+		public uint dwFlags;
+		/// <summary></summary>
+		public IntPtr hwndTrack;
+		/// <summary></summary>
+		public uint dwHoverTime;
 	}
 	// ReSharper restore InconsistentNaming
 }
