@@ -37,7 +37,7 @@
 			removeButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			resetButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
 			showComboBox = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicComboBox();
-			otherNumberTextBox = new Polycode.NostalgicPlayer.Controls.Input.NostalgicNumberTextBox();
+			otherNumberTextBox = new Polycode.NostalgicPlayer.Controls.Inputs.NostalgicNumberTextBox();
 			toolTip = new System.Windows.Forms.ToolTip(components);
 			((System.ComponentModel.ISupportInitialize)favoriteDataGridView).BeginInit();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
@@ -150,7 +150,7 @@
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton removeButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicButton resetButton;
 		private NostalgicPlayer.Controls.Lists.NostalgicComboBox showComboBox;
-		private NostalgicPlayer.Controls.Input.NostalgicNumberTextBox otherNumberTextBox;
+		private NostalgicPlayer.Controls.Inputs.NostalgicNumberTextBox otherNumberTextBox;
 		private System.Windows.Forms.ToolTip toolTip;
 		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
 	}
