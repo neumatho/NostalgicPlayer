@@ -82,8 +82,11 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			{
 				fontConfiguration = value;
 
-				UpdateFont();
-				Invalidate();
+				if (IsHandleCreated)
+				{
+					UpdateFont();
+					Invalidate();
+				}
 			}
 		}
 		#endregion
