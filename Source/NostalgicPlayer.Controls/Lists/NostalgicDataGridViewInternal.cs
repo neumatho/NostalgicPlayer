@@ -94,8 +94,11 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			{
 				fontConfiguration = value;
 
-				UpdateFont();
-				Invalidate();
+				if (IsHandleCreated)
+				{
+					UpdateFont();
+					Invalidate();
+				}
 			}
 		}
 
@@ -265,8 +268,20 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			if ((e.RowIndex >= 0) && (e.ColumnIndex >= 0))
 			{
-				bool isLink = Rows[e.RowIndex].Cells[e.ColumnIndex] is DataGridViewLinkCell;
-				DrawColumnCell(g, e.CellBounds, GetFont(), GetCellColors(e.State), e.CellStyle?.Alignment ?? DataGridViewContentAlignment.TopLeft, e.Value, isLink);
+				DataGridViewCell cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+				CellStateColors cellColors = GetCellColors(e.State);
+
+				if (cell is DataGridViewImageCell)
+				{
+					DrawColumnCellBackground(g, e.CellBounds, cellColors);
+					DrawColumnCellImage(g, e.CellBounds, e.CellStyle?.Alignment ?? DataGridViewContentAlignment.MiddleCenter, e.Value);
+				}
+				else
+				{
+					bool isLink = cell is DataGridViewLinkCell;
+					DrawColumnCell(g, e.CellBounds, GetFont(), cellColors, e.CellStyle?.Alignment ?? DataGridViewContentAlignment.TopLeft, e.Value, isLink);
+				}
+
 				e.Handled = true;
 			}
 			else if ((e.RowIndex == -1) && (e.ColumnIndex >= 0))
@@ -999,6 +1014,90 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 					TextRenderer.DrawText(g, text, font, textRect, textColor, flags);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw a single column cell image
+		/// </summary>
+		/********************************************************************/
+		private void DrawColumnCellImage(Graphics g, Rectangle rect, DataGridViewContentAlignment alignment, object value)
+		{
+			if (value is not Image image)
+				return;
+
+			int x, y;
+
+			switch (alignment)
+			{
+				case DataGridViewContentAlignment.TopLeft:
+				{
+					x = rect.X + 1;
+					y = rect.Y + 1;
+					break;
+				}
+
+				case DataGridViewContentAlignment.TopCenter:
+				{
+					x = rect.X + (rect.Width - image.Width) / 2;
+					y = rect.Y + 1;
+					break;
+				}
+
+				case DataGridViewContentAlignment.TopRight:
+				{
+					x = rect.Right - image.Width - 1;
+					y = rect.Y + 1;
+					break;
+				}
+
+				case DataGridViewContentAlignment.MiddleLeft:
+				{
+					x = rect.X + 1;
+					y = rect.Y + (rect.Height - image.Height) / 2;
+					break;
+				}
+
+				default:
+				case DataGridViewContentAlignment.MiddleCenter:
+				{
+					x = rect.X + (rect.Width - image.Width) / 2;
+					y = rect.Y + (rect.Height - image.Height) / 2;
+					break;
+				}
+
+				case DataGridViewContentAlignment.MiddleRight:
+				{
+					x = rect.Right - image.Width - 1;
+					y = rect.Y + (rect.Height - image.Height) / 2;
+					break;
+				}
+
+				case DataGridViewContentAlignment.BottomLeft:
+				{
+					x = rect.X + 1;
+					y = rect.Bottom - image.Height - 1;
+					break;
+				}
+
+				case DataGridViewContentAlignment.BottomCenter:
+				{
+					x = rect.X + (rect.Width - image.Width) / 2;
+					y = rect.Bottom - image.Height - 1;
+					break;
+				}
+
+				case DataGridViewContentAlignment.BottomRight:
+				{
+					x = rect.Right - image.Width - 1;
+					y = rect.Bottom - image.Height - 1;
+					break;
+				}
+			}
+
+			g.DrawImage(image, x, y, image.Width, image.Height);
 		}
 		#endregion
 	}
