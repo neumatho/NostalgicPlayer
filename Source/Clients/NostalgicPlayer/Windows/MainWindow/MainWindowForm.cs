@@ -65,6 +65,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private IFormCreatorService formCreatorService;
 		private IFileScannerService fileScanner;
 		private IModuleHandlerService moduleHandler;
+		private IArchiveDetector archiveDetector;
 		private ISystemMediaTransportControlsService systemMediaTransportControlsService;
 
 		// Settings
@@ -151,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService, ISystemMediaTransportControlsService systemMediaTransportControlsService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService, IArchiveDetector archiveDetector, ISystemMediaTransportControlsService systemMediaTransportControlsService)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
@@ -166,6 +167,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			this.formCreatorService = formCreatorService;
 			fileScanner = fileScannerService;
 			moduleHandler = moduleHandlerService;
+			this.archiveDetector = archiveDetector;
 			this.systemMediaTransportControlsService = systemMediaTransportControlsService;
 
 			// Initialize the adapter with the created form
@@ -2986,7 +2988,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 						List<ModuleListItem> itemList = new List<ModuleListItem>();
 
 						string[] listExtensions = playlistFactory.GetExtensions();
-						string[] archiveExtensions = new ArchiveDetector().GetExtensions();
+						string[] archiveExtensions = archiveDetector.GetExtensions();
 
 						AddDirectoryToList(path, itemList, listExtensions, archiveExtensions, false);
 
@@ -4688,12 +4690,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					if (archiveExtensions.Contains(extension))
 					{
 						// Check if the file is an archive
-						ArchiveDetector detector = new ArchiveDetector();
-
-						bool isArchive = detector.IsArchive(fileName);
+						bool isArchive = archiveDetector.IsArchive(fileName);
 						if (isArchive)
 						{
-							foreach (string archiveFileName in detector.GetEntries(fileName))
+							foreach (string archiveFileName in archiveDetector.GetEntries(fileName))
 								list.Add(new ModuleListItem(new ArchiveFileModuleListItem(archiveFileName)));
 						}
 						else
@@ -5093,7 +5093,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			List<ModuleListItem> itemList = new List<ModuleListItem>();
 
 			string[] listExtensions = playlistFactory.GetExtensions();
-			string[] archiveExtensions = new ArchiveDetector().GetExtensions();
+			string[] archiveExtensions = archiveDetector.GetExtensions();
 
 			foreach (string file in files)
 			{

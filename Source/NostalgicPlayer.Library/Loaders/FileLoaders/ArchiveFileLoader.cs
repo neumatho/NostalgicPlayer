@@ -8,14 +8,18 @@ using System.IO;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 {
 	/// <summary>
 	/// This loader can open files in an archive
 	/// </summary>
-	public class ArchiveFileLoader : FileLoaderBase
+	internal class ArchiveFileLoader : FileLoaderBase
 	{
+		private readonly FileDecruncherFactory fileDecruncherFactory;
+		private readonly ArchiveDecruncherFactory archiveDecruncherFactory;
+
 		private ArchiveFileDecruncher archiveFileDecruncher;
 
 		/********************************************************************/
@@ -23,8 +27,10 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileLoader(string fileName) : base(fileName)
+		public ArchiveFileLoader(string fileName, FileDecruncherFactory fileDecruncherFactory, ArchiveDecruncherFactory archiveDecruncherFactory) : base(fileName)
 		{
+			this.fileDecruncherFactory = fileDecruncherFactory;
+			this.archiveDecruncherFactory = archiveDecruncherFactory;
 		}
 
 
@@ -51,7 +57,8 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 		/********************************************************************/
 		public override Stream OpenFile()
 		{
-			archiveFileDecruncher = new ArchiveFileDecruncher(FullPath);
+			archiveFileDecruncher = archiveDecruncherFactory.CreateArchiveFileDecruncher();
+			archiveFileDecruncher.OpenArchive(FullPath);
 
 			ArchiveEntryInfo entryInfo = archiveFileDecruncher.OpenArchiveEntry(ArchivePath.GetEntryName(FullPath));
 
@@ -82,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 			// Decrunch it if needed
 			streamInfo.CrunchedSize = entryInfo.CrunchedSize;
 
-			SingleFileDecruncher decruncher = new SingleFileDecruncher();
+			SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
 			Stream stream = decruncher.DecrunchFileMultipleLevels(entryInfo.EntryStream);
 
 			streamInfo.DecrunchedSize = stream.Length;

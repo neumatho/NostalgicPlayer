@@ -10,11 +10,10 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 
-namespace Polycode.NostalgicPlayer.Library.Loaders
+namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 {
 	/// <summary>
 	/// Helper class to decrunch a file using single file decrunchers
@@ -28,9 +27,9 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileDecruncher()
+		public SingleFileDecruncher(IAgentManager agentManager)
 		{
-			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+			this.agentManager = agentManager;
 		}
 
 

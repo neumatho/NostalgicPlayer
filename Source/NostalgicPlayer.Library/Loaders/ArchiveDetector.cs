@@ -12,27 +12,29 @@ using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders
 {
 	/// <summary>
-	/// Helper class to detect archive files and extract entries
+	/// Helper to detect archive files and extract entries
 	/// </summary>
-	public class ArchiveDetector
+	internal class ArchiveDetector : IArchiveDetector
 	{
 		private readonly IAgentManager agentManager;
+		private readonly FileDecruncherFactory fileDecruncherFactory;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveDetector()
+		public ArchiveDetector(IAgentManager agentManager, FileDecruncherFactory fileDecruncherFactory)
 		{
-			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+			this.agentManager = agentManager;
+			this.fileDecruncherFactory = fileDecruncherFactory;
 		}
 
 
@@ -91,14 +93,15 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 			}
 		}
 
-		#region Helper methods
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will try to find the archive agent that can be used on the
 		/// given stream and then open the archive and return a new stream
 		/// </summary>
 		/********************************************************************/
-		protected IArchive OpenArchive(string archiveFileName, Stream stream, out Stream newStream, out List<string> decruncherAlgorithms)
+		public IArchive OpenArchive(string archiveFileName, Stream stream, out Stream newStream, out List<string> decruncherAlgorithms)
 		{
 			decruncherAlgorithms = new List<string>();
 
@@ -114,7 +117,6 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 			return archiveDecruncher.OpenArchive(archiveFileName, (ReaderStream)newStream);
 		}
-		#endregion
 
 		#region Private methods
 		/********************************************************************/
@@ -146,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		private IArchiveDecruncherAgent FindArchiveAgent(Stream stream, List<string> decruncherAlgorithms, out Stream newStream)
 		{
-			SingleFileDecruncher decruncher = new SingleFileDecruncher();
+			SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
 
 			// The archive file itself can be crunched, e.g. Bzip2, so decrunch it
 			newStream = decruncher.DecrunchFileMultipleLevels(stream);

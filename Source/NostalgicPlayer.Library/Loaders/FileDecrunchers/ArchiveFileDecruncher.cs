@@ -11,14 +11,17 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Containers;
 
-namespace Polycode.NostalgicPlayer.Library.Loaders
+namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 {
 	/// <summary>
 	/// This class manage opening and detection of archive files
 	/// </summary>
-	internal class ArchiveFileDecruncher : ArchiveDetector, IDisposable
+	internal class ArchiveFileDecruncher : IDisposable
 	{
-		private readonly string fullArchivePath;
+		private readonly IArchiveDetector archiveDetector;
+		private readonly FileDecruncherFactory fileDecruncherFactory;
+
+		private string archivePath;
 
 		private Stack<Stream> archiveStreams;
 		private List<string> decruncherAlgorithms;
@@ -27,6 +30,33 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ArchiveFileDecruncher(IArchiveDetector archiveDetector, FileDecruncherFactory fileDecruncherFactory)
+		{
+			this.archiveDetector = archiveDetector;
+			this.fileDecruncherFactory = fileDecruncherFactory;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Free allocated stuff
+		/// </summary>
+		/********************************************************************/
+		public void Dispose()
+		{
+			archive = null;
+
+			CloseStreams();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Open an archive.
 		///
 		/// The path is a little bit different than usual. Here is an example
 		/// of such path:
@@ -45,25 +75,11 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// M:\Modules\AllMyModules.zip|Deep Joy.it
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileDecruncher(string fullArchivePath)
+		public void OpenArchive(string fullArchivePath)
 		{
-			this.fullArchivePath = fullArchivePath;
+			archivePath = fullArchivePath;
 
 			OpenArchiveStream();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Free allocated stuff
-		/// </summary>
-		/********************************************************************/
-		public void Dispose()
-		{
-			archive = null;
-
-			CloseStreams();
 		}
 
 
@@ -92,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 					StreamHelper.CopyData(entryStream, stream, (int)entryStream.Length);
 
 				// The entry may be crunched, so decrunch it
-				SingleFileDecruncher decruncher = new SingleFileDecruncher();
+				SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				List<string> algorithms = new List<string>(decruncherAlgorithms);
@@ -131,14 +147,14 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 			try
 			{
-				string[] parts = fullArchivePath.Split('|');
+				string[] parts = archivePath.Split('|');
 
 				// First part is the full path to the archive itself in the file system,
 				// so we just open that file normally
 				Stream stream = new FileStream(parts[0], FileMode.Open, FileAccess.Read);
 
 				// Open the archive stream
-				archive = OpenArchive(Path.GetFileName(parts[0]), stream, out stream, out List<string> archiveAlgorimths);
+				archive = archiveDetector.OpenArchive(Path.GetFileName(parts[0]), stream, out stream, out List<string> archiveAlgorimths);
 				archiveStreams.Push(stream);
 				decruncherAlgorithms.AddRange(archiveAlgorimths);
 
@@ -150,7 +166,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 					stream = entryInfo.EntryStream;
 
-					archive = OpenArchive(parts[i], stream, out stream, out archiveAlgorimths);
+					archive = archiveDetector.OpenArchive(parts[i], stream, out stream, out archiveAlgorimths);
 					archiveStreams.Push(stream);
 					decruncherAlgorithms.AddRange(archiveAlgorimths);
 				}

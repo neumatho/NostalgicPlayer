@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
-using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Library.Agent;
@@ -35,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		}
 
 		private readonly IAgentManager agentManager;
+		private readonly IFileLoaderFactory fileLoaderFactory;
 		private readonly IPlayerFactory playerFactory;
 
 		private string source;
@@ -57,9 +57,10 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Loader(IAgentManager agentManager, IPlayerFactory playerFactory)
+		public Loader(IAgentManager agentManager, IFileLoaderFactory fileLoaderFactory, IPlayerFactory playerFactory)
 		{
 			this.agentManager = agentManager;
+			this.fileLoaderFactory = fileLoaderFactory;
 			this.playerFactory = playerFactory;
 
 			PlayerAgentInfo = null;
@@ -303,10 +304,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		private ILoader FindLoader(string fileName)
 		{
-			if (ArchivePath.IsArchivePath(fileName))
-				return new ArchiveFileLoader(fileName);
-
-			return new NormalFileLoader(fileName);
+			return fileLoaderFactory.CreateFileLoader(fileName);
 		}
 
 

@@ -6,21 +6,25 @@
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 {
 	/// <summary>
 	/// This loader can open just standard files in a file system
 	/// </summary>
-	public class NormalFileLoader : FileLoaderBase
+	internal class NormalFileLoader : FileLoaderBase
 	{
+		private readonly FileDecruncherFactory fileDecruncherFactory;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NormalFileLoader(string fileName) : base(fileName)
+		public NormalFileLoader(string fileName, FileDecruncherFactory fileDecruncherFactory) : base(fileName)
 		{
+			this.fileDecruncherFactory = fileDecruncherFactory;
 		}
 
 		#region FileLoaderBase implementation
@@ -41,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 				CrunchedSize = stream.Length;
 
 				// First try to decrunch the file if needed
-				SingleFileDecruncher decruncher = new SingleFileDecruncher();
+				SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				// Update sizes
@@ -82,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 				// Decrunch it if needed
 				streamInfo.CrunchedSize = stream.Length;
 
-				SingleFileDecruncher decruncher = new SingleFileDecruncher();
+				SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				streamInfo.DecrunchedSize = stream.Length;

@@ -39,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		private readonly IPlaylistFactory playlistFactory;
 		private readonly IMainWindowApi mainWindowApi;
 		private readonly ILoaderFactory loaderFactory;
+		private readonly IArchiveDetector archiveDetector;
 
 		private ManualResetEvent shutdownEvent;
 		private AutoResetEvent breakEvent;
@@ -52,13 +53,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScannerService(IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, OptionSettings optionSettings, IMainWindowApi mainWindowApi, ILoaderFactory loaderFactory)
+		public FileScannerService(IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, OptionSettings optionSettings, IMainWindowApi mainWindowApi, ILoaderFactory loaderFactory, IArchiveDetector archiveDetector)
 		{
 			database = moduleDatabase;
 			this.playlistFactory = playlistFactory;
 			settings = optionSettings;
 			this.mainWindowApi = mainWindowApi;
 			this.loaderFactory = loaderFactory;
+			this.archiveDetector = archiveDetector;
 
 			// Create event used to tell the thread to stop
 			shutdownEvent = new ManualResetEvent(false);
@@ -284,12 +286,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 				if (list.Count == 0)
 				{
 					// Check if the file is an archive
-					ArchiveDetector detector = new ArchiveDetector();
-
-					bool isArchive = detector.IsArchive(fileName);
+					bool isArchive = archiveDetector.IsArchive(fileName);
 					if (isArchive)
 					{
-						foreach (string archiveFileName in detector.GetEntries(fileName))
+						foreach (string archiveFileName in archiveDetector.GetEntries(fileName))
 							list.Add(new ModuleListItem(new ArchiveFileModuleListItem(archiveFileName)));
 					}
 				}

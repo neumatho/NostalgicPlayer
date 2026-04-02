@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Library.Loaders;
+using Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers;
+using Polycode.NostalgicPlayer.Library.Loaders.FileLoaders;
 using Polycode.NostalgicPlayer.Library.Players;
 using SimpleInjector;
 
@@ -51,9 +53,14 @@ namespace Polycode.NostalgicPlayer.Library.Composition
 		private static void RegisterLoaders(Container container)
 		{
 			container.RegisterSingleton<ILoaderFactory, LoaderFactory>();
+			container.RegisterSingleton<IFileLoaderFactory, FileLoaderFactory>();
+			container.RegisterSingleton<FileDecruncherFactory>();
+			container.RegisterSingleton<ArchiveDecruncherFactory>();
 
 			container.Register<Loader>();
 			container.Register<StreamLoader>();
+
+			container.RegisterSingleton<IArchiveDetector, ArchiveDetector>();
 		}
 	}
 }

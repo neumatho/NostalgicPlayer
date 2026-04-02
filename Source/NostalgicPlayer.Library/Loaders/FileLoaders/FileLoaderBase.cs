@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 	/// <summary>
 	/// Helper class for loader implementations
 	/// </summary>
-	public abstract class FileLoaderBase : ILoader
+	internal abstract class FileLoaderBase : ILoader
 	{
 		/// <summary>
 		/// Holds information about the opened extra file
