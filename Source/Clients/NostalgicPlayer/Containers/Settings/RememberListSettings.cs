@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
@@ -20,9 +19,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public RememberListSettings()
+		public RememberListSettings(ISettings settings)
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettings>();
+			this.settings = settings;
 			settings.LoadSettings("__RememberList");
 		}
 

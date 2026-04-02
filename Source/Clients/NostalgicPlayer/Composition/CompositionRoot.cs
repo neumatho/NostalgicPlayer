@@ -41,6 +41,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			RegisterAudius(container);
 
 			container.RegisterSingleton<ListItemMapper>();
+			container.Register<RememberListSettings>();
 
 			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
 		}

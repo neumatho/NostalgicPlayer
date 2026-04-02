@@ -58,6 +58,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			public bool Enabled { get; set; }
 		}
 
+		private IApplicationContext applicationContext;
 		private IPlatformPath platformPath;
 		private IModuleDatabase database;
 		private IAgentManager agentManager;
@@ -153,8 +154,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService, IArchiveDetector archiveDetector, ISystemMediaTransportControlsService systemMediaTransportControlsService, ListItemMapper listItemMapper)
+		public void InitializeForm(IApplicationContext applicationContext, IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService, IArchiveDetector archiveDetector, ISystemMediaTransportControlsService systemMediaTransportControlsService, ListItemMapper listItemMapper)
 		{
+			this.applicationContext = applicationContext;
 			this.platformPath = platformPath;
 			database = moduleDatabase;
 			this.agentManager = agentManager;
@@ -2968,7 +2970,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 						LoadModuleList(fileName);
 
 						// Get the remember information
-						RememberListSettings infoSettings = new RememberListSettings();
+						RememberListSettings infoSettings = applicationContext.Container.GetInstance<RememberListSettings>();
 
 						// Load the module if anyone was selected
 						if (infoSettings.ListPosition != -1)
@@ -5479,7 +5481,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			try
 			{
 				string fileName = Path.Combine(platformPath.SettingsPath, "___RememberList.npml");
-				RememberListSettings infoSettings = new RememberListSettings();
+				RememberListSettings infoSettings = applicationContext.Container.GetInstance<RememberListSettings>();
 
 				// Delete the file if it exists
 				if (File.Exists(fileName))
