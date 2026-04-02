@@ -13,6 +13,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	public interface IControlInitializerService
 	{
 		/// <summary>
+		/// Initialize all the controls in the given form
+		/// </summary>
+		void InitializeControls(Form form);
+
+		/// <summary>
 		/// Initialize a collection of controls with dependency injections
 		/// </summary>
 		void InitializeControls(Control.ControlCollection controls);
