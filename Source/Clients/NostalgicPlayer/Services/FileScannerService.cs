@@ -40,6 +40,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		private readonly IMainWindowApi mainWindowApi;
 		private readonly ILoaderFactory loaderFactory;
 		private readonly IArchiveDetector archiveDetector;
+		private readonly ListItemMapper listItemMapper;
 
 		private ManualResetEvent shutdownEvent;
 		private AutoResetEvent breakEvent;
@@ -53,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScannerService(IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, OptionSettings optionSettings, IMainWindowApi mainWindowApi, ILoaderFactory loaderFactory, IArchiveDetector archiveDetector)
+		public FileScannerService(IModuleDatabase moduleDatabase, IPlaylistFactory playlistFactory, OptionSettings optionSettings, IMainWindowApi mainWindowApi, ILoaderFactory loaderFactory, IArchiveDetector archiveDetector, ListItemMapper listItemMapper)
 		{
 			database = moduleDatabase;
 			this.playlistFactory = playlistFactory;
@@ -61,6 +62,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			this.mainWindowApi = mainWindowApi;
 			this.loaderFactory = loaderFactory;
 			this.archiveDetector = archiveDetector;
+			this.listItemMapper = listItemMapper;
 
 			// Create event used to tell the thread to stop
 			shutdownEvent = new ManualResetEvent(false);
@@ -279,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					if (playlist != null)
 					{
 						foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
-							list.Add(ListItemMapper.Convert(info));
+							list.Add(listItemMapper.Convert(info));
 					}
 				}
 

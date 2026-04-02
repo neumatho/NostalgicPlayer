@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
@@ -38,6 +39,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			RegisterServices(container);
 			RegisterAdapters(container);
 			RegisterAudius(container);
+
+			container.RegisterSingleton<ListItemMapper>();
 
 			container.RegisterSingleton<IApplicationHost, SingleInstanceApplication>();
 		}

@@ -7,7 +7,6 @@ using System;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
@@ -15,14 +14,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 	/// <summary>
 	/// This class can convert between a module list item and a file list item
 	/// </summary>
-	public static class ListItemMapper
+	public class ListItemMapper
 	{
+		private readonly IAudiusLoaderFactory audiusLoaderFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ListItemMapper(IAudiusLoaderFactory audiusLoaderFactory)
+		{
+			this.audiusLoaderFactory = audiusLoaderFactory;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Convert a list item to a list info
 		/// </summary>
 		/********************************************************************/
-		public static PlaylistFileInfo Convert(ModuleListItem listItem)
+		public PlaylistFileInfo Convert(ModuleListItem listItem)
 		{
 			PlaylistFileInfo multiFileInfo = new PlaylistFileInfo
 			{
@@ -61,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 		/// Convert a list info to a list item
 		/// </summary>
 		/********************************************************************/
-		public static ModuleListItem Convert(PlaylistFileInfo fileInfo)
+		public ModuleListItem Convert(PlaylistFileInfo fileInfo)
 		{
 			IModuleListItem item;
 
@@ -87,8 +100,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 
 				case PlaylistFileInfo.FileType.Audius:
 				{
-					IAudiusLoaderFactory audiusLoaderFactory = DependencyInjection.Container.GetInstance<IAudiusLoaderFactory>();
-
 					item = new AudiusModuleListItem(fileInfo.DisplayName, fileInfo.Source, audiusLoaderFactory);
 					break;
 				}

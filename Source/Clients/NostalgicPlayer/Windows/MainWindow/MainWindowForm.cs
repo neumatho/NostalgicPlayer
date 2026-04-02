@@ -67,6 +67,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private IModuleHandlerService moduleHandler;
 		private IArchiveDetector archiveDetector;
 		private ISystemMediaTransportControlsService systemMediaTransportControlsService;
+		private ListItemMapper listItemMapper;
 
 		// Settings
 		private ISettings userSettings;
@@ -152,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService, IArchiveDetector archiveDetector, ISystemMediaTransportControlsService systemMediaTransportControlsService)
+		public void InitializeForm(IProgressCallbackFactory progressCallbackFactory, MainWindowApiAdapter mainWindowApiAdapter, IPlatformPath platformPath, IModuleDatabase moduleDatabase, IAgentManager agentManager, IPlaylistFactory playlistFactory, ISettingsService settingsService, ModuleSettings moduleSettings, OptionSettings optionSettings, PathSettings pathSettings, SoundSettings soundSettings, IFormCreatorService formCreatorService, IFileScannerService fileScannerService, IModuleHandlerService moduleHandlerService, IArchiveDetector archiveDetector, ISystemMediaTransportControlsService systemMediaTransportControlsService, ListItemMapper listItemMapper)
 		{
 			this.platformPath = platformPath;
 			database = moduleDatabase;
@@ -169,6 +170,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleHandler = moduleHandlerService;
 			this.archiveDetector = archiveDetector;
 			this.systemMediaTransportControlsService = systemMediaTransportControlsService;
+			this.listItemMapper = listItemMapper;
 
 			// Initialize the adapter with the created form
 			mainWindowApiAdapter.Initialize(this);
@@ -590,7 +592,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public PlaylistFileInfo GetFileInfo()
 		{
-			return playItem == null ? null : ListItemMapper.Convert(playItem);
+			return playItem == null ? null : listItemMapper.Convert(playItem);
 		}
 
 
@@ -4679,7 +4681,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 							if (playlist != null)
 							{
 								foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
-									list.Add(ListItemMapper.Convert(info));
+									list.Add(listItemMapper.Convert(info));
 							}
 						}
 					}
@@ -4883,7 +4885,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 						List<ModuleListItem> tempList = new List<ModuleListItem>();
 
 						foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
-							tempList.Add(ListItemMapper.Convert(info));
+							tempList.Add(listItemMapper.Convert(info));
 
 						int currentCount = moduleListControl.Items.Count;
 
@@ -4950,7 +4952,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private IEnumerable<PlaylistFileInfo> GetModuleList()
 		{
 			foreach (ModuleListItem listItem in moduleListControl.Items)
-				yield return ListItemMapper.Convert(listItem);
+				yield return listItemMapper.Convert(listItem);
 		}
 
 
