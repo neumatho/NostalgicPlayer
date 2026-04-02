@@ -52,6 +52,22 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
+		public void Test_Mmcmp()
+		{
+			VerifyFile("test_C2.mmcmp122", "test_C2.xm", true);
+			VerifyFile("test_C2.mmcmp130", "test_C2.xm", true);
+			VerifyFile("test_C2.mmcmp132", "test_C2.xm", true);
+			VerifyFile("test_C2.mmcmp134", "test_C2.xm", true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
 		public void Test_PackIce()
 		{
 			VerifyFile("test_C1_113.ice", "test_C1.raw");
@@ -77,12 +93,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Mmcmp()
+		public void Test_PowerPacker()
 		{
-			VerifyFile("test_C2.mmcmp122", "test_C2.xm", true);
-			VerifyFile("test_C2.mmcmp130", "test_C2.xm", true);
-			VerifyFile("test_C2.mmcmp132", "test_C2.xm", true);
-			VerifyFile("test_C2.mmcmp134", "test_C2.xm", true);
+			VerifyFile("test_C1.pp", "test_C1.raw");
+			VerifyFile("test_C1_chfc.pp", "test_C1.raw");
+			VerifyFile("test_C1_den.pp", "test_C1.raw");
+			VerifyFile("test_C1_dxs9.pp", "test_C1.raw");
+			VerifyFile("test_C1_hd.pp", "test_C1.raw");
+			VerifyFile("test_C1_rvv.pp", "test_C1.raw");
 		}
 
 
@@ -93,14 +111,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibAncient.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_PowerPacker()
+		public void Test_PowerPlayer()
 		{
-			VerifyFile("test_C1.pp", "test_C1.raw");
-			VerifyFile("test_C1_chfc.pp", "test_C1.raw");
-			VerifyFile("test_C1_den.pp", "test_C1.raw");
-			VerifyFile("test_C1_dxs9.pp", "test_C1.raw");
-			VerifyFile("test_C1_hd.pp", "test_C1.raw");
-			VerifyFile("test_C1_rvv.pp", "test_C1.raw");
+			VerifyFile("test_C2.pmc1", "test_C2.xm");
+			VerifyFile("test_C2.pmc2", "test_C2.xm");
 		}
 
 

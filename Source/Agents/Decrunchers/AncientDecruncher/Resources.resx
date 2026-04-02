@@ -281,4 +281,13 @@ Pack-Ice was created for the Atari ST by Axe of Delight. Digital Tracker has the
   <data name="IDS_ANC_NAME_AGENT15" xml:space="preserve">
     <value>Pack-Ice</value>
   </data>
+  <data name="IDS_ANC_NAME_AGENT16" xml:space="preserve">
+    <value>PowerPlayer Music Compressor</value>
+  </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT16" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+PowerPlayer was written by Stephan Fuhrmann. It is a module player where he have created an extra tool to compress the modules using lh.library and delta coding. The player could then load and decompress the modules on the fly.</value>
+  </data>
 </root>

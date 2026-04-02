@@ -35,6 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal
 			new DecompressorPair { First = PackIceDecompressor.DetectHeader, Second = PackIceDecompressor.Create },
 			new DecompressorPair { First = MmcmpDecompressor.DetectHeader, Second = MmcmpDecompressor.Create },
 			new DecompressorPair { First = PowerPackerDecompressor.DetectHeader, Second = PowerPackerDecompressor.Create },
+			new DecompressorPair { First = PowerPlayerDecompressor.DetectHeader, Second = PowerPlayerDecompressor.Create },
 			new DecompressorPair { First = XpkMain.DetectHeader, Second = XpkMain.Create },
 			// Putting StoneCracker last since detection can be accidentally be detected instead of correct format
 			new DecompressorPair { First = StoneCrackerDecompressor.DetectHeader, Second = StoneCrackerDecompressor.Create }

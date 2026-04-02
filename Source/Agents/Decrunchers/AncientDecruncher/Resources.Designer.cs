@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -147,6 +147,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_DESCRIPTION_AGENT15 {
             get {
                 return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///PowerPlayer was written by Stephan Fuhrmann. It is a module player where he have created an extra tool to compress the modules using lh.library and delta coding. The player could then load and decompress the modules on the fly..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT16 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT16", resourceCulture);
             }
         }
         
@@ -343,6 +355,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT15 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PowerPlayer Music Compressor.
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT16 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT16", resourceCulture);
             }
         }
         

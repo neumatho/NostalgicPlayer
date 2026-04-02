@@ -14,7 +14,7 @@ using Buffer = Polycode.NostalgicPlayer.Ports.LibAncient.Common.Buffers.Buffer;
 namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 {
 	/// <summary>
-	/// Ice decompressor
+	/// Pack-Ice decompressor
 	/// </summary>
 	internal class PackIceDecompressor : Decompressor
 	{
@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient.Internal.Decompressors
 
 		/********************************************************************/
 		/// <summary>
-		/// Actual decompression
+		/// Return the length of the decompressed data
 		/// </summary>
 		/********************************************************************/
 		public override size_t GetRawSize()

@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibAncient
 
 		/********************************************************************/
 		/// <summary>
-		/// Actual decompression
+		/// Return the length of the decompressed data
 		/// </summary>
 		/********************************************************************/
 		public size_t GetRawSize()
