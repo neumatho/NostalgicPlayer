@@ -14,7 +14,7 @@ using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 using Polycode.NostalgicPlayer.Platform.Native;
 
-namespace Polycode.NostalgicPlayer.Controls.Input
+namespace Polycode.NostalgicPlayer.Controls.Inputs
 {
 	/// <summary>
 	/// Themed text box with custom rendering
