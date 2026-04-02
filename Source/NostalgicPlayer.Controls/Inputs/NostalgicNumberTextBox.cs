@@ -7,7 +7,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.Controls.Input
+namespace Polycode.NostalgicPlayer.Controls.Inputs
 {
 	/// <summary>
 	/// Themed number text box with custom rendering
