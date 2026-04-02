@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Library.Containers;
 
-namespace Polycode.NostalgicPlayer.Library.Loaders
+namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 {
 	/// <summary>
 	/// This loader can open files in an archive

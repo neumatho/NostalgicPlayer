@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Library.Loaders.FileLoaders;
 using Polycode.NostalgicPlayer.Library.Players;
 
 namespace Polycode.NostalgicPlayer.Library.Loaders

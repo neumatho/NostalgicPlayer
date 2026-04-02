@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Library.Loaders
+namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 {
 	/// <summary>
 	/// Helper class for loader implementations

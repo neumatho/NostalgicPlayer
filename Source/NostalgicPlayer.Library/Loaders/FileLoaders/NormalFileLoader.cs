@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Library.Loaders
+namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 {
 	/// <summary>
 	/// This loader can open just standard files in a file system
