@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Controls.Forms;
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Purple;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
@@ -46,9 +47,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings, IThemeManager themeManager)
+		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings, IThemeManager themeManager, INostalgicImageBank imageBank)
 		{
-			InitializeNostalgicForm(themeManager);
+			InitializeNostalgicForm(themeManager, imageBank);
 
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;

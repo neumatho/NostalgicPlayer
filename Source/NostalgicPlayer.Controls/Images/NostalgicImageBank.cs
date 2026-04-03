@@ -3,27 +3,34 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Controls.Images;
-using Polycode.NostalgicPlayer.Controls.Theme;
-using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
-using SimpleInjector;
+using System;
 
-namespace Polycode.NostalgicPlayer.Controls.Composition
+namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Register all classes/interfaces into the dependency injection container
+	/// Contains all the images used in NostalgicPlayer
 	/// </summary>
-	public static class CompositionRoot
+	internal class NostalgicImageBank : INostalgicImageBank, IDisposable
 	{
+		private readonly FormImages formImages = new FormImages();
+
 		/********************************************************************/
 		/// <summary>
-		/// Register all client specific classes into the container
+		/// Dispose all the images
 		/// </summary>
 		/********************************************************************/
-		public static void RegisterControls(this Container container)
+		public void Dispose()
 		{
-			container.RegisterSingleton<IThemeManager, ThemeManager>();
-			container.RegisterSingleton<INostalgicImageBank, NostalgicImageBank>();
+			formImages.Dispose();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds all the images needed by the form
+		/// </summary>
+		/********************************************************************/
+		public IFormImages Form => formImages;
 	}
 }

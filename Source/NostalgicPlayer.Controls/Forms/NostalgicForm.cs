@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Events;
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Platform.Native;
@@ -69,6 +70,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		private CaptionButton pressButton = CaptionButton.None;
 
 		private IThemeManager themeManager;
+		private INostalgicImageBank imageBank;
 
 		#region Initialize
 		/********************************************************************/
@@ -76,9 +78,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/// Initialize the form
 		/// </summary>
 		/********************************************************************/
-		public void InitializeNostalgicForm(IThemeManager themeManager)
+		public void InitializeNostalgicForm(IThemeManager themeManager, INostalgicImageBank imageBank)
 		{
 			this.themeManager = themeManager;
+			this.imageBank = imageBank;
 		}
 
 
@@ -992,7 +995,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				if (status != CaptionButtonStatus.Hidden)
 				{
 					right -= CaptionButtonWidth;
-					DrawSingleCaptionButton(g, Resources.IDB_CAPTION_CLOSE, status, right, totalTitleBarHeight, GetCloseCaptionButtonColors());
+					DrawSingleCaptionButton(g, imageBank.Form.CaptionClose, status, right, totalTitleBarHeight, GetCloseCaptionButtonColors());
 				}
 
 				CaptionButtonColors captionColors = GetCaptionButtonColors();
@@ -1001,14 +1004,14 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				if (status != CaptionButtonStatus.Hidden)
 				{
 					right -= CaptionButtonWidth;
-					DrawSingleCaptionButton(g, WindowState == FormWindowState.Maximized ? Resources.IDB_CAPTION_NORMALIZE : Resources.IDB_CAPTION_MAXIMIZE, status, right, totalTitleBarHeight, captionColors);
+					DrawSingleCaptionButton(g, WindowState == FormWindowState.Maximized ? imageBank.Form.CaptionNormalize : imageBank.Form.CaptionMaximize, status, right, totalTitleBarHeight, captionColors);
 				}
 
 				status = GetMinimizeCaptionButtonStatus();
 				if (status != CaptionButtonStatus.Hidden)
 				{
 					right -= CaptionButtonWidth;
-					DrawSingleCaptionButton(g, Resources.IDB_CAPTION_MINIMIZE, status, right, totalTitleBarHeight, captionColors);
+					DrawSingleCaptionButton(g, imageBank.Form.CaptionMinimize, status, right, totalTitleBarHeight, captionColors);
 				}
 			}
 
