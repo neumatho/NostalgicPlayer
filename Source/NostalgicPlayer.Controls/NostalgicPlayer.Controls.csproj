@@ -18,11 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Close.svg" />
-    <None Remove="Resources\CaptionClose.svg" />
-    <None Remove="Resources\CaptionMaximize.svg" />
-    <None Remove="Resources\CaptionMinimize.svg" />
-    <None Remove="Resources\CaptionNormalize.svg" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionClose.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionMaximize.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionMinimize.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionNormalize.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,21 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
