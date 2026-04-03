@@ -3,21 +3,23 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Drawing;
+
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Contains all the images used in NostalgicPlayer
+	/// Holds all the images needed by the Module Information window
 	/// </summary>
-	public interface INostalgicImageBank
+	public interface IModuleInformationImages
 	{
 		/// <summary>
-		/// Holds all the images needed by the form
+		/// Gets the previous picture image
 		/// </summary>
-		internal IFormImages Form { get; }
+		Bitmap GetPreviousPicture(Color color);
 
 		/// <summary>
-		/// Holds all the images needed by the Module Information window
+		/// Gets the next picture image
 		/// </summary>
-		IModuleInformationImages ModuleInformation { get; }
+		Bitmap GetNextPicture(Color color);
 	}
 }
