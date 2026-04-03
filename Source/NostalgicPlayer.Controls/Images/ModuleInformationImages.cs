@@ -4,16 +4,19 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Drawing;
 
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Contains all the images used in NostalgicPlayer
+	/// Holds all the images needed by the Module Information window
 	/// </summary>
-	internal class NostalgicImageBank : INostalgicImageBank, IDisposable
+	internal class ModuleInformationImages : ImageBase, IModuleInformationImages, IDisposable
 	{
-		private readonly FormImages formImages = new FormImages();
-		private readonly ModuleInformationImages moduleInformationImages = new ModuleInformationImages();
+		private const string Category = "ModuleInformation";
+
+		private Bitmap previousPicture;
+		private Bitmap nextPicture;
 
 		/********************************************************************/
 		/// <summary>
@@ -22,26 +25,41 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		public void Dispose()
 		{
-			formImages.Dispose();
-			moduleInformationImages.Dispose();
+			previousPicture?.Dispose();
+			previousPicture = null;
+
+			nextPicture?.Dispose();
+			nextPicture = null;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds all the images needed by the form
+		/// Gets the previous picture image
 		/// </summary>
 		/********************************************************************/
-		public IFormImages Form => formImages;
+		public Bitmap GetPreviousPicture(Color color)
+		{
+			if (previousPicture == null)
+				previousPicture = GetSvgBitmap(Category, "PreviousPicture", color, 24, 24);
+
+			return previousPicture;
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds all the images needed by the Module Information window
+		/// Gets the next picture image
 		/// </summary>
 		/********************************************************************/
-		public IModuleInformationImages ModuleInformation => moduleInformationImages;
+		public Bitmap GetNextPicture(Color color)
+		{
+			if (nextPicture == null)
+				nextPicture = GetSvgBitmap(Category, "NextPicture", color, 24, 24);
+
+			return nextPicture;
+		}
 	}
 }
