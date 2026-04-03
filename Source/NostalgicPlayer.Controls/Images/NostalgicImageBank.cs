@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
@@ -12,8 +13,23 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	/// </summary>
 	internal class NostalgicImageBank : INostalgicImageBank, IDisposable
 	{
-		private readonly FormImages formImages = new FormImages();
-		private readonly ModuleInformationImages moduleInformationImages = new ModuleInformationImages();
+		private readonly FormImages formImages;
+		private readonly ModuleInformationImages moduleInformationImages;
+		private readonly SampleInformationImages sampleInformationImages;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public NostalgicImageBank(IThemeManager themeManager)
+		{
+			formImages = new FormImages();
+			moduleInformationImages = new ModuleInformationImages(themeManager);
+			sampleInformationImages = new SampleInformationImages(themeManager);
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -24,6 +40,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		{
 			formImages.Dispose();
 			moduleInformationImages.Dispose();
+			sampleInformationImages.Dispose();
 		}
 
 
@@ -43,5 +60,14 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// </summary>
 		/********************************************************************/
 		public IModuleInformationImages ModuleInformation => moduleInformationImages;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds all the images needed by the Sample Information window
+		/// </summary>
+		/********************************************************************/
+		public ISampleInformationImages SampleInformation => sampleInformationImages;
 	}
 }

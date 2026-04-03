@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			this.themeManager = themeManager;
 			this.imageBank = imageBank;
 
-			themeManager.ThemeChanged += ThemeManagerOnThemeChanged;
+			themeManager.ThemeChanged += ThemeChanged;
 
 			animationLock = new Lock();
 			themeHasChanged = false;
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		public void CleanupControl()
 		{
-			themeManager.ThemeChanged -= ThemeManagerOnThemeChanged;
+			themeManager.ThemeChanged -= ThemeChanged;
 
 			CleanupPictures();
 		}
@@ -174,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/// Is called when the theme changes
 		/// </summary>
 		/********************************************************************/
-		private void ThemeManagerOnThemeChanged(object sender, ThemeChangedEventArgs e)
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
 		{
 			lock (animationLock)
 			{
@@ -304,8 +304,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		private void InitializePictureButtons()
 		{
-			previousPictureButton.Image = imageBank.ModuleInformation.GetPreviousPicture(themeManager.CurrentTheme.LabelColors.TextColor);
-			nextPictureButton.Image = imageBank.ModuleInformation.GetNextPicture(themeManager.CurrentTheme.LabelColors.TextColor);
+			previousPictureButton.Image = imageBank.ModuleInformation.PreviousPicture;
+			nextPictureButton.Image = imageBank.ModuleInformation.NextPicture;
 		}
 
 

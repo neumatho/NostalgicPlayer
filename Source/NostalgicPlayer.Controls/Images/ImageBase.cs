@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -14,8 +15,17 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	/// <summary>
 	/// Base class to all image classes with helper methods
 	/// </summary>
-	internal abstract class ImageBase
+	internal abstract class ImageBase : IDisposable
 	{
+		/********************************************************************/
+		/// <summary>
+		/// Dispose all the images
+		/// </summary>
+		/********************************************************************/
+		public abstract void Dispose();
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return a bitmap

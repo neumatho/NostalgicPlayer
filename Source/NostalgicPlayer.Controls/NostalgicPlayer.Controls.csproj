@@ -24,6 +24,10 @@
     <EmbeddedResource Include="Images\Resources\Form\CaptionNormalize.png" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\NextPicture.svg" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\PreviousPicture.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleLoop.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleMultiOctaves.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SamplePingPong.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleStereo.svg" />
   </ItemGroup>
 
   <ItemGroup>
