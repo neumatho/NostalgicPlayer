@@ -12,7 +12,11 @@ using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Events;
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Lists;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -25,8 +29,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class SamplePageControl : UserControl
+	public partial class SamplePageControl : UserControl, IDependencyInjectionControl
 	{
+		private IAgentManager agentManager;
+		private IThemeManager themeManager;
+		private INostalgicImageBank imageBank;
+
 		private readonly Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
 
 		private int samplePlayOctave;
@@ -62,9 +70,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		/********************************************************************/
 		/// <summary>
 		/// Initialize the control
+		///
+		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitControl(IAgentManager agentManager, SampleInfoWindowSettings settings)
+		public void InitializeControl(IAgentManager agentManager, IThemeManager themeManager, INostalgicImageBank imageBank)
+		{
+			this.agentManager = agentManager;
+			this.themeManager = themeManager;
+			this.imageBank = imageBank;
+
+			themeManager.ThemeChanged += ThemeChanged;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		/// </summary>
+		/********************************************************************/
+		public void InitControl(SampleInfoWindowSettings settings)
 		{
 			// Initialize sample play
 			samplePlayOctave = 48;
@@ -214,6 +240,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		/********************************************************************/
 		public void CleanupControl()
 		{
+			themeManager.ThemeChanged -= ThemeChanged;
+
 			sampleFileDialog?.Dispose();
 			sampleFileDialog = null;
 		}
@@ -346,6 +374,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		#endregion
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes
+		/// </summary>
+		/********************************************************************/
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			UpdateSampleImages();
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when a key is hold down in the sample list
@@ -587,32 +627,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 				{
 					SampleInfo sample = staticInfo.Samples[i];
 
-					Bitmap bitmap = null;
-					string tooltip = string.Empty;
-
-					if ((sample.Flags & SampleInfo.SampleFlag.MultiOctave) != 0)
-					{
-						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_OCTAVES);
-						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_MULTIOCTAVE}";
-					}
-
-					if ((sample.Flags & SampleInfo.SampleFlag.Stereo) != 0)
-					{
-						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_STEREO);
-						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO}";
-					}
-
-					if ((sample.Flags & SampleInfo.SampleFlag.Loop) != 0)
-					{
-						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_LOOP);
-						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_LOOP}";
-					}
-
-					if ((sample.Flags & SampleInfo.SampleFlag.PingPong) != 0)
-					{
-						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_PINGPONG);
-						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_PINGPONG}";
-					}
+					var combinedBitmap = CreateCombinedBitmap(i, sample);
 
 					DataGridViewRow row = new DataGridViewRow();
 					row.Cells.AddRange(new DataGridViewCell[]
@@ -626,7 +641,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 						new DataGridViewTextBoxCell { Value = sample.Volume },
 						new DataGridViewTextBoxCell { Value = sample.Panning == -1 ? "-" : sample.Panning },
 						new DataGridViewTextBoxCell { Value = sample.MiddleC },
-						new DataGridViewImageCell { Value =  bitmap, ToolTipText = tooltip.Length > 1 ? tooltip.Substring(1) : string.Empty },
+						new DataGridViewImageCell { Value = combinedBitmap.bitmap, ToolTipText = combinedBitmap.tooltip.Length > 1 ? combinedBitmap.tooltip.Substring(1) : string.Empty },
 						new DataGridViewTextBoxCell { Value = GetTypeString(sample.Type) }
 					});
 
@@ -640,6 +655,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 
 				// Resize the rows, so the lines are compacted
 				sampleDataGridView.AutoResizeRows();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Update all images after theme change
+		/// </summary>
+		/********************************************************************/
+		private void UpdateSampleImages()
+		{
+			for (int i = 0; i < sampleDataGridView.RowCount; i++)
+			{
+				DataGridViewRow row = sampleDataGridView.Rows[i];
+				SampleInfo sample = (SampleInfo)row.Tag;
+
+				var combinedBitmap = CreateCombinedBitmap(i, sample);
+				row.Cells[9] = new DataGridViewImageCell { Value = combinedBitmap.bitmap, ToolTipText = combinedBitmap.tooltip.Length > 1 ? combinedBitmap.tooltip.Substring(1) : string.Empty };
 			}
 		}
 
@@ -685,6 +719,45 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			}
 
 			return string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create combined bitmap
+		/// </summary>
+		/********************************************************************/
+		private (Bitmap bitmap, string tooltip) CreateCombinedBitmap(int index, SampleInfo sample)
+		{
+			string tooltip = string.Empty;
+			Bitmap bitmap = null;
+
+			if ((sample.Flags & SampleInfo.SampleFlag.MultiOctave) != 0)
+			{
+				bitmap = AppendBitmap(index, bitmap, imageBank.SampleInformation.SampleMultiOctaves);
+				tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_MULTIOCTAVE}";
+			}
+
+			if ((sample.Flags & SampleInfo.SampleFlag.Stereo) != 0)
+			{
+				bitmap = AppendBitmap(index, bitmap, imageBank.SampleInformation.SampleStereo);
+				tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO}";
+			}
+
+			if ((sample.Flags & SampleInfo.SampleFlag.Loop) != 0)
+			{
+				bitmap = AppendBitmap(index, bitmap, imageBank.SampleInformation.SampleLoop);
+				tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_LOOP}";
+			}
+
+			if ((sample.Flags & SampleInfo.SampleFlag.PingPong) != 0)
+			{
+				bitmap = AppendBitmap(index, bitmap, imageBank.SampleInformation.SamplePingPong);
+				tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_PINGPONG}";
+			}
+
+			return (bitmap, tooltip);
 		}
 
 
