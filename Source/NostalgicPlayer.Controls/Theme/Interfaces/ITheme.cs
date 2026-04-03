@@ -23,6 +23,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		IFonts StandardFonts { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by images
+		/// </summary>
+		internal IImageColors ImageColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by forms
 		/// </summary>
 		IFormColors FormColors { get; }

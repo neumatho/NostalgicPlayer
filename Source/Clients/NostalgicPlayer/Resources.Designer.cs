@@ -393,46 +393,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_LOOP {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_LOOP", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_OCTAVES {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_OCTAVES", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_PINGPONG {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_PINGPONG", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_STEREO {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_STEREO", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_SAMPLES {
             get {
                 object obj = ResourceManager.GetObject("IDB_SAMPLES", resourceCulture);
