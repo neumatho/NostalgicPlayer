@@ -10,9 +10,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Controls.Lists;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			samplePlayQueue = new Queue<PlaySampleInfo>();
 
 			// Add the columns to the sample grid
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = "#",
 					Resizable = DataGridViewTriState.True,
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn1Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_NAME,
 					Resizable = DataGridViewTriState.True,
@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn2Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_LENGTH,
 					Resizable = DataGridViewTriState.True,
@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn3Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPSTART,
 					Resizable = DataGridViewTriState.True,
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn4Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPLENGTH,
 					Resizable = DataGridViewTriState.True,
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn5Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_BITSIZE,
 					Resizable = DataGridViewTriState.True,
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn6Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_VOLUME,
 					Resizable = DataGridViewTriState.True,
@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn7Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_PANNING,
 					Resizable = DataGridViewTriState.True,
@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn8Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_MIDDLEC,
 					Resizable = DataGridViewTriState.True,
@@ -175,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.SampColumn10Pos
 				});
 
-			sampleDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			sampleDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_TYPE,
 					Resizable = DataGridViewTriState.True,
@@ -191,7 +191,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 
 			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.SampleConverters).Where(a => a.Agent.CreateInstance(a.TypeId) is ISampleSaverAgent))
 			{
-				KryptonListItem listItem = new KryptonListItem(agentInfo.TypeName);
+				NostalgicListItem listItem = new NostalgicListItem(agentInfo.TypeName);
 				listItem.Tag = agentInfo;
 
 				int index = saveFormatComboBox.Items.Add(listItem);
@@ -263,7 +263,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			settings.SampSortKey = sampleDataGridView.SortedColumn.Index;
 			settings.SampSortOrder = sampleDataGridView.SortOrder;
 
-			settings.SampleSaveFormat = ((AgentInfo)((KryptonListItem)saveFormatComboBox.SelectedItem).Tag).TypeId;
+			settings.SampleSaveFormat = ((AgentInfo)((NostalgicListItem)saveFormatComboBox.SelectedItem).Tag).TypeId;
 		}
 
 
@@ -617,17 +617,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DataGridViewRow row = new DataGridViewRow();
 					row.Cells.AddRange(new DataGridViewCell[]
 					{
-						new KryptonDataGridViewTextBoxCell { Value = i + 1 },
-						new KryptonDataGridViewTextBoxCell { Value = sample.Name, ToolTipText = sample.Name },
-						new KryptonDataGridViewTextBoxCell { Value = sample.Length },
-						new KryptonDataGridViewTextBoxCell { Value = sample.LoopStart },
-						new KryptonDataGridViewTextBoxCell { Value = sample.LoopLength },
-						new KryptonDataGridViewTextBoxCell { Value = (sample.Flags & SampleInfo.SampleFlag._16Bit) != 0 ? 16 : 8 },
-						new KryptonDataGridViewTextBoxCell { Value = sample.Volume },
-						new KryptonDataGridViewTextBoxCell { Value = sample.Panning == -1 ? "-" : sample.Panning },
-						new KryptonDataGridViewTextBoxCell { Value = sample.MiddleC },
+						new DataGridViewTextBoxCell { Value = i + 1 },
+						new DataGridViewTextBoxCell { Value = sample.Name, ToolTipText = sample.Name },
+						new DataGridViewTextBoxCell { Value = sample.Length },
+						new DataGridViewTextBoxCell { Value = sample.LoopStart },
+						new DataGridViewTextBoxCell { Value = sample.LoopLength },
+						new DataGridViewTextBoxCell { Value = (sample.Flags & SampleInfo.SampleFlag._16Bit) != 0 ? 16 : 8 },
+						new DataGridViewTextBoxCell { Value = sample.Volume },
+						new DataGridViewTextBoxCell { Value = sample.Panning == -1 ? "-" : sample.Panning },
+						new DataGridViewTextBoxCell { Value = sample.MiddleC },
 						new DataGridViewImageCell { Value =  bitmap, ToolTipText = tooltip.Length > 1 ? tooltip.Substring(1) : string.Empty },
-						new KryptonDataGridViewTextBoxCell { Value = GetTypeString(sample.Type) }
+						new DataGridViewTextBoxCell { Value = GetTypeString(sample.Type) }
 					});
 
 					row.Tag = sample;
@@ -855,7 +855,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		private void SaveSample(SampleInfo sampleInfo, string fileName)
 		{
 			// Create an instance of the sample saver agent to use
-			AgentInfo agentInfo = ((KryptonListItem)saveFormatComboBox.SelectedItem).Tag as AgentInfo;
+			AgentInfo agentInfo = ((NostalgicListItem)saveFormatComboBox.SelectedItem).Tag as AgentInfo;
 			if (agentInfo != null)
 			{
 				ISampleSaverAgent converterAgent = (ISampleSaverAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
