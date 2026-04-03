@@ -856,7 +856,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			if (SortOrder == SortOrder.None)
 				return;
 
-			int glyphX = rect.Right - GlyphWidthSize - 8;
+			int glyphX = rect.Right - GlyphWidthSize - 4;
 			int glyphY = rect.Top + ((rect.Height - 1 - GlyphHeightSize) / 2);
 
 			Point[] triangle;
