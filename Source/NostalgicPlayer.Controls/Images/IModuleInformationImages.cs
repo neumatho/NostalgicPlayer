@@ -15,11 +15,11 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// <summary>
 		/// Gets the previous picture image
 		/// </summary>
-		Bitmap GetPreviousPicture(Color color);
+		Bitmap PreviousPicture { get; }
 
 		/// <summary>
 		/// Gets the next picture image
 		/// </summary>
-		Bitmap GetNextPicture(Color color);
+		Bitmap NextPicture { get; }
 	}
 }

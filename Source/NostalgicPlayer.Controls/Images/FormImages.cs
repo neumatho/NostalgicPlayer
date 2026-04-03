@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Drawing;
 
 namespace Polycode.NostalgicPlayer.Controls.Images
@@ -11,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	/// <summary>
 	/// Holds all the images needed by the form
 	/// </summary>
-	internal class FormImages : ImageBase, IFormImages, IDisposable
+	internal class FormImages : ImageBase, IFormImages
 	{
 		private const string Category = "Form";
 
@@ -25,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Dispose all the images
 		/// </summary>
 		/********************************************************************/
-		public void Dispose()
+		public override void Dispose()
 		{
 			captionClose?.Dispose();
 			captionClose = null;

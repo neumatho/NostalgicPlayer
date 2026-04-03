@@ -6,91 +6,70 @@
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Images
+namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// Holds all the images needed by the Module Information window
+	/// Holds all colors used by the images
 	/// </summary>
-	internal class ModuleInformationImages : ThemedImageBase, IModuleInformationImages
+	internal class PurpleImageColors : IImageColors
 	{
-		private const string Category = "ModuleInformation";
+		private readonly ILabelColors labelColors = new PurpleLabelColors();
 
-		private Bitmap previousPicture;
-		private Bitmap nextPicture;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public ModuleInformationImages(IThemeManager themeManager) : base(themeManager)
-		{
-		}
-
-
+		private static readonly Color sampleLoopColor = Color.FromArgb(55, 134, 64);
+		private static readonly Color samplePingPongColor = Color.FromArgb(16, 43, 147);
+		private static readonly Color sampleStereoColor = Color.FromArgb(255, 120, 70);
+		private static readonly Color sampleMultiOctavesColor = Color.FromArgb(119, 137, 201);
 
 		/********************************************************************/
 		/// <summary>
-		/// Dispose all the images
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public override void Dispose()
-		{
-			base.Dispose();
-
-			FlushImages();
-		}
+		public Color PreviousPictureColor => labelColors.TextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Flush images
+		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void FlushImages()
-		{
-			previousPicture?.Dispose();
-			previousPicture = null;
-
-			nextPicture?.Dispose();
-			nextPicture = null;
-		}
+		public Color NextPictureColor => labelColors.TextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the previous picture image
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public Bitmap PreviousPicture
-		{
-			get
-			{
-				if (previousPicture == null)
-					previousPicture = GetSvgBitmap(Category, "PreviousPicture", CurrentColors.PreviousPictureColor, 24, 24);
-
-				return previousPicture;
-			}
-		}
+		public Color SampleLoopColor => sampleLoopColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the next picture image
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public Bitmap NextPicture
-		{
-			get
-			{
-				if (nextPicture == null)
-					nextPicture = GetSvgBitmap(Category, "NextPicture", CurrentColors.NextPictureColor, 24, 24);
+		public Color SamplePingPongColor => samplePingPongColor;
 
-				return nextPicture;
-			}
-		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color SampleStereoColor => sampleStereoColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color SampleMultiOctavesColor => sampleMultiOctavesColor;
 	}
 }
