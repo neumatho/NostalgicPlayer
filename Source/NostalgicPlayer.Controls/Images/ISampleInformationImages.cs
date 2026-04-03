@@ -3,26 +3,33 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Drawing;
+
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Contains all the images used in NostalgicPlayer
+	/// Holds all the images needed by the Sample Information window
 	/// </summary>
-	public interface INostalgicImageBank
+	public interface ISampleInformationImages
 	{
 		/// <summary>
-		/// Holds all the images needed by the form
+		/// Gets the sample loop image
 		/// </summary>
-		internal IFormImages Form { get; }
+		Bitmap SampleLoop { get; }
 
 		/// <summary>
-		/// Holds all the images needed by the Module Information window
+		/// Gets the sample ping-pong image
 		/// </summary>
-		IModuleInformationImages ModuleInformation { get; }
+		Bitmap SamplePingPong { get; }
 
 		/// <summary>
-		/// Holds all the images needed by the Sample Information window
+		/// Gets the sample stereo image
 		/// </summary>
-		ISampleInformationImages SampleInformation { get; }
+		Bitmap SampleStereo { get; }
+
+		/// <summary>
+		/// Gets the sample multi octaves image
+		/// </summary>
+		Bitmap SampleMultiOctaves { get; }
 	}
 }
