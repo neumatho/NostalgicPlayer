@@ -14,5 +14,10 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Holds all the images needed by the form
 		/// </summary>
 		internal IFormImages Form { get; }
+
+		/// <summary>
+		/// Holds all the images needed by the Module Information window
+		/// </summary>
+		IModuleInformationImages ModuleInformation { get; }
 	}
 }
