@@ -154,6 +154,28 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public DataGridViewColumn SortedColumn => nostalgicDataGridViewInternal.SortedColumn;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public SortOrder SortOrder => nostalgicDataGridViewInternal.SortOrder;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public DataGridViewCell this[int columnIndex, int rowIndex]
@@ -192,28 +214,6 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public new event MouseEventHandler MouseDoubleClick;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		protected override void OnMouseDoubleClick(MouseEventArgs e)
-		{
-			if (MouseDoubleClick != null)
-				MouseDoubleClick(this, e);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
 		public event DataGridViewCellEventHandler CellContentClick;
 
 
@@ -223,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected void OnCellContentClick(DataGridViewCellEventArgs e)
+		protected virtual void OnCellContentClick(DataGridViewCellEventArgs e)
 		{
 			if (CellContentClick != null)
 				CellContentClick(this, e);
@@ -248,7 +248,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		}
 		#endregion
 
-		#region Public methods
+		#region Redirected public methods
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -283,6 +283,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		{
 			return nostalgicDataGridViewInternal.HitTest(x, y);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Sort(DataGridViewColumn dataGridViewColumn, ListSortDirection direction)
+		{
+			nostalgicDataGridViewInternal.Sort(dataGridViewColumn, direction);
+		}
 		#endregion
 
 		#region Theme
@@ -300,12 +312,24 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		#region Handlers
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		private void SelectionChangedHandler(object sender, EventArgs e)
+		private void KeyDownHandler(object sender, KeyEventArgs e)
 		{
-			OnSelectionChanged(e);
+			OnKeyDown(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		private void KeyUpHandler(object sender, KeyEventArgs e)
+		{
+			OnKeyUp(e);
 		}
 
 
@@ -325,6 +349,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		/// <summary>
 		/// 
+		/// </summary>
+		/********************************************************************/
+		private void SelectionChangedHandler(object sender, EventArgs e)
+		{
+			OnSelectionChanged(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
 		/// </summary>
 		/********************************************************************/
 		private void CellContentClickHandler(object sender, DataGridViewCellEventArgs e)
