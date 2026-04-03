@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Containers;
@@ -39,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		public void InitControl(SampleInfoWindowSettings settings)
 		{
 			// Add the columns to the instrument grid
-			instrumentDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			instrumentDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = "#",
 					Resizable = DataGridViewTriState.True,
@@ -49,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.InstColumn1Pos
 				});
 
-			instrumentDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			instrumentDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_INST_COLUMN_NAME,
 					Resizable = DataGridViewTriState.True,
@@ -58,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DisplayIndex = settings.InstColumn2Pos
 				});
 
-			instrumentDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			instrumentDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 				{
 					Name = Resources.IDS_SAMPLE_INFO_INST_COLUMN_SAMPLENUM,
 					Resizable = DataGridViewTriState.True,
@@ -139,9 +138,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 					DataGridViewRow row = new DataGridViewRow();
 					row.Cells.AddRange(new DataGridViewCell[]
 					{
-						new KryptonDataGridViewTextBoxCell { Value = i + 1 },
-						new KryptonDataGridViewTextBoxCell { Value = instrument.Name, ToolTipText = instrument.Name },
-						new KryptonDataGridViewTextBoxCell { Value = sampleUsed.Count }
+						new DataGridViewTextBoxCell { Value = i + 1 },
+						new DataGridViewTextBoxCell { Value = instrument.Name, ToolTipText = instrument.Name },
+						new DataGridViewTextBoxCell { Value = sampleUsed.Count }
 					});
 
 					instrumentDataGridView.Rows.Add(row);
