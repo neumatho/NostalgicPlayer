@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
@@ -50,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IModuleHandlerService moduleHandlerService, IAgentManager agentManager)
+		public void InitializeForm(IModuleHandlerService moduleHandlerService)
 		{
 			// Remember the arguments
 			moduleHandler = moduleHandlerService;
@@ -70,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			tabControl.SelectedIndex = settings.AutoSelectTab;
 
 			instrumentPageControl.InitControl(settings);
-			samplePageControl.InitControl(agentManager, settings);
+			samplePageControl.InitControl(settings);
 
 			RefreshWindow();
 		}
