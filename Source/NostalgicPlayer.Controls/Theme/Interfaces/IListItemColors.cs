@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 	/// <summary>
 	/// Holds all colors used by a themed list item
 	/// </summary>
-	public interface IListItemColors
+	internal interface IListItemColors
 	{
 		/// <summary></summary>
 		Color NormalBackgroundStartColor { get; }

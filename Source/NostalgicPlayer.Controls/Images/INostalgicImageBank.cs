@@ -19,5 +19,10 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Holds all the images needed by the Module Information window
 		/// </summary>
 		IModuleInformationImages ModuleInformation { get; }
+
+		/// <summary>
+		/// Holds all the images needed by the Sample Information window
+		/// </summary>
+		ISampleInformationImages SampleInformation { get; }
 	}
 }

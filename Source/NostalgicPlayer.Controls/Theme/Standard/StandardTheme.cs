@@ -13,6 +13,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 	{
 		private StandardFonts standardFonts;
 
+		private static readonly StandardImageColors imageColors = new StandardImageColors();
 		private static readonly StandardFormColors formColors = new StandardFormColors();
 		private static readonly StandardBoxColors boxColors = new StandardBoxColors();
 		private static readonly StandardButtonColors buttonColors = new StandardButtonColors();
@@ -63,6 +64,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public IFonts StandardFonts => standardFonts;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by images
+		/// </summary>
+		/********************************************************************/
+		public IImageColors ImageColors => imageColors;
 
 
 

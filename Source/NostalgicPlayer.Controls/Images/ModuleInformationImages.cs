@@ -3,15 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Drawing;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
 	/// Holds all the images needed by the Module Information window
 	/// </summary>
-	internal class ModuleInformationImages : ImageBase, IModuleInformationImages, IDisposable
+	internal class ModuleInformationImages : ThemedImageBase, IModuleInformationImages
 	{
 		private const string Category = "ModuleInformation";
 
@@ -20,10 +20,35 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ModuleInformationImages(IThemeManager themeManager) : base(themeManager)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Dispose all the images
 		/// </summary>
 		/********************************************************************/
-		public void Dispose()
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			FlushImages();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Flush images
+		/// </summary>
+		/********************************************************************/
+		protected override void FlushImages()
 		{
 			previousPicture?.Dispose();
 			previousPicture = null;
@@ -39,12 +64,15 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Gets the previous picture image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap GetPreviousPicture(Color color)
+		public Bitmap PreviousPicture
 		{
-			if (previousPicture == null)
-				previousPicture = GetSvgBitmap(Category, "PreviousPicture", color, 24, 24);
+			get
+			{
+				if (previousPicture == null)
+					previousPicture = GetSvgBitmap(Category, "PreviousPicture", CurrentColors.PreviousPictureColor, 24, 24);
 
-			return previousPicture;
+				return previousPicture;
+			}
 		}
 
 
@@ -54,12 +82,15 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Gets the next picture image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap GetNextPicture(Color color)
+		public Bitmap NextPicture
 		{
-			if (nextPicture == null)
-				nextPicture = GetSvgBitmap(Category, "NextPicture", color, 24, 24);
+			get
+			{
+				if (nextPicture == null)
+					nextPicture = GetSvgBitmap(Category, "NextPicture", CurrentColors.NextPictureColor, 24, 24);
 
-			return nextPicture;
+				return nextPicture;
+			}
 		}
 	}
 }

@@ -14,6 +14,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 	public class PurpleTheme : ITheme, IDisposable
 	{
 		private StandardFonts standardFonts;
+
+		private static readonly PurpleImageColors imageColors = new PurpleImageColors();
 		private static readonly PurpleFormColors formColors = new PurpleFormColors();
 		private static readonly PurpleBoxColors boxColors = new PurpleBoxColors();
 		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
@@ -64,6 +66,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public IFonts StandardFonts => standardFonts;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by images
+		/// </summary>
+		/********************************************************************/
+		public IImageColors ImageColors => imageColors;
 
 
 
