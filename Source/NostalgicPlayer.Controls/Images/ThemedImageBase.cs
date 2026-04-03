@@ -3,28 +3,28 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Drawing;
+using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Holds all the images needed by the Module Information window
+	/// Base class to all image classes which used themed colors
 	/// </summary>
-	internal class ModuleInformationImages : ThemedImageBase, IModuleInformationImages
+	internal abstract class ThemedImageBase : ImageBase
 	{
-		private const string Category = "ModuleInformation";
-
-		private Bitmap previousPicture;
-		private Bitmap nextPicture;
+		private readonly IThemeManager themeManager;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInformationImages(IThemeManager themeManager) : base(themeManager)
+		protected ThemedImageBase(IThemeManager themeManager)
 		{
+			this.themeManager = themeManager;
+
+			themeManager.ThemeChanged += ThemeChanged;
 		}
 
 
@@ -36,8 +36,19 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		public override void Dispose()
 		{
-			base.Dispose();
+			themeManager.ThemeChanged -= ThemeChanged;
+		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes. Update all controls and redraw
+		/// itself
+		/// </summary>
+		/********************************************************************/
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
 			FlushImages();
 		}
 
@@ -48,49 +59,15 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Flush images
 		/// </summary>
 		/********************************************************************/
-		protected override void FlushImages()
-		{
-			previousPicture?.Dispose();
-			previousPicture = null;
-
-			nextPicture?.Dispose();
-			nextPicture = null;
-		}
+		protected abstract void FlushImages();
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the previous picture image
+		/// Return current themed colors
 		/// </summary>
 		/********************************************************************/
-		public Bitmap PreviousPicture
-		{
-			get
-			{
-				if (previousPicture == null)
-					previousPicture = GetSvgBitmap(Category, "PreviousPicture", CurrentColors.PreviousPictureColor, 24, 24);
-
-				return previousPicture;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Gets the next picture image
-		/// </summary>
-		/********************************************************************/
-		public Bitmap NextPicture
-		{
-			get
-			{
-				if (nextPicture == null)
-					nextPicture = GetSvgBitmap(Category, "NextPicture", CurrentColors.NextPictureColor, 24, 24);
-
-				return nextPicture;
-			}
-		}
+		protected IImageColors CurrentColors => themeManager.CurrentTheme.ImageColors;
 	}
 }
