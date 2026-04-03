@@ -8,26 +8,22 @@ using System.Drawing;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 {
 	/// <summary>
-	/// Holds all colors used by a themed list item
+	/// Holds all colors used by the images
 	/// </summary>
-	internal interface IListItemColors
+	public interface IImageColors
 	{
 		/// <summary></summary>
-		Color NormalBackgroundStartColor { get; }
+		Color PreviousPictureColor { get; }
 		/// <summary></summary>
-		Color NormalBackgroundMiddleColor { get; }
-		/// <summary></summary>
-		Color NormalBackgroundStopColor { get; }
-		/// <summary></summary>
-		Color NormalTextColor { get; }
+		Color NextPictureColor { get; }
 
 		/// <summary></summary>
-		Color SelectedBackgroundStartColor { get; }
+		Color SampleLoopColor { get; }
 		/// <summary></summary>
-		Color SelectedBackgroundMiddleColor { get; }
+		Color SamplePingPongColor { get; }
 		/// <summary></summary>
-		Color SelectedBackgroundStopColor { get; }
+		Color SampleStereoColor { get; }
 		/// <summary></summary>
-		Color SelectedTextColor { get; }
+		Color SampleMultiOctavesColor { get; }
 	}
 }
