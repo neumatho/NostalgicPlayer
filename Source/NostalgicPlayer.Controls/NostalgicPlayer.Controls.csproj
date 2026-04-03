@@ -22,6 +22,8 @@
     <EmbeddedResource Include="Images\Resources\Form\CaptionMaximize.png" />
     <EmbeddedResource Include="Images\Resources\Form\CaptionMinimize.png" />
     <EmbeddedResource Include="Images\Resources\Form\CaptionNormalize.png" />
+    <EmbeddedResource Include="Images\Resources\ModuleInformation\NextPicture.svg" />
+    <EmbeddedResource Include="Images\Resources\ModuleInformation\PreviousPicture.svg" />
   </ItemGroup>
 
   <ItemGroup>
