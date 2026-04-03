@@ -29,77 +29,37 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			instrumentGroup = new Krypton.Toolkit.KryptonGroup();
-			instrumentDataGridView = new Krypton.Toolkit.KryptonDataGridView();
-			monoFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			((System.ComponentModel.ISupportInitialize)instrumentGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)instrumentGroup.Panel).BeginInit();
-			instrumentGroup.Panel.SuspendLayout();
+			instrumentDataGridView = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicDataGridView();
+			monoFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			((System.ComponentModel.ISupportInitialize)instrumentDataGridView).BeginInit();
 			SuspendLayout();
 			// 
-			// instrumentGroup
-			// 
-			instrumentGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			instrumentGroup.Location = new System.Drawing.Point(8, 8);
-			instrumentGroup.Name = "instrumentGroup";
-			// 
-			// 
-			// 
-			instrumentGroup.Panel.Controls.Add(instrumentDataGridView);
-			instrumentGroup.Size = new System.Drawing.Size(414, 130);
-			instrumentGroup.TabIndex = 0;
-			// 
 			// instrumentDataGridView
 			// 
-			instrumentDataGridView.AllowUserToAddRows = false;
-			instrumentDataGridView.AllowUserToDeleteRows = false;
 			instrumentDataGridView.AllowUserToOrderColumns = true;
-			instrumentDataGridView.AllowUserToResizeRows = false;
-			instrumentDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			instrumentDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			instrumentDataGridView.Location = new System.Drawing.Point(0, 0);
-			instrumentDataGridView.MultiSelect = false;
+			instrumentDataGridView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			instrumentDataGridView.Location = new System.Drawing.Point(8, 8);
 			instrumentDataGridView.Name = "instrumentDataGridView";
-			instrumentDataGridView.Palette = monoFontPalette;
-			instrumentDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			instrumentDataGridView.ReadOnly = true;
-			instrumentDataGridView.RowHeadersVisible = false;
-			instrumentDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			instrumentDataGridView.ShowCellErrors = false;
-			instrumentDataGridView.ShowEditingIcon = false;
-			instrumentDataGridView.ShowRowErrors = false;
-			instrumentDataGridView.Size = new System.Drawing.Size(412, 128);
-			instrumentDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			instrumentDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
-			instrumentDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			instrumentDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right;
+			instrumentDataGridView.Size = new System.Drawing.Size(414, 130);
 			instrumentDataGridView.TabIndex = 0;
+			instrumentDataGridView.UseFont = monoFontConfiguration;
 			// 
-			// monoFontPalette
+			// monoFontConfiguration
 			// 
-			monoFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			monoFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			monoFontPalette.ThemeName = "";
-			monoFontPalette.UseKryptonFileDialogs = true;
-			monoFontPalette.UseMonospaceOnGrid = true;
+			monoFontConfiguration.FontType = NostalgicPlayer.Controls.FontType.Monospace;
 			// 
 			// InstrumentPageControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			Controls.Add(instrumentGroup);
+			Controls.Add(instrumentDataGridView);
 			Name = "InstrumentPageControl";
 			Size = new System.Drawing.Size(430, 146);
-			((System.ComponentModel.ISupportInitialize)instrumentGroup.Panel).EndInit();
-			instrumentGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)instrumentGroup).EndInit();
 			((System.ComponentModel.ISupportInitialize)instrumentDataGridView).EndInit();
 			ResumeLayout(false);
 		}
 
 		#endregion
-		private Krypton.Toolkit.KryptonGroup instrumentGroup;
-		private Krypton.Toolkit.KryptonDataGridView instrumentDataGridView;
-		private Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette monoFontPalette;
+		private NostalgicPlayer.Controls.Lists.NostalgicDataGridView instrumentDataGridView;
+		private NostalgicPlayer.Controls.Components.FontConfiguration monoFontConfiguration;
 	}
 }
