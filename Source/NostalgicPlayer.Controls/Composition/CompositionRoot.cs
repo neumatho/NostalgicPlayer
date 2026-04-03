@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using SimpleInjector;
@@ -22,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Controls.Composition
 		public static void RegisterControls(this Container container)
 		{
 			container.RegisterSingleton<IThemeManager, ThemeManager>();
+			container.RegisterSingleton<INostalgicImageBank, NostalgicImageBank>();
 		}
 	}
 }
