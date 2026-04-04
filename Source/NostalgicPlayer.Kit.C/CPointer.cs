@@ -156,6 +156,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
+		public CPointer(Memory<T> buffer)
+		{
+			internalBuffer = buffer;
+			bufferOffset = 0;
+			bufferSet = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
 		private CPointer(CPointer<T> pointer, int offset)
 		{
 			if (pointer.IsNotNull)
@@ -734,6 +748,21 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			Type[] genericArgs = internalBuffer.GetType().GetGenericArguments();
 
 			return genericArgs[0];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the backing array and the byte offset into it
+		/// </summary>
+		/********************************************************************/
+		(Array, int) IPointerInternal.GetBackingArrayInfo()
+		{
+			if (MemoryMarshal.TryGetArray(internalBuffer, out ArraySegment<T> segment))
+				return (segment.Array, (segment.Offset + bufferOffset) * Unsafe.SizeOf<T>());
+
+			throw new NotSupportedException();
 		}
 
 

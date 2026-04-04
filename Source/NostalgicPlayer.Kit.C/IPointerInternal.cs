@@ -16,5 +16,10 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// Return the type of the elements
 		/// </summary>
 		Type GetElementType();
+
+		/// <summary>
+		/// Return the backing array and the byte offset into it
+		/// </summary>
+		(Array Array, int ByteOffset) GetBackingArrayInfo();
 	}
 }
