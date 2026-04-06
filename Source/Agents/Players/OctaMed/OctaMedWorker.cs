@@ -1297,7 +1297,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 								sampleInfo.MultiOctaveSamples[oct + 1].Sample = sample.GetPlayBuffer(note, ref repeat, ref repLen);
 								sampleInfo.MultiOctaveSamples[oct + 1].SampleOffset = 0;
-								sampleInfo.MultiOctaveSamples[oct + 1].Length = sampleInfo.MultiOctaveSamples[oct + 1].Length;
+								sampleInfo.MultiOctaveSamples[oct + 1].Length = (uint)sampleInfo.MultiOctaveSamples[oct + 1].Sample.Length;
 								sampleInfo.MultiOctaveSamples[oct + 1].LoopStart = repeat;
 								sampleInfo.MultiOctaveSamples[oct + 1].LoopLength = repLen;
 								sampleInfo.MultiOctaveSamples[oct + 1].NoteAdd = sample.GetNoteDifference(note);

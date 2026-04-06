@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
@@ -13,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Player_Data
+	internal class Player_Data : IDeepCloneable<Player_Data>
 	{
 		public c_int Ord;
 		public c_int Pos;
