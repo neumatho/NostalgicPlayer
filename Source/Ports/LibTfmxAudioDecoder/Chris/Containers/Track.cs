@@ -3,35 +3,33 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 {
 	/// <summary>
-	/// Holds all the information about the player state at a specific time
+	/// 
 	/// </summary>
-	internal class Snapshot : ISnapshot
+	internal class Track : IDeepCloneable<Track>
 	{
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public Snapshot(GlobalPlayingInfo playingInfo)
-		{
-			PlayingInfo = playingInfo.MakeDeepClone();
-		}
+		public ubyte Pt;
+		public sbyte Tr;
+		public bool On;					// Mute flag
 
-
+		public Pattern Pattern = new Pattern();
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Make a deep copy of the current object
 		/// </summary>
 		/********************************************************************/
-		public GlobalPlayingInfo PlayingInfo
+		public Track MakeDeepClone()
 		{
-			get;
+			Track clone = (Track)MemberwiseClone();
+
+			clone.Pattern = Pattern.MakeDeepClone();
+
+			return clone;
 		}
 	}
 }

@@ -129,6 +129,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				subSongInfo = new SubSongInfo(result.Count, 0);
 				allDurationInfo = result.ToArray();
 
+				DurationDone();
+
 				// ReSharper disable once CoVariantArrayConversion
 				return allDurationInfo;
 			}
@@ -219,6 +221,17 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		protected virtual void CleanupDuration()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the duration calculation is done for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		protected virtual void DurationDone()
 		{
 		}
 

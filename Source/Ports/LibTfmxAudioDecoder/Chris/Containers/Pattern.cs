@@ -5,38 +5,30 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 {
-	internal delegate bool Loop(Hdb hw);
-
 	/// <summary>
+	/// 
 	/// </summary>
-	internal class Hdb : IDeepCloneable<Hdb>
+	internal class Pattern : IDeepCloneable<Pattern>
 	{
-		public uint Pos { get; set; }
-		public uint Delta { get; set; }
-		public ushort SLen { get; set; }
-		public ushort SampleLength { get; set; }
-		public int SBeg { get; set; }
-		public int SampleStart { get; set; }
-		public byte Vol { get; set; }
-		public byte Mode { get; set; }
-		public Loop Loop { get; set; }
-		public Cdb C { get; set; }
+		public udword Offset;
+		public udword OffsetSaved;
+		public uword Step;
+		public uword StepSaved;
+		public ubyte Wait;
+		public sbyte Loops;
+		public bool EvalNext;
+		public bool InfiniteLoop;
 
 		/********************************************************************/
 		/// <summary>
 		/// Make a deep copy of the current object
 		/// </summary>
 		/********************************************************************/
-		public Hdb MakeDeepClone()
+		public Pattern MakeDeepClone()
 		{
-			Hdb clone = (Hdb)MemberwiseClone();
-
-			clone.C = C.MakeDeepClone();
-			clone.C.Hw = clone;
-
-			return clone;
+			return (Pattern)MemberwiseClone();
 		}
 	}
 }

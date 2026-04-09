@@ -95,11 +95,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public IdentifyFormatInfo IdentifyFormat(PlayerFileInfo fileInfo)
 		{
-			ModuleType moduleType = TfmxIdentifier.TestModule(fileInfo);
-			if (moduleType == ModuleType.Unknown)
+			var identifyResult = TfmxIdentifier.TestModule(fileInfo);
+			if (identifyResult.moduleType == ModuleType.Unknown)
 				return null;
 
-			return new IdentifyFormatInfo(new TfmxWorker(moduleType), moduleTypeLookup[moduleType]);
+			return new IdentifyFormatInfo(new TfmxWorker(identifyResult.moduleType, identifyResult.singleFile), moduleTypeLookup[identifyResult.moduleType]);
 		}
 		#endregion
 	}

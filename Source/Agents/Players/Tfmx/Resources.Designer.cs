@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -72,9 +72,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Chris Hülsbeck.
-        ///Converted to C by Jonathan H. Pickard and some fixes by Per Lindén.
-        ///Converted to C# and some extra fixes by Thomas Neumann.
+        ///   Looks up a localized string similar to Original player on the Amiga by Chris Hülsbeck.
+        ///C player created by Michael Schwendt.
+        ///Converted to C# by Thomas Neumann.
         ///
         ///This is the first version of the format and only a few modules exists in this format. The player can play both one and two file formats..
         /// </summary>
@@ -85,9 +85,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Chris Hülsbeck.
-        ///Converted to C by Jonathan H. Pickard and some fixes by Per Lindén.
-        ///Converted to C# and some extra fixes by Thomas Neumann.
+        ///   Looks up a localized string similar to Original player on the Amiga by Chris Hülsbeck.
+        ///C player created by Michael Schwendt.
+        ///Converted to C# by Thomas Neumann.
         ///
         ///Most of Chris Hülsbeck music is made with this version. It is still 4 voices modules. The player can play both one and two file formats..
         /// </summary>
@@ -98,9 +98,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Chris Hülsbeck and Jochen Hippel.
-        ///Converted to C by Jonathan H. Pickard and some fixes by Per Lindén.
-        ///Converted to C# and some extra fixes by Thomas Neumann.
+        ///   Looks up a localized string similar to Original player on the Amiga by Chris Hülsbeck.
+        ///C player created by Michael Schwendt.
+        ///Converted to C# by Thomas Neumann.
         ///
         ///This is the 7 voices version of this format. Chris used Jochen Hippel mixer, because Jochen had written a great mixer routine on the Amiga. The player can play both one and two file formats..
         /// </summary>
@@ -111,11 +111,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t read the module header.
+        ///   Looks up a localized string similar to Can&apos;t read the module.
         /// </summary>
-        internal static string IDS_TFMX_ERR_LOADING_HEADER {
+        internal static string IDS_TFMX_ERR_LOADING {
             get {
-                return ResourceManager.GetString("IDS_TFMX_ERR_LOADING_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_TFMX_ERR_LOADING", resourceCulture);
             }
         }
         
@@ -125,6 +125,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         internal static string IDS_TFMX_ERR_LOADING_SAMPLE {
             get {
                 return ResourceManager.GetString("IDS_TFMX_ERR_LOADING_SAMPLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number of voices do not match.
+        /// </summary>
+        internal static string IDS_TFMX_ERR_VOICE_COUNT {
+            get {
+                return ResourceManager.GetString("IDS_TFMX_ERR_VOICE_COUNT", resourceCulture);
             }
         }
         
@@ -147,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used macros:.
+        ///   Looks up a localized string similar to Playing position:.
         /// </summary>
         internal static string IDS_TFMX_INFODESCLINE2 {
             get {
@@ -156,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Playing position:.
+        ///   Looks up a localized string similar to Playing tracks:.
         /// </summary>
         internal static string IDS_TFMX_INFODESCLINE3 {
             get {
@@ -165,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Playing tracks:.
+        ///   Looks up a localized string similar to Current speed:.
         /// </summary>
         internal static string IDS_TFMX_INFODESCLINE4 {
             get {
@@ -174,20 +183,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Current tempo (Hz):.
         /// </summary>
         internal static string IDS_TFMX_INFODESCLINE5 {
             get {
                 return ResourceManager.GetString("IDS_TFMX_INFODESCLINE5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Current tempo (BPM):.
-        /// </summary>
-        internal static string IDS_TFMX_INFODESCLINE6 {
-            get {
-                return ResourceManager.GetString("IDS_TFMX_INFODESCLINE6", resourceCulture);
             }
         }
         

@@ -3,29 +3,28 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 {
 	/// <summary>
+	/// 
 	/// </summary>
-	internal class Idb : IDeepCloneable<Idb>
+	internal class Cmd : IDeepCloneable<Cmd>
 	{
-		public ushort[] Cue { get; set; } = new ushort[4];
+		public ubyte Aa;
+		public ubyte Bb;
+		public ubyte Cd;
+		public ubyte Ee;
 
 		/********************************************************************/
 		/// <summary>
 		/// Make a deep copy of the current object
 		/// </summary>
 		/********************************************************************/
-		public Idb MakeDeepClone()
+		public Cmd MakeDeepClone()
 		{
-			Idb clone = (Idb)MemberwiseClone();
-
-			clone.Cue = ArrayHelper.CloneArray(Cue);
-
-			return clone;
+			return (Cmd)MemberwiseClone();
 		}
 	}
 }

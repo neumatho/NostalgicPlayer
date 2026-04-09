@@ -5,32 +5,29 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 {
 	/// <summary>
+	/// 
 	/// </summary>
-	internal class Mdb : IDeepCloneable<Mdb>
+	internal class Admin : IDeepCloneable<Admin>
 	{
-		public bool PlayerEnable { get; set; }
-		public bool EndFlag { get; set; }
-		public ushort SpeedCnt { get; set; }
-		public ushort CiaSave { get; set; }
-		public bool PlayPattFlag { get; set; }
-		public sbyte MasterVol { get; set; }
-		public sbyte FadeDest { get; set; }
-		public sbyte FadeTime { get; set; }
-		public sbyte FadeReset { get; set; }
-		public sbyte FadeSlope { get; set; }
-		public short TrackLoop { get; set; }
+		public sword Speed;			// Speed
+		public sword Count;			// Speed count
+		public c_int StartSpeed;
+		public c_int StartSong;
+
+		public bool Initialized;	// True => restartable
+		public uword RandomWord;
 
 		/********************************************************************/
 		/// <summary>
 		/// Make a deep copy of the current object
 		/// </summary>
 		/********************************************************************/
-		public Mdb MakeDeepClone()
+		public Admin MakeDeepClone()
 		{
-			return (Mdb)MemberwiseClone();
+			return (Admin)MemberwiseClone();
 		}
 	}
 }

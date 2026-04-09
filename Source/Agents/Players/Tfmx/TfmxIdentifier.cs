@@ -3,12 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.IO;
-using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers;
-using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 {
@@ -17,6 +17,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 	/// </summary>
 	internal static class TfmxIdentifier
 	{
+		private static readonly uint[] tfmx15Variants =
+		[
+			// Danger Freak (1989)
+			0x48960d8c, 0x5dcd624f, 0x3f0b151f,
+
+			// Hard'n'Heavy (1989)
+			0x27f8998c, 0x26447707, 0xd404651b, 0xb5348633,
+
+			// R-Type (1989)
+			0x8ac70fc8
+		];
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -28,16 +40,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Tests the module to see which type of module it is
+		/// Tests the module to see which type of module it is.
+		///
+		/// I still use my original detection routine, since the real
+		/// detection is merged into the init functionality in
+		/// LibTfmxAudioDecoder
 		/// </summary>
 		/********************************************************************/
-		public static ModuleType TestModule(PlayerFileInfo fileInfo)
+		public static (ModuleType moduleType, bool singleFile) TestModule(PlayerFileInfo fileInfo)
 		{
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
 			if (moduleStream.Length < 512)
-				return ModuleType.Unknown;
+				return (ModuleType.Unknown, false);
 
 			int startOffset = 0;
 
@@ -57,26 +73,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					switch (tfhdHeader.Type & 127)
 					{
 						case 1:
-							return ModuleType.Tfmx15;
+							return (ModuleType.Tfmx15, true);
 
 						case 2:
-							return ModuleType.TfmxPro;
+							return (ModuleType.TfmxPro, true);
 
 						case 3:
-							return ModuleType.Tfmx7V;
+							return (ModuleType.Tfmx7V, true);
 					}
 
-					return ModuleType.Unknown;
+					return (ModuleType.Unknown, false);
 				}
 			}
 			else
 			{
-				TfmxModHeader modHeader = IsTfmxModFile(moduleStream, false);
-				if (modHeader != null)
+				if (IsTfmxModFile(moduleStream))
 					startOffset = 20;
 			}
 
+			if (IsStModule(moduleStream, startOffset))
+				return (ModuleType.Unknown, false);
+
 			// Check for two-file format. Read the mark
+			bool singleFile = startOffset > 0;
 			moduleStream.Seek(startOffset, SeekOrigin.Begin);
 
 			uint mark1 = moduleStream.Read_B_UINT32();
@@ -87,7 +106,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			//
 			// If the file starts with TFMX and does not have SONG, it's the old format
 			if ((mark1 == 0x54464d58) && ((mark2 & 0xff000000) == 0x20000000) && ((mark2 & 0x00ffffff) != 0x00534f4e) && (mark3 != 0x47))
-				return ModuleType.Tfmx15;
+				return (ModuleType.Tfmx15, singleFile);
+
+			// Make a check for Danger Freak, since it is a special variant of TFMX 1.5
+			moduleStream.Seek(startOffset + 0x1d4, SeekOrigin.Begin);
+			uint offset = moduleStream.Read_B_UINT32();
+			if (offset == 0)
+				offset = 0x400;
+
+			moduleStream.Seek(startOffset + offset, SeekOrigin.Begin);
+			offset = moduleStream.Read_B_UINT32();
+
+			byte[] checkBuffer = new byte[0x100];
+			moduleStream.Seek(startOffset + offset, SeekOrigin.Begin);
+			moduleStream.ReadInto(checkBuffer, 0, checkBuffer.Length);
+
+			uint crc = CrcLight.Get(checkBuffer, 0, 0x100);
+			if (tfmx15Variants.Contains(crc))
+				return (ModuleType.Tfmx15, singleFile);
 
 			// TFMX-SONG / TFMX_SONG / tfmxsong
 			if (((mark1 == 0x54464d58) && ((mark2 == 0x2d534f4e) || (mark2 == 0x5f534f4e)) && (mark3 == 0x47)) || ((mark1 == 0x74666d78) && (mark2 == 0x736f6e67)))
@@ -101,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 				// Get the track step offset
 				moduleStream.Seek(startOffset + 0x1d0, SeekOrigin.Begin);
-				uint offset = moduleStream.Read_B_UINT32();
+				offset = moduleStream.Read_B_UINT32();
 				if (offset == 0)
 					offset = 0x800;
 
@@ -123,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					{
 						// Find the position in the file where the current track step
 						// information to read is stored
-						moduleStream.Seek(startOffset + offset + position * 16, SeekOrigin.Begin);
+						moduleStream.Seek(startOffset + offset + (position * 16), SeekOrigin.Begin);
 
 						// If the track step information isn't a command, stop
 						// the checking
@@ -155,6 +191,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 											position = moduleStream.Read_B_UINT16();
 										}
 									}
+
 									break;
 								}
 
@@ -189,13 +226,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 						break;
 				}
 
-				if (IsStModule(moduleStream, startOffset))
-					return ModuleType.Unknown;
-
-				return gotTimeShare ? ModuleType.Tfmx7V : ModuleType.TfmxPro;
+				return (gotTimeShare ? ModuleType.Tfmx7V : ModuleType.TfmxPro, singleFile);
 			}
 
-			return ModuleType.Unknown;
+			return (ModuleType.Unknown, false);
 		}
 
 
@@ -206,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// If that is true, it will load the structure
 		/// </summary>
 		/********************************************************************/
-		public static TfhdHeader IsTfhdFile(ModuleStream moduleStream)
+		private static TfhdHeader IsTfhdFile(ModuleStream moduleStream)
 		{
 			// Seek to the start of the file
 			moduleStream.Seek(0, SeekOrigin.Begin);
@@ -233,125 +267,74 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Will check the current file to see if it's a ST module
+		/// Will check the current file to see if it's in TFMX-MOD format.
+		/// If that is true, it will load the structure
 		/// </summary>
 		/********************************************************************/
-		public static bool IsStModule(ModuleStream moduleStream, int startOffset)
+		private static bool IsTfmxModFile(ModuleStream moduleStream)
 		{
-			moduleStream.Seek(startOffset + 0x1d4, SeekOrigin.Begin);
+			// Seek to the start of the file
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			int startIndex;
-			int endIndex = moduleStream.Read_B_INT32();
-
-			if (endIndex == 0)
-			{
-				moduleStream.Seek(startOffset + 0x600, SeekOrigin.Begin);
-				startIndex = moduleStream.Read_B_INT32();
-
-				moduleStream.Seek(startOffset + 0x7fc, SeekOrigin.Begin);
-				endIndex = moduleStream.Read_B_INT32();
-			}
-			else
-			{
-				startIndex = moduleStream.Read_B_INT32();
-
-				moduleStream.Seek(startOffset + startIndex, SeekOrigin.Begin);
-				startIndex = moduleStream.Read_B_INT32();
-			}
-
-			byte[] buffer = new byte[endIndex - startIndex];
-
-			moduleStream.Seek(startOffset + startIndex, SeekOrigin.Begin);
-			moduleStream.ReadInto(buffer, 0, buffer.Length);
-
-			for (int i = 0; i < buffer.Length; i += 4)
-			{
-				if ((buffer[i] > 63) && (buffer[i] < 128))
-					return true;
-			}
-
-			return false;
+			// Check the mark
+			return moduleStream.ReadMark(8) == "TFMX-MOD";
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Will check the current file to see if it's in TFMX-MOD format.
-		/// If that is true, it will load the structure
+		/// Will check the current file to see if it's an ST module
 		/// </summary>
 		/********************************************************************/
-		public static TfmxModHeader IsTfmxModFile(ModuleStream moduleStream, bool loadInfo)
+		private static bool IsStModule(ModuleStream moduleStream, int startOffset)
 		{
-			// Seek to the start of the file
-			moduleStream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(startOffset + 0x1d8, SeekOrigin.Begin);
+			int macroIndex = moduleStream.Read_B_INT32();
 
-			// Check the mark
-			if (moduleStream.ReadMark(8) == "TFMX-MOD")
+			if (macroIndex == 0)
+				macroIndex = 0x600;
+
+			// Only check the first 7 macros
+			moduleStream.Seek(startOffset + macroIndex, SeekOrigin.Begin);
+
+			uint[] offsets = new uint[8];
+			moduleStream.ReadArray_B_UINT32s(offsets, 0, offsets.Length);
+
+			bool foundHighMacroCmd = false;
+
+			for (int i = 0; i < offsets.Length - 1; i++)
 			{
-				TfmxModHeader header = new TfmxModHeader();
+				uint macroOffs = offsets[i];
+				uint macroEnd = offsets[i + 1];
 
-				header.OffsetToSample = moduleStream.Read_L_UINT32();
-				header.OffsetToInfo = moduleStream.Read_L_UINT32();
-				header.Reserved = moduleStream.Read_L_UINT32();
+				if (macroEnd <= macroOffs)
+					break;
 
-				if (loadInfo)
+				bool foundStop = false;
+
+				byte[] buffer = new byte[macroEnd - macroOffs];
+
+				moduleStream.Seek(startOffset + macroOffs, SeekOrigin.Begin);
+				moduleStream.ReadInto(buffer, 0, buffer.Length);
+
+				for (int j = 0; j < buffer.Length; j += 4)
 				{
-					Encoding encoder = EncoderCollection.Win1252;
-
-					moduleStream.Seek(header.OffsetToInfo, SeekOrigin.Begin);
-
-					while (moduleStream.Position < moduleStream.Length)
+					if (buffer[j] == 7)
 					{
-						byte type = moduleStream.Read_UINT8();
-						if (type == 0)
-						{
-							moduleStream.Seek(4, SeekOrigin.Current);
-							header.StartSong = moduleStream.Read_UINT8();
-							break;
-						}
-
-						ushort length = moduleStream.Read_L_UINT16();
-
-						switch (type)
-						{
-							case 1:
-							{
-								header.Author = moduleStream.ReadString(encoder, length);
-								break;
-							}
-
-							case 2:
-							{
-								header.Game = moduleStream.ReadString(encoder, length);
-								break;
-							}
-
-							case 5:
-							{
-								header.Flag = moduleStream.Read_UINT8();
-								break;
-							}
-
-							case 6:
-							{
-								header.Title = moduleStream.ReadString(encoder, length);
-								break;
-							}
-
-							default:
-							{
-								moduleStream.Seek(length, SeekOrigin.Current);
-								break;
-							}
-						}
+						foundStop = true;
+						break;
 					}
+
+					if (buffer[j] >= 64)
+						foundHighMacroCmd = true;
 				}
 
-				return header;
+				if (foundStop && foundHighMacroCmd)
+					return true;
 			}
 
-			return null;
+			return false;
 		}
 	}
 }

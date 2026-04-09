@@ -3,20 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 {
 	/// <summary>
-	/// Holds needed information to load the module
+	/// 
 	/// </summary>
-	internal class LoadInfo
+	internal class ModuleOffsets
 	{
-		public int ModuleStartOffset { get; set; }
-		public int ModuleSize { get; set; }
-		public int SampleStartOffset { get; set; }		// Is -1 if two files
-		public int SampleSize { get; set; }
-
-		public int StartSong { get; set; }
-		public string ModuleName { get; set; }
-		public string Author { get; set; }
+		public udword Header;
+		public udword TrackTable;
+		public udword Patterns;
+		public udword Macros;
+		public udword SampleData;
+		public udword Silence;
 	}
 }

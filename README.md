@@ -18,6 +18,7 @@ NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/Nosta
 * libOgg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOgg/LICENSE">BSD License</a>)
 * libOpus (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpus/LICENSE">BSD License</a>)
 * libOpusFile (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpusFile/LICENSE">BSD License</a>)
+* libTfmxAudioDecoder (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibTfmxAudioDecoder/LICENSE">GNU General Public License version 2</a>)
 * libVorbis (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibVorbis/LICENSE">BSD License</a>)
 * libVorbisFile (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibVorbisFile/LICENSE">BSD License</a>)
 * libXmp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibXmp/LICENSE">MIT License</a>)

@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -19,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.Sound
 		private bool dmaState;
 
 		private short number;
-		private sbyte[] sample;
+		private Array sample;
 		private uint offset;
 		private bool retrig;
 
@@ -44,6 +45,21 @@ namespace Polycode.NostalgicPlayer.Kit.Sound
 		/// </summary>
 		/********************************************************************/
 		public void SetAddress(short sampleNumber, sbyte[] sampleData, uint startOffset, bool retrigSample)
+		{
+			number = sampleNumber;
+			sample = sampleData;
+			offset = startOffset;
+			retrig = retrigSample;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Change the sample address
+		/// </summary>
+		/********************************************************************/
+		public void SetAddress(short sampleNumber, byte[] sampleData, uint startOffset, bool retrigSample)
 		{
 			number = sampleNumber;
 			sample = sampleData;
@@ -96,10 +112,7 @@ namespace Polycode.NostalgicPlayer.Kit.Sound
 			if (enabled)
 			{
 				if (!dmaState || !channel.IsActive)
-				{
 					channel.PlaySample(number, sample, offset, Length * 2U);
-					channel.SetLoop(offset, Length * 2U);
-				}
 			}
 			else
 			{
@@ -123,10 +136,7 @@ namespace Polycode.NostalgicPlayer.Kit.Sound
 		public InterruptResult Interrupt()
 		{
 			if ((number != -1) && retrig)
-			{
 				channel.SetSampleNumber(number);
-				channel.SetLoop(sample, offset, Length * 2U);
-			}
 
 			return new InterruptResult
 			{

@@ -364,7 +364,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 					done = 0;
 				else
 				{
-					done = Math.Min((int)((end - vnf.Current) / vnf.Increment + 1), todoInFrames);
+					done = Math.Min((int)(((end - vnf.Current) / vnf.Increment) + 1), todoInFrames);
 					if (done < 0)
 						done = 0;
 				}
@@ -375,7 +375,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 					break;
 				}
 
-				long endPos = vnf.Current + done * vnf.Increment;
+				long endPos = vnf.Current + (done * vnf.Increment);
 
 				if (vnf.Volume != 0)
 				{

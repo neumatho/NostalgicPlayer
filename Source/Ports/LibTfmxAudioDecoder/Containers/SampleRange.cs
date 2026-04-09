@@ -3,32 +3,28 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using System;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Containers
 {
 	/// <summary>
+	/// 
 	/// </summary>
-	internal class Pdb : IDeepCloneable<Pdb>
+	internal class SampleRange : IComparable<SampleRange>
 	{
-		public uint PAddr { get; set; }
-		public byte PNum { get; set; }
-		public sbyte PxPose { get; set; }
-		public ushort PLoop { get; set; }
-		public ushort PStep { get; set; }
-		public byte PWait { get; set; }
-		public uint PrOAddr { get; set; }
-		public ushort PrOStep { get; set; }
-		public bool Looped { get; set; }
+		public udword Start { get; set; }
+		public udword End { get; set; }
+		public udword LoopStart { get; set; }
+		public udword LoopLength { get; set; }
 
 		/********************************************************************/
 		/// <summary>
-		/// Make a deep copy of the current object
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public Pdb MakeDeepClone()
+		public int CompareTo(SampleRange other)
 		{
-			return (Pdb)MemberwiseClone();
+			return Start.CompareTo(other.Start);
 		}
 	}
 }

@@ -971,7 +971,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 								playFlag |= PlaySampleFlag.Stereo;
 
 							// Play it
-							channel.PlaySample(-1, sample, offset, length - offset, playFlag);
+							channel.PlaySample(-1, sample, offset, length, playFlag);
 
 							channel.SetFrequency((uint)frequency);
 
@@ -982,7 +982,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 							channel.SetPanning(pan == -1 ? (ushort)ChannelPanningType.Center : (ushort)pan);
 
 							if ((sampleInfo.Flags & SampleInfo.SampleFlag.Loop) != 0)
-								channel.SetLoop(loopStart, loopLength, (sampleInfo.Flags & SampleInfo.SampleFlag.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
+								channel.SetLoop(offset + loopStart, loopLength, (sampleInfo.Flags & SampleInfo.SampleFlag.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
 						}
 						else
 						{

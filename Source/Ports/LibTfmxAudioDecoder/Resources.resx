@@ -117,71 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_TFMX_DESCRIPTION" xml:space="preserve">
-    <value>Do you remember the music from Turican II or Rock'n'Roll on the Amiga? Well, it was Chris Hülsbeck who composed these wonderful pieces of music and you can now play them with NostalgicPlayer. You can download tons of music by Chris on the internet in this format. There is 3 formats this player can play, and that's the old 1.5 format, the Professional and the 7 voices formats.
-
-7 voices player is created by both Chris and Jochen Hippel, because Jochen had written a great mixer routine on the Amiga. Later on, a tool was created on the Amiga to merge the two files TFMX have (the .mdat and .smpl files) together in one file. NostalgicPlayer can also play these standalone files.
-
-The player using libTfmxAudioDecoder written by Michael Schwendt .</value>
+  <data name="IDS_ERR_ATARI" xml:space="preserve">
+    <value>Can not play Atari ST TFMX modules</value>
   </data>
-  <data name="IDS_TFMX_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>Original player on the Amiga by Chris Hülsbeck.
-C player created by Michael Schwendt.
-Converted to C# by Thomas Neumann.
-
-This is the first version of the format and only a few modules exists in this format. The player can play both one and two file formats.</value>
+  <data name="IDS_ERR_CORRUPT" xml:space="preserve">
+    <value>Module is corrupt</value>
   </data>
-  <data name="IDS_TFMX_DESCRIPTION_AGENT2" xml:space="preserve">
-    <value>Original player on the Amiga by Chris Hülsbeck.
-C player created by Michael Schwendt.
-Converted to C# by Thomas Neumann.
-
-Most of Chris Hülsbeck music is made with this version. It is still 4 voices modules. The player can play both one and two file formats.</value>
+  <data name="IDS_ERR_NOT_INITIALIZED" xml:space="preserve">
+    <value>Has not been initialized before</value>
   </data>
-  <data name="IDS_TFMX_DESCRIPTION_AGENT3" xml:space="preserve">
-    <value>Original player on the Amiga by Chris Hülsbeck.
-C player created by Michael Schwendt.
-Converted to C# by Thomas Neumann.
-
-This is the 7 voices version of this format. Chris used Jochen Hippel mixer, because Jochen had written a great mixer routine on the Amiga. The player can play both one and two file formats.</value>
+  <data name="IDS_ERR_NO_SAMPLES" xml:space="preserve">
+    <value>No sample data found</value>
   </data>
-  <data name="IDS_TFMX_ERR_LOADING" xml:space="preserve">
-    <value>Can't read the module</value>
+  <data name="IDS_ERR_NO_SUBSONGS" xml:space="preserve">
+    <value>No songs could be found</value>
   </data>
-  <data name="IDS_TFMX_ERR_LOADING_SAMPLE" xml:space="preserve">
-    <value>Can't read the module samples</value>
-  </data>
-  <data name="IDS_TFMX_ERR_VOICE_COUNT" xml:space="preserve">
-    <value>Number of voices do not match</value>
-  </data>
-  <data name="IDS_TFMX_INFODESCLINE0" xml:space="preserve">
-    <value>Number of positions:</value>
-  </data>
-  <data name="IDS_TFMX_INFODESCLINE1" xml:space="preserve">
-    <value>Used tracks:</value>
-  </data>
-  <data name="IDS_TFMX_INFODESCLINE2" xml:space="preserve">
-    <value>Playing position:</value>
-  </data>
-  <data name="IDS_TFMX_INFODESCLINE3" xml:space="preserve">
-    <value>Playing tracks:</value>
-  </data>
-  <data name="IDS_TFMX_INFODESCLINE4" xml:space="preserve">
-    <value>Current speed:</value>
-  </data>
-  <data name="IDS_TFMX_INFODESCLINE5" xml:space="preserve">
-    <value>Current tempo (Hz):</value>
-  </data>
-  <data name="IDS_TFMX_NAME" xml:space="preserve">
-    <value>TFMX</value>
-  </data>
-  <data name="IDS_TFMX_NAME_AGENT1" xml:space="preserve">
-    <value>TFMX 1.5</value>
-  </data>
-  <data name="IDS_TFMX_NAME_AGENT2" xml:space="preserve">
-    <value>TFMX Professional</value>
-  </data>
-  <data name="IDS_TFMX_NAME_AGENT3" xml:space="preserve">
-    <value>TFMX 7 voices</value>
+  <data name="IDS_ERR_UNKNOWN_FORMAT" xml:space="preserve">
+    <value>Unknown module format</value>
   </data>
 </root>

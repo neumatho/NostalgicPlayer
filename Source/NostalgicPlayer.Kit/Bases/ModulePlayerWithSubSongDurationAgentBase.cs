@@ -115,6 +115,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 				allDurationInfo = result.ToArray();
 
+				DurationDone();
+
 				return allDurationInfo;
 			}
 			finally
@@ -196,6 +198,17 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		protected virtual void CleanupDuration()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the duration calculation is done for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		protected virtual void DurationDone()
 		{
 		}
 
