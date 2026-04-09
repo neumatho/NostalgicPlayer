@@ -49,6 +49,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 		private bool isHovered;
 		private bool isButtonHovered;
+		private bool isFocused;
 
 		/********************************************************************/
 		/// <summary>
@@ -179,6 +180,36 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
+		protected override void OnEnter(EventArgs e)
+		{
+			isFocused = true;
+			Invalidate();
+
+			base.OnEnter(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected override void OnLeave(EventArgs e)
+		{
+			isFocused = false;
+			Invalidate();
+
+			base.OnLeave(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
 		protected override void OnGotFocus(EventArgs e)
 		{
 			Invalidate();
@@ -190,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
 		protected override void OnLostFocus(EventArgs e)
@@ -402,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 				};
 			}
 
-			if (Focused)
+			if (isFocused)
 			{
 				return new StateColors
 				{

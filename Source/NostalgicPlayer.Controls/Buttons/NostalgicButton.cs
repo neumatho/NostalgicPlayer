@@ -38,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		private bool isHovered;
 		private bool isPressed;			// True while mouse down or space-bar held
 		private bool isSpacePressed;	// Track if space currently holds the pressed state
+		private bool isFocused;
 
 		/********************************************************************/
 		/// <summary>
@@ -231,6 +232,38 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/// 
 		/// </summary>
 		/********************************************************************/
+		protected override void OnEnter(EventArgs e)
+		{
+			isFocused = true;
+			Invalidate();
+
+			base.OnEnter(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected override void OnLeave(EventArgs e)
+		{
+			isFocused = false;
+			isSpacePressed = false;
+			isPressed = false;
+			Invalidate();
+
+			base.OnLeave(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
 		protected override void OnGotFocus(EventArgs e)
 		{
 			Invalidate();
@@ -242,13 +275,11 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
 		protected override void OnLostFocus(EventArgs e)
 		{
-			isSpacePressed = false;
-			isPressed = false;
 			Invalidate();
 
 			base.OnLostFocus(e);
@@ -456,7 +487,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 				};
 			}
 
-			if (Focused)
+			if (isFocused)
 			{
 				return new StateColors
 				{
