@@ -2055,6 +2055,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 									voiceInfo.Tick = 0;
 								}
 							}
+
 							break;
 						}
 					}
@@ -2333,6 +2334,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.FrequencyPosition += 2;
 										oneMore = enableEffectLoop;
 									}
+
 									break;
 								}
 
@@ -2346,6 +2348,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.FrequencyPosition += 3;
 										oneMore = enableEffectLoop;
 									}
+
 									break;
 								}
 
@@ -2366,6 +2369,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.FrequencyPosition += 2;
 										oneMore = enableEffectLoop;
 									}
+
 									break;
 								}
 
@@ -2437,6 +2441,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.FrequencyPosition += 6;
 										oneMore = true;
 									}
+
 									break;
 								}
 
@@ -2481,6 +2486,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 											break;
 										}
 									}
+
 									break;
 								}
 
@@ -2493,6 +2499,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.FrequencyPosition += 2;
 										oneMoreBigLoop = true;
 									}
+
 									break;
 								}
 
@@ -2547,6 +2554,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.FrequencyPosition += 3;
 										oneMore = enableEffectLoop;
 									}
+
 									break;
 								}
 
@@ -2560,6 +2568,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.FrequencyPosition += 2;
 										oneMore = true;
 									}
+
 									break;
 								}
 							}
