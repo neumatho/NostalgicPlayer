@@ -18,10 +18,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Snapshot(PlayerInfo playerInfo, VoiceVars[] voices)
+		public Snapshot(PlayerInfo playerInfo, VoiceVars[] voices, udword rate)
 		{
 			PlayerInfo = playerInfo.MakeDeepClone();
 			Voices = ArrayHelper.CloneObjectArray(voices);
+			Rate = rate;
 		}
 
 
@@ -44,6 +45,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 		/// </summary>
 		/********************************************************************/
 		public VoiceVars[] Voices
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public udword Rate
 		{
 			get;
 		}

@@ -897,7 +897,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		public override ISnapshot CreateSnapshot()
 		{
-			return new Snapshot(playerInfo, voiceVars);
+			return new Snapshot(playerInfo, voiceVars, rate);
 		}
 
 
@@ -911,10 +911,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		{
 			// Start to make a clone of the snapshot
 			Snapshot currentSnapshot = (Snapshot)snapshot;
-			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayerInfo, currentSnapshot.Voices);
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayerInfo, currentSnapshot.Voices, currentSnapshot.Rate);
 
 			playerInfo = clonedSnapshot.PlayerInfo;
 			voiceVars = clonedSnapshot.Voices;
+			rate = clonedSnapshot.Rate;
 		}
 		#endregion
 

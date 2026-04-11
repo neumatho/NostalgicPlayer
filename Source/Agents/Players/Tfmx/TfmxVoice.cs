@@ -22,16 +22,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		private bool isOn;
 		private bool retrig;
 
+		private SampleInfo[] allSamples;
+		private short sampleNumber;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public TfmxVoice(IChannel channel)
+		public TfmxVoice(IChannel channel, SampleInfo[] samples)
 		{
 			paulaChannel = new PaulaChannel(channel);
 			channel.Interrupt = HandleInterrupt;
 			isOn = false;
+
+			allSamples = samples;
+			sampleNumber = -1;
 		}
 
 
@@ -78,7 +84,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		public override void TakeNextBuf()
 		{
 			if (!isOn)
+			{
 				loopCount = 0;
+				sampleNumber = FindSampleNumber();
+			}
 
 			ReadOnlyMemory<byte> sampleBuffer = Paula.Start.AsMemory();
 
@@ -88,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				if (length == 0)
 					length = 1;
 
-				paulaChannel.SetAddress(0, segment.Array, (uint)segment.Offset, retrig);
+				paulaChannel.SetAddress(sampleNumber, segment.Array, (uint)segment.Offset, retrig);
 				paulaChannel.Length = length;
 			}
 		}
@@ -130,6 +139,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			loopCount++;
 
 			return paulaChannel.Interrupt();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find the sample number playing
+		/// </summary>
+		/********************************************************************/
+		private short FindSampleNumber()
+		{
+			if (allSamples == null)
+				return -1;
+
+			int startOffset = Paula.Start.Offset;
+
+			for (short i = 0; i < allSamples.Length; i++)
+			{
+				SampleInfo sampleInfo = allSamples[i];
+
+				if (startOffset == sampleInfo.SampleOffset)
+					return i;
+
+				if (startOffset < sampleInfo.SampleOffset)
+					return (short)(i - 1);
+			}
+
+			return -1;
 		}
 	}
 }

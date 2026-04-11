@@ -548,7 +548,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			for (byte i = 0; i < voices.Length; i++)
 			{
-				TfmxVoice voice = new TfmxVoice(VirtualChannels[i]);
+				TfmxVoice voice = new TfmxVoice(VirtualChannels[i], sampleInfo);
 
 				voices[i] = voice;
 				decoder.SetPaulaVoice(i, voice);

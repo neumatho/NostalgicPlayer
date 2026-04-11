@@ -141,89 +141,81 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				if (offset == 0)
 					offset = 0x800;
 
-				// Take all the sub-songs
+				// Only check the first sub-song
 				short times = 0;
 				bool gotTimeShare = false;
 
-				for (int i = 0; i < 31; i++)
+				bool getNext = true;
+
+				// Get the current sub-song start position
+				ushort position = songStarts[0];
+
+				// Read the track step information
+				while (getNext)
 				{
-					bool getNext = true;
+					// Find the position in the file where the current track step
+					// information to read is stored
+					moduleStream.Seek(startOffset + offset + (position * 16), SeekOrigin.Begin);
 
-					// Get the current sub-song start position
-					ushort position = songStarts[i];
-					if (position == 0x1ff)
-						break;
-
-					// Read the track step information
-					while (getNext)
+					// If the track step information isn't a command, stop
+					// the checking
+					if (moduleStream.Read_B_UINT16() != 0xeffe)
+						getNext = false;
+					else
 					{
-						// Find the position in the file where the current track step
-						// information to read is stored
-						moduleStream.Seek(startOffset + offset + (position * 16), SeekOrigin.Begin);
-
-						// If the track step information isn't a command, stop
-						// the checking
-						if (moduleStream.Read_B_UINT16() != 0xeffe)
-							getNext = false;
-						else
+						// Get the command
+						switch (moduleStream.Read_B_UINT16())
 						{
-							// Get the command
-							switch (moduleStream.Read_B_UINT16())
+							// Loop a section
+							case 1:
 							{
-								// Loop a section
-								case 1:
+								if (times == 0)
 								{
-									if (times == 0)
+									times = -1;
+									position++;
+								}
+								else
+								{
+									if (times < 0)
 									{
-										times = -1;
-										position++;
+										position = moduleStream.Read_B_UINT16();
+										times = (short)(moduleStream.Read_B_UINT16() - 1);
 									}
 									else
 									{
-										if (times < 0)
-										{
-											position = moduleStream.Read_B_UINT16();
-											times = (short)(moduleStream.Read_B_UINT16() - 1);
-										}
-										else
-										{
-											times--;
-											position = moduleStream.Read_B_UINT16();
-										}
+										times--;
+										position = moduleStream.Read_B_UINT16();
 									}
-
-									break;
 								}
 
-								// Set tempo + start master volume slide
-								case 2:
-								case 4:
-								{
-									position++;
-									break;
-								}
+								break;
+							}
 
-								// Time share
-								case 3:
-								{
-									gotTimeShare = true;
-									position++;
-									break;
-								}
+							// Set tempo + start master volume slide
+							case 2:
+							case 4:
+							{
+								position++;
+								break;
+							}
 
-								// Unknown command
-								default:
-								{
-									getNext = false;
-									gotTimeShare = false;
-									break;
-								}
+							// Time share
+							case 3:
+							{
+								gotTimeShare = true;
+								position++;
+								break;
+							}
+
+							// Unknown command
+							default:
+							{
+								getNext = false;
+								gotTimeShare = false;
+								break;
 							}
 						}
 					}
-
-					if (gotTimeShare)
-						break;
 				}
 
 				return (gotTimeShare ? ModuleType.Tfmx7V : ModuleType.TfmxPro, singleFile);
