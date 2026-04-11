@@ -3,15 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
-using Polycode.NostalgicPlayer.Controls.Theme.Purple;
-using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
@@ -39,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 
 		private WindowSettings windowSettings;
 		private IThemeManager themeManager;
+		private Guid selectedTheme;
 
 		/********************************************************************/
 		/// <summary>
@@ -55,6 +56,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 			this.mainWindowApi = mainWindowApi;
 			allWindowSettings = settings;
 			this.themeManager = themeManager;
+
+			// Find current theme ID
+			selectedTheme = themeManager.CurrentTheme.Id;
+			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
 			// Set how the window should act in the task bar and task switcher.
 			// Only apply to child windows - the main window (where mainWindowApi.Form
@@ -200,11 +205,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 						break;
 					}
 
-					//XX Denne skal slettes når jeg er færdig
-					case Keys.F12:
+					case Keys.F9:
 					{
-						theme = !theme;
-						themeManager.SwitchTheme(theme ? new PurpleTheme() : new StandardTheme());
+						Guid[] availableThemes = themeManager.GetAvailableThemes();
+						int currentThemeIndex = availableThemes.IndexOf(selectedTheme);
+
+						if ((currentThemeIndex + 1) == availableThemes.Length)
+							currentThemeIndex = -1;
+
+						selectedTheme = availableThemes[currentThemeIndex + 1];
+
+						themeManager.SwitchTheme(selectedTheme);
 
 						return true;
 					}
@@ -213,7 +224,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
-		private bool theme = false;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes
+		/// </summary>
+		/********************************************************************/
+		private void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			selectedTheme = e.NewTheme.Id;
+		}
 
 
 
