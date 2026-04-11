@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Controls.Events;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
@@ -18,18 +20,23 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		event ThemeChangedEventHandler ThemeChanged;
 
 		/// <summary>
+		/// Return all available themes that can be used
+		/// </summary>
+		Guid[] GetAvailableThemes();
+
+		/// <summary>
 		/// Return the current theme
 		/// </summary>
-		public ITheme CurrentTheme { get; }
+		ITheme CurrentTheme { get; }
 
 		/// <summary>
 		/// Switch to the new theme given
 		/// </summary>
-		public void SwitchTheme(ITheme newTheme);
+		void SwitchTheme(Guid themeId);
 
 		/// <summary>
 		/// Refresh all controls
 		/// </summary>
-		public void RefreshControls();
+		void RefreshControls();
 	}
 }
