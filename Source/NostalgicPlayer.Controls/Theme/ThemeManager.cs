@@ -4,8 +4,11 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Purple;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme
@@ -17,7 +20,13 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 	/// </summary>
 	internal class ThemeManager : IThemeManager, IDisposable
 	{
-		private ITheme theme;
+		private readonly ITheme[] embeddedThemes =
+		[
+			new StandardTheme(),
+			new PurpleTheme()
+		];
+
+		private ITheme currentTheme;
 
 		/********************************************************************/
 		/// <summary>
@@ -26,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/********************************************************************/
 		public ThemeManager()
 		{
-			theme = new StandardTheme();
+			currentTheme = embeddedThemes[0];
 		}
 
 
@@ -38,10 +47,13 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/********************************************************************/
 		public void Dispose()
 		{
-			if (theme is IDisposable disposable)
-				disposable.Dispose();
+			foreach (ITheme theme in embeddedThemes)
+			{
+				if (theme is IDisposable disposable)
+					disposable.Dispose();
+			}
 
-			theme = null;
+			currentTheme = null;
 		}
 
 
@@ -57,10 +69,22 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 
 		/********************************************************************/
 		/// <summary>
+		/// Return all available themes that can be used
+		/// </summary>
+		/********************************************************************/
+		public Guid[] GetAvailableThemes()
+		{
+			return GetThemes().Select(x => x.Id).ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the current theme
 		/// </summary>
 		/********************************************************************/
-		public ITheme CurrentTheme => theme;
+		public ITheme CurrentTheme => currentTheme;
 
 
 
@@ -69,12 +93,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/// Switch to the new theme given
 		/// </summary>
 		/********************************************************************/
-		public void SwitchTheme(ITheme newTheme)
+		public void SwitchTheme(Guid themeId)
 		{
-			if (theme is IDisposable disposable)
-				disposable.Dispose();
-
-			theme = newTheme;
+			currentTheme = GetThemes().FirstOrDefault(x => x.Id == themeId);
+			if (currentTheme == null)
+				currentTheme = embeddedThemes[0];
 
 			RefreshControls();
 		}
@@ -89,7 +112,20 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		public void RefreshControls()
 		{
 			if (ThemeChanged != null)
-				ThemeChanged(this, new ThemeChangedEventArgs(theme));
+				ThemeChanged(this, new ThemeChangedEventArgs(currentTheme));
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Return all available themes that can be used
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<ITheme> GetThemes()
+		{
+			foreach (ITheme theme in embeddedThemes)
+				yield return theme;
+		}
+		#endregion
 	}
 }
