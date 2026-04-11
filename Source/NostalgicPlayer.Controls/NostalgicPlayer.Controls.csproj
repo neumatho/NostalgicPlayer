@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Polycode.NostalgicPlayer.Controls</RootNamespace>
+    <DocumentationFile>bin\NostalgicPlayer.Controls.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Description>A collection of themed custom controls</Description>
+    <Version>3.3.1</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Resources\Form\CaptionClose.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionMaximize.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionMinimize.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionNormalize.png" />
+    <EmbeddedResource Include="Images\Resources\ModuleInformation\NextPicture.svg" />
+    <EmbeddedResource Include="Images\Resources\ModuleInformation\PreviousPicture.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleLoop.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleMultiOctaves.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SamplePingPong.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleStereo.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SimpleInjector" Version="5.5.0" />
+    <PackageReference Include="Svg.Skia" Version="3.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
+  </ItemGroup>
+
+</Project>

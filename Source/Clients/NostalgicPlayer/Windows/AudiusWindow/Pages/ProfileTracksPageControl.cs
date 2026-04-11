@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Audius;
 using Polycode.NostalgicPlayer.External.Audius.Interfaces;

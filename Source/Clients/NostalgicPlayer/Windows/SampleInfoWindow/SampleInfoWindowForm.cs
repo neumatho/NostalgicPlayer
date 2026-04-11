@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
-using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
@@ -17,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 	/// <summary>
 	/// This shows the sample information window
 	/// </summary>
-	public partial class SampleInfoWindowForm : WindowFormBase
+	public partial class SampleInfoWindowForm : WindowFormBase2
 	{
 		private IModuleHandlerService moduleHandler;
 
@@ -50,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IModuleHandlerService moduleHandlerService, IAgentManager agentManager)
+		public void InitializeForm(IModuleHandlerService moduleHandlerService)
 		{
 			// Remember the arguments
 			moduleHandler = moduleHandlerService;
@@ -63,14 +62,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			Text = Resources.IDS_SAMPLE_INFO_TITLE;
 
 			// Set the tab titles
-			navigator.Pages[Page_Instruments].Text = Resources.IDS_SAMPLE_INFO_TAB_INSTRUMENT;
-			navigator.Pages[Page_Samples].Text = Resources.IDS_SAMPLE_INFO_TAB_SAMPLE;
+			tabControl.Pages[Page_Instruments].Text = Resources.IDS_SAMPLE_INFO_TAB_INSTRUMENT;
+			tabControl.Pages[Page_Samples].Text = Resources.IDS_SAMPLE_INFO_TAB_SAMPLE;
 
 			// Select the last used tab
-			navigator.SelectedIndex = settings.AutoSelectTab;
+			tabControl.SelectedIndex = settings.AutoSelectTab;
 
 			instrumentPageControl.InitControl(settings);
-			samplePageControl.InitControl(agentManager, settings);
+			samplePageControl.InitControl(settings);
 
 			RefreshWindow();
 		}
@@ -93,14 +92,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 				if (instrumentPageControl.RefreshControl(staticInfo))
 				{
 					// Show tab if auto-selected
-					navigator.Pages[Page_Instruments].Visible = true;
+					tabControl.Pages[Page_Instruments].Visible = true;
 
 					if (settings.AutoSelectTab == Page_Instruments)
-						navigator.SelectedIndex = Page_Instruments;
+						tabControl.SelectedIndex = Page_Instruments;
 
 				}
 				else
-					navigator.Pages[Page_Instruments].Visible = false;
+					tabControl.Pages[Page_Instruments].Visible = false;
 
 				samplePageControl.RefreshControl(staticInfo);
 
@@ -181,10 +180,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 		/// Is called when a tab is selected
 		/// </summary>
 		/********************************************************************/
-		private void Navigator_SelectedPageChanged(object sender, EventArgs e)
+		private void Tab_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (!doNotUpdateAutoSelection)
-				settings.AutoSelectTab = navigator.SelectedIndex;
+				settings.AutoSelectTab = tabControl.SelectedIndex;
 		}
 		#endregion
 	}

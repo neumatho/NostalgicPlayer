@@ -20,6 +20,11 @@ jobs:
         run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Release" -property:Platform="Any CPU"
       - name: Rename binary directory
         run: move Source\Clients\NostalgicPlayer\bin\Release\net* NostalgicPlayer-dev-build-${{github.run_number}}
+      - name: Cleanup runtimes
+        run: |
+          Get-ChildItem -Path "NostalgicPlayer-dev-build-${{github.run_number}}\runtimes" -Directory |
+          Where-Object { $_.Name -ne "win-x64" } |
+          ForEach-Object { Remove-Item -Path $_.FullName -Recurse -Force }
       - name: Create artifacts
         uses: actions/upload-artifact@v7
         with:

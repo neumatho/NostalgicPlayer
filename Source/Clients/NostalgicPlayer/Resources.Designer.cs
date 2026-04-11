@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -293,16 +293,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_NEXT_PICTURE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_NEXT_PICTURE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_NEXT_SONG {
             get {
                 object obj = ResourceManager.GetObject("IDB_NEXT_SONG", resourceCulture);
@@ -363,16 +353,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_PREVIOUS_PICTURE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_PREVIOUS_PICTURE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_PREVIOUS_SONG {
             get {
                 object obj = ResourceManager.GetObject("IDB_PREVIOUS_SONG", resourceCulture);
@@ -406,46 +386,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_REWIND {
             get {
                 object obj = ResourceManager.GetObject("IDB_REWIND", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_LOOP {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_LOOP", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_OCTAVES {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_OCTAVES", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_PINGPONG {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_PINGPONG", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLE_STEREO {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLE_STEREO", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -4348,6 +4288,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to NostalgicPlayer.
+        /// </summary>
+        internal static string IDS_SMTC_APP_MEDIA_ID {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_APP_MEDIA_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ({1}/{2}).
+        /// </summary>
+        internal static string IDS_SMTC_SONG_FORMAT {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_SONG_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string IDS_SMTC_UNKNOWN_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_UNKNOWN_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Subsongs: {0}/{1}.
         /// </summary>
         internal static string IDS_SUBSONGS {
@@ -4669,33 +4636,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_TIP_MAIN_VOLUME {
             get {
                 return ResourceManager.GetString("IDS_TIP_MAIN_VOLUME", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to NostalgicPlayer.
-        /// </summary>
-        internal static string IDS_SMTC_APP_MEDIA_ID {
-            get {
-                return ResourceManager.GetString("IDS_SMTC_APP_MEDIA_ID", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown.
-        /// </summary>
-        internal static string IDS_SMTC_UNKNOWN_TITLE {
-            get {
-                return ResourceManager.GetString("IDS_SMTC_UNKNOWN_TITLE", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} ({1}/{2}).
-        /// </summary>
-        internal static string IDS_SMTC_SONG_FORMAT {
-            get {
-                return ResourceManager.GetString("IDS_SMTC_SONG_FORMAT", resourceCulture);
             }
         }
     }

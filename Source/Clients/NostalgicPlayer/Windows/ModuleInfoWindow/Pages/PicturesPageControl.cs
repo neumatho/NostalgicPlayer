@@ -10,8 +10,11 @@ using System.Drawing.Text;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Events;
+using Polycode.NostalgicPlayer.Controls.Images;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 using Polycode.NostalgicPlayer.Library.Containers;
 
@@ -20,8 +23,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class PicturesPageControl : UserControl
+	public partial class PicturesPageControl : UserControl, IDependencyInjectionControl
 	{
+		private IThemeManager themeManager;
+		private INostalgicImageBank imageBank;
+
+		private bool themeHasChanged;
+
 		private PictureInfo[] pictures;
 		private int pictureIndex;
 		private int nextPictureIndex;
@@ -72,11 +80,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		/// <summary>
 		/// Initialize the control
+		///
+		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitControl()
+		public void InitializeControl(IThemeManager themeManager, INostalgicImageBank imageBank)
 		{
+			this.themeManager = themeManager;
+			this.imageBank = imageBank;
+
+			themeManager.ThemeChanged += ThemeChanged;
+
 			animationLock = new Lock();
+			themeHasChanged = false;
 		}
 
 
@@ -88,6 +104,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		public void CleanupControl()
 		{
+			themeManager.ThemeChanged -= ThemeChanged;
+
 			CleanupPictures();
 		}
 
@@ -153,6 +171,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>
+		/// Is called when the theme changes
+		/// </summary>
+		/********************************************************************/
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			lock (animationLock)
+			{
+				if (!animationRunning)
+					UpdateThemedControls();
+				else
+					themeHasChanged = true;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the user clicks on the previous picture button
 		/// </summary>
 		/********************************************************************/
@@ -182,21 +218,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		private void PictureGroup_Resize(object sender, EventArgs e)
 		{
-			lock (animationLock)
+			if (animationLock != null)
 			{
-				// Replace the next/previous buttons
-				int newYPos = ((pictureBox.Height - previousPictureButton.Height) / 2) + pictureBox.Location.Y;
-				previousPictureButton.Location = new Point(8, newYPos);
-				nextPictureButton.Location = new Point(pictureGroup.Width - nextPictureButton.Width - 8, newYPos);
-
-				// Resize picture and label
-				if (pictures != null)
+				lock (animationLock)
 				{
-					if (currentPictureBitmap != null)
-						CreateAllPictureBitmaps(pictureIndex, ref currentPictureBitmap, ref currentLabelBitmap);
+					// Replace the next/previous buttons
+					int newYPos = ((pictureBox.Height - previousPictureButton.Height) / 2) + pictureBox.Location.Y;
+					previousPictureButton.Location = new Point(8, newYPos);
+					nextPictureButton.Location = new Point(picturePanel.Width - nextPictureButton.Width - 8, newYPos);
 
-					if (newPictureBitmap != null)
-						CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+					// Resize picture and label
+					if (pictures != null)
+					{
+						if (currentPictureBitmap != null)
+							CreateAllPictureBitmaps(pictureIndex, ref currentPictureBitmap, ref currentLabelBitmap);
+
+						if (newPictureBitmap != null)
+							CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+					}
 				}
 			}
 		}
@@ -243,6 +282,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// When the theme has changed, update themed custom controls
+		/// </summary>
+		/********************************************************************/
+		private void UpdateThemedControls()
+		{
+			InitializePictureButtons();
+
+			if (currentLabelBitmap != null)
+				CreateLabelBitmap(pictures[pictureIndex].Description, ref currentLabelBitmap);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will render the picture button images
+		/// </summary>
+		/********************************************************************/
+		private void InitializePictureButtons()
+		{
+			previousPictureButton.Image = imageBank.ModuleInformation.PreviousPicture;
+			nextPictureButton.Image = imageBank.ModuleInformation.NextPicture;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will prepare the pictures for the first appearance
@@ -377,12 +444,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			if (pictureIndex <= nextPictureIndex)
 			{
 				currentXPos = 0;
-				newXPos = pictureGroup.Width;
+				newXPos = picturePanel.Width;
 			}
 			else
 			{
 				currentXPos = 0;
-				newXPos = -pictureGroup.Width;
+				newXPos = -picturePanel.Width;
 			}
 
 			animationRunning = true;
@@ -443,21 +510,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			labelBitmap?.Dispose();
 			labelBitmap = new Bitmap(pictureLabelPictureBox.Width, pictureLabelPictureBox.Height);
 
-			using (Font font = FontPalette.GetRegularFont())
+			Font font = themeManager.CurrentTheme.StandardFonts.RegularFont;
+			string labelToDraw = description.EllipsisLine(picturePanel.Handle, pictureLabelPictureBox.Width, font, out int newWidth);
+
+			using (Graphics g = Graphics.FromImage(labelBitmap))
 			{
-				string labelToDraw = description.EllipsisLine(pictureGroup.Handle, pictureLabelPictureBox.Width, font, out int newWidth);
+				g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-				using (Graphics g = Graphics.FromImage(labelBitmap))
+				Color color = themeManager.CurrentTheme.LabelColors.TextColor;
+
+				using (Brush brush = new SolidBrush(color))
 				{
-					g.TextRenderingHint = TextRenderingHint.AntiAlias;
-
-					Color color = fontPalette.GetDefaultFontColor();
-
-					using (Brush brush = new SolidBrush(color))
-					{
-						int x = (labelBitmap.Width - newWidth) / 2;
-						g.DrawString(labelToDraw, font, brush, x, 4);
-					}
+					int x = (labelBitmap.Width - newWidth) / 2;
+					g.DrawString(labelToDraw, font, brush, x, 4);
 				}
 			}
 		}
@@ -526,17 +591,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 				{
 					// EaseOutCubic
 					double pos = 1.0 - Math.Pow(1 - easePosition, 3.0);
-					int posDiff = (int)(pos * pictureGroup.Width);
+					int posDiff = (int)(pos * picturePanel.Width);
 
 					if (pictureIndex <= nextPictureIndex)
 					{
 						currentXPos = -posDiff;
-						newXPos = pictureGroup.Width - posDiff;
+						newXPos = picturePanel.Width - posDiff;
 					}
 					else
 					{
 						currentXPos = posDiff;
-						newXPos = -(pictureGroup.Width - posDiff);
+						newXPos = -(picturePanel.Width - posDiff);
 					}
 
 					easePosition += EaseIncrement;
@@ -575,6 +640,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 					pictureIndex = nextPictureIndex;
 
 					ShowHideArrows();
+
+					if (themeHasChanged)
+					{
+						UpdateThemedControls();
+						themeHasChanged = false;
+					}
 				}
 				else
 				{

@@ -187,9 +187,6 @@
   <data name="IDB_NEXT_MODULE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\NextModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_NEXT_PICTURE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\NextPicture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_NEXT_SONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\NextSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -208,9 +205,6 @@
   <data name="IDB_PREVIOUS_MODULE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\PreviousModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_PREVIOUS_PICTURE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\PreviousPicture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_PREVIOUS_SONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\PreviousSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -225,18 +219,6 @@
   </data>
   <data name="IDB_SAMPLES" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Samples.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_LOOP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SampleLoop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_OCTAVES" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SampleMultiOctaves.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_PINGPONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SamplePingPong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_STEREO" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SampleStereo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_SAVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
