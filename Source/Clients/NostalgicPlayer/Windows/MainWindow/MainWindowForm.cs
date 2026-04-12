@@ -1522,7 +1522,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			BeginInvoke(() =>
 			{
-				if (moduleListControl.Items.Count > 1)
+				if (nextSongButton.Enabled)
+					nextSongButton.PerformClick();
+				else if (moduleListControl.Items.Count > 1)
 					nextModuleButton.PerformClick();
 			});
 		}
@@ -1538,7 +1540,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			BeginInvoke(() =>
 			{
-				if (moduleListControl.Items.Count > 1)
+				if (previousSongButton.Enabled)
+					previousSongButton.PerformClick();
+				else if (moduleListControl.Items.Count > 1)
 					previousModuleButton.PerformClick();
 			});
 		}
