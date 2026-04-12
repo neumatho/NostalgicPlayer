@@ -89,16 +89,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				sampleNumber = FindSampleNumber();
 			}
 
-			ReadOnlyMemory<byte> sampleBuffer = Paula.Start.AsMemory();
-
-			if (MemoryMarshal.TryGetArray(sampleBuffer, out ArraySegment<byte> segment))
+			if (Paula.Start.IsNotNull)
 			{
-				ushort length = Paula.Length;
-				if (length == 0)
-					length = 1;
+				ReadOnlyMemory<byte> sampleBuffer = Paula.Start.AsMemory();
 
-				paulaChannel.SetAddress(sampleNumber, segment.Array, (uint)segment.Offset, retrig);
-				paulaChannel.Length = length;
+				if (MemoryMarshal.TryGetArray(sampleBuffer, out ArraySegment<byte> segment))
+				{
+					ushort length = Paula.Length;
+					if (length == 0)
+						length = 1;
+
+					paulaChannel.SetAddress(sampleNumber, segment.Array, (uint)segment.Offset, retrig);
+					paulaChannel.Length = length;
+				}
 			}
 		}
 

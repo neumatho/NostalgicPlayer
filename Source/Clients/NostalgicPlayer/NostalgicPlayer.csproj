@@ -9,6 +9,7 @@
     <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <SelfContained>false</SelfContained>
+    <Title>NostalgicPlayer</Title>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Description>Music player with an user interface</Description>

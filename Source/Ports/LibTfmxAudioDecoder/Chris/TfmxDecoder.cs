@@ -316,7 +316,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				}
 
 				for (int i = 0; i < finalSamples.Count; i++)
-					yield return GetSampleInfo(finalSamples[i], i < finalSamples.Count - 1 ? finalSamples[i + 1] : null);
+				{
+					Sample sample = GetSampleInfo(finalSamples[i], i < finalSamples.Count - 1 ? finalSamples[i + 1] : null);
+					if (sample != null)
+						yield return sample;
+				}
 			}
 		}
 

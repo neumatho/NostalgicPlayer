@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Kit.Sound
 		{
 			if (enabled)
 			{
-				if (!dmaState || !channel.IsActive)
+				if ((!dmaState || !channel.IsActive) && (sample != null))
 					channel.PlaySample(number, sample, offset, Length * 2U);
 			}
 			else
