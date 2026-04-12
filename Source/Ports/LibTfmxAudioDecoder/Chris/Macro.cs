@@ -560,12 +560,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			voice.Macro.Step++;
 			paulaVoice.Off();
-			playerInfo.MacroEvalAgain = true;
 
 			// Rare variants of TFMX implement it as a count value, but no module
 			// sets the value to anything above 1
 			if (playerInfo.Cmd.Bb != 0)
 				voice.Macro.ExtraWait = false;
+			else
+				playerInfo.MacroEvalAgain = true;
 
 			// The variant that also does AddVolume/SetVolume
 			if (playerInfo.Cmd.Cd == 0)

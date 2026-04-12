@@ -842,10 +842,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				songEnd = false;
 
 				if (triggerRestart)
-				{
-					Restart();
-					triggerRestart = false;
-				}
+					SoftRestart();
 
 				realSongEnd = true;
 			}
@@ -931,34 +928,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void Reset()
 		{
-			songEnd = false;
-			songPosCurrent = 0;
-			tickFpAdd = 0;
-			triggerRestart = false;
-
-			playerInfo.Sequencer.Step.Next = false;
-			playerInfo.Sequencer.Loops = -1;
-
-			for (c_int step = 0; step < Track_Steps_Max; step++)
-				playerInfo.Sequencer.StepSeenBefore[step] = false;
-
-			playerInfo.Fade.Active = false;
-			playerInfo.Fade.Volume = playerInfo.Fade.Target = 64;
-			playerInfo.Fade.Delta = 0;
-
 			playerInfo.Cmd.Aa = playerInfo.Cmd.Bb = playerInfo.Cmd.Cd = playerInfo.Cmd.Ee = 0;
-
-			for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
-			{
-				Track tr = playerInfo.Track[t];
-
-				tr.On = GetTrackMute(t);
-				tr.Pt = 0xff;
-				tr.Tr = 0;
-				tr.Pattern.Offset = tr.Pattern.Step = 0;
-				tr.Pattern.Wait = 0;
-				tr.Pattern.Loops = -1;
-			}
 
 			for (ubyte v = 0; v < voices; v++)
 			{
@@ -1026,7 +996,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void Restart()
 		{
-			Reset();	// State variables
+			Reset();
+			SoftRestart();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void SoftRestart()
+		{
+			songEnd = false;
+			songPosCurrent = 0;
+			tickFpAdd = 0;
+			triggerRestart = false;
+
+			playerInfo.Sequencer.Step.Next = false;
+			playerInfo.Sequencer.Loops = -1;
+
+			for (c_int step = 0; step < Track_Steps_Max; step++)
+				playerInfo.Sequencer.StepSeenBefore[step] = false;
+
+			for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
+			{
+				Track tr = playerInfo.Track[t];
+
+				tr.On = GetTrackMute(t);
+				tr.Pt = 0xff;
+				tr.Tr = 0;
+				tr.Pattern.Offset = tr.Pattern.Step = 0;
+				tr.Pattern.Wait = 0;
+				tr.Pattern.Loops = -1;
+			}
+
+			playerInfo.Fade.Active = false;
+			playerInfo.Fade.Volume = playerInfo.Fade.Target = 64;
+			playerInfo.Fade.Delta = 0;
 
 			uword so = (uword)(vSongs[playerInfo.Admin.StartSong] << 1);
 			playerInfo.Sequencer.Step.First = playerInfo.Sequencer.Step.Current = MyEndian.ReadBEUword(pBuf, offsets.Header + 0x100 + so);
@@ -1187,6 +1195,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// PT >= 0x90 : track not used
 			if (tr.Pt < 0x90)
 			{
+				if (tr.Pattern.Offset == 0)		// Track didn't set valid PT before
+				{
+					tr.Pt = 0xff;
+					return;
+				}
+
 				if (tr.Pattern.Wait == 0)
 					ProcessPattern(tr);
 				else
