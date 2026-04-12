@@ -110,34 +110,37 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		{
 			lock (this)
 			{
-				int controlIndex = 0;
-
-				if (speakers.HasFlag(SpeakerFlag.FrontLeft))
+				if (oscilloscopesPanel.Controls.Count > 0)
 				{
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontLeft], sampleData.ChannelCount);
+					int controlIndex = 0;
 
-					if (speakers.HasFlag(SpeakerFlag.FrontCenter))
+					if (speakers.HasFlag(SpeakerFlag.FrontLeft))
+					{
+						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontLeft], sampleData.ChannelCount);
+
+						if (speakers.HasFlag(SpeakerFlag.FrontCenter))
+							((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontCenter], sampleData.ChannelCount);
+
+						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontRight], sampleData.ChannelCount);
+					}
+					else if (speakers.HasFlag(SpeakerFlag.FrontCenter))
 						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontCenter], sampleData.ChannelCount);
 
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontRight], sampleData.ChannelCount);
-				}
-				else if (speakers.HasFlag(SpeakerFlag.FrontCenter))
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontCenter], sampleData.ChannelCount);
+					if (speakers.HasFlag(SpeakerFlag.SideLeft))
+					{
+						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.SideLeft], sampleData.ChannelCount);
+						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.SideRight], sampleData.ChannelCount);
+					}
 
-				if (speakers.HasFlag(SpeakerFlag.SideLeft))
-				{
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.SideLeft], sampleData.ChannelCount);
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.SideRight], sampleData.ChannelCount);
-				}
+					if (speakers.HasFlag(SpeakerFlag.BackLeft))
+					{
+						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.BackLeft], sampleData.ChannelCount);
+						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.BackRight], sampleData.ChannelCount);
+					}
 
-				if (speakers.HasFlag(SpeakerFlag.BackLeft))
-				{
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.BackLeft], sampleData.ChannelCount);
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex++].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.BackRight], sampleData.ChannelCount);
+					if (speakers.HasFlag(SpeakerFlag.LowFrequency))
+						((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.LowFrequency], sampleData.ChannelCount);
 				}
-
-				if (speakers.HasFlag(SpeakerFlag.LowFrequency))
-					((SpeakerOscilloscopeControl)oscilloscopesPanel.Controls[controlIndex].Controls[0]).DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.LowFrequency], sampleData.ChannelCount);
 			}
 		}
 
