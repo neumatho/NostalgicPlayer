@@ -76,8 +76,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/********************************************************************/
 		public static readonly ChannelPanningType[] Pan7 =
 		[
-			ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Right,
-			ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Right
+			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right,
+			ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Left
 		];
 	}
 }
