@@ -59,6 +59,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 
 			SetStyle(ControlStyles.UserPaint, true);
 
+			TabStop = false;
+
 			speaker = speakerName;
 
 			levelDecay = 1.0f - (float)Math.Exp(-1.0f / (RefreshRate * 0.2f));
