@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			input.Len += input.SmplSize;
 
 			// Update smart pointers
-			pBuf = new CPointer<ubyte>(input.Buf.AsMemory((int)input.BufLen));
+			pBuf.SetBuffer(input.Buf, input.BufLen);
 
 			return true;
 		}

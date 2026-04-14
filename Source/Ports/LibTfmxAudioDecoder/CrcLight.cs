@@ -75,6 +75,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		/********************************************************************/
 		public static udword Get(CPointer<ubyte> ptr, udword offset, udword len)
 		{
+			return Get(new SmartPtr<ubyte>(ptr, (c_ulong)ptr.Length), offset, len);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		internal static udword Get(SmartPtr<ubyte> ptr, udword offset, udword len)
+		{
 			udword crc = 0xffffffff;
 
 			if (len != 0)

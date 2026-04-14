@@ -127,35 +127,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 					ubyte what = pBuf[offs++];
 					uword len = MyEndian.MakeWord(pBuf[offs + 1], pBuf[offs]);
 
-					if (len == 0)
-						break;
-
 					offs += 2;
 
 					// Need this, since there is crap at the end that
 					// triggers definitions accidentally
-					if ((offs + len) > input.Len)
+					if ((len == 0) || (offs >= input.Len) ||
+						// Need this, since there is crap at the end that
+						// triggers definitions accidentally
+					    ((offs + len) > input.Len))
 						break;
 
 					switch (what)
 					{
 						case 1:
 						{
-							author = encoder.GetString(pBuf.AsSpan((int)offs, len));
+							author = encoder.GetString(pBuf.TellBegin().AsSpan((int)offs, len));
 							offs += len;
 							break;
 						}
 
 						case 2:
 						{
-							game = encoder.GetString(pBuf.AsSpan((int)offs, len));
+							game = encoder.GetString(pBuf.TellBegin().AsSpan((int)offs, len));
 							offs += len;
 							break;
 						}
 
 						case 6:
 						{
-							title = encoder.GetString(pBuf.AsSpan((int)offs, len));
+							title = encoder.GetString(pBuf.TellBegin().AsSpan((int)offs, len));
 							offs += len;
 							break;
 						}

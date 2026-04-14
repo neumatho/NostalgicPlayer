@@ -9,7 +9,18 @@ using Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers;
 namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 {
 	/// <summary>
-	/// 
+	/// TFMX's sequencer is designed as a track table with N columns (= tracks).
+	/// Each track can assign patterns to any audio channel or execute a small
+	/// number of commands to affect either the track or song progression.
+	///
+	/// Some modules use the LOOP command to escape from their initial start/end
+	/// range within the track table.
+	///
+	/// The size of the track table (and thus the number of lines/steps within it)
+	/// cannot be determined reliably, unfortunately. In some files there are data
+	/// within track table range, which look like pattern data before the actual
+	/// beginning of the patterns. As such, not much can be done about figuring out
+	/// whether a song definition's track step number is valid
 	/// </summary>
 	public partial class TfmxDecoder
 	{
@@ -56,11 +67,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Track Mute is a feature of the TFMX file format and editor, but
+		/// isn't used much outside the editor itself. For the majority of
+		/// files all tracks are set to ON. In only 7 files, some tracks are
+		/// set to OFF and lead to missing voices in two cases
 		/// </summary>
 		/********************************************************************/
 		private bool GetTrackMute(ubyte t)
 		{
+			if (variant.NoTrackMute)
+				return true;
+
 			return 0 == MyEndian.ReadBEUword(pBuf, (udword)(offsets.Header + 0x1c0 + (t << 1)));
 		}
 

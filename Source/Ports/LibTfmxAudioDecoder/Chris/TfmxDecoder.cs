@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 		private readonly PaulaVoice[] dummyVoices = ArrayHelper.InitializeArray<PaulaVoice>(Voices_Max);
 
-		private CPointer<ubyte> pBuf;	// For safe unsigned access
+		private readonly SmartPtr<ubyte> pBuf = new SmartPtr<ubyte>();	// For safe unsigned access
 
 		private readonly List<ubyte> vSongs = new List<ubyte>();
 		private udword songPosCurrent;
@@ -76,7 +76,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			bool PortaOverride,
 			bool NoNoteDetune,
 			bool BpmSpeed5,
-			bool NoAddBeginCount
+			bool NoAddBeginCount,
+			bool NoTrackMute
 		) variant;
 
 		private
@@ -333,15 +334,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private Sample GetSampleInfo(SampleRange current, SampleRange next)
 		{
-			if ((offsets.SampleData + current.Start) >= pBuf.Length)
+			if ((offsets.SampleData + current.Start) >= pBuf.TellLength())
 				return null;
 
 			udword sampleLength = (next == null ? current.End : next.Start) - current.Start;
-			sampleLength = Math.Min(sampleLength, (udword)pBuf.Length - current.Start);
+			sampleLength = Math.Min(sampleLength, (udword)pBuf.TellLength() - current.Start);
 
 			Sample sample = new Sample
 			{
-				Start = pBuf.Slice((c_int)(offsets.SampleData + current.Start)),
+				Start = pBuf.TellBegin().Slice((c_int)(offsets.SampleData + current.Start)),
 				Length = sampleLength
 			};
 
@@ -432,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				input.Len = length;
 
 				// Set up smart pointer for unsigned input buffer access
-				pBuf = new CPointer<ubyte>(input.Buf.AsMemory((int)input.BufLen));
+				pBuf.SetBuffer(input.Buf, input.BufLen);
 
 				if (!Detect(input.Buf, input.BufLen))
 				{
@@ -469,7 +470,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			for (c_int line = 0; line < 6; line++)
 			{
 				udword lineOffset = (udword)(h + 16 + (line * 40));
-				string commentLine = encoder.GetString(pBuf.AsSpan((int)lineOffset, 40)).Replace("\r", string.Empty).TrimEnd();
+				string commentLine = encoder.GetString(pBuf.TellBegin().AsSpan((int)lineOffset, 40)).Replace("\r", string.Empty).TrimEnd();
 
 				if (!string.IsNullOrEmpty(commentLine))
 					comment += commentLine + "\n";
@@ -581,6 +582,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			variant.NoNoteDetune = false;
 			variant.BpmSpeed5 = false;
 			variant.NoAddBeginCount = false;
+			variant.NoTrackMute = false;
 
 			pattCmdFuncs[0] = PattCmd_End;
 			pattCmdFuncs[1] = PattCmd_Loop;
@@ -820,17 +822,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 								break;
 						}	// Next track
 
-						// This is a state where track sequencer cannot advance
-						if (!playerInfo.Sequencer.Step.Next && (countInactive == playerInfo.Sequencer.Tracks))
+						// These are states where track sequencer cannot advance
+						if (!playerInfo.Sequencer.Step.Next)
 						{
-							songEnd = true;
-							triggerRestart = true;
-						}
-
-						if (!playerInfo.Sequencer.Step.Next && ((countInactive + countInfinite) == playerInfo.Sequencer.Tracks))
-						{
-							songEnd = true;
-							triggerRestart = true;
+							if ((countInactive == playerInfo.Sequencer.Tracks) || ((countInactive + countInfinite) == playerInfo.Sequencer.Tracks))
+							{
+								songEnd = true;
+								triggerRestart = true;
+							}
 						}
 					}
 					while (playerInfo.Sequencer.Step.Next);
@@ -930,6 +929,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		{
 			playerInfo.Cmd.Aa = playerInfo.Cmd.Bb = playerInfo.Cmd.Cd = playerInfo.Cmd.Ee = 0;
 
+			for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
+			{
+				Track tr = playerInfo.Track[t];
+
+				tr.On = GetTrackMute(t);
+				tr.Pt = 0xff;
+				tr.Tr = 0;
+				tr.Pattern.Offset = tr.Pattern.Step = 0;
+				tr.Pattern.Wait = 0;
+				tr.Pattern.Loops = -1;
+			}
+
 			for (ubyte v = 0; v < voices; v++)
 			{
 				VoiceVars voice = voiceVars[v];
@@ -1020,16 +1031,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			for (c_int step = 0; step < Track_Steps_Max; step++)
 				playerInfo.Sequencer.StepSeenBefore[step] = false;
 
-			for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
+			// Not all songs are designed for looping cleanly, so aid them
+			for (ubyte v = 0; v < voices; v++)
 			{
-				Track tr = playerInfo.Track[t];
+				VoiceVars voice = voiceVars[v];
 
-				tr.On = GetTrackMute(t);
-				tr.Pt = 0xff;
-				tr.Tr = 0;
-				tr.Pattern.Offset = tr.Pattern.Step = 0;
-				tr.Pattern.Wait = 0;
-				tr.Pattern.Loops = -1;
+				voice.KeyUp = true;
+				voice.Volume = 0;
 			}
 
 			playerInfo.Fade.Active = false;
@@ -1178,7 +1186,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private CPointer<ubyte> MakeSamplePtr(udword offset)
 		{
-			return pBuf + offset;
+			return pBuf.TellBegin() + offset;
 		}
 
 

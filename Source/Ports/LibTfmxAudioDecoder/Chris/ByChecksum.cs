@@ -3,8 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.C;
-
 namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 {
 	/// <summary>
@@ -19,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void TraitsByChecksum()
 		{
-			CPointer<ubyte> sBuf = pBuf;
+			SmartPtr<ubyte> sBuf = new SmartPtr<ubyte>(pBuf.TellBegin(), pBuf.TellLength());
 			udword p0 = offsets.Header + MyEndian.ReadBEUdword(sBuf, offsets.Patterns);
 			udword crc1 = CrcLight.Get(sBuf, p0, 0x100);
 
@@ -53,6 +51,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			else if (crc1 == 0x8ac70fc8)
 			{
 				SetTfmxV1();
+			}
+			// Software Manager - Title 2
+			else if (crc1 == 0xa8566760)
+			{
+				variant.NoTrackMute = true;
+			}
+			// BiFi Adventure 2 - Ongame
+			else if (crc1 == 0xab1a6c6e)
+			{
+				variant.NoTrackMute = true;
 			}
 			// Ooops Up by Peter Thierolf. First two sub-songs specify a BPM customization
 			// that isn't compatible with the speed count value of default TFMX

@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static udword ReadBEUdword(CPointer<ubyte> ptr, udword offset)
+		public static udword ReadBEUdword(SmartPtr<ubyte> ptr, udword offset)
 		{
 			return (udword)((ptr[offset] << 24) + (ptr[offset + 1] << 16) + (ptr[offset + 2] << 8) + ptr[offset + 3]);
 		}
@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uword ReadBEUword(CPointer<ubyte> ptr, udword offset)
+		public static uword ReadBEUword(SmartPtr<ubyte> ptr, udword offset)
 		{
 			return (uword)((ptr[offset] << 8) + ptr[offset + 1]);
 		}

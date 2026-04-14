@@ -211,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			if (voice.Sid.TargetLength == 0)
 				return;
 
-			CPointer<ubyte> pTarget = pBuf + offsets.SampleData + voice.Sid.TargetOffset;
+			CPointer<ubyte> pTarget = pBuf.TellBegin() + offsets.SampleData + voice.Sid.TargetOffset;
 			udword currSourceOffset = 0;
 			udword x = voice.Sid.Op3.Offset;
 			ubyte d = (ubyte)(voice.Sid.Op1.InterDelta >> 8);
