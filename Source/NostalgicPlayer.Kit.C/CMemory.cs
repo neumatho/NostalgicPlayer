@@ -238,13 +238,23 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				IPointerInternal srcInternal = (IPointerInternal)source;
 				IPointerInternal destInternal = (IPointerInternal)dest;
 
-				int srcElementSize = Marshal.SizeOf(srcInternal.GetElementType());
-				int byteLength = (int)length * srcElementSize;
-
 				(Array srcArray, int srcByteOffset) = srcInternal.GetBackingArrayInfo();
 				(Array destArray, int destByteOffset) = destInternal.GetBackingArrayInfo();
 
-				Buffer.BlockCopy(srcArray, srcByteOffset, destArray, destByteOffset, byteLength);
+				if ((destArray is char[] destCharArray) && (srcArray is not char[]))
+				{
+					int destIndex = destByteOffset / sizeof(char);
+
+					for (int i = 0; i < (int)length; i++)
+						destCharArray[destIndex + i] = (char)Buffer.GetByte(srcArray, srcByteOffset + i);
+				}
+				else
+				{
+					int srcElementSize = Marshal.SizeOf(srcInternal.GetElementType());
+					int byteLength = (int)length * srcElementSize;
+
+					Buffer.BlockCopy(srcArray, srcByteOffset, destArray, destByteOffset, byteLength);
+				}
 			}
 		}
 

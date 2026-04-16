@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public static readonly string[] FileExtensions = [ "tfx", "mdat", "tfm" ];
+		public static readonly string[] FileExtensions = [ "tfx", "mdat", "tfm", "tfmx" ];
 
 
 
@@ -89,6 +89,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{
 				if (IsTfmxModFile(moduleStream))
 					startOffset = 20;
+				else
+					startOffset = IsTfmxPakFile(moduleStream);
 			}
 
 			if (IsStModule(moduleStream, startOffset))
@@ -108,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			if ((mark1 == 0x54464d58) && ((mark2 & 0xff000000) == 0x20000000) && ((mark2 & 0x00ffffff) != 0x00534f4e) && (mark3 != 0x47))
 				return (ModuleType.Tfmx15, singleFile);
 
-			// Make a check for Danger Freak, since it is a special variant of TFMX 1.5
+			// Make a check for special modules, since they are a special variant of TFMX 1.5
 			moduleStream.Seek(startOffset + 0x1d4, SeekOrigin.Begin);
 			uint offset = moduleStream.Read_B_UINT32();
 			if (offset == 0)
@@ -259,8 +261,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Will check the current file to see if it's in TFMX-MOD format.
-		/// If that is true, it will load the structure
+		/// Will check the current file to see if it's in TFMX-MOD format
 		/// </summary>
 		/********************************************************************/
 		private static bool IsTfmxModFile(ModuleStream moduleStream)
@@ -270,6 +271,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			// Check the mark
 			return moduleStream.ReadMark(8) == "TFMX-MOD";
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will check the current file to see if it's in TFMXPAK format
+		/// </summary>
+		/********************************************************************/
+		private static int IsTfmxPakFile(ModuleStream moduleStream)
+		{
+			// Seek to the start of the file
+			moduleStream.Seek(0, SeekOrigin.Begin);
+
+			// Check the mark
+			if (moduleStream.ReadMark(7) == "TFMXPAK")
+			{
+				for (int i = 8; i < 32; i++)
+				{
+					if (moduleStream.Read_UINT8() == '>')
+					{
+						if (moduleStream.ReadMark(2) == ">>")
+							return (int)moduleStream.Position;
+					}
+				}
+			}
+
+			return 0;
 		}
 
 

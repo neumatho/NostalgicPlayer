@@ -238,6 +238,7 @@
               <uap:FileType ContentType="audio/x-tfmx">.tfx</uap:FileType>
               <uap:FileType ContentType="audio/x-tfmx">.mdat</uap:FileType>
               <uap:FileType ContentType="audio/x-tfmx">.tfm</uap:FileType>
+              <uap:FileType ContentType="audio/x-tfmx">.tfmx</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>TFMX</uap:DisplayName>
           </uap:FileTypeAssociation>
