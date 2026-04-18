@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Polycode.NostalgicPlayer.Kit.Gui.Extensions
+namespace Polycode.NostalgicPlayer.Controls.Extensions
 {
 	/// <summary>
 	/// Extension methods to the string class
