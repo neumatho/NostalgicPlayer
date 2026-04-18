@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleListContextMenu = new KryptonContextMenu();
 			neverEndingTimer = new System.Windows.Forms.Timer(components);
 			addContextMenu = new KryptonContextMenu();
-			moduleListControl = new ModuleListControl();
+			moduleList = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicModuleList();
 			searchPopupControl = new SearchPopupControl();
 			infoBox.SuspendLayout();
 			listButtonsBox.SuspendLayout();
@@ -446,13 +446,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			addContextMenu.Palette = fontPalette;
 			// 
-			// moduleListControl
+			// moduleList
 			// 
-			moduleListControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			moduleListControl.Location = new System.Drawing.Point(35, 56);
-			moduleListControl.Name = "moduleListControl";
-			moduleListControl.Size = new System.Drawing.Size(377, 116);
-			moduleListControl.TabIndex = 5;
+			moduleList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			moduleList.Location = new System.Drawing.Point(35, 56);
+			moduleList.Name = "moduleList";
+			moduleList.Size = new System.Drawing.Size(377, 116);
+			moduleList.TabIndex = 5;
 			// 
 			// moduleListContextMenu
 			// 
@@ -470,7 +470,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			ClientSize = new System.Drawing.Size(416, 281);
 			Controls.Add(searchPopupControl);
-			Controls.Add(moduleListControl);
+			Controls.Add(moduleList);
 			Controls.Add(muteCheckButton);
 			Controls.Add(functionsBox);
 			Controls.Add(tapedeckBox);
@@ -540,7 +540,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private KryptonContextMenu addContextMenu;
 		private KryptonButton favoritesButton;
 		private Kit.Gui.Components.FontPalette fontPalette;
-		private ModuleListControl moduleListControl;
+		private NostalgicPlayer.Controls.Lists.NostalgicModuleList moduleList;
 		private SearchPopupControl searchPopupControl;
 		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
 	}

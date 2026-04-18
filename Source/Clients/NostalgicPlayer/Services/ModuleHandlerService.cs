@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
@@ -18,6 +17,7 @@ using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Will load and play the module at the index given
 		/// </summary>
 		/********************************************************************/
-		public bool LoadAndPlayModule(ModuleListItem listItem, int subSong, int startPos)
+		public bool LoadAndPlayModule(ModuleListListItem listItem, int subSong, int startPos)
 		{
 			// Start to free all loaded modules
 			FreeAllModules();
@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Load and/or initialize module
 		/// </summary>
 		/********************************************************************/
-		public bool LoadAndInitModule(ModuleListItem listItem, int? subSong = null, int? startPos = null, bool showError = true)
+		public bool LoadAndInitModule(ModuleListListItem listItem, int? subSong = null, int? startPos = null, bool showError = true)
 		{
 			// Should we load a module?
 			if (listItem != null)
@@ -347,7 +347,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Will start playing the given module
 		/// </summary>
 		/********************************************************************/
-		public bool PlayModule(ModuleListItem listItem)
+		public bool PlayModule(ModuleListListItem listItem)
 		{
 			bool result = true;
 
@@ -515,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Will start to play the song given
 		/// </summary>
 		/********************************************************************/
-		public bool StartSong(ModuleListItem listItem, int newSong)
+		public bool StartSong(ModuleListListItem listItem, int newSong)
 		{
 			IPlayer player = GetActivePlayer();
 
@@ -820,7 +820,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Will show an error message to the user with options
 		/// </summary>
 		/********************************************************************/
-		private void ShowErrorMessage(string message, ModuleListItem listItem)
+		private void ShowErrorMessage(string message, ModuleListListItem listItem)
 		{
 			mainWindowApi.Form.BeginInvoke(() =>
 			{
@@ -900,7 +900,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// NOTE: This method needs to be called from the main GUI thread
 		/// </summary>
 		/********************************************************************/
-		private bool StartPlaying(ModuleListItem listItem, int subSong, int startPos, bool showError = true)
+		private bool StartPlaying(ModuleListListItem listItem, int subSong, int startPos, bool showError = true)
 		{
 			IPlayer player = GetActivePlayer();
 

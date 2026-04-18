@@ -16,8 +16,8 @@ namespace Polycode.NostalgicPlayer.Controls.Extensions
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Split the given string into multiple lines if needed if the
-		/// exceed the given length
+		/// Split the given string into multiple lines if it exceeds the
+		/// given length
 		/// </summary>
 		/********************************************************************/
 		public static IEnumerable<string> SplitIntoLines(this string str, IntPtr handle, int maxWidth, Font font)
