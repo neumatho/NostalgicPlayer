@@ -9,6 +9,7 @@ tab_width = 4
 end_of_line = crlf
 
 # Microsoft .NET properties
+dotnet_style_prefer_string_empty = true:suggestion
 csharp_preferred_modifier_order = public, private, protected, internal, file, static, extern, new, virtual, abstract, sealed, override, readonly, unsafe, required, volatile, async:suggestion
 csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = false
