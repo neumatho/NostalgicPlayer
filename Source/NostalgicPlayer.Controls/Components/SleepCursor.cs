@@ -9,7 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Platform.Native;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
+namespace Polycode.NostalgicPlayer.Controls.Components
 {
 	/// <summary>
 	/// Smart control to make a sleep cursor when initiated via using()
