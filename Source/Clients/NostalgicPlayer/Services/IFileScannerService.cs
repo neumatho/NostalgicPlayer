@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// <summary>
 		/// Will tell the scanner to scan the given range of items
 		/// </summary>
-		void ScanItems(IEnumerable<ModuleListItem> items);
+		void ScanItems(IEnumerable<ModuleListListItem> items);
 
 		/// <summary>
 		/// Will clear the current query and stop ongoing scanning

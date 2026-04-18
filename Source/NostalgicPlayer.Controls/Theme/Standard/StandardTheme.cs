@@ -23,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardScrollBarColors scrollBarColors = new StandardScrollBarColors();
 		private static readonly StandardTabColors tabColors = new StandardTabColors();
 		private static readonly StandardLabelColors labelColors = new StandardLabelColors();
+		private static readonly StandardModuleListColors moduleListColors = new StandardModuleListColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -154,5 +155,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public ILabelColors LabelColors => labelColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by module list control
+		/// </summary>
+		/********************************************************************/
+		public IModuleListColors ModuleListColors => moduleListColors;
 	}
 }

@@ -5,8 +5,8 @@
 /******************************************************************************/
 using System;
 using Windows.Media;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// <summary>
 		/// Update the media information displayed in system controls
 		/// </summary>
-		void UpdateMetadata(ModuleListItem listItem, ModuleInfoStatic staticInfo, int currentSong, int maxSongs);
+		void UpdateMetadata(ModuleListListItem listItem, ModuleInfoStatic staticInfo, int currentSong, int maxSongs);
 
 		/// <summary>
 		/// Clear the media information
