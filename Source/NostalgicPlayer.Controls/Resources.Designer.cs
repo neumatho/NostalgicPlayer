@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.NostalgicPlayer.Kit.Gui {
+namespace Polycode.NostalgicPlayer.Controls {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Kit.Gui {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Kit.Gui.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Controls.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,42 +61,29 @@ namespace Polycode.NostalgicPlayer.Kit.Gui {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to hh\:mm\:ss.
         /// </summary>
-        internal static System.Drawing.Bitmap Error {
+        internal static string IDS_TIMEFORMAT {
             get {
-                object obj = ResourceManager.GetObject("Error", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("IDS_TIMEFORMAT", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to d\:hh\:mm\:ss.
         /// </summary>
-        internal static System.Drawing.Bitmap Information {
+        internal static string IDS_TIMEFORMAT_BIG {
             get {
-                object obj = ResourceManager.GetObject("Information", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("IDS_TIMEFORMAT_BIG", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized string similar to m\:ss.
         /// </summary>
-        internal static System.Drawing.Bitmap Question {
+        internal static string IDS_TIMEFORMAT_SMALL {
             get {
-                object obj = ResourceManager.GetObject("Question", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Warning {
-            get {
-                object obj = ResourceManager.GetObject("Warning", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                return ResourceManager.GetString("IDS_TIMEFORMAT_SMALL", resourceCulture);
             }
         }
     }

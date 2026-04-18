@@ -12,10 +12,10 @@ using System.Threading;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Controls.Events;
+using Polycode.NostalgicPlayer.Controls.Extensions;
 using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages
