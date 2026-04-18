@@ -13,6 +13,9 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 	public interface IImageColors
 	{
 		/// <summary></summary>
+		Color PlayingItemColor { get; }
+
+		/// <summary></summary>
 		Color PreviousPictureColor { get; }
 		/// <summary></summary>
 		Color NextPictureColor { get; }
