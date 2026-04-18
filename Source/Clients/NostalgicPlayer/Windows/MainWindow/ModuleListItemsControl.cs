@@ -14,8 +14,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Controls.Components;
+using Polycode.NostalgicPlayer.Controls.Extensions;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
-using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
