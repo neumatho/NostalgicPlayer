@@ -18,10 +18,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\Resources\Main\PlayingItem.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Images\Resources\Form\CaptionClose.png" />
     <EmbeddedResource Include="Images\Resources\Form\CaptionMaximize.png" />
     <EmbeddedResource Include="Images\Resources\Form\CaptionMinimize.png" />
     <EmbeddedResource Include="Images\Resources\Form\CaptionNormalize.png" />
+    <EmbeddedResource Include="Images\Resources\Main\PlayingItem.svg" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\NextPicture.svg" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\PreviousPicture.svg" />
     <EmbeddedResource Include="Images\Resources\SampleInformation\SampleLoop.svg" />
