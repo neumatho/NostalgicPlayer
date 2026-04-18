@@ -113,8 +113,14 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		protected override void OnHandleCreated(EventArgs e)
 		{
-			if (DesignerHelper.IsInDesignMode(this) && (themeManager == null))
-				themeManager = new ThemeManager();
+			if (DesignerHelper.IsInDesignMode(this))
+			{
+				if (themeManager == null)
+					themeManager = new ThemeManager();
+
+				if (imageBank == null)
+					imageBank = new NostalgicImageBank(themeManager);
+			}
 
 			InitializeTheme();
 
