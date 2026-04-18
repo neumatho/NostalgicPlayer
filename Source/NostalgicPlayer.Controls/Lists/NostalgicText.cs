@@ -7,7 +7,6 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Platform.Native;
 
 namespace Polycode.NostalgicPlayer.Controls.Lists
 {
@@ -86,10 +85,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
 			if (textVScrollBar.Visible)
-			{
-				// Navigate the mouse wheel message to the scrollbar control
-				User32.SendMessageW(textVScrollBar.Handle, WM.MOUSEWHEEL, (e.Delta * SystemInformation.MouseWheelScrollLines) << 16, IntPtr.Zero);
-			}
+				textVScrollBar.CalculateValueForMouseWheel(e);
 
 			base.OnMouseWheel(e);
 		}

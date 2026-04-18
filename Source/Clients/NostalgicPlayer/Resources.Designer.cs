@@ -333,16 +333,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_PLAYING_ITEM {
-            get {
-                object obj = ResourceManager.GetObject("IDB_PLAYING_ITEM", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_PREVIOUS_MODULE {
             get {
                 object obj = ResourceManager.GetObject("IDB_PREVIOUS_MODULE", resourceCulture);
@@ -1397,15 +1387,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_CONTEXTMENU_SORT_SORT_ZA {
             get {
                 return ResourceManager.GetString("IDS_CONTEXTMENU_SORT_SORT_ZA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to #{0}.
-        /// </summary>
-        internal static string IDS_DEFAULT_SUBSONG {
-            get {
-                return ResourceManager.GetString("IDS_DEFAULT_SUBSONG", resourceCulture);
             }
         }
         

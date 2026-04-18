@@ -71,5 +71,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by label controls
 		/// </summary>
 		ILabelColors LabelColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by module list control
+		/// </summary>
+		IModuleListColors ModuleListColors { get; }
 	}
 }
