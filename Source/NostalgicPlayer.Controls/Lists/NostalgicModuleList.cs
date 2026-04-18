@@ -10,39 +10,40 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Controls.Designer;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Polycode.NostalgicPlayer.Platform.Native;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
+namespace Polycode.NostalgicPlayer.Controls.Lists
 {
 	/// <summary>
 	/// This control replaces a normal ListBox control to speed up things
 	/// with large lists
 	/// </summary>
-	public partial class ModuleListControl : UserControl
+	public partial class NostalgicModuleList : UserControl
 	{
 		#region ItemCollection class
 		/// <summary>
 		/// Holds all the items to show in the control
 		/// </summary>
-		public class ItemCollection : IList<ModuleListItem>
+		public class ItemCollection : IList<ModuleListListItem>
 		{
-			private readonly ModuleListControl owner;
-			private readonly ModuleListItemsControl listItemsControl;
+			private readonly NostalgicModuleList owner;
+			private readonly NostalgicModuleListInternal listItemsControl;
 
-			private readonly List<ModuleListItem> collection;
+			private readonly List<ModuleListListItem> collection;
 
 			/********************************************************************/
 			/// <summary>
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public ItemCollection(ModuleListControl moduleListControl, ModuleListItemsControl moduleListItemsControl)
+			internal ItemCollection(NostalgicModuleList moduleListControl, NostalgicModuleListInternal moduleListItemsControl)
 			{
 				owner = moduleListControl;
 				listItemsControl = moduleListItemsControl;
 
-				collection = new List<ModuleListItem>();
+				collection = new List<ModuleListListItem>();
 			}
 
 			#region Properties
@@ -69,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Return an enumerator to traverse the collection
 			/// </summary>
 			/********************************************************************/
-			public IEnumerator<ModuleListItem> GetEnumerator()
+			public IEnumerator<ModuleListListItem> GetEnumerator()
 			{
 				return collection.GetEnumerator();
 			}
@@ -93,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Add a single item to the collection
 			/// </summary>
 			/********************************************************************/
-			public void Add(ModuleListItem item)
+			public void Add(ModuleListListItem item)
 			{
 				collection.Add(item);
 
@@ -107,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Add a bunch of items to the collection
 			/// </summary>
 			/********************************************************************/
-			public void AddRange(IEnumerable<ModuleListItem> items)
+			public void AddRange(IEnumerable<ModuleListListItem> items)
 			{
 				int startIndex = collection.Count;
 
@@ -123,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Insert a single item to the collection at the specified position
 			/// </summary>
 			/********************************************************************/
-			public void Insert(int index, ModuleListItem item)
+			public void Insert(int index, ModuleListListItem item)
 			{
 				collection.Insert(index, item);
 
@@ -138,9 +139,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// position
 			/// </summary>
 			/********************************************************************/
-			public void InsertRange(int index, IEnumerable<ModuleListItem> items)
+			public void InsertRange(int index, IEnumerable<ModuleListListItem> items)
 			{
-				List<ModuleListItem> list = items.ToList();
+				List<ModuleListListItem> list = items.ToList();
 
 				for (int i = list.Count - 1; i >= 0; i--)
 					collection.Insert(index, list[i]);
@@ -170,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Will try to find the given item and remove it from the collection
 			/// </summary>
 			/********************************************************************/
-			public bool Remove(ModuleListItem item)
+			public bool Remove(ModuleListListItem item)
 			{
 				int index = collection.IndexOf(item);
 				if (index != -1)
@@ -205,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Checks to see if the given item is stored in the collection
 			/// </summary>
 			/********************************************************************/
-			public bool Contains(ModuleListItem item)
+			public bool Contains(ModuleListListItem item)
 			{
 				return collection.Contains(item);
 			}
@@ -217,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Try to find the given item and return the index in the collection
 			/// </summary>
 			/********************************************************************/
-			public int IndexOf(ModuleListItem item)
+			public int IndexOf(ModuleListListItem item)
 			{
 				return collection.IndexOf(item);
 			}
@@ -229,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Copy the collection into the given array
 			/// </summary>
 			/********************************************************************/
-			public void CopyTo(ModuleListItem[] array, int arrayIndex)
+			public void CopyTo(ModuleListListItem[] array, int arrayIndex)
 			{
 				collection.CopyTo(array, arrayIndex);
 			}
@@ -241,7 +242,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			/// Return or set the item at the given index from the collection
 			/// </summary>
 			/********************************************************************/
-			public ModuleListItem this[int index]
+			public ModuleListListItem this[int index]
 			{
 				get => collection[index];
 
@@ -347,11 +348,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleListControl()
+		public NostalgicModuleList()
 		{
 			InitializeComponent();
 
-			moduleListItemsControl.SetControls(this, moduleListScrollBar);
+			moduleListInternal.SetControls(this, moduleListScrollBar);
 
 			updateCount = 0;
 		}
@@ -362,7 +363,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Return the item collection
 		/// </summary>
 		/********************************************************************/
-		public ItemCollection Items => moduleListItemsControl.Items;
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public ItemCollection Items => moduleListInternal.Items;
 
 
 
@@ -371,7 +374,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Return the selected items collection
 		/// </summary>
 		/********************************************************************/
-		public IReadOnlyList<ModuleListItem> SelectedItems => moduleListItemsControl.SelectedItems;
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public IReadOnlyList<ModuleListListItem> SelectedItems => moduleListInternal.SelectedItems;
 
 
 
@@ -380,7 +385,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Return the selected indexes collection
 		/// </summary>
 		/********************************************************************/
-		public IReadOnlyList<int> SelectedIndexes => moduleListItemsControl.SelectedIndexes;
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public IReadOnlyList<int> SelectedIndexes => moduleListInternal.SelectedIndexes;
 
 
 
@@ -391,10 +398,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// </summary>
 		/********************************************************************/
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
 		public int SelectedIndex
 		{
-			get => moduleListItemsControl.SelectedIndex;
-			set => moduleListItemsControl.SelectedIndex = value;
+			get => moduleListInternal.SelectedIndex;
+			set => moduleListInternal.SelectedIndex = value;
 		}
 
 
@@ -404,7 +412,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// if none is selected
 		/// </summary>
 		/********************************************************************/
-		public ModuleListItem SelectedItem => moduleListItemsControl.SelectedItem;
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public ModuleListListItem SelectedItem => moduleListInternal.SelectedItem;
 
 
 
@@ -414,6 +424,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// </summary>
 		/********************************************************************/
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
 		public int TopIndex
 		{
 			get => moduleListScrollBar.Value;
@@ -442,6 +453,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler SelectedIndexChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		internal void OnSelectedIndexChanged()
+		{
+			if (SelectedIndexChanged != null)
+				SelectedIndexChanged(this, EventArgs.Empty);
+		}
 		#endregion
 
 		#region Public methods
@@ -498,7 +522,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			if (index >= 0)
 			{
 				if (IsItemVisible(index))
-					moduleListItemsControl.Invalidate();
+					moduleListInternal.Invalidate();
 			}
 		}
 
@@ -511,7 +535,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public void SetSelected(int index, bool select)
 		{
-			moduleListItemsControl.SetSelected(index, select);
+			moduleListInternal.SetSelected(index, select);
 		}
 
 
@@ -523,7 +547,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public void SetSelectedOnAllItems(bool select)
 		{
-			moduleListItemsControl.SetSelectedOnAllItems(select);
+			moduleListInternal.SetSelectedOnAllItems(select);
 		}
 
 
@@ -535,7 +559,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public int IndexFromPoint(Point point)
 		{
-			return moduleListItemsControl.IndexFromPoint(point);
+			return moduleListInternal.IndexFromPoint(point);
 		}
 
 
@@ -547,7 +571,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public bool IsItemVisible(int index)
 		{
-			int itemsVisible = Height / ModuleListItemsControl.ItemHeight;
+			int itemsVisible = Height / NostalgicModuleListInternal.ItemHeight;
 
 			if ((index >= moduleListScrollBar.Value) && (index < (moduleListScrollBar.Value + itemsVisible)))
 				return true;
@@ -564,7 +588,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public void EnableListNumber(bool enable)
 		{
-			moduleListItemsControl.EnableListNumber(enable);
+			moduleListInternal.EnableListNumber(enable);
 		}
 
 
@@ -576,7 +600,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public void EnableFullPath(bool enable)
 		{
-			moduleListItemsControl.EnableFullPath(enable);
+			moduleListInternal.EnableFullPath(enable);
 		}
 
 
@@ -588,7 +612,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public void SetLastItemSelected(int index)
 		{
-			moduleListItemsControl.SetLastItemSelected(index);
+			moduleListInternal.SetLastItemSelected(index);
 		}
 
 
@@ -600,7 +624,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public DragDropInformation GetLatestDragAndDropInformation(DragEventArgs e)
 		{
-			return moduleListItemsControl.GetLatestDragAndDropInformation(e);
+			return moduleListInternal.GetLatestDragAndDropInformation(e);
 		}
 		#endregion
 
@@ -626,8 +650,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
-			// Navigate the mouse wheel message to the scrollbar control
-			User32.SendMessageW(moduleListScrollBar.Handle, WM.MOUSEWHEEL, (e.Delta * SystemInformation.MouseWheelScrollLines) << 16, IntPtr.Zero);
+			if (moduleListScrollBar.Enabled)
+				moduleListScrollBar.CalculateValueForMouseWheel(e);
 
 			base.OnMouseWheel(e);
 		}
@@ -641,7 +665,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void ScrollBar_ValueChanged(object sender, EventArgs e)
 		{
-			moduleListItemsControl.Invalidate();
+			moduleListInternal.Invalidate();
 		}
 
 
@@ -681,19 +705,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		}
 		#endregion
 
-		#region Internal methods
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		internal void OnSelectedIndexChanged()
-		{
-			if (SelectedIndexChanged != null)
-				SelectedIndexChanged(this, EventArgs.Empty);
-		}
-		#endregion
-
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -704,7 +715,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			if (Items != null)
 			{
-				int itemsVisible = Height / ModuleListItemsControl.ItemHeight;
+				int itemsVisible = Height / NostalgicModuleListInternal.ItemHeight;
 
 				moduleListScrollBar.Maximum = Math.Max(Items.Count - 1 - 1, 0);
 				moduleListScrollBar.LargeChange = Math.Max(itemsVisible - 1, 1);
@@ -713,6 +724,61 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				int maxValue = moduleListScrollBar.Maximum - moduleListScrollBar.LargeChange + 1;
 				if (moduleListScrollBar.Value > maxValue)
 					moduleListScrollBar.Value = maxValue;
+			}
+		}
+		#endregion
+
+		#region Designer filtering (hide properties from PropertyGrid)
+		/********************************************************************/
+		/// <summary>
+		/// Register a provider that filters properties for the designer
+		/// </summary>
+		/********************************************************************/
+		static NostalgicModuleList()
+		{
+			TypeDescriptor.AddProvider(new NostalgicModuleListTypeDescriptionProvider(), typeof(NostalgicModuleList));
+		}
+
+		/// <summary>
+		/// Filter out properties we do not want to show in the designer.
+		/// This is needed for properties that we cannot override, but we do
+		/// it for all our hidden properties to be sure
+		/// </summary>
+		private sealed class NostalgicModuleListTypeDescriptionProvider : TypeDescriptionProvider
+		{
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(UserControl));
+
+			private static readonly string[] propertiesToHide =
+			[
+				nameof(BackColor),
+				nameof(BorderStyle),
+				nameof(BackColor),
+				nameof(BackgroundImage),
+				nameof(BackgroundImageLayout),
+				nameof(Font),
+				nameof(ForeColor),
+				nameof(RightToLeft),
+			];
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public NostalgicModuleListTypeDescriptionProvider() : base(parent)
+			{
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
+			{
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance), propertiesToHide);
 			}
 		}
 		#endregion

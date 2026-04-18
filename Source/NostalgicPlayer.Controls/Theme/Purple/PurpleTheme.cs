@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleScrollBarColors scrollBarColors = new PurpleScrollBarColors();
 		private static readonly PurpleTabColors tabColors = new PurpleTabColors();
 		private static readonly PurpleLabelColors labelColors = new PurpleLabelColors();
+		private static readonly PurpleModuleListColors moduleListColors = new PurpleModuleListColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -156,5 +157,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public ILabelColors LabelColors => labelColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by module list control
+		/// </summary>
+		/********************************************************************/
+		public IModuleListColors ModuleListColors => moduleListColors;
 	}
 }

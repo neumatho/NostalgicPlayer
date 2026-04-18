@@ -61,6 +61,15 @@ namespace Polycode.NostalgicPlayer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to #{0}.
+        /// </summary>
+        internal static string IDS_DEFAULT_SUBSONG {
+            get {
+                return ResourceManager.GetString("IDS_DEFAULT_SUBSONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to hh\:mm\:ss.
         /// </summary>
         internal static string IDS_TIMEFORMAT {
