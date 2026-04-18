@@ -3,82 +3,91 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
+namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Holds all colors used by the images
+	/// Holds all the images needed by the Main window
 	/// </summary>
-	internal class StandardImageColors : IImageColors
+	internal class MainImages : ThemedImageBase, IMainImages
 	{
-		private readonly ILabelColors labelColors = new StandardLabelColors();
+		private const string Category = "Main";
 
-		private static readonly Color sampleLoopColor = Color.FromArgb(55, 134, 64);
-		private static readonly Color samplePingPongColor = Color.FromArgb(16, 43, 147);
-		private static readonly Color sampleStereoColor = Color.FromArgb(255, 120, 70);
-		private static readonly Color sampleMultiOctavesColor = Color.FromArgb(119, 137, 201);
+		private Dictionary<Color, Bitmap> playingItems;
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Color PlayingItemColor => labelColors.TextColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color PreviousPictureColor => labelColors.TextColor;
+		public MainImages(IThemeManager themeManager) : base(themeManager)
+		{
+			playingItems = new Dictionary<Color, Bitmap>();
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Dispose all the images
 		/// </summary>
 		/********************************************************************/
-		public Color NextPictureColor => labelColors.TextColor;
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			FlushImages();
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Flush images
 		/// </summary>
 		/********************************************************************/
-		public Color SampleLoopColor => sampleLoopColor;
+		protected override void FlushImages()
+		{
+			FlushPlayingItems();
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Gets the playing item image
 		/// </summary>
 		/********************************************************************/
-		public Color SamplePingPongColor => samplePingPongColor;
+		public Bitmap GetPlayingItem(Color color)
+		{
+			if (!playingItems.TryGetValue(color, out Bitmap bitmap))
+			{
+				if (playingItems.Count == 2)
+					FlushPlayingItems();
+
+				bitmap = GetSvgBitmap(Category, "PlayingItem", color, 10, 10);
+				playingItems.Add(color, bitmap);
+			}
+
+			return bitmap;
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Flush all playing item bitmaps
 		/// </summary>
 		/********************************************************************/
-		public Color SampleStereoColor => sampleStereoColor;
+		private void FlushPlayingItems()
+		{
+			foreach (Bitmap bitmap in playingItems.Values)
+				bitmap.Dispose();
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SampleMultiOctavesColor => sampleMultiOctavesColor;
+			playingItems.Clear();
+		}
 	}
 }
