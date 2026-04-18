@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Gui.Extensions
+namespace Polycode.NostalgicPlayer.Controls.Extensions
 {
 	/// <summary>
 	/// Extension methods to the long value
