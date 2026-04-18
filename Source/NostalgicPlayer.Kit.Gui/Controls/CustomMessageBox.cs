@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
+using Polycode.NostalgicPlayer.Controls.Extensions;
 
 namespace Polycode.NostalgicPlayer.Kit.Gui.Controls
 {
