@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Gui {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -67,33 +67,6 @@ namespace Polycode.NostalgicPlayer.Kit.Gui {
             get {
                 object obj = ResourceManager.GetObject("Error", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to hh\:mm\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to d\:hh\:mm\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT_BIG {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT_BIG", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to m\:ss.
-        /// </summary>
-        internal static string IDS_TIMEFORMAT_SMALL {
-            get {
-                return ResourceManager.GetString("IDS_TIMEFORMAT_SMALL", resourceCulture);
             }
         }
         

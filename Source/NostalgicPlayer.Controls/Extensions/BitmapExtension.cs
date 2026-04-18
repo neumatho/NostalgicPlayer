@@ -7,7 +7,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Polycode.NostalgicPlayer.Kit.Gui.Extensions
+namespace Polycode.NostalgicPlayer.Controls.Extensions
 {
 	/// <summary>
 	/// Extension methods to the Bitmap class
