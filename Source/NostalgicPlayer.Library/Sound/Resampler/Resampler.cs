@@ -21,6 +21,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 	/// </summary>
 	internal class Resampler : SoundBase
 	{
+		private readonly IVisualizerFactory visualizerFactory;
+
 		private const int FracBits = 11;
 		private const int FracMask = ((1 << FracBits) - 1);
 
@@ -55,6 +57,18 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public Resampler(IVisualizerFactory visualizerFactory)
+		{
+			this.visualizerFactory = visualizerFactory;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize the resampler routines
 		/// </summary>
 		/********************************************************************/
@@ -74,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 				inputChannelCount = currentPlayer.ChannelCount;
 
 				// Allocate the visual component
-				currentVisualizer = new Visualizer();
+				currentVisualizer = visualizerFactory.GetVisualizer();
 
 				// Initialize the visualizer
 				currentVisualizer.Initialize();

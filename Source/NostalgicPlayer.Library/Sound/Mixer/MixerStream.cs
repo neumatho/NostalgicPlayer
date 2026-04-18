@@ -20,8 +20,22 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 	/// </summary>
 	internal class MixerStream : SoundStream
 	{
+		private readonly ISoundFactory soundFactory;
+
 		private Mixer mixer;
 		private Lock mixerLock;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public MixerStream(ISoundFactory soundFactory)
+		{
+			this.soundFactory = soundFactory;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -30,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/********************************************************************/
 		public bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
-			mixer = new Mixer();
+			mixer = soundFactory.GetMixer();
 			mixerLock = new Lock();
 
 			mixer.ClockUpdated += Mixer_ClockUpdated;

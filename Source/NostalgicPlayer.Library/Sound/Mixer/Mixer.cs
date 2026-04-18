@@ -34,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 	/// </summary>
 	internal class Mixer : SoundBase
 	{
+		private readonly IVisualizerFactory visualizerFactory;
+
 		private IModulePlayerAgent currentPlayer;
 		private bool bufferMode;
 		private bool bufferDirect;
@@ -83,8 +85,10 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Mixer()
+		public Mixer(IVisualizerFactory visualizerFactory)
 		{
+			this.visualizerFactory = visualizerFactory;
+
 			// Initialize member variables
 			playing = false;
 		}
@@ -114,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
 
 				// Allocate and initialize he visual component
-				currentVisualizer = new Visualizer();
+				currentVisualizer = visualizerFactory.GetVisualizer();
 				currentVisualizer.Initialize();
 
 				if (bufferDirect)

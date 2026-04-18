@@ -10,7 +10,6 @@ using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Agent;
 
 namespace Polycode.NostalgicPlayer.Library.Sound
@@ -68,9 +67,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Visualizer()
+		public Visualizer(IAgentManager agentManager)
 		{
-			agentManager = DependencyInjection.Container.GetInstance<IAgentManager>();
+			this.agentManager = agentManager;
 		}
 
 

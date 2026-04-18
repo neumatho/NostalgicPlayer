@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
+using Polycode.NostalgicPlayer.Library.Sound;
 using Polycode.NostalgicPlayer.Library.Sound.Mixer;
 
 namespace Polycode.NostalgicPlayer.Library.Players
@@ -23,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 	internal class ModulePlayer : IModulePlayer
 	{
 		private readonly IAgentManager agentManager;
+		private readonly ISoundStreamFactory soundStreamFactory;
 
 		private readonly Lock playerLock = new Lock();
 		private IModulePlayerAgent currentPlayer;
@@ -36,9 +38,10 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModulePlayer(IAgentManager agentManager)
+		public ModulePlayer(IAgentManager agentManager, ISoundStreamFactory soundStreamFactory)
 		{
 			this.agentManager = agentManager;
+			this.soundStreamFactory = soundStreamFactory;
 
 			// Initialize member variables
 			StaticModuleInformation = new ModuleInfoStatic();
@@ -109,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 							StaticModuleInformation = new ModuleInfoStatic(loader, currentPlayer);
 
 							// Initialize the mixer
-							soundStream = new MixerStream();
+							soundStream = soundStreamFactory.GetMixerStream();
 
 							// Subscribe the events
 							soundStream.ClockUpdated += Stream_ClockUpdated;

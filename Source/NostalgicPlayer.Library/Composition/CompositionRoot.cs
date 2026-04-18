@@ -7,6 +7,9 @@ using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers;
 using Polycode.NostalgicPlayer.Library.Loaders.FileLoaders;
 using Polycode.NostalgicPlayer.Library.Players;
+using Polycode.NostalgicPlayer.Library.Sound;
+using Polycode.NostalgicPlayer.Library.Sound.Mixer;
+using Polycode.NostalgicPlayer.Library.Sound.Resampler;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.Library.Composition
@@ -25,6 +28,8 @@ namespace Polycode.NostalgicPlayer.Library.Composition
 		{
 			RegisterPlayers(container);
 			RegisterLoaders(container);
+			RegisterSoundStreams(container);
+			RegisterSounds(container);
 		}
 
 
@@ -61,6 +66,36 @@ namespace Polycode.NostalgicPlayer.Library.Composition
 			container.Register<StreamLoader>();
 
 			container.RegisterSingleton<IArchiveDetector, ArchiveDetector>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all SoundStream implementations
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterSoundStreams(Container container)
+		{
+			container.RegisterSingleton<ISoundStreamFactory, SoundStreamFactory>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all sound implementations
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterSounds(Container container)
+		{
+			container.RegisterSingleton<ISoundFactory, SoundFactory>();
+			container.RegisterSingleton<IVisualizerFactory, VisualizerFactory>();
+
+			container.Register<Mixer>();
+			container.Register<Resampler>();
+
+			container.Register<Visualizer>();
 		}
 	}
 }

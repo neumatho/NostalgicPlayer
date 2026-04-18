@@ -21,6 +21,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 	/// </summary>
 	internal class ResamplerStream : SoundStream
 	{
+		private readonly ISoundFactory soundFactory;
+
 		private bool playing;
 
 		private Resampler resampler;
@@ -29,6 +31,18 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 		private int maxBufferSizeInFrames;
 		private int delayCount;
 		private int outputChannelNumber;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ResamplerStream(ISoundFactory soundFactory)
+		{
+			this.soundFactory = soundFactory;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -42,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 			maxBufferSizeInFrames = 0;
 			delayCount = 0;
 
-			resampler = new Resampler();
+			resampler = soundFactory.GetResampler();
 			resamplerLock = new Lock();
 
 			resampler.ClockUpdated += Resampler_ClockUpdated;
