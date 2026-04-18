@@ -14,6 +14,8 @@ namespace Polycode.NostalgicPlayer.Platform.Native
 		/// <summary></summary>
 		NOWHERE = 0,
 		/// <summary></summary>
+		CLIENT = 1,
+		/// <summary></summary>
 		CAPTION = 2,
 		/// <summary></summary>
 		SYSMENU = 3,
