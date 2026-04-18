@@ -304,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		private ILoader FindLoader(string fileName)
 		{
-			return fileLoaderFactory.CreateFileLoader(fileName);
+			return fileLoaderFactory.GetFileLoader(fileName);
 		}
 
 

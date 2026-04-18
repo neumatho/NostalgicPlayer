@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			if (moduleHandler == null)
 				return;
 
-			MixerConfiguration configuration = mixerConfigurationFactory.Create();
+			MixerConfiguration configuration = mixerConfigurationFactory.GetCurrentSettings();
 			configuration.EnableEqualizer = equalizerControl.IsEqualizerEnabled;
 			configuration.EqualizerBands = equalizerControl.GetBandValues();
 

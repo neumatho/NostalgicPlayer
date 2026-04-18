@@ -21,11 +21,11 @@ namespace Polycode.NostalgicPlayer.Logic.Playlists
 		/// Try to figure out which kind of list this is and return a loader
 		/// if anyone could be found
 		/// </summary>
-		IPlaylist Create(Stream stream, string fileExtension);
+		IPlaylist GetPlaylist(Stream stream, string fileExtension);
 
 		/// <summary>
 		/// Create a playlist instance based on type
 		/// </summary>
-		IPlaylist Create(PlaylistType type);
+		IPlaylist GetPlaylistByType(PlaylistType type);
 	}
 }

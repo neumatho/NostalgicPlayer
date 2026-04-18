@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 	internal class ArchiveFileDecruncher : IDisposable
 	{
 		private readonly IArchiveDetector archiveDetector;
-		private readonly FileDecruncherFactory fileDecruncherFactory;
+		private readonly IFileDecruncherFactory fileDecruncherFactory;
 
 		private string archivePath;
 
@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileDecruncher(IArchiveDetector archiveDetector, FileDecruncherFactory fileDecruncherFactory)
+		public ArchiveFileDecruncher(IArchiveDetector archiveDetector, IFileDecruncherFactory fileDecruncherFactory)
 		{
 			this.archiveDetector = archiveDetector;
 			this.fileDecruncherFactory = fileDecruncherFactory;
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 					StreamHelper.CopyData(entryStream, stream, (int)entryStream.Length);
 
 				// The entry may be crunched, so decrunch it
-				SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
+				SingleFileDecruncher decruncher = fileDecruncherFactory.GetSingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				List<string> algorithms = new List<string>(decruncherAlgorithms);

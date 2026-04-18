@@ -361,6 +361,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 							if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
 								channelChangeVisualAgent.ChannelsChanged(channelChanged);
 						}
+
 						break;
 					}
 				}

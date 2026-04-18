@@ -11,8 +11,8 @@ namespace Polycode.NostalgicPlayer.External.Download
 	public interface IPictureDownloaderFactory
 	{
 		/// <summary>
-		/// Create a new instance
+		/// Returns a picture downloader instance
 		/// </summary>
-		IPictureDownloader Create();
+		IPictureDownloader GetDownloader();
 	}
 }

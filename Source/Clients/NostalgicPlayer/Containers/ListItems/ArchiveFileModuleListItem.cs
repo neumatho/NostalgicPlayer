@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 		/********************************************************************/
 		public LoaderBase CreateLoader(ILoaderFactory loaderFactory)
 		{
-			return loaderFactory.CreateLoader();
+			return loaderFactory.GetLoader();
 		}
 		#endregion
 	}

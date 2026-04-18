@@ -13,6 +13,6 @@ namespace Polycode.NostalgicPlayer.Kit.Utility.Interfaces
 		/// <summary>
 		/// Creates a new ISettings instance
 		/// </summary>
-		ISettings CreateSettings();
+		ISettings GetSettings();
 	}
 }

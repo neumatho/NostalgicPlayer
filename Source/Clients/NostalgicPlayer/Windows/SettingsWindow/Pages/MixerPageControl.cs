@@ -448,7 +448,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 		/********************************************************************/
 		private void SetMixerSettings()
 		{
-			MixerConfiguration configuration = mixerConfigurationFactory.Create();
+			MixerConfiguration configuration = mixerConfigurationFactory.GetCurrentSettings();
 
 			Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);
 

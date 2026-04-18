@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader
 			this.playerFactory = playerFactory;
 			clientFactory = audiusClientFactory;
 
-			pictureDownloader = pictureDownloaderFactory.Create();
+			pictureDownloader = pictureDownloaderFactory.GetDownloader();
 			pictureDownloader.SetMaxNumberInCache(5);
 		}
 
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader
 		/// Create specific loader for Audius
 		/// </summary>
 		/********************************************************************/
-		public AudiusLoader CreateAudiusLoader()
+		public AudiusLoader GetAudiusLoader()
 		{
 			return new AudiusLoader(agentManager, playerFactory, clientFactory, pictureDownloader);
 		}

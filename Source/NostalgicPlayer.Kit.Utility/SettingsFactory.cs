@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Creates a new ISettings instance
 		/// </summary>
 		/********************************************************************/
-		public ISettings CreateSettings()
+		public ISettings GetSettings()
 		{
 			return new Settings(platformPath);
 		}

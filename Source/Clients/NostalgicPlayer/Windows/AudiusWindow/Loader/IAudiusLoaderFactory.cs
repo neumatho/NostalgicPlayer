@@ -13,6 +13,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader
 		/// <summary>
 		/// Create specific loader for Audius
 		/// </summary>
-		AudiusLoader CreateAudiusLoader();
+		AudiusLoader GetAudiusLoader();
 	}
 }

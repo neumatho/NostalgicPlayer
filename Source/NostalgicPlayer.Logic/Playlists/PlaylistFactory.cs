@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Logic.Playlists
 		/// if anyone could be found
 		/// </summary>
 		/********************************************************************/
-		public IPlaylist Create(Stream stream, string fileExtension)
+		public IPlaylist GetPlaylist(Stream stream, string fileExtension)
 		{
 			byte[] buffer = new byte[16];
 
@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Logic.Playlists
 		/// Create a playlist instance based on type
 		/// </summary>
 		/********************************************************************/
-		public IPlaylist Create(PlaylistType type)
+		public IPlaylist GetPlaylistByType(PlaylistType type)
 		{
 			switch (type)
 			{

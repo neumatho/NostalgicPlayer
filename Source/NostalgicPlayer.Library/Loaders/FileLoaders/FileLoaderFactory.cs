@@ -14,15 +14,15 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 	/// </summary>
 	internal class FileLoaderFactory : IFileLoaderFactory
 	{
-		private readonly FileDecruncherFactory fileDecruncherFactory;
-		private readonly ArchiveDecruncherFactory archiveDecruncherFactory;
+		private readonly IFileDecruncherFactory fileDecruncherFactory;
+		private readonly IArchiveDecruncherFactory archiveDecruncherFactory;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileLoaderFactory(FileDecruncherFactory fileDecruncherFactory, ArchiveDecruncherFactory archiveDecruncherFactory)
+		public FileLoaderFactory(IFileDecruncherFactory fileDecruncherFactory, IArchiveDecruncherFactory archiveDecruncherFactory)
 		{
 			this.fileDecruncherFactory = fileDecruncherFactory;
 			this.archiveDecruncherFactory = archiveDecruncherFactory;
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 		/// Will parse the file name path and return the loader to use
 		/// </summary>
 		/********************************************************************/
-		public ILoader CreateFileLoader(string fileName)
+		public ILoader GetFileLoader(string fileName)
 		{
 			if (ArchivePath.IsArchivePath(fileName))
 				return new ArchiveFileLoader(fileName, fileDecruncherFactory, archiveDecruncherFactory);

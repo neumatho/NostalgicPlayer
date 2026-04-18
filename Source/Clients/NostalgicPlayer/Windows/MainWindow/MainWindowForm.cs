@@ -4683,7 +4683,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					{
 						using (FileStream fs = File.OpenRead(fileName))
 						{
-							playlist = playlistFactory.Create(fs, extension);
+							playlist = playlistFactory.GetPlaylist(fs, extension);
 							if (playlist != null)
 							{
 								foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
@@ -4883,7 +4883,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				using (FileStream fs = File.OpenRead(fileName))
 				{
-					IPlaylist playlist = playlistFactory.Create(fs, extension);
+					IPlaylist playlist = playlistFactory.GetPlaylist(fs, extension);
 					if (playlist == null)
 						ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_FORMAT, fileName));
 					else
@@ -4938,7 +4938,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			try
 			{
-				IPlaylist playlist = playlistFactory.Create(PlaylistType.Npml);
+				IPlaylist playlist = playlistFactory.GetPlaylistByType(PlaylistType.Npml);
 				playlist.SaveList(fileName, GetModuleList());
 			}
 			catch (Exception ex)

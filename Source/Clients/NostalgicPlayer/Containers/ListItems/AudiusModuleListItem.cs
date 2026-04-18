@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 		/********************************************************************/
 		public LoaderBase CreateLoader(ILoaderFactory loaderFactory)
 		{
-			return audiusLoaderFactory.CreateAudiusLoader();
+			return audiusLoaderFactory.GetAudiusLoader();
 		}
 		#endregion
 	}

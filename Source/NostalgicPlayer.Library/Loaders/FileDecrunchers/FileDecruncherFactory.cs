@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 	/// <summary>
 	/// Factory class to create file decruncher instances
 	/// </summary>
-	internal class FileDecruncherFactory
+	internal class FileDecruncherFactory : IFileDecruncherFactory
 	{
 		private readonly IAgentManager agentManager;
 
@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 		/// Create a new instance of the single file decruncher
 		/// </summary>
 		/********************************************************************/
-		public SingleFileDecruncher CreateSingleFileDecruncher()
+		public SingleFileDecruncher GetSingleFileDecruncher()
 		{
 			return new SingleFileDecruncher(agentManager);
 		}

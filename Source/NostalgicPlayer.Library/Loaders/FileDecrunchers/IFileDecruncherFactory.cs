@@ -3,21 +3,16 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Library.Loaders
+namespace Polycode.NostalgicPlayer.Library.Loaders.FileDecrunchers
 {
 	/// <summary>
-	/// Factory implementation to create new instances of the right loader
+	/// Factory class to create file decruncher instances
 	/// </summary>
-	public interface ILoaderFactory
+	internal interface IFileDecruncherFactory
 	{
 		/// <summary>
-		/// Get normal loader instance
+		/// Create a new instance of the single file decruncher
 		/// </summary>
-		Loader GetLoader();
-
-		/// <summary>
-		/// Get stream loader instance
-		/// </summary>
-		StreamLoader GetStreamLoader();
+		SingleFileDecruncher GetSingleFileDecruncher();
 	}
 }

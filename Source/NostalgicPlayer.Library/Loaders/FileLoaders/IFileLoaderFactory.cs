@@ -15,6 +15,6 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 		/// <summary>
 		/// Will parse the file name path and return the loader to use
 		/// </summary>
-		ILoader CreateFileLoader(string fileName);
+		ILoader GetFileLoader(string fileName);
 	}
 }

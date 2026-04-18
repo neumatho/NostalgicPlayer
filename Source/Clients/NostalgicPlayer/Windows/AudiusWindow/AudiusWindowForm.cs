@@ -7,7 +7,6 @@ using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages;
 using Polycode.NostalgicPlayer.External.Download;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 {
@@ -48,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 			LoadWindowSettings("AudiusWindow");
 
 			// Initialize picture downloader
-			pictureDownloader = pictureDownloaderFactory.Create();
+			pictureDownloader = pictureDownloaderFactory.GetDownloader();
 			pictureDownloader.SetMaxNumberInCache(100);
 
 			// Set the title of the window

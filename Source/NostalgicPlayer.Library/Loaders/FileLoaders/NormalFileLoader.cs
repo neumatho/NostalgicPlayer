@@ -15,14 +15,14 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 	/// </summary>
 	internal class NormalFileLoader : FileLoaderBase
 	{
-		private readonly FileDecruncherFactory fileDecruncherFactory;
+		private readonly IFileDecruncherFactory fileDecruncherFactory;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NormalFileLoader(string fileName, FileDecruncherFactory fileDecruncherFactory) : base(fileName)
+		public NormalFileLoader(string fileName, IFileDecruncherFactory fileDecruncherFactory) : base(fileName)
 		{
 			this.fileDecruncherFactory = fileDecruncherFactory;
 		}
@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 				CrunchedSize = stream.Length;
 
 				// First try to decrunch the file if needed
-				SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
+				SingleFileDecruncher decruncher = fileDecruncherFactory.GetSingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				// Update sizes
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 				// Decrunch it if needed
 				streamInfo.CrunchedSize = stream.Length;
 
-				SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
+				SingleFileDecruncher decruncher = fileDecruncherFactory.GetSingleFileDecruncher();
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
 				streamInfo.DecrunchedSize = stream.Length;

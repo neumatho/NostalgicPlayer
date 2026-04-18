@@ -28,10 +28,10 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 		/********************************************************************/
 		/// <summary>
-		/// Create new instance of the normal loader
+		/// Get normal loader instance
 		/// </summary>
 		/********************************************************************/
-		public Loader CreateLoader()
+		public Loader GetLoader()
 		{
 			return applicationContext.Container.GetInstance<Loader>();
 		}
@@ -40,10 +40,10 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 		/********************************************************************/
 		/// <summary>
-		/// Create new instance of the stream loader
+		/// Get stream loader instance
 		/// </summary>
 		/********************************************************************/
-		public StreamLoader CreateStreamLoader()
+		public StreamLoader GetStreamLoader()
 		{
 			return applicationContext.Container.GetInstance<StreamLoader>();
 		}

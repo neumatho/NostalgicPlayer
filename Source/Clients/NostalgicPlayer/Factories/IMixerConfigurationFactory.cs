@@ -15,6 +15,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Factories
 		/// <summary>
 		/// Create a new instance based on the current settings
 		/// </summary>
-		MixerConfiguration Create();
+		MixerConfiguration GetCurrentSettings();
 	}
 }

@@ -54,8 +54,8 @@ namespace Polycode.NostalgicPlayer.Library.Composition
 		{
 			container.RegisterSingleton<ILoaderFactory, LoaderFactory>();
 			container.RegisterSingleton<IFileLoaderFactory, FileLoaderFactory>();
-			container.RegisterSingleton<FileDecruncherFactory>();
-			container.RegisterSingleton<ArchiveDecruncherFactory>();
+			container.RegisterSingleton<IFileDecruncherFactory, FileDecruncherFactory>();
+			container.RegisterSingleton<IArchiveDecruncherFactory, ArchiveDecruncherFactory>();
 
 			container.Register<Loader>();
 			container.Register<StreamLoader>();

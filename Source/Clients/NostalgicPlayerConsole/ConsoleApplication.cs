@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/********************************************************************/
 		private LoaderBase LoadFile(string fileName)
 		{
-			Loader loader = loaderFactory.CreateLoader();
+			Loader loader = loaderFactory.GetLoader();
 
 			if (!loader.Load(fileName, out string errorMessage))
 			{
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/********************************************************************/
 		private LoaderBase LoadStream(string url)
 		{
-			StreamLoader streamLoader = loaderFactory.CreateStreamLoader();
+			StreamLoader streamLoader = loaderFactory.GetStreamLoader();
 
 			if (!streamLoader.Load(url, out string errorMessage))
 			{

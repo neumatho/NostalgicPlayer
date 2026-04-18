@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		public SettingsService(ISettingsFactory settingsFactory, IPlatformPath platformPath)
 		{
-			settings = settingsFactory.CreateSettings();
+			settings = settingsFactory.GetSettings();
 			this.platformPath = platformPath;
 
 			settings.LoadSettings("Settings");

@@ -24,14 +24,14 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 	internal class ArchiveDetector : IArchiveDetector
 	{
 		private readonly IAgentManager agentManager;
-		private readonly FileDecruncherFactory fileDecruncherFactory;
+		private readonly IFileDecruncherFactory fileDecruncherFactory;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveDetector(IAgentManager agentManager, FileDecruncherFactory fileDecruncherFactory)
+		public ArchiveDetector(IAgentManager agentManager, IFileDecruncherFactory fileDecruncherFactory)
 		{
 			this.agentManager = agentManager;
 			this.fileDecruncherFactory = fileDecruncherFactory;
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		private IArchiveDecruncherAgent FindArchiveAgent(Stream stream, List<string> decruncherAlgorithms, out Stream newStream)
 		{
-			SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
+			SingleFileDecruncher decruncher = fileDecruncherFactory.GetSingleFileDecruncher();
 
 			// The archive file itself can be crunched, e.g. Bzip2, so decrunch it
 			newStream = decruncher.DecrunchFileMultipleLevels(stream);

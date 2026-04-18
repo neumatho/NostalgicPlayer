@@ -17,8 +17,8 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 	/// </summary>
 	internal class ArchiveFileLoader : FileLoaderBase
 	{
-		private readonly FileDecruncherFactory fileDecruncherFactory;
-		private readonly ArchiveDecruncherFactory archiveDecruncherFactory;
+		private readonly IFileDecruncherFactory fileDecruncherFactory;
+		private readonly IArchiveDecruncherFactory archiveDecruncherFactory;
 
 		private ArchiveFileDecruncher archiveFileDecruncher;
 
@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveFileLoader(string fileName, FileDecruncherFactory fileDecruncherFactory, ArchiveDecruncherFactory archiveDecruncherFactory) : base(fileName)
+		public ArchiveFileLoader(string fileName, IFileDecruncherFactory fileDecruncherFactory, IArchiveDecruncherFactory archiveDecruncherFactory) : base(fileName)
 		{
 			this.fileDecruncherFactory = fileDecruncherFactory;
 			this.archiveDecruncherFactory = archiveDecruncherFactory;
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 		/********************************************************************/
 		public override Stream OpenFile()
 		{
-			archiveFileDecruncher = archiveDecruncherFactory.CreateArchiveFileDecruncher();
+			archiveFileDecruncher = archiveDecruncherFactory.GetArchiveFileDecruncher();
 			archiveFileDecruncher.OpenArchive(FullPath);
 
 			ArchiveEntryInfo entryInfo = archiveFileDecruncher.OpenArchiveEntry(ArchivePath.GetEntryName(FullPath));
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders.FileLoaders
 			// Decrunch it if needed
 			streamInfo.CrunchedSize = entryInfo.CrunchedSize;
 
-			SingleFileDecruncher decruncher = fileDecruncherFactory.CreateSingleFileDecruncher();
+			SingleFileDecruncher decruncher = fileDecruncherFactory.GetSingleFileDecruncher();
 			Stream stream = decruncher.DecrunchFileMultipleLevels(entryInfo.EntryStream);
 
 			streamInfo.DecrunchedSize = stream.Length;

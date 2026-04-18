@@ -15,10 +15,10 @@ namespace Polycode.NostalgicPlayer.Platform
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Create a new instance
+		/// Returns a picture downloader instance
 		/// </summary>
 		/********************************************************************/
-		public IPictureDownloader Create()
+		public IPictureDownloader GetDownloader()
 		{
 			if (OperatingSystem.IsWindows())
 				return new PictureDownloader();

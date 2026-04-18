@@ -793,7 +793,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		{
 			if (mixerConfiguration == null)
 			{
-				mixerConfiguration = mixerConfigurationFactory.Create();
+				mixerConfiguration = mixerConfigurationFactory.GetCurrentSettings();
 				mixerConfiguration.ExtraChannels = mainWindowApi.ExtraChannelsImplementation;
 			}
 		}

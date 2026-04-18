@@ -277,7 +277,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 
 				using (FileStream fs = File.OpenRead(fileName))
 				{
-					IPlaylist playlist = playlistFactory.Create(fs, extension);
+					IPlaylist playlist = playlistFactory.GetPlaylist(fs, extension);
 					if (playlist != null)
 					{
 						foreach (PlaylistFileInfo info in playlist.LoadList(Path.GetDirectoryName(fileName), fs, extension))
@@ -425,7 +425,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/********************************************************************/
 		private Loader FindPlayer(string fileName)
 		{
-			Loader loader = loaderFactory.CreateLoader();
+			Loader loader = loaderFactory.GetLoader();
 
 			if (loader.FindPlayer(fileName, out string _))
 				return loader;
