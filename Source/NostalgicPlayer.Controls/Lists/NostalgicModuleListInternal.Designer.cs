@@ -1,6 +1,6 @@
-﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
+﻿namespace Polycode.NostalgicPlayer.Controls.Lists
 {
-	partial class ModuleListItemsControl
+	partial class NostalgicModuleListInternal
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -31,6 +31,7 @@
 			components = new System.ComponentModel.Container();
 			scrollTimer = new System.Windows.Forms.Timer(components);
 			toolTip = new System.Windows.Forms.ToolTip(components);
+			boldFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			SuspendLayout();
 			// 
 			// scrollTimer
@@ -38,13 +39,17 @@
 			scrollTimer.Interval = 300;
 			scrollTimer.Tick += ScrollTimer_Tick;
 			// 
-			// ModuleListItemsControl
+			// boldFontConfiguration
+			// 
+			boldFontConfiguration.FontStyle = System.Drawing.FontStyle.Bold;
+			// 
+			// NostalgicModuleListInternal
 			// 
 			AllowDrop = true;
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
 			DoubleBuffered = true;
-			Name = "ModuleListItemsControl";
+			Name = "NostalgicModuleListInternal";
 			ResumeLayout(false);
 		}
 
@@ -52,5 +57,6 @@
 
 		private System.Windows.Forms.Timer scrollTimer;
 		private System.Windows.Forms.ToolTip toolTip;
+		private Components.FontConfiguration boldFontConfiguration;
 	}
 }

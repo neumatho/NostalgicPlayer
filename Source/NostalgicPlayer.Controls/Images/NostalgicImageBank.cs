@@ -14,6 +14,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	internal class NostalgicImageBank : INostalgicImageBank, IDisposable
 	{
 		private readonly FormImages formImages;
+		private readonly MainImages mainImages;
 		private readonly ModuleInformationImages moduleInformationImages;
 		private readonly SampleInformationImages sampleInformationImages;
 
@@ -25,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		public NostalgicImageBank(IThemeManager themeManager)
 		{
 			formImages = new FormImages();
+			mainImages = new MainImages(themeManager);
 			moduleInformationImages = new ModuleInformationImages(themeManager);
 			sampleInformationImages = new SampleInformationImages(themeManager);
 		}
@@ -39,6 +41,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		public void Dispose()
 		{
 			formImages.Dispose();
+			mainImages.Dispose();
 			moduleInformationImages.Dispose();
 			sampleInformationImages.Dispose();
 		}
@@ -51,6 +54,15 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// </summary>
 		/********************************************************************/
 		public IFormImages Form => formImages;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds all the images needed by the Main window
+		/// </summary>
+		/********************************************************************/
+		public IMainImages Main => mainImages;
 
 
 

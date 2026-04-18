@@ -25,6 +25,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public Color PlayingItemColor => labelColors.TextColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public Color PreviousPictureColor => labelColors.TextColor;
 
 

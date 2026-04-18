@@ -4,14 +4,13 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
+namespace Polycode.NostalgicPlayer.Logic.Containers
 {
 	/// <summary>
 	/// This is the class used for each item in the module list
 	/// </summary>
-	public class ModuleListItem : IComparable<ModuleListItem>
+	public class ModuleListListItem : IComparable<ModuleListListItem>
 	{
 		private TimeSpan duration;
 
@@ -20,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleListItem(IModuleListItem listItem)
+		public ModuleListListItem(IModuleListItem listItem)
 		{
 			ListItem = listItem;
 
@@ -100,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 		/// Compare two module list items
 		/// </summary>
 		/********************************************************************/
-		public int CompareTo(ModuleListItem other)
+		public int CompareTo(ModuleListListItem other)
 		{
 			return ListItem.DisplayName.CompareTo(other.ListItem.DisplayName);
 		}

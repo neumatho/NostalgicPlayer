@@ -12,17 +12,20 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Extensions;
-using Polycode.NostalgicPlayer.Kit.Gui.Components;
+using Polycode.NostalgicPlayer.Controls.Images;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard;
+using Polycode.NostalgicPlayer.Logic.Containers;
+using Polycode.NostalgicPlayer.Platform.Native;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
+namespace Polycode.NostalgicPlayer.Controls.Lists
 {
 	/// <summary>
 	/// This control draws the list items list
 	/// </summary>
-	public partial class ModuleListItemsControl : UserControl
+	internal partial class NostalgicModuleListInternal : UserControl, IThemeControl, IDependencyInjectionControl
 	{
 		private readonly Color textColor = Color.FromArgb(30, 57, 91);
 		private readonly Color defaultSubSongColor = Color.FromArgb(159, 81, 255);
@@ -33,11 +36,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		private readonly Color dragDropLineColor = Color.CornflowerBlue;
 
+		private struct ItemStateColors
+		{
+			public Color BackgroundStartColor { get; init; }
+			public Color BackgroundMiddleColor { get; init; }
+			public Color BackgroundStopColor { get; init; }
+			public Color TextColor { get; init; }
+			public Color SubSongColor { get; init; }
+		}
+
 		/// <summary></summary>
 		public const int ItemHeight = 13 + 3;
 
-		private ModuleListControl owner;
-		private VScrollBar vScrollBar;
+		private INostalgicImageBank imageBank;
+
+		private IModuleListColors colors;
+		private IFonts fonts;
+
+		private NostalgicModuleList owner;
+		private NostalgicVScrollBar vScrollBar;
 
 		private bool listNumberEnabled;
 		private bool showFullPathEnabled;
@@ -47,38 +64,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		private int lastToolTipItem;
 
-		private ModuleListControl.ItemCollection collection;
-		private readonly SortedDictionary<int, ModuleListItem> selectedItems;
+		private NostalgicModuleList.ItemCollection collection;
+		private SortedDictionary<int, ModuleListListItem> selectedItems;
 
-		private IReadOnlyList<ModuleListItem> publicSelectedItems;
+		private IReadOnlyList<ModuleListListItem> publicSelectedItems;
 		private IReadOnlyList<int> publicSelectedIndexes;
 
 		// Drag'n'drop variables
 		private int indexOfItemUnderMouseToDrop = -2;
 		private Rectangle dragBoxFromMouseDown;
 		private bool drawLine;
-		private ModuleListControl.FileDropType dropType;
+		private NostalgicModuleList.FileDropType dropType;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleListItemsControl()
+		public NostalgicModuleListInternal()
 		{
 			InitializeComponent();
-
-			listNumberEnabled = false;
-			showFullPathEnabled = false;
-
-			lastItemSelected = -1;
-			deltaToLastSelected = 0;
-
-			lastToolTipItem = -1;
-
-			selectedItems = new SortedDictionary<int, ModuleListItem>();
-			publicSelectedItems = null;
-			publicSelectedIndexes = null;
 		}
 
 		#region Properties
@@ -89,22 +94,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ModuleListControl.ItemCollection Items => collection;
-		#endregion
-
-		#region Public methods
-		/********************************************************************/
-		/// <summary>
-		/// Set the owner of this control
-		/// </summary>
-		/********************************************************************/
-		public void SetControls(ModuleListControl moduleListControl, VScrollBar scrollBar)
-		{
-			owner = moduleListControl;
-			vScrollBar = scrollBar;
-
-			collection = new ModuleListControl.ItemCollection(moduleListControl, this);
-		}
+		public NostalgicModuleList.ItemCollection Items => collection;
 
 
 
@@ -115,12 +105,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IReadOnlyList<ModuleListItem> SelectedItems
+		public IReadOnlyList<ModuleListListItem> SelectedItems
 		{
 			get
 			{
 				if (publicSelectedItems == null)
-					publicSelectedItems = new ReadOnlyCollection<ModuleListItem>(selectedItems.Values.ToList());
+					publicSelectedItems = new ReadOnlyCollection<ModuleListListItem>(selectedItems.Values.ToList());
 
 				return publicSelectedItems;
 			}
@@ -187,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ModuleListItem SelectedItem
+		public ModuleListListItem SelectedItem
 		{
 			get
 			{
@@ -196,6 +186,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				return selectedItems.Values.First();
 			}
+		}
+		#endregion
+
+		#region Public methods
+		/********************************************************************/
+		/// <summary>
+		/// Set the owner of this control
+		/// </summary>
+		/********************************************************************/
+		public void SetControls(NostalgicModuleList moduleListControl, NostalgicVScrollBar scrollBar)
+		{
+			owner = moduleListControl;
+			vScrollBar = scrollBar;
+
+			collection = new NostalgicModuleList.ItemCollection(moduleListControl, this);
 		}
 
 
@@ -344,14 +349,70 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Return information about the last drag'n'drop that has been made
 		/// </summary>
 		/********************************************************************/
-		public ModuleListControl.DragDropInformation GetLatestDragAndDropInformation(DragEventArgs e)
+		public NostalgicModuleList.DragDropInformation GetLatestDragAndDropInformation(DragEventArgs e)
 		{
-			return new ModuleListControl.DragDropInformation
+			return new NostalgicModuleList.DragDropInformation
 			{
-				Type = e.Data.GetDataPresent(GetType()) ? ModuleListControl.DragDropType.List : e.Data.GetDataPresent(DataFormats.FileDrop) ? ModuleListControl.DragDropType.File : ModuleListControl.DragDropType.Unknown,
+				Type = e.Data.GetDataPresent(GetType()) ? NostalgicModuleList.DragDropType.List : e.Data.GetDataPresent(DataFormats.FileDrop) ? NostalgicModuleList.DragDropType.File : NostalgicModuleList.DragDropType.Unknown,
 				IndexOfItemUnderMouseToDrop = indexOfItemUnderMouseToDrop,
 				DropType = dropType
 			};
+		}
+		#endregion
+
+		#region Initialize
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(INostalgicImageBank imageBank)
+		{
+			this.imageBank = imageBank;
+
+			listNumberEnabled = false;
+			showFullPathEnabled = false;
+
+			lastItemSelected = -1;
+			deltaToLastSelected = 0;
+
+			lastToolTipItem = -1;
+
+			selectedItems = new SortedDictionary<int, ModuleListListItem>();
+			publicSelectedItems = null;
+			publicSelectedIndexes = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control to use custom rendering
+		/// </summary>
+		/********************************************************************/
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			if (DesignerHelper.IsInDesignMode(this))
+				SetTheme(new StandardTheme());
+
+			base.OnHandleCreated(e);
+		}
+		#endregion
+
+		#region Theme
+		/********************************************************************/
+		/// <summary>
+		/// Will setup the theme for the control
+		/// </summary>
+		/********************************************************************/
+		public void SetTheme(ITheme theme)
+		{
+			colors = theme.ModuleListColors;
+			fonts = theme.StandardFonts;
+
+			Invalidate();
 		}
 		#endregion
 
@@ -363,8 +424,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			DrawBackground(e.Graphics);
-			DrawItems(e.Graphics);
+			Graphics g = e.Graphics;
+
+			Rectangle rect = ClientRectangle;
+
+			DrawBackground(g, rect);
+			DrawItems(g);
 
 			base.OnPaint(e);
 		}
@@ -631,6 +696,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 								lastItemSelected = index;
 								selectionChanged = true;
 							}
+
 							break;
 						}
 					}
@@ -690,6 +756,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 								lastItemSelected = index;
 							}
+
 							break;
 						}
 
@@ -705,6 +772,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 								lastItemSelected = index;
 							}
+
 							break;
 						}
 					}
@@ -839,20 +907,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					if ((ModifierKeys & Keys.Shift) != 0)
 					{
 						e.Effect = DragDropEffects.Copy;        // Append to list
-						dropType = ModuleListControl.FileDropType.Append;
+						dropType = NostalgicModuleList.FileDropType.Append;
 						drawLine = false;
 					}
 					else
 					{
 						e.Effect = DragDropEffects.Move;        // Insert into position in list
-						dropType = ModuleListControl.FileDropType.Insert;
+						dropType = NostalgicModuleList.FileDropType.Insert;
 						drawLine = true;
 					}
 				}
 				else
 				{
 					e.Effect = DragDropEffects.Move;            // Clear list and add files
-					dropType = ModuleListControl.FileDropType.ClearAndAdd;
+					dropType = NostalgicModuleList.FileDropType.ClearAndAdd;
 					drawLine = false;
 				}
 			}
@@ -909,7 +977,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					{
 						int insertAt = collection.Count;
 
-						foreach (KeyValuePair<int, ModuleListItem> pair in reversedSelectedItems)
+						foreach (KeyValuePair<int, ModuleListListItem> pair in reversedSelectedItems)
 						{
 							collection.Insert(insertAt--, pair.Value);
 							collection.RemoveAt(pair.Key);
@@ -921,7 +989,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 						int insertExtra = 0;
 						int removeExtra = 0;
 
-						foreach (KeyValuePair<int, ModuleListItem> pair in reversedSelectedItems)
+						foreach (KeyValuePair<int, ModuleListListItem> pair in reversedSelectedItems)
 						{
 							collection.Insert(insertAt + insertExtra, pair.Value);
 
@@ -981,248 +1049,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		#endregion
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Return brush to use when drawing selected item background
-		/// </summary>
-		/********************************************************************/
-		private Brush GetSelectedItemBackgroundBrush()
-		{
-			LinearGradientBrush selectedItemBackgroundBrush = new LinearGradientBrush(new Point(0, 0), new Point(0, ItemHeight), selectedBackgroundColor1, selectedBackgroundColor3);
-
-			ColorBlend blend = new ColorBlend
-			{
-				Colors = [ selectedBackgroundColor1, selectedBackgroundColor2, selectedBackgroundColor2, selectedBackgroundColor3 ],
-				Positions = [ 0.0f, 0.1f, 0.7f, 1.0f ]
-			};
-
-			selectedItemBackgroundBrush.InterpolationColors = blend;
-
-			return selectedItemBackgroundBrush;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw the background
-		/// </summary>
-		/********************************************************************/
-		private void DrawBackground(Graphics g)
-		{
-			g.FillRectangle(Brushes.White, 0, 0, Width, Height);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw all the items
-		/// </summary>
-		/********************************************************************/
-		private void DrawItems(Graphics g)
-		{
-			if ((collection != null) && (collection.Count > 0))
-			{
-				using (Font font = FontPalette.GetRegularFont())
-				{
-					using (Font boldFont = new Font(font, FontStyle.Bold))
-					{
-						using (Brush selectedItemBackgroundBrush = GetSelectedItemBackgroundBrush())
-						{
-							int count = collection.Count;
-							int height = Height;
-
-							for (int i = vScrollBar.Value, y = 0; i < count; i++)
-							{
-								DrawSingleItem(g, font, boldFont, selectedItemBackgroundBrush, y, i);
-
-								y += ItemHeight;
-								if (y >= height)
-									break;
-							}
-						}
-					}
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will draw a single item
-		/// </summary>
-		/********************************************************************/
-		private void DrawSingleItem(Graphics g, Font font, Font boldFont, Brush selectedItemBackgroundBrush, int y, int itemIndex)
-		{
-			ModuleListItem item = collection[itemIndex];
-
-			DrawItemBackground(g, selectedItemBackgroundBrush, y, itemIndex);
-			DrawItemPlayingStatus(g, y, item);
-			int timeWidth = DrawItemDuration(g, font, y, item);
-			DrawItemName(g, font, boldFont, itemIndex, y, timeWidth, item);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will draw the background of a single item
-		/// </summary>
-		/********************************************************************/
-		private void DrawItemBackground(Graphics g, Brush selectedItemBackgroundBrush, int y, int itemIndex)
-		{
-			if (selectedItems.ContainsKey(itemIndex))
-				g.FillRectangle(selectedItemBackgroundBrush, 0, y, Width, ItemHeight);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Check if the current item is the playing one and if so, draw the
-		/// image telling so
-		/// </summary>
-		/********************************************************************/
-		private void DrawItemPlayingStatus(Graphics g, int y, ModuleListItem item)
-		{
-			if (item.IsPlaying)
-			{
-				Image image = Resources.IDB_PLAYING_ITEM;
-				g.DrawImage(image, 2, y + 4, image.Width, image.Height);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will draw the duration of the item if any
-		/// </summary>
-		/********************************************************************/
-		private int DrawItemDuration(Graphics g, Font font, int y, ModuleListItem item)
-		{
-			if (!item.HaveTime)
-				return 0;
-
-			string moduleTime = item.Duration.ToFormattedString();
-
-			Size size = TextRenderer.MeasureText(g, moduleTime, font);
-			TextRenderer.DrawText(g, moduleTime, font, new Point(Width - size.Width, y + 1), textColor, TextFormatFlags.NoPrefix);
-
-			return size.Width;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will draw the name of the item
-		/// </summary>
-		/********************************************************************/
-		private void DrawItemName(Graphics g, Font font, Font boldFont, int index, int y, int timeWidth, ModuleListItem item)
-		{
-			int maxWidth = Width - 12 - timeWidth;
-			string defaultSubSong = string.Empty;
-
-			if (item.DefaultSubSong.HasValue)
-			{
-				defaultSubSong = string.Format(Resources.IDS_DEFAULT_SUBSONG, item.DefaultSubSong.Value + 1);
-				int width = TextRenderer.MeasureText(g, defaultSubSong, boldFont).Width;
-
-				maxWidth -= width;
-			}
-
-			string name = listNumberEnabled ? $"{index + 1}. {item.ListItem.DisplayName}" : item.ListItem.DisplayName;
-			string showName = name;
-			int nameWidth = TextRenderer.MeasureText(g, showName, font).Width;
-
-			while (nameWidth > maxWidth)
-			{
-				name = name.Substring(0, name.Length - 1);
-				showName = name + "…";
-
-				nameWidth = TextRenderer.MeasureText(g, showName, font).Width;
-			}
-
-			TextRenderer.DrawText(g, showName, font, new Point(10, y + 1), textColor, TextFormatFlags.NoPrefix);
-
-			if (item.DefaultSubSong.HasValue)
-				TextRenderer.DrawText(g, defaultSubSong, boldFont, new Point(10 + nameWidth, y + 1), defaultSubSongColor, TextFormatFlags.NoPrefix);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will draw a line at the place where the drop will happen
-		/// </summary>
-		/********************************************************************/
-		private void DrawLine(bool erase)
-		{
-			if (erase || drawLine)
-			{
-				using (Graphics g = CreateGraphics())
-				{
-					// Find the position where to draw the line
-					int pos;
-
-					int count = collection.Count;
-
-					int indexCheck;
-
-					// If no items are in the list or it is the first position
-					// to insert, just draw the line at top of the control
-					int indexFromTop = indexOfItemUnderMouseToDrop - owner.TopIndex;
-
-					if ((count == 0) || (indexFromTop == 0))
-					{
-						pos = 0;
-						indexCheck = -1;
-					}
-					else
-					{
-						// Do we point at any item?
-						if (indexOfItemUnderMouseToDrop < 0)
-						{
-							pos = (count - owner.TopIndex) * ItemHeight - 1;
-							indexCheck = count - 1;
-						}
-						else
-						{
-							pos = indexFromTop * ItemHeight - 1;
-							indexCheck = indexOfItemUnderMouseToDrop - 1;
-						}
-					}
-
-					if (erase && selectedItems.ContainsKey(indexCheck))
-					{
-						using (Font font = FontPalette.GetRegularFont())
-						{
-							using (Font boldFont = new Font(font, FontStyle.Bold))
-							{
-								using (Brush selectedItemBackgroundBrush = GetSelectedItemBackgroundBrush())
-								{
-									DrawSingleItem(g, font, boldFont, selectedItemBackgroundBrush, pos - ItemHeight + 1, indexCheck);
-								}
-							}
-						}
-					}
-					else
-					{
-						// Draw the line
-						using (Pen pen = new Pen(erase ? Color.White : dragDropLineColor))
-						{
-							g.DrawLine(pen, 0, pos, Width, pos);
-						}
-					}
-				}
-			}
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will do whatever is needed when the selection collection changes
@@ -1375,6 +1201,287 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 
 			MakeItemVisible(newSelectedIndex);
+		}
+		#endregion
+
+		#region Drawing
+		/********************************************************************/
+		/// <summary>
+		/// Return the item colors to use for the items state
+		/// </summary>
+		/********************************************************************/
+		private ItemStateColors GetItemColors(int itemIndex)
+		{
+			if (selectedItems.ContainsKey(itemIndex))
+			{
+				return new ItemStateColors
+				{
+					BackgroundStartColor = colors.SelectedItemBackgroundStartColor,
+					BackgroundMiddleColor = colors.SelectedItemBackgroundMiddleColor,
+					BackgroundStopColor = colors.SelectedItemBackgroundStopColor,
+					TextColor = colors.SelectedItemTextColor,
+					SubSongColor = colors.SelectedItemSubSongColor
+				};
+			}
+
+			return new ItemStateColors
+			{
+				BackgroundStartColor = colors.NormalItemBackgroundStartColor,
+				BackgroundMiddleColor = colors.NormalItemBackgroundMiddleColor,
+				BackgroundStopColor = colors.NormalItemBackgroundStopColor,
+				TextColor = colors.NormalItemTextColor,
+				SubSongColor = colors.NormalItemSubSongColor
+			};
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw the background
+		/// </summary>
+		/********************************************************************/
+		private void DrawBackground(Graphics g, Rectangle rect)
+		{
+			using (SolidBrush brush = new SolidBrush(colors.BackgroundColor))
+			{
+				g.FillRectangle(brush, rect);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return brush to use when drawing selected item background
+		/// </summary>
+		/********************************************************************/
+		private Brush GetSelectedItemBackgroundBrush()
+		{
+			LinearGradientBrush selectedItemBackgroundBrush = new LinearGradientBrush(new Point(0, 0), new Point(0, ItemHeight), selectedBackgroundColor1, selectedBackgroundColor3);
+
+			ColorBlend blend = new ColorBlend
+			{
+				Colors = [ selectedBackgroundColor1, selectedBackgroundColor2, selectedBackgroundColor2, selectedBackgroundColor3 ],
+				Positions = [ 0.0f, 0.1f, 0.7f, 1.0f ]
+			};
+
+			selectedItemBackgroundBrush.InterpolationColors = blend;
+
+			return selectedItemBackgroundBrush;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw all the items
+		/// </summary>
+		/********************************************************************/
+		private void DrawItems(Graphics g)
+		{
+			if ((collection != null) && (collection.Count > 0))
+			{
+				int count = collection.Count;
+				int height = Height;
+
+				for (int i = vScrollBar.Value, y = 0; i < count; i++)
+				{
+					Rectangle itemRect = new Rectangle(0, y, ClientRectangle.Width, ItemHeight);
+
+					DrawSingleItem(g, itemRect, i);
+
+					y += ItemHeight;
+					if (y >= height)
+						break;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw a single item
+		/// </summary>
+		/********************************************************************/
+		private void DrawSingleItem(Graphics g, Rectangle rect, int itemIndex)
+		{
+			ModuleListListItem item = collection[itemIndex];
+
+			ItemStateColors stateColors = GetItemColors(itemIndex);
+
+			DrawItemBackground(g, rect, stateColors);
+			DrawItemPlayingStatus(g, rect, stateColors, item);
+			int timeWidth = DrawItemDuration(g, rect, stateColors, item);
+			DrawItemName(g, rect, stateColors, timeWidth, itemIndex, item);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw the background of a single item
+		/// </summary>
+		/********************************************************************/
+		private void DrawItemBackground(Graphics g, Rectangle rect, ItemStateColors stateColors)
+		{
+			g.SmoothingMode = SmoothingMode.None;
+
+			using (LinearGradientBrush brush = new LinearGradientBrush(rect, stateColors.BackgroundStartColor, stateColors.BackgroundStopColor, LinearGradientMode.Vertical))
+			{
+				ColorBlend blend = new ColorBlend
+				{
+					Colors = [ stateColors.BackgroundStartColor, stateColors.BackgroundMiddleColor, stateColors.BackgroundMiddleColor, stateColors.BackgroundStopColor ],
+					Positions = [ 0.0f, 0.1f, 0.7f, 1.0f ]
+				};
+
+				brush.InterpolationColors = blend;
+
+				g.FillRectangle(brush, rect);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the current item is the playing one and if so, draw the
+		/// image telling so
+		/// </summary>
+		/********************************************************************/
+		private void DrawItemPlayingStatus(Graphics g, Rectangle rect, ItemStateColors stateColors, ModuleListListItem item)
+		{
+			if (item.IsPlaying)
+			{
+				Image image = imageBank.Main.GetPlayingItem(stateColors.TextColor);
+				g.DrawImage(image, rect.X + 2, rect.Y + 3, image.Width, image.Height);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw the duration of the item if any
+		/// </summary>
+		/********************************************************************/
+		private int DrawItemDuration(Graphics g, Rectangle rect, ItemStateColors stateColors, ModuleListListItem item)
+		{
+			if (!item.HaveTime)
+				return 0;
+
+			Font font = fonts.RegularFont;
+
+			string moduleTime = item.Duration.ToFormattedString();
+
+			Size size = TextRenderer.MeasureText(g, moduleTime, font);
+			TextRenderer.DrawText(g, moduleTime, font, new Point(Width - size.Width, rect.Y + 1), stateColors.TextColor, TextFormatFlags.NoPrefix);
+
+			return size.Width;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw the name of the item
+		/// </summary>
+		/********************************************************************/
+		private void DrawItemName(Graphics g, Rectangle rect, ItemStateColors stateColors, int timeWidth, int itemIndex, ModuleListListItem item)
+		{
+			Font font = fonts.RegularFont;
+			Font boldFont = boldFontConfiguration.Font;
+
+			int maxWidth = rect.Width - 12 - timeWidth;
+			string defaultSubSong = string.Empty;
+
+			if (item.DefaultSubSong.HasValue)
+			{
+				defaultSubSong = string.Format(Resources.IDS_DEFAULT_SUBSONG, item.DefaultSubSong.Value + 1);
+				int width = TextRenderer.MeasureText(g, defaultSubSong, boldFont).Width;
+
+				maxWidth -= width;
+			}
+
+			string name = listNumberEnabled ? $"{itemIndex + 1}. {item.ListItem.DisplayName}" : item.ListItem.DisplayName;
+			string showName = name;
+			int nameWidth = TextRenderer.MeasureText(g, showName, font).Width;
+
+			while (nameWidth > maxWidth)
+			{
+				name = name.Substring(0, name.Length - 1);
+				showName = name + "…";
+
+				nameWidth = TextRenderer.MeasureText(g, showName, font).Width;
+			}
+
+			TextRenderer.DrawText(g, showName, font, new Point(10, rect.Y + 1), stateColors.TextColor, TextFormatFlags.NoPrefix);
+
+			if (item.DefaultSubSong.HasValue)
+				TextRenderer.DrawText(g, defaultSubSong, boldFont, new Point(10 + nameWidth, rect.Y + 1), stateColors.SubSongColor, TextFormatFlags.NoPrefix);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw a line at the place where the drop will happen
+		/// </summary>
+		/********************************************************************/
+		private void DrawLine(bool erase)
+		{
+			if (erase || drawLine)
+			{
+				using (Graphics g = CreateGraphics())
+				{
+					// Find the position where to draw the line
+					int pos;
+
+					int count = collection.Count;
+
+					int indexCheck;
+
+					// If no items are in the list or it is the first position
+					// to insert, just draw the line at top of the control
+					int indexFromTop = indexOfItemUnderMouseToDrop - owner.TopIndex;
+
+					if ((count == 0) || (indexFromTop == 0))
+					{
+						pos = 0;
+						indexCheck = -1;
+					}
+					else
+					{
+						// Do we point at any item?
+						if (indexOfItemUnderMouseToDrop < 0)
+						{
+							pos = ((count - owner.TopIndex) * ItemHeight) - 1;
+							indexCheck = count - 1;
+						}
+						else
+						{
+							pos = indexFromTop * ItemHeight - 1;
+							indexCheck = indexOfItemUnderMouseToDrop - 1;
+						}
+					}
+
+					if (erase && selectedItems.ContainsKey(indexCheck))
+					{
+						Rectangle rect = new Rectangle(0, pos - ItemHeight + 1, ClientRectangle.Width, ItemHeight);
+
+						DrawSingleItem(g, rect, indexCheck);
+					}
+					else
+					{
+						// Draw the line
+						using (Pen pen = new Pen(erase ? colors.BackgroundColor : colors.DropLineColor))
+						{
+							g.DrawLine(pen, 0, pos, Width, pos);
+						}
+					}
+				}
+			}
 		}
 		#endregion
 	}
