@@ -607,6 +607,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				return HT.CAPTION;
 			}
 
+			// Any remaining position inside the window is the client area
+			if ((x >= FrameBorderThickness) && (x < (width - FrameBorderThickness)) && (y >= (FrameBorderThickness + titleBarHeight)) && (y < (height - FrameBorderThickness)))
+				return HT.CLIENT;
+
 			return HT.NOWHERE;
 		}
 
