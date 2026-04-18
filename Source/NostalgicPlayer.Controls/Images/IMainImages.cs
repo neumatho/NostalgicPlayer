@@ -3,14 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Logic.Containers;
+using System.Drawing;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
+namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// All list item types that are streams, must implement this interface
+	/// Holds all the images needed by the Main window
 	/// </summary>
-	public interface IStreamModuleListItem : IModuleListItem
+	public interface IMainImages
 	{
+		/// <summary>
+		/// Gets the playing item image
+		/// </summary>
+		Bitmap GetPlayingItem(Color color);
 	}
 }

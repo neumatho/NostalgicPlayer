@@ -5,7 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Library.Loaders;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
+namespace Polycode.NostalgicPlayer.Logic.Containers
 {
 	/// <summary>
 	/// All module items need to implement this interface

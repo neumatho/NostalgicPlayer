@@ -4,9 +4,9 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 		/// Convert a list item to a list info
 		/// </summary>
 		/********************************************************************/
-		public PlaylistFileInfo Convert(ModuleListItem listItem)
+		public PlaylistFileInfo Convert(ModuleListListItem listItem)
 		{
 			PlaylistFileInfo multiFileInfo = new PlaylistFileInfo
 			{
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 		/// Convert a list info to a list item
 		/// </summary>
 		/********************************************************************/
-		public ModuleListItem Convert(PlaylistFileInfo fileInfo)
+		public ModuleListListItem Convert(PlaylistFileInfo fileInfo)
 		{
 			IModuleListItem item;
 
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers
 					throw new NotImplementedException($"File type ({fileInfo.Type}) not implemented");
 			}
 
-			ModuleListItem listItem = new ModuleListItem(item);
+			ModuleListListItem listItem = new ModuleListListItem(item);
 			if (fileInfo.PlayTime.HasValue)
 				listItem.Duration = fileInfo.PlayTime.Value;
 

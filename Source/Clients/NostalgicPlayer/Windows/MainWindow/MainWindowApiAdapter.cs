@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
@@ -101,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show an error message to the user with options
 		/// </summary>
 		/********************************************************************/
-		public void ShowErrorMessage(string message, ModuleListItem listItem)
+		public void ShowErrorMessage(string message, ModuleListListItem listItem)
 		{
 			mainWindowForm.ShowErrorMessage(message, listItem);
 		}
@@ -125,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will add the given module list items to the module list
 		/// </summary>
 		/********************************************************************/
-		public void AddItemsToModuleList(ModuleListItem[] items, bool clearAndPlay)
+		public void AddItemsToModuleList(ModuleListListItem[] items, bool clearAndPlay)
 		{
 			mainWindowForm.AddItemsToModuleList(items, clearAndPlay);
 		}
@@ -137,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will replace the given item with the new list of items
 		/// </summary>
 		/********************************************************************/
-		public void ReplaceItemInModuleList(ModuleListItem listItem, List<ModuleListItem> newItems)
+		public void ReplaceItemInModuleList(ModuleListListItem listItem, List<ModuleListListItem> newItems)
 		{
 			mainWindowForm.ReplaceItemInModuleList(listItem, newItems);
 		}
@@ -149,7 +150,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will remove all the items in the given list from the module list
 		/// </summary>
 		/********************************************************************/
-		public void RemoveItemsFromModuleList(List<ModuleListItem> items)
+		public void RemoveItemsFromModuleList(List<ModuleListListItem> items)
 		{
 			mainWindowForm.RemoveItemsFromModuleList(items);
 		}
