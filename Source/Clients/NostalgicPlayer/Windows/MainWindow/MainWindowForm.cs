@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 	/// <summary>
 	/// This is the main window
 	/// </summary>
-	public partial class MainWindowForm : WindowFormBase, IExtraChannels
+	public partial class MainWindowForm : WindowFormBase2, IExtraChannels
 	{
 		private class AgentEntry
 		{
@@ -1022,7 +1022,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			FormClosed += MainWindowForm_FormClosed;
 
 			// Module information
-			infoGroup.Panel.Click += InfoGroup_Click;
+			infoGroup.Click += InfoGroup_Click;
 			infoLabel.Click += InfoGroup_Click;
 
 			equalizerButton.Click += EqualizerButton_Click;
@@ -3356,7 +3356,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void SetTooltips()
 		{
-			toolTip.SetToolTip(infoGroup.Panel, Resources.IDS_TIP_MAIN_INFO);
+			toolTip.SetToolTip(infoGroup, Resources.IDS_TIP_MAIN_INFO);
 			toolTip.SetToolTip(infoLabel, Resources.IDS_TIP_MAIN_INFO);
 			toolTip.SetToolTip(moduleInfoButton, Resources.IDS_TIP_MAIN_MODULEINFO);
 
