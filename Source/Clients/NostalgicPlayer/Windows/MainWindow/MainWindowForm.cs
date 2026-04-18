@@ -1022,7 +1022,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			FormClosed += MainWindowForm_FormClosed;
 
 			// Module information
-			infoGroup.Click += InfoGroup_Click;
+			infoBox.Click += InfoGroup_Click;
 			infoLabel.Click += InfoGroup_Click;
 
 			equalizerButton.Click += EqualizerButton_Click;
@@ -3356,7 +3356,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void SetTooltips()
 		{
-			toolTip.SetToolTip(infoGroup, Resources.IDS_TIP_MAIN_INFO);
+			toolTip.SetToolTip(infoBox, Resources.IDS_TIP_MAIN_INFO);
 			toolTip.SetToolTip(infoLabel, Resources.IDS_TIP_MAIN_INFO);
 			toolTip.SetToolTip(moduleInfoButton, Resources.IDS_TIP_MAIN_MODULEINFO);
 
