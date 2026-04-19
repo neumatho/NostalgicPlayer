@@ -1066,7 +1066,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			pauseCheckButton.CheckedChanged += PauseCheckButton_CheckedChanged;
 			ejectButton.Click += EjectButton_Click;
 
-			rewindButton.Click += RewindButton_Click;
+			fastRewindButton.Click += FastRewindButton_Click;
 			fastForwardButton.Click += FastForwardButton_Click;
 
 			previousSongButton.Click += PreviousSongButton_Click;
@@ -1191,7 +1191,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					// Left arrow - Rewind
 					case Keys.Left:
 					{
-						rewindButton.PerformClick();
+						fastRewindButton.PerformClick();
 						return true;
 					}
 
@@ -2671,10 +2671,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// The user clicked on the rewind button
+		/// The user clicked on the fast rewind button
 		/// </summary>
 		/********************************************************************/
-		private void RewindButton_Click(object sender, EventArgs e)
+		private void FastRewindButton_Click(object sender, EventArgs e)
 		{
 			if (playItem != null)
 			{
@@ -3381,7 +3381,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			toolTip.SetToolTip(previousModuleButton, Resources.IDS_TIP_MAIN_PREVMOD);
 			toolTip.SetToolTip(previousSongButton, Resources.IDS_TIP_MAIN_PREVSONG);
-			toolTip.SetToolTip(rewindButton, Resources.IDS_TIP_MAIN_REWIND);
+			toolTip.SetToolTip(fastRewindButton, Resources.IDS_TIP_MAIN_REWIND);
 			toolTip.SetToolTip(playButton, Resources.IDS_TIP_MAIN_PLAY);
 			toolTip.SetToolTip(fastForwardButton, Resources.IDS_TIP_MAIN_FORWARD);
 			toolTip.SetToolTip(nextSongButton, Resources.IDS_TIP_MAIN_NEXTSONG);
@@ -3954,13 +3954,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// disable the rewind and forward buttons + the position slider
 			if (isLoaded && staticModuleInfo.CanChangePosition)
 			{
-				rewindButton.Enabled = true;
+				fastRewindButton.Enabled = true;
 				fastForwardButton.Enabled = true;
 				positionTrackBar.Enabled = true;
 			}
 			else
 			{
-				rewindButton.Enabled = false;
+				fastRewindButton.Enabled = false;
 				fastForwardButton.Enabled = false;
 				positionTrackBar.Enabled = false;
 			}
