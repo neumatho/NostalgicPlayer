@@ -143,59 +143,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_DISK {
-            get {
-                object obj = ResourceManager.GetObject("IDB_DISK", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_EJECT {
-            get {
-                object obj = ResourceManager.GetObject("IDB_EJECT", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_EQUALIZER {
-            get {
-                object obj = ResourceManager.GetObject("IDB_EQUALIZER", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_FAST_FORWARD {
-            get {
-                object obj = ResourceManager.GetObject("IDB_FAST_FORWARD", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_FAVORITE {
             get {
                 object obj = ResourceManager.GetObject("IDB_FAVORITE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_FAVORITES {
-            get {
-                object obj = ResourceManager.GetObject("IDB_FAVORITES", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -213,89 +163,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_INFORMATION {
-            get {
-                object obj = ResourceManager.GetObject("IDB_INFORMATION", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_LIST {
-            get {
-                object obj = ResourceManager.GetObject("IDB_LIST", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_LOAD {
             get {
                 object obj = ResourceManager.GetObject("IDB_LOAD", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_LOOP {
-            get {
-                object obj = ResourceManager.GetObject("IDB_LOOP", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_MOVE_DOWN {
-            get {
-                object obj = ResourceManager.GetObject("IDB_MOVE_DOWN", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_MOVE_UP {
-            get {
-                object obj = ResourceManager.GetObject("IDB_MOVE_UP", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_MUTE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_MUTE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_NEXT_MODULE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_NEXT_MODULE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_NEXT_SONG {
-            get {
-                object obj = ResourceManager.GetObject("IDB_NEXT_SONG", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -313,16 +183,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_PAUSE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_PAUSE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_PLAY {
             get {
                 object obj = ResourceManager.GetObject("IDB_PLAY", resourceCulture);
@@ -333,59 +193,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_PREVIOUS_MODULE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_PREVIOUS_MODULE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_PREVIOUS_SONG {
-            get {
-                object obj = ResourceManager.GetObject("IDB_PREVIOUS_SONG", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_REMOVE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_REMOVE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_REPOST {
             get {
                 object obj = ResourceManager.GetObject("IDB_REPOST", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_REWIND {
-            get {
-                object obj = ResourceManager.GetObject("IDB_REWIND", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SAMPLES {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SAMPLES", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -436,26 +246,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_SHUFFLE {
             get {
                 object obj = ResourceManager.GetObject("IDB_SHUFFLE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SORT {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SORT", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SWAP {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SWAP", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
