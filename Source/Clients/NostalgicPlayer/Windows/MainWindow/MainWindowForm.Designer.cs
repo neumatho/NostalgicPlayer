@@ -37,37 +37,37 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			infoBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
-			equalizerButton = new KryptonButton();
-			moduleInfoButton = new KryptonButton();
+			equalizerButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			moduleInfoButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
 			masterVolumeTrackBar = new KryptonTrackBar();
 			listButtonsBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
-			diskButton = new KryptonButton();
-			listButton = new KryptonButton();
-			moveModulesDownButton = new KryptonButton();
-			moveModulesUpButton = new KryptonButton();
-			sortModulesButton = new KryptonButton();
-			swapModulesButton = new KryptonButton();
-			removeModuleButton = new KryptonButton();
-			addModuleButton = new KryptonButton();
+			diskButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			listButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			moveModulesDownButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			moveModulesUpButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			sortModulesButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			swapModulesButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			removeModuleButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			addModuleButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
 			listInfoBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			totalLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
 			timeLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
 			positionTrackBar = new KryptonTrackBar();
 			tapedeckBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
-			pauseCheckButton = new KryptonCheckButton();
-			ejectButton = new KryptonButton();
-			nextModuleButton = new KryptonButton();
-			nextSongButton = new KryptonButton();
-			fastForwardButton = new KryptonButton();
-			playButton = new KryptonButton();
-			rewindButton = new KryptonButton();
-			previousSongButton = new KryptonButton();
-			previousModuleButton = new KryptonButton();
+			pauseCheckButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton();
+			ejectButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			nextModuleButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			nextSongButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			fastForwardButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			playButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			fastRewindButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			previousSongButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			previousModuleButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
 			functionsBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
-			loopCheckButton = new KryptonCheckButton();
-			favoritesButton = new KryptonButton();
-			sampleInfoButton = new KryptonButton();
-			muteCheckButton = new KryptonCheckButton();
+			loopCheckButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton();
+			favoritesButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			sampleInfoButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			muteCheckButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton();
 			toolTip = new System.Windows.Forms.ToolTip(components);
 			sortContextMenu = new KryptonContextMenu();
 			listContextMenu = new KryptonContextMenu();
@@ -123,22 +123,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// equalizerButton
 			// 
+			equalizerButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			equalizerButton.ImageName = "Equalizer";
 			equalizerButton.Location = new System.Drawing.Point(60, 4);
 			equalizerButton.Name = "equalizerButton";
 			equalizerButton.Size = new System.Drawing.Size(24, 24);
 			equalizerButton.TabIndex = 2;
-			equalizerButton.Values.Image = Resources.IDB_EQUALIZER;
-			equalizerButton.Values.Text = "";
 			// 
 			// moduleInfoButton
 			// 
 			moduleInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			moduleInfoButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			moduleInfoButton.ImageName = "Information";
 			moduleInfoButton.Location = new System.Drawing.Point(388, 28);
 			moduleInfoButton.Name = "moduleInfoButton";
 			moduleInfoButton.Size = new System.Drawing.Size(24, 24);
 			moduleInfoButton.TabIndex = 2;
-			moduleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("moduleInfoButton.Values.Image");
-			moduleInfoButton.Values.Text = "";
 			// 
 			// masterVolumeTrackBar
 			// 
@@ -170,75 +170,75 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// diskButton
 			// 
+			diskButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			diskButton.ImageName = "Disk";
 			diskButton.Location = new System.Drawing.Point(200, 4);
 			diskButton.Name = "diskButton";
 			diskButton.Size = new System.Drawing.Size(24, 24);
 			diskButton.TabIndex = 7;
-			diskButton.Values.Image = (System.Drawing.Image)resources.GetObject("diskButton.Values.Image");
-			diskButton.Values.Text = "";
 			// 
 			// listButton
 			// 
+			listButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			listButton.ImageName = "List";
 			listButton.Location = new System.Drawing.Point(172, 4);
 			listButton.Name = "listButton";
 			listButton.Size = new System.Drawing.Size(24, 24);
 			listButton.TabIndex = 6;
-			listButton.Values.Image = (System.Drawing.Image)resources.GetObject("listButton.Values.Image");
-			listButton.Values.Text = "";
 			// 
 			// moveModulesDownButton
 			// 
+			moveModulesDownButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			moveModulesDownButton.ImageName = "MoveDown";
 			moveModulesDownButton.Location = new System.Drawing.Point(144, 4);
 			moveModulesDownButton.Name = "moveModulesDownButton";
 			moveModulesDownButton.Size = new System.Drawing.Size(24, 24);
 			moveModulesDownButton.TabIndex = 5;
-			moveModulesDownButton.Values.Image = (System.Drawing.Image)resources.GetObject("moveModulesDownButton.Values.Image");
-			moveModulesDownButton.Values.Text = "";
 			// 
 			// moveModulesUpButton
 			// 
+			moveModulesUpButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			moveModulesUpButton.ImageName = "MoveUp";
 			moveModulesUpButton.Location = new System.Drawing.Point(116, 4);
 			moveModulesUpButton.Name = "moveModulesUpButton";
 			moveModulesUpButton.Size = new System.Drawing.Size(24, 24);
 			moveModulesUpButton.TabIndex = 4;
-			moveModulesUpButton.Values.Image = (System.Drawing.Image)resources.GetObject("moveModulesUpButton.Values.Image");
-			moveModulesUpButton.Values.Text = "";
 			// 
 			// sortModulesButton
 			// 
+			sortModulesButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			sortModulesButton.ImageName = "Sort";
 			sortModulesButton.Location = new System.Drawing.Point(88, 4);
 			sortModulesButton.Name = "sortModulesButton";
 			sortModulesButton.Size = new System.Drawing.Size(24, 24);
 			sortModulesButton.TabIndex = 3;
-			sortModulesButton.Values.Image = (System.Drawing.Image)resources.GetObject("sortModulesButton.Values.Image");
-			sortModulesButton.Values.Text = "";
 			// 
 			// swapModulesButton
 			// 
+			swapModulesButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			swapModulesButton.ImageName = "Swap";
 			swapModulesButton.Location = new System.Drawing.Point(60, 4);
 			swapModulesButton.Name = "swapModulesButton";
 			swapModulesButton.Size = new System.Drawing.Size(24, 24);
 			swapModulesButton.TabIndex = 2;
-			swapModulesButton.Values.Image = (System.Drawing.Image)resources.GetObject("swapModulesButton.Values.Image");
-			swapModulesButton.Values.Text = "";
 			// 
 			// removeModuleButton
 			// 
+			removeModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			removeModuleButton.ImageName = "Remove";
 			removeModuleButton.Location = new System.Drawing.Point(32, 4);
 			removeModuleButton.Name = "removeModuleButton";
 			removeModuleButton.Size = new System.Drawing.Size(24, 24);
 			removeModuleButton.TabIndex = 1;
-			removeModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("removeModuleButton.Values.Image");
-			removeModuleButton.Values.Text = "";
 			// 
 			// addModuleButton
 			// 
+			addModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			addModuleButton.ImageName = "Add";
 			addModuleButton.Location = new System.Drawing.Point(4, 4);
 			addModuleButton.Name = "addModuleButton";
 			addModuleButton.Size = new System.Drawing.Size(24, 24);
 			addModuleButton.TabIndex = 0;
-			addModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("addModuleButton.Values.Image");
-			addModuleButton.Values.Text = "";
 			// 
 			// listInfoBox
 			// 
@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// totalLabel
 			// 
 			totalLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-			totalLabel.Location = new System.Drawing.Point(138, 7);
+			totalLabel.Location = new System.Drawing.Point(140, 8);
 			totalLabel.Name = "totalLabel";
 			totalLabel.Size = new System.Drawing.Size(28, 18);
 			totalLabel.TabIndex = 1;
@@ -263,7 +263,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// timeLabel
 			// 
-			timeLabel.Location = new System.Drawing.Point(3, 7);
+			timeLabel.Location = new System.Drawing.Point(4, 8);
 			timeLabel.Name = "timeLabel";
 			timeLabel.Size = new System.Drawing.Size(62, 18);
 			timeLabel.TabIndex = 0;
@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			tapedeckBox.Controls.Add(nextSongButton);
 			tapedeckBox.Controls.Add(fastForwardButton);
 			tapedeckBox.Controls.Add(playButton);
-			tapedeckBox.Controls.Add(rewindButton);
+			tapedeckBox.Controls.Add(fastRewindButton);
 			tapedeckBox.Controls.Add(previousSongButton);
 			tapedeckBox.Controls.Add(previousModuleButton);
 			tapedeckBox.Location = new System.Drawing.Point(4, 243);
@@ -300,84 +300,85 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// pauseCheckButton
 			// 
+			pauseCheckButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
+			pauseCheckButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			pauseCheckButton.ImageName = "Pause";
 			pauseCheckButton.Location = new System.Drawing.Point(228, 4);
 			pauseCheckButton.Name = "pauseCheckButton";
 			pauseCheckButton.Size = new System.Drawing.Size(24, 24);
 			pauseCheckButton.TabIndex = 8;
-			pauseCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("pauseCheckButton.Values.Image");
-			pauseCheckButton.Values.Text = "";
 			// 
 			// ejectButton
 			// 
+			ejectButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			ejectButton.ImageName = "Eject";
 			ejectButton.Location = new System.Drawing.Point(200, 4);
 			ejectButton.Name = "ejectButton";
 			ejectButton.Size = new System.Drawing.Size(24, 24);
 			ejectButton.TabIndex = 7;
-			ejectButton.Values.Image = (System.Drawing.Image)resources.GetObject("ejectButton.Values.Image");
-			ejectButton.Values.Text = "";
 			// 
 			// nextModuleButton
 			// 
+			nextModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			nextModuleButton.ImageName = "NextModule";
 			nextModuleButton.Location = new System.Drawing.Point(172, 4);
 			nextModuleButton.Name = "nextModuleButton";
 			nextModuleButton.Size = new System.Drawing.Size(24, 24);
 			nextModuleButton.TabIndex = 6;
-			nextModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("nextModuleButton.Values.Image");
-			nextModuleButton.Values.Text = "";
 			// 
 			// nextSongButton
 			// 
+			nextSongButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			nextSongButton.ImageName = "NextSong";
 			nextSongButton.Location = new System.Drawing.Point(144, 4);
 			nextSongButton.Name = "nextSongButton";
 			nextSongButton.Size = new System.Drawing.Size(24, 24);
 			nextSongButton.TabIndex = 5;
-			nextSongButton.Values.Image = (System.Drawing.Image)resources.GetObject("nextSongButton.Values.Image");
-			nextSongButton.Values.Text = "";
 			// 
 			// fastForwardButton
 			// 
+			fastForwardButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			fastForwardButton.ImageName = "FastForward";
 			fastForwardButton.Location = new System.Drawing.Point(116, 4);
 			fastForwardButton.Name = "fastForwardButton";
 			fastForwardButton.Size = new System.Drawing.Size(24, 24);
 			fastForwardButton.TabIndex = 4;
-			fastForwardButton.Values.Image = (System.Drawing.Image)resources.GetObject("fastForwardButton.Values.Image");
-			fastForwardButton.Values.Text = "";
 			// 
 			// playButton
 			// 
+			playButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			playButton.ImageName = "Play";
 			playButton.Location = new System.Drawing.Point(88, 4);
 			playButton.Name = "playButton";
 			playButton.Size = new System.Drawing.Size(24, 24);
 			playButton.TabIndex = 3;
-			playButton.Values.Image = (System.Drawing.Image)resources.GetObject("playButton.Values.Image");
-			playButton.Values.Text = "";
 			// 
-			// rewindButton
+			// fastRewindButton
 			// 
-			rewindButton.Location = new System.Drawing.Point(60, 4);
-			rewindButton.Name = "rewindButton";
-			rewindButton.Size = new System.Drawing.Size(24, 24);
-			rewindButton.TabIndex = 2;
-			rewindButton.Values.Image = (System.Drawing.Image)resources.GetObject("rewindButton.Values.Image");
-			rewindButton.Values.Text = "";
+			fastRewindButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			fastRewindButton.ImageName = "FastRewind";
+			fastRewindButton.Location = new System.Drawing.Point(60, 4);
+			fastRewindButton.Name = "fastRewindButton";
+			fastRewindButton.Size = new System.Drawing.Size(24, 24);
+			fastRewindButton.TabIndex = 2;
 			// 
 			// previousSongButton
 			// 
+			previousSongButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			previousSongButton.ImageName = "PreviousSong";
 			previousSongButton.Location = new System.Drawing.Point(32, 4);
 			previousSongButton.Name = "previousSongButton";
 			previousSongButton.Size = new System.Drawing.Size(24, 24);
 			previousSongButton.TabIndex = 1;
-			previousSongButton.Values.Image = (System.Drawing.Image)resources.GetObject("previousSongButton.Values.Image");
-			previousSongButton.Values.Text = "";
 			// 
 			// previousModuleButton
 			// 
+			previousModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			previousModuleButton.ImageName = "PreviousModule";
 			previousModuleButton.Location = new System.Drawing.Point(4, 4);
 			previousModuleButton.Name = "previousModuleButton";
 			previousModuleButton.Size = new System.Drawing.Size(24, 24);
 			previousModuleButton.TabIndex = 0;
-			previousModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("previousModuleButton.Values.Image");
-			previousModuleButton.Values.Text = "";
 			// 
 			// functionsBox
 			// 
@@ -393,40 +394,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// loopCheckButton
 			// 
+			loopCheckButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
+			loopCheckButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			loopCheckButton.ImageName = "Loop";
 			loopCheckButton.Location = new System.Drawing.Point(4, 4);
 			loopCheckButton.Name = "loopCheckButton";
 			loopCheckButton.Size = new System.Drawing.Size(24, 24);
 			loopCheckButton.TabIndex = 0;
-			loopCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("loopCheckButton.Values.Image");
-			loopCheckButton.Values.Text = "";
 			// 
 			// favoritesButton
 			// 
+			favoritesButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			favoritesButton.ImageName = "Favorites";
 			favoritesButton.Location = new System.Drawing.Point(32, 4);
 			favoritesButton.Name = "favoritesButton";
 			favoritesButton.Size = new System.Drawing.Size(24, 24);
 			favoritesButton.TabIndex = 1;
-			favoritesButton.Values.Image = Resources.IDB_FAVORITES;
-			favoritesButton.Values.Text = "";
 			// 
 			// sampleInfoButton
 			// 
+			sampleInfoButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			sampleInfoButton.ImageName = "Samples";
 			sampleInfoButton.Location = new System.Drawing.Point(88, 4);
 			sampleInfoButton.Name = "sampleInfoButton";
 			sampleInfoButton.Size = new System.Drawing.Size(24, 24);
 			sampleInfoButton.TabIndex = 3;
-			sampleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("sampleInfoButton.Values.Image");
-			sampleInfoButton.Values.Text = "";
 			// 
 			// muteCheckButton
 			// 
+			muteCheckButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
+			muteCheckButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			muteCheckButton.ImageName = "Mute";
 			muteCheckButton.Location = new System.Drawing.Point(4, 56);
 			muteCheckButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			muteCheckButton.Name = "muteCheckButton";
 			muteCheckButton.Size = new System.Drawing.Size(27, 24);
 			muteCheckButton.TabIndex = 3;
-			muteCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("muteCheckButton.Values.Image");
-			muteCheckButton.Values.Text = "";
 			// 
 			// sortContextMenu
 			// 
@@ -496,43 +499,43 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private System.Windows.Forms.MenuStrip menuStrip;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel infoLabel;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox infoBox;
-		private KryptonButton equalizerButton;
-		private KryptonButton moduleInfoButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton equalizerButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton moduleInfoButton;
 		private KryptonTrackBar masterVolumeTrackBar;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox listButtonsBox;
-		private KryptonButton addModuleButton;
-		private KryptonButton removeModuleButton;
-		private KryptonButton swapModulesButton;
-		private KryptonButton sortModulesButton;
-		private KryptonButton moveModulesDownButton;
-		private KryptonButton moveModulesUpButton;
-		private KryptonButton listButton;
-		private KryptonButton diskButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton addModuleButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton removeModuleButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton swapModulesButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton sortModulesButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton moveModulesDownButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton moveModulesUpButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton listButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton diskButton;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox listInfoBox;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel totalLabel;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel timeLabel;
 		private KryptonTrackBar positionTrackBar;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox tapedeckBox;
-		private KryptonButton ejectButton;
-		private KryptonButton nextModuleButton;
-		private KryptonButton nextSongButton;
-		private KryptonButton fastForwardButton;
-		private KryptonButton playButton;
-		private KryptonButton rewindButton;
-		private KryptonButton previousSongButton;
-		private KryptonButton previousModuleButton;
-		private KryptonCheckButton pauseCheckButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton ejectButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton nextModuleButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton nextSongButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton fastForwardButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton playButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton fastRewindButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton previousSongButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton previousModuleButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton pauseCheckButton;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox functionsBox;
-		private KryptonCheckButton loopCheckButton;
-		private KryptonButton sampleInfoButton;
-		private KryptonCheckButton muteCheckButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton loopCheckButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton sampleInfoButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton muteCheckButton;
 		private System.Windows.Forms.ToolTip toolTip;
 		private KryptonContextMenu sortContextMenu;
 		private KryptonContextMenu listContextMenu;
 		private KryptonContextMenu diskContextMenu;
 		private System.Windows.Forms.Timer neverEndingTimer;
 		private KryptonContextMenu addContextMenu;
-		private KryptonButton favoritesButton;
+		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton favoritesButton;
 		private Kit.Gui.Components.FontPalette fontPalette;
 		private NostalgicPlayer.Controls.Lists.NostalgicModuleList moduleList;
 		private SearchPopupControl searchPopupControl;

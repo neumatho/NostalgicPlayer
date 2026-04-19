@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color hoverBackgroundStopColor = Color.FromArgb(255, 237, 136);
 		private static readonly Color hoverTextColor = Color.FromArgb(30, 57, 91);
 
-		private static readonly Color pressedBorderColor = Color.FromArgb(227, 182, 67);
+		private static readonly Color pressedBorderColor = Color.FromArgb(194, 140, 50);
 		private static readonly Color pressedBackgroundStartColor = Color.FromArgb(229, 207, 116);
 		private static readonly Color pressedBackgroundStopColor = Color.FromArgb(235, 217, 116);
 		private static readonly Color pressedTextColor = Color.FromArgb(30, 57, 91);
