@@ -18,7 +18,7 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
       - name: Setup NuGet
-        uses: nuget/setup-nuget@v3
+        uses: nuget/setup-nuget@v4
       - name: Install dependencies
         run: nuget restore Source\NostalgicPlayer.sln
       - name: Build
