@@ -142,101 +142,23 @@
   <data name="IDB_DIRECTORY" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Directory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_DISK" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Disk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_EJECT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Eject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_EQUALIZER" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Equalizer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_FAST_FORWARD" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\FastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_FAVORITE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Favorite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_FAVORITES" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Favorites.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_FILE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\File.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_INFORMATION" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Information.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_LIST" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\List.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_LOAD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Load.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_LOOP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Loop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_MOVE_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\MoveDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_MOVE_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\MoveUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_MUTE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Mute.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_NEXT_MODULE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\NextModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_NEXT_PICTURE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\NextPicture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_NEXT_SONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\NextSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_OPEN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_PAUSE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_PLAY" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_PLAYING_ITEM" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\PlayingItem.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_PREVIOUS_MODULE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\PreviousModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_PREVIOUS_PICTURE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\PreviousPicture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_PREVIOUS_SONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\PreviousSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_REMOVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Remove.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_REPOST" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Repost.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_REWIND" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Rewind.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLES" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Samples.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_LOOP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SampleLoop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_OCTAVES" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SampleMultiOctaves.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_PINGPONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SamplePingPong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SAMPLE_STEREO" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SampleStereo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_SAVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -252,12 +174,6 @@
   </data>
   <data name="IDB_SHUFFLE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Shuffle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SORT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Sort.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SWAP" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Swap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_UNKNOWN_ALBUM_COVER" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\UnknownAlbumCover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -656,9 +572,6 @@ Formats supported:
   </data>
   <data name="IDS_CONTEXTMENU_SORT_SORT_ZA" xml:space="preserve">
     <value>Sort descending</value>
-  </data>
-  <data name="IDS_DEFAULT_SUBSONG" xml:space="preserve">
-    <value>#{0}</value>
   </data>
   <data name="IDS_ERR_ADD_ITEMS" xml:space="preserve">
     <value>Failed to add items into the list:
