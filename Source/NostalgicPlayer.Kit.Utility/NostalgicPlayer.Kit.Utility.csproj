@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SimpleInjector" Version="5.5.1" />
+    <PackageReference Include="SimpleInjector" Version="5.5.2" />
   </ItemGroup>
 
 </Project>
