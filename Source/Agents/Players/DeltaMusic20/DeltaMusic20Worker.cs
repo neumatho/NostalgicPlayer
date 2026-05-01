@@ -261,7 +261,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 					inst.PitchBend = moduleStream.Read_B_UINT16();
 					inst.IsSample = moduleStream.Read_UINT8() == 0xff;
-					inst.SampleNumber = (byte)(moduleStream.Read_UINT8() & 0x7);
+					inst.SampleNumber = moduleStream.Read_UINT8();
 
 					int bytesRead = moduleStream.Read(inst.Table, 0, 48);
 
@@ -300,9 +300,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 				foreach (Instrument inst in instruments.Where(i => (i != null) && i.IsSample))
 				{
-					moduleStream.Seek(startOffset + sampleOffsets[inst.SampleNumber], SeekOrigin.Begin);
+					int sampleSlot = inst.SampleNumber & 0x7;
+					moduleStream.Seek(startOffset + sampleOffsets[sampleSlot], SeekOrigin.Begin);
 
-					inst.SampleData = moduleStream.ReadSampleData(inst.SampleNumber, inst.SampleLength, out int readBytes);
+					inst.SampleData = moduleStream.ReadSampleData(sampleSlot, inst.SampleLength, out int readBytes);
 
 					if (readBytes < (inst.SampleLength - 256))
 					{
