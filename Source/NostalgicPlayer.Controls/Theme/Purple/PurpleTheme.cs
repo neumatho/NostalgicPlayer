@@ -1,0 +1,180 @@
+/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
+using System;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+
+namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
+{
+	/// <summary>
+	/// A simple purple themed test implementation of ITheme
+	/// </summary>
+	public class PurpleTheme : ITheme, IDisposable
+	{
+		private StandardFonts standardFonts;
+
+		private static readonly PurpleImageColors imageColors = new PurpleImageColors();
+		private static readonly PurpleFormColors formColors = new PurpleFormColors();
+		private static readonly PurpleBoxColors boxColors = new PurpleBoxColors();
+		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
+		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
+		private static readonly PurpleTextBoxColors textBoxColors = new PurpleTextBoxColors();
+		private static readonly PurpleDataGridViewColors dataGridViewColors = new PurpleDataGridViewColors();
+		private static readonly PurpleScrollBarColors scrollBarColors = new PurpleScrollBarColors();
+		private static readonly PurpleTabColors tabColors = new PurpleTabColors();
+		private static readonly PurpleLabelColors labelColors = new PurpleLabelColors();
+		private static readonly PurpleModuleListColors moduleListColors = new PurpleModuleListColors();
+		private static readonly PurpleTrackBarColors trackBarColors = new PurpleTrackBarColors();
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public PurpleTheme()
+		{
+			standardFonts = new StandardFonts();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup
+		/// </summary>
+		/********************************************************************/
+		public void Dispose()
+		{
+			standardFonts.Dispose();
+			standardFonts = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a unique ID for the theme
+		/// </summary>
+		/********************************************************************/
+		public Guid Id => new Guid("A4F0D3C0-5D2E-44A2-9CF1-8A1C6D2E0B12");
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of standard fonts
+		/// </summary>
+		/********************************************************************/
+		public IFonts StandardFonts => standardFonts;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by images
+		/// </summary>
+		/********************************************************************/
+		public IImageColors ImageColors => imageColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by forms
+		/// </summary>
+		/********************************************************************/
+		public IFormColors FormColors => formColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by box
+		/// </summary>
+		/********************************************************************/
+		public IBoxColors BoxColors => boxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by buttons
+		/// </summary>
+		/********************************************************************/
+		public IButtonColors ButtonColors => buttonColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by combo boxes
+		/// </summary>
+		/********************************************************************/
+		public IComboBoxColors ComboBoxColors => comboBoxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by text boxes
+		/// </summary>
+		/********************************************************************/
+		public ITextBoxColors TextBoxColors => textBoxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by DataGridView
+		/// </summary>
+		/********************************************************************/
+		public IDataGridViewColors DataGridViewColors => dataGridViewColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by scroll bars
+		/// </summary>
+		/********************************************************************/
+		public IScrollBarColors ScrollBarColors => scrollBarColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by tab controls
+		/// </summary>
+		/********************************************************************/
+		public ITabColors TabColors => tabColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by label controls
+		/// </summary>
+		/********************************************************************/
+		public ILabelColors LabelColors => labelColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by module list control
+		/// </summary>
+		/********************************************************************/
+		public IModuleListColors ModuleListColors => moduleListColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by track bars
+		/// </summary>
+		/********************************************************************/
+		public ITrackBarColors TrackBarColors => trackBarColors;
+	}
+}

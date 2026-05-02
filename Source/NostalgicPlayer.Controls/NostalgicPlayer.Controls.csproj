@@ -1,0 +1,108 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Polycode.NostalgicPlayer.Controls</RootNamespace>
+    <DocumentationFile>bin\NostalgicPlayer.Controls.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Description>A collection of themed custom controls</Description>
+    <Version>3.3.1</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\Resources\Main\Add.svg" />
+    <None Remove="Images\Resources\Main\Disk.svg" />
+    <None Remove="Images\Resources\Main\Eject.svg" />
+    <None Remove="Images\Resources\Main\Equalizer.svg" />
+    <None Remove="Images\Resources\Main\FastForward.svg" />
+    <None Remove="Images\Resources\Main\FastRewind.svg" />
+    <None Remove="Images\Resources\Main\Favorites.svg" />
+    <None Remove="Images\Resources\Main\Information.svg" />
+    <None Remove="Images\Resources\Main\List.svg" />
+    <None Remove="Images\Resources\Main\Loop.svg" />
+    <None Remove="Images\Resources\Main\MoveDown.svg" />
+    <None Remove="Images\Resources\Main\MoveUp.svg" />
+    <None Remove="Images\Resources\Main\Mute.svg" />
+    <None Remove="Images\Resources\Main\NextModule.svg" />
+    <None Remove="Images\Resources\Main\NextSong.svg" />
+    <None Remove="Images\Resources\Main\Pause.svg" />
+    <None Remove="Images\Resources\Main\Play.svg" />
+    <None Remove="Images\Resources\Main\PlayingItem.svg" />
+    <None Remove="Images\Resources\Main\PreviousModule.svg" />
+    <None Remove="Images\Resources\Main\PreviousSong.svg" />
+    <None Remove="Images\Resources\Main\Remove.svg" />
+    <None Remove="Images\Resources\Main\Samples.svg" />
+    <None Remove="Images\Resources\Main\Sort.svg" />
+    <None Remove="Images\Resources\Main\Swap.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Resources\Form\CaptionClose.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionMaximize.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionMinimize.png" />
+    <EmbeddedResource Include="Images\Resources\Form\CaptionNormalize.png" />
+    <EmbeddedResource Include="Images\Resources\Main\Add.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Disk.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Eject.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Equalizer.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\FastForward.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\FastRewind.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Favorites.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Information.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\List.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Loop.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\MoveDown.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\MoveUp.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Mute.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\NextModule.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\NextSong.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Pause.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Play.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\PlayingItem.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\PreviousModule.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\PreviousSong.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Remove.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Samples.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Sort.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Swap.svg" />
+    <EmbeddedResource Include="Images\Resources\ModuleInformation\NextPicture.svg" />
+    <EmbeddedResource Include="Images\Resources\ModuleInformation\PreviousPicture.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleLoop.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleMultiOctaves.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SamplePingPong.svg" />
+    <EmbeddedResource Include="Images\Resources\SampleInformation\SampleStereo.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SimpleInjector" Version="5.5.2" />
+    <PackageReference Include="Svg.Skia" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
