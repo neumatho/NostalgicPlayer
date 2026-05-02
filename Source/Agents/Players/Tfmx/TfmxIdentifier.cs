@@ -113,11 +113,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			// Make a check for special modules, since they are a special variant of TFMX 1.5
 			moduleStream.Seek(startOffset + 0x1d4, SeekOrigin.Begin);
 			uint offset = moduleStream.Read_B_UINT32();
+
+			if (offset >= moduleStream.Length)
+				return (ModuleType.Unknown, false);
+
 			if (offset == 0)
 				offset = 0x400;
 
 			moduleStream.Seek(startOffset + offset, SeekOrigin.Begin);
 			offset = moduleStream.Read_B_UINT32();
+
+			if (offset >= moduleStream.Length)
+				return (ModuleType.Unknown, false);
 
 			byte[] checkBuffer = new byte[0x100];
 			moduleStream.Seek(startOffset + offset, SeekOrigin.Begin);
@@ -312,6 +319,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		{
 			moduleStream.Seek(startOffset + 0x1d8, SeekOrigin.Begin);
 			int macroIndex = moduleStream.Read_B_INT32();
+
+			if ((macroIndex < 0) || (macroIndex >= moduleStream.Length))
+				return false;
 
 			if (macroIndex == 0)
 				macroIndex = 0x600;
