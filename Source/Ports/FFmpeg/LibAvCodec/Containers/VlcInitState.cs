@@ -3,31 +3,23 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.C;
+
 namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers
 {
 	/// <summary>
-	/// Different constants used in LibAvCodec
+	/// 
 	/// </summary>
-	internal static class CodecConstants
+	public class VlcInitState
 	{
 		/// <summary>
-		/// 
+		/// Points to where the next VLC table will be placed
 		/// </summary>
-		public const c_int Stride_Align = 8;
+		public CPointer<VlcElem> Table;
 
 		/// <summary>
-		/// 
+		/// Remaining number of elements in table
 		/// </summary>
-		public const c_uint FF_Sane_Nb_Channels = 512;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public const c_int Min_Cache_Bits = 25;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public const c_int Buf_Bits = 64;
+		public c_uint Size;
 	}
 }

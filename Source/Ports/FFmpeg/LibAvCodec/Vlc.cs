@@ -31,6 +31,36 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static VlcInitState Vlc_Init_State(CPointer<VlcElem> _table)
+		{
+			return new VlcInitState
+			{
+				Table = _table,
+				Size = (c_uint)Macros.FF_Array_Elems(_table)
+			};
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Vlc_Init_Static_Table_From_Lengths<TLens, TSymbols>(CPointer<VlcElem> vlc_Table, c_int nb_Bits, c_int nb_Codes, CPointer<TLens> lens, CPointer<TSymbols> syms, c_int offset, VlcInit flags) where TLens : INumber<TLens> where TSymbols : INumber<TSymbols>
+		{
+			FF_Vlc_Init_Table_From_Lengths(vlc_Table, (c_int)Macros.FF_Array_Elems(vlc_Table), nb_Bits, nb_Codes, lens, syms, offset, flags);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static c_int Vlc_Init<TBits, TCodes>(Vlc vlc, c_int nb_Bits, c_int nb_Codes, CPointer<TBits> bits, CPointer<TCodes> codes, VlcInit flags) where TBits : INumber<TBits> where TCodes : INumber<TCodes>
 		{
 			return FF_Vlc_Init_Sparse<TBits, TCodes, c_int>(vlc, nb_Bits, nb_Codes, bits, codes, null, flags);
@@ -200,6 +230,47 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 				Mem.Av_Free(buf);
 
 			return Error.InvalidData;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static void FF_Vlc_Init_Table_From_Lengths<TLens, TSymbols>(CPointer<VlcElem> table, c_int table_Size, c_int nb_Bits, c_int nb_Codes, CPointer<TLens> lens, CPointer<TSymbols> symbols, c_int offset, VlcInit flags) where TLens : INumber<TLens> where TSymbols : INumber<TSymbols>
+		{
+			Vlc vlc = new Vlc
+			{
+				Table = table,
+				Table_Allocated = table_Size
+			};
+
+			FF_Vlc_Init_From_Lengths(vlc, nb_Bits, nb_Codes, lens, symbols, offset, flags | VlcInit.Use_Static, null);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static CPointer<VlcElem> FF_Vlc_Init_Tables_From_Lengths<TLens, TSymbols>(VlcInitState state, c_int nb_Bits, c_int nb_Codes, CPointer<TLens> lens, CPointer<TSymbols> symbols, c_int offset, VlcInit flags) where TLens : INumber<TLens> where TSymbols : INumber<TSymbols>
+		{
+			Vlc vlc = new Vlc
+			{
+				Table = state.Table,
+				Table_Allocated = (c_int)state.Size
+			};
+
+			FF_Vlc_Init_From_Lengths(vlc, nb_Bits, nb_Codes, lens, symbols, offset, flags | VlcInit.Static_Overlong, null);
+
+			state.Table += vlc.Table_Size;
+			state.Size -= (c_uint)vlc.Table_Size;
+
+			return vlc.Table;
 		}
 
 

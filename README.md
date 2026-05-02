@@ -253,5 +253,6 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Wanton Packer | .wnp | ProWizard | ModTracker |
 | Windows Media Audio 1 | .wma | | FFMpeg |
 | Windows Media Audio 2 | .wma | | FFMpeg |
+| Windows Media Audio Professional | .wma | | FFMpeg |
 | Xann Packer | .xann | ProWizard | ModTracker |
 | Zen Packer | .zen | ProWizard | ModTracker |

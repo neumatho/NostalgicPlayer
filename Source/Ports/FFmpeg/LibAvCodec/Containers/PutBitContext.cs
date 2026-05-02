@@ -6,18 +6,19 @@
 global using BitBuf = System.UInt64;
 
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class PutBitContext
+	public class PutBitContext : IDeepCloneable<PutBitContext>
 	{
 		/// <summary>
 		/// 
 		/// </summary>
-		public readonly BitBuf Bit_Buf = new BitBuf();
+		public BitBuf Bit_Buf;
 
 		/// <summary>
 		/// 
@@ -38,5 +39,15 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers
 		/// 
 		/// </summary>
 		public CPointer<uint8_t> Buf_End;
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public PutBitContext MakeDeepClone()
+		{
+			return (PutBitContext)MemberwiseClone();
+		}
 	}
 }

@@ -69,10 +69,10 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 			new AvOption("phase_shift", "set swr resampling phase shift", nameof(SwrContext.Phase_Shift), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = 10 }, 0, 24, Param),
 			new AvOption("linear_interp", "enable linear interpolation", nameof(SwrContext.Linear_Interp), AvOptionType.Bool, new AvOption.DefaultValueUnion { I64 = 1 }, 0, 1, Param),
 			new AvOption("exact_rational", "enable exact rational", nameof(SwrContext.Exact_Rational), AvOptionType.Bool, new AvOption.DefaultValueUnion { I64 = 1 }, 0, 1, Param),
-			new AvOption("cutoff", "set cutoff frequency ratio", nameof(SwrContext.Cutoff), AvOptionType.Double, new AvOption.DefaultValueUnion { Dbl = 0.0 }, 0, 1, Param),
+			new AvOption("cutoff", "set cutoff frequency ratio", nameof(SwrContext.CutOff), AvOptionType.Double, new AvOption.DefaultValueUnion { Dbl = 0.0 }, 0, 1, Param),
 
 			// Duplicate option in order to work with avconv
-			new AvOption("resample_cutoff", "set cutoff frequency ratio", nameof(SwrContext.Cutoff), AvOptionType.Double, new AvOption.DefaultValueUnion { Dbl = 0.0 }, 0, 1, Param),
+			new AvOption("resample_cutoff", "set cutoff frequency ratio", nameof(SwrContext.CutOff), AvOptionType.Double, new AvOption.DefaultValueUnion { Dbl = 0.0 }, 0, 1, Param),
 
 			new AvOption("resampler", "set resampling Engine", nameof(SwrContext.Engine), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = 0 }, 0, (c_int)SwrEngine.Nb - 1, Param, "resampler"),
 			new AvOption("swr", "select SW Resampler", null, AvOptionType.Const, new AvOption.DefaultValueUnion { I64 = (int64_t)SwrEngine.Swr }, c_int.MinValue, c_int.MaxValue, Param, "resampler"),

@@ -776,14 +776,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 						// Very low freqs : noise
 						for (c_int i = 0; i < s.Coefs_Start; i++)
 						{
-							coefs[0, 1] = s.Noise_Table[s.Noise_Index] * exponents[i << bSize >> eSize] * mult1;
+							coefs[0, 1] = s.Noise_Table[s.Noise_Index] * exponents[(i << bSize) >> eSize] * mult1;
 							s.Noise_Index = (s.Noise_Index + 1) & (WmaConstants.Noise_Tab_Size - 1);
 						}
 
 						c_int n1 = s.Exponent_High_Sizes[bSize];
 
 						// Compute power of high bands
-						exponents = s.Exponents[ch].ToPointer() + (s.High_Band_Start[bSize] << bSize >> eSize);
+						exponents = s.Exponents[ch].ToPointer() + ((s.High_Band_Start[bSize] << bSize) >> eSize);
 						c_int last_High_Band = 0;	// Avoid warning
 
 						for (c_int j = 0; j < n1; j++)
@@ -810,7 +810,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 						}
 
 						// Main freqs and high freqs
-						exponents = s.Exponents[ch].ToPointer() + (s.Coefs_Start << bSize >> eSize);
+						exponents = s.Exponents[ch].ToPointer() + ((s.Coefs_Start << bSize) >> eSize);
 
 						for (c_int j = -1; j < n1; j++)
 						{
@@ -831,7 +831,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 								{
 									c_float noise = s.Noise_Table[s.Noise_Index];
 									s.Noise_Index = (s.Noise_Index + 1) & (WmaConstants.Noise_Tab_Size - 1);
-									coefs[0, 1] = noise * exponents[i << bSize >> eSize] * mult1;
+									coefs[0, 1] = noise * exponents[(i << bSize) >> eSize] * mult1;
 								}
 
 								exponents += n << bSize >> eSize;
@@ -843,10 +843,10 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 								{
 									c_float noise = s.Noise_Table[s.Noise_Index];
 									s.Noise_Index = (s.Noise_Index + 1) & (WmaConstants.Noise_Tab_Size - 1);
-									coefs[0, 1] = (coefs1[0, 1] + noise) * exponents[i << bSize >> eSize] * mult;
+									coefs[0, 1] = (coefs1[0, 1] + noise) * exponents[(i << bSize) >> eSize] * mult;
 								}
 
-								exponents += n << bSize >> eSize;
+								exponents += (n << bSize) >> eSize;
 							}
 						}
 
@@ -868,7 +868,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 						n = nb_Coefs[ch];
 
 						for (c_int i = 0; i < n; i++)
-							coefs[0, 1] = coefs1[i] * exponents[i << bSize >> eSize] * mult;
+							coefs[0, 1] = coefs1[i] * exponents[(i << bSize) >> eSize] * mult;
 
 						n = s.Block_Len - s.Coefs_End[bSize];
 

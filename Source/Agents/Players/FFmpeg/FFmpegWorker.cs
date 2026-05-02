@@ -37,6 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 		private SwrContext swrContext;
 
 		private int[] channelMapping;
+		private SpeakerFlag speakerFlags;
 		private int channels;
 		private int frequency;
 
@@ -186,6 +187,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 
 			// Build channel mapping table if possible
 			BuildChannelMapping(decoderContext.Ch_Layout);
+
+			// If the codec doesn't expose a layout, fall back to the default one for the
+			// channel count so SpeakerFlags is valid before the mixer queries it
+			if (speakerFlags == 0)
+			{
+				AvChannelLayout layout = new AvChannelLayout();
+				Channel_Layout.Av_Channel_Layout_Default(ref layout, channels);
+				BuildChannelMapping(layout);
+			}
 
 			// Get meta data
 			ExtractMetadata();
@@ -338,7 +348,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 		/// order in SpeakerFlag enum
 		/// </summary>
 		/********************************************************************/
-		public override SpeakerFlag SpeakerFlags => Tables.ChannelToSpeaker[channels - 1];
+		public override SpeakerFlag SpeakerFlags => speakerFlags;
 
 
 
@@ -496,16 +506,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 			if (channelLayout.Order == AvChannelOrder.Unspec)
 				return;		// We don't have the layout yet
 
-			Dictionary<SpeakerFlag, int> speakerToOutputChannel = BuildSpeakerMap(SpeakerFlags);
+			SpeakerFlag[] perChannelSpeaker = new SpeakerFlag[channelLayout.Nb_Channels];
+			SpeakerFlag flags = 0;
 
-			channelMapping = new int[channelLayout.Nb_Channels];
-
-			for (uint i = 0; i < channelMapping.Length; i++)
+			for (uint i = 0; i < perChannelSpeaker.Length; i++)
 			{
 				AvChannel channel = Channel_Layout.Av_Channel_Layout_Channel_From_Index(channelLayout, i);
 				SpeakerFlag speaker = MapFromChannelToSpeaker(channel);
 
-				if (!speakerToOutputChannel.TryGetValue(speaker, out channelMapping[i]))
+				perChannelSpeaker[i] = speaker;
+				flags |= speaker;
+			}
+
+			speakerFlags = flags;
+
+			Dictionary<SpeakerFlag, int> speakerToOutputChannel = BuildSpeakerMap(speakerFlags);
+
+			channelMapping = new int[channelLayout.Nb_Channels];
+
+			for (int i = 0; i < channelMapping.Length; i++)
+			{
+				if (!speakerToOutputChannel.TryGetValue(perChannelSpeaker[i], out channelMapping[i]))
 					channelMapping[i] = -1;
 			}
 

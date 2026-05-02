@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 	{
 		internal static readonly Guid Agent1Id = Guid.Parse("9C7018D0-C57C-4B45-A733-BD27C3920DD6");
 		internal static readonly Guid Agent2Id = Guid.Parse("AF84D839-0F00-4B25-8127-7940272969F5");
+		internal static readonly Guid Agent3Id = Guid.Parse("0445012D-0916-4E1B-A5CF-3F5915ADB3E6");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -49,7 +50,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 		public override AgentSupportInfo[] AgentInformation =>
 		[
 			new AgentSupportInfo(Resources.IDS_FFMPEG_NAME_AGENT1, Resources.IDS_FFMPEG_DESCRIPTION_AGENT1, Agent1Id),
-			new AgentSupportInfo(Resources.IDS_FFMPEG_NAME_AGENT2, Resources.IDS_FFMPEG_DESCRIPTION_AGENT2, Agent2Id)
+			new AgentSupportInfo(Resources.IDS_FFMPEG_NAME_AGENT2, Resources.IDS_FFMPEG_DESCRIPTION_AGENT2, Agent2Id),
+			new AgentSupportInfo(Resources.IDS_FFMPEG_NAME_AGENT3, Resources.IDS_FFMPEG_DESCRIPTION_AGENT3, Agent3Id)
 		];
 
 

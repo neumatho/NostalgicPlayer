@@ -32,6 +32,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 				Name = "wmav2".ToCharPointer(),
 				Long_Name = "Windows Media Audio 2".ToCharPointer(),
 				Props = AvCodecProp.Intra_Only | AvCodecProp.Lossy
+			},
+			new AvCodecDescriptor
+			{
+				Id = AvCodecId.WmaPro,
+				Type = AvMediaType.Audio,
+				Name = "wmapro".ToCharPointer(),
+				Long_Name = "Windows Media Audio 9 Professional".ToCharPointer(),
+				Props = AvCodecProp.Intra_Only | AvCodecProp.Lossy
 			}
 		];
 

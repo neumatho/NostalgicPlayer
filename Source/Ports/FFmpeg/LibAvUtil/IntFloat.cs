@@ -23,5 +23,18 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		{
 			return BitConverter.UInt32BitsToSingle(i);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reinterpret a float as 32-bit integer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint32_t Av_Float2Int(c_float f)
+		{
+			return BitConverter.SingleToUInt32Bits(f);
+		}
 	}
 }

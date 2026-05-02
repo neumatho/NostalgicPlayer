@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 			new AvOption("time_base", null, nameof(AvCodecContext.Time_Base), AvOptionType.Rational, new AvOption.DefaultValueUnion { Dbl = 0 }, 0, c_int.MaxValue, AvOptFlag.None),
 			new AvOption("g", "set the group of picture (GOP) size", nameof(AvCodecContext.Gop_Size), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = 12 }, c_int.MinValue, c_int.MaxValue, V | E),
 			new AvOption("ar", "set audio sampling rate (in Hz)", nameof(AvCodecContext.Sample_Rate), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = Default }, 0, c_int.MaxValue, A | D | E),
-			new AvOption("cutoff", "set cutoff bandwidth", nameof(AvCodecContext.Cutoff), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = Default }, c_int.MinValue, c_int.MaxValue, A | E),
+			new AvOption("cutoff", "set cutoff bandwidth", nameof(AvCodecContext.CutOff), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = Default }, c_int.MinValue, c_int.MaxValue, A | E),
 			new AvOption("frame_size", null, nameof(AvCodecContext.Frame_Size), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = Default }, 0, c_int.MaxValue, A | E),
 			new AvOption("frame_number", null, nameof(AvCodecContext.Frame_Num), AvOptionType.Int64, new AvOption.DefaultValueUnion { I64 = Default }, c_int.MinValue, c_int.MaxValue, AvOptFlag.None),
 			new AvOption("delay", null, nameof(AvCodecContext.Delay), AvOptionType.Int, new AvOption.DefaultValueUnion { I64 = Default }, c_int.MinValue, c_int.MaxValue, AvOptFlag.None),

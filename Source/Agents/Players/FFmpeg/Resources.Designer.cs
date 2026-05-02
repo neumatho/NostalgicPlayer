@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -97,6 +97,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg {
         internal static string IDS_FFMPEG_DESCRIPTION_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_FFMPEG_DESCRIPTION_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Based on FFmpeg.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///Windows Media Audio (WMA) is a series of audio codecs and their corresponding audio coding formats developed by Microsoft. It is a proprietary technology that forms part of the Windows Media framework. Audio encoded in WMA is stored in a digital container format called Advanced Systems Format (ASF).
+        ///
+        ///This player can play the WMA professional format..
+        /// </summary>
+        internal static string IDS_FFMPEG_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_FFMPEG_DESCRIPTION_AGENT3", resourceCulture);
             }
         }
         
@@ -223,6 +237,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg {
         internal static string IDS_FFMPEG_NAME_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_FFMPEG_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows Media Audio Professional.
+        /// </summary>
+        internal static string IDS_FFMPEG_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_FFMPEG_NAME_AGENT3", resourceCulture);
             }
         }
     }

@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample.Containers
 		/// <summary>
 		/// Resampling cutoff frequency (swr: 6dB point; soxr: 0dB point). 1.0 corresponds to half the output sample rate
 		/// </summary>
-		internal c_double Cutoff;
+		internal c_double CutOff;
 
 		/// <summary>
 		/// Swr resampling filter type

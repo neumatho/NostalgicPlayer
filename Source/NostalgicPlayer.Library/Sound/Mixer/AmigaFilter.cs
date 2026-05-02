@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 	/// </summary>
 	internal class AmigaFilter
 	{
-		private const double CutoffFrequency = 3275.0;
+		private const double CutOffFrequency = 3275.0;
 		private const int Scale = 24;
 		private const long ScaleFactor = 1L << Scale;
 
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 //			double b2Coef = 0.0;
 
 			// Bilinear transformation precalculations
-			double omega = 2.0 * Math.PI * CutoffFrequency / sampleRate;
+			double omega = 2.0 * Math.PI * CutOffFrequency / sampleRate;
 			double tanOmega = Math.Tan(omega / 2.0);
 
 			// Z-domain coefficients (bilinear transformation)

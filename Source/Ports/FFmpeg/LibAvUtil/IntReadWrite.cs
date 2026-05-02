@@ -20,6 +20,19 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint32_t Av_RB16(CPointer<uint8_t> x)
+		{
+			return ((uint32_t)x[0] << 8) | x[1];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static uint32_t Av_RB16(CPointer<char> x)
 		{
 			return ((uint32_t)x[0] << 8) | x[1];
@@ -314,6 +327,19 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				Av_WL64(p, val);
 			else
 				Av_WB64(p, val);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Av_WN32A<T>(CPointer<T> p, uint32_t val) where T : unmanaged
+		{
+			p.Cast<T, uint32_t>()[0] = val;
 		}
 	}
 }

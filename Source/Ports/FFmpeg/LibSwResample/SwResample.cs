@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 
 			if ((s.Out_Sample_Rate != s.In_Sample_Rate) || ((s.Flags & SwrFlag.Resample) != 0))
 			{
-				s.Resample = s.Resampler.Init(s.Resample, s.Out_Sample_Rate, s.In_Sample_Rate, s.Filter_Size, s.Phase_Shift, s.Linear_Interp, s.Cutoff, s.Int_Sample_Fmt, s.Filter_Type, s.Kaiser_Beta, s.Precision, s.Cheby, s.Exact_Rational);
+				s.Resample = s.Resampler.Init(s.Resample, s.Out_Sample_Rate, s.In_Sample_Rate, s.Filter_Size, s.Phase_Shift, s.Linear_Interp, s.CutOff, s.Int_Sample_Fmt, s.Filter_Type, s.Kaiser_Beta, s.Precision, s.Cheby, s.Exact_Rational);
 
 				if (s.Resample == null)
 				{

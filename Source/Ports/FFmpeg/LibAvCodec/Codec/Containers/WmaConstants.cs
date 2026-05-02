@@ -45,6 +45,21 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec.Containers
 		public const c_int Max_Coded_SuperFrame_Size = 32768;
 
 		/// <summary>
+		/// Max number of subframes per channel
+		/// </summary>
+		public const c_int Max_Subframes = 32;
+
+		/// <summary>
+		/// Max number of scale factor bands
+		/// </summary>
+		public const c_int Max_Bands = 29;
+
+		/// <summary>
+		/// Maximum compressed frame size
+		/// </summary>
+		public const c_int Max_FrameSize = 32768;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public const c_int Max_Channels = 2;
@@ -88,5 +103,130 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec.Containers
 		/// 
 		/// </summary>
 		public const c_int HGainMax = (13 + HGainVlcBits - 1) / HGainVlcBits;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int ScaleVlcBits = 8;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Scale_Size = 121;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Scale_MaxBits = 19;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Scale_Rl_Size = 120;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Scale_Rl_MaxBits = 21;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Coef0_Size = 272;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Coef1_Size = 244;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Vec4_Size = 127;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Vec4_MaxBits = 14;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Vec2_Size = 137;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Vec2_MaxBits = 12;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Vec1_Size = 101;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Huff_Vec1_MaxBits = 11;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Vec4MaxDepth = (Huff_Vec4_MaxBits + VlcBits - 1) / VlcBits;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Vec2MaxDepth = (Huff_Vec2_MaxBits + VlcBits - 1) / VlcBits;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Vec1MaxDepth = (Huff_Vec1_MaxBits + VlcBits - 1) / VlcBits;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int ScaleMaxDepth = (Huff_Scale_MaxBits + ScaleVlcBits - 1) / ScaleVlcBits;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int ScaleRlMaxDepth = (Huff_Scale_Rl_MaxBits + VlcBits - 1) / VlcBits;
+
+		/// <summary>
+		/// Max number of handled channels
+		/// </summary>
+		public const c_int WmaPro_Max_Channels = 8;
+
+		/// <summary>
+		/// log2 of min block size
+		/// </summary>
+		public const c_int WmaPro_Block_Min_Bits = 6;
+
+		/// <summary>
+		/// log2 of max block size
+		/// </summary>
+		public const c_int WmaPro_Block_Max_Bits = 13;
+
+		/// <summary>
+		/// Minimum block size
+		/// </summary>
+		public const c_int WmaPro_Block_Min_Size = 1 << WmaPro_Block_Min_Bits;
+
+		/// <summary>
+		/// Maximum block size
+		/// </summary>
+		public const c_int WmaPro_Block_Max_Size = 1 << WmaPro_Block_Max_Bits;
+
+		/// <summary>
+		/// Possible block sizes
+		/// </summary>
+		public const c_int WmaPro_Block_Sizes = WmaPro_Block_Max_Bits - WmaPro_Block_Min_Bits + 1;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public const c_int Xma_Max_Channels_Stream = 2;
 	}
 }

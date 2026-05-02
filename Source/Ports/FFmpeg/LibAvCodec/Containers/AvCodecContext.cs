@@ -648,7 +648,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers
 		/// - encoding: Set by user
 		/// - decoding: unused
 		/// </summary>
-		public c_int Cutoff;
+		public c_int CutOff;
 
 		/// <summary>
 		/// Type of service that the audio stream conveys.
@@ -1524,7 +1524,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers
 			Ch_Layout.Clear();
 			Frame_Size = 0;
 			Block_Align = 0;
-			Cutoff = 0;
+			CutOff = 0;
 			Audio_Service_Type = AvAudioServiceType.Main;
 			Request_Sample_Fmt = AvSampleFormat.U8;
 			Initial_Padding = 0;
