@@ -9,7 +9,18 @@ using Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers;
 namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 {
 	/// <summary>
-	/// 
+	/// Some false positives look like valid song definitions, but define
+	/// a false speed. It may be necessary to add some sort of blacklist
+	/// based on checksum. Possibly MD5 then and not CRC.
+	///
+	/// There are song definitions that define start/end steps outside
+	/// the range of the sequencer's track table. For example,
+	/// Jim Power (End Level):
+	/// Track table length is $e0, so the end step must be at most $e,
+	/// but subsong is defined as $e to $f which would be behind the end
+	/// of the track table. The inaccessible pattern data between end of
+	/// track table and beginning of the actual first pattern are not
+	/// helpful in that case
 	/// </summary>
 	public partial class TfmxDecoder
 	{
@@ -27,9 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 		/********************************************************************/
 		/// <summary>
-		/// Some false positives look like valid song definitions, but define
-		/// a false speed. It may be necessary to add some sort of blacklist
-		/// based on checksum. Possibly MD5 then and not CRC
+		/// 
 		/// </summary>
 		/********************************************************************/
 		private void FindSongs()
@@ -45,6 +54,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				c_int s2 = MyEndian.ReadBEUword(pBuf, (udword)(offsets.Header + 0x140 + (so << 1)));
 				c_int s3 = MyEndian.ReadBEUword(pBuf, (udword)(offsets.Header + 0x180 + (so << 1)));
 				c_int s1Next = s1;
+				uword stepMax = (uword)((offsets.TrackTableEnd - offsets.TrackTable) / 0x10);
+
+				// If the first song's track end is out of bounds, fix it
+				if ((so == 0) && (s2 > stepMax))
+					s2 = stepMax;
 
 				// Skip invalid defs
 				// Largest track number $1ff is not invalid per se,
@@ -52,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				// and some files have changed it to (0,1ff,5).
 				// Yet we cannot reject (0,1ff,SPEED) entirely, since e.g.
 				// the composer Erno used that in the first song definition
-				if ((s1 > s2) || (s1 > 0x1ff) || (s2 > 0x1ff) || ((so > 1) && ((s1 == 0x1ff) || (s2 == 0x1ff))))
+				if ((s1 > s2) || (s1 > 0x1ff) || (s2 > 0x1ff) || (s1 >= stepMax) || ((so > 0) && ((s1 == 0x1ff) || (s2 == 0x1ff))))
 					continue;
 
 				// First step == last step isn't invalid per se,

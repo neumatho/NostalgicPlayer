@@ -33,6 +33,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void ProcessMacroMain(VoiceVars voice)
 		{
+			PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
+
+			if (voice.Macro.DelayedOff)
+			{
+				paulaVoice.Off();
+				voice.Macro.DelayedOff = false;
+			}
+
 			if (voice.Macro.Skip)
 				return;
 
@@ -559,14 +567,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
 
 			voice.Macro.Step++;
-			paulaVoice.Off();
 
 			// Rare variants of TFMX implement it as a count value, but no module
 			// sets the value to anything above 1
 			if (playerInfo.Cmd.Bb != 0)
+			{
 				voice.Macro.ExtraWait = false;
+				voice.Macro.DelayedOff = true;
+			}
 			else
+			{
+				paulaVoice.Off();
 				playerInfo.MacroEvalAgain = true;
+			}
 
 			// The variant that also does AddVolume/SetVolume
 			if (playerInfo.Cmd.Cd == 0)

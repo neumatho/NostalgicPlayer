@@ -16,5 +16,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 		public udword Macros;
 		public udword SampleData;
 		public udword Silence;
+		public udword TrackTableEnd;
 	}
 }

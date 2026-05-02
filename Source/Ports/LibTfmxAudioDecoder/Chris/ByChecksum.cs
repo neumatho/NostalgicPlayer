@@ -6,7 +6,10 @@
 namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 {
 	/// <summary>
-	/// 
+	/// Since the TFMX header and data don't tell which specific version or
+	/// variant of TFMX are required, this function comes as a last resort.
+	/// It tries to recognize specific files via a checksum of a small portion
+	/// of the pattern data and then adjusts player traits
 	/// </summary>
 	public partial class TfmxDecoder
 	{
@@ -20,6 +23,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			SmartPtr<ubyte> sBuf = new SmartPtr<ubyte>(pBuf.TellBegin(), pBuf.TellLength());
 			udword p0 = offsets.Header + MyEndian.ReadBEUdword(sBuf, offsets.Patterns);
 			udword crc1 = CrcLight.Get(sBuf, p0, 0x100);
+
+			// Rock'n'Roll (1989). No checksum based adjustments required, because
+			// it uses the unique header tag that was specific to TFMX before v1
 
 			// Gem'X. No checksum based adjustments required, but the soundtrack
 			// strictly requires a special variant of $00 DMAoff as well as the

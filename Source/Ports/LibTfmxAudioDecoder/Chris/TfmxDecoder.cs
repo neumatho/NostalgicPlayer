@@ -561,6 +561,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// TFMX clears the first dword here for one shot samples e.g.
 			pBuf[offsets.Silence] = pBuf[offsets.Silence + 1] = pBuf[offsets.Silence + 2] = pBuf[offsets.Silence + 3] = 0;
 
+			// Evaluate the compress identification fields at $0A and $0C.
+			// In rare cases that part of the header has been overwritten
+			// and is invalid
+			udword compressHint = MyEndian.ReadBEUdword(pBuf, h + 0x0c);
+
+			if ((compressHint != 0) && (MyEndian.ReadBEUdword(pBuf, h + 0x0a) == 1))
+			{
+				offsets.TrackTableEnd = offsets.TrackTable + compressHint - (0x800 - 0x10);
+
+				if (offsets.TrackTableEnd > GetPattOffset(0))
+					offsets.TrackTableEnd = GetPattOffset(0);
+			}
+			else
+				offsets.TrackTableEnd = GetPattOffset(0);
+
 			// ----------
 
 			// Defaults only. Detection further below
@@ -970,6 +985,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				voice.Macro.Skip = true;
 				voice.Macro.Loop = 0xff;
 				voice.Macro.ExtraWait = true;
+				voice.Macro.DelayedOff = false;
 
 				voice.Sid.TargetOffset = (0x100U * v) + 4U;
 				voice.Sid.TargetLength = 0;
