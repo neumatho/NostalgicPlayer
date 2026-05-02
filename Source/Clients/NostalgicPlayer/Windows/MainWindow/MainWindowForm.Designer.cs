@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			listInfoBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			totalLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
 			timeLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
-			positionTrackBar = new KryptonTrackBar();
+			positionTrackBar = new Polycode.NostalgicPlayer.Controls.Sliders.NostalgicTrackBar();
 			tapedeckBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			pauseCheckButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton();
 			ejectButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
@@ -273,7 +273,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// positionTrackBar
 			// 
 			positionTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			positionTrackBar.BackStyle = PaletteBackStyle.SeparatorLowProfile;
 			positionTrackBar.Location = new System.Drawing.Point(4, 216);
 			positionTrackBar.Maximum = 100;
 			positionTrackBar.Name = "positionTrackBar";
@@ -514,7 +513,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private NostalgicPlayer.Controls.Containers.NostalgicBox listInfoBox;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel totalLabel;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel timeLabel;
-		private KryptonTrackBar positionTrackBar;
+		private Polycode.NostalgicPlayer.Controls.Sliders.NostalgicTrackBar positionTrackBar;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox tapedeckBox;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton ejectButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton nextModuleButton;
