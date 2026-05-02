@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleTabColors tabColors = new PurpleTabColors();
 		private static readonly PurpleLabelColors labelColors = new PurpleLabelColors();
 		private static readonly PurpleModuleListColors moduleListColors = new PurpleModuleListColors();
+		private static readonly PurpleTrackBarColors trackBarColors = new PurpleTrackBarColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -166,5 +167,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public IModuleListColors ModuleListColors => moduleListColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by track bars
+		/// </summary>
+		/********************************************************************/
+		public ITrackBarColors TrackBarColors => trackBarColors;
 	}
 }

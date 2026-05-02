@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardTabColors tabColors = new StandardTabColors();
 		private static readonly StandardLabelColors labelColors = new StandardLabelColors();
 		private static readonly StandardModuleListColors moduleListColors = new StandardModuleListColors();
+		private static readonly StandardTrackBarColors trackBarColors = new StandardTrackBarColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -164,5 +165,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public IModuleListColors ModuleListColors => moduleListColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by track bars
+		/// </summary>
+		/********************************************************************/
+		public ITrackBarColors TrackBarColors => trackBarColors;
 	}
 }
