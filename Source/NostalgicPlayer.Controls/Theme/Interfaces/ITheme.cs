@@ -76,5 +76,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by module list control
 		/// </summary>
 		IModuleListColors ModuleListColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by track bars
+		/// </summary>
+		ITrackBarColors TrackBarColors { get; }
 	}
 }
