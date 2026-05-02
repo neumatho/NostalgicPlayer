@@ -110,7 +110,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private TimeSpan selectedTime;
 
 		// Window/control status variables
-		private bool allowPosSliderUpdate;
+		private int currentPositionPercent;
+		private bool updatingTrackBarFromPlayer;
+		private bool userInteractingWithTrackBar;
 
 		// Play samples from sample info window info
 		private int playSamplesChannelNumber;
@@ -182,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			// Initialize member variables
 			playItem = null;
-			allowPosSliderUpdate = true;
+			currentPositionPercent = 0;
 
 			// Initialize and load settings
 			InitSettings();
@@ -1056,7 +1058,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// Position slider
 			positionTrackBar.MouseDown += PositionTrackBar_MouseDown;
 			positionTrackBar.MouseUp += PositionTrackBar_MouseUp;
-			positionTrackBar.Click += PositionTrackBar_Click;
 			positionTrackBar.ValueChanged += PositionTrackBar_ValueChanged;
 
 			// Tape deck
@@ -1732,6 +1733,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				{
 					// Set the time offset
 					timeOccurred = e.Time;
+
+					// When never ending timeout is on, the slider tracks the
+					// elapsed time instead of the song position. Skip while
+					// the user is dragging so the thumb follows the mouse
+					if (!userInteractingWithTrackBar && moduleHandler.IsModuleLoaded && (moduleHandler.PlayingModuleInformation.SongLength == 0) && neverEndingStarted)
+					{
+						int percent = Math.Min((int)(timeOccurred.TotalMilliseconds * 100 / neverEndingTimeout.TotalMilliseconds), 100);
+						SetTrackBarValueFromPlayer(percent);
+					}
 
 					// Print the module information
 					PrintInfo();
@@ -2518,13 +2528,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		#region Position slider events
 		/********************************************************************/
 		/// <summary>
-		/// The user hold down the mouse button on the slider
+		/// The user pressed the mouse button on the slider
 		/// </summary>
 		/********************************************************************/
 		private void PositionTrackBar_MouseDown(object sender, MouseEventArgs e)
 		{
-			// Prevent slider updates when printing information
-			allowPosSliderUpdate = false;
+			// Suppress player-driven updates while the user is dragging
+			userInteractingWithTrackBar = true;
 		}
 
 
@@ -2536,28 +2546,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void PositionTrackBar_MouseUp(object sender, MouseEventArgs e)
 		{
-			allowPosSliderUpdate = true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// The user clicked on the track bar
-		/// </summary>
-		/********************************************************************/
-		private void PositionTrackBar_Click(object sender, EventArgs e)
-		{
-			// Calculate the song position
-			int songLength = moduleHandler.PlayingModuleInformation.SongLength;
-			int val = positionTrackBar.Value;
-
-			int newSongPos = val == 100 ? songLength - 1 : val * songLength / 100;
-
-			// Set the new song position
-			allowPosSliderUpdate = false;
-			SetPosition(newSongPos);
-			allowPosSliderUpdate = true;
+			userInteractingWithTrackBar = false;
 		}
 
 
@@ -2569,18 +2558,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void PositionTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			// Only do this, if the user change the position and not the player
-			if (!allowPosSliderUpdate)
-			{
-				// Calculate the song position
-				int songLength = moduleHandler.PlayingModuleInformation.SongLength;
-				int val = positionTrackBar.Value;
+			// Skip when the player is updating the slider, so we only react
+			// to direct user input
+			if (updatingTrackBarFromPlayer)
+				return;
 
-				int newSongPos = val == 100 ? songLength - 1 : val * songLength / 100;
+			// Cache the new percent so PrintInfo shows the value the user picked
+			currentPositionPercent = positionTrackBar.Value;
 
-				// Set the new song position
-				SetPosition(newSongPos);
-			}
+			// Calculate the song position
+			int songLength = moduleHandler.PlayingModuleInformation.SongLength;
+			int val = positionTrackBar.Value;
+
+			int newSongPos = val == 100 ? songLength - 1 : val * songLength / 100;
+
+			// Set the new song position
+			SetPosition(newSongPos);
 		}
 		#endregion
 
@@ -2697,7 +2690,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// The user clicked on the fast forward button
+		/// The user clicked on the fast-forward button
 		/// </summary>
 		/********************************************************************/
 		private void FastForwardButton_Click(object sender, EventArgs e)
@@ -3767,7 +3760,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			pauseCheckButton.Checked = false;
 
 			// Set the position slider on the first position
-			positionTrackBar.Value = 0;
+			SetTrackBarValueFromPlayer(0);
 
 			// Update the tape deck buttons
 			UpdateTapeDeck();
@@ -4068,31 +4061,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				if (songLength > 0)
 				{
 					// We got a length, so we can create the position string
-					int percent = songPos * 100 / songLength;
-					if (percent > 100)
-						percent = 100;
-
-					posStr = string.Format(Resources.IDS_POSITION, songPos, songLength, percent);
-
-					// Set the position slider
-					if (allowPosSliderUpdate && (positionTrackBar.Value != percent))
-						positionTrackBar.Value = percent;
+					// using the cached percent (updated when the player or the
+					// user changes the position)
+					posStr = string.Format(Resources.IDS_POSITION, songPos, songLength, currentPositionPercent);
 				}
 				else
 				{
 					// Set the position string to n/a
 					posStr = Resources.IDS_NOPOSITION;
-
-					// If never ending timeout is on, we need to update the position slider
-					if (neverEndingStarted)
-					{
-						// Calculate the percent
-						int percent = Math.Min((int)(timeOccurred.TotalMilliseconds * 100 / neverEndingTimeout.TotalMilliseconds), 100);
-
-						// Set the position slider
-						if (allowPosSliderUpdate && (positionTrackBar.Value != percent))
-							positionTrackBar.Value = percent;
-					}
 				}
 
 				// Create sub-song string
@@ -4390,7 +4366,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			ChangePlayItem(null);
 
 			// Reset the position slider
-			positionTrackBar.Value = 0;
+			SetTrackBarValueFromPlayer(0);
 
 			// Update the window controls
 			InitControls();
@@ -4472,9 +4448,71 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					// Change the position
 					moduleHandler.SetSongPosition(newPosition);
 
+					// Sync the cached percent and the slider with the new
+					// player position. Skipped automatically while the user
+					// is dragging the slider, so the thumb stays under the mouse
+					UpdatePositionFromPlayer();
+
 					// Show it to the user
 					PrintInfo();
 				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Recalculate the cached position percent from the player and
+		/// update the position slider accordingly
+		/// </summary>
+		/********************************************************************/
+		private void UpdatePositionFromPlayer()
+		{
+			if (!moduleHandler.IsModuleLoaded)
+				return;
+
+			// While the user is dragging the slider, leave it alone — the
+			// thumb should follow the mouse, not the player
+			if (userInteractingWithTrackBar)
+				return;
+
+			ModuleInfoFloating playingModuleInfo = moduleHandler.PlayingModuleInformation;
+			int songLength = playingModuleInfo.SongLength;
+
+			if (songLength > 0)
+			{
+				int percent = playingModuleInfo.SongPosition * 100 / songLength;
+				if (percent > 100)
+					percent = 100;
+
+				SetTrackBarValueFromPlayer(percent);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Update the cached percent and the position slider from a
+		/// player-driven source, suppressing the user-input handler
+		/// </summary>
+		/********************************************************************/
+		private void SetTrackBarValueFromPlayer(int percent)
+		{
+			currentPositionPercent = percent;
+
+			if (positionTrackBar.Value == percent)
+				return;
+
+			updatingTrackBarFromPlayer = true;
+			try
+			{
+				positionTrackBar.Value = percent;
+			}
+			finally
+			{
+				updatingTrackBarFromPlayer = false;
 			}
 		}
 
@@ -4489,6 +4527,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			BeginInvoke(() =>
 			{
+				// Refresh the cached percent and the slider from the player
+				UpdatePositionFromPlayer();
+
 				// Print the information
 				PrintInfo();
 
@@ -4556,6 +4597,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			BeginInvoke(() =>
 			{
 				SetTimeOnItem(playItem, moduleHandler.PlayingModuleInformation.SongTotalTime);
+				UpdatePositionFromPlayer();
 				PrintInfo();
 				UpdateTapeDeck();
 			});
