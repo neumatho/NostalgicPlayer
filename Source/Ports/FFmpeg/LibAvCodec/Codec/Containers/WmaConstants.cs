@@ -19,6 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec.Containers
 		/// 
 		/// </summary>
 		public const c_int Block_Max_Bits = 11;
+
 		/// <summary>
 		/// 
 		/// </summary>
