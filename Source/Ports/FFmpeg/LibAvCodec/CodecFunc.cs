@@ -109,5 +109,10 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 		/// <summary></summary>
 		public delegate void HwAccel_Priv_Free_Delegate(IPrivateData priv);
+
+		/// <summary></summary>
+		public delegate int32_t LLAudDsp_ScalarProduct_And_MAdd_Int16(CPointer<int16_t> v1, CPointer<int16_t> v2, CPointer<int16_t> v3, c_int len, c_int mul);
+		/// <summary></summary>
+		public delegate int32_t LLAudDsp_ScalarProduct_And_MAdd_Int32(CPointer<int16_t> v1, CPointer<int32_t> v2, CPointer<int16_t> v3, c_int len, c_int mul);
 	}
 }

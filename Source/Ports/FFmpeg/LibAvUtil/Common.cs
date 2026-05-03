@@ -251,6 +251,32 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 		/********************************************************************/
 		/// <summary>
+		/// Compute ceil(log2(x))
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int Av_Ceil_Log2(int32_t x)
+		{
+			return Av_Ceil_Log2_C(x);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Compute ceil(log2(x))
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int Av_Ceil_Log2_C(int32_t x)
+		{
+			return IntMath.Av_Log2((c_uint)((x - 1) << 1));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Count number of bits set to one in x
 		/// </summary>
 		/********************************************************************/

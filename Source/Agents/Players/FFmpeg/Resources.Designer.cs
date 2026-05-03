@@ -115,6 +115,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Based on FFmpeg.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///Windows Media Audio (WMA) is a series of audio codecs and their corresponding audio coding formats developed by Microsoft. It is a proprietary technology that forms part of the Windows Media framework. Audio encoded in WMA is stored in a digital container format called Advanced Systems Format (ASF).
+        ///
+        ///This player can play the WMA lossless format..
+        /// </summary>
+        internal static string IDS_FFMPEG_DESCRIPTION_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_FFMPEG_DESCRIPTION_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only up to 8 channels are supported at the moment. You tried to play a sample that uses {0} channels..
         /// </summary>
         internal static string IDS_FFMPEG_ERR_ILLEGAL_CHANNELS {
@@ -246,6 +260,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg {
         internal static string IDS_FFMPEG_NAME_AGENT3 {
             get {
                 return ResourceManager.GetString("IDS_FFMPEG_NAME_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Windows Media Audio Lossless.
+        /// </summary>
+        internal static string IDS_FFMPEG_NAME_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_FFMPEG_NAME_AGENT4", resourceCulture);
             }
         }
     }

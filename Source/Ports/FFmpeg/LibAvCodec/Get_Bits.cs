@@ -167,6 +167,23 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 		/********************************************************************/
 		/// <summary>
+		/// Read 0-32 bits as a signed integer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int Get_SBits_Long(GetBitContext s, c_int n)
+		{
+			// sign_extend(x, 0) is undefined
+			if (n == 0)
+				return 0;
+
+			return MathOps.Sign_Extend((c_int)Get_Bits_Long(s, n), (c_uint)n);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize GetBitContext
 		/// </summary>
 		/********************************************************************/

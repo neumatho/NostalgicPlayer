@@ -147,6 +147,14 @@ Windows Media Audio (WMA) is a series of audio codecs and their corresponding au
 
 This player can play the WMA professional format.</value>
   </data>
+  <data name="IDS_FFMPEG_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>Based on FFmpeg.
+Converted to C# by Thomas Neumann.
+
+Windows Media Audio (WMA) is a series of audio codecs and their corresponding audio coding formats developed by Microsoft. It is a proprietary technology that forms part of the Windows Media framework. Audio encoded in WMA is stored in a digital container format called Advanced Systems Format (ASF).
+
+This player can play the WMA lossless format.</value>
+  </data>
   <data name="IDS_FFMPEG_ERR_ILLEGAL_CHANNELS" xml:space="preserve">
     <value>Only up to 8 channels are supported at the moment. You tried to play a sample that uses {0} channels.</value>
   </data>
@@ -191,5 +199,8 @@ This player can play the WMA professional format.</value>
   </data>
   <data name="IDS_FFMPEG_NAME_AGENT3" xml:space="preserve">
     <value>Windows Media Audio Professional</value>
+  </data>
+  <data name="IDS_FFMPEG_NAME_AGENT4" xml:space="preserve">
+    <value>Windows Media Audio Lossless</value>
   </data>
 </root>

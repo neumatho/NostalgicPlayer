@@ -62,6 +62,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec.Containers
 		/// <summary>
 		/// 
 		/// </summary>
+		public const c_int Max_Order = 256;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public const c_int Max_Channels = 2;
 
 		/// <summary>
@@ -228,5 +233,25 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec.Containers
 		/// 
 		/// </summary>
 		public const c_int Xma_Max_Channels_Stream = 2;
+
+		/// <summary>
+		/// Max number of handled channels
+		/// </summary>
+		public const c_int WmaLL_Max_Channels = 8;
+
+		/// <summary>
+		/// Log2 of max block size
+		/// </summary>
+		public const c_int WmaLL_Block_Max_Bits = 14;
+
+		/// <summary>
+		/// Maximum block size
+		/// </summary>
+		public const c_int WmaLL_Block_Max_Size = 1 << WmaLL_Block_Max_Bits;
+
+		/// <summary>
+		/// Pad coef buffers with 0 for use with SIMD
+		/// </summary>
+		public const c_int WmaLL_Coeff_Pad_Size = 16;
 	}
 }

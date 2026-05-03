@@ -93,6 +93,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FFmpeg
 
 					case AvCodecId.WmaPro:
 						return FFmpeg.Agent3Id;
+
+					case AvCodecId.WmaLossless:
+						return FFmpeg.Agent4Id;
 				}
 
 				return null;
