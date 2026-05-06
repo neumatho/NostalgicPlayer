@@ -16,18 +16,16 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly Color backgroundColor = Color.FromArgb(245, 240, 250);
 
 		private static readonly Color normalArrowColor = Color.FromArgb(140, 125, 160);
-
-		private static readonly Color hoverArrowColor = Color.FromArgb(90, 100, 205);
-
-		private static readonly Color pressedArrowColor = Color.FromArgb(55, 30, 85);
-
-		private static readonly Color disabledArrowColor = Color.FromArgb(180, 180, 180);
-
 		private static readonly Color normalThumbColor = Color.FromArgb(210, 195, 225);
 
+		private static readonly Color hoverArrowColor = Color.FromArgb(90, 100, 205);
 		private static readonly Color hoverThumbColor = Color.FromArgb(190, 170, 210);
 
+		private static readonly Color pressedArrowColor = Color.FromArgb(55, 30, 85);
 		private static readonly Color pressedThumbColor = Color.FromArgb(165, 150, 190);
+
+		private static readonly Color disabledArrowColor = Color.FromArgb(180, 180, 180);
+		private static readonly Color disabledThumbColor = Color.FromArgb(210, 195, 225);
 
 		/********************************************************************/
 		/// <summary>
@@ -52,34 +50,16 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color HoverArrowColor => hoverArrowColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color PressedArrowColor => pressedArrowColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color DisabledArrowColor => disabledArrowColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
 		public Color NormalThumbColor => normalThumbColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color HoverArrowColor => hoverArrowColor;
 
 
 
@@ -97,6 +77,33 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public Color PressedArrowColor => pressedArrowColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public Color PressedThumbColor => pressedThumbColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledArrowColor => disabledArrowColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledThumbColor => disabledThumbColor;
 	}
 }

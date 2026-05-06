@@ -19,31 +19,109 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 	/// </summary>
 	public class NostalgicTrackBar : Control, IThemeControl
 	{
-		private const int ThumbBreadth = 11;		// Size of thumb along slider axis
-		private const int ThumbExtent = 20;			// Size of thumb perpendicular to slider axis
-		private const int TrackThickness = 4;
-		private const int TickAreaSize = 7;			// Space reserved for tick marks (line + small gap)
-		private const int TickLineSize = 5;			// Length of a major tick line
-		private const int TickMinorLineSize = 3;	// Length of an intermediate tick line
-		private const int ThumbArrowSize = 5;		// Length of thumb's arrow tip
-		private const int AxisPadding = 1;			// Padding at start/end of slider axis
-		private const int PerpPadding = 2;			// Padding perpendicular to axis
+		/// <summary>
+		/// Size of thumb along slider axis
+		/// </summary>
+		private const int ThumbBreadth = 11;
 
-		private struct LayoutInfo
+		/// <summary>
+		/// Size of thumb perpendicular to slider axis
+		/// </summary>
+		private const int ThumbExtent = 20;
+
+		/// <summary>
+		/// Size of the track bar
+		/// </summary>
+		private const int TrackThickness = 4;
+
+		/// <summary>
+		/// Space reserved for tick marks (line + small gap)
+		/// </summary>
+		private const int TickAreaSize = 7;
+
+		/// <summary>
+		/// Length of a major tick line
+		/// </summary>
+		private const int TickLineSize = 5;
+
+		/// <summary>
+		/// Length of an intermediate tick line
+		/// </summary>
+		private const int TickMinorLineSize = 3;
+
+		/// <summary>
+		/// Length of thumb's arrow tip (perpendicular to slider axis on each side that has ticks)
+		/// </summary>
+		protected const int ThumbArrowSize = 5;
+
+		/// <summary>
+		/// Padding at start/end of slider axis
+		/// </summary>
+		private const int AxisPadding = 1;
+
+		/// <summary>
+		/// Padding perpendicular to axis
+		/// </summary>
+		private const int PerpPadding = 2;
+
+		/// <summary>
+		/// Layout rectangles computed for the current state. Exposed so
+		/// subclasses can build their own track geometry
+		/// </summary>
+		protected struct LayoutInfo
 		{
-			public Rectangle ThumbAxisRect;			// Bounds in which the thumb travels (along axis) and its perpendicular extent
-			public Rectangle ThumbRect;				// Current thumb rectangle
-			public Rectangle TrackRect;				// Track full rectangle
-			public Rectangle TrackFillRect;			// Track filled portion (from min to thumb)
+			/// <summary>
+			/// Bounds in which the thumb travels (along axis) and its perpendicular extent
+			/// </summary>
+			public Rectangle ThumbAxisRect;
+
+			/// <summary>
+			/// Current thumb rectangle
+			/// </summary>
+			public Rectangle ThumbRect;
+
+			/// <summary>
+			/// Track full rectangle
+			/// </summary>
+			public Rectangle TrackRect;
+
+			/// <summary>
+			/// Track filled portion (from min to thumb)
+			/// </summary>
+			public Rectangle TrackFillRect;
+
+			/// <summary>
+			/// Tick area on the top (horizontal) or left (vertical) side
+			/// </summary>
 			public Rectangle TopLeftTickArea;
+
+			/// <summary>
+			/// Tick area on the bottom (horizontal) or right (vertical) side
+			/// </summary>
 			public Rectangle BottomRightTickArea;
 		}
 
-		private struct ThumbStateColors
+		/// <summary>
+		/// 
+		/// </summary>
+		protected struct StateColors
 		{
-			public Color BorderColor { get; init; }
-			public Color StartColor { get; init; }
-			public Color StopColor { get; init; }
+			/// <summary></summary>
+			public Color TrackBorderColor { get; init; }
+			/// <summary></summary>
+			public Color TrackBackgroundColor { get; init; }
+			/// <summary></summary>
+			public Color TrackFillStartColor { get; init; }
+			/// <summary></summary>
+			public Color TrackFillStopColor { get; init; }
+			/// <summary></summary>
+			public Color TickColor { get; init; }
+			/// <summary></summary>
+			public Color ThumbBorderColor { get; init; }
+			/// <summary></summary>
+			public Color ThumbStartColor { get; init; }
+			/// <summary></summary>
+			public Color ThumbStopColor { get; init; }
 		}
 
 		private ITrackBarColors colors;
@@ -715,16 +793,17 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 
 			Graphics g = e.Graphics;
 
+			StateColors stateColors = GetColors();
+
 			DrawBackground(g);
 
 			LayoutInfo layoutInfo = ComputeLayout();
 
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
-			DrawTicks(g, layoutInfo);
-			DrawTrack(g, layoutInfo);
-			DrawThumb(g, layoutInfo);
-			DrawFocus(g, layoutInfo);
+			DrawTicks(g, stateColors, layoutInfo);
+			DrawTrack(g, stateColors, layoutInfo);
+			DrawThumb(g, stateColors, layoutInfo);
 		}
 		#endregion
 
@@ -836,7 +915,7 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 		/// Compute layout rectangles for the current state
 		/// </summary>
 		/********************************************************************/
-		private LayoutInfo ComputeLayout()
+		protected virtual LayoutInfo ComputeLayout()
 		{
 			Rectangle client = ClientRectangle;
 
@@ -941,53 +1020,78 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 		///
 		/// </summary>
 		/********************************************************************/
-		private ThumbStateColors GetThumbColors()
+		private StateColors GetColors()
 		{
 			if (!Enabled)
 			{
-				return new ThumbStateColors
+				return new StateColors
 				{
-					BorderColor = colors.DisabledThumbBorderColor,
-					StartColor = colors.DisabledThumbBackgroundStartColor,
-					StopColor = colors.DisabledThumbBackgroundStopColor
+					TrackBorderColor = colors.DisabledTrackBorderColor,
+					TrackBackgroundColor = colors.DisabledTrackBackgroundColor,
+					TrackFillStartColor = colors.DisabledTrackFillStartColor,
+					TrackFillStopColor = colors.DisabledTrackFillStopColor,
+					TickColor = colors.DisabledTickColor,
+					ThumbBorderColor = colors.DisabledThumbBorderColor,
+					ThumbStartColor = colors.DisabledThumbBackgroundStartColor,
+					ThumbStopColor = colors.DisabledThumbBackgroundStopColor,
 				};
 			}
 
 			if (isThumbPressed)
 			{
-				return new ThumbStateColors
+				return new StateColors
 				{
-					BorderColor = colors.PressedThumbBorderColor,
-					StartColor = colors.PressedThumbBackgroundStartColor,
-					StopColor = colors.PressedThumbBackgroundStopColor
+					TrackBorderColor = colors.NormalTrackBorderColor,
+					TrackBackgroundColor = colors.NormalTrackBackgroundColor,
+					TrackFillStartColor = colors.NormalTrackFillStartColor,
+					TrackFillStopColor = colors.NormalTrackFillStopColor,
+					TickColor = colors.NormalTickColor,
+					ThumbBorderColor = colors.PressedThumbBorderColor,
+					ThumbStartColor = colors.PressedThumbBackgroundStartColor,
+					ThumbStopColor = colors.PressedThumbBackgroundStopColor
 				};
 			}
 
 			if (isThumbHovered)
 			{
-				return new ThumbStateColors
+				return new StateColors
 				{
-					BorderColor = colors.HoverThumbBorderColor,
-					StartColor = colors.HoverThumbBackgroundStartColor,
-					StopColor = colors.HoverThumbBackgroundStopColor
+					TrackBorderColor = colors.NormalTrackBorderColor,
+					TrackBackgroundColor = colors.NormalTrackBackgroundColor,
+					TrackFillStartColor = colors.NormalTrackFillStartColor,
+					TrackFillStopColor = colors.NormalTrackFillStopColor,
+					TickColor = colors.NormalTickColor,
+					ThumbBorderColor = colors.HoverThumbBorderColor,
+					ThumbStartColor = colors.HoverThumbBackgroundStartColor,
+					ThumbStopColor = colors.HoverThumbBackgroundStopColor
 				};
 			}
 
 			if (isFocused)
 			{
-				return new ThumbStateColors
+				return new StateColors
 				{
-					BorderColor = colors.FocusedThumbBorderColor,
-					StartColor = colors.FocusedThumbBackgroundStartColor,
-					StopColor = colors.FocusedThumbBackgroundStopColor
+					TrackBorderColor = colors.NormalTrackBorderColor,
+					TrackBackgroundColor = colors.NormalTrackBackgroundColor,
+					TrackFillStartColor = colors.NormalTrackFillStartColor,
+					TrackFillStopColor = colors.NormalTrackFillStopColor,
+					TickColor = colors.NormalTickColor,
+					ThumbBorderColor = colors.FocusedThumbBorderColor,
+					ThumbStartColor = colors.FocusedThumbBackgroundStartColor,
+					ThumbStopColor = colors.FocusedThumbBackgroundStopColor
 				};
 			}
 
-			return new ThumbStateColors
+			return new StateColors
 			{
-				BorderColor = colors.NormalThumbBorderColor,
-				StartColor = colors.NormalThumbBackgroundStartColor,
-				StopColor = colors.NormalThumbBackgroundStopColor
+				TrackBorderColor = colors.NormalTrackBorderColor,
+				TrackBackgroundColor = colors.NormalTrackBackgroundColor,
+				TrackFillStartColor = colors.NormalTrackFillStartColor,
+				TrackFillStopColor = colors.NormalTrackFillStopColor,
+				TickColor = colors.NormalTickColor,
+				ThumbBorderColor = colors.NormalThumbBorderColor,
+				ThumbStartColor = colors.NormalThumbBackgroundStartColor,
+				ThumbStopColor = colors.NormalThumbBackgroundStopColor
 			};
 		}
 
@@ -1013,7 +1117,7 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 		/// Draw track background plus the filled portion up to the thumb
 		/// </summary>
 		/********************************************************************/
-		private void DrawTrack(Graphics g, LayoutInfo layoutInfo)
+		protected virtual void DrawTrack(Graphics g, StateColors stateColors, LayoutInfo layoutInfo)
 		{
 			Rectangle trackRect = layoutInfo.TrackRect;
 
@@ -1022,7 +1126,7 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 
 			Rectangle borderRect = new Rectangle(trackRect.X, trackRect.Y, trackRect.Width - 1, trackRect.Height - 1);
 
-			using (SolidBrush brush = new SolidBrush(colors.TrackBackgroundColor))
+			using (SolidBrush brush = new SolidBrush(stateColors.TrackBackgroundColor))
 			{
 				g.FillRectangle(brush, trackRect);
 			}
@@ -1031,25 +1135,31 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 
 			if ((fillRect.Width > 0) && (fillRect.Height > 0))
 			{
-				if (Enabled)
-				{
-					LinearGradientMode gradientMode = orientation == Orientation.Horizontal ? LinearGradientMode.Vertical : LinearGradientMode.Horizontal;
+				// Gradient runs along the slider axis from min to max:
+				// horizontal = left-to-right, vertical = bottom-to-top
+				LinearGradientMode gradientMode;
+				Color color1, color2;
 
-					using (LinearGradientBrush brush = new LinearGradientBrush(trackRect, colors.TrackFillStartColor, colors.TrackFillStopColor, gradientMode))
-					{
-						g.FillRectangle(brush, fillRect);
-					}
+				if (orientation == Orientation.Horizontal)
+				{
+					gradientMode = LinearGradientMode.Horizontal;
+					color1 = stateColors.TrackFillStartColor;
+					color2 = stateColors.TrackFillStopColor;
 				}
 				else
 				{
-					using (SolidBrush brush = new SolidBrush(colors.TrackDisabledFillColor))
-					{
-						g.FillRectangle(brush, fillRect);
-					}
+					gradientMode = LinearGradientMode.Vertical;
+					color1 = stateColors.TrackFillStopColor;		// top = max
+					color2 = stateColors.TrackFillStartColor;		// bottom = min
+				}
+
+				using (LinearGradientBrush brush = new LinearGradientBrush(trackRect, color1, color2, gradientMode))
+				{
+					g.FillRectangle(brush, fillRect);
 				}
 			}
 
-			using (Pen pen = new Pen(colors.TrackBorderColor))
+			using (Pen pen = new Pen(stateColors.TrackBorderColor))
 			{
 				g.DrawRectangle(pen, borderRect);
 			}
@@ -1062,12 +1172,11 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 		/// Draw the tick marks
 		/// </summary>
 		/********************************************************************/
-		private void DrawTicks(Graphics g, LayoutInfo layoutInfo)
+		private void DrawTicks(Graphics g, StateColors stateColors, LayoutInfo layoutInfo)
 		{
 			if (tickStyle == TickStyle.None)
 				return;
 
-			Color tickColor = Enabled ? colors.TickColor : colors.DisabledTickColor;
 			int range = maximum - minimum;
 
 			if (range <= 0)
@@ -1082,7 +1191,7 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 			if (travel <= 0)
 				return;
 
-			using (Pen pen = new Pen(tickColor))
+			using (Pen pen = new Pen(stateColors.TickColor))
 			{
 				int freq = Math.Max(1, tickFrequency);
 
@@ -1175,25 +1284,23 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 		/// Draw the thumb
 		/// </summary>
 		/********************************************************************/
-		private void DrawThumb(Graphics g, LayoutInfo layoutInfo)
+		private void DrawThumb(Graphics g, StateColors stateColors, LayoutInfo layoutInfo)
 		{
 			Rectangle thumbRect = layoutInfo.ThumbRect;
 
 			if ((thumbRect.Width <= 0) || (thumbRect.Height <= 0))
 				return;
 
-			ThumbStateColors thumbColors = GetThumbColors();
-
 			using (GraphicsPath path = CreateThumbPath(thumbRect))
 			{
 				LinearGradientMode gradientMode = orientation == Orientation.Horizontal ? LinearGradientMode.Vertical : LinearGradientMode.Horizontal;
 
-				using (LinearGradientBrush brush = new LinearGradientBrush(thumbRect, thumbColors.StartColor, thumbColors.StopColor, gradientMode))
+				using (LinearGradientBrush brush = new LinearGradientBrush(thumbRect, stateColors.ThumbStartColor, stateColors.ThumbStopColor, gradientMode))
 				{
 					g.FillPath(brush, path);
 				}
 
-				using (Pen pen = new Pen(thumbColors.BorderColor))
+				using (Pen pen = new Pen(stateColors.ThumbBorderColor))
 				{
 					g.DrawPath(pen, path);
 				}
@@ -1240,39 +1347,39 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 				if (arrowFirst && !arrowSecond)
 				{
 					// Arrow pointing up
-					path.AddPolygon(new Point[]
-					{
+					path.AddPolygon(
+					[
 						new Point(centerX, top),
 						new Point(right, arrowTopY),
 						new Point(right, bottom),
 						new Point(left, bottom),
 						new Point(left, arrowTopY)
-					});
+					]);
 				}
 				else if (!arrowFirst && arrowSecond)
 				{
 					// Arrow pointing down
-					path.AddPolygon(new Point[]
-					{
+					path.AddPolygon(
+					[
 						new Point(left, top),
 						new Point(right, top),
 						new Point(right, arrowBottomY),
 						new Point(centerX, bottom),
 						new Point(left, arrowBottomY)
-					});
+					]);
 				}
 				else
 				{
 					// Both arrows
-					path.AddPolygon(new Point[]
-					{
+					path.AddPolygon(
+					[
 						new Point(centerX, top),
 						new Point(right, arrowTopY),
 						new Point(right, arrowBottomY),
 						new Point(centerX, bottom),
 						new Point(left, arrowBottomY),
 						new Point(left, arrowTopY)
-					});
+					]);
 				}
 			}
 			else
@@ -1284,61 +1391,45 @@ namespace Polycode.NostalgicPlayer.Controls.Sliders
 				if (arrowFirst && !arrowSecond)
 				{
 					// Arrow pointing left
-					path.AddPolygon(new Point[]
-					{
+					path.AddPolygon(
+					[
 						new Point(arrowLeftX, top),
 						new Point(right, top),
 						new Point(right, bottom),
 						new Point(arrowLeftX, bottom),
 						new Point(left, centerY)
-					});
+					]);
 				}
 				else if (!arrowFirst && arrowSecond)
 				{
 					// Arrow pointing right
-					path.AddPolygon(new Point[]
-					{
+					path.AddPolygon(
+					[
 						new Point(left, top),
 						new Point(arrowRightX, top),
 						new Point(right, centerY),
 						new Point(arrowRightX, bottom),
 						new Point(left, bottom)
-					});
+					]);
 				}
 				else
 				{
 					// Both arrows
-					path.AddPolygon(new Point[]
-					{
+					path.AddPolygon(
+					[
 						new Point(arrowLeftX, top),
 						new Point(arrowRightX, top),
 						new Point(right, centerY),
 						new Point(arrowRightX, bottom),
 						new Point(arrowLeftX, bottom),
 						new Point(left, centerY)
-					});
+					]);
 				}
 			}
 
 			path.CloseFigure();
 
 			return path;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Draw the focus rectangle around the thumb
-		/// </summary>
-		/********************************************************************/
-		private void DrawFocus(Graphics g, LayoutInfo layoutInfo)
-		{
-			if (Focused && ShowFocusCues && Enabled)
-			{
-				Rectangle focusRect = Rectangle.Inflate(layoutInfo.ThumbRect, 1, 1);
-				ControlPaint.DrawFocusRectangle(g, focusRect);
-			}
 		}
 		#endregion
 
