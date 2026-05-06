@@ -786,6 +786,14 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		private ThumbStateColors GetThumbColors()
 		{
+			if (thumbState == ScrollBarState.Disabled)
+			{
+				return new ThumbStateColors
+				{
+					ThumbColor = colors.DisabledThumbColor
+				};
+			}
+
 			if (thumbState == ScrollBarState.Pressed)
 			{
 				return new ThumbStateColors

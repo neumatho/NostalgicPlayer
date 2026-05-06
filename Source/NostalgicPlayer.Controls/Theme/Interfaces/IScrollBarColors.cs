@@ -17,23 +17,22 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 
 		/// <summary></summary>
 		Color NormalArrowColor { get; }
-
-		/// <summary></summary>
-		Color HoverArrowColor { get; }
-
-		/// <summary></summary>
-		Color PressedArrowColor { get; }
-
-		/// <summary></summary>
-		Color DisabledArrowColor { get; }
-
 		/// <summary></summary>
 		Color NormalThumbColor { get; }
 
 		/// <summary></summary>
+		Color HoverArrowColor { get; }
+		/// <summary></summary>
 		Color HoverThumbColor { get; }
 
 		/// <summary></summary>
+		Color PressedArrowColor { get; }
+		/// <summary></summary>
 		Color PressedThumbColor { get; }
+
+		/// <summary></summary>
+		Color DisabledArrowColor { get; }
+		/// <summary></summary>
+		Color DisabledThumbColor { get; }
 	}
 }
