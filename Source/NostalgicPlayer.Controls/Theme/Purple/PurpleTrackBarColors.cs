@@ -17,13 +17,16 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 
 		private static readonly Color backgroundColor = Color.FromArgb(245, 240, 250);
 
-		private static readonly Color trackBorderColor = Color.FromArgb(140, 125, 160);
-		private static readonly Color trackBackgroundColor = Color.FromArgb(225, 215, 235);
-		private static readonly Color trackFillStartColor = Color.FromArgb(150, 120, 200);
-		private static readonly Color trackFillStopColor = Color.FromArgb(95, 70, 145);
-		private static readonly Color trackDisabledFillColor = Color.FromArgb(200, 200, 200);
+		private static readonly Color normalTrackBorderColor = Color.FromArgb(140, 125, 160);
+		private static readonly Color normalTrackBackgroundColor = Color.FromArgb(225, 215, 235);
+		private static readonly Color normalTrackFillStartColor = Color.FromArgb(150, 120, 200);
+		private static readonly Color normalTrackFillStopColor = Color.FromArgb(95, 70, 145);
+		private static readonly Color normalTickColor = Color.FromArgb(150, 120, 200);
 
-		private static readonly Color tickColor = Color.FromArgb(150, 120, 200);
+		private static readonly Color disabledTrackBorderColor = Color.FromArgb(140, 125, 160);
+		private static readonly Color disabledTrackBackgroundColor = Color.FromArgb(225, 215, 235);
+		private static readonly Color disabledTrackFillStartColor = Color.FromArgb(200, 200, 200);
+		private static readonly Color disabledTrackFillStopColor = Color.FromArgb(200, 200, 200);
 		private static readonly Color disabledTickColor = Color.FromArgb(200, 200, 200);
 
 		/********************************************************************/
@@ -40,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color TrackBorderColor => trackBorderColor;
+		public Color NormalTrackBorderColor => normalTrackBorderColor;
 
 
 
@@ -49,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color TrackBackgroundColor => trackBackgroundColor;
+		public Color NormalTrackBackgroundColor => normalTrackBackgroundColor;
 
 
 
@@ -58,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color TrackFillStartColor => trackFillStartColor;
+		public Color NormalTrackFillStartColor => normalTrackFillStartColor;
 
 
 
@@ -67,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color TrackFillStopColor => trackFillStopColor;
+		public Color NormalTrackFillStopColor => normalTrackFillStopColor;
 
 
 
@@ -76,25 +79,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color TrackDisabledFillColor => trackDisabledFillColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		///
-		/// </summary>
-		/********************************************************************/
-		public Color TickColor => tickColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		///
-		/// </summary>
-		/********************************************************************/
-		public Color DisabledTickColor => disabledTickColor;
+		public Color NormalTickColor => normalTickColor;
 
 
 
@@ -203,6 +188,51 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public Color FocusedThumbBackgroundStopColor => buttonColors.FocusedBackgroundStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTrackBorderColor => disabledTrackBorderColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTrackBackgroundColor => disabledTrackBackgroundColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTrackFillStartColor => disabledTrackFillStartColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTrackFillStopColor => disabledTrackFillStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTickColor => disabledTickColor;
 
 
 

@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			infoBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			equalizerButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
 			moduleInfoButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
-			masterVolumeTrackBar = new KryptonTrackBar();
+			masterVolumeTrackBar = new Polycode.NostalgicPlayer.Controls.Sliders.NostalgicVolumeBar();
 			listButtonsBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			diskButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
 			listButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
@@ -150,7 +150,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			masterVolumeTrackBar.Size = new System.Drawing.Size(27, 88);
 			masterVolumeTrackBar.TabIndex = 4;
 			masterVolumeTrackBar.TickFrequency = 8;
-			masterVolumeTrackBar.VolumeControl = true;
 			// 
 			// listButtonsBox
 			// 
@@ -500,7 +499,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private NostalgicPlayer.Controls.Containers.NostalgicBox infoBox;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton equalizerButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton moduleInfoButton;
-		private KryptonTrackBar masterVolumeTrackBar;
+		private NostalgicPlayer.Controls.Sliders.NostalgicVolumeBar masterVolumeTrackBar;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox listButtonsBox;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton addModuleButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton removeModuleButton;
@@ -513,7 +512,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private NostalgicPlayer.Controls.Containers.NostalgicBox listInfoBox;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel totalLabel;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel timeLabel;
-		private Polycode.NostalgicPlayer.Controls.Sliders.NostalgicTrackBar positionTrackBar;
+		private NostalgicPlayer.Controls.Sliders.NostalgicTrackBar positionTrackBar;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox tapedeckBox;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton ejectButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton nextModuleButton;
