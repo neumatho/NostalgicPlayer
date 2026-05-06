@@ -16,21 +16,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color BackgroundColor { get; }
 
 		/// <summary></summary>
-		Color TrackBorderColor { get; }
+		Color NormalTrackBorderColor { get; }
 		/// <summary></summary>
-		Color TrackBackgroundColor { get; }
+		Color NormalTrackBackgroundColor { get; }
 		/// <summary></summary>
-		Color TrackFillStartColor { get; }
+		Color NormalTrackFillStartColor { get; }
 		/// <summary></summary>
-		Color TrackFillStopColor { get; }
+		Color NormalTrackFillStopColor { get; }
 		/// <summary></summary>
-		Color TrackDisabledFillColor { get; }
-
-		/// <summary></summary>
-		Color TickColor { get; }
-		/// <summary></summary>
-		Color DisabledTickColor { get; }
-
+		Color NormalTickColor { get; }
 		/// <summary></summary>
 		Color NormalThumbBorderColor { get; }
 		/// <summary></summary>
@@ -59,6 +53,16 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// <summary></summary>
 		Color FocusedThumbBackgroundStopColor { get; }
 
+		/// <summary></summary>
+		Color DisabledTrackBorderColor { get; }
+		/// <summary></summary>
+		Color DisabledTrackBackgroundColor { get; }
+		/// <summary></summary>
+		Color DisabledTrackFillStartColor { get; }
+		/// <summary></summary>
+		Color DisabledTrackFillStopColor { get; }
+		/// <summary></summary>
+		Color DisabledTickColor { get; }
 		/// <summary></summary>
 		Color DisabledThumbBorderColor { get; }
 		/// <summary></summary>
