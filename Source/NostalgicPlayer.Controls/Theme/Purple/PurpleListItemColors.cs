@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// Different colors used by combo box
+	/// Different colors used by list items
 	/// </summary>
 	internal class PurpleListItemColors : IListItemColors
 	{
