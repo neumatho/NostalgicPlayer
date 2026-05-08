@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color normalSubSongColor = Color.FromArgb(159, 81, 255);
 		private static readonly Color selectedSubSongColor = Color.FromArgb(159, 81, 255);
 
-		private readonly IListItemColors listColors = new StandardListColors();
+		private readonly IListItemColors listItemColors = new StandardListItemColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalItemBackgroundStartColor => listColors.NormalBackgroundStartColor;
+		public Color NormalItemBackgroundStartColor => listItemColors.NormalBackgroundStartColor;
 
 
 
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalItemBackgroundMiddleColor => listColors.NormalBackgroundMiddleColor;
+		public Color NormalItemBackgroundMiddleColor => listItemColors.NormalBackgroundMiddleColor;
 
 
 
@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalItemBackgroundStopColor => listColors.NormalBackgroundStopColor;
+		public Color NormalItemBackgroundStopColor => listItemColors.NormalBackgroundStopColor;
 
 
 
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalItemTextColor => listColors.NormalTextColor;
+		public Color NormalItemTextColor => listItemColors.NormalTextColor;
 
 
 
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedItemBackgroundStartColor => listColors.SelectedBackgroundStartColor;
+		public Color SelectedItemBackgroundStartColor => listItemColors.SelectedBackgroundStartColor;
 
 
 
@@ -98,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedItemBackgroundMiddleColor => listColors.SelectedBackgroundMiddleColor;
+		public Color SelectedItemBackgroundMiddleColor => listItemColors.SelectedBackgroundMiddleColor;
 
 
 
@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedItemBackgroundStopColor => listColors.SelectedBackgroundStopColor;
+		public Color SelectedItemBackgroundStopColor => listItemColors.SelectedBackgroundStopColor;
 
 
 
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedItemTextColor => listColors.SelectedTextColor;
+		public Color SelectedItemTextColor => listItemColors.SelectedTextColor;
 
 
 

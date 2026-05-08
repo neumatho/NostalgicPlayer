@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 	{
 		private readonly IInputControlColors inputControlColors = new PurpleInputControlColors();
 		private readonly IButtonColors buttonColors = new PurpleButtonColors();
-		private readonly IListItemColors listColors = new PurpleListColors();
+		private readonly IListItemColors listItemColors = new PurpleListItemColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -337,7 +337,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalDropDownBackgroundStartColor => listColors.NormalBackgroundStartColor;
+		public Color NormalDropDownBackgroundStartColor => listItemColors.NormalBackgroundStartColor;
 
 
 
@@ -346,7 +346,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalDropDownBackgroundMiddleColor => listColors.NormalBackgroundMiddleColor;
+		public Color NormalDropDownBackgroundMiddleColor => listItemColors.NormalBackgroundMiddleColor;
 
 
 
@@ -355,7 +355,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalDropDownBackgroundStopColor => listColors.NormalBackgroundStopColor;
+		public Color NormalDropDownBackgroundStopColor => listItemColors.NormalBackgroundStopColor;
 
 
 
@@ -364,7 +364,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalDropDownTextColor => listColors.NormalTextColor;
+		public Color NormalDropDownTextColor => listItemColors.NormalTextColor;
 
 
 
@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedDropDownBackgroundStartColor => listColors.SelectedBackgroundStartColor;
+		public Color SelectedDropDownBackgroundStartColor => listItemColors.SelectedBackgroundStartColor;
 
 
 
@@ -382,7 +382,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedDropDownBackgroundMiddleColor => listColors.SelectedBackgroundMiddleColor;
+		public Color SelectedDropDownBackgroundMiddleColor => listItemColors.SelectedBackgroundMiddleColor;
 
 
 
@@ -391,7 +391,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedDropDownBackgroundStopColor => listColors.SelectedBackgroundStopColor;
+		public Color SelectedDropDownBackgroundStopColor => listItemColors.SelectedBackgroundStopColor;
 
 
 
@@ -400,6 +400,6 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedDropDownTextColor => listColors.SelectedTextColor;
+		public Color SelectedDropDownTextColor => listItemColors.SelectedTextColor;
 	}
 }

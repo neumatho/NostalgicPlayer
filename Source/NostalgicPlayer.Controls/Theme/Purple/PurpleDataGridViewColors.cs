@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly Color normalCellLinkColor = Color.FromArgb(130, 90, 200);
 		private static readonly Color selectedCellLinkColor = Color.FromArgb(130, 90, 200);
 
-		private readonly IListItemColors listColors = new PurpleListColors();
+		private readonly IListItemColors listItemColors = new PurpleListItemColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalCellBackgroundStartColor => listColors.NormalBackgroundStartColor;
+		public Color NormalCellBackgroundStartColor => listItemColors.NormalBackgroundStartColor;
 
 
 
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalCellBackgroundMiddleColor => listColors.NormalBackgroundMiddleColor;
+		public Color NormalCellBackgroundMiddleColor => listItemColors.NormalBackgroundMiddleColor;
 
 
 
@@ -134,7 +134,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalCellBackgroundStopColor => listColors.NormalBackgroundStopColor;
+		public Color NormalCellBackgroundStopColor => listItemColors.NormalBackgroundStopColor;
 
 
 
@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color NormalCellTextColor => listColors.NormalTextColor;
+		public Color NormalCellTextColor => listItemColors.NormalTextColor;
 
 
 
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedCellBackgroundStartColor => listColors.SelectedBackgroundStartColor;
+		public Color SelectedCellBackgroundStartColor => listItemColors.SelectedBackgroundStartColor;
 
 
 
@@ -170,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedCellBackgroundMiddleColor => listColors.SelectedBackgroundMiddleColor;
+		public Color SelectedCellBackgroundMiddleColor => listItemColors.SelectedBackgroundMiddleColor;
 
 
 
@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedCellBackgroundStopColor => listColors.SelectedBackgroundStopColor;
+		public Color SelectedCellBackgroundStopColor => listItemColors.SelectedBackgroundStopColor;
 
 
 
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedCellTextColor => listColors.SelectedTextColor;
+		public Color SelectedCellTextColor => listItemColors.SelectedTextColor;
 
 
 
