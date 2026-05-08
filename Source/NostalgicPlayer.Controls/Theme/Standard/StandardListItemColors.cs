@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {
 	/// <summary>
-	/// Different colors used by different list controls
+	/// Different colors used by list items
 	/// </summary>
 	internal class StandardListItemColors : IListItemColors
 	{
