@@ -6,22 +6,22 @@
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
+namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// Different colors used by different list controls
+	/// Different colors used by combo box
 	/// </summary>
-	internal class StandardListColors : IListItemColors
+	internal class PurpleListItemColors : IListItemColors
 	{
 		private static readonly Color normalBackgroundStartColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color normalBackgroundMiddleColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color normalBackgroundStopColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color normalTextColor = Color.FromArgb(30, 57, 91);
+		private static readonly Color normalTextColor = Color.FromArgb(55, 30, 85);
 
-		private static readonly Color selectedBackgroundStartColor = Color.FromArgb(255, 225, 112);
-		private static readonly Color selectedBackgroundMiddleColor = Color.FromArgb(255, 216, 108);
-		private static readonly Color selectedBackgroundStopColor = Color.FromArgb(255, 237, 123);
-		private static readonly Color selectedTextColor = Color.FromArgb(30, 57, 91);
+		private static readonly Color selectedBackgroundStartColor = Color.FromArgb(190, 170, 230);
+		private static readonly Color selectedBackgroundMiddleColor = Color.FromArgb(175, 155, 215);
+		private static readonly Color selectedBackgroundStopColor = Color.FromArgb(205, 185, 240);
+		private static readonly Color selectedTextColor = Color.FromArgb(55, 30, 85);
 
 		/********************************************************************/
 		/// <summary>
