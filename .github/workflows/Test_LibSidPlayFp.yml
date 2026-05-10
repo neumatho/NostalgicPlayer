@@ -31,6 +31,7 @@ jobs:
         run: nuget restore Source\NostalgicPlayer.sln
       - name: Build
         run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Debug" -property:Platform="Any CPU" -property:CI="CI"
-      - name: Test
+      - name: Test LibReSidFp
         run: dotnet test Source\Ports\Tests\LibReSidFp.Test\LibReSidFp.Test.csproj --no-build --verbosity normal
+      - name: Test LibSidPlayFp
         run: dotnet test Source\Ports\Tests\LibSidPlayFp.Test\LibSidPlayFp.Test.csproj --no-build --verbosity normal
