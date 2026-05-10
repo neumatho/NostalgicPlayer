@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp;
 
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibReSidFp.Test
 {
 	/// <summary>
 	/// 

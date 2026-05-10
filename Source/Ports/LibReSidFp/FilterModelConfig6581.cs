@@ -6,8 +6,8 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
@@ -65,8 +65,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			new ( 10.31,  0.81)		// Approximate end of actual range
 		];
 
+		private const double Caps_Old = 2200e-12;	// ASSY 326298 uses 2200pF caps
+		private const double Caps_New = 470e-12;	// Standard 470pF caps used on other ASSY
+
 		private static FilterModelConfig6581 instance = null;
-		private static readonly Lock instance6581_Lock = new Lock();
+		private static readonly CThread.Once_Flag flag6581 = new CThread.Once_Flag();
 
 		// Transistor parameters
 		private readonly double wl_vcr;			// W/L for VCR
@@ -85,6 +88,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		private readonly ushort[] vcr_nVg = new ushort[1 << 16];
 		private readonly double[] vcr_n_ids_term = new double[1 << 16];
 
+		private double vcr_Mult;
+		private bool oldCaps;
+
 		// Voice DC offset LUT
 		private readonly double[] voiceDc = new double[256];
 
@@ -95,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		private FilterModelConfig6581() : base(
 			1.5,						// Voice voltage range FIXME should theoretically be ~3.571V
-			470e-12,					// Capacitor value
+			Caps_New,					// Capacitor value
 			12.0 * VOLTAGE_SKEW,		// Vdd
 			1.31,					// Vth
 			20e-6,					// uCox
@@ -107,6 +113,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			dac_zero = 6.65;
 			dac_scale = 2.63;
 			dac = new Dac(DAC_BITS);
+			oldCaps = false;
+
+			UpdateParams();
 
 			dac.KinkedDac(ChipModel.MOS6581);
 
@@ -117,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				for (int i = 0; i < 256; i++)
 				{
 					double envI = envDec.GetOutput((uint)i);
-					voiceDc[i] = 5.0 * VOLTAGE_SKEW + (0.2143 * envI);
+					voiceDc[i] = (5.0 * VOLTAGE_SKEW) + (0.2143 * envI);
 				}
 			}
 
@@ -215,13 +224,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public static FilterModelConfig6581 GetInstance()
 		{
-			lock (instance6581_Lock)
-			{
-				if (instance == null)
-					instance = new FilterModelConfig6581();
+			CThread.call_once(flag6581, () => instance = new FilterModelConfig6581());
 
-				return instance;
-			}
+			return instance;
 		}
 
 
@@ -237,13 +242,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			adjustment = Math.Clamp(adjustment, 0.0, 1.0);
 
 			// Get the new uCox value, in the range [1,40]
-			double new_uCox = (1.0 + 39.0 * adjustment) * 1e-6;
+			double new_uCox = (1.0 + (39.0 * adjustment)) * 1e-6;
 
 			// Ignore small changes
 			if (Math.Abs(uCox - new_uCox) < 1e-12)
 				return;
 
-			SetUCox(new_uCox);
+			uCox = new_uCox;
+			UpdateParams();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void EnableOldCaps(bool enable)
+		{
+			if (oldCaps == enable)
+				return;
+
+			oldCaps = enable;
+			UpdateParams();
 		}
 
 
@@ -257,14 +279,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public ushort[] GetDac(double adjustment)
 		{
-			double dac_zero = GetDacZero(adjustment);
+			double new_dac_zero = GetDacZero(adjustment);
 
 			ushort[] f0_dac = new ushort[1 << DAC_BITS];
 
 			for (uint i = 0; i < (1 << DAC_BITS); i++)
 			{
 				double fcd = dac.GetOutput(i);
-				f0_dac[i] = GetNormalizedValue(dac_zero + fcd * dac_scale);
+				f0_dac[i] = GetNormalizedValue(new_dac_zero + (fcd * dac_scale));
 			}
 
 			return f0_dac;
@@ -306,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ushort GetVcr_n_Ids_Term(int i)
 		{
-			return To_UShort(vcr_n_ids_term[i] * uCox);
+			return To_UShort(vcr_n_ids_term[i] * vcr_Mult);
 		}
 
 
@@ -332,7 +354,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private double Log1p(double x)
 		{
-			return Math.Log(1.0 + x) - (((1.0 + x) - 1.0) - x) / (1.0 + x);
+			return Math.Log(1.0 + x) - ((((1.0 + x) - 1.0) - x) / (1.0 + x));
 		}
 
 
@@ -344,7 +366,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		private double GetDacZero(double adjustment)
 		{
-			return dac_zero + (1.0 - adjustment);
+			return dac_zero + (3.0 * adjustment) - 1.0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void UpdateParams()
+		{
+			CalcCurrFactorCoeff();
+			vcr_Mult = uCox;
+
+			if (oldCaps)
+			{
+				double caps_Mult = Caps_New / Caps_Old;
+				currFactorCoeff *= caps_Mult;
+				vcr_Mult *= caps_Mult;
+			}
 		}
 		#endregion
 	}

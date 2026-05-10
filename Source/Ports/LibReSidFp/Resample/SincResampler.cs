@@ -46,12 +46,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// <summary>
 		/// Filter resolution
 		/// </summary>
-		private int firRes;
+		private readonly int firRes;
 
 		/// <summary>
 		/// Filter length
 		/// </summary>
-		private int firN;
+		private readonly int firN;
 
 		private readonly int cyclesPerSample;
 		private int sampleOffset = 0;

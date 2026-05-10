@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
@@ -23,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		public short GetOutput(int scaleFactor)
 		{
 			int @out = (scaleFactor * Output()) / 2;
-			return SoftClip(@out);
+			return Limiter.SoftClip(@out);
 		}
 
 		#region Overrides
@@ -52,57 +51,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// </summary>
 		/********************************************************************/
 		public abstract int Output();
-		#endregion
-
-		#region Helper methods
-		/********************************************************************/
-		/// <summary>
-		/// Soft clipping into 16 bit range [-32768,32767]
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected short SoftClip(int x)
-		{
-			return (short)SoftClipImpl(x);
-		}
-		#endregion
-
-		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Soft clipping implementation, splitted for test
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal static int SoftClipImpl(int x)
-		{
-			return x < 0 ? -Clipper(-x, 32768) : Clipper(x, 32767);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int Clipper(int x, int m)
-		{
-			int threshold = 28000;
-			if (x < threshold)
-				return (short)x;
-
-			double max_val = m;
-			double t = threshold / max_val;
-			double a = 1.0 - t;
-			double b = 1.0 / a;
-
-			double value = (x - threshold) / max_val;
-			value = t + a * Math.Tanh(b * value);
-
-			return (int)(value * max_val);
-		}
 		#endregion
 	}
 }

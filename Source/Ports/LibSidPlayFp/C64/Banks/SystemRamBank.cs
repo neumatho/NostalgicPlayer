@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using Polycode.NostalgicPlayer.Kit.C;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 {
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 	/// </summary>
 	internal sealed class SystemRamBank : IBank
 	{
-		public readonly uint8_t[] ram = new uint8_t[0x10000];
+		public readonly CPointer<uint8_t> ram = new CPointer<uint8_t>(0x10000);
 
 		/********************************************************************/
 		/// <summary>
@@ -33,11 +33,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 
 			for (int j = 0x0000; j < 0x10000; j += 0x4000)
 			{
-				Array.Fill(ram, @byte, j, 0x4000);
+				CMemory.memset(ram + j, @byte, 0x4000);
 				@byte = (uint8_t)~@byte;
 
 				for (int i = 0x02; i < 0x4000; i += 0x08)
-					Array.Fill(ram, @byte, j + i, 0x04);
+					CMemory.memset(ram + j + i, @byte, 0x04);
 			}
 		}
 

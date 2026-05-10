@@ -3,7 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.C;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 {
@@ -15,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/// <summary>
 		/// The ROM array
 		/// </summary>
-		protected readonly uint8_t[] rom;
+		protected readonly CPointer<uint8_t> rom;
 
 		/********************************************************************/
 		/// <summary>
@@ -24,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/********************************************************************/
 		protected RomBank(int n)	// n must be a power of two
 		{
-			rom = new uint8_t[n];
+			rom = new CPointer<uint8_t>(n);
 		}
 
 
@@ -34,10 +35,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/// Copy content from source buffer
 		/// </summary>
 		/********************************************************************/
-		public virtual void Set(uint8_t[] source)
+		public virtual void Set(CPointer<uint8_t> source)
 		{
 			if (source != null)
-				Array.Copy(source, rom, rom.Length);
+				CMemory.memcpy(rom, source, (size_t)rom.Length);
 		}
 
 
@@ -47,6 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/// Set value at memory address
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected void SetVal(uint_least16_t address, uint8_t val)
 		{
 			rom[address & (rom.Length - 1)] = val;
@@ -56,9 +58,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 
 		/********************************************************************/
 		/// <summary>
+		/// Set value at memory address
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected void SetVal16(uint_least16_t address, uint_least16_t val)
+		{
+			SidEndian.Endian_Little16(GetPtr(address), val);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return value from memory address
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected uint8_t GetVal(uint_least16_t address)
 		{
 			return rom[address & (rom.Length - 1)];
@@ -68,12 +84,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 
 		/********************************************************************/
 		/// <summary>
+		/// Return value from memory address
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected uint_least16_t GetVal16(uint_least16_t address)
+		{
+			return SidEndian.Endian_Little16(GetPtr(address));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return pointer to memory address
 		/// </summary>
 		/********************************************************************/
-		protected uint_least16_t GetPtr(uint_least16_t address)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected CPointer<uint8_t> GetPtr(uint_least16_t address)
 		{
-			return (uint_least16_t)(address & (rom.Length - 1));
+			return rom + (address & (rom.Length - 1));
 		}
 
 		#region IBank implementation

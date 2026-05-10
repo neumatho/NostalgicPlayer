@@ -17,40 +17,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		public string speedString;
 
-		public uint maxSids = Mixer.MAX_SIDS;
-
-		public uint channels = 1;
-
 		public uint_least16_t driverAddr = 0;
 		public uint_least16_t driverLength = 0;
 
 		public uint_least16_t powerOnDelay = 0;
 
 		#region Overrides
-		/********************************************************************/
-		/// <summary>
-		/// Number of SIDs supported by this library
-		/// </summary>
-		/********************************************************************/
-		protected override uint GetMaxSids()
-		{
-			return maxSids;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Number of output channels (1-mono, 2-stereo)
-		/// </summary>
-		/********************************************************************/
-		protected override uint GetChannels()
-		{
-			return channels;
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Address of the driver

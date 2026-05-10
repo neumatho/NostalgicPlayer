@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers
 	public enum CombinedWaveforms
 	{
 		/// <summary></summary>
-		AVERAGE = 1,
+		AVERAGE,
 		/// <summary></summary>
 		WEAK,
 		/// <summary></summary>

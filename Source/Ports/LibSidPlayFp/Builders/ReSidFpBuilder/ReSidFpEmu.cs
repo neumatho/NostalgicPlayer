@@ -7,25 +7,24 @@ using System;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
-using Polycode.NostalgicPlayer.Ports.LibReSidFp.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal sealed class ReSidFp : SidEmu
+	internal sealed class ReSidFpEmu : SidEmu
 	{
-		private readonly Sid sid;
+		private readonly ReSidFp sid;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ReSidFp(SidBuilder builder) : base(builder)
+		public ReSidFpEmu(SidBuilder builder) : base(builder)
 		{
-			sid = new Sid();
+			sid = new ReSidFp();
 
 			Reset(0);
 		}
@@ -109,6 +108,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 			status = true;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable/disable old caps for 6581 model.
+		/// When enabled the filter cutoff is lower
+		/// </summary>
+		/********************************************************************/
+		public void EnableOld6581Caps(bool enable)
+		{
+			sid.EnableOld6581Caps(enable);
+		}
+
 		#region SidEmu overrides
 		/********************************************************************/
 		/// <summary>
@@ -129,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override void Sampling(float systemClock, float freq, SidConfig.sampling_method_t method, bool fast)
+		public override void Sampling(float systemClock, float freq, SidConfig.sampling_method_t method)
 		{
 			SamplingMethod samplingMethod;
 
@@ -155,11 +167,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 				}
 			}
 
-			try
-			{
-				sid.SetSamplingParameters(systemClock, samplingMethod, freq);
-			}
-			catch (SidErrorException)
+			bool res = sid.SetSamplingParameters(systemClock, samplingMethod, freq);
+			if (!res)
 			{
 				status = false;
 				error = Resources.IDS_SID_ERR_UNSUPPORTED_OUTPUT_FREQ;
@@ -195,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 
 				case SidConfig.sid_model_t.MOS8580:
 				{
-					chipModel = ChipModel.MOS8580;
+					chipModel = ChipModel.CSG8580;
 					sid.Input(digiBoost ? -32768 : 0);
 					break;
 				}

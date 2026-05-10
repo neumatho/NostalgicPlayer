@@ -26,22 +26,32 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// <summary>
 		/// 
 		/// </summary>
-		public class ViceException : Exception
+		private class ViceException : Exception
 		{
 			/********************************************************************/
 			/// <summary>
 			/// 
 			/// </summary>
 			/********************************************************************/
-			public ViceException(string message) : base(message)
+			public ViceException(string message, bool failed) : base(message)
 			{
+				Failed = failed;
 			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public bool Failed { get; }
 		}
 		#endregion
 
 		// Screen codes conversion table (0x01 = no output)
 		private static readonly char[] chrTab =
-		{
+		[
 			'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
 			'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', '\u0001', '\u0001', '\u0001', '\u0001',
 			' ', '!', '\u0001', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/',
@@ -51,18 +61,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 
 			// alternative: CHR$(92=0x5c) => ISO Latin-1(0xa3)
 			'-', '#', '|', '-', '-', '-', '-', '|', '|', '\\', '\\', '/', '\\', '\\', '/', '/',
-			'\\', '#', '_', '#', '|', '/', 'X', 'O', '#', '|', '#', '+', '|', '|', '&', '\\',
+			'\\', '#', '_', '#', '|', '/', 'X', 'O', '#', '|', '#', '+', '|', '|', '&', '\\'
+		];
 
-			// 0x80-0xFF
-			'\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001',
-			'\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001', '\u0001',
-			' ', '|', '#', '-', '-', '|', '#', '|', '#', '/', '|', '|', '/', '\\', '\\', '-',
-			'/', '-', '-', '|', '|', '|', '|', '-', '-', '-', '/', '\\', '\\', '/', '/', '#',
-			'@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-			'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '+', '|', '|', '&', '\\',
-			' ', '|', '#', '-', '-', '|', '#', '|', '#', '/', '|', '|', '/', '\\', '\\', '-',
-			'/', '-', '-', '|', '|', '|', '|', '-', '-', '-', '/', '\\', '\\', '/', '/', '#'
-		};
+#if CI
+		private StreamWriter consoleWriter;
+#endif
 
 		/********************************************************************/
 		/// <summary>
@@ -77,17 +81,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			int failedCount = 0;
 
 #if CI
-			using (StreamWriter consoleWriter = new StreamWriter(Console.OpenStandardOutput()))
+			using (consoleWriter = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true })
 #endif
 			{
-				void WriteLine(string line)
-				{
-#if CI
-					consoleWriter.WriteLine(line);
-#else
-					Debug.WriteLine(line);
-#endif
-				}
 
 				// Open test file and run tests
 				using (StreamReader sr = new StreamReader(Path.Combine(viceDirectory, "testlist")))
@@ -106,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 							continue;
 
 						string[] args = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-						WriteLine($"{lineNumber} - Running test {args[0]}");
+						Write($"{lineNumber} - Running test {args[0]} - ");
 
 						try
 						{
@@ -114,24 +110,39 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 						}
 						catch(ViceException ex)
 						{
-							if (ex.Message == "OK")
-								successCount++;
-							else
-							{
-								WriteLine(">>> Failed");
+							Write($"{ex.Message}\x1b[0m\n");
+
+							if (ex.Failed)
 								failedCount++;
-							}
+							else
+								successCount++;
 						}
 					}
 				}
 
-				WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
+				Write($"Successful tests: {successCount} - Failed tests {failedCount}\n");
 
 				Assert.AreEqual(0, failedCount);
 			}
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Write to the output
+		/// </summary>
+		/********************************************************************/
+		private void Write(string str)
+		{
+#if CI
+			consoleWriter.Write(str);
+#else
+			Debug.Write(str);
+#endif
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Find the solution directory
@@ -179,15 +190,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 						i++;
 						if (args[i] == "old")
 						{
-							config.sidEmulation = new ReSidFpBuilder();
-							config.sidEmulation.Create(1);
+							config.sidEmulation = new ReSidFpBuilder("test");
 							config.forceSidModel = true;
 							config.defaultSidModel = SidConfig.sid_model_t.MOS6581;
 						}
 						else if (args[i] == "new")
 						{
-							config.sidEmulation = new ReSidFpBuilder();
-							config.sidEmulation.Create(1);
+							config.sidEmulation = new ReSidFpBuilder("test");
 							config.forceSidModel = true;
 							config.defaultSidModel = SidConfig.sid_model_t.MOS8580;
 						}
@@ -261,21 +270,33 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 
 			engine.SetTestHook((addr, data) =>
 			{
+#if false
+				if ((addr >= 0x0400) && (addr <= 0x7ff))
+				{
+					string fg = "[0;94";
+					string bg = ";44";
+
+					uint8_t chr = data;
+					if ((chr & 0x80) != 0)
+					{
+						chr >>= 1;
+						fg = "[0;34";
+						bg = ";104";
+					}
+
+					Write($"\x1b{fg}{bg}m");
+					Write(chrTab[chr].ToString());
+				}
+#endif
+
 				if (addr == 0xd7ff)
 				{
 					if (data == 0)
-						throw new ViceException("OK");
+						throw new ViceException("\x1b[0;32m" + "OK", false);
 
 					if (data == 0xff)
-						throw new ViceException("KO");
+						throw new ViceException("\x1b[0;31m" + "KO", true);
 				}
-#if false
-				if ((addr >= 1024) && (addr <= 2047))
-				{
-					Console.Write(chrTab[data]);
-					Debug.Write(chrTab[data]);
-				}
-#endif
 			});
 
 			for (;;)

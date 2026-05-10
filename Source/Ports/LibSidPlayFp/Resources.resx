@@ -144,17 +144,11 @@
   <data name="IDS_SID_ERR_EMPTY" xml:space="preserve">
     <value>No data to load</value>
   </data>
-  <data name="IDS_SID_ERR_ILLEGAL_INSN" xml:space="preserve">
-    <value>Illegal instruction executed</value>
-  </data>
   <data name="IDS_SID_ERR_INVALID" xml:space="preserve">
     <value>File contains invalid data</value>
   </data>
   <data name="IDS_SID_ERR_INVALID_CHIP" xml:space="preserve">
     <value>Invalid chip model</value>
-  </data>
-  <data name="IDS_SID_ERR_INVALID_CONF" xml:space="preserve">
-    <value>Invalid configuration</value>
   </data>
   <data name="IDS_SID_ERR_INVALID_CW" xml:space="preserve">
     <value>Invalid combined waveforms strength</value>

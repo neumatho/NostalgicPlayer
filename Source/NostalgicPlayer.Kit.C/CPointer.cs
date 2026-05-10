@@ -216,6 +216,19 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the length of the buffer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public size_t Size()
+		{
+			return (size_t)Length;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Clear the pointer
 		/// </summary>
 		/********************************************************************/

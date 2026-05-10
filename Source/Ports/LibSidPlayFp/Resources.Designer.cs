@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -142,15 +142,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Illegal instruction executed.
-        /// </summary>
-        internal static string IDS_SID_ERR_ILLEGAL_INSN {
-            get {
-                return ResourceManager.GetString("IDS_SID_ERR_ILLEGAL_INSN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to File contains invalid data.
         /// </summary>
         internal static string IDS_SID_ERR_INVALID {
@@ -165,15 +156,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         internal static string IDS_SID_ERR_INVALID_CHIP {
             get {
                 return ResourceManager.GetString("IDS_SID_ERR_INVALID_CHIP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid configuration.
-        /// </summary>
-        internal static string IDS_SID_ERR_INVALID_CONF {
-            get {
-                return ResourceManager.GetString("IDS_SID_ERR_INVALID_CONF", resourceCulture);
             }
         }
         

@@ -237,9 +237,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Must be called before any operation
 		/// </summary>
 		/********************************************************************/
-		public void SetModel(bool is6581)
+		public void SetModel(bool new_is6581)
 		{
-			this.is6581 = is6581;
+			is6581 = new_is6581;
 		}
 
 

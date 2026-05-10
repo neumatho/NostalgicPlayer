@@ -97,7 +97,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		protected readonly double c;
 
 		// Transistor parameters
-		protected const double Ut = 26.0e-3;
+		protected const double K = 1.380649e-23;	// Boltzmann Constant
+		protected const double Q = 1.602176634e-19;	// Charge of an electron
+		protected const double Temp = 27;			// Temperature in °C
+		protected const double Ut = (K * (Temp + 273.15)) / Q;
 
 		private readonly double vdd;			// Positive supply voltage
 		private readonly double vth;			// Threshold voltage
@@ -111,10 +114,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// Fixed point scaling for 16 bit op-amp output
 		protected readonly double n16;
 
-		private readonly double voice_voltage_range;
+		protected readonly double voice_voltage_range;
 
 		// Current factor coefficient for op-amp integrators
-		private double currFactorCoeff;
+		protected double currFactorCoeff;
 
 		// Lookup tables for gain and summer op-amps in output stage / filter
 		protected readonly ushort[] mixer;			// This is initialized in the derived class constructor
@@ -138,6 +141,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			this.vdd = vdd;
 			this.vth = vth;
 			vddt = vdd - vth;
+			this.uCox = uCox;
 			vMin = opamp_voltage[0].x;
 			vMax = Math.Max(vddt, opamp_voltage[0].y);
 			denorm = vMax - vMin;
@@ -150,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			volume = new ushort[16 * (1 << 16)];
 			resonance = new ushort[16 * (1 << 16)];
 
-			SetUCox(uCox);
+			CalcCurrFactorCoeff();
 
 			// Convert op-amp voltage transfer to 16 bit values
 			List<Spline.Point> scaled_voltage = new List<Spline.Point>((int)opamp_size);
@@ -482,9 +486,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected void SetUCox(double new_uCox)
+		protected void CalcCurrFactorCoeff()
 		{
-			uCox = new_uCox;
 			currFactorCoeff = denorm * (uCox / 2.0 * 1.0e-6 / c);
 		}
 

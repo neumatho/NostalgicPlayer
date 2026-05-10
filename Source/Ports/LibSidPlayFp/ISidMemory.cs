@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.C;
+
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 {
 	/// <summary>
@@ -29,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// <summary>
 		/// Copy a buffer into a RAM area
 		/// </summary>
-		void FillRam(uint_least16_t start, uint8_t[] source, uint sourceOffset, uint size);
+		void FillRam(uint_least16_t start, CPointer<uint8_t> source, uint size);
 
 		/// <summary>
 		/// Change the RESET vector

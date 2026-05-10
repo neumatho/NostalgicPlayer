@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
@@ -13,13 +14,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 	/// </summary>
 	public class ReSidFpBuilder : SidBuilder
 	{
+		private class Config
+		{
+			public Property<c_double> Filter8580Curve;
+			public Property<c_double> Filter6581Curve;
+			public Property<c_double> Filter6581Range;
+			public Property<SidConfig.sid_cw_t> Cws;
+			public Property<bool> Old6581Caps;
+		}
+
+		private readonly Config config;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ReSidFpBuilder() : base("ReSidFp")
+		public ReSidFpBuilder(string name) : base(name)
 		{
+			config = new Config();
 		}
 
 
@@ -29,10 +42,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		/// Set 6581 filter curve
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Filter6581Curve(double filterCurve)
 		{
-			foreach (ReSidFp s in sidObjs)
-				s.Filter6581Curve(filterCurve);
+			config.Filter6581Curve = filterCurve;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).Filter6581Curve(filterCurve);
 		}
 
 
@@ -42,10 +58,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		/// Set 6581 filter curve
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Filter6581Range(double filterRange)
 		{
-			foreach (ReSidFp s in sidObjs)
-				s.Filter6581Range(filterRange);
+			config.Filter6581Range = filterRange;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).Filter6581Range(filterRange);
 		}
 
 
@@ -55,10 +74,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		/// Set 8580 filter curve
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Filter8580Curve(double filterCurve)
 		{
-			foreach (ReSidFp s in sidObjs)
-				s.Filter8580Curve(filterCurve);
+			config.Filter8580Curve = filterCurve;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).Filter8580Curve(filterCurve);
 		}
 
 
@@ -70,53 +92,62 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		/********************************************************************/
 		public void CombinedWaveformsStrength(SidConfig.sid_cw_t cws)
 		{
-			foreach (ReSidFp s in sidObjs)
-				s.CombinedWaveforms(cws);
+			config.Cws = cws;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).CombinedWaveforms(cws);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void EnableOld6581Caps(bool enable)
+		{
+			config.Old6581Caps = enable;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).EnableOld6581Caps(enable);
 		}
 
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Available devices. 0 means endless
-		/// </summary>
-		/********************************************************************/
-		public override uint AvailDevices()
-		{
-			return 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Create a new SID emulation
 		/// </summary>
 		/********************************************************************/
-		public override uint Create(uint sids)
+		internal override SidEmu Create()
 		{
-			status = true;
-
-			// Check available devices
-			uint count = AvailDevices();
-
-			if ((count != 0) && (count < sids))
-				sids = count;
-
-			for (count = 0; count < sids; count++)
+			try
 			{
-				try
-				{
-					sidObjs.Add(new ReSidFp(this));
-				}
-				catch (Exception)
-				{
-					errorBuffer = string.Format(Resources.IDS_SID_ERR_CREATE_OBJECT, Name());
-					status = false;
-					break;
-				}
-			}
+				ReSidFpEmu sid = new ReSidFpEmu(this);
 
-			return count;
+				if (config.Filter6581Curve.Has_Value())
+					sid.Filter6581Curve(config.Filter6581Curve.Value());
+
+				if (config.Filter8580Curve.Has_Value())
+					sid.Filter8580Curve(config.Filter8580Curve.Value());
+
+				if (config.Filter6581Range.Has_Value())
+					sid.Filter6581Range(config.Filter6581Range.Value());
+
+				if (config.Cws.Has_Value())
+					sid.CombinedWaveforms(config.Cws.Value());
+
+				if (config.Old6581Caps.Has_Value())
+					sid.EnableOld6581Caps(config.Old6581Caps.Value());
+
+				return sid;
+			}
+			catch (Exception)
+			{
+				errorBuffer = string.Format(Resources.IDS_SID_ERR_CREATE_OBJECT, Name());
+				return null;
+			}
 		}
 		#endregion
 	}

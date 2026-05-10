@@ -3,8 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Collections.Generic;
+using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Exceptions;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
@@ -22,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 
 		#region SidPlayer1
 		private static readonly byte[] sidPlayer1 =
-		{
+		[
 			0x01, 0x00, 0x6f, 0x36, 0x35, 0x00, 0x00, 0x00, 0x00, 0x10, 0x91, 0x0c, 0x00, 0x04, 0x00, 0x00,
 			0x00, 0x40, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe0, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -227,12 +228,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			0xe2, 0xa9, 0x07, 0x8d, 0x00, 0xe0, 0x8d, 0x81, 0xec, 0x60, 0x00, 0x00, 0x00, 0xa9, 0x00, 0x29,
 			0xff, 0xf0, 0xf6, 0x4c, 0x29, 0xe3, 0xa9, 0x07, 0x8d, 0x00, 0xe0, 0x60, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00,
-		};
+		];
 		#endregion
 
 		#region SidPlayer2
 		private static readonly byte[] sidPlayer2 =
-		{
+		[
 			0x01, 0x00, 0x6f, 0x36, 0x35, 0x00, 0x00, 0x00, 0x00, 0x10, 0x9e, 0x0c, 0x00, 0x04, 0x00, 0x00,
 			0x00, 0x40, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -437,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			0xf2, 0xa9, 0x07, 0x8d, 0x00, 0xf0, 0x8d, 0x81, 0xfc, 0x60, 0x00, 0x00, 0x00, 0xa9, 0x00, 0x29,
 			0xff, 0xf0, 0xf6, 0x4c, 0x29, 0xf3, 0xa9, 0x07, 0x8d, 0x00, 0xf0, 0x60, 0x00, 0x20, 0x60, 0xec,
 			0x4c, 0x60, 0xfc, 0x20, 0x80, 0xec, 0x4c, 0x80, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		};
+		];
 		#endregion
 
 		private const int o65HeaderSize = 27;
@@ -457,9 +458,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static SidTuneBase Load(byte[] musBuf, bool init = false)
+		public static SidTuneBase Load(buffer_t dataBuf, bool init = false)
 		{
-			return Load(musBuf, null, null, 0, init, out _);
+			buffer_t empty = new buffer_t();
+			return Load(dataBuf, empty, empty, 0, init, out _);
 		}
 
 
@@ -469,16 +471,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static SidTuneBase Load(byte[] musBuf, byte[] strBuf, byte[] wdsBuf, uint_least32_t fileOffset, bool init, out byte[] newBuf)
+		public static SidTuneBase Load(buffer_t musBuf, buffer_t strBuf, buffer_t wdsBuf, uint_least32_t fileOffset, bool init, out CPointer<byte> newBuf)
 		{
-			if (!Detect(musBuf, fileOffset, (int)(musBuf.Length - fileOffset), out uint_least32_t voice3Index))
+			if (!Detect(musBuf + fileOffset, (int)(musBuf.Size() - fileOffset), out uint_least32_t voice3Index))
 			{
 				newBuf = null;
 				return null;
 			}
 
 			Mus tune = new Mus();
-			tune.TryLoad(musBuf, strBuf, voice3Index, init);
+			tune.TryLoad(musBuf, strBuf, fileOffset, voice3Index, init);
 			tune.MergeParts(musBuf, strBuf, out newBuf);
 
 			tune.AddLyrics(wdsBuf);
@@ -493,12 +495,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// Add lyrics to the tune
 		/// </summary>
 		/********************************************************************/
-		public void AddLyrics(byte[] wdsBuf)
+		public void AddLyrics(buffer_t wdsBuf)
 		{
 			// If lyrics is supplied, extract them
-			if (wdsBuf != null)
+			if (wdsBuf.IsNotNull)
 			{
-				info.lyricsString.AddRange(GetPetsciiStrings(wdsBuf, 0, wdsBuf.Length, true));
+				info.lyricsString.AddRange(GetPetsciiStrings(wdsBuf, true));
 				RemoveTrailingEmptyLines(info.lyricsString);
 			}
 		}
@@ -509,7 +511,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void AcceptSidTune(byte[] buf)
+		protected override void AcceptSidTune(buffer_t buf)
 		{
 			SetPlayerAddress();
 			base.AcceptSidTune(buf);
@@ -536,31 +538,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// file
 		/// </summary>
 		/********************************************************************/
-		private static bool Detect(uint8_t[] buffer, uint_least32_t fileOffset, int bufSize, out uint_least32_t voice3Index)
+		private static bool Detect(CPointer<uint8_t> buffer, int bufSize, out uint_least32_t voice3Index)
 		{
 			// Sanity check
-			if ((buffer == null) || (bufSize < 8))
+			if (buffer.IsNull || (bufSize < 8))
 			{
 				voice3Index = 0;
 				return false;
 			}
 
 			// Skip load address and 3x length entry
-			uint_least32_t voice1Index = fileOffset + 2 + 3 * 2;
+			uint_least32_t voice1Index = 2 + (3 * 2);
 
 			// Add length of voice 1 data
-			voice1Index += SidEndian.Endian_Little16(buffer, fileOffset + 2);
+			voice1Index += SidEndian.Endian_Little16(buffer + 2);
 
 			// Add length of voice 2 data
-			uint_least32_t voice2Index = voice1Index + SidEndian.Endian_Little16(buffer, fileOffset + 4);
+			uint_least32_t voice2Index = voice1Index + SidEndian.Endian_Little16(buffer + 4);
 
 			// Add length of voice 3 data
-			voice3Index = voice2Index + SidEndian.Endian_Little16(buffer, fileOffset + 6);
+			voice3Index = voice2Index + SidEndian.Endian_Little16(buffer + 6);
 
 			if (voice3Index > bufSize)
 				return false;
 
-			return (SidEndian.Endian_Big16(buffer, voice1Index - 2) == SIDTUNE_MUS_HLT_CMD) && (SidEndian.Endian_Big16(buffer, voice2Index - 2) == SIDTUNE_MUS_HLT_CMD) && (SidEndian.Endian_Big16(buffer, voice3Index - 2) == SIDTUNE_MUS_HLT_CMD);
+			return (SidEndian.Endian_Big16(buffer + voice1Index - 2) == SIDTUNE_MUS_HLT_CMD) && (SidEndian.Endian_Big16(buffer + voice2Index - 2) == SIDTUNE_MUS_HLT_CMD) && (SidEndian.Endian_Big16(buffer + voice3Index - 2) == SIDTUNE_MUS_HLT_CMD);
 		}
 
 
@@ -593,29 +595,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// Will merge the two files together
 		/// </summary>
 		/********************************************************************/
-		private void MergeParts(byte[] musBuf, byte[] strBuf, out byte[] newBuf)
+		private void MergeParts(buffer_t musBuf, buffer_t strBuf, out CPointer<byte> newBuf)
 		{
 			newBuf = null;
 
-			uint_least32_t mergeLen = (uint_least32_t)musBuf.Length;
-			if (strBuf != null)
-				mergeLen += (uint_least32_t)strBuf.Length;
+			uint_least32_t mergeLen = (uint_least32_t)(musBuf.Size() + strBuf.Size());
 
 			// Sanity check. I do not trust those MUS/STR files around
 			uint_least32_t freeSpace = (uint_least32_t)(SidEndian.Endian_16(sidPlayer1[player1Offset + 1], sidPlayer1[player1Offset]) - SIDTUNE_MUS_DATA_ADDR);
 			if ((mergeLen - 4) > freeSpace)
 				throw new LoadErrorException(Resources.IDS_SID_ERR_SIZE_EXCEEDED);
 
-			byte[] mergeBuf = new byte[mergeLen];
+			CPointer<byte> mergeBuf = new CPointer<byte>(mergeLen);
 
 			// Install MUS data #1 including load address
-			Array.Copy(musBuf, 0, mergeBuf, 0, musBuf.Length);
+			CMemory.memcpy(mergeBuf, musBuf, musBuf.Size());
 
-			if ((strBuf != null) && (info.SidChips() > 1))
+			if (strBuf.IsNotNull && (info.SidChips() > 1))
 			{
 				// Install MUS data #2 NOT including load address
-				Array.Copy(strBuf, 0, mergeBuf, musBuf.Length, strBuf.Length);
+				CMemory.memcpy(mergeBuf + musBuf.Size(), strBuf, strBuf.Size());
 			}
+
+			strBuf.SetToNull();
 
 			newBuf = mergeBuf;
 		}
@@ -630,7 +632,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		private void RemoveReads(ISidMemory mem, uint_least16_t dest)
 		{
 			int sid_read_offset = 0x424 - o65HeaderSize - 2;
-			mem.FillRam((uint_least16_t)(dest + sid_read_offset), 0xea, 12);
+			mem.FillRam((uint_least16_t)(dest + sid_read_offset), Opcodes.NOPn, 12);
 		}
 
 
@@ -645,7 +647,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			// Install MUS player #1
 			uint_least16_t dest = SidEndian.Endian_16(sidPlayer1[player1Offset + 1], sidPlayer1[player1Offset]);
 
-			mem.FillRam(dest, sidPlayer1, player1Offset + 2, player1Size - 2);
+			mem.FillRam(dest, sidPlayer1.ToPointer() + player1Offset + 2, player1Size - 2);
 			RemoveReads(mem, dest);
 
 			// Point player #1 to data #1
@@ -657,7 +659,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				// Install MUS player #2
 				dest = SidEndian.Endian_16(sidPlayer2[player2Offset + 1], sidPlayer2[player2Offset]);
 
-				mem.FillRam(dest, sidPlayer2, player2Offset + 2, player2Size - 2);
+				mem.FillRam(dest, sidPlayer2.ToPointer() + player2Offset + 2, player2Size - 2);
 				RemoveReads(mem, dest);
 
 				// Point player #2 to data #2
@@ -672,7 +674,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// Initialize and extract information from the tune
 		/// </summary>
 		/********************************************************************/
-		private void TryLoad(byte[] musBuf, byte[] strBuf, uint_least32_t voice3Index, bool init)
+		private void TryLoad(buffer_t musBuf, buffer_t strBuf, uint_least32_t fileOffset, uint_least32_t voice3Index, bool init)
 		{
 			if (init)
 			{
@@ -688,31 +690,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			if ((info.compatibility != SidTuneInfo.compatibility_t.COMPATIBILITY_C64) || (info.relocStartPage != 0) || (info.relocPages != 0))
 				throw new LoadErrorException(Resources.IDS_SID_ERR_INVALID);
 
-			// All sub-tunes should be CIA
-			for (uint i = 0; i < info.songs; i++)
 			{
-				if (songSpeed[i] != SidTuneInfo.SPEED_CIA_1A)
-					throw new LoadErrorException(Resources.IDS_SID_ERR_INVALID);
+				// All sub-tunes should be CIA
+				for (uint i = 0; i < info.songs; i++)
+				{
+					if (songSpeed[i] != SidTuneInfo.SPEED_CIA_1A)
+						throw new LoadErrorException(Resources.IDS_SID_ERR_INVALID);
+				}
 			}
 
-			musDataLen = (uint_least16_t)musBuf.Length;
+			musDataLen = (uint_least16_t)musBuf.Size();
 			info.loadAddr = SIDTUNE_MUS_DATA_ADDR;
 
+			CPointer<uint8_t> spPet = musBuf + fileOffset;
+
 			// Voice3Index now is offset to text lines (uppercase Pet-strings)
-			int pet = (int)voice3Index;
+			spPet += voice3Index;
 
 			// Extract credits
-			info.commentString.AddRange(GetPetsciiStrings(musBuf, pet, musBuf.Length - pet, false));
+			info.commentString.AddRange(GetPetsciiStrings(spPet, false));
 
 			// If second buffer is supplied, extract credits from there as well
-			if (strBuf != null)
+			bool stereo = false;
+
+			if (strBuf.IsNotNull)
 			{
-				if (!Detect(strBuf, 0, strBuf.Length, out voice3Index))
+				if (!Detect(strBuf, strBuf.Length, out voice3Index))
 					throw new LoadErrorException(Resources.IDS_SID_ERR_2ND_INVALID);
 
-				pet = (int)voice3Index;
+				spPet = strBuf;
+				stereo = true;
+			}
 
-				info.commentString.AddRange(GetPetsciiStrings(strBuf, pet, strBuf.Length - pet, false));
+			if (stereo)
+			{
+				// Voice3Index now is offset to text lines (uppercase Pet-strings)
+				spPet += voice3Index;
+
+				info.commentString.AddRange(GetPetsciiStrings(spPet, false));
 
 				info.sidChipAddresses.Add(SIDTUNE_SID2_BASE_ADDR);
 				info.formatString = Resources.IDS_SID_FORMAT_STR;

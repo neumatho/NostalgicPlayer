@@ -493,23 +493,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 
 		/********************************************************************/
 		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public uint InstalledSids()
-		{
-			uint sids = 1;
-
-			foreach (sidBankMap_value_type sidBank in extraSidBanks)
-				sids += sidBank.Value.InstalledSids();
-
-			return sids;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Set the base SID
 		/// </summary>
 		/********************************************************************/

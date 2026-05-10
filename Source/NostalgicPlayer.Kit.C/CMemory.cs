@@ -376,6 +376,19 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void fill<T>(CPointer<T> ptr, T value, size_t length)
+		{
+			ptr.AsSpan((int)length).Fill(value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static CPointer<T> memchr<T>(CPointer<T> ptr, T ch, size_t count)
 		{
 			size_t searchLength = Math.Min(count, (size_t)ptr.Length);

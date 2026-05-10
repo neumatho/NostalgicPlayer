@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		public C64Cia1(C64Env env) : base(env.Scheduler())
 		{
 			this.env = env;
+			Reset();
 		}
 
 		#region IBank implementation

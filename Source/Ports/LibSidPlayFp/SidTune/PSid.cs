@@ -3,10 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Security.Cryptography;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Exceptions;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
@@ -82,13 +82,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// while loading, an LoadErrorException is thrown
 		/// </summary>
 		/********************************************************************/
-		public static SidTuneBase Load(byte[] dataBuf)
+		public static SidTuneBase Load(buffer_t dataBuf)
 		{
 			// File format check
 			if (dataBuf.Length < 4)
 				return null;
 
-			uint32_t magic = SidEndian.Endian_Big32(dataBuf, 0);
+			uint32_t magic = SidEndian.Endian_Big32(dataBuf);
 			if ((magic != PSID_ID) && (magic != RSID_ID))
 				return null;
 
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			{
 				// The calculation is now simplified.
 				// All the header + all the data
-				return md5.ComputeHash(cache, 0, cache.Length);
+				return md5.ComputeHash(cache.ToArray(), 0, cache.Length);
 			}
 		}
 
@@ -165,38 +165,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// Read PSID file header
 		/// </summary>
 		/********************************************************************/
-		private static PSidHeader ReadHeader(byte[] dataBuf)
+		private static PSidHeader ReadHeader(buffer_t dataBuf)
 		{
 			// Due to security concerns, input must be at least as long as version 1
 			// header plus 16-bit C64 load address. That is the area which will be
 			// accessed
-			if (dataBuf.Length < (PSid_HeaderSize + 2))
+			if (dataBuf.Size() < (PSid_HeaderSize + 2))
 				throw new LoadErrorException(Resources.IDS_SID_ERR_TRUNCATED);
 
 			PSidHeader hdr = new PSidHeader();
 
 			// Read v1 fields
-			hdr.Id = SidEndian.Endian_Big32(dataBuf, 0);
-			hdr.Version = SidEndian.Endian_Big16(dataBuf, 4);
-			hdr.Data = SidEndian.Endian_Big16(dataBuf, 6);
-			hdr.Load = SidEndian.Endian_Big16(dataBuf, 8);
-			hdr.Init = SidEndian.Endian_Big16(dataBuf, 10);
-			hdr.Play = SidEndian.Endian_Big16(dataBuf, 12);
-			hdr.Songs = SidEndian.Endian_Big16(dataBuf, 14);
-			hdr.Start = SidEndian.Endian_Big16(dataBuf, 16);
-			hdr.Speed = SidEndian.Endian_Big32(dataBuf, 18);
+			hdr.Id = SidEndian.Endian_Big32(dataBuf);
+			hdr.Version = SidEndian.Endian_Big16(dataBuf + 4);
+			hdr.Data = SidEndian.Endian_Big16(dataBuf + 6);
+			hdr.Load = SidEndian.Endian_Big16(dataBuf + 8);
+			hdr.Init = SidEndian.Endian_Big16(dataBuf + 10);
+			hdr.Play = SidEndian.Endian_Big16(dataBuf + 12);
+			hdr.Songs = SidEndian.Endian_Big16(dataBuf + 14);
+			hdr.Start = SidEndian.Endian_Big16(dataBuf + 16);
+			hdr.Speed = SidEndian.Endian_Big32(dataBuf + 18);
 
-			Array.Copy(dataBuf, 22, hdr.Name, 0, PSid_MaxStrLen);
-			Array.Copy(dataBuf, 54, hdr.Author, 0, PSid_MaxStrLen);
-			Array.Copy(dataBuf, 86, hdr.Released, 0, PSid_MaxStrLen);
+			CMemory.memcpy(hdr.Name, dataBuf + 22, PSid_MaxStrLen);
+			CMemory.memcpy(hdr.Author, dataBuf + 54, PSid_MaxStrLen);
+			CMemory.memcpy(hdr.Released, dataBuf + 86, PSid_MaxStrLen);
 
 			if (hdr.Version >= 2)
 			{
-				if (dataBuf.Length < (PSidV2_HeaderSize + 2))
+				if (dataBuf.Size() < (PSidV2_HeaderSize + 2))
 					throw new LoadErrorException(Resources.IDS_SID_ERR_TRUNCATED);
 
 				// Read v2/3/4 fields
-				hdr.Flags = SidEndian.Endian_Big16(dataBuf, 118);
+				hdr.Flags = SidEndian.Endian_Big16(dataBuf + 118);
 				hdr.RelocStartPage = dataBuf[120];
 				hdr.RelocPages = dataBuf[121];
 				hdr.SidChipBase2 = dataBuf[122];

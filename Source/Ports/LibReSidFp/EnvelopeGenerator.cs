@@ -426,6 +426,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 						rate = adsrTable[attack];
 						counter_enabled = true;
 					}
+
 					break;
 				}
 
@@ -436,6 +437,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 						state = State.DECAY_SUSTAIN;
 						rate = adsrTable[decay];
 					}
+
 					break;
 				}
 
@@ -446,6 +448,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 						state = State.RELEASE;
 						rate = adsrTable[release];
 					}
+
 					break;
 				}
 			}

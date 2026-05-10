@@ -39,9 +39,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Integrator8580(FilterModelConfig8580 fmc)
+		public Integrator8580(FilterModelConfig8580 new_fmc)
 		{
-			this.fmc = fmc;
+			fmc = new_fmc;
 
 			SetV(1.5);
 		}

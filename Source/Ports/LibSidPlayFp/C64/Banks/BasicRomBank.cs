@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
@@ -34,14 +34,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/// Copy content from source buffer
 		/// </summary>
 		/********************************************************************/
-		public override void Set(uint8_t[] basic)
+		public override void Set(CPointer<uint8_t> basic)
 		{
 			base.Set(basic);
 
 			// Backup BASIC warm start
-			Array.Copy(rom, GetPtr(0xa7ae), trap, 0, trap.Length);
+			CMemory.memcpy(trap, GetPtr(0xa7ae), (size_t)trap.Length);
 
-			Array.Copy(rom, GetPtr(0xbf53), subTune, 0, subTune.Length);
+			CMemory.memcpy(subTune, GetPtr(0xbf53), (size_t)subTune.Length);
 		}
 
 
@@ -54,10 +54,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		public void Reset()
 		{
 			// Restore original BASIC warm start
-			Array.Copy(trap, 0, rom, GetPtr(0xa7ae), trap.Length);
+			CMemory.memcpy(GetPtr(0xa7ae), trap, (size_t)trap.Length);
 
-			Array.Copy(subTune, 0, rom, GetPtr(0xbf53), subTune.Length);
+			CMemory.memcpy(GetPtr(0xbf53), subTune, (size_t)subTune.Length);
 		}
+
 
 
 		/********************************************************************/
@@ -68,8 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		public void InstallTrap(uint_least16_t addr)
 		{
 			SetVal(0xa7ae, Opcodes.JMPw);
-			SetVal(0xa7af, SidEndian.Endian_16Lo8(addr));
-			SetVal(0xa7b0, SidEndian.Endian_16Hi8(addr));
+			SetVal16(0xa7af, addr);
 		}
 
 
@@ -84,14 +84,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 			SetVal(0xbf53, Opcodes.LDAb);
 			SetVal(0xbf54, tune);
 			SetVal(0xbf55, Opcodes.STAa);
-			SetVal(0xbf56, 0x0c);
-			SetVal(0xbf57, 0x03);
+			SetVal16(0xbf56, 0x030c);
 			SetVal(0xbf58, Opcodes.JSRw);
-			SetVal(0xbf59, 0x2c);
-			SetVal(0xbf5a, 0xa8);
+			SetVal16(0xbf59, 0xa82c);
 			SetVal(0xbf5b, Opcodes.JMPw);
-			SetVal(0xbf5c, 0xb1);
-			SetVal(0xbf5d, 0xa7);
+			SetVal16(0xbf5c, 0xa7b1);
 		}
 	}
 }

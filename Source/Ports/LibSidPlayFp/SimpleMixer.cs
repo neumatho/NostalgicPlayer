@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 {
@@ -97,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 					iSamples[(int)k] = buf[i];
 				}
 
-				foreach (MixerFunc mix in this.mix)
+				foreach (MixerFunc mix in mix)
 				{
 					int_least32_t tmp = mix();
 					buffer[j++] = (short)tmp;
@@ -105,6 +106,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			}
 
 			return j;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public uint Channels()
+		{
+			return (uint)mix.Count;
 		}
 
 		#region Private methods

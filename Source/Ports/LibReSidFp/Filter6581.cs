@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Runtime.CompilerServices;
+
 namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 {
 	/// <summary>
@@ -227,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// vi -----||              o---o----- vo
 		//         ||--+           |   |
 		//             |       ||--+   |
-		//             |-------||      |
+		//             o-------||      |
 		//             |       ||--+   |
 		//         ||--+           |   |
 		//      +--||              |   |
@@ -300,7 +302,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// VCR + associated capacitor connected to bandpass output
 		/// </summary>
-		private Integrator6581 bpIntegrator;
+		private readonly Integrator6581 bpIntegrator;
 
 		private ushort[] f0_dac;
 
@@ -336,9 +338,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Set filter offset and range based on single parameter
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void SetFilterRange(double adjustment)
 		{
 			FilterModelConfig6581.GetInstance().SetFilterRange(adjustment);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable/disable old caps for 6581 model
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void EnableOldCaps(bool enable)
+		{
+			FilterModelConfig6581.GetInstance().EnableOldCaps(enable);
 		}
 
 		#region Overrides
@@ -370,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			// Scaling unsigned values adds a DC offset
 			int offset = 32767 * ((1 << 12) - filterGain);
 
-			return (vFilt * filterGain + offset) >> 12;
+			return ((vFilt * filterGain) + offset) >> 12;
 		}
 
 

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Exceptions;
@@ -209,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// </summary>
 		protected uint_least32_t fileOffset;
 
-		protected byte[] cache;
+		protected buffer_t cache;
 
 		/********************************************************************/
 		/// <summary>
@@ -265,10 +266,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// song number out of [1,2,..,SIDTUNE_MAX_SONGS]
 		/// </summary>
 		/********************************************************************/
-		public uint SelectSong(uint selectedSong)
+		public uint SelectSong(uint songNum)
 		{
 			// Check whether selected song is valid, use start song if not
-			uint song = (selectedSong == 0) || (selectedSong > info.songs) ? info.startSong : selectedSong;
+			uint song = (songNum == 0) || (songNum > info.songs) ? info.startSong : songNum;
 
 			// Copy any song-specific variable information
 			// such a speed/clock setting to the info structure
@@ -327,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			mem.WriteMemWord(0xae, end);
 
 			// Copy data from cache to the correct destination
-			mem.FillRam(info.loadAddr, cache, fileOffset, info.c64DataLen);
+			mem.FillRam(info.loadAddr, cache + fileOffset, info.c64DataLen);
 		}
 
 
@@ -348,7 +349,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// Cache the data of a single-file or two-file sid tune
 		/// </summary>
 		/********************************************************************/
-		protected virtual void AcceptSidTune(byte[] buf)
+		protected virtual void AcceptSidTune(buffer_t buf)
 		{
 			// Fix bad sid tune setup
 			if (info.songs > MAX_SONGS)
@@ -364,7 +365,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 
 			// Calculate any remaining addresses and then
 			// confirm all the file details are correct
-			ResolveAddrs(buf, fileOffset);
+			ResolveAddrs(buf + fileOffset);
 
 			if (!CheckRelocInfo())
 				throw new LoadErrorException(Resources.IDS_SID_ERR_BAD_RELOC);
@@ -377,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				// We only detect an offset of two. Some positions independent
 				// sid tunes contain a load address of 0xE000, but are loaded
 				// to 0x0FFE and call player at 0x1000
-				info.fixLoad = SidEndian.Endian_Little16(buf, fileOffset) == (info.loadAddr + 2);
+				info.fixLoad = SidEndian.Endian_Little16(buf + fileOffset) == (info.loadAddr + 2);
 			}
 
 			// Check the size of the data
@@ -422,8 +423,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// Convert the comment to the right unicode characters
 		/// </summary>
 		/********************************************************************/
-		protected IEnumerable<string> GetPetsciiStrings(byte[] buf, int index, int length, bool lyrics)
+		protected IEnumerable<string> GetPetsciiStrings(buffer_t buf, bool lyrics)
 		{
+			int length = buf.Length;
 			char[] tempBuffer = new char[length];
 
 			ushort[] lowerLookupTable = lyrics ? chrTabUpper : chrTabLower;
@@ -438,7 +440,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 
 				for (; length > 0;)
 				{
-					byte b = buf[index++];
+					byte b = buf[0];
+					buf++;
 					length--;
 
 					// Handle special characters
@@ -575,7 +578,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 											// Check if tunes in wrong order and therefore swap them here
 											if (extension == "mus")
 											{
-												SidTuneBase s2 = Mus.Load(fileBuf2, fileBuf1, lyricsBuf, 0, true, out byte[] newBuf);
+												SidTuneBase s2 = Mus.Load(fileBuf2, fileBuf1, lyricsBuf, 0, true, out CPointer<byte> newBuf);
 												if (s2 != null)
 												{
 													fileInfo.Loader.AddSizes();
@@ -586,7 +589,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 											}
 											else
 											{
-												SidTuneBase s2 = Mus.Load(fileBuf1, fileBuf2, lyricsBuf, 0, true, out byte[] newBuf);
+												SidTuneBase s2 = Mus.Load(fileBuf1, fileBuf2, lyricsBuf, 0, true, out CPointer<byte> newBuf);
 												if (s2 != null)
 												{
 													fileInfo.Loader.AddSizes();
@@ -671,7 +674,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// Common address resolution procedure
 		/// </summary>
 		/********************************************************************/
-		private void ResolveAddrs(uint8_t[] c64Data, uint offset)
+		private void ResolveAddrs(CPointer<uint_least8_t> c64Data)
 		{
 			// Originally used as a first attempt at an RSID
 			// style format. Now reserved for future use
@@ -684,7 +687,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				if (info.c64DataLen < 2)
 					throw new LoadErrorException(Resources.IDS_SID_ERR_CORRUPT);
 
-				info.loadAddr = SidEndian.Endian_16(c64Data[offset + 1], c64Data[offset]);
+				info.loadAddr = SidEndian.Endian_16(c64Data[1], c64Data[0]);
 				fileOffset += 2;
 				info.c64DataLen -= 2;
 			}

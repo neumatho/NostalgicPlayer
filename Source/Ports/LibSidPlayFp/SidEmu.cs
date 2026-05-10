@@ -202,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// Set the sampling method
 		/// </summary>
 		/********************************************************************/
-		public virtual void Sampling(float systemFreq, float outputFreq, SidConfig.sampling_method_t method, bool fast)
+		public virtual void Sampling(float systemFreq, float outputFreq, SidConfig.sampling_method_t method)
 		{
 		}
 

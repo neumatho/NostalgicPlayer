@@ -107,8 +107,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			tod = new Tod(scheduler, this, regs);
 			serialPort = new SerialPort(scheduler, this);
 			bTickEvent = new EventCallback("CIA B counts A", BTick);
-
-			Reset();
 		}
 
 

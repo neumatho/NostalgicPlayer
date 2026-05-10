@@ -10,9 +10,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers
 	/// </summary>
 	public enum SamplingMethod
 	{
-		/// <summary></summary>
+		/// <summary>
+		/// Linear interpolation
+		/// </summary>
 		DECIMATE,
-		/// <summary></summary>
-		RESAMPLE
+
+		/// <summary>
+		/// Sinc resampling
+		/// </summary>
+		RESAMPLE,
+
+		/// <summary>
+		/// No resampling
+		/// </summary>
+		NONE
 	}
 }

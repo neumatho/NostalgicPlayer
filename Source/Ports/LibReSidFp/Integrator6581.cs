@@ -148,14 +148,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Integrator6581(FilterModelConfig6581 fmc)
+		public Integrator6581(FilterModelConfig6581 new_fmc)
 		{
-			wlSnake = fmc.GetWl_Snake();
+			wlSnake = new_fmc.GetWl_Snake();
 			nVddt_vw_2 = 0;
-			nVddt = fmc.GetNormalizedValue(fmc.GetVddt());
-			nVt = fmc.GetNormalizedValue(fmc.GetVth());
-			nVMin = fmc.GetNVMin();
-			this.fmc = fmc;
+			nVddt = new_fmc.GetNormalizedValue(new_fmc.GetVddt());
+			nVt = new_fmc.GetNormalizedValue(new_fmc.GetVth());
+			nVMin = new_fmc.GetNVMin();
+			fmc = new_fmc;
 		}
 
 

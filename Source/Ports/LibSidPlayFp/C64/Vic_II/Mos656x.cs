@@ -1171,6 +1171,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 		/// Return the raster line when to trigger an IRQ
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private uint ReadRasterLineIrq()
 		{
 			return (uint)(regs[0x12] + ((regs[0x11] & 0x80) << 1));
@@ -1183,6 +1184,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 		/// Read the DEN flag which tells whether the display is enabled
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private bool ReadDen()
 		{
 			return (regs[0x11] & 0x10) != 0;
@@ -1195,6 +1197,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private bool EvaluateIsBadLine()
 		{
 			return areBadLinesEnabled && (rasterY >= FIRST_DMA_LINE) && (rasterY <= LAST_DMA_LINE) && ((rasterY & 7) == yScroll);

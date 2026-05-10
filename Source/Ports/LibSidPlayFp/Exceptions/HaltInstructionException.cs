@@ -12,5 +12,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Exceptions
 	/// </summary>
 	internal class HaltInstructionException : Exception
 	{
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public HaltInstructionException(string msg) : base(msg)
+		{
+		}
 	}
 }

@@ -5,8 +5,8 @@
 /******************************************************************************/
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Kit.C;
 
 namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 {
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		];
 
 		private static FilterModelConfig8580 instance = null;
-		private static readonly Lock instance8580_Lock = new Lock();
+		private static readonly CThread.Once_Flag flag8580 = new CThread.Once_Flag();
 
 		/********************************************************************/
 		/// <summary>
@@ -181,13 +181,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public static FilterModelConfig8580 GetInstance()
 		{
-			lock (instance8580_Lock)
-			{
-				if (instance == null)
-					instance = new FilterModelConfig8580();
+			CThread.call_once(flag8580, () => instance = new FilterModelConfig8580());
 
-				return instance;
-			}
+			return instance;
 		}
 	}
 }

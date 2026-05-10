@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			double _2r_div_r = chipModel == ChipModel.MOS6581 ? 2.20 : 2.00;
 
 			// 6581 DACs are not terminated by a 2R resistor
-			bool term = chipModel == ChipModel.MOS8580;
+			bool term = chipModel == ChipModel.CSG8580;
 
 			leakage = chipModel == ChipModel.MOS6581 ? MOSFET_LEAKAGE_6581 : MOSFET_LEAKAGE_8580;
 

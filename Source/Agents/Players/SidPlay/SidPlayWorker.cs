@@ -396,8 +396,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			}
 
 			// Setup filter
-			uint maxSids = engine.Info().MaxSids();
-			for (uint i = 0; i < maxSids; i++)
+			uint sidCount = engine.InstalledSids();
+			for (uint i = 0; i < sidCount; i++)
 				engine.Filter(i, settings.FilterEnabled);
 
 			firstTime = true;
@@ -440,14 +440,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			base.SetOutputFormat(mixerFrequency, channels);
 
 			engineConfig.frequency = mixerFrequency;
-			engineConfig.playback = channels == 1 ? SidConfig.playback_t.MONO : SidConfig.playback_t.STEREO;
 
 			engine.Config(engineConfig, true);
 
 			// Initialize the mixer
 			engine.InitMixer(true);
 
-			short[][] sidBuffers = new short[engine.Info().MaxSids()][];
+			short[][] sidBuffers = new short[engine.InstalledSids()][];
 			engine.Buffers(sidBuffers);
 
 			outputBuffer = new short[sidBuffers[0].Length * 2];
@@ -869,27 +868,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			errorMessage = string.Empty;
 
 			// Set up a SID builder
-			SidBuilder sidBuilder = new ReSidFpBuilder();
-
-			// Check if the builder is ok
-			if (!sidBuilder.GetStatus())
-			{
-				errorMessage = sidBuilder.Error();
-				return false;
-			}
-
-			// Get the number of SIDs supported by the engine
-			uint maxSids = engine.Info().MaxSids();
-
-			// Create the SID emulators
-			sidBuilder.Create(maxSids);
-
-			// Check if the builder is ok
-			if (!sidBuilder.GetStatus())
-			{
-				errorMessage = sidBuilder.Error();
-				return false;
-			}
+			SidBuilder sidBuilder = new ReSidFpBuilder("ReSidFp");
 
 			engineConfig.sidEmulation = sidBuilder;
 

@@ -3,40 +3,37 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks;
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia;
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
 
-namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibReSidFp.Test
 {
 	/// <summary>
-	/// CIA 2
-	///
-	/// Generates NMIs
+	/// 
 	/// </summary>
-	internal class C64Cia2 : Mos652x, IBank
+	[TestClass]
+	public class TestSid
 	{
-		private readonly C64Env env;
+		private const int Buf_Size = 481;
+		private const int Cycles = 10000;
+		private const short Canary = 0x7fff;
+
+		private readonly ReSidFp s = new ReSidFp();
+
+		private readonly short[] buf = new short[Buf_Size + 1];
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public C64Cia2(C64Env env) : base(env.Scheduler())
+		public TestSid()
 		{
-			this.env = env;
-			Reset();
-		}
-
-		#region IBank implementation
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void Poke(uint_least16_t address, uint8_t value)
-		{
-			Write(SidEndian.Endian_16Lo8(address), value);
+			// Test setup
+			Array.Fill(buf, Canary);
+			s.SetSamplingParameters(1000000, SamplingMethod.DECIMATE, 48000.0);
 		}
 
 
@@ -46,23 +43,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint8_t Peek(uint_least16_t address)
+		[TestMethod]
+		public void TestCycles()
 		{
-			return Read(SidEndian.Endian_16Lo8(address));
-		}
-		#endregion
+			int c = s.Clock(buf, 0, Buf_Size);
 
-		#region Overrides
+			Assert.AreEqual(Cycles, c);
+			Assert.AreNotEqual(Canary, buf[Buf_Size - 1]);
+			Assert.AreEqual(Canary, buf[Buf_Size]);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
-		/// Signal interrupt
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public override void Interrupt(bool state)
+		[TestMethod]
+		public void TestBufSize()
 		{
-			if (state)
-				env.InterruptNmi();
+			int b = s.Clock(Cycles, buf, 0);
+
+			Assert.AreEqual(Buf_Size, b);
+			Assert.AreNotEqual(Canary, buf[Buf_Size - 1]);
+			Assert.AreEqual(Canary, buf[Buf_Size]);
 		}
-		#endregion
 	}
 }

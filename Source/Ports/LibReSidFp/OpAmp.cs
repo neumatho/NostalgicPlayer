@@ -65,12 +65,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OpAmp(List<Spline.Point> opamp_voltages, double vddt, double vMin, double vMax)
+		public OpAmp(List<Spline.Point> opamp_voltages, double new_vddt, double new_vMin, double new_vMax)
 		{
-			this.vddt = vddt;
-			this.vMin = vMin;
-			this.vMax = vMax;
-			this.opamp = new Spline(opamp_voltages);
+			vddt = new_vddt;
+			vMin = new_vMin;
+			vMax = new_vMax;
+			opamp = new Spline(opamp_voltages);
 		}
 
 

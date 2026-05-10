@@ -61,6 +61,21 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		}
 		#endregion
 
+		#region Once_Flag class
+		/// <summary>
+		/// 
+		/// </summary>
+		public class Once_Flag
+		{
+			/********************************************************************/
+			/// <summary>
+			/// Indicate if the initialization method has been called
+			/// </summary>
+			/********************************************************************/
+			internal bool HasBeenInitialized { get; set; } = false;
+		}
+		#endregion
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the approximate processor time that is consumed by the
@@ -91,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
-		/// Initialize the thread once state
+		/// Call the initialize only once
 		/// </summary>
 		/********************************************************************/
 		public static c_int pthread_once(pthread_once_t once_Control, ThreadOnce_Init_Delegate init_Routine)
@@ -106,6 +121,25 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			}
 
 			return 0;
+		}
+		#endregion
+
+		#region once
+		/********************************************************************/
+		/// <summary>
+		/// Call the initialize only once
+		/// </summary>
+		/********************************************************************/
+		public static void call_once(Once_Flag flag, Delegate f, params object[] args)
+		{
+			lock (flag)
+			{
+				if (!flag.HasBeenInitialized)
+				{
+					f.DynamicInvoke(args);
+					flag.HasBeenInitialized = true;
+				}
+			}
 		}
 		#endregion
 

@@ -19,9 +19,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		internal readonly HashSet<SidEmu> sidObjs = new HashSet<SidEmu>();
 
-		/// <summary></summary>
-		protected bool status;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -31,25 +28,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		{
 			this.name = name;
 			errorBuffer = Resources.IDS_SID_NA;
-			status = true;
 		}
 
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Available devices. 0 means endless
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public abstract uint AvailDevices();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Create the SID emulator
-		/// </summary>
-		/********************************************************************/
-		public abstract uint Create(uint sids);
+		internal abstract SidEmu Create();
 		#endregion
 
 		/********************************************************************/
@@ -59,19 +46,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		/********************************************************************/
 		internal SidEmu Lock(EventScheduler scheduler, SidConfig.sid_model_t model, bool digiBoost)
 		{
-			status = true;
-
-			foreach (SidEmu sid in sidObjs)
+			// Create new emu
+			SidEmu sid = Create();
+			if (sid != null)
 			{
 				if (sid.Lock(scheduler))
 				{
 					sid.Model(model, digiBoost);
+					sidObjs.Add(sid);
 					return sid;
 				}
 			}
 
 			// Unable to locate a free SID
-			status = false;
 			errorBuffer = string.Format(Resources.IDS_SID_ERR_NO_SIDS, Name());
 
 			return null;
@@ -87,7 +74,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		internal void Unlock(SidEmu device)
 		{
 			if (sidObjs.TryGetValue(device, out SidEmu so))
+			{
 				so.Unlock();
+
+				// Should we cache these for later use?
+				sidObjs.Remove(device);
+			}
 		}
 
 
@@ -100,18 +92,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public string Error()
 		{
 			return errorBuffer;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Determine current state of object
-		/// </summary>
-		/********************************************************************/
-		public bool GetStatus()
-		{
-			return status;
 		}
 
 

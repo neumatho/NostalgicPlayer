@@ -3,65 +3,61 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks;
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia;
-
-namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
+namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 {
 	/// <summary>
-	/// CIA 2
-	///
-	/// Generates NMIs
+	/// Pass through with no resampling
 	/// </summary>
-	internal class C64Cia2 : Mos652x, IBank
+	internal sealed class PassThrough : Resampler
 	{
-		private readonly C64Env env;
+		// Last sample
+		private int outputValue;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public C64Cia2(C64Env env) : base(env.Scheduler())
+		public PassThrough()
 		{
-			this.env = env;
-			Reset();
+			outputValue = 0;
 		}
-
-		#region IBank implementation
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void Poke(uint_least16_t address, uint8_t value)
-		{
-			Write(SidEndian.Endian_16Lo8(address), value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public uint8_t Peek(uint_least16_t address)
-		{
-			return Read(SidEndian.Endian_16Lo8(address));
-		}
-		#endregion
 
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Signal interrupt
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public override void Interrupt(bool state)
+		public override bool Input(int sample)
 		{
-			if (state)
-				env.InterruptNmi();
+			outputValue = sample;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override int Output()
+		{
+			return outputValue;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override void Reset()
+		{
+			outputValue = 0;
 		}
 		#endregion
 	}

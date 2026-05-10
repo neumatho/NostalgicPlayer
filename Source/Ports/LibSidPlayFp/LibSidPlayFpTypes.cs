@@ -7,3 +7,4 @@ global using event_clock_t = System.Int64;
 
 global using sidBankMap_t = System.Collections.Generic.Dictionary<int, Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks.ExtraSidBank>;
 global using sidBankMap_value_type = System.Collections.Generic.KeyValuePair<int, Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks.ExtraSidBank>;
+global using buffer_t = Polycode.NostalgicPlayer.Kit.C.CPointer<byte>;

@@ -18,15 +18,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Array
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Matrix(uint x, uint y)
+		public Matrix(uint new_x, uint new_y)
 		{
-			data = new T[x][];
+			data = new T[new_x][];
 
-			for (uint i = 0; i < x; i++)
-				data[i] = new T[y];
+			for (uint i = 0; i < new_x; i++)
+				data[i] = new T[new_y];
 
-			this.x = x;
-			this.y = y;
+			x = new_x;
+			y = new_y;
 		}
 
 

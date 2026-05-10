@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
 
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibReSidFp.Test
 {
 	/// <summary>
 	/// 
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		[TestMethod]
 		public void TestDac8580()
 		{
-			Assert.IsTrue(IsDacLinear(ChipModel.MOS8580));
+			Assert.IsTrue(IsDacLinear(ChipModel.CSG8580));
 		}
 
 
@@ -63,6 +63,22 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void BuildDac(double[] dac, ChipModel chipModel)
+		{
+			Dac dacBuilder = new Dac(DacBits);
+			dacBuilder.KinkedDac(chipModel);
+
+			for (uint i = 0; i < (1 << DacBits); i++)
+				dac[i] = dacBuilder.GetOutput(i);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private bool IsDacLinear(ChipModel chipModel)
 		{
 			double[] dac = new double[1 << DacBits];
@@ -75,22 +91,6 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			}
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void BuildDac(double[] dac, ChipModel chipModel)
-		{
-			Dac dacBuilder = new Dac(DacBits);
-			dacBuilder.KinkedDac(chipModel);
-
-			for (uint i = 0; i < (1 << DacBits); i++)
-				dac[i] = dacBuilder.GetOutput(i);
 		}
 		#endregion
 	}

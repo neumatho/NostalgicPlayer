@@ -19,13 +19,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static SidTuneBase Load(string fileName, byte[] dataBuf)
+		public static SidTuneBase Load(string fileName, buffer_t dataBuf)
 		{
 			string ext = Path.GetExtension(fileName);
 			if ((ext != ".prg") && (ext != ".c64"))
 				return null;
 
-			if (dataBuf.Length < 2)
+			if (dataBuf.Size() < 2)
 				throw new LoadErrorException(Resources.IDS_SID_ERR_TRUNCATED);
 
 			Prg tune = new Prg();

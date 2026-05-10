@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
@@ -151,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/********************************************************************/
 		public void WriteMemWord(uint_least16_t addr, uint_least16_t value)
 		{
-			SidEndian.Endian_Little16(ramBank.ram, addr, value);
+			SidEndian.Endian_Little16(ramBank.ram + addr, value);
 		}
 
 
@@ -163,7 +163,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/********************************************************************/
 		public void FillRam(uint_least16_t start, uint8_t value, uint size)
 		{
-			Array.Fill(ramBank.ram, value, start, (int)size);
+			CMemory.memset(ramBank.ram + start, value, size);
 		}
 
 
@@ -173,9 +173,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// Copy a buffer into a RAM area
 		/// </summary>
 		/********************************************************************/
-		public void FillRam(uint_least16_t start, uint8_t[] source, uint sourceOffset, uint size)
+		public void FillRam(uint_least16_t start, CPointer<uint8_t> source, uint size)
 		{
-			Array.Copy(source, sourceOffset, ramBank.ram, start, size);
+			CMemory.memcpy(ramBank.ram + start, source, size);
 		}
 
 

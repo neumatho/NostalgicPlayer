@@ -12,22 +12,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 	public class SidConfig
 	{
 		/// <summary>
-		/// Playback mode
-		/// </summary>
-		public enum playback_t
-		{
-			/// <summary>
-			/// One channel mono playback
-			/// </summary>
-			MONO = 1,
-
-			/// <summary>
-			/// Two channels stereo playback
-			/// </summary>
-			STEREO
-		}
-
-		/// <summary>
 		/// SID chip model
 		/// </summary>
 		public enum sid_model_t
@@ -153,11 +137,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public cia_model_t ciaModel;
 
 		/// <summary>
-		/// Playback mode
-		/// </summary>
-		public playback_t playback;
-
-		/// <summary>
 		/// Sampling frequency
 		/// </summary>
 		public uint_least32_t frequency;
@@ -179,16 +158,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public SidBuilder sidEmulation;
 
 		/// <summary>
-		/// Left channel volume
-		/// </summary>
-		public uint_least32_t leftVolume;
-
-		/// <summary>
-		/// Right channel volume
-		/// </summary>
-		public uint_least32_t rightVolume;
-
-		/// <summary>
 		/// Power on delay cycles
 		/// </summary>
 		public uint_least16_t powerOnDelay;
@@ -199,12 +168,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public sampling_method_t samplingMethod;
 
 		/// <summary>
-		/// Faster low-quality emulation,
-		/// available only for reSID
-		/// </summary>
-		public bool fastSampling;
-
-		/// <summary>
 		/// Maximum power on delay.
 		/// - Delays &lt;= MAX produce constant results
 		/// - Delays &gt;  MAX produce random results
@@ -212,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public const uint_least16_t MAX_POWER_ON_DELAY = 0x1fff;
 		private const uint_least16_t DEFAULT_POWER_ON_DELAY = MAX_POWER_ON_DELAY + 1;
 
-		private const uint_least32_t DEFAULT_SAMPLING_FREQ = 44100;
+		private const uint_least32_t DEFAULT_SAMPLING_FREQ = 48000;
 
 		/********************************************************************/
 		/// <summary>
@@ -223,20 +186,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		{
 			defaultC64Model = c64_model_t.PAL;
 			forceC64Model = false;
-			defaultSidModel = sid_model_t.MOS6581;
+			defaultSidModel = sid_model_t.MOS8580;
 			forceSidModel = false;
 			digiBoost = false;
-			ciaModel = cia_model_t.MOS6526;
-			playback = playback_t.MONO;
+			ciaModel = cia_model_t.MOS8521;
 			frequency = DEFAULT_SAMPLING_FREQ;
 			secondSidAddress = 0;
 			thirdSidAddress = 0;
 			sidEmulation = null;
-			leftVolume = Mixer.VOLUME_MAX;
-			rightVolume = Mixer.VOLUME_MAX;
 			powerOnDelay = DEFAULT_POWER_ON_DELAY;
 			samplingMethod = sampling_method_t.RESAMPLE_INTERPOLATE;
-			fastSampling = false;
 		}
 
 
@@ -254,16 +213,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 				|| forceSidModel != config.forceSidModel
 				|| digiBoost != config.digiBoost
 				|| ciaModel != config.ciaModel
-				|| playback != config.playback
 				|| frequency != config.frequency
 				|| secondSidAddress != config.secondSidAddress
 				|| thirdSidAddress != config.thirdSidAddress
 				|| sidEmulation != config.sidEmulation
-				|| leftVolume != config.leftVolume
-				|| rightVolume != config.rightVolume
 				|| powerOnDelay != config.powerOnDelay
-				|| samplingMethod != config.samplingMethod
-				|| fastSampling != config.fastSampling;
+				|| samplingMethod != config.samplingMethod;
 		}
 	}
 }

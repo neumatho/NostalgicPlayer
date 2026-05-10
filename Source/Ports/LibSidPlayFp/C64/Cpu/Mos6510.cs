@@ -1942,7 +1942,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 		/********************************************************************/
 		private void InvalidOpcode()
 		{
-			throw new HaltInstructionException();
+			string msg = $"Illegal instruction ${cycleCount >> 3:x2} at address ${register_ProgramCounter - 1:x4}";
+			throw new HaltInstructionException(msg);
 		}
 		#endregion
 

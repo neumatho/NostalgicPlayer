@@ -10,9 +10,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers
 	/// </summary>
 	public enum ChipModel
 	{
-		/// <summary></summary>
+		/// <summary>
+		/// Old MOS6581
+		/// </summary>
 		MOS6581,
-		/// <summary></summary>
-		MOS8580
+
+		/// <summary>
+		/// New CSG8580
+		/// </summary>
+		CSG8580
 	}
 }

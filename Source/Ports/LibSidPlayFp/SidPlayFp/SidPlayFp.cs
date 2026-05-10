@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
@@ -60,32 +59,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public SidConfig Config()
 		{
 			return sidPlayer.Config();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Stop the engine
-		/// </summary>
-		/********************************************************************/
-		[Obsolete]
-		public void Stop()
-		{
-			sidPlayer.Stop();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Run emulation and produce samples to play if a buffer is given
-		/// </summary>
-		/********************************************************************/
-		[Obsolete("Use play(uint)")]
-		public uint_least32_t Play(short[] leftBuffer, short[] rightBuffer, uint_least32_t count)
-		{
-			return sidPlayer.Play(leftBuffer, rightBuffer, count);
 		}
 
 
@@ -190,7 +163,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Enable/disable SID filter
+		/// Enable/disable SID filter.
+		/// Note: Must be called after config or it has no effect
 		/// </summary>
 		/********************************************************************/
 		public void Filter(uint sidNum, bool enable)
@@ -276,7 +250,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Init mixer
+		/// Initialize the mixer
 		/// </summary>
 		/********************************************************************/
 		public void InitMixer(bool stereo)
@@ -294,6 +268,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		public uint Mix(short[] buffer, uint samples)
 		{
 			return sidPlayer.Mix(buffer, samples);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the required size of the buffer for the number of cycles to
+		/// run, approximate value by excess.
+		/// The mixer must have been initialized before with initMixer
+		/// </summary>
+		/********************************************************************/
+		public int GetBufSize(uint cycles)
+		{
+			return sidPlayer.GetBufSize(cycles);
 		}
 	}
 }

@@ -3,40 +3,26 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks;
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia;
+using System.Runtime.CompilerServices;
 
-namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
+namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 {
 	/// <summary>
-	/// CIA 2
-	///
-	/// Generates NMIs
+	/// 
 	/// </summary>
-	internal class C64Cia2 : Mos652x, IBank
+	public struct Property<T>
 	{
-		private readonly C64Env env;
+		private T val;
+		private bool isSet;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public C64Cia2(C64Env env) : base(env.Scheduler())
+		public Property()
 		{
-			this.env = env;
-			Reset();
-		}
-
-		#region IBank implementation
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void Poke(uint_least16_t address, uint8_t value)
-		{
-			Write(SidEndian.Endian_16Lo8(address), value);
+			isSet = false;
 		}
 
 
@@ -46,23 +32,40 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint8_t Peek(uint_least16_t address)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool Has_Value()
 		{
-			return Read(SidEndian.Endian_16Lo8(address));
+			return isSet;
 		}
-		#endregion
 
-		#region Overrides
+
+
 		/********************************************************************/
 		/// <summary>
-		/// Signal interrupt
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public override void Interrupt(bool state)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T Value()
 		{
-			if (state)
-				env.InterruptNmi();
+			return val;
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static implicit operator Property<T>(T val)
+		{
+			return new Property<T>
+			{
+				val = val,
+				isSet = true
+			};
+		}
 	}
 }

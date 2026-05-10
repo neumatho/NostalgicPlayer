@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Exceptions;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
@@ -16,22 +17,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 	/// </summary>
 	internal class Player
 	{
-		private enum state_t
-		{
-			STOPPED,
-			PLAYING,
-			STOPPING
-		}
+		// Limit to roughly 20 ms
+		private const uint MAX_CYCLES = 20000;
 
 		/// <summary>
 		/// Commodore 64 emulator
 		/// </summary>
 		private readonly C64.C64 c64 = new C64.C64();
-
-		/// <summary>
-		/// Mixer
-		/// </summary>
-		private readonly Mixer mixer = new Mixer();
 
 		/// <summary>
 		/// Emulator info
@@ -53,8 +45,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		private string errorString;
 
-		private volatile state_t isPlaying;
-
 		private readonly SidRandom rand;
 
 		private uint_least32_t startTime = 0;
@@ -63,6 +53,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// PAL/NTSC switch value
 		/// </summary>
 		private uint8_t videoSwitch;
+
+		private readonly List<SidEmu> chips = new List<SidEmu>();
 
 		private SimpleMixer simpleMixer;
 
@@ -75,7 +67,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		{
 			tune = null;
 			errorString = "NA";
-			isPlaying = state_t.STOPPED;
 			rand = new SidRandom((uint)(DateTime.Now - DateTime.UnixEpoch).TotalSeconds);
 
 			// We need at least some minimal interrupt handling
@@ -153,7 +144,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public uint InstalledSids()
 		{
-			return c64.InstalledSids();
+			return (uint)chips.Count;
 		}
 
 
@@ -254,17 +245,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 					C64.C64.cia_model_t ciaModel = GetCiaModel(config.ciaModel);
 					c64.SetCiaModel(ciaModel);
 
-					SidParams(c64.GetMainCpuSpeed(), (int)config.frequency, config.samplingMethod, config.fastSampling);
+					SidParams(c64.GetMainCpuSpeed(), (int)config.frequency, config.samplingMethod);
 
 					// Configure, setup and install C64 environment/events
 					Initialize();
 				}
-				catch(Exception)
+				catch(ConfigErrorException e)
 				{
 					SidRelease();
 
-//					errorString = ex.Message;
-					errorString = Resources.IDS_SID_ERR_INVALID_CONF;
+					errorString = e.Message;
 					cfg.sidEmulation = null;
 
 					if (cfg != config)
@@ -273,12 +263,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 					return false;
 				}
 			}
-
-			bool isStereo = config.playback == SidConfig.playback_t.STEREO;
-			info.channels = isStereo ? (uint)2 : 1;
-
-			mixer.SetStereo(isStereo);
-			mixer.SetVolume((int)config.leftVolume, (int)config.rightVolume);
 
 			// Update configuration
 			cfg = config;
@@ -320,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public void Mute(uint sidNum, uint voice, bool enable)
 		{
-			SidEmu s = mixer.GetSid(sidNum);
+			SidEmu s = sidNum < chips.Count ? chips[(int)sidNum] : null;
 			if (s != null)
 				s.Voice(voice, enable);
 		}
@@ -334,7 +318,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public void Filter(uint sidNum, bool enable)
 		{
-			SidEmu s = mixer.GetSid(sidNum);
+			SidEmu s = sidNum < chips.Count ? chips[(int)sidNum] : null;
 			if (s != null)
 				s.Filter(enable);
 		}
@@ -348,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public void InitMixer(bool stereo)
 		{
-			short[][] bufs = new short[Mixer.MAX_SIDS][];
+			short[][] bufs = new short[chips.Count][];
 			Buffers(bufs);
 			simpleMixer = new SimpleMixer(stereo, bufs, (int)InstalledSids());
 		}
@@ -374,11 +358,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public void Buffers(short[][] buffers)
 		{
-			for (uint i = 0; i < Mixer.MAX_SIDS; i++)
-			{
-				SidEmu s = mixer.GetSid(i);
-				buffers[i] = s != null ? s.Buffer() : null;
-			}
+			for (size_t i = 0; i < (size_t)chips.Count; i++)
+				buffers[i] = chips[(int)i].Buffer();
 		}
 
 
@@ -398,11 +379,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				return -1;
 			}
 
-			// Limit to roughly 20 ms
-			const uint max_Cycles = 20000;
-
-			if (cycles > max_Cycles)
-				cycles = max_Cycles;
+			if (cycles > MAX_CYCLES)
+				cycles = MAX_CYCLES;
 
 			try
 			{
@@ -411,27 +389,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 				int sampleCount = 0;
 
-				for (uint i = 0; i < Mixer.MAX_SIDS; i++)
+				foreach (SidEmu s in chips)
 				{
-					SidEmu s = mixer.GetSid(i);
-					if (s != null)
-					{
-						// Clock the chip and get the buffer
-						// buffersize is expected to be the same
-						// for all chips
-						s.Clock();
-						sampleCount = s.BufferPos();
+					// Clock the chip and get the buffer
+					// buffersize is expected to be the same
+					// for all chips
+					s.Clock();
+					sampleCount = s.BufferPos();
 
-						// Reset the buffer
-						s.BufferPos(0);
-					}
+					// Reset the buffer
+					s.BufferPos(0);
 				}
 
 				return sampleCount;
 			}
-			catch (HaltInstructionException)
+			catch (HaltInstructionException ill)
 			{
-				errorString = Resources.IDS_SID_ERR_ILLEGAL_INSN;
+				errorString = ill.Message;
 				return -1;
 			}
 		}
@@ -461,110 +435,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Run emulation and produce samples to play if a buffer is given
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint_least32_t Play(short[] leftBuffer, short[] rightBuffer, uint_least32_t count)
+		public int GetBufSize(uint cycles)
 		{
-			const uint CYCLES = 3000;
-
-			// Make sure a tune is loaded
-			if (tune == null)
+			if (simpleMixer == null)
 				return 0;
 
-			// Start the player loop
-			if (isPlaying == state_t.STOPPED)
-				isPlaying = state_t.PLAYING;
+			if (cycles > MAX_CYCLES)
+				cycles = MAX_CYCLES;
 
-			if (isPlaying == state_t.PLAYING)
-			{
-				try
-				{
-					mixer.Begin(leftBuffer, rightBuffer, count);
-
-					int size;
-
-					if (mixer.GetSid(0) != null)
-					{
-						if ((count != 0) && (leftBuffer != null) && (rightBuffer != null))
-						{
-							// Reset count in case of exceptions
-							count = 0;
-
-							// Clock chips and mix into output buffers
-							while ((isPlaying != state_t.STOPPED) && mixer.NotFinished())
-							{
-								if (!mixer.Wait())
-									Run(CYCLES);
-
-								mixer.ClockChips();
-								mixer.DoMix();
-							}
-
-							count = mixer.SamplesGenerated();
-						}
-						else
-						{
-							// Clock chips and discard buffers
-							size = (int)(c64.GetMainCpuSpeed() / cfg.frequency);
-							while ((isPlaying != state_t.STOPPED) && (--size != 0))
-							{
-								Run(CYCLES);
-
-								mixer.ClockChips();
-								mixer.ResetBufs();
-							}
-						}
-					}
-					else
-					{
-						// Clock the machine
-						size = (int)(c64.GetMainCpuSpeed() / cfg.frequency);
-						while ((isPlaying != state_t.STOPPED) && (--size != 0))
-						{
-							Run(CYCLES);
-						}
-					}
-				}
-				catch (HaltInstructionException)
-				{
-					errorString = Resources.IDS_SID_ERR_ILLEGAL_INSN;
-					isPlaying = state_t.STOPPING;
-				}
-				catch (BadBufferSize)
-				{
-					errorString = Resources.IDS_SID_ERR_BAD_BUF_SIZE;
-					isPlaying = state_t.STOPPING;
-				}
-			}
-
-			if (isPlaying == state_t.STOPPING)
-			{
-				try
-				{
-					Initialize();
-				}
-				catch (ConfigErrorException)
-				{
-				}
-
-				isPlaying = state_t.STOPPED;
-			}
-
-			return count;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Stop the engine
-		/// </summary>
-		/********************************************************************/
-		public void Stop()
-		{
-			if ((tune != null) && (isPlaying == state_t.PLAYING))
-				isPlaying = state_t.STOPPING;
+			double size = cfg.frequency / c64.GetMainCpuSpeed() * cycles;
+			return (int)((int)CMath.ceil(size) * simpleMixer.Channels());
 		}
 
 		#region Private methods
@@ -575,8 +458,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		private void Initialize()
 		{
-			isPlaying = state_t.STOPPED;
-
 			c64.Reset();
 
 			SidTuneInfo tuneInfo = tune.GetInfo();
@@ -597,13 +478,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			powerOnDelay += 8000;
 
 			// Run for ~[25000,50000] cycles
-			for (int i = 0; i < powerOnDelay; i++)
+			for (int i = 0; i <= powerOnDelay; i++)
 			{
 				for (int j = 0; j < 3; j++)
 					c64.Clock();
 
-				mixer.ClockChips();
-				mixer.ResetBufs();
+				foreach (SidEmu chip in chips)
+				{
+					chip.Clock();
+					chip.BufferPos(0);
+				}
 			}
 
 			PSidDrv driver = new PSidDrv(tune.GetInfo());
@@ -621,15 +505,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				throw new ConfigErrorException(tune.StatusString());
 
 			c64.ResetCpu();
-
 #if false
 			// Run for some cycles until the initialization routine is done
 			for (int j = 0; j < 50; j++)
 				c64.Clock();
 
-			mixer.ClockChips();
-			mixer.ResetBufs();
+			foreach (SidEmu chip in chips)
+			{
+				chip.Clock();
+				chip.BufferPos(0);
+			}
 #endif
+
 			startTime = c64.GetTimeMs();
 		}
 
@@ -773,19 +660,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		/********************************************************************/
 		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void Run(uint events)
-		{
-			for (uint i = 0; (isPlaying != state_t.STOPPED) && (i < events); i++)
-				c64.Clock();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Get the SID model
 		/// </summary>
 		/********************************************************************/
@@ -834,25 +708,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				}
 			}
 
-			SidConfig.sid_model_t newModel;
-
 			switch (tuneModel)
 			{
 				default:
 				case SidTuneInfo.model_t.SIDMODEL_6581:
-				{
-					newModel = SidConfig.sid_model_t.MOS6581;
-					break;
-				}
+					return SidConfig.sid_model_t.MOS6581;
 
 				case SidTuneInfo.model_t.SIDMODEL_8580:
-				{
-					newModel = SidConfig.sid_model_t.MOS8580;
-					break;
-				}
+					return SidConfig.sid_model_t.MOS8580;
 			}
-
-			return newModel;
 		}
 
 
@@ -866,18 +730,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		{
 			c64.ClearSids();
 
-			for (uint i = 0; ; i++)
+			foreach (SidEmu s in chips)
 			{
-				SidEmu s = mixer.GetSid(i);
-				if (s == null)
-					break;
-
 				SidBuilder b = s.Builder();
 				if (b != null)
 					b.Unlock(s);
 			}
 
-			mixer.ClearSids();
+			chips.Clear();
 		}
 
 
@@ -891,6 +751,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		{
 			if (builder != null)
 			{
+				chips.Clear();
 				info.sidModels.Clear();
 
 				SidTuneInfo tuneInfo = tune.GetInfo();
@@ -899,11 +760,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				SidConfig.sid_model_t userModel = GetSidModel(tuneInfo.SidModel(0), defaultModel, forced);
 
 				SidEmu s = builder.Lock(c64.GetEventScheduler(), userModel, digiBoost);
-				if (!builder.GetStatus())
+				if (s == null)
 					throw new ConfigErrorException(builder.Error());
 
 				c64.SetBaseSid(s);
-				mixer.AddSid(s);
+				chips.Add(s);
 				info.sidModels.Add(GetSidModel(userModel));
 
 				// Setup extra SIDs if needed
@@ -920,13 +781,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 						userModel = GetSidModel(tuneInfo.SidModel(i + 1), defaultModel, forced);
 
 						s = builder.Lock(c64.GetEventScheduler(), userModel, digiBoost);
-						if (!builder.GetStatus())
+						if (s == null)
 							throw new ConfigErrorException(builder.Error());
 
 						if (!c64.AddExtraSid(s, (int)extraSidAddresses[(int)i]))
 							throw new ConfigErrorException(Resources.IDS_SID_ERR_UNSUPPORTED_SID_ADDR);
 
-						mixer.AddSid(s);
+						chips.Add(s);
 						info.sidModels.Add(GetSidModel(userModel));
 					}
 				}
@@ -940,16 +801,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// Set the SID emulation parameters
 		/// </summary>
 		/********************************************************************/
-		private void SidParams(double cpuFreq, int frequency, SidConfig.sampling_method_t sampling, bool fastSampling)
+		private void SidParams(double cpuFreq, int frequency, SidConfig.sampling_method_t sampling)
 		{
-			for (uint i = 0; ; i++)
-			{
-				SidEmu s = mixer.GetSid(i);
-				if (s == null)
-					break;
-
-				s.Sampling((float)cpuFreq, frequency, sampling, fastSampling);
-			}
+			foreach (SidEmu s in chips)
+				s.Sampling((float)cpuFreq, frequency, sampling);
 		}
 		#endregion
 	}

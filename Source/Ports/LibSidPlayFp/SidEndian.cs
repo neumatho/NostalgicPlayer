@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.C;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 {
@@ -91,9 +92,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint_least16_t Endian_Little16(uint8_t[] ptr, uint offset)
+		public static uint_least16_t Endian_Little16(CPointer<uint8_t> ptr)
 		{
-			return Endian_16(ptr[offset + 1], ptr[offset]);
+			return Endian_16(ptr[1], ptr[0]);
 		}
 
 
@@ -104,10 +105,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Endian_Little16(uint8_t[] ptr, uint offset, uint_least16_t word)
+		public static void Endian_Little16(CPointer<uint8_t> ptr, uint_least16_t word)
 		{
-			ptr[offset] = Endian_16Lo8(word);
-			ptr[offset + 1] = Endian_16Hi8(word);
+			ptr[0] = Endian_16Lo8(word);
+			ptr[1] = Endian_16Hi8(word);
 		}
 
 
@@ -118,9 +119,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint_least16_t Endian_Big16(uint8_t[] ptr, uint offset)
+		public static uint_least16_t Endian_Big16(CPointer<uint8_t> ptr)
 		{
-			return Endian_16(ptr[offset], ptr[offset + 1]);
+			return Endian_16(ptr[0], ptr[1]);
 		}
 		#endregion
 
@@ -195,9 +196,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint_least32_t Endian_Big32(uint8_t[] ptr, int offset)
+		public static uint_least32_t Endian_Big32(CPointer<uint8_t> ptr)
 		{
-			return Endian_32(ptr[offset], ptr[offset + 1], ptr[offset + 2], ptr[offset + 3]);
+			return Endian_32(ptr[0], ptr[1], ptr[2], ptr[3]);
 		}
 		#endregion
 	}

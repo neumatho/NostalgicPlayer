@@ -3,65 +3,64 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks;
-using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia;
+using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.C;
 
-namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
+namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 {
 	/// <summary>
-	/// CIA 2
-	///
-	/// Generates NMIs
+	/// 
 	/// </summary>
-	internal class C64Cia2 : Mos652x, IBank
+	internal static class Limiter
 	{
-		private readonly C64Env env;
+		/// <summary></summary>
+		public const int threshold = 28000;
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Soft Clipping into 16 bit range [-32768,32767]
 		/// </summary>
 		/********************************************************************/
-		public C64Cia2(C64Env env) : base(env.Scheduler())
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static short SoftClip(int x)
 		{
-			this.env = env;
-			Reset();
+			return (short)(SoftClipImpl(x));
 		}
 
-		#region IBank implementation
+		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Poke(uint_least16_t address, uint8_t value)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static int Clipper(int x, int m)
 		{
-			Write(SidEndian.Endian_16Lo8(address), value);
+			if (x < threshold)
+				return x;
+
+			double max_val = m;
+			double t = threshold / max_val;
+			double a = 1.0 - t;
+			double b = 1.0 / a;
+
+			double value = (x - threshold) / max_val;
+			value = a * CMath.tanh(b * value);
+
+			return (int)(threshold + (value * max_val));
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Soft clipping implementation, splitted for test
 		/// </summary>
 		/********************************************************************/
-		public uint8_t Peek(uint_least16_t address)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal static int SoftClipImpl(int x)
 		{
-			return Read(SidEndian.Endian_16Lo8(address));
-		}
-		#endregion
-
-		#region Overrides
-		/********************************************************************/
-		/// <summary>
-		/// Signal interrupt
-		/// </summary>
-		/********************************************************************/
-		public override void Interrupt(bool state)
-		{
-			if (state)
-				env.InterruptNmi();
+			return x < 0 ? -Clipper(-x, 32768) : Clipper(x, 32767);
 		}
 		#endregion
 	}

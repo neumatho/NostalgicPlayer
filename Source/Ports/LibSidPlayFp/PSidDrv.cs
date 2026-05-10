@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
@@ -109,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		private string errorString;
 
 		private uint8_t[] psid_driver;
-		private uint8_t[] reloc_driver;
+		private CPointer<uint8_t> reloc_driver;
 		private int reloc_size;
 
 		private uint_least16_t driverAddr;
@@ -224,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			// Set PAL/NTSC switch
 			mem.WriteMemByte(0x02a6, video);
 
-			mem.InstallResetHook(SidEndian.Endian_Little16(reloc_driver, 0));
+			mem.InstallResetHook(SidEndian.Endian_Little16(reloc_driver));
 
 			// If not a basic tune then the psiddrv must install
 			// interrupt hooks and trap programs trying to restart basic
@@ -237,10 +238,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			else
 			{
 				// Only install IRQ handle for RSID tunes
-				mem.FillRam(0x0314, reloc_driver, 2, tuneInfo.Compatibility() == SidTuneInfo.compatibility_t.COMPATIBILITY_R64 ? (uint)2 : 6);
+				mem.FillRam(0x0314, reloc_driver + 2, tuneInfo.Compatibility() == SidTuneInfo.compatibility_t.COMPATIBILITY_R64 ? (uint)2 : 6);
 
 				// Experimental restart basic trap
-				uint_least16_t addr = SidEndian.Endian_Little16(reloc_driver, 8);
+				uint_least16_t addr = SidEndian.Endian_Little16(reloc_driver + 8);
 				mem.InstallBasicTrap(0xffe1);
 				mem.WriteMemWord(0x0328, addr);
 			}
@@ -248,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			uint_least16_t pos = driverAddr;
 
 			// Install driver to ram
-			mem.FillRam(pos, reloc_driver, 10, (uint)reloc_size);
+			mem.FillRam(pos, reloc_driver + 10, (uint)reloc_size);
 
 			// Set song number
 			mem.WriteMemByte(pos, (uint8_t)(tuneInfo.CurrentSong() - 1));

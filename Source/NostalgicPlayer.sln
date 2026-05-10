@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.4.11626.88 stable
+VisualStudioVersion = 18.4.11626.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{06E407D7-A4A3-4870-92B6-D7F8352A7164}"
 EndProject
@@ -251,6 +251,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoodooSupremeSynthesizer", "Agents\Players\VoodooSupremeSynthesizer\VoodooSupremeSynthesizer.csproj", "{D263330E-BF64-4196-A404-CE3D4FF95D28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTfmxAudioDecoder", "Ports\LibTfmxAudioDecoder\LibTfmxAudioDecoder.csproj", "{00DA3CD8-AB54-4392-8B98-AD720279700E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibReSidFp.Test", "Ports\Tests\LibReSidFp.Test\LibReSidFp.Test.csproj", "{FA3291FB-1771-45E5-B484-41CF56F50EB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2000,6 +2002,22 @@ Global
 		{00DA3CD8-AB54-4392-8B98-AD720279700E}.Release|x64.Build.0 = Release|Any CPU
 		{00DA3CD8-AB54-4392-8B98-AD720279700E}.Release|x86.ActiveCfg = Release|Any CPU
 		{00DA3CD8-AB54-4392-8B98-AD720279700E}.Release|x86.Build.0 = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|x64.Build.0 = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Debug|x86.Build.0 = Debug|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|ARM64.Build.0 = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|x64.ActiveCfg = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|x64.Build.0 = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|x86.ActiveCfg = Release|Any CPU
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2115,6 +2133,7 @@ Global
 		{AFEC3030-A2BE-41F2-9911-65E531433E15} = {DA98D609-A121-45DF-9B62-CD335DD2467F}
 		{D263330E-BF64-4196-A404-CE3D4FF95D28} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 		{00DA3CD8-AB54-4392-8B98-AD720279700E} = {409138C0-F329-4BA5-8F10-1C401960E3AC}
+		{FA3291FB-1771-45E5-B484-41CF56F50EB0} = {3EA2E21A-7EC2-426D-9ACD-CB01AEC12090}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA2EFEF5-9B3B-46F2-BE4B-077ED6CADA79}

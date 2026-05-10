@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -6,13 +6,13 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Ports.Tests.LibReSidFp.Test</RootNamespace>
 
     <IsPublishable>False</IsPublishable>
 
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
-    <DocumentationFile>bin\LibSidPlayFp.Test.xml</DocumentationFile>
+    <DocumentationFile>bin\LibReSidFp.Test.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,13 +28,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Vice\VICE-testprogs\**" />
-    <EmbeddedResource Remove="Vice\VICE-testprogs\**" />
-    <None Remove="Vice\VICE-testprogs\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="..\..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\..\LibReSidFp\ReSidFpTypes.cs" Link="ReSidFpTypes.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,9 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Agents\Players\SidPlay\SidPlay.csproj" />
-    <ProjectReference Include="..\..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
-    <ProjectReference Include="..\..\LibSidPlayFp\LibSidPlayFp.csproj" />
+    <ProjectReference Include="..\..\LibReSidFp\LibReSidFp.csproj" />
   </ItemGroup>
 
 </Project>

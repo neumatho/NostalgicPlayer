@@ -129,13 +129,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected Filter(FilterModelConfig fmc)
+		protected Filter(FilterModelConfig new_Fmc)
 		{
-			mixer = fmc.GetMixer();
-			summer = fmc.GetSummer();
-			resonance = fmc.GetResonance();
-			volume = fmc.GetVolume();
-			this.fmc = fmc;
+			mixer = new_Fmc.GetMixer();
+			summer = new_Fmc.GetSummer();
+			resonance = new_Fmc.GetResonance();
+			volume = new_Fmc.GetVolume();
+			fmc = new_Fmc;
 
 			Input(0);
 		}
@@ -349,7 +349,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int GetSilentVoice(Voice v)
+		private static int GetSilentVoice(Voice v)
 		{
 			v.Wave().Output();
 

@@ -12,30 +12,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Number of SIDs supported by this library
-		/// </summary>
-		/********************************************************************/
-		public uint MaxSids()
-		{
-			return GetMaxSids();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Number of output channels (1-mono, 2-stereo)
-		/// </summary>
-		/********************************************************************/
-		public uint Channels()
-		{
-			return GetChannels();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Address of the driver
 		/// </summary>
 		/********************************************************************/
@@ -105,24 +81,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		}
 
 		#region Overrides
-		/********************************************************************/
-		/// <summary>
-		/// Number of SIDs supported by this library
-		/// </summary>
-		/********************************************************************/
-		protected abstract uint GetMaxSids();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Number of output channels (1-mono, 2-stereo)
-		/// </summary>
-		/********************************************************************/
-		protected abstract uint GetChannels();
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Address of the driver
