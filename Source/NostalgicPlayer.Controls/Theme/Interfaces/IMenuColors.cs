@@ -8,35 +8,40 @@ using System.Drawing;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 {
 	/// <summary>
-	/// Holds all colors used by a themed list item
+	/// Holds all colors used by a themed menu
 	/// </summary>
-	internal interface IListItemColors
+	internal interface IMenuColors
 	{
 		/// <summary></summary>
-		Color NormalBackgroundStartColor { get; }
+		Color BorderColor { get; }
 		/// <summary></summary>
-		Color NormalBackgroundMiddleColor { get; }
-		/// <summary></summary>
-		Color NormalBackgroundStopColor { get; }
-		/// <summary></summary>
-		Color NormalTextColor { get; }
+		Color DropDownSeparatorColor { get; }
 
 		/// <summary></summary>
-		Color SelectedBackgroundStartColor { get; }
+		Color NormalItemBackgroundStartColor { get; }
 		/// <summary></summary>
-		Color SelectedBackgroundMiddleColor { get; }
+		Color NormalItemBackgroundMiddleColor { get; }
 		/// <summary></summary>
-		Color SelectedBackgroundStopColor { get; }
+		Color NormalItemBackgroundStopColor { get; }
 		/// <summary></summary>
-		Color SelectedTextColor { get; }
+		Color NormalItemTextColor { get; }
 
 		/// <summary></summary>
-		Color DisabledBackgroundStartColor { get; }
+		Color HoverItemBackgroundStartColor { get; }
 		/// <summary></summary>
-		Color DisabledBackgroundMiddleColor { get; }
+		Color HoverItemBackgroundMiddleColor { get; }
 		/// <summary></summary>
-		Color DisabledBackgroundStopColor { get; }
+		Color HoverItemBackgroundStopColor { get; }
 		/// <summary></summary>
-		Color DisabledTextColor { get; }
+		Color HoverItemTextColor { get; }
+
+		/// <summary></summary>
+		Color DisabledItemBackgroundStartColor { get; }
+		/// <summary></summary>
+		Color DisabledItemBackgroundMiddleColor { get; }
+		/// <summary></summary>
+		Color DisabledItemBackgroundStopColor { get; }
+		/// <summary></summary>
+		Color DisabledItemTextColor { get; }
 	}
 }

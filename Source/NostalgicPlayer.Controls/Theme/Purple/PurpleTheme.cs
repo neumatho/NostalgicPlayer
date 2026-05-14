@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleLabelColors labelColors = new PurpleLabelColors();
 		private static readonly PurpleModuleListColors moduleListColors = new PurpleModuleListColors();
 		private static readonly PurpleTrackBarColors trackBarColors = new PurpleTrackBarColors();
+		private static readonly PurpleMenuStripColors menuStripColors = new PurpleMenuStripColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -176,5 +177,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public ITrackBarColors TrackBarColors => trackBarColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by menu strips
+		/// </summary>
+		/********************************************************************/
+		public IMenuStripColors MenuStripColors => menuStripColors;
 	}
 }
