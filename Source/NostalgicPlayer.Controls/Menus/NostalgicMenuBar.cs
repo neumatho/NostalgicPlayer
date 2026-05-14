@@ -136,9 +136,6 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 			if (item is ToolStripDropDownItem dropDownItem)
 			{
 				ToolStripDropDown dropDown = dropDownItem.DropDown;
-				if (dropDown == null)
-					return;
-
 				dropDown.Renderer = menuRenderer;
 
 				if (hookedDropDowns.Add(dropDown))

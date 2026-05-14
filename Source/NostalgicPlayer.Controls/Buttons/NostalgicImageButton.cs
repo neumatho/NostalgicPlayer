@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 	/// <summary>
 	/// Themed button that displays an image from the image bank
 	/// </summary>
-	public class NostalgicImageButton : Button, IThemeControl, IDependencyInjectionControl
+	public class NostalgicImageButton : Button, IThemeControl, IImageBank, IDependencyInjectionControl
 	{
 		/// <summary>
 		/// Colors for a single visual state

@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (sampleLoop == null)
-					sampleLoop = GetSvgBitmap(Category, "SampleLoop", CurrentColors.SampleLoopColor, 12, 12);
+					sampleLoop = GetSvgBitmap(Category, nameof(ISampleInformationImages.SampleLoop), CurrentColors.SampleLoopColor, 12, 12);
 
 				return sampleLoop;
 			}
@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (samplePingPong == null)
-					samplePingPong = GetSvgBitmap(Category, "SamplePingPong", CurrentColors.SamplePingPongColor, 12, 12);
+					samplePingPong = GetSvgBitmap(Category, nameof(ISampleInformationImages.SamplePingPong), CurrentColors.SamplePingPongColor, 12, 12);
 
 				return samplePingPong;
 			}
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (sampleStereo == null)
-					sampleStereo = GetSvgBitmap(Category, "SampleStereo", CurrentColors.SampleStereoColor, 12, 12);
+					sampleStereo = GetSvgBitmap(Category, nameof(ISampleInformationImages.SampleStereo), CurrentColors.SampleStereoColor, 12, 12);
 
 				return sampleStereo;
 			}
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (sampleMultiOctave == null)
-					sampleMultiOctave = GetSvgBitmap(Category, "SampleMultiOctaves", CurrentColors.SampleMultiOctavesColor, 12, 12);
+					sampleMultiOctave = GetSvgBitmap(Category, nameof(ISampleInformationImages.SampleMultiOctaves), CurrentColors.SampleMultiOctavesColor, 12, 12);
 
 				return sampleMultiOctave;
 			}
