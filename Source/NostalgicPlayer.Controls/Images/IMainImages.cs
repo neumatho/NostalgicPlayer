@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// <summary>
 		/// Gets the playing item image
 		/// </summary>
-		Bitmap GetPlayingItem(Color color);
+		Bitmap PlayingItem(Color color);
 
 		/// <summary>
 		/// Gets the information image
@@ -131,5 +131,50 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Gets the samples image
 		/// </summary>
 		Bitmap Samples { get; }
+
+		/// <summary>
+		/// Gets the file image
+		/// </summary>
+		Bitmap File(Color color);
+
+		/// <summary>
+		/// Gets the directory image
+		/// </summary>
+		Bitmap Directory(Color color);
+
+		/// <summary>
+		/// Gets the A-Z sorting image
+		/// </summary>
+		Bitmap AZ(Color color);
+
+		/// <summary>
+		/// Gets the Z-A sorting image
+		/// </summary>
+		Bitmap ZA(Color color);
+
+		/// <summary>
+		/// Gets the shuffle image
+		/// </summary>
+		Bitmap Shuffle(Color color);
+
+		/// <summary>
+		/// Gets the set subsong image
+		/// </summary>
+		Bitmap SetSubSong(Color color);
+
+		/// <summary>
+		/// Gets the clear subsong image
+		/// </summary>
+		Bitmap ClearSubSong(Color color);
+
+		/// <summary>
+		/// Gets the load image
+		/// </summary>
+		Bitmap Load(Color color);
+
+		/// <summary>
+		/// Gets the save image
+		/// </summary>
+		Bitmap Save(Color color);
 	}
 }
