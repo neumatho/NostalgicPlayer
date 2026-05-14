@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (previousPicture == null)
-					previousPicture = GetSvgBitmap(Category, "PreviousPicture", CurrentColors.PreviousPictureColor, 24, 24);
+					previousPicture = GetSvgBitmap(Category, nameof(IModuleInformationImages.PreviousPicture), CurrentColors.PreviousPictureColor, 24, 24);
 
 				return previousPicture;
 			}
@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (nextPicture == null)
-					nextPicture = GetSvgBitmap(Category, "NextPicture", CurrentColors.NextPictureColor, 24, 24);
+					nextPicture = GetSvgBitmap(Category, nameof(IModuleInformationImages.NextPicture), CurrentColors.NextPictureColor, 24, 24);
 
 				return nextPicture;
 			}

@@ -19,14 +19,19 @@
 
   <ItemGroup>
     <None Remove="Images\Resources\Main\Add.svg" />
+    <None Remove="Images\Resources\Main\AZ.svg" />
+    <None Remove="Images\Resources\Main\ClearSubSong.svg" />
+    <None Remove="Images\Resources\Main\Directory.svg" />
     <None Remove="Images\Resources\Main\Disk.svg" />
     <None Remove="Images\Resources\Main\Eject.svg" />
     <None Remove="Images\Resources\Main\Equalizer.svg" />
     <None Remove="Images\Resources\Main\FastForward.svg" />
     <None Remove="Images\Resources\Main\FastRewind.svg" />
     <None Remove="Images\Resources\Main\Favorites.svg" />
+    <None Remove="Images\Resources\Main\File.svg" />
     <None Remove="Images\Resources\Main\Information.svg" />
     <None Remove="Images\Resources\Main\List.svg" />
+    <None Remove="Images\Resources\Main\Load.svg" />
     <None Remove="Images\Resources\Main\Loop.svg" />
     <None Remove="Images\Resources\Main\MoveDown.svg" />
     <None Remove="Images\Resources\Main\MoveUp.svg" />
@@ -40,8 +45,12 @@
     <None Remove="Images\Resources\Main\PreviousSong.svg" />
     <None Remove="Images\Resources\Main\Remove.svg" />
     <None Remove="Images\Resources\Main\Samples.svg" />
+    <None Remove="Images\Resources\Main\Save.svg" />
+    <None Remove="Images\Resources\Main\SetSubSong.svg" />
+    <None Remove="Images\Resources\Main\Shuffle.svg" />
     <None Remove="Images\Resources\Main\Sort.svg" />
     <None Remove="Images\Resources\Main\Swap.svg" />
+    <None Remove="Images\Resources\Main\ZA.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,14 +59,19 @@
     <EmbeddedResource Include="Images\Resources\Form\CaptionMinimize.png" />
     <EmbeddedResource Include="Images\Resources\Form\CaptionNormalize.png" />
     <EmbeddedResource Include="Images\Resources\Main\Add.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\AZ.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\ClearSubSong.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Directory.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Disk.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Eject.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Equalizer.svg" />
     <EmbeddedResource Include="Images\Resources\Main\FastForward.svg" />
     <EmbeddedResource Include="Images\Resources\Main\FastRewind.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Favorites.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\File.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Information.svg" />
     <EmbeddedResource Include="Images\Resources\Main\List.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Load.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Loop.svg" />
     <EmbeddedResource Include="Images\Resources\Main\MoveDown.svg" />
     <EmbeddedResource Include="Images\Resources\Main\MoveUp.svg" />
@@ -71,8 +85,12 @@
     <EmbeddedResource Include="Images\Resources\Main\PreviousSong.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Remove.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Samples.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Save.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\SetSubSong.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\Shuffle.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Sort.svg" />
     <EmbeddedResource Include="Images\Resources\Main\Swap.svg" />
+    <EmbeddedResource Include="Images\Resources\Main\ZA.svg" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\NextPicture.svg" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\PreviousPicture.svg" />
     <EmbeddedResource Include="Images\Resources\SampleInformation\SampleLoop.svg" />
