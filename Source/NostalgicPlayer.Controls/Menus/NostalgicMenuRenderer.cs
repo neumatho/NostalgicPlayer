@@ -60,7 +60,10 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/********************************************************************/
 		public void UpdateFont(FontConfiguration fontConfiguration)
 		{
-			fontToUse = fontConfiguration?.Font ?? fonts.RegularFont;
+			if (fontConfiguration?.Font != null)
+				fontToUse = fontConfiguration.Font;
+			else if (fonts != null)
+				fontToUse = fonts.RegularFont;
 		}
 
 		#region Drawing
@@ -274,6 +277,32 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 
 		/********************************************************************/
 		/// <summary>
+		/// Repaint the item image using the current state-dependent text
+		/// color, so it always matches the text rendered by
+		/// OnRenderItemText
+		/// </summary>
+		/********************************************************************/
+		protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
+		{
+			if (e.Item is NostalgicToolStripMenuItem menuItem)
+			{
+				Color imageColor = e.Item.IsOnDropDown ? GetDropDownColors(e.Item).TextColor : GetMenuBarColors(e.Item).TextColor;
+
+				Bitmap coloredImage = menuItem.GetImage(imageColor);
+				if (coloredImage != null)
+				{
+					e.Graphics.DrawImage(coloredImage, e.ImageRectangle);
+					return;
+				}
+			}
+
+			base.OnRenderItemImage(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Draw a horizontal line for separator items
 		/// </summary>
 		/********************************************************************/
@@ -439,7 +468,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/********************************************************************/
 		private void DrawDropDownImageMarginSeparator(Graphics g, Rectangle rect, ToolStripItem item)
 		{
-			if ((imageMarginRightEdge <= 0) || item.Selected)
+			if ((imageMarginRightEdge <= 0) || (item.Selected && item.Enabled))
 				return;
 
 			int x = imageMarginRightEdge - item.Bounds.X - 1;

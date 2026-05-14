@@ -3,28 +3,36 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
 using System.Drawing;
-using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Holds all the images needed by the Module Information window
+	/// Holds a cache of the same bitmap but with different colors
 	/// </summary>
-	internal class ModuleInformationImages : ThemedImageBase, IModuleInformationImages
+	internal class ImageColorBitmapCache : ImageBase
 	{
-		private const string Category = "ModuleInformation";
+		private readonly string category;
+		private readonly string resourceName;
+		private readonly int width;
+		private readonly int height;
 
-		private Bitmap previousPicture;
-		private Bitmap nextPicture;
+		private readonly Dictionary<Color, Bitmap> bitmaps;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInformationImages(IThemeManager themeManager) : base(themeManager)
+		public ImageColorBitmapCache(string category, string resourceName, int width, int height)
 		{
+			this.category = category;
+			this.resourceName = resourceName;
+			this.width = width;
+			this.height = height;
+
+			bitmaps = new Dictionary<Color, Bitmap>();
 		}
 
 
@@ -36,61 +44,43 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		public override void Dispose()
 		{
-			base.Dispose();
-
-			FlushImages();
+			FlushBitmaps();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Flush images
+		/// Return the bitmap with the color given
 		/// </summary>
 		/********************************************************************/
-		protected override void FlushImages()
+		public Bitmap GetBitmap(Color color)
 		{
-			previousPicture?.Dispose();
-			previousPicture = null;
-
-			nextPicture?.Dispose();
-			nextPicture = null;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Gets the previous picture image
-		/// </summary>
-		/********************************************************************/
-		public Bitmap PreviousPicture
-		{
-			get
+			if (!bitmaps.TryGetValue(color, out Bitmap bitmap))
 			{
-				if (previousPicture == null)
-					previousPicture = GetSvgBitmap(Category, nameof(IModuleInformationImages.PreviousPicture), CurrentColors.PreviousPictureColor, 24, 24);
+				if (bitmaps.Count == 2)
+					FlushBitmaps();
 
-				return previousPicture;
+				bitmap = GetSvgBitmap(category, resourceName, color, width, height);
+				bitmaps.Add(color, bitmap);
 			}
+
+			return bitmap;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the next picture image
+		/// Flush all bitmaps
 		/// </summary>
 		/********************************************************************/
-		public Bitmap NextPicture
+		private void FlushBitmaps()
 		{
-			get
-			{
-				if (nextPicture == null)
-					nextPicture = GetSvgBitmap(Category, nameof(IModuleInformationImages.NextPicture), CurrentColors.NextPictureColor, 24, 24);
+			foreach (Bitmap bitmap in bitmaps.Values)
+				bitmap.Dispose();
 
-				return nextPicture;
-			}
+			bitmaps.Clear();
 		}
 	}
 }

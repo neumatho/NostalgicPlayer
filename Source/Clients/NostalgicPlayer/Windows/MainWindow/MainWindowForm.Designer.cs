@@ -35,7 +35,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			menuBar = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicMenuBar();
 			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			infoLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			infoBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			equalizerButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
 			moduleInfoButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
@@ -69,11 +68,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			sampleInfoButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
 			muteCheckButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton();
 			toolTip = new System.Windows.Forms.ToolTip(components);
-			sortContextMenu = new KryptonContextMenu();
-			listContextMenu = new KryptonContextMenu();
-			diskContextMenu = new KryptonContextMenu();
+			sortContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
+			listContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
+			diskContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			neverEndingTimer = new System.Windows.Forms.Timer(components);
-			addContextMenu = new KryptonContextMenu();
+			addContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			moduleList = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicModuleList();
 			searchPopupControl = new SearchPopupControl();
 			infoBox.SuspendLayout();
@@ -103,13 +102,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			infoLabel.Size = new System.Drawing.Size(374, 16);
 			infoLabel.TabIndex = 0;
 			infoLabel.UseFont = bigFontConfiguration;
-			// 
-			// fontPalette
-			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// infoBox
 			// 
@@ -430,20 +422,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// sortContextMenu
 			// 
-			sortContextMenu.Palette = fontPalette;
+			sortContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			sortContextMenu.Name = "sortContextMenu";
 			// 
 			// listContextMenu
 			// 
-			listContextMenu.Palette = fontPalette;
+			listContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			listContextMenu.Name = "listContextMenu";
 			listContextMenu.Opening += ListContextMenu_Opening;
 			// 
 			// diskContextMenu
 			// 
-			diskContextMenu.Palette = fontPalette;
+			diskContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			diskContextMenu.Name = "diskContextMenu";
 			// 
 			// addContextMenu
 			// 
-			addContextMenu.Palette = fontPalette;
+			addContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			addContextMenu.Name = "addContextMenu";
 			// 
 			// moduleList
 			// 
@@ -527,13 +523,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton sampleInfoButton;
 		private NostalgicPlayer.Controls.Buttons.NostalgicToggleImageButton muteCheckButton;
 		private System.Windows.Forms.ToolTip toolTip;
-		private KryptonContextMenu sortContextMenu;
-		private KryptonContextMenu listContextMenu;
-		private KryptonContextMenu diskContextMenu;
+		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu sortContextMenu;
+		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu listContextMenu;
+		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu diskContextMenu;
 		private System.Windows.Forms.Timer neverEndingTimer;
-		private KryptonContextMenu addContextMenu;
+		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu addContextMenu;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton favoritesButton;
-		private Kit.Gui.Components.FontPalette fontPalette;
 		private NostalgicPlayer.Controls.Lists.NostalgicModuleList moduleList;
 		private SearchPopupControl searchPopupControl;
 		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
