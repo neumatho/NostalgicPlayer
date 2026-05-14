@@ -5,11 +5,11 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -30,7 +30,9 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Extensions;
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Lists;
+using Polycode.NostalgicPlayer.Controls.Menus;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -93,8 +95,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private ToolStripMenuItem agentShowMenuItem;
 
 		// Context menus
-		private KryptonContextMenuItem setSubSongMenuItem;
-		private KryptonContextMenuItem clearSubSongMenuItem;
+		private NostalgicToolStripMenuItem setSubSongMenuItem;
+		private NostalgicToolStripMenuItem clearSubSongMenuItem;
 
 		// Timer variables
 		private MainWindowSettings.TimeFormat timeFormat;
@@ -2072,7 +2074,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private void AddModuleButton_Click(object sender, EventArgs e)
 		{
 			// Show the menu
-			addContextMenu.Show(sender);
+			addContextMenu.Show(addModuleButton);
 		}
 
 
@@ -2145,7 +2147,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private void SortModulesButton_Click(object sender, EventArgs e)
 		{
 			// Show the menu
-			sortContextMenu.Show(sender);
+			sortContextMenu.Show(sortModulesButton);
 		}
 
 
@@ -2208,7 +2210,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private void ListButton_Click(object sender, EventArgs e)
 		{
 			// Show the menu
-			listContextMenu.Show(sender);
+			listContextMenu.Show(listButton);
 		}
 
 
@@ -2221,7 +2223,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private void DiskButton_Click(object sender, EventArgs e)
 		{
 			// Show the menu
-			diskContextMenu.Show(sender);
+			diskContextMenu.Show(diskButton);
 		}
 
 		#region Add menu events
@@ -2395,7 +2397,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Is called right before the list context menu is opened
 		/// </summary>
 		/********************************************************************/
-		private void ListContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		private void ListContextMenu_Opening(object sender, CancelEventArgs e)
 		{
 			// Get playing flag
 			bool isLoaded = moduleHandler.IsModuleLoaded;
@@ -3303,19 +3305,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void CreateAddContextMenu()
 		{
-			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
-
-			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES);
-			item.Image = Resources.IDB_FILE;
+			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES);
+			item.ImageName = nameof(IMainImages.File);
 			item.Click += AddMenu_Files;
-			menuItems.Items.Add(item);
+			addContextMenu.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY);
-			item.Image = Resources.IDB_DIRECTORY;
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY);
+			item.ImageName = nameof(IMainImages.Directory);
 			item.Click += AddMenu_Directory;
-			menuItems.Items.Add(item);
-
-			addContextMenu.Items.Add(menuItems);
+			addContextMenu.Items.Add(item);
 		}
 
 
@@ -3327,24 +3325,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void CreateSortContextMenu()
 		{
-			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
-
-			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ);
-			item.Image = Resources.IDB_AZ;
+			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ);
+			item.ImageName = nameof(IMainImages.AZ);
 			item.Click += SortMenu_AZ;
-			menuItems.Items.Add(item);
+			sortContextMenu.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA);
-			item.Image = Resources.IDB_ZA;
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA);
+			item.ImageName = nameof(IMainImages.ZA);
 			item.Click += SortMenu_ZA;
-			menuItems.Items.Add(item);
+			sortContextMenu.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE);
-			item.Image = Resources.IDB_SHUFFLE;
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE);
+			item.ImageName = nameof(IMainImages.Shuffle);
 			item.Click += SortMenu_Shuffle;
-			menuItems.Items.Add(item);
-
-			sortContextMenu.Items.Add(menuItems);
+			sortContextMenu.Items.Add(item);
 		}
 
 
@@ -3356,30 +3350,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void CreateListContextMenu()
 		{
-			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
-
-			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL);
+			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL);
 			item.Click += ListMenu_SelectAll;
-			menuItems.Items.Add(item);
+			listContextMenu.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE);
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE);
 			item.Click += ListMenu_SelectNone;
-			menuItems.Items.Add(item);
+			listContextMenu.Items.Add(item);
 
-			KryptonContextMenuSeparator separatorItem = new KryptonContextMenuSeparator();
-			menuItems.Items.Add(separatorItem);
+			ToolStripSeparator separatorItem = new ToolStripSeparator();
+			listContextMenu.Items.Add(separatorItem);
 
-			setSubSongMenuItem = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG);
-			setSubSongMenuItem.Image = Resources.IDB_SET_SUBSONG;
+			setSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG);
+			setSubSongMenuItem.ImageName = nameof(IMainImages.SetSubSong);
 			setSubSongMenuItem.Click += ListMenu_SetDefaultSubSong;
-			menuItems.Items.Add(setSubSongMenuItem);
+			listContextMenu.Items.Add(setSubSongMenuItem);
 
-			clearSubSongMenuItem = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG);
-			clearSubSongMenuItem.Image = Resources.IDB_CLEAR_SUBSONG;
+			clearSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG);
+			clearSubSongMenuItem.ImageName = nameof(IMainImages.ClearSubSong);
 			clearSubSongMenuItem.Click += ListMenu_ClearDefaultSubSong;
-			menuItems.Items.Add(clearSubSongMenuItem);
-
-			listContextMenu.Items.Add(menuItems);
+			listContextMenu.Items.Add(clearSubSongMenuItem);
 		}
 
 
@@ -3391,23 +3381,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void CreateDiskContextMenu()
 		{
-			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
-
-			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD);
-			item.Image = Resources.IDB_LOAD;
+			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD);
+			item.ImageName = nameof(IMainImages.Load);
 			item.Click += DiskMenu_LoadList;
-			menuItems.Items.Add(item);
+			diskContextMenu.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_APPEND);
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_APPEND);
 			item.Click += DiskMenu_AppendList;
-			menuItems.Items.Add(item);
+			diskContextMenu.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE);
-			item.Image = Resources.IDB_SAVE;
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE);
+			item.ImageName = nameof(IMainImages.Save);
 			item.Click += DiskMenu_SaveList;
-			menuItems.Items.Add(item);
-
-			diskContextMenu.Items.Add(menuItems);
+			diskContextMenu.Items.Add(item);
 		}
 
 
@@ -3987,6 +3973,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private void UpdateControls()
 		{
 			UpdateListCount();
+			UpdateListControls();
 			UpdateTimes();
 			UpdateTapeDeck();
 			UpdateListControls();

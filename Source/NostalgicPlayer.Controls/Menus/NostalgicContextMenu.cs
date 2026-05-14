@@ -9,29 +9,59 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Designer;
+using Polycode.NostalgicPlayer.Controls.Forms;
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 
 namespace Polycode.NostalgicPlayer.Controls.Menus
 {
 	/// <summary>
-	/// Themed menu bar with custom rendering
+	/// Themed context menu with custom rendering
 	/// </summary>
-	public class NostalgicMenuBar : MenuStrip, IThemeControl, IFontConfiguration
+	public class NostalgicContextMenu : ContextMenuStrip, IThemeControl, IFontConfiguration
 	{
 		private readonly NostalgicMenuRenderer menuRenderer = new NostalgicMenuRenderer();
 		private readonly HashSet<ToolStripDropDown> hookedDropDowns = new HashSet<ToolStripDropDown>();
 
 		private FontConfiguration fontConfiguration;
+		private NostalgicForm registeredForm;
+		private INostalgicImageBank imageBank;
+		private ImageBankArea imageArea = ImageBankArea.None;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NostalgicMenuBar()
+		public NostalgicContextMenu()
 		{
 			Renderer = menuRenderer;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public NostalgicContextMenu(IContainer container) : this()
+		{
+			container.Add(this);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Show the context menu with its top-left corner at the current
+		/// mouse position
+		/// </summary>
+		/********************************************************************/
+		public void Show(Control control)
+		{
+			Show(control, control.PointToClient(MousePosition), ToolStripDropDownDirection.BelowRight);
 		}
 
 		#region Designer properties
@@ -59,6 +89,32 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The image bank area passed to NostalgicToolStripMenuItem children
+		/// so they can resolve their images
+		/// </summary>
+		/********************************************************************/
+		[Category("Appearance")]
+		[Description("The image bank area passed to NostalgicToolStripMenuItem children.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(ImageBankArea.None)]
+		public ImageBankArea ImageArea
+		{
+			get => imageArea;
+
+			set
+			{
+				if (value != imageArea)
+				{
+					imageArea = value;
+					ApplyImageBankToItems(Items);
+				}
+			}
+		}
 		#endregion
 
 		#region Initialize
@@ -75,6 +131,56 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 			menuRenderer.UpdateFont(fontConfiguration);
 
 			base.OnHandleCreated(e);
+		}
+		#endregion
+
+		#region ImageBank
+		/********************************************************************/
+		/// <summary>
+		/// Provide the image bank used by NostalgicToolStripMenuItem that
+		/// resolve their image from it. Propagates to existing items and
+		/// any items added later
+		/// </summary>
+		/********************************************************************/
+		internal void InitializeControl(INostalgicImageBank imageBank)
+		{
+			this.imageBank = imageBank;
+
+			ApplyImageBankToItems(Items);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Push the current image bank to an item (and recursively into any
+		/// drop-down panel it owns)
+		/// </summary>
+		/********************************************************************/
+		private void ApplyImageBankToItem(ToolStripItem item)
+		{
+			if (item is NostalgicToolStripMenuItem menuItem)
+			{
+				menuItem.ImageArea = imageArea;
+
+				menuItem.SetImageBank(imageBank);
+			}
+
+			if (item is ToolStripDropDownItem dropDownItem)
+				ApplyImageBankToItems(dropDownItem.DropDown.Items);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Push the current image bank to a collection of items
+		/// </summary>
+		/********************************************************************/
+		private void ApplyImageBankToItems(ToolStripItemCollection items)
+		{
+			foreach (ToolStripItem item in items)
+				ApplyImageBankToItem(item);
 		}
 		#endregion
 
@@ -107,6 +213,32 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 			base.OnItemAdded(e);
 
 			ApplyRendererToItem(e.Item);
+			ApplyImageBankToItem(e.Item);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Lazily locate the owning NostalgicForm the first time the menu
+		/// opens and register with it for theme updates. This is the central
+		/// hook hit by every Show overload (Show(), Show(Point), Show(Control,
+		/// Point), etc.) so it covers them all
+		/// </summary>
+		/********************************************************************/
+		protected override void OnOpening(CancelEventArgs e)
+		{
+			if (registeredForm == null)
+			{
+				Form form = SourceControl?.FindForm();
+				if (form is NostalgicForm nostalgicForm)
+				{
+					registeredForm = nostalgicForm;
+					nostalgicForm.RegisterThemedComponent(this);
+				}
+			}
+
+			base.OnOpening(e);
 		}
 		#endregion
 
@@ -149,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 
 		/********************************************************************/
 		/// <summary>
-		/// Hook for items added to a drop-down panel after the menu strip
+		/// Hook for items added to a drop-down panel after the context menu
 		/// has been built, so that nested sub-menus also use the custom
 		/// renderer
 		/// </summary>
@@ -157,6 +289,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		private void DropDown_ItemAdded(object sender, ToolStripItemEventArgs e)
 		{
 			ApplyRendererToItem(e.Item);
+			ApplyImageBankToItem(e.Item);
 		}
 		#endregion
 
@@ -166,9 +299,9 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/// Register a provider that filters properties for the designer
 		/// </summary>
 		/********************************************************************/
-		static NostalgicMenuBar()
+		static NostalgicContextMenu()
 		{
-			TypeDescriptor.AddProvider(new NostalgicMenuBarTypeDescriptionProvider(), typeof(NostalgicMenuBar));
+			TypeDescriptor.AddProvider(new NostalgicContextMenuTypeDescriptionProvider(), typeof(NostalgicContextMenu));
 		}
 
 		/// <summary>
@@ -176,9 +309,9 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/// This is needed for properties that we cannot override, but we do
 		/// it for all our hidden properties to be sure
 		/// </summary>
-		private sealed class NostalgicMenuBarTypeDescriptionProvider : TypeDescriptionProvider
+		private sealed class NostalgicContextMenuTypeDescriptionProvider : TypeDescriptionProvider
 		{
-			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(MenuStrip));
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(ContextMenuStrip));
 
 			private static readonly string[] propertiesToHide =
 			[
@@ -189,6 +322,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 				nameof(ForeColor),
 				nameof(RenderMode),
 				nameof(RightToLeft),
+				nameof(Size)
 			];
 
 			/********************************************************************/
@@ -196,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public NostalgicMenuBarTypeDescriptionProvider() : base(parent)
+			public NostalgicContextMenuTypeDescriptionProvider() : base(parent)
 			{
 			}
 
