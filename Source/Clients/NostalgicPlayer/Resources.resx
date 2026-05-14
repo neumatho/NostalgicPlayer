@@ -124,14 +124,8 @@
   <data name="IDB_ADD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_AZ" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\AZ.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_CHECKMARK" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\CheckMark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_CLEAR_SUBSONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\ClearSubSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_CLOSE_BLACK" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\CloseBlack.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -139,17 +133,8 @@
   <data name="IDB_CLOSE_WHITE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\CloseWhite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_DIRECTORY" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Directory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_FAVORITE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Favorite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_FILE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\File.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_LOAD" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Load.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_OPEN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -160,20 +145,11 @@
   <data name="IDB_REPOST" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Repost.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_SAVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_SEARCH" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="IDB_SET_SUBSONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SetSubSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="IDB_SHOW_PROFILE_INFO" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\ShowProfileInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_SHUFFLE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Shuffle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_UNKNOWN_ALBUM_COVER" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\UnknownAlbumCover.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -183,9 +159,6 @@
   </data>
   <data name="IDB_UNKNOWN_PROFILE_SMALL" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\UnknownProfileSmall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="IDB_ZA" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\ZA.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDS_ABOUT_TEXT" xml:space="preserve">
     <value>¤L
