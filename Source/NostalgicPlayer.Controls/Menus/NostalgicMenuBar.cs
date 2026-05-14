@@ -15,9 +15,9 @@ using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 namespace Polycode.NostalgicPlayer.Controls.Menus
 {
 	/// <summary>
-	/// Themed menu strip with custom rendering
+	/// Themed menu bar with custom rendering
 	/// </summary>
-	public class NostalgicMenuStrip : MenuStrip, IThemeControl, IFontConfiguration
+	public class NostalgicMenuBar : MenuStrip, IThemeControl, IFontConfiguration
 	{
 		private readonly NostalgicMenuRenderer menuRenderer = new NostalgicMenuRenderer();
 		private readonly HashSet<ToolStripDropDown> hookedDropDowns = new HashSet<ToolStripDropDown>();
@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NostalgicMenuStrip()
+		public NostalgicMenuBar()
 		{
 			Renderer = menuRenderer;
 		}
@@ -169,9 +169,9 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/// Register a provider that filters properties for the designer
 		/// </summary>
 		/********************************************************************/
-		static NostalgicMenuStrip()
+		static NostalgicMenuBar()
 		{
-			TypeDescriptor.AddProvider(new NostalgicMenuStripTypeDescriptionProvider(), typeof(NostalgicMenuStrip));
+			TypeDescriptor.AddProvider(new NostalgicMenuBarTypeDescriptionProvider(), typeof(NostalgicMenuBar));
 		}
 
 		/// <summary>
@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/// This is needed for properties that we cannot override, but we do
 		/// it for all our hidden properties to be sure
 		/// </summary>
-		private sealed class NostalgicMenuStripTypeDescriptionProvider : TypeDescriptionProvider
+		private sealed class NostalgicMenuBarTypeDescriptionProvider : TypeDescriptionProvider
 		{
 			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(MenuStrip));
 
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public NostalgicMenuStripTypeDescriptionProvider() : base(parent)
+			public NostalgicMenuBarTypeDescriptionProvider() : base(parent)
 			{
 			}
 
