@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Images;
+using Polycode.NostalgicPlayer.Controls.Menus;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Platform.Native;
@@ -71,6 +72,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 		private IThemeManager themeManager;
 		private INostalgicImageBank imageBank;
+
+		private readonly List<IThemeControl> registeredThemedComponents = new List<IThemeControl>();
 
 		#region Initialize
 		/********************************************************************/
@@ -176,7 +179,34 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			foreach (IThemeControl control in FindThemedControls(Controls))
 				control.SetTheme(theme);
 
+			foreach (IThemeControl component in registeredThemedComponents)
+				component.SetTheme(theme);
+
 			BackColor = colors.FormBackgroundColor;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register a themable component (e.g. a context menu) that lives
+		/// outside the form's Controls hierarchy. The current theme is
+		/// applied immediately and the component will receive future theme
+		/// changes
+		/// </summary>
+		/********************************************************************/
+		internal void RegisterThemedComponent(IThemeControl component)
+		{
+			if (registeredThemedComponents.Contains(component))
+				return;
+
+			registeredThemedComponents.Add(component);
+
+			if (themeManager != null)
+				component.SetTheme(themeManager.CurrentTheme);
+
+			if (component is NostalgicContextMenu contextMenu)
+				contextMenu.InitializeControl(imageBank);
 		}
 
 

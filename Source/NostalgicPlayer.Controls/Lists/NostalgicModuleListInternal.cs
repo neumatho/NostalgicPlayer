@@ -1354,7 +1354,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		{
 			if (item.IsPlaying)
 			{
-				Image image = imageBank.Main.GetPlayingItem(stateColors.TextColor);
+				Image image = imageBank.Main.PlayingItem(stateColors.TextColor);
 				g.DrawImage(image, rect.X + 2, rect.Y + 3, image.Width, image.Height);
 			}
 		}

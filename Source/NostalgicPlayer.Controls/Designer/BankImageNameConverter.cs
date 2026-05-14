@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using Polycode.NostalgicPlayer.Controls.Images;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Designer
 {
@@ -85,9 +86,9 @@ namespace Polycode.NostalgicPlayer.Controls.Designer
 		/********************************************************************/
 		public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
 		{
-			if (context?.Instance is Buttons.NostalgicImageButton button)
+			if (context?.Instance is IImageBank imageBank)
 			{
-				Type interfaceType = GetAreaInterfaceType(button.ImageArea);
+				Type interfaceType = GetAreaInterfaceType(imageBank.ImageArea);
 				if (interfaceType != null)
 				{
 					string[] names = interfaceType

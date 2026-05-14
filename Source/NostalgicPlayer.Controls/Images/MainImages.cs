@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Collections.Generic;
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
@@ -16,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	{
 		private const string Category = "Main";
 
-		private readonly Dictionary<Color, Bitmap> playingItems;
+		private ImageColorBitmapCache playing;
 
 		private Bitmap information;
 
@@ -46,6 +45,16 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		private Bitmap equalizer;
 		private Bitmap samples;
 
+		private ImageColorBitmapCache file;
+		private ImageColorBitmapCache directory;
+		private ImageColorBitmapCache az;
+		private ImageColorBitmapCache za;
+		private ImageColorBitmapCache shuffle;
+		private ImageColorBitmapCache setSubSong;
+		private ImageColorBitmapCache clearSubSong;
+		private ImageColorBitmapCache load;
+		private ImageColorBitmapCache save;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -53,7 +62,6 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		public MainImages(IThemeManager themeManager) : base(themeManager)
 		{
-			playingItems = new Dictionary<Color, Bitmap>();
 		}
 
 
@@ -79,7 +87,8 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		protected override void FlushImages()
 		{
-			FlushPlayingItems();
+			playing?.Dispose();
+			playing = null;
 
 			information?.Dispose();
 			information = null;
@@ -131,6 +140,25 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			equalizer = null;
 			samples?.Dispose();
 			samples = null;
+
+			file?.Dispose();
+			file = null;
+			directory?.Dispose();
+			directory = null;
+			az?.Dispose();
+			az = null;
+			za?.Dispose();
+			za = null;
+			shuffle?.Dispose();
+			shuffle = null;
+			setSubSong?.Dispose();
+			setSubSong = null;
+			clearSubSong?.Dispose();
+			clearSubSong = null;
+			load?.Dispose();
+			load = null;
+			save?.Dispose();
+			save = null;
 		}
 
 
@@ -140,18 +168,12 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Gets the playing item image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap GetPlayingItem(Color color)
+		public Bitmap PlayingItem(Color color)
 		{
-			if (!playingItems.TryGetValue(color, out Bitmap bitmap))
-			{
-				if (playingItems.Count == 2)
-					FlushPlayingItems();
+			if (playing == null)
+				playing = new ImageColorBitmapCache(Category, nameof(IMainImages.PlayingItem), 10, 10);
 
-				bitmap = GetSvgBitmap(Category, "PlayingItem", color, 10, 10);
-				playingItems.Add(color, bitmap);
-			}
-
-			return bitmap;
+			return playing.GetBitmap(color);
 		}
 
 
@@ -166,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (information == null)
-					information = GetSvgBitmap(Category, "Information", CurrentColors.InformationColor, 20, 20);
+					information = GetSvgBitmap(Category, nameof(IMainImages.Information), CurrentColors.InformationColor, 20, 20);
 
 				return information;
 			}
@@ -184,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (mute == null)
-					mute = GetSvgBitmap(Category, "Mute", CurrentColors.MuteColor, 20, 20);
+					mute = GetSvgBitmap(Category, nameof(IMainImages.Mute), CurrentColors.MuteColor, 20, 20);
 
 				return mute;
 			}
@@ -202,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (add == null)
-					add = GetSvgBitmap(Category, "Add", CurrentColors.AddColor, 20, 20);
+					add = GetSvgBitmap(Category, nameof(IMainImages.Add), CurrentColors.AddColor, 20, 20);
 
 				return add;
 			}
@@ -220,7 +242,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (remove == null)
-					remove = GetSvgBitmap(Category, "Remove", CurrentColors.RemoveColor, 20, 20);
+					remove = GetSvgBitmap(Category, nameof(IMainImages.Remove), CurrentColors.RemoveColor, 20, 20);
 
 				return remove;
 			}
@@ -238,7 +260,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (swap == null)
-					swap = GetSvgBitmap(Category, "Swap", CurrentColors.SwapColor, 20, 20);
+					swap = GetSvgBitmap(Category, nameof(IMainImages.Swap), CurrentColors.SwapColor, 20, 20);
 
 				return swap;
 			}
@@ -256,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (sort == null)
-					sort = GetSvgBitmap(Category, "Sort", CurrentColors.SortColor, 20, 20);
+					sort = GetSvgBitmap(Category, nameof(IMainImages.Sort), CurrentColors.SortColor, 20, 20);
 
 				return sort;
 			}
@@ -274,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (moveUp == null)
-					moveUp = GetSvgBitmap(Category, "MoveUp", CurrentColors.MoveUpColor, 20, 20);
+					moveUp = GetSvgBitmap(Category, nameof(IMainImages.MoveUp), CurrentColors.MoveUpColor, 20, 20);
 
 				return moveUp;
 			}
@@ -292,7 +314,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (moveDown == null)
-					moveDown = GetSvgBitmap(Category, "MoveDown", CurrentColors.MoveDownColor, 20, 20);
+					moveDown = GetSvgBitmap(Category, nameof(IMainImages.MoveDown), CurrentColors.MoveDownColor, 20, 20);
 
 				return moveDown;
 			}
@@ -310,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (list == null)
-					list = GetSvgBitmap(Category, "List", CurrentColors.ListColor, 20, 20);
+					list = GetSvgBitmap(Category, nameof(IMainImages.List), CurrentColors.ListColor, 20, 20);
 
 				return list;
 			}
@@ -328,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (disk == null)
-					disk = GetSvgBitmap(Category, "Disk", CurrentColors.DiskColor, 20, 20);
+					disk = GetSvgBitmap(Category, nameof(IMainImages.Disk), CurrentColors.DiskColor, 20, 20);
 
 				return disk;
 			}
@@ -346,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (previousModule == null)
-					previousModule = GetSvgBitmap(Category, "PreviousModule", CurrentColors.PreviousModuleColor, 20, 20);
+					previousModule = GetSvgBitmap(Category, nameof(IMainImages.PreviousModule), CurrentColors.PreviousModuleColor, 20, 20);
 
 				return previousModule;
 			}
@@ -364,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (nextModule == null)
-					nextModule = GetSvgBitmap(Category, "NextModule", CurrentColors.NextModuleColor, 20, 20);
+					nextModule = GetSvgBitmap(Category, nameof(IMainImages.NextModule), CurrentColors.NextModuleColor, 20, 20);
 
 				return nextModule;
 			}
@@ -382,7 +404,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (previousSong == null)
-					previousSong = GetSvgBitmap(Category, "PreviousSong", CurrentColors.PreviousSongColor, 20, 20);
+					previousSong = GetSvgBitmap(Category, nameof(IMainImages.PreviousSong), CurrentColors.PreviousSongColor, 20, 20);
 
 				return previousSong;
 			}
@@ -400,7 +422,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (nextSong == null)
-					nextSong = GetSvgBitmap(Category, "NextSong", CurrentColors.NextSongColor, 20, 20);
+					nextSong = GetSvgBitmap(Category, nameof(IMainImages.NextSong), CurrentColors.NextSongColor, 20, 20);
 
 				return nextSong;
 			}
@@ -418,7 +440,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (fastRewind == null)
-					fastRewind = GetSvgBitmap(Category, "FastRewind", CurrentColors.FastRewindColor, 20, 20);
+					fastRewind = GetSvgBitmap(Category, nameof(IMainImages.FastRewind), CurrentColors.FastRewindColor, 20, 20);
 
 				return fastRewind;
 			}
@@ -436,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (fastForward == null)
-					fastForward = GetSvgBitmap(Category, "FastForward", CurrentColors.FastForwardColor, 20, 20);
+					fastForward = GetSvgBitmap(Category, nameof(IMainImages.FastForward), CurrentColors.FastForwardColor, 20, 20);
 
 				return fastForward;
 			}
@@ -454,7 +476,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (play == null)
-					play = GetSvgBitmap(Category, "Play", CurrentColors.PlayColor, 20, 20);
+					play = GetSvgBitmap(Category, nameof(IMainImages.Play), CurrentColors.PlayColor, 20, 20);
 
 				return play;
 			}
@@ -472,7 +494,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (eject == null)
-					eject = GetSvgBitmap(Category, "Eject", CurrentColors.EjectColor, 20, 20);
+					eject = GetSvgBitmap(Category, nameof(IMainImages.Eject), CurrentColors.EjectColor, 20, 20);
 
 				return eject;
 			}
@@ -490,7 +512,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (pause == null)
-					pause = GetSvgBitmap(Category, "Pause", CurrentColors.PauseColor, 20, 20);
+					pause = GetSvgBitmap(Category, nameof(IMainImages.Pause), CurrentColors.PauseColor, 20, 20);
 
 				return pause;
 			}
@@ -508,7 +530,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (loop == null)
-					loop = GetSvgBitmap(Category, "Loop", CurrentColors.LoopColor, 20, 20);
+					loop = GetSvgBitmap(Category, nameof(IMainImages.Loop), CurrentColors.LoopColor, 20, 20);
 
 				return loop;
 			}
@@ -526,7 +548,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (favorites == null)
-					favorites = GetSvgBitmap(Category, "Favorites", CurrentColors.FavoritesColor, 20, 20);
+					favorites = GetSvgBitmap(Category, nameof(IMainImages.Favorites), CurrentColors.FavoritesColor, 20, 20);
 
 				return favorites;
 			}
@@ -544,7 +566,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (equalizer == null)
-					equalizer = GetSvgBitmap(Category, "Equalizer", CurrentColors.EqualizerColor, 20, 20);
+					equalizer = GetSvgBitmap(Category, nameof(IMainImages.Equalizer), CurrentColors.EqualizerColor, 20, 20);
 
 				return equalizer;
 			}
@@ -562,7 +584,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (samples == null)
-					samples = GetSvgBitmap(Category, "Samples", CurrentColors.SamplesColor, 20, 20);
+					samples = GetSvgBitmap(Category, nameof(IMainImages.Samples), CurrentColors.SamplesColor, 20, 20);
 
 				return samples;
 			}
@@ -572,15 +594,135 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
-		/// Flush all playing item bitmaps
+		/// Gets the file image
 		/// </summary>
 		/********************************************************************/
-		private void FlushPlayingItems()
+		public Bitmap File(Color color)
 		{
-			foreach (Bitmap bitmap in playingItems.Values)
-				bitmap.Dispose();
+			if (file == null)
+				file = new ImageColorBitmapCache(Category, nameof(IMainImages.File), 20, 20);
 
-			playingItems.Clear();
+			return file.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the directory image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Directory(Color color)
+		{
+			if (directory == null)
+				directory = new ImageColorBitmapCache(Category, nameof(IMainImages.Directory), 20, 20);
+
+			return directory.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the A-Z sorting image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap AZ(Color color)
+		{
+			if (az == null)
+				az = new ImageColorBitmapCache(Category, nameof(IMainImages.AZ), 20, 20);
+
+			return az.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the Z-A sorting image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap ZA(Color color)
+		{
+			if (za == null)
+				za = new ImageColorBitmapCache(Category, nameof(IMainImages.ZA), 20, 20);
+
+			return za.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the shuffle image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Shuffle(Color color)
+		{
+			if (shuffle == null)
+				shuffle = new ImageColorBitmapCache(Category, nameof(IMainImages.Shuffle), 20, 20);
+
+			return shuffle.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the set subsong image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap SetSubSong(Color color)
+		{
+			if (setSubSong == null)
+				setSubSong = new ImageColorBitmapCache(Category, nameof(IMainImages.SetSubSong), 20, 20);
+
+			return setSubSong.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the clear subsong image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap ClearSubSong(Color color)
+		{
+			if (clearSubSong == null)
+				clearSubSong = new ImageColorBitmapCache(Category, nameof(IMainImages.ClearSubSong), 20, 20);
+
+			return clearSubSong.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the load image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Load(Color color)
+		{
+			if (load == null)
+				load = new ImageColorBitmapCache(Category, nameof(IMainImages.Load), 20, 20);
+
+			return load.GetBitmap(color);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the load image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Save(Color color)
+		{
+			if (save == null)
+				save = new ImageColorBitmapCache(Category, nameof(IMainImages.Save), 20, 20);
+
+			return save.GetBitmap(color);
 		}
 	}
 }
