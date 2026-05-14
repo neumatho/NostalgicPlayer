@@ -3233,7 +3233,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			menuItem.Click += Menu_File_Exit_Click;
 			fileMenuItem.DropDownItems.Add(menuItem);
 
-			menuStrip.Items.Add(fileMenuItem);
+			menuBar.Items.Add(fileMenuItem);
 
 			// Create the window menu
 			ToolStripMenuItem windowMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW);
@@ -3268,7 +3268,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			agentSettingsMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsMenuItem);
 
-			menuStrip.Items.Add(windowMenuItem);
+			menuBar.Items.Add(windowMenuItem);
 
 			// Create the help menu
 			ToolStripMenuItem helpMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP);
@@ -3284,7 +3284,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			menuItem.Click += Menu_Help_About_Click;
 			helpMenuItem.DropDownItems.Add(menuItem);
 
-			menuStrip.Items.Add(helpMenuItem);
+			menuBar.Items.Add(helpMenuItem);
 
 			// Add all agent windows to the menu which have settings or show windows
 			foreach (AgentInfo agentInfo in agentManager.GetAllAgents())
