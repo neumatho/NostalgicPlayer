@@ -1554,7 +1554,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		#region File menu
 		/********************************************************************/
 		/// <summary>
-		/// User selected the settings menu item
+		/// User selected to open the URL dialog
 		/// </summary>
 		/********************************************************************/
 		private void Menu_File_OpenUrl_Click(object sender, EventArgs e)
@@ -1571,6 +1571,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					}
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected to exit the application
+		/// </summary>
+		/********************************************************************/
+		private void Menu_File_Exit_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
 		}
 		#endregion
 
@@ -3165,6 +3177,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_EXIT);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.F4;
+			menuItem.Click += Menu_File_Exit_Click;
 			fileMenuItem.DropDownItems.Add(menuItem);
 
 			menuStrip.Items.Add(fileMenuItem);
