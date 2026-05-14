@@ -6,132 +6,137 @@
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
+namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {
-	/// <summary>
-	/// Different colors used by list items
-	/// </summary>
-	internal class PurpleListItemColors : IListItemColors
+	internal class StandardMenuColors : IMenuColors
 	{
-		private static readonly Color normalBackgroundStartColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color normalBackgroundMiddleColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color normalBackgroundStopColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color normalTextColor = Color.FromArgb(55, 30, 85);
+		private static readonly Color dropDownBorderColor = Color.FromArgb(167, 171, 176);
+		private static readonly Color dropDownSeparatorColor = Color.FromArgb(227, 229, 230);
 
-		private static readonly Color selectedBackgroundStartColor = Color.FromArgb(190, 170, 230);
-		private static readonly Color selectedBackgroundMiddleColor = Color.FromArgb(175, 155, 215);
-		private static readonly Color selectedBackgroundStopColor = Color.FromArgb(205, 185, 240);
-		private static readonly Color selectedTextColor = Color.FromArgb(55, 30, 85);
-
-		private static readonly Color disabledBackgroundStartColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color disabledBackgroundMiddleColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color disabledBackgroundStopColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color disabledTextColor = Color.FromArgb(168, 168, 168);
+		private readonly IListItemColors listItemColors = new StandardListItemColors();
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalBackgroundStartColor => normalBackgroundStartColor;
+		public Color BorderColor => dropDownBorderColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalBackgroundMiddleColor => normalBackgroundMiddleColor;
+		public Color DropDownSeparatorColor => dropDownSeparatorColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalBackgroundStopColor => normalBackgroundStopColor;
+		public Color NormalItemBackgroundStartColor => listItemColors.NormalBackgroundStartColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalTextColor => normalTextColor;
+		public Color NormalItemBackgroundMiddleColor => listItemColors.NormalBackgroundMiddleColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedBackgroundStartColor => selectedBackgroundStartColor;
+		public Color NormalItemBackgroundStopColor => listItemColors.NormalBackgroundStopColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedBackgroundMiddleColor => selectedBackgroundMiddleColor;
+		public Color NormalItemTextColor => listItemColors.NormalTextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedBackgroundStopColor => selectedBackgroundStopColor;
+		public Color HoverItemBackgroundStartColor => listItemColors.SelectedBackgroundStartColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color SelectedTextColor => selectedTextColor;
+		public Color HoverItemBackgroundMiddleColor => listItemColors.SelectedBackgroundMiddleColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledBackgroundStartColor => disabledBackgroundStartColor;
+		public Color HoverItemBackgroundStopColor => listItemColors.SelectedBackgroundStopColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledBackgroundMiddleColor => disabledBackgroundMiddleColor;
+		public Color HoverItemTextColor => listItemColors.SelectedTextColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledBackgroundStopColor => disabledBackgroundStopColor;
+		public Color DisabledItemBackgroundStartColor => listItemColors.DisabledBackgroundStartColor;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledTextColor => disabledTextColor;
+		public Color DisabledItemBackgroundMiddleColor => listItemColors.DisabledBackgroundMiddleColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledItemBackgroundStopColor => listItemColors.DisabledBackgroundStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledItemTextColor => listItemColors.DisabledTextColor;
 	}
 }
