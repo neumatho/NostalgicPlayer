@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowForm));
-			menuStrip = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicMenuStrip();
+			menuBar = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicMenuBar();
 			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			infoLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
@@ -83,13 +83,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			functionsBox.SuspendLayout();
 			SuspendLayout();
 			// 
-			// menuStrip
+			// menuBar
 			// 
-			menuStrip.Location = new System.Drawing.Point(0, 0);
-			menuStrip.Name = "menuStrip";
-			menuStrip.Size = new System.Drawing.Size(416, 24);
-			menuStrip.TabIndex = 0;
-			menuStrip.Text = "menuStrip";
+			menuBar.Location = new System.Drawing.Point(0, 0);
+			menuBar.Name = "menuBar";
+			menuBar.Size = new System.Drawing.Size(416, 24);
+			menuBar.TabIndex = 0;
+			menuBar.Text = "menuStrip";
 			// 
 			// bigFontConfiguration
 			// 
@@ -475,10 +475,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			Controls.Add(masterVolumeTrackBar);
 			Controls.Add(moduleInfoButton);
 			Controls.Add(infoBox);
-			Controls.Add(menuStrip);
+			Controls.Add(menuBar);
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			KeyPreview = true;
-			MainMenuStrip = menuStrip;
+			MainMenuStrip = menuBar;
 			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			MinimumSize = new System.Drawing.Size(432, 320);
 			Name = "MainWindowForm";
@@ -493,7 +493,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		#endregion
 
-		private NostalgicPlayer.Controls.Menus.NostalgicMenuStrip menuStrip;
+		private NostalgicPlayer.Controls.Menus.NostalgicMenuBar menuBar;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel infoLabel;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox infoBox;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton equalizerButton;
