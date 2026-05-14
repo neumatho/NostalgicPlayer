@@ -29,5 +29,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color SelectedBackgroundStopColor { get; }
 		/// <summary></summary>
 		Color SelectedTextColor { get; }
+
+		/// <summary></summary>
+		Color DisabledBackgroundStartColor { get; }
+		/// <summary></summary>
+		Color DisabledBackgroundMiddleColor { get; }
+		/// <summary></summary>
+		Color DisabledBackgroundStopColor { get; }
+		/// <summary></summary>
+		Color DisabledTextColor { get; }
 	}
 }

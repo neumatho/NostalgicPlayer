@@ -23,6 +23,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly Color selectedBackgroundStopColor = Color.FromArgb(205, 185, 240);
 		private static readonly Color selectedTextColor = Color.FromArgb(55, 30, 85);
 
+		private static readonly Color disabledBackgroundStartColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color disabledBackgroundMiddleColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color disabledBackgroundStopColor = Color.FromArgb(255, 255, 255);
+		private static readonly Color disabledTextColor = Color.FromArgb(168, 168, 168);
+
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -92,5 +97,41 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public Color SelectedTextColor => selectedTextColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledBackgroundStartColor => disabledBackgroundStartColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledBackgroundMiddleColor => disabledBackgroundMiddleColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledBackgroundStopColor => disabledBackgroundStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTextColor => disabledTextColor;
 	}
 }
