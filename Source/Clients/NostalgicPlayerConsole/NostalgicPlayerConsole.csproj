@@ -18,10 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.IO.Hashing" Version="10.0.7" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Agents\Decrunchers\AncientDecruncher\AncientDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\Decrunchers\ArchiveDecruncher\ArchiveDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\Decrunchers\SharpCompressDecruncher\SharpCompressDecruncher.csproj" />
