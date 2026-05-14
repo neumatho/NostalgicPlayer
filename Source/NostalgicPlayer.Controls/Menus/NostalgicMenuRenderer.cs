@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 			Graphics g = e.Graphics;
 			Rectangle rect = e.AffectedBounds;
 
-			if (e.ToolStrip is NostalgicMenuStrip)
+			if (e.ToolStrip is NostalgicMenuBar)
 				DrawMenuBarBackground(g, rect);
 			else if (e.ToolStrip is ToolStripDropDown)
 				DrawDropDownBackground(g, rect);
