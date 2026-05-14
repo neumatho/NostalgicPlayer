@@ -32,9 +32,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowForm));
-			menuStrip = new System.Windows.Forms.MenuStrip();
-			infoLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			menuStrip = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicMenuStrip();
 			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
+			infoLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
 			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			infoBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			equalizerButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
@@ -85,12 +85,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// menuStrip
 			// 
-			menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F);
 			menuStrip.Location = new System.Drawing.Point(0, 0);
 			menuStrip.Name = "menuStrip";
 			menuStrip.Size = new System.Drawing.Size(416, 24);
 			menuStrip.TabIndex = 0;
 			menuStrip.Text = "menuStrip";
+			// 
+			// bigFontConfiguration
+			// 
+			bigFontConfiguration.FontSize = 1;
 			// 
 			// infoLabel
 			// 
@@ -100,10 +103,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			infoLabel.Size = new System.Drawing.Size(374, 16);
 			infoLabel.TabIndex = 0;
 			infoLabel.UseFont = bigFontConfiguration;
-			// 
-			// bigFontConfiguration
-			// 
-			bigFontConfiguration.FontSize = 1;
 			// 
 			// fontPalette
 			// 
@@ -494,7 +493,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		#endregion
 
-		private System.Windows.Forms.MenuStrip menuStrip;
+		private NostalgicPlayer.Controls.Menus.NostalgicMenuStrip menuStrip;
 		private NostalgicPlayer.Controls.Texts.NostalgicLabel infoLabel;
 		private NostalgicPlayer.Controls.Containers.NostalgicBox infoBox;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton equalizerButton;

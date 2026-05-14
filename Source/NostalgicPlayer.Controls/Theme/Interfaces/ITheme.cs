@@ -81,5 +81,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by track bars
 		/// </summary>
 		ITrackBarColors TrackBarColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by menu strips
+		/// </summary>
+		IMenuStripColors MenuStripColors { get; }
 	}
 }
