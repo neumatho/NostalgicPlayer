@@ -15,7 +15,9 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.External.Download;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 {
@@ -243,7 +245,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		private void MusicListItem_PlayTracks(object sender, TrackEventArgs e)
 		{
-			ModuleListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
+			ModuleListListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
 
 			mainWindowApi.AddItemsToModuleList(listItems, true);
 		}
@@ -257,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		private void MusicListItem_AddTracks(object sender, TrackEventArgs e)
 		{
-			ModuleListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
+			ModuleListListItem[] listItems = e.Items.Select(CreateModuleListItem).ToArray();
 
 			mainWindowApi.AddItemsToModuleList(listItems, false);
 		}
@@ -375,9 +377,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// Will create a module item from the given Audius item
 		/// </summary>
 		/********************************************************************/
-		private ModuleListItem CreateModuleListItem(AudiusMusicListItem item)
+		private ModuleListListItem CreateModuleListItem(AudiusMusicListItem item)
 		{
-			return new ModuleListItem(new AudiusModuleListItem(item.Title, item.ItemId, audiusLoaderFactory))
+			return new ModuleListListItem(new AudiusModuleListItem(item.Title, item.ItemId, audiusLoaderFactory))
 			{
 				Duration = item.Duration
 			};
