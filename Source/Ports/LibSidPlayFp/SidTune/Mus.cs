@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.Utility.Extensions;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Exceptions;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
@@ -501,7 +501,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			if (wdsBuf.IsNotNull)
 			{
 				info.lyricsString.AddRange(GetPetsciiStrings(wdsBuf, true));
-				RemoveTrailingEmptyLines(info.lyricsString);
+				info.lyricsString.RemoveTrailingEmptyLines();
 			}
 		}
 
@@ -737,28 +737,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 
 			SetPlayerAddress();
 
-			RemoveTrailingEmptyLines(info.commentString);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Remove trailing empty lines
-		/// </summary>
-		/********************************************************************/
-		private void RemoveTrailingEmptyLines(List<string> lines)
-		{
-			if (lines.Count > 0)
-			{
-				for (int line = lines.Count - 1; line >= 0; line--)
-				{
-					if (string.IsNullOrEmpty(lines[line]))
-						lines.RemoveAt(line);
-					else
-						break;
-				}
-			}
+			info.commentString.RemoveTrailingEmptyLines();
 		}
 		#endregion
 	}
