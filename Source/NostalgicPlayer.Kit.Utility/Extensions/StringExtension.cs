@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Text;
 
-namespace Polycode.NostalgicPlayer.Kit.Extensions
+namespace Polycode.NostalgicPlayer.Kit.Utility.Extensions
 {
 	/// <summary>
 	/// Extension methods to the string class
