@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank.Containers;
 using Polycode.NostalgicPlayer.Kit;
@@ -28,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		private ushort tempoBase;	// 100 = PAL, 120 = NTSC
 
 		private GlobalPlayingInfo playingInfo;
+		private SubSongInfo subSongs;
 
 		private const int InfoPositionLine = 3;
 		private const int InfoTrackLine = 4;
@@ -143,6 +145,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 
 			tempoBase = 100;
 
+			subSongs = new SubSongInfo(songInfo.Length, 0, songInfo.Select(x => x.Name));
+
 			return true;
 		}
 
@@ -216,19 +220,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the title
-		/// </summary>
-		/********************************************************************/
-		public override string Title => songInfo[0].Name;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(songInfo.Length, 0);
+		public override SubSongInfo SubSongs => subSongs;
 
 
 
@@ -677,6 +672,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		private void Cleanup()
 		{
 			playingInfo = null;
+			subSongs = null;
 
 			samples = null;
 			tracks = null;

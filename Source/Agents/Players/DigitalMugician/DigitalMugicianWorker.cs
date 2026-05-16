@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers;
 using Polycode.NostalgicPlayer.Kit;
@@ -62,6 +63,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		private short[] instrumentToSampleInfoMapping;
 
 		private bool endReached;
+
+		private SubSongInfo subSongInfo;
 
 		private const int InfoPositionLine = 4;
 		private const int InfoTrackLine = 5;
@@ -427,6 +430,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 				}
 			}
 
+			subSongInfo = new SubSongInfo(subSongMapping.Count, 0, subSongMapping.Select(x => subSongs[x].Name));
+
 			return true;
 		}
 
@@ -500,19 +505,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the title
-		/// </summary>
-		/********************************************************************/
-		public override string Title => subSongs[subSongMapping[0]].Name;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(subSongMapping.Count, 0);
+		public override SubSongInfo SubSongs => subSongInfo;
 
 
 
@@ -803,6 +799,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 			subSongs = null;
 
 			subSongMapping = null;
+			subSongs = null;
 
 			instrumentToSampleInfoMapping = null;
 		}

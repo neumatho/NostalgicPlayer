@@ -449,7 +449,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 							}
 
 							// Initialize the module information
-							PlayingModuleInformation = new ModuleInfoFloating(songNum, allSongsInfo?[songNum], PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+							PlayingModuleInformation = new ModuleInfoFloating(songNum, currentPlayer.SubSongs.GetSongTitle(songNum), allSongsInfo?[songNum], PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 						}
 						catch (Exception ex)
 						{
@@ -535,7 +535,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 			if (currentPlayer != null)
 			{
 				// Update the sub-song
-				PlayingModuleInformation.SetCurrentSong(e.SubSong, e.DurationInfo);
+				PlayingModuleInformation.SetCurrentSong(e.SubSong, currentPlayer.SubSongs.GetSongTitle(e.SubSong), e.DurationInfo);
 
 				// Just call the next event handler
 				if (SubSongChanged != null)

@@ -1790,4 +1790,7 @@ This will delete the local database file and clear all data from memory.</value>
   <data name="IDS_SMTC_SONG_FORMAT" xml:space="preserve">
     <value>{0} ({1}/{2})</value>
   </data>
+  <data name="IDS_MODULE_INFO_ITEM_SONGTITLE" xml:space="preserve">
+    <value>Song name:</value>
+  </data>
 </root>

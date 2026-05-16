@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		/********************************************************************/
 		private ModuleInfoStatic(LoaderInfoBase loaderInfo, IModuleInformation playerAgent) : this(loaderInfo)
 		{
-			Title = playerAgent.Title?.Trim();
+			Title = playerAgent.Title?.Trim() ?? string.Empty;
 			Author = string.Empty;
 			Comment = playerAgent.Comment;
 			CommentFont = playerAgent.CommentFont;
@@ -459,7 +459,7 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 			}
 
 			// Trim and return the name
-			return name?.Trim();
+			return name?.Trim() ?? string.Empty;
 		}
 
 

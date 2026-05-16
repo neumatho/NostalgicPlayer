@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
@@ -10,6 +13,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 	/// </summary>
 	public class SubSongInfo
 	{
+		private readonly string[] titles;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -19,6 +24,21 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		{
 			Number = number;
 			DefaultStartSong = defaultStartSong;
+			titles = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public SubSongInfo(int number, int defaultStartSong, IEnumerable<string> songTitles)
+		{
+			Number = number;
+			DefaultStartSong = defaultStartSong;
+			titles = songTitles.ToArray();
 		}
 
 
@@ -44,6 +64,21 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		public int DefaultStartSong
 		{
 			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the song title for the given song if any
+		/// </summary>
+		/********************************************************************/
+		public string GetSongTitle(int songNumber)
+		{
+			if ((titles == null) || (songNumber >= titles.Length))
+				return string.Empty;
+
+			return titles[songNumber] ?? string.Empty;
 		}
 	}
 }

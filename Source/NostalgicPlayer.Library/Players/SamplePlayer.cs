@@ -193,7 +193,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 						return false;
 
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(0, null, durationInfo, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 
 				soundStream.Start();
@@ -486,7 +486,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 					durationInfo = allSongsInfo[0];
 
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, null);
+					PlayingModuleInformation = new ModuleInfoFloating(0, null, durationInfo, null);
 				}
 			}
 		}

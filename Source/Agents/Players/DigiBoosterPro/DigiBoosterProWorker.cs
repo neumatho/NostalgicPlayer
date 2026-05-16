@@ -31,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		private DB3Module module;
 		private Implementation.Player player;
 
+		private SubSongInfo subSongs;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -110,6 +112,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 			player = Implementation.Player.NewEngine(module, this);
 
+			List<string> songTitles = new List<string>();
+
+			for (int i = 0; i < module.NumberOfSongs; i++)
+				songTitles.Add(module.Songs[i].Name);
+
+			subSongs = new SubSongInfo(module.NumberOfSongs, 0, songTitles);
+
 			return true;
 		}
 
@@ -172,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(module.NumberOfSongs, 0);
+		public override SubSongInfo SubSongs => subSongs;
 
 
 
@@ -553,6 +562,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 				Loader.Unload(module);
 				module = null;
 			}
+
+			subSongs = null;
 		}
 		#endregion
 	}

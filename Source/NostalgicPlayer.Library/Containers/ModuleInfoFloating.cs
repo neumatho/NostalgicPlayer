@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		public ModuleInfoFloating()
 		{
 			currentSong = 0;
+			SongTitle = string.Empty;
 			DurationInfo = null;
 			songPosition = 0;
 			SongLength = 0;
@@ -37,9 +38,10 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoFloating(int songNumber, DurationInfo durationInfo, string[] moduleInfo)
+		internal ModuleInfoFloating(int songNumber, string songTitle, DurationInfo durationInfo, string[] moduleInfo)
 		{
 			currentSong = songNumber;
+			SongTitle = songTitle ?? string.Empty;
 			DurationInfo = durationInfo;
 			songPosition = 0;
 			SongLength = durationInfo != null ? durationInfo.PositionInfo.Length : 0;
@@ -71,14 +73,27 @@ namespace Polycode.NostalgicPlayer.Library.Containers
 		/// Change the current song
 		/// </summary>
 		/********************************************************************/
-		public void SetCurrentSong(int newSubSong, DurationInfo newDurationInfo)
+		public void SetCurrentSong(int newSubSong, string newSongTitle, DurationInfo newDurationInfo)
 		{
 			lock (this)
 			{
 				currentSong = newSubSong;
+				SongTitle = newSongTitle;
 				DurationInfo = newDurationInfo;
 				SongLength = newDurationInfo.PositionInfo.Length;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Hold the title of the current song
+		/// </summary>
+		/********************************************************************/
+		public string SongTitle
+		{
+			get; private set;
 		}
 
 

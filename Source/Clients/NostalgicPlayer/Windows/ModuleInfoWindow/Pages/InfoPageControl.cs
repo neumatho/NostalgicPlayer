@@ -104,6 +104,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TITLE, val);
 
+				val = floatingInfo.SongTitle;
+				if (!string.IsNullOrEmpty(val))
+				{
+					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_SONGTITLE, val);
+					firstCustomLine++;
+				}
+
 				val = staticInfo.Author;
 				if (string.IsNullOrEmpty(val))
 					val = Resources.IDS_MODULE_INFO_UNKNOWN;

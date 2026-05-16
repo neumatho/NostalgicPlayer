@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -3057,6 +3057,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Song name:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_SONGTITLE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_SONGTITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Total time:.
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_TIME {
@@ -4348,6 +4357,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to NostalgicPlayer.
+        /// </summary>
+        internal static string IDS_SMTC_APP_MEDIA_ID {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_APP_MEDIA_ID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} ({1}/{2}).
+        /// </summary>
+        internal static string IDS_SMTC_SONG_FORMAT {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_SONG_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string IDS_SMTC_UNKNOWN_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_SMTC_UNKNOWN_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Subsongs: {0}/{1}.
         /// </summary>
         internal static string IDS_SUBSONGS {
@@ -4669,33 +4705,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_TIP_MAIN_VOLUME {
             get {
                 return ResourceManager.GetString("IDS_TIP_MAIN_VOLUME", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to NostalgicPlayer.
-        /// </summary>
-        internal static string IDS_SMTC_APP_MEDIA_ID {
-            get {
-                return ResourceManager.GetString("IDS_SMTC_APP_MEDIA_ID", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown.
-        /// </summary>
-        internal static string IDS_SMTC_UNKNOWN_TITLE {
-            get {
-                return ResourceManager.GetString("IDS_SMTC_UNKNOWN_TITLE", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to {0} ({1}/{2}).
-        /// </summary>
-        internal static string IDS_SMTC_SONG_FORMAT {
-            get {
-                return ResourceManager.GetString("IDS_SMTC_SONG_FORMAT", resourceCulture);
             }
         }
     }

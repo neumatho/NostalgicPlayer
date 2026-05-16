@@ -30,6 +30,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		public Song sg;
 		public Implementation.Player plr;
 
+		public SubSongInfo subSongs;
+
 		private const int InfoPositionLine = 3;
 		private const int InfoPatternLine = 4;
 		private const int InfoSpeedLine = 5;
@@ -1133,6 +1135,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 			// Get the number of sub-songs
 			uint numSongs = sg.NumSubSongs();
+			string[] titles = new string[numSongs];
 
 			// Now loop all the songs
 			for (uint i = 0; i < numSongs; i++)
@@ -1143,7 +1146,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 				// Initialize the start tempo
 				Tempo tempo = ss.GetTempo();
 				ss.SetStartTempo(tempo);
+
+				titles[i] = ss.GetSongName();
 			}
+
+			subSongs = new SubSongInfo((int)sg.NumSubSongs(), 0, titles);
 
 			return true;
 		}
@@ -1195,15 +1202,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		#region Information
 		/********************************************************************/
 		/// <summary>
-		/// Return the title
-		/// </summary>
-		/********************************************************************/
-		public override string Title => sg.CurrSS().GetSongName();
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return the comment separated in lines
 		/// </summary>
 		/********************************************************************/
@@ -1216,7 +1214,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo((int)sg.NumSubSongs(), 0);
+		public override SubSongInfo SubSongs => subSongs;
 
 
 
@@ -1592,6 +1590,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 			plr = null;
 			sg = null;
+
+			subSongs = null;
 		}
 
 
