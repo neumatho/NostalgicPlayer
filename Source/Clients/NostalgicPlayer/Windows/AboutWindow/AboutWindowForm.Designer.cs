@@ -33,18 +33,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutWindowForm));
 			pictureBox = new System.Windows.Forms.PictureBox();
 			pulseTimer = new System.Windows.Forms.Timer(components);
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			nostalgicBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
+			nostalgicBox.SuspendLayout();
 			SuspendLayout();
 			// 
 			// pictureBox
 			// 
-			pictureBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			pictureBox.Location = new System.Drawing.Point(8, 8);
+			pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			pictureBox.Location = new System.Drawing.Point(0, 0);
 			pictureBox.Margin = new System.Windows.Forms.Padding(0);
 			pictureBox.Name = "pictureBox";
-			pictureBox.Size = new System.Drawing.Size(342, 172);
+			pictureBox.Size = new System.Drawing.Size(340, 170);
 			pictureBox.TabIndex = 0;
 			pictureBox.TabStop = false;
 			// 
@@ -53,26 +53,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			pulseTimer.Interval = 50;
 			pulseTimer.Tick += Pulse_Tick;
 			// 
-			// fontPalette
+			// nostalgicBox
 			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
+			nostalgicBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			nostalgicBox.Controls.Add(pictureBox);
+			nostalgicBox.Location = new System.Drawing.Point(8, 8);
+			nostalgicBox.Name = "nostalgicBox";
+			nostalgicBox.Size = new System.Drawing.Size(342, 172);
+			nostalgicBox.TabIndex = 0;
 			// 
 			// AboutWindowForm
 			// 
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			ClientSize = new System.Drawing.Size(358, 188);
-			Controls.Add(pictureBox);
+			Controls.Add(nostalgicBox);
 			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "AboutWindowForm";
-			Palette = fontPalette;
-			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
+			nostalgicBox.ResumeLayout(false);
 			ResumeLayout(false);
 
 		}
@@ -80,6 +80,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 		#endregion
 		private System.Windows.Forms.PictureBox pictureBox;
 		private System.Windows.Forms.Timer pulseTimer;
-		private Kit.Gui.Components.FontPalette fontPalette;
+		private NostalgicPlayer.Controls.Containers.NostalgicBox nostalgicBox;
 	}
 }
