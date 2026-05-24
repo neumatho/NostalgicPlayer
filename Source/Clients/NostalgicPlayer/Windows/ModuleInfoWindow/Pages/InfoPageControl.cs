@@ -112,11 +112,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 				if (string.IsNullOrEmpty(moduleTitle))
 					moduleTitle = fileInfo.DisplayName;
 
-				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TITLE, moduleTitle);
+				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TITLE, moduleTitle);
 
 				if (!string.IsNullOrEmpty(songTitle))
 				{
-					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_SONGTITLE, songTitle);
+					moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_SONGTITLE, songTitle);
 					firstCustomLine++;
 				}
 
