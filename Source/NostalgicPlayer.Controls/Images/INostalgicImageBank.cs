@@ -11,6 +11,11 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	public interface INostalgicImageBank
 	{
 		/// <summary>
+		/// Holds all the general usable images
+		/// </summary>
+		IGeneralImages General { get; }
+
+		/// <summary>
 		/// Holds all the images needed by the form
 		/// </summary>
 		internal IFormImages Form { get; }
