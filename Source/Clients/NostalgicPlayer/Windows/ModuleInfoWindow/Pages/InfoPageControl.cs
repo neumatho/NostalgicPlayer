@@ -98,20 +98,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 				firstCustomLine = 7;
 
 				// Module in memory, add items
-				string val = staticInfo.Title;
-				if (string.IsNullOrEmpty(val))
-					val = fileInfo.DisplayName;
+				string moduleTitle = staticInfo.Title;
+				string songTitle = floatingInfo.SongTitle;
 
-				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TITLE, val);
-
-				val = floatingInfo.SongTitle;
-				if (!string.IsNullOrEmpty(val))
+				if (staticInfo.MaxSongNumber == 1)
 				{
-					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_SONGTITLE, val);
+					if (string.IsNullOrEmpty(moduleTitle))
+					{
+						moduleTitle = songTitle;
+						songTitle = null;
+					}
+				}
+
+				if (string.IsNullOrEmpty(moduleTitle))
+					moduleTitle = fileInfo.DisplayName;
+
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TITLE, moduleTitle);
+
+				if (!string.IsNullOrEmpty(songTitle))
+				{
+					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_SONGTITLE, songTitle);
 					firstCustomLine++;
 				}
 
-				val = staticInfo.Author;
+				string val = staticInfo.Author;
 				if (string.IsNullOrEmpty(val))
 					val = Resources.IDS_MODULE_INFO_UNKNOWN;
 
