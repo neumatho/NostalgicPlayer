@@ -11,17 +11,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers
 	public enum SamplingMethod
 	{
 		/// <summary>
-		/// Linear interpolation
+		/// Linear interpolation (fast but low quality)
 		/// </summary>
 		DECIMATE,
 
 		/// <summary>
-		/// Sinc resampling
+		/// Sinc resampling (high quality but CPU intensive)
 		/// </summary>
 		RESAMPLE,
 
 		/// <summary>
-		/// No resampling
+		/// No resampling (raw 1 MHz output)
 		/// </summary>
 		NONE
 	}
