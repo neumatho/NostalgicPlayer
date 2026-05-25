@@ -27,15 +27,6 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 	/// </summary>
 	internal partial class NostalgicModuleListInternal : UserControl, IThemeControl, IDependencyInjectionControl
 	{
-		private readonly Color textColor = Color.FromArgb(30, 57, 91);
-		private readonly Color defaultSubSongColor = Color.FromArgb(159, 81, 255);
-
-		private readonly Color selectedBackgroundColor1 = Color.FromArgb(255, 225, 112);
-		private readonly Color selectedBackgroundColor2 = Color.FromArgb(255, 216, 108);
-		private readonly Color selectedBackgroundColor3 = Color.FromArgb(255, 237, 123);
-
-		private readonly Color dragDropLineColor = Color.CornflowerBlue;
-
 		private struct ItemStateColors
 		{
 			public Color BackgroundStartColor { get; init; }
@@ -1247,28 +1238,6 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			{
 				g.FillRectangle(brush, rect);
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return brush to use when drawing selected item background
-		/// </summary>
-		/********************************************************************/
-		private Brush GetSelectedItemBackgroundBrush()
-		{
-			LinearGradientBrush selectedItemBackgroundBrush = new LinearGradientBrush(new Point(0, 0), new Point(0, ItemHeight), selectedBackgroundColor1, selectedBackgroundColor3);
-
-			ColorBlend blend = new ColorBlend
-			{
-				Colors = [ selectedBackgroundColor1, selectedBackgroundColor2, selectedBackgroundColor2, selectedBackgroundColor3 ],
-				Positions = [ 0.0f, 0.1f, 0.7f, 1.0f ]
-			};
-
-			selectedItemBackgroundBrush.InterpolationColors = blend;
-
-			return selectedItemBackgroundBrush;
 		}
 
 
