@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Types;
 
 namespace Polycode.NostalgicPlayer.Controls.Menus
 {
