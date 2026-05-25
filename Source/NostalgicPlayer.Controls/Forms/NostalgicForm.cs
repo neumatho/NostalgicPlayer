@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 	{
 		private const int FrameCornerRadius = 8;
 		private const int FrameBorderThickness = 8;
+		private const int ThinBorderThickness = 1;
 		private const int TitleBarPadding = 10;
 		private const int CaptionButtonWidth = 24;
 		private const int IconPosition = FrameBorderThickness + 3;
@@ -64,6 +65,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		private int titleBarFontSize;
 		private int titleBarHeight;
 
+		private Types.BorderStyle borderStyle = Types.BorderStyle.Normal;
+
 		private Icon smallIcon;
 		private bool isActive;
 
@@ -74,6 +77,42 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		private INostalgicImageBank imageBank;
 
 		private readonly List<IThemeControl> registeredThemedComponents = new List<IThemeControl>();
+
+		#region Designer properties
+		/********************************************************************/
+		/// <summary>
+		/// Select the visual style of the border drawn around the form
+		/// </summary>
+		/********************************************************************/
+		[Category("Appearance")]
+		[Description("Selects the visual style of the border drawn around the form.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(Types.BorderStyle.Normal)]
+		public Types.BorderStyle BorderStyle
+		{
+			get => borderStyle;
+
+			set
+			{
+				if (borderStyle == value)
+					return;
+
+				borderStyle = value;
+
+				if (IsHandleCreated)
+				{
+					CalculateTitleHeight();
+					ApplyWindowRegion();
+
+					// Force a WM_NCCALCSIZE so the client area is recalculated
+					User32.SetWindowPos(Handle, IntPtr.Zero, 0, 0, 0, 0, (uint)(SWP.NOMOVE | SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE | SWP.FRAMECHANGED));
+
+					RefreshNonClientArea();
+					Invalidate();
+				}
+			}
+		}
+		#endregion
 
 		#region Initialize
 		/********************************************************************/
@@ -276,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			{
 				case WM.NCCALCSIZE:
 				{
-					if (titleBarHeight > 0)
+					if (IsCustomNonClientReady)
 					{
 						RecalculateClientArea(m);
 
@@ -434,6 +473,26 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 		/********************************************************************/
 		/// <summary>
+		/// Tells whether the custom non-client handling is ready to take
+		/// over. Until the form has picked up its theme, we let Windows
+		/// handle the non-client area
+		/// </summary>
+		/********************************************************************/
+		private bool IsCustomNonClientReady => colors != null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the border thickness for the current border style
+		/// </summary>
+		/********************************************************************/
+		private int CurrentBorderThickness => borderStyle == Types.BorderStyle.Thin ? ThinBorderThickness : FrameBorderThickness;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Calculate the height of the title bar
 		/// </summary>
 		/********************************************************************/
@@ -441,6 +500,13 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			if (!IsHandleCreated)
 				return;
+
+			if (borderStyle == Types.BorderStyle.Thin)
+			{
+				titleBarFontSize = 0;
+				titleBarHeight = 0;
+				return;
+			}
 
 			using (Graphics g = CreateGraphics())
 			{
@@ -469,7 +535,9 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			if ((width <= 0) || (height <= 0))
 				return;
 
-			IntPtr hRgn = Gdi32.CreateRoundRectRgn(0, 0, width + 1, height + 1, FrameCornerRadius * 2, FrameCornerRadius * 2);
+			int radius = borderStyle == Types.BorderStyle.Thin ? 0 : FrameCornerRadius;
+
+			IntPtr hRgn = Gdi32.CreateRoundRectRgn(0, 0, width + 1, height + 1, radius * 2, radius * 2);
 
 			// After SetWindowRgn, system owns hRgn
 			User32.SetWindowRgn(Handle, hRgn, true);
@@ -515,15 +583,18 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		private void RecalculateClientArea(Message m)
 		{
+			int borderThickness = CurrentBorderThickness;
+			int topInset = borderThickness + titleBarHeight;
+
 			// See https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-nccalcsize for more information
 			if (m.WParam != IntPtr.Zero)
 			{
 				NCCALCSIZE_PARAMS nccsp = Marshal.PtrToStructure<NCCALCSIZE_PARAMS>(m.LParam);
 
-				nccsp.rgrc0.Left += FrameBorderThickness;
-				nccsp.rgrc0.Top += FrameBorderThickness + titleBarHeight;
-				nccsp.rgrc0.Right -= FrameBorderThickness;
-				nccsp.rgrc0.Bottom -= FrameBorderThickness;
+				nccsp.rgrc0.Left += borderThickness;
+				nccsp.rgrc0.Top += topInset;
+				nccsp.rgrc0.Right -= borderThickness;
+				nccsp.rgrc0.Bottom -= borderThickness;
 
 				Marshal.StructureToPtr(nccsp, m.LParam, false);
 			}
@@ -531,10 +602,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			{
 				RECT rect = Marshal.PtrToStructure<RECT>(m.LParam);
 
-				rect.Left += FrameBorderThickness;
-				rect.Top += FrameBorderThickness + titleBarHeight;
-				rect.Right -= FrameBorderThickness;
-				rect.Bottom -= FrameBorderThickness;
+				rect.Left += borderThickness;
+				rect.Top += topInset;
+				rect.Right -= borderThickness;
+				rect.Bottom -= borderThickness;
 
 				Marshal.StructureToPtr(rect, m.LParam, false);
 			}
@@ -555,6 +626,17 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			int y = screen.Y - windowRect.Top;
 			int width = Math.Max(0, windowRect.Right - windowRect.Left);
 			int height = Math.Max(0, windowRect.Bottom - windowRect.Top);
+
+			if (borderStyle == Types.BorderStyle.Thin)
+			{
+				if ((x < 0) || (x >= width) || (y < 0) || (y >= height))
+					return HT.NOWHERE;
+
+				if ((x < ThinBorderThickness) || (x >= (width - ThinBorderThickness)) || (y < ThinBorderThickness) || (y >= (height - ThinBorderThickness)))
+					return HT.BORDER;
+
+				return HT.CLIENT;
+			}
 
 			// Test for resize positions
 			bool atTopBorder = y < FrameBorderThickness;
@@ -766,6 +848,34 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			if (!IsHandleCreated)
 				return;
 
+			switch (borderStyle)
+			{
+				case Types.BorderStyle.Normal:
+				{
+					DrawNormalBorder();
+					break;
+				}
+
+				case Types.BorderStyle.Thin:
+				{
+					DrawThinBorder();
+					break;
+				}
+
+				default:
+					throw new NotImplementedException($"Missing implementation of {borderStyle} border rendering");
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw the normal border around the form
+		/// </summary>
+		/********************************************************************/
+		private void DrawNormalBorder()
+		{
 			IntPtr hdc = IntPtr.Zero;
 
 			try
@@ -818,6 +928,56 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 						// And finally, render it to the window
 						buffer.Render(gWin);
+					}
+				}
+			}
+			catch
+			{
+				// Ignore any exceptions
+			}
+			finally
+			{
+				if (hdc != IntPtr.Zero)
+					User32.ReleaseDC(Handle, hdc);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw a single thin border around the form
+		/// </summary>
+		/********************************************************************/
+		private void DrawThinBorder()
+		{
+			if (colors == null)
+				return;
+
+			IntPtr hdc = IntPtr.Zero;
+
+			try
+			{
+				hdc = User32.GetWindowDC(Handle);
+				if (hdc == IntPtr.Zero)
+					return;
+
+				User32.GetClientRect(Handle, out RECT clientRect);
+				User32.MapWindowPoints(Handle, IntPtr.Zero, ref clientRect, 2);
+
+				int clientRight = clientRect.Right - clientRect.Left;
+				int clientBottom = clientRect.Bottom - clientRect.Top;
+
+				int windowWidth = clientRight + ThinBorderThickness * 2 - 1;
+				int windowHeight = clientBottom + ThinBorderThickness * 2 - 1;
+
+				Color borderColor = isActive ? colors.ActivatedFormOuterColor : colors.DeactivatedFormOuterColor;
+
+				using (Graphics g = Graphics.FromHdc(hdc))
+				{
+					using (Pen pen = new Pen(borderColor, 1))
+					{
+						g.DrawRectangle(pen, 0, 0, windowWidth, windowHeight);
 					}
 				}
 			}
@@ -1299,7 +1459,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				nameof(AutoScaleMode),
 				nameof(BackColor),
 				nameof(Font),
-				nameof(ForeColor)
+				nameof(ForeColor),
+				nameof(FormBorderStyle)
 			];
 
 			/********************************************************************/
