@@ -66,7 +66,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			// 
 			ClientSize = new System.Drawing.Size(358, 188);
 			Controls.Add(nostalgicBox);
-			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			MaximizeBox = false;
 			MinimizeBox = false;
