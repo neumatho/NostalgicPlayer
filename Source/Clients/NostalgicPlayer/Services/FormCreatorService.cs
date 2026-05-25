@@ -3,12 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
-using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
@@ -46,6 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 
 			controlInitializerService.InitializeControls(form);
 
+			CallInitializeMethod(form, "InitializeNostalgicForm");
 			CallInitializeMethod(form, "InitializeBaseForm");
 			CallInitializeMethod(form, "InitializeForm", extraArguments);
 

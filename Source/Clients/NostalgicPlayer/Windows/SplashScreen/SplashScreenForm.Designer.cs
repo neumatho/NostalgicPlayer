@@ -29,13 +29,12 @@
 		private void InitializeComponent()
 		{
 			logoPictureBox = new System.Windows.Forms.PictureBox();
-			progressBar = new Krypton.Toolkit.KryptonProgressBar();
+			progressBar = new Polycode.NostalgicPlayer.Controls.Progress.NostalgicProgressBar();
 			((System.ComponentModel.ISupportInitialize)logoPictureBox).BeginInit();
 			SuspendLayout();
 			// 
 			// logoPictureBox
 			// 
-			logoPictureBox.Image = Resources.IDB_ABOUT_LOGO;
 			logoPictureBox.Location = new System.Drawing.Point(0, 0);
 			logoPictureBox.Name = "logoPictureBox";
 			logoPictureBox.Size = new System.Drawing.Size(340, 130);
@@ -47,20 +46,15 @@
 			progressBar.Location = new System.Drawing.Point(8, 138);
 			progressBar.Name = "progressBar";
 			progressBar.Size = new System.Drawing.Size(324, 26);
-			progressBar.StateCommon.Back.Color1 = System.Drawing.Color.Green;
-			progressBar.StateDisabled.Back.ColorStyle = Krypton.Toolkit.PaletteColorStyle.OneNote;
-			progressBar.StateNormal.Back.ColorStyle = Krypton.Toolkit.PaletteColorStyle.OneNote;
 			progressBar.TabIndex = 1;
-			progressBar.Values.Text = "";
 			// 
 			// SplashScreenForm
 			// 
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			ClientSize = new System.Drawing.Size(340, 172);
+			BorderStyle = NostalgicPlayer.Controls.Types.BorderStyle.Thin;
+			ClientSize = new System.Drawing.Size(338, 170);
 			ControlBox = false;
 			Controls.Add(progressBar);
 			Controls.Add(logoPictureBox);
-			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "SplashScreenForm";
@@ -73,6 +67,6 @@
 		#endregion
 
 		private System.Windows.Forms.PictureBox logoPictureBox;
-		private Krypton.Toolkit.KryptonProgressBar progressBar;
+		private NostalgicPlayer.Controls.Progress.NostalgicProgressBar progressBar;
 	}
 }
