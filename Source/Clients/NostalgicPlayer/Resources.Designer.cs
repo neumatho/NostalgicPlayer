@@ -63,16 +63,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_ABOUT_LOGO {
-            get {
-                object obj = ResourceManager.GetObject("IDB_ABOUT_LOGO", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_ADD {
             get {
                 object obj = ResourceManager.GetObject("IDB_ADD", resourceCulture);
