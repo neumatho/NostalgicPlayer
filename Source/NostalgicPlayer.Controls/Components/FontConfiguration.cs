@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Types;
 
 namespace Polycode.NostalgicPlayer.Controls.Components
 {

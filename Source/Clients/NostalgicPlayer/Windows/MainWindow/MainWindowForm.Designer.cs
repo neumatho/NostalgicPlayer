@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// equalizerButton
 			// 
-			equalizerButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			equalizerButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			equalizerButton.ImageName = "Equalizer";
 			equalizerButton.Location = new System.Drawing.Point(60, 4);
 			equalizerButton.Name = "equalizerButton";
@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// moduleInfoButton
 			// 
 			moduleInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-			moduleInfoButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			moduleInfoButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			moduleInfoButton.ImageName = "Information";
 			moduleInfoButton.Location = new System.Drawing.Point(388, 28);
 			moduleInfoButton.Name = "moduleInfoButton";
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// diskButton
 			// 
-			diskButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			diskButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			diskButton.ImageName = "Disk";
 			diskButton.Location = new System.Drawing.Point(200, 4);
 			diskButton.Name = "diskButton";
@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// listButton
 			// 
-			listButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			listButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			listButton.ImageName = "List";
 			listButton.Location = new System.Drawing.Point(172, 4);
 			listButton.Name = "listButton";
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// moveModulesDownButton
 			// 
-			moveModulesDownButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			moveModulesDownButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			moveModulesDownButton.ImageName = "MoveDown";
 			moveModulesDownButton.Location = new System.Drawing.Point(144, 4);
 			moveModulesDownButton.Name = "moveModulesDownButton";
@@ -187,7 +187,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// moveModulesUpButton
 			// 
-			moveModulesUpButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			moveModulesUpButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			moveModulesUpButton.ImageName = "MoveUp";
 			moveModulesUpButton.Location = new System.Drawing.Point(116, 4);
 			moveModulesUpButton.Name = "moveModulesUpButton";
@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// sortModulesButton
 			// 
-			sortModulesButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			sortModulesButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			sortModulesButton.ImageName = "Sort";
 			sortModulesButton.Location = new System.Drawing.Point(88, 4);
 			sortModulesButton.Name = "sortModulesButton";
@@ -205,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// swapModulesButton
 			// 
-			swapModulesButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			swapModulesButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			swapModulesButton.ImageName = "Swap";
 			swapModulesButton.Location = new System.Drawing.Point(60, 4);
 			swapModulesButton.Name = "swapModulesButton";
@@ -214,7 +214,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// removeModuleButton
 			// 
-			removeModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			removeModuleButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			removeModuleButton.ImageName = "Remove";
 			removeModuleButton.Location = new System.Drawing.Point(32, 4);
 			removeModuleButton.Name = "removeModuleButton";
@@ -223,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// addModuleButton
 			// 
-			addModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			addModuleButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			addModuleButton.ImageName = "Add";
 			addModuleButton.Location = new System.Drawing.Point(4, 4);
 			addModuleButton.Name = "addModuleButton";
@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// pauseCheckButton
 			// 
 			pauseCheckButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
-			pauseCheckButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			pauseCheckButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			pauseCheckButton.ImageName = "Pause";
 			pauseCheckButton.Location = new System.Drawing.Point(228, 4);
 			pauseCheckButton.Name = "pauseCheckButton";
@@ -299,7 +299,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// ejectButton
 			// 
-			ejectButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			ejectButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			ejectButton.ImageName = "Eject";
 			ejectButton.Location = new System.Drawing.Point(200, 4);
 			ejectButton.Name = "ejectButton";
@@ -308,7 +308,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// nextModuleButton
 			// 
-			nextModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			nextModuleButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			nextModuleButton.ImageName = "NextModule";
 			nextModuleButton.Location = new System.Drawing.Point(172, 4);
 			nextModuleButton.Name = "nextModuleButton";
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// nextSongButton
 			// 
-			nextSongButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			nextSongButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			nextSongButton.ImageName = "NextSong";
 			nextSongButton.Location = new System.Drawing.Point(144, 4);
 			nextSongButton.Name = "nextSongButton";
@@ -326,7 +326,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// fastForwardButton
 			// 
-			fastForwardButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			fastForwardButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			fastForwardButton.ImageName = "FastForward";
 			fastForwardButton.Location = new System.Drawing.Point(116, 4);
 			fastForwardButton.Name = "fastForwardButton";
@@ -335,7 +335,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// playButton
 			// 
-			playButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			playButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			playButton.ImageName = "Play";
 			playButton.Location = new System.Drawing.Point(88, 4);
 			playButton.Name = "playButton";
@@ -344,7 +344,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// fastRewindButton
 			// 
-			fastRewindButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			fastRewindButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			fastRewindButton.ImageName = "FastRewind";
 			fastRewindButton.Location = new System.Drawing.Point(60, 4);
 			fastRewindButton.Name = "fastRewindButton";
@@ -353,7 +353,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// previousSongButton
 			// 
-			previousSongButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			previousSongButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			previousSongButton.ImageName = "PreviousSong";
 			previousSongButton.Location = new System.Drawing.Point(32, 4);
 			previousSongButton.Name = "previousSongButton";
@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// previousModuleButton
 			// 
-			previousModuleButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			previousModuleButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			previousModuleButton.ImageName = "PreviousModule";
 			previousModuleButton.Location = new System.Drawing.Point(4, 4);
 			previousModuleButton.Name = "previousModuleButton";
@@ -384,7 +384,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// loopCheckButton
 			// 
 			loopCheckButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
-			loopCheckButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			loopCheckButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			loopCheckButton.ImageName = "Loop";
 			loopCheckButton.Location = new System.Drawing.Point(4, 4);
 			loopCheckButton.Name = "loopCheckButton";
@@ -393,7 +393,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// favoritesButton
 			// 
-			favoritesButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			favoritesButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			favoritesButton.ImageName = "Favorites";
 			favoritesButton.Location = new System.Drawing.Point(32, 4);
 			favoritesButton.Name = "favoritesButton";
@@ -402,7 +402,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// sampleInfoButton
 			// 
-			sampleInfoButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			sampleInfoButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			sampleInfoButton.ImageName = "Samples";
 			sampleInfoButton.Location = new System.Drawing.Point(88, 4);
 			sampleInfoButton.Name = "sampleInfoButton";
@@ -412,7 +412,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// muteCheckButton
 			// 
 			muteCheckButton.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
-			muteCheckButton.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			muteCheckButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			muteCheckButton.ImageName = "Mute";
 			muteCheckButton.Location = new System.Drawing.Point(4, 56);
 			muteCheckButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -422,23 +422,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			// sortContextMenu
 			// 
-			sortContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			sortContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			sortContextMenu.Name = "sortContextMenu";
 			// 
 			// listContextMenu
 			// 
-			listContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			listContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			listContextMenu.Name = "listContextMenu";
 			listContextMenu.Opening += ListContextMenu_Opening;
 			// 
 			// diskContextMenu
 			// 
-			diskContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			diskContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			diskContextMenu.Name = "diskContextMenu";
 			// 
 			// addContextMenu
 			// 
-			addContextMenu.ImageArea = NostalgicPlayer.Controls.ImageBankArea.Main;
+			addContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			addContextMenu.Name = "addContextMenu";
 			// 
 			// moduleList

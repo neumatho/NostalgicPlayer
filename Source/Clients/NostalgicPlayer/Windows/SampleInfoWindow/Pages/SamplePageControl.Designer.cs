@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			// 
 			// monoFontConfiguration
 			// 
-			monoFontConfiguration.FontType = NostalgicPlayer.Controls.FontType.Monospace;
+			monoFontConfiguration.FontType = NostalgicPlayer.Controls.Types.FontType.Monospace;
 			// 
 			// octaveLabel
 			// 
