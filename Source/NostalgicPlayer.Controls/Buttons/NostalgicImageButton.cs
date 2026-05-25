@@ -15,6 +15,7 @@ using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
+using Polycode.NostalgicPlayer.Controls.Types;
 
 namespace Polycode.NostalgicPlayer.Controls.Buttons
 {

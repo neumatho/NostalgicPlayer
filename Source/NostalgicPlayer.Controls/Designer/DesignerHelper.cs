@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.Controls
+namespace Polycode.NostalgicPlayer.Controls.Designer
 {
 	/// <summary>
 	/// Helper class with designer methods
