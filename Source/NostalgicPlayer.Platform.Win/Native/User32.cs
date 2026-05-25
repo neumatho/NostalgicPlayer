@@ -47,6 +47,10 @@ namespace Polycode.NostalgicPlayer.Platform.Native
 
 		/// <summary></summary>
 		[DllImport("user32.dll")]
+		public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+		/// <summary></summary>
+		[DllImport("user32.dll")]
 		public static extern int SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool bRedraw);
 
 		/// <summary></summary>

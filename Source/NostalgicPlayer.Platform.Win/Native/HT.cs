@@ -18,6 +18,8 @@ namespace Polycode.NostalgicPlayer.Platform.Native
 		/// <summary></summary>
 		CAPTION = 2,
 		/// <summary></summary>
+		BORDER = 18,
+		/// <summary></summary>
 		SYSMENU = 3,
 		/// <summary></summary>
 		MINBUTTON = 8,
