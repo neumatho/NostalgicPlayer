@@ -172,6 +172,11 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 			CalculateTitleHeight();
 			ApplyWindowRegion();
+
+			// The first WM_NCCALCSIZE fired before our theme was ready, so
+			// force one now so the client area uses our custom non-client metrics
+			User32.SetWindowPos(Handle, IntPtr.Zero, 0, 0, 0, 0, (uint)(SWP.NOMOVE | SWP.NOSIZE | SWP.NOZORDER | SWP.NOACTIVATE | SWP.FRAMECHANGED));
+
 			RefreshNonClientArea();
 
 			base.OnHandleCreated(e);
@@ -288,6 +293,46 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		#endregion
 
 		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// Convert a client size to the corresponding outer window size,
+		/// using our custom non-client metrics instead of the default
+		/// AdjustWindowRectEx based calculation (which assumes a standard
+		/// caption + thick frame and would make the form too large)
+		/// </summary>
+		/********************************************************************/
+		protected override Size SizeFromClientSize(Size clientSize)
+		{
+			return CalculateOuterSize(clientSize);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Translate a client size to an outer window size using our custom
+		/// non-client metrics.
+		///
+		/// Control.SetClientSizeCore internally calls the non-virtual
+		/// SizeFromClientSize(int, int) overload (which uses
+		/// AdjustWindowRectEx based on the form's WindowStyle), so our
+		/// SizeFromClientSize(Size) override is never reached from the
+		/// ClientSize property setter. Override here so the form grows by
+		/// the same amount our WM_NCCALCSIZE handler shrinks the client
+		/// area, regardless of the border style
+		/// </summary>
+		/********************************************************************/
+		protected override void SetClientSizeCore(int x, int y)
+		{
+			Size = CalculateOuterSize(new Size(x, y));
+
+			// _clientWidth / _clientHeight are private to Control, but UpdateBounds
+			// will refresh them from GetClientRect once the handle is created
+			OnClientSizeChanged(EventArgs.Empty);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Make sure the form is rendered when resized
@@ -493,14 +538,37 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculate the height of the title bar
+		/// Compute the outer window size that wraps the given client size,
+		/// using our custom non-client metrics for the current border style
+		/// </summary>
+		/********************************************************************/
+		private Size CalculateOuterSize(Size clientSize)
+		{
+			int border = CurrentBorderThickness;
+			int caption = 0;
+
+			if (borderStyle != Types.BorderStyle.Thin)
+			{
+				if (titleBarHeight == 0)
+					CalculateTitleHeight();
+
+				caption = titleBarHeight;
+			}
+
+			return new Size(clientSize.Width + 2 * border, clientSize.Height + 2 * border + caption);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the height of the title bar. Works both before and
+		/// after the handle has been created so the size of the form can be
+		/// derived from designer generated InitializeComponent code
 		/// </summary>
 		/********************************************************************/
 		private void CalculateTitleHeight()
 		{
-			if (!IsHandleCreated)
-				return;
-
 			if (borderStyle == Types.BorderStyle.Thin)
 			{
 				titleBarFontSize = 0;
@@ -508,9 +576,16 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				return;
 			}
 
-			using (Graphics g = CreateGraphics())
+			// Lazily create a theme manager so we always have a font available,
+			// even before InitializeNostalgicForm or OnHandleCreated has run
+			if (themeManager == null)
+				themeManager = new ThemeManager();
+
+			Font titleFont = (fonts ?? themeManager.CurrentTheme.StandardFonts).FormTitleFont;
+
+			using (Graphics g = IsHandleCreated ? CreateGraphics() : Graphics.FromHwnd(IntPtr.Zero))
 			{
-				Size size = TextRenderer.MeasureText(g, "Ag", fonts.FormTitleFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
+				Size size = TextRenderer.MeasureText(g, "Ag", titleFont, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding);
 
 				titleBarFontSize = size.Height;
 				titleBarHeight = titleBarFontSize + TitleBarPadding;
