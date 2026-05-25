@@ -120,8 +120,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 				}
 			}
 
-			// Remember the logo
-			logoBitmap = imageBank.General.Logo;
+			// Make a copy of the logo
+			logoBitmap = new Bitmap(imageBank.General.Logo);
 
 			// Initialize variables
 			showMode = Mode.Text;
@@ -164,12 +164,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 		{
 			base.OnFormClosed(e);
 
-			if (bitmap != null)
-			{
-				// Do some cleanup
-				bitmap.Dispose();
-				bitmap = null;
-			}
+			// Do some cleanup
+			bitmap?.Dispose();
+			bitmap = null;
+
+			logoBitmap?.Dispose();
+			logoBitmap = null;
 		}
 
 
