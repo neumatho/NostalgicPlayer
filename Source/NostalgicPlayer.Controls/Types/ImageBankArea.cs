@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Controls
+namespace Polycode.NostalgicPlayer.Controls.Types
 {
 	/// <summary>
 	/// Holds the different image bank areas
