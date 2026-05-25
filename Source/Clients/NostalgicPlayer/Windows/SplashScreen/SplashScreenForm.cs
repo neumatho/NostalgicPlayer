@@ -3,8 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Drawing;
 using System.Windows.Forms;
-using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Controls.Forms;
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen
@@ -12,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen
 	/// <summary>
 	/// Show a simple splash screen with a progress bar
 	/// </summary>
-	public partial class SplashScreenForm : KryptonForm, ILoadProgressCallback
+	public partial class SplashScreenForm : NostalgicForm, ILoadProgressCallback
 	{
 		/********************************************************************/
 		/// <summary>
@@ -22,6 +24,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen
 		public SplashScreenForm()
 		{
 			InitializeComponent();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the form
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeForm(INostalgicImageBank imageBank)
+		{
+			logoPictureBox.Image = new Bitmap(imageBank.General.Logo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the form is closed
+		/// </summary>
+		/********************************************************************/
+		protected override void OnFormClosed(FormClosedEventArgs e)
+		{
+			base.OnFormClosed(e);
+
+			logoPictureBox.Image?.Dispose();
+			logoPictureBox.Image = null;
 		}
 
 		#region ILoadProgressCallback implementation

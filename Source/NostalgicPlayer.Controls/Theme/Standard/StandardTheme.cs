@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardLabelColors labelColors = new StandardLabelColors();
 		private static readonly StandardModuleListColors moduleListColors = new StandardModuleListColors();
 		private static readonly StandardTrackBarColors trackBarColors = new StandardTrackBarColors();
+		private static readonly StandardProgressBarColors progressBarColors = new StandardProgressBarColors();
 		private static readonly StandardMenuStripColors menuStripColors = new StandardMenuStripColors();
 
 		/********************************************************************/
@@ -175,6 +176,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public ITrackBarColors TrackBarColors => trackBarColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by progress bars
+		/// </summary>
+		/********************************************************************/
+		public IProgressBarColors ProgressBarColors => progressBarColors;
 
 
 
