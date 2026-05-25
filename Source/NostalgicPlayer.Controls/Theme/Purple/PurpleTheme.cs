@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleLabelColors labelColors = new PurpleLabelColors();
 		private static readonly PurpleModuleListColors moduleListColors = new PurpleModuleListColors();
 		private static readonly PurpleTrackBarColors trackBarColors = new PurpleTrackBarColors();
+		private static readonly PurpleProgressBarColors progressBarColors = new PurpleProgressBarColors();
 		private static readonly PurpleMenuStripColors menuStripColors = new PurpleMenuStripColors();
 
 		/********************************************************************/
@@ -177,6 +178,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public ITrackBarColors TrackBarColors => trackBarColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by progress bars
+		/// </summary>
+		/********************************************************************/
+		public IProgressBarColors ProgressBarColors => progressBarColors;
 
 
 

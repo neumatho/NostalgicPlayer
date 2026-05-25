@@ -83,6 +83,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		ITrackBarColors TrackBarColors { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by progress bars
+		/// </summary>
+		IProgressBarColors ProgressBarColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by menu strips
 		/// </summary>
 		IMenuStripColors MenuStripColors { get; }

@@ -48,10 +48,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings, IThemeManager themeManager, INostalgicImageBank imageBank)
+		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings, IThemeManager themeManager)
 		{
-			InitializeNostalgicForm(themeManager, imageBank);
-
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 			allWindowSettings = settings;
