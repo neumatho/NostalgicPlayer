@@ -112,6 +112,22 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Whether the form can be resized by the user dragging its borders
+		/// </summary>
+		/********************************************************************/
+		[Category("Behavior")]
+		[Description("Whether the form can be resized by the user dragging its borders.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(true)]
+		public bool AllowResizing
+		{
+			get; set;
+		} = true;
 		#endregion
 
 		#region Initialize
@@ -512,6 +528,7 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		private void SetFormProperties()
 		{
 			AutoScaleMode = AutoScaleMode.None;
+			SizeGripStyle = SizeGripStyle.Hide;
 		}
 
 
@@ -719,29 +736,36 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 			bool atRightBorder = x >= (width - FrameBorderThickness);
 			bool atBottomBorder = y >= (height - FrameBorderThickness);
 
-			if (atTopBorder && atLeftBorder)
-				return HT.TOPLEFT;
+			if (AllowResizing)
+			{
+				if (atTopBorder && atLeftBorder)
+					return HT.TOPLEFT;
 
-			if (atTopBorder && atRightBorder)
-				return HT.TOPRIGHT;
+				if (atTopBorder && atRightBorder)
+					return HT.TOPRIGHT;
 
-			if (atBottomBorder && atLeftBorder)
-				return HT.BOTTOMLEFT;
+				if (atBottomBorder && atLeftBorder)
+					return HT.BOTTOMLEFT;
 
-			if (atBottomBorder && atRightBorder)
-				return HT.BOTTOMRIGHT;
+				if (atBottomBorder && atRightBorder)
+					return HT.BOTTOMRIGHT;
 
-			if (atTopBorder)
-				return HT.TOP;
+				if (atTopBorder)
+					return HT.TOP;
 
-			if (atLeftBorder)
-				return HT.LEFT;
+				if (atLeftBorder)
+					return HT.LEFT;
 
-			if (atRightBorder)
-				return HT.RIGHT;
+				if (atRightBorder)
+					return HT.RIGHT;
 
-			if (atBottomBorder)
-				return HT.BOTTOM;
+				if (atBottomBorder)
+					return HT.BOTTOM;
+			}
+			else if (atTopBorder || atLeftBorder || atRightBorder || atBottomBorder)
+			{
+				return HT.BORDER;
+			}
 
 			int titleTop = FrameBorderThickness;
 			int titleBottom = titleTop + titleBarHeight;
@@ -1535,7 +1559,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				nameof(BackColor),
 				nameof(Font),
 				nameof(ForeColor),
-				nameof(FormBorderStyle)
+				nameof(FormBorderStyle),
+				nameof(SizeGripStyle)
 			];
 
 			/********************************************************************/
