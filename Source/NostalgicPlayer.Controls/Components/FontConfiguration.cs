@@ -79,6 +79,30 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 		public Font Font => font;
 		#endregion
 
+		#region Events
+		/********************************************************************/
+		/// <summary>
+		/// Raised whenever the resolved font has been recalculated
+		/// (font type/style/size changed or the theme manager finished
+		/// initializing)
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler FontChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the clock is updated
+		/// </summary>
+		/********************************************************************/
+		protected virtual void OnFontChanged(EventArgs e)
+		{
+			if (FontChanged != null)
+				FontChanged(this, e);
+		}
+		#endregion
+
 		#region Designer properties
 		/********************************************************************/
 		/// <summary>
@@ -190,6 +214,8 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 
 					font = new Font(baseFont.FontFamily, baseFont.Size + FontSize, fontStyle, GraphicsUnit.Point);
 				}
+
+				OnFontChanged(EventArgs.Empty);
 
 				themeManager.RefreshControls();
 			}

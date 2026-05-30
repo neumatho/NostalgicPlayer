@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Platform.Native
 		/// <summary></summary>
 		LBUTTONDOWN = 0x0201,
 		/// <summary></summary>
-		MOUSEWHEEL = 0x020A,
+		LBUTTONDBLCLK = 0x0203,
 		/// <summary></summary>
 		NCMOUSELEAVE = 0x02A2,
 
