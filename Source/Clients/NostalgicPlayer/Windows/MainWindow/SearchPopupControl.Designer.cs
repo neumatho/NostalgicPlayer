@@ -38,7 +38,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			searchTextBox.Dock = System.Windows.Forms.DockStyle.Top;
 			searchTextBox.Location = new System.Drawing.Point(0, 0);
-			searchTextBox.Multiline = false;
 			searchTextBox.Name = "searchTextBox";
 			searchTextBox.Size = new System.Drawing.Size(300, 23);
 			searchTextBox.TabIndex = 0;
