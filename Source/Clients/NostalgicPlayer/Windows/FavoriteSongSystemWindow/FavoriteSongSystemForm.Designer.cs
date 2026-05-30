@@ -116,11 +116,9 @@
 			otherNumberTextBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			otherNumberTextBox.Enabled = false;
 			otherNumberTextBox.Location = new System.Drawing.Point(290, 200);
-			otherNumberTextBox.Multiline = false;
 			otherNumberTextBox.Name = "otherNumberTextBox";
 			otherNumberTextBox.Size = new System.Drawing.Size(30, 21);
 			otherNumberTextBox.TabIndex = 4;
-			otherNumberTextBox.Text = "";
 			otherNumberTextBox.TextChanged += OtherNumberTextBox_TextChanged;
 			// 
 			// FavoriteSongSystemForm
