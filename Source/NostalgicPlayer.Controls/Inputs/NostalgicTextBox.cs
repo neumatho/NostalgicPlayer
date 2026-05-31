@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		{
 			InitializeComponent();
 
-			nostalgicRichTextBox.TextChanged += NostalgicRichTextBox_TextChanged;
+			nostalgicTextBoxInternal.TextChanged += NostalgicRichTextBox_TextChanged;
 		}
 
 		#region Designer properties
@@ -45,15 +45,15 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		[DefaultValue(null)]
 		public FontConfiguration UseFont
 		{
-			get => nostalgicRichTextBox.UseFont;
+			get => nostalgicTextBoxInternal.UseFont;
 
 			set
 			{
-				FontConfiguration previous = nostalgicRichTextBox.UseFont;
+				FontConfiguration previous = nostalgicTextBoxInternal.UseFont;
 				if (previous != null)
 					previous.FontChanged -= FontConfiguration_FontChanged;
 
-				nostalgicRichTextBox.UseFont = value;
+				nostalgicTextBoxInternal.UseFont = value;
 
 				if (value != null)
 					value.FontChanged += FontConfiguration_FontChanged;
@@ -73,9 +73,9 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string SelectedText
 		{
-			get => nostalgicRichTextBox.SelectedText;
+			get => nostalgicTextBoxInternal.SelectedText;
 
-			set => nostalgicRichTextBox.SelectedText = value;
+			set => nostalgicTextBoxInternal.SelectedText = value;
 		}
 
 
@@ -89,9 +89,9 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionLength
 		{
-			get => nostalgicRichTextBox.SelectionLength;
+			get => nostalgicTextBoxInternal.SelectionLength;
 
-			set => nostalgicRichTextBox.SelectionLength = value;
+			set => nostalgicTextBoxInternal.SelectionLength = value;
 		}
 
 
@@ -105,9 +105,9 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart
 		{
-			get => nostalgicRichTextBox.SelectionStart;
+			get => nostalgicTextBoxInternal.SelectionStart;
 
-			set => nostalgicRichTextBox.SelectionStart = value;
+			set => nostalgicTextBoxInternal.SelectionStart = value;
 		}
 		#endregion
 
@@ -148,9 +148,9 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		/********************************************************************/
 		public override string Text
 		{
-			get => nostalgicRichTextBox.Text;
+			get => nostalgicTextBoxInternal.Text;
 
-			set => nostalgicRichTextBox.Text = value;
+			set => nostalgicTextBoxInternal.Text = value;
 		}
 
 
@@ -217,7 +217,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 			if (resolvedFont == null)
 				return;
 
-			nostalgicRichTextBox.Font = resolvedFont;
+			nostalgicTextBoxInternal.Font = resolvedFont;
 
 			// Re-clamp the current height. Growing the font bumps the height
 			// up; shrinking it keeps a larger height (the computed value is
@@ -240,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		/********************************************************************/
 		private Font GetResolvedFont()
 		{
-			return nostalgicRichTextBox.UseFont?.Font ?? fonts?.RegularFont;
+			return nostalgicTextBoxInternal.UseFont?.Font ?? fonts?.RegularFont;
 		}
 
 
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 			if (font == null)
 				return 0;
 
-			return font.Height + ((NostalgicRichTextBox.BorderWidth + NostalgicRichTextBox.VerticalPadding) * 2);
+			return font.Height + ((NostalgicTextBoxInternal.BorderWidth + NostalgicTextBoxInternal.VerticalPadding) * 2);
 		}
 		#endregion
 

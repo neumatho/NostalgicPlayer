@@ -28,26 +28,26 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			nostalgicRichTextBox = new NostalgicRichTextBox();
+			nostalgicTextBoxInternal = new NostalgicTextBoxInternal();
 			SuspendLayout();
 			// 
-			// nostalgicRichTextBox
+			// nostalgicTextBoxInternal
 			// 
-			nostalgicRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			nostalgicRichTextBox.Location = new System.Drawing.Point(0, 0);
-			nostalgicRichTextBox.Name = "nostalgicRichTextBox";
-			nostalgicRichTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-			nostalgicRichTextBox.SingleLine = true;
-			nostalgicRichTextBox.Size = new System.Drawing.Size(150, 20);
-			nostalgicRichTextBox.TabIndex = 0;
-			nostalgicRichTextBox.Text = "";
-			nostalgicRichTextBox.WordWrap = false;
+			nostalgicTextBoxInternal.Dock = System.Windows.Forms.DockStyle.Fill;
+			nostalgicTextBoxInternal.Location = new System.Drawing.Point(0, 0);
+			nostalgicTextBoxInternal.Name = "nostalgicTextBoxInternal";
+			nostalgicTextBoxInternal.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+			nostalgicTextBoxInternal.SingleLine = true;
+			nostalgicTextBoxInternal.Size = new System.Drawing.Size(150, 20);
+			nostalgicTextBoxInternal.TabIndex = 0;
+			nostalgicTextBoxInternal.Text = "";
+			nostalgicTextBoxInternal.WordWrap = false;
 			// 
 			// NostalgicTextBox
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			Controls.Add(nostalgicRichTextBox);
+			Controls.Add(nostalgicTextBoxInternal);
 			Name = "NostalgicTextBox";
 			Size = new System.Drawing.Size(150, 20);
 			ResumeLayout(false);
@@ -55,6 +55,6 @@
 
 		#endregion
 
-		private NostalgicRichTextBox nostalgicRichTextBox;
+		private NostalgicTextBoxInternal nostalgicTextBoxInternal;
 	}
 }
