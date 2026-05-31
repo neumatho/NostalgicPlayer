@@ -19,22 +19,22 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 	/// <summary>
 	/// Themed text box with custom rendering
 	/// </summary>
-	public class NostalgicRichTextBox : RichTextBox, IThemeControl, IFontConfiguration
+	internal class NostalgicTextBoxInternal : RichTextBox, IThemeControl, IFontConfiguration
 	{
 		/// <summary>
 		/// Thickness in pixels of the custom border drawn in the non-client area
 		/// </summary>
-		internal const int BorderWidth = 1;
+		public const int BorderWidth = 1;
 
 		/// <summary>
 		/// Horizontal padding in pixels between the border and the rendered text
 		/// </summary>
-		internal const int HorizontalPadding = 2;
+		public const int HorizontalPadding = 2;
 
 		/// <summary>
 		/// Vertical padding in pixels between the border and the rendered text
 		/// </summary>
-		internal const int VerticalPadding = 3;
+		public const int VerticalPadding = 3;
 
 		private struct StateColors
 		{
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NostalgicRichTextBox()
+		public NostalgicTextBoxInternal()
 		{
 			SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
 
@@ -877,7 +877,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 			}
 
 			if (Focused && caretVisible && (SelectionLength == 0) && Enabled)
-				DrawCaret(g, font, stateColors, displayText, textY, scrollOffset, textRect);
+				DrawCaret(g, font, stateColors, displayText, textY, textRect);
 		}
 
 
@@ -986,7 +986,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		/// Draw the blinking caret
 		/// </summary>
 		/********************************************************************/
-		private void DrawCaret(Graphics g, Font font, StateColors stateColors, string displayText, int textY, int scrollOffset, Rectangle textRect)
+		private void DrawCaret(Graphics g, Font font, StateColors stateColors, string displayText, int textY, Rectangle textRect)
 		{
 			int caretX = GetCharacterX(g, font, displayText, SelectionStart) - scrollOffset;
 
@@ -997,61 +997,6 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 			using (Pen caretPen = new Pen(stateColors.TextColor))
 			{
 				g.DrawLine(caretPen, caretX, textY, caretX, textY + font.Height - 1);
-			}
-		}
-		#endregion
-
-		#region Designer filtering (hide properties from PropertyGrid)
-		/********************************************************************/
-		/// <summary>
-		/// Register a provider that filters properties for the designer
-		/// </summary>
-		/********************************************************************/
-		static NostalgicRichTextBox()
-		{
-			TypeDescriptor.AddProvider(new NostalgicRichTextBoxTypeDescriptionProvider(), typeof(NostalgicRichTextBox));
-		}
-
-		/// <summary>
-		/// Filter out properties we do not want to show in the designer.
-		/// This is needed for properties that we cannot override, but we do
-		/// it for all our hidden properties to be sure
-		/// </summary>
-		private sealed class NostalgicRichTextBoxTypeDescriptionProvider : TypeDescriptionProvider
-		{
-			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(RichTextBox));
-
-			private static readonly string[] propertiesToHide =
-			[
-				nameof(BackColor),
-				nameof(BackgroundImage),
-				nameof(BackgroundImageLayout),
-				nameof(BorderStyle),
-				nameof(Font),
-				nameof(ForeColor),
-				nameof(RightToLeft),
-				nameof(Multiline)
-			];
-
-			/********************************************************************/
-			/// <summary>
-			/// Constructor
-			/// </summary>
-			/********************************************************************/
-			public NostalgicRichTextBoxTypeDescriptionProvider() : base(parent)
-			{
-			}
-
-
-
-			/********************************************************************/
-			/// <summary>
-			///
-			/// </summary>
-			/********************************************************************/
-			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
-			{
-				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance), propertiesToHide);
 			}
 		}
 		#endregion
