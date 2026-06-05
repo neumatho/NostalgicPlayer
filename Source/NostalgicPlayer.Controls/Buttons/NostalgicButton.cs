@@ -66,7 +66,13 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 			set
 			{
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged -= FontConfiguration_FontChanged;
+
 				fontConfiguration = value;
+
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged += FontConfiguration_FontChanged;
 
 				Invalidate();
 			}
@@ -388,6 +394,20 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		{
 			base.OnSizeChanged(e);
 			UpdateButtonRegion();
+		}
+		#endregion
+
+		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// React when the attached FontConfiguration recalculates its font
+		/// (e.g. theme manager just initialized, or one of FontType /
+		/// FontStyle / FontSize changed at runtime)
+		/// </summary>
+		/********************************************************************/
+		private void FontConfiguration_FontChanged(object sender, EventArgs e)
+		{
+			Invalidate();
 		}
 		#endregion
 
