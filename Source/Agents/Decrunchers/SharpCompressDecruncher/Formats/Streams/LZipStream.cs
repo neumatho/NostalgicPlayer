@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 			decrunchedLength = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 
 			wrapperStream.Seek(0, SeekOrigin.Begin);
-			decruncherStream = new SharpCompress.Compressors.LZMA.LZipStream(wrapperStream, CompressionMode.Decompress);
+			decruncherStream = SharpCompress.Compressors.LZMA.LZipStream.Create(wrapperStream, CompressionMode.Decompress);
 		}
 
 
