@@ -53,6 +53,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		ITextBoxColors TextBoxColors { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by RichText views
+		/// </summary>
+		IRichTextViewColors RichTextViewColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by DataGridView
 		/// </summary>
 		IDataGridViewColors DataGridViewColors { get; }
