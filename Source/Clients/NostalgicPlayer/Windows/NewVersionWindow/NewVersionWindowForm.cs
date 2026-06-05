@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.External.Homepage;
 using Polycode.NostalgicPlayer.External.Homepage.Interfaces;
 using Polycode.NostalgicPlayer.External.Homepage.Models.VersionHistory;
@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 	/// <summary>
 	/// This shows the help documentation
 	/// </summary>
-	public partial class NewVersionWindowForm : KryptonForm
+	public partial class NewVersionWindowForm : NostalgicForm
 	{
 		private IHomepageClientFactory clientFactory;
 
