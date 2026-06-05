@@ -14,5 +14,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility.Interfaces
 		/// Return the path to where the settings should be stored
 		/// </summary>
 		string SettingsPath { get; }
+
+		/// <summary>
+		/// Return the path to where the web browser (WebView2) user data should be stored
+		/// </summary>
+		string WebBrowserPath { get; }
 	}
 }

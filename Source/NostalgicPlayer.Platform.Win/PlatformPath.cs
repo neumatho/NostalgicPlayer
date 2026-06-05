@@ -20,5 +20,15 @@ namespace Polycode.NostalgicPlayer.Platform
 		/// </summary>
 		/********************************************************************/
 		public string SettingsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the path to where the web browser (WebView2) user data
+		/// should be stored
+		/// </summary>
+		/********************************************************************/
+		public string WebBrowserPath => Path.Combine(SettingsPath, "WebView2");
 	}
 }

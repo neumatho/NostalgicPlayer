@@ -16,6 +16,8 @@
     <Version>3.3.1</Version>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
+    <!-- The WebView2 package ships an unused WPF assembly that references a different WindowsBase version. We only use the WinForms control, so demote that harmless reference conflict to a message -->
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -70,6 +72,7 @@
   <ItemGroup>
     <PackageReference Include="Krypton.Navigator" Version="85.24.10.288" />
     <PackageReference Include="Krypton.Toolkit" Version="85.24.10.288" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3967.48" />
   </ItemGroup>
 
   <ItemGroup>

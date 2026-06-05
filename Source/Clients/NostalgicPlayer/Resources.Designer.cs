@@ -1616,7 +1616,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ResourceManager.GetString("IDS_ERR_UNKNOWN_LIST_FORMAT", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Could not open the help viewer.
+        /// </summary>
+        internal static string IDS_ERR_WEBVIEW2_FAILED {
+            get {
+                return ResourceManager.GetString("IDS_ERR_WEBVIEW2_FAILED", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The Microsoft Edge WebView2 Runtime is not installed, so the help can&apos;t be shown. Please install it from https://go.microsoft.com/fwlink/p/?LinkId=2124703 and try again..
+        /// </summary>
+        internal static string IDS_ERR_WEBVIEW2_MISSING {
+            get {
+                return ResourceManager.GetString("IDS_ERR_WEBVIEW2_MISSING", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>

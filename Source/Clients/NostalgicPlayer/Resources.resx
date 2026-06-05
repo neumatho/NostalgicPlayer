@@ -718,6 +718,13 @@ Do you want to continue?</value>
   <data name="IDS_ERR_UNKNOWN_LIST_FORMAT" xml:space="preserve">
     <value>The file {0} could not be regonized as a module list.</value>
   </data>
+  <data name="IDS_ERR_WEBVIEW2_FAILED" xml:space="preserve">
+    <value>Could not open the help viewer.
+{0}</value>
+  </data>
+  <data name="IDS_ERR_WEBVIEW2_MISSING" xml:space="preserve">
+    <value>The Microsoft Edge WebView2 Runtime is not installed, so the help can't be shown. Please install it from https://go.microsoft.com/fwlink/p/?LinkId=2124703 and try again.</value>
+  </data>
   <data name="IDS_FAVORITE_BUTTON_ADD" xml:space="preserve">
     <value>Add</value>
   </data>
