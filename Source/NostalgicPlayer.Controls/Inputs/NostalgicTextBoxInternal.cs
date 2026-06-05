@@ -78,19 +78,23 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		/// Set the FontConfiguration component to use for this control
 		/// </summary>
 		/********************************************************************/
-		[Category("Appearance")]
-		[Description("Which font configuration to use if you want to change the default font.")]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-		[DefaultValue(null)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
 		public FontConfiguration UseFont
 		{
 			get => fontConfiguration;
 
 			set
 			{
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged -= FontConfiguration_FontChanged;
+
 				fontConfiguration = value;
 
-				Invalidate();
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged += FontConfiguration_FontChanged;
+
+				ApplyResolvedFont();
 			}
 		}
 
@@ -153,6 +157,8 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		{
 			colors = theme.TextBoxColors;
 			fonts = theme.StandardFonts;
+
+			ApplyResolvedFont();
 
 			Invalidate();
 			RefreshNonClientArea();
@@ -710,6 +716,29 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 			if (scrollOffset < 0)
 				scrollOffset = 0;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Push the resolved font from the FontConfiguration (or the theme's
+		/// regular font) onto the control, so TextBoxBase' single-line auto
+		/// height adjustment fires. Setting Font raises the standard
+		/// Control.FontChanged event, which the wrapping NostalgicTextBox
+		/// uses to re-clamp its height. Custom rendering still uses GetFont
+		/// directly
+		/// </summary>
+		/********************************************************************/
+		private void ApplyResolvedFont()
+		{
+			Font resolvedFont = fontConfiguration?.Font ?? fonts?.RegularFont;
+			if (resolvedFont == null)
+				return;
+
+			Font = resolvedFont;
+
+			Invalidate();
+		}
 		#endregion
 
 		#region Event handlers
@@ -722,6 +751,20 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		{
 			caretVisible = !caretVisible;
 			Invalidate();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// React when the attached FontConfiguration recalculates its font
+		/// (e.g. theme manager just initialized, or one of FontType /
+		/// FontStyle / FontSize changed at runtime)
+		/// </summary>
+		/********************************************************************/
+		private void FontConfiguration_FontChanged(object sender, EventArgs e)
+		{
+			ApplyResolvedFont();
 		}
 		#endregion
 
