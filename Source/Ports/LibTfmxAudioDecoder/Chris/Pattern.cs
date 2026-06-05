@@ -108,18 +108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		{
 			tr.Pt = 0xff;
 
-			if (playerInfo.Sequencer.Step.Current != playerInfo.Sequencer.Step.Last)
-				playerInfo.Sequencer.Step.Current++;
-
-			if (playerInfo.Sequencer.Step.Current == playerInfo.Sequencer.Step.Last)
-			{
-				songEnd = true;
-				triggerRestart = true;
-				return;
-			}
-
-			ProcessTrackStep();
-			playerInfo.Sequencer.Step.Next = true;
+			NextTrackStep();
 		}
 
 

@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		private bool isOn;
 		private bool retrig;
 
-		private SampleInfo[] allSamples;
+		private readonly SampleInfo[] allSamples;
 		private short sampleNumber;
 
 		/********************************************************************/
@@ -69,8 +69,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			paulaChannel.SetDma(false);
 
 			isOn = false;
-			Paula.Period = 0;
-			Paula.Volume = 0;
 			loopCount = 0;
 		}
 

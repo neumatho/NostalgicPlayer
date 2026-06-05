@@ -88,6 +88,47 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void ResetSequencer()
+		{
+			playerInfo.Sequencer.Step.Current = playerInfo.Sequencer.Step.First;
+			playerInfo.Sequencer.Step.Next = false;
+			playerInfo.Sequencer.Loops = -1;
+
+			for (c_int step = 0; step < Track_Steps_Max; step++)
+				playerInfo.Sequencer.StepSeenBefore[step] = false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void NextTrackStep()
+		{
+			// This is a normal song end condition, but comparison must be '=='
+			// because the track loop command can jump beyond last track
+			if (playerInfo.Sequencer.Step.Current == playerInfo.Sequencer.Step.Last)
+			{
+				// Default behaviour is to return to beginning
+				playerInfo.Sequencer.Step.Current = playerInfo.Sequencer.Step.First;
+				songEnd = true;
+			}
+			else
+				playerInfo.Sequencer.Step.Current++;
+
+			ProcessTrackStep();
+			playerInfo.Sequencer.Step.Next = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private void ProcessTrackStep()
 		{
 			c_int evalMaxLoops = Recurse_Limit;		// NB! Around 5 would suffice

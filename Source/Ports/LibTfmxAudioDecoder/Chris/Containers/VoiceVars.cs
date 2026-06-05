@@ -34,9 +34,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 			udword StepSaved,
 			sword Wait,
 			ubyte Loop,
-			bool Skip,
+			// Deliberately not using enum/const yet
+			sbyte State,	// -1 = enabled, 0 = skip, 1 = init
 			bool ExtraWait,
-			bool DelayedOff
+			bool DelayedOff,
+			bool DelayedOn
 		) Macro;
 
 		public sword WaitOnDmaCount;

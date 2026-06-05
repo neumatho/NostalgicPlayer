@@ -31,23 +31,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void InitMacro(VoiceVars voice)
+		{
+			voice.Macro.Step = 0;
+			voice.Macro.Wait = 0;
+			voice.Macro.Loop = 0xff;
+			voice.Macro.State = -1;
+			voice.WaitOnDmaCount = 0;
+
+			if (variant.ExecOrder == ExecOrder.Mac_Mod_Seq)
+				voice.EffectsMode = 0;
+			else
+				voice.EffectsMode = 1;
+
+			voice.Macro.ExtraWait = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private void ProcessMacroMain(VoiceVars voice)
 		{
-			PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
-
-			if (voice.Macro.DelayedOff)
-			{
-				paulaVoice.Off();
-				voice.Macro.DelayedOff = false;
-			}
-
-			if (voice.Macro.Skip)
+			if (voice.Macro.State == 0)
 				return;
-
-			if (voice.Macro.Wait > 0)
+			else if (voice.Macro.State == 1)
+				InitMacro(voice);
+			else
 			{
-				voice.Macro.Wait--;
-				return;
+				if (voice.Macro.Wait > 0)
+				{
+					voice.Macro.Wait--;
+					return;
+				}
 			}
 
 			c_int macroLen = 0;
@@ -81,6 +100,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		{
 			voice.Macro.Step++;
 
+			if (variant.ExtraWaitV1)
+				return;
+
+			// TBD
 			if (!voice.Macro.ExtraWait)
 			{
 				voice.Macro.ExtraWait = true;
@@ -137,8 +160,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// There are variants of the "DMAon" macro command, which
 			// are not needed because we don't emulate access to Amiga
 			// custom chip registers like DMACON, INTENA and INTREQ
-			paulaVoice.On();
-			voice.EffectsMode = (sbyte)playerInfo.Cmd.Bb;
+			if (variant.NoDelayedDmaOn)
+				paulaVoice.On();
+			else
+				voice.Macro.DelayedOn = true;
+
+			// Variants of the player can set the macro wait value here.
+			// The high byte (in cmd.aa) is set to zero early, so only the
+			// low byte (in cmd.bb) would matter. However, as the low byte
+			// is 0 for all but a very few TFMX files, the resulting wait
+			// value would stay at 0, which would be pointless.
+			//
+			// Furthermore, of the existing files that run a subsequent Wait
+			// command, that wait value would take precedence. It can be
+			// assumed that setting the wait value here is not the real goal.
+			//
+			// Instead, of the few remaining files that set the first parameter
+			// to 1, they want the player to run sound synthesis via the effects
+			// processor a first time before turning on the audio channel
+			if (playerInfo.Cmd.Bb != 0)
+			{
+				voice.EffectsMode = 1;
+
+				if (variant.ExecOrder == ExecOrder.Mod_Mac_Seq)
+				{
+					ProcessModulation(voice);
+					return;
+				}
+			}
 
 			voice.Macro.Step++;
 			playerInfo.MacroEvalAgain = true;
@@ -231,6 +280,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			{
 				voice.Macro.Loop = 0xff;
 				voice.Macro.Step++;
+
+				// Possibly unique to R-Type, which does an extra wait here
+				// unlike TFMX v1 and later
+				if (variant.MacroLoopExtraWait)
+					return;
 			}
 			else
 			{
@@ -270,7 +324,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void MacroFunc_Stop(VoiceVars voice)
 		{
-			voice.Macro.Skip = true;
+			voice.Macro.State = 0;
 		}
 
 
@@ -282,7 +336,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void MacroFunc_AddNote(VoiceVars voice)
 		{
-			MacroFunc_AddNote_Sub(voice, voice.Note);
+			MacroFunc_AddNote_Sub(voice, voice.Note, voice.Detune);
 			MacroFunc_ExtraWait(voice);
 		}
 
@@ -293,11 +347,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void MacroFunc_AddNote_Sub(VoiceVars voice, ubyte noteAdd)
+		private void MacroFunc_AddNote_Sub(VoiceVars voice, ubyte noteAdd, sword detuneAdd)
 		{
 			sbyte n = (sbyte)(noteAdd + (sbyte)playerInfo.Cmd.Bb);
 			uword p = NoteToPeriod(n);
-			sword finetune = (sword)(voice.Detune + (sword)MyEndian.MakeWord(playerInfo.Cmd.Cd, playerInfo.Cmd.Ee));
+			sword finetune = (sword)(detuneAdd + (sword)MyEndian.MakeWord(playerInfo.Cmd.Cd, playerInfo.Cmd.Ee));
 
 			if (variant.FinetuneUnscaled)
 				p = (uword)(p + finetune);
@@ -319,7 +373,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void MacroFunc_SetNote(VoiceVars voice)
 		{
-			MacroFunc_AddNote_Sub(voice, 0);
+			sword detune = voice.Detune;
+
+			// TFMX v1 SetNote ignores voice detune
+			if (variant.SetNoteV1)
+				detune = 0;
+
+			MacroFunc_AddNote_Sub(voice, 0, detune);
 			MacroFunc_ExtraWait(voice);
 		}
 
@@ -372,6 +432,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		private void MacroFunc_Vibrato(VoiceVars voice)
 		{
 			voice.Vibrato.Time = playerInfo.Cmd.Bb;
+
+			// Original v1 and v2 apply this bit mask here.
+			// Since a composer may have entered an uneven vibrato parameter,
+			// the masked value can affect vibrato amplitude
+			if (variant.VibratoTimeMask)
+				voice.Vibrato.Time &= 0xfe;
+
 			voice.Vibrato.Count = (ubyte)(playerInfo.Cmd.Bb >> 1);
 			voice.Vibrato.Intensity = (sbyte)playerInfo.Cmd.Ee;
 
@@ -411,12 +478,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void MacroFunc_AddVolNote(VoiceVars voice)
 		{
+			// Replaces AddVolume by default. Potentially harmless,
+			// since 'bb' arg must be set to 0xfe in order to activate the
+			// extra behaviour, and AddVolume doesn't use 'bb' arg, so
+			// it's set to 0 in macro scripts
 			if (playerInfo.Cmd.Cd == 0xfe)
 			{
 				ubyte ee = playerInfo.Cmd.Ee;
 				playerInfo.Cmd.Cd = playerInfo.Cmd.Ee = 0;
 
-				MacroFunc_AddNote_Sub(voice, voice.Note);
+				MacroFunc_AddNote_Sub(voice, voice.Note, voice.Detune);
 
 				playerInfo.Cmd.Ee = ee;
 			}
@@ -443,7 +514,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				ubyte ee = playerInfo.Cmd.Ee;
 				playerInfo.Cmd.Cd = playerInfo.Cmd.Ee = 0;
 
-				MacroFunc_AddNote_Sub(voice, voice.Note);
+				MacroFunc_AddNote_Sub(voice, voice.Note, voice.Detune);
 
 				playerInfo.Cmd.Ee = ee;
 			}
@@ -735,7 +806,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			// The rarely used variant where 'cdee' arg is the number of waits
 			voice.WaitOnDmaCount = (sword)MyEndian.MakeWord(playerInfo.Cmd.Cd, playerInfo.Cmd.Ee);
-			voice.Macro.Skip = true;
+			voice.Macro.State = 0;
 			voice.WaitOnDmaPrevLoops = paulaVoice.GetLoopCount();
 
 			MacroFunc_ExtraWait(voice);
@@ -755,9 +826,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			voice.Rnd.Mode = playerInfo.Cmd.Ee;
 			voice.Rnd.Count = 1;
 			voice.Rnd.Flag = 1;
-			voice.Rnd.BlockWait = true;
 
 			RandomPlay(voice);
+
+			voice.Rnd.BlockWait = true;
 
 			voice.Macro.Step++;
 			playerInfo.MacroEvalAgain = true;
@@ -821,7 +893,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void MacroFunc_SetPrevNote(VoiceVars voice)
 		{
-			MacroFunc_AddNote_Sub(voice, voice.NotePrevious);
+			// Non-existent in TFMX v1, so add voice detune by default
+			MacroFunc_AddNote_Sub(voice, voice.NotePrevious, voice.Detune);
 			MacroFunc_ExtraWait(voice);
 		}
 

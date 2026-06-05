@@ -46,6 +46,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		/// <summary></summary>
 		protected udword tickFpAdd;
 
+		/// <summary></summary>
+		protected bool blacklisted;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -57,6 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 			realSongEnd = false;
 			loopMode = false;
 			rate = 50 << 8;
+			blacklisted = false;
 		}
 
 

@@ -26,7 +26,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			0x27f8998c, 0x26447707, 0xd404651b, 0xb5348633,
 
 			// R-Type (1989)
-			0x8ac70fc8
+			0x8ac70fc8,
+
+			// Rock'n'Roll intro
+			0xda279570,
+
+			// Musication Vol. 1 by Ern0
+			0x0eed9c91, 0x1a5d2b53, 0x22a92c26, 0xe60babf2, 0x5fb2f54e, 0xcb3c7113,
+
+			// Turican
+			0x73868fda, 0x93730029, 0x6e799869, 0x3d00fc52, 0xd76d33ed, 0xb989d570, 0x8fa80b4e, 0x88f7c34b, 0xb762f2dc
+		];
+
+		private static readonly uint[] blacklisted =
+		[
+			// mdat.blade of destiny - titel (7ch)
+			0xc83b701b
 		];
 
 		/********************************************************************/
@@ -131,6 +146,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			moduleStream.ReadInto(checkBuffer, 0, checkBuffer.Length);
 
 			uint crc = CrcLight.Get(checkBuffer, 0, 0x100);
+
+			if (blacklisted.Contains(crc))
+				return (ModuleType.Unknown, false);
+
 			if (tfmx15Variants.Contains(crc))
 				return (ModuleType.Tfmx15, singleFile);
 

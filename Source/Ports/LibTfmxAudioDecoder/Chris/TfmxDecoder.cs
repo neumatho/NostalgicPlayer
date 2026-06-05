@@ -70,14 +70,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// Format
 			bool Compressed,
 			// Player variants
+			// Track individual differences for now.
+			// Eventually, some may be grouped together and eliminated
 			bool FinetuneUnscaled,
 			bool VibratoUnscaled,
+			bool VibratoTimeMask,
 			bool PortaUnscaled,
 			bool PortaOverride,
 			bool NoNoteDetune,
+			bool SetNoteV1,
+			bool ExtraWaitV1,
+			bool MacroLoopExtraWait,
 			bool BpmSpeed5,
 			bool NoAddBeginCount,
-			bool NoTrackMute
+			bool NoDelayedDmaOn,
+			bool NoTrackMute,
+			// Main player order of execution
+			ExecOrder ExecOrder
 		) variant;
 
 		private
@@ -515,6 +524,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			}
 
 			offsets.SampleData = h + input.MdatSize;
+			offsets.Silence = offsets.SampleData;
 
 			// TFMX clears the first two words for one-shot samples
 			udword o = offsets.SampleData;
@@ -556,11 +566,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				}
 			}
 
-			offsets.Silence = offsets.SampleData;
-
-			// TFMX clears the first dword here for one shot samples e.g.
-			pBuf[offsets.Silence] = pBuf[offsets.Silence + 1] = pBuf[offsets.Silence + 2] = pBuf[offsets.Silence + 3] = 0;
-
 			// Evaluate the compress identification fields at $0A and $0C.
 			// In rare cases that part of the header has been overwritten
 			// and is invalid
@@ -592,12 +597,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			variant.Compressed = false;
 			variant.FinetuneUnscaled = false;
 			variant.VibratoUnscaled = false;
+			variant.VibratoTimeMask = false;
 			variant.PortaUnscaled = false;
 			variant.PortaOverride = false;
 			variant.NoNoteDetune = false;
+			variant.SetNoteV1 = false;
+			variant.ExtraWaitV1 = false;
+			variant.MacroLoopExtraWait = false;
 			variant.BpmSpeed5 = false;
 			variant.NoAddBeginCount = false;
+			variant.NoDelayedDmaOn = false;
 			variant.NoTrackMute = false;
+			variant.ExecOrder = ExecOrder.Mac_Mod_Seq;
 
 			pattCmdFuncs[0] = PattCmd_End;
 			pattCmdFuncs[1] = PattCmd_Loop;
@@ -693,6 +704,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// Last the rare checksum adjustments
 			TraitsByChecksum();
 
+			if (blacklisted)
+				return false;
+
 			FindSongs();
 
 			// Some files contain SFX only and no valid song definitions
@@ -769,97 +783,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			realSongEnd = false;
 
-			for (ubyte v = 0; v < voices; v++)
-			{
-				if (!songEnd || loopMode)
-				{
-					VoiceVars voice = voiceVars[v];
-					PaulaVoice paulaVoice = paulaVoices[v];
-
-					// Pretend we have an interrupt handler that has evaluated
-					// Paula "audio channel 0-3 block finished" interrupts meanwhile
-					if (voice.WaitOnDmaCount >= 0)	// 0 = wait once
-					{
-						uword x = paulaVoice.GetLoopCount();
-						uword y = voice.WaitOnDmaPrevLoops;
-						c_int d;
-
-						if (x >= y)
-							d = x - y;
-						else
-							d = x + (0x10000 - y);
-
-						if (d > voice.WaitOnDmaCount)
-						{
-							voice.Macro.Skip = false;
-							voice.WaitOnDmaCount = -1;
-						}
-						else
-						{
-							voice.WaitOnDmaCount -= (sword)d;
-							voice.WaitOnDmaPrevLoops = paulaVoice.GetLoopCount();
-						}
-					}
-
-					ProcessMacroMain(voice);
-					ProcessModulation(voice);
-
-					paulaVoice.Paula.Period = voice.OutputPeriod;
-				}
-			}
-
-			if (!songEnd || loopMode)
-			{
-				if (--playerInfo.Admin.Count < 0)
-				{
-					playerInfo.Admin.Count = playerInfo.Admin.Speed;	// Reload
-
-					do
-					{
-						playerInfo.Sequencer.Step.Next = false;
-						c_int countInactive = 0;
-						c_int countInfinite = 0;
-
-						for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
-						{
-							Track tr = playerInfo.Track[t];
-
-							tr.On = GetTrackMute(t);
-
-							if (tr.Pt >= 0x90)
-								countInactive++;
-							else if (tr.Pattern.InfiniteLoop)
-								countInfinite++;
-
-							ProcessPttr(tr);
-
-							if (playerInfo.Sequencer.Step.Next)
-								break;
-						}	// Next track
-
-						// These are states where track sequencer cannot advance
-						if (!playerInfo.Sequencer.Step.Next)
-						{
-							if ((countInactive == playerInfo.Sequencer.Tracks) || ((countInactive + countInfinite) == playerInfo.Sequencer.Tracks))
-							{
-								songEnd = true;
-								triggerRestart = true;
-							}
-						}
-					}
-					while (playerInfo.Sequencer.Step.Next);
-				}
-			}
-
-			if (songEnd && loopMode)
-			{
-				songEnd = false;
-
-				if (triggerRestart)
-					SoftRestart();
-
-				realSongEnd = true;
-			}
+			PlayerCommon();
 
 			tickFpAdd += tickFp;
 			c_int tick = (c_int)(tickFpAdd >> 8);
@@ -904,7 +828,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			return false;
 		}
 
-		#region THE: Added extra methods for snapshot support
+		#region TNE: Added extra methods for snapshot support
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -982,10 +906,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 				voice.Macro.Wait = 1;
 				voice.Macro.Step = 0;
-				voice.Macro.Skip = true;
+				voice.Macro.State = 0;
 				voice.Macro.Loop = 0xff;
 				voice.Macro.ExtraWait = true;
-				voice.Macro.DelayedOff = false;
+				voice.Macro.DelayedOff = voice.Macro.DelayedOn = false;
 
 				voice.Sid.TargetOffset = (0x100U * v) + 4U;
 				voice.Sid.TargetLength = 0;
@@ -1024,41 +948,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		private void Restart()
 		{
 			Reset();
-			SoftRestart();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void SoftRestart()
-		{
-			songEnd = false;
-			songPosCurrent = 0;
-			tickFpAdd = 0;
-			triggerRestart = false;
-
-			playerInfo.Sequencer.Step.Next = false;
-			playerInfo.Sequencer.Loops = -1;
-
-			for (c_int step = 0; step < Track_Steps_Max; step++)
-				playerInfo.Sequencer.StepSeenBefore[step] = false;
-
-			// Not all songs are designed for looping cleanly, so aid them
-			for (ubyte v = 0; v < voices; v++)
-			{
-				VoiceVars voice = voiceVars[v];
-
-				voice.KeyUp = true;
-				voice.Volume = 0;
-			}
-
-			playerInfo.Fade.Active = false;
-			playerInfo.Fade.Volume = playerInfo.Fade.Target = 64;
-			playerInfo.Fade.Delta = 0;
 
 			uword so = (uword)(vSongs[playerInfo.Admin.StartSong] << 1);
 			playerInfo.Sequencer.Step.First = playerInfo.Sequencer.Step.Current = MyEndian.ReadBEUword(pBuf, offsets.Header + 0x100 + so);
@@ -1075,8 +964,40 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			}
 
 			playerInfo.Admin.StartSpeed = playerInfo.Admin.Speed;
-			playerInfo.Admin.Count = 0;	// Quick start
+			playerInfo.Admin.Count = 0;		// Quick start
 
+			SoftRestart();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The bits that also are needed when restarting songs that end
+		/// without looping
+		/// </summary>
+		/********************************************************************/
+		private void SoftRestart()
+		{
+			songEnd = false;
+			songPosCurrent = 0;
+			tickFpAdd = 0;
+			triggerRestart = false;
+
+			// Not all songs are designed for looping cleanly, so aid them
+			for (ubyte v = 0; v < voices; v++)
+			{
+				VoiceVars voice = voiceVars[v];
+
+				voice.KeyUp = true;
+				voice.Volume = 0;
+			}
+
+			playerInfo.Fade.Active = false;
+			playerInfo.Fade.Volume = playerInfo.Fade.Target = 64;
+			playerInfo.Fade.Delta = 0;
+
+			ResetSequencer();
 			ProcessTrackStep();
 		}
 
@@ -1091,9 +1012,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		{
 			variant.NoAddBeginCount = true;
 			variant.VibratoUnscaled = true;
+			variant.VibratoTimeMask = true;
 			variant.FinetuneUnscaled = true;
-			variant.PortaUnscaled = false;
+			variant.PortaUnscaled = true;
 			variant.PortaOverride = true;
+			variant.SetNoteV1 = true;
+			variant.ExtraWaitV1 = true;
+			variant.NoDelayedDmaOn = true;
+			variant.ExecOrder = ExecOrder.Seq_Mod_Mac;
 
 			macroCmdFuncs[0xd] = MacroFunc_AddVolume;
 
@@ -1212,6 +1138,158 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void HandleWaitOnPaulaDone()
+		{
+			// Pretend we have an interrupt handler that has evaluated
+			// Paula "audio channel 0-3 block finished" interrupts meanwhile
+			for (ubyte v = 0; v < voices; v++)
+			{
+				VoiceVars voice = voiceVars[v];
+				PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
+
+				if (voice.WaitOnDmaCount >= 0)	// 0 = wait once
+				{
+					uword x = paulaVoice.GetLoopCount();
+					uword y = voice.WaitOnDmaPrevLoops;
+					c_int d;
+
+					if (x >= y)
+						d = x - y;
+					else
+						d = x + (0x10000 - y);
+
+					if (d > voice.WaitOnDmaCount)
+					{
+						voice.WaitOnDmaCount = -1;
+
+						if (voice.Macro.State == 0)
+							voice.Macro.State = -1;
+					}
+					else
+					{
+						voice.WaitOnDmaCount -= (sword)d;
+						voice.WaitOnDmaPrevLoops = paulaVoice.GetLoopCount();
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void HandleDelayedDmaOff()
+		{
+			for (ubyte v = 0; v < voices; v++)
+			{
+				VoiceVars voice = voiceVars[v];
+				PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
+
+				if (voice.Macro.DelayedOff)
+				{
+					voice.Macro.DelayedOff = false;
+					paulaVoice.Off();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void HandleDelayedDmaOn()
+		{
+			for (ubyte v = 0; v < voices; v++)
+			{
+				VoiceVars voice = voiceVars[v];
+				PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
+
+				if (voice.Macro.DelayedOn)
+				{
+					voice.Macro.DelayedOn = false;
+					paulaVoice.On();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void RunMain()
+		{
+			if (--playerInfo.Admin.Count < 0)
+			{
+				playerInfo.Admin.Count = playerInfo.Admin.Speed;	// Reload
+
+				do
+				{
+					playerInfo.Sequencer.Step.Next = false;
+					c_int countInactive = 0;
+					c_int countInfinite = 0;
+
+					for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
+					{
+						Track tr = playerInfo.Track[t];
+
+						tr.On = GetTrackMute(t);
+
+						if (tr.Pt >= 0x90)
+							countInactive++;
+						else if (tr.Pattern.InfiniteLoop)
+							countInfinite++;
+
+						ProcessPttr(tr);
+
+						if (playerInfo.Sequencer.Step.Next)
+							break;
+					}	// Next track
+
+					// These are states where track sequencer cannot advance
+					if (!playerInfo.Sequencer.Step.Next)
+					{
+						if ((countInactive == playerInfo.Sequencer.Tracks) || ((countInactive + countInfinite) == playerInfo.Sequencer.Tracks))
+						{
+							songEnd = true;
+							triggerRestart = true;
+						}
+					}
+
+					// Loop on end?
+					if (songEnd && loopMode)
+					{
+						songEnd = false;
+
+						if (triggerRestart)
+						{
+							SoftRestart();
+							ProcessTrackStep();
+						}
+
+						realSongEnd = true;
+						break;
+					}
+				}
+				while (playerInfo.Sequencer.Step.Next);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private void ProcessPttr(Track tr)
 		{
 			// PT < 0x80 : current pattern
@@ -1239,9 +1317,73 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 					ubyte vNum = channelToVoiceMap[tr.Tr & (channelToVoiceMap.Length - 1)];
 					VoiceVars v = voiceVars[vNum];
 					PaulaVoice p = paulaVoices[vNum];
-					v.Macro.Skip = true;
+					v.Macro.State = 0;
 					p.Off();
 				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void PlayerCommon()
+		{
+			if (!songEnd || loopMode)
+			{
+				HandleWaitOnPaulaDone();
+				HandleDelayedDmaOff();
+
+				if (variant.ExecOrder == ExecOrder.Mod_Mac_Seq)
+				{
+					for (ubyte v = 0; v < voices; v++)
+					{
+						VoiceVars voice = voiceVars[v];
+						PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
+
+						ProcessModulation(voice);
+						ProcessMacroMain(voice);
+
+						paulaVoice.Paula.Period = voice.OutputPeriod;
+					}
+
+					RunMain();
+				}
+				else if (variant.ExecOrder == ExecOrder.Seq_Mod_Mac)
+				{
+					RunMain();
+
+					for (ubyte v = 0; v < voices; v++)
+					{
+						VoiceVars voice = voiceVars[v];
+						PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
+
+						ProcessModulation(voice);
+						ProcessMacroMain(voice);
+
+						paulaVoice.Paula.Period = voice.OutputPeriod;
+					}
+				}
+				else
+				{
+					for (ubyte v = 0; v < voices; v++)
+					{
+						VoiceVars voice = voiceVars[v];
+						PaulaVoice paulaVoice = paulaVoices[voice.VoiceNum];
+
+						ProcessMacroMain(voice);
+						ProcessModulation(voice);
+
+						paulaVoice.Paula.Period = voice.OutputPeriod;
+					}
+
+					RunMain();
+				}
+
+				HandleDelayedDmaOn();
 			}
 		}
 
@@ -1270,6 +1412,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			}
 			else if (playerInfo.Cmd.Aa == 0xf6)	// Vibrato
 			{
+				// Unlike the variants of the vibrato macro command,
+				// here the bitmask has never been dropped
 				ubyte tmp = (ubyte)(playerInfo.Cmd.Bb & 0xfe);
 				v.Vibrato.Time = tmp;
 				v.Vibrato.Count = (ubyte)(tmp >> 1);
@@ -1290,12 +1434,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				v.Note = playerInfo.Cmd.Aa;
 				v.KeyUp = false;
 				v.Macro.Offset = GetMacroOffset((ubyte)(playerInfo.Cmd.Bb & 0x7f));
-				v.Macro.Step = 0;
-				v.Macro.Wait = 0;
-				v.Macro.Loop = 0xff;
-				v.Macro.Skip = false;
-				v.EffectsMode = 0;
-				v.WaitOnDmaCount = 0;
+				v.Macro.State = 1;
 			}
 			else						// Portamento note
 			{

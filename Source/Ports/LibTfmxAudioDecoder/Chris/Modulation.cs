@@ -177,8 +177,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				// Up, decrease period
 				if (variant.PortaUnscaled)
 					current -= voice.Portamento.Speed;
-
-				current = (uword)(((0x100 - voice.Portamento.Speed) * current) >> 8);
+				else
+					current = (uword)(((0x100 - voice.Portamento.Speed) * current) >> 8);
 
 				if (current > target)
 					goto Set;
