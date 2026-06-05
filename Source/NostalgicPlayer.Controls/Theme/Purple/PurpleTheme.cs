@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
 		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
 		private static readonly PurpleTextBoxColors textBoxColors = new PurpleTextBoxColors();
+		private static readonly PurpleRichTextViewColors richTextViewColors = new PurpleRichTextViewColors();
 		private static readonly PurpleDataGridViewColors dataGridViewColors = new PurpleDataGridViewColors();
 		private static readonly PurpleScrollBarColors scrollBarColors = new PurpleScrollBarColors();
 		private static readonly PurpleTabColors tabColors = new PurpleTabColors();
@@ -124,6 +125,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public ITextBoxColors TextBoxColors => textBoxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by RichText views
+		/// </summary>
+		/********************************************************************/
+		public IRichTextViewColors RichTextViewColors => richTextViewColors;
 
 
 
