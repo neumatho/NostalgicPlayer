@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 			InitializeComponent();
 
 			nostalgicTextBoxInternal.TextChanged += NostalgicRichTextBox_TextChanged;
+			nostalgicTextBoxInternal.FontChanged += NostalgicTextBoxInternal_FontChanged;
 		}
 
 		#region Designer properties
@@ -47,19 +48,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		{
 			get => nostalgicTextBoxInternal.UseFont;
 
-			set
-			{
-				FontConfiguration previous = nostalgicTextBoxInternal.UseFont;
-				if (previous != null)
-					previous.FontChanged -= FontConfiguration_FontChanged;
-
-				nostalgicTextBoxInternal.UseFont = value;
-
-				if (value != null)
-					value.FontChanged += FontConfiguration_FontChanged;
-
-				ApplyResolvedFont();
-			}
+			set => nostalgicTextBoxInternal.UseFont = value;
 		}
 		#endregion
 
@@ -121,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		{
 			fonts = theme.StandardFonts;
 
-			ApplyResolvedFont();
+			ClampHeight();
 		}
 		#endregion
 
@@ -191,38 +180,32 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 
 		/********************************************************************/
 		/// <summary>
-		/// React when the attached FontConfiguration recalculates its font
-		/// (e.g. theme manager just initialized, or one of FontType /
-		/// FontStyle / FontSize changed at runtime)
+		/// Re-clamp the height when the inner control's font changes. The
+		/// inner control owns the FontConfiguration and pushes the resolved
+		/// font onto itself; setting its Font raises this event, which is
+		/// also where a runtime FontType / FontStyle / FontSize change ends
+		/// up
 		/// </summary>
 		/********************************************************************/
-		private void FontConfiguration_FontChanged(object sender, EventArgs e)
+		private void NostalgicTextBoxInternal_FontChanged(object sender, EventArgs e)
 		{
-			ApplyResolvedFont();
+			ClampHeight();
 		}
 		#endregion
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Push the resolved font from the FontConfiguration onto the inner
-		/// control so TextBoxBase' single-line auto height adjustment fires.
-		/// Custom rendering inside NostalgicRichTextBox still uses the
-		/// FontConfiguration directly
+		/// Re-clamp the current height. Growing the font bumps the height
+		/// up; shrinking it keeps a larger height (the computed value is
+		/// only a floor, enforced live in SetBoundsCore - never stored in
+		/// MinimumSize so the designer cannot serialize a stale value). The
+		/// inner control owns the FontConfiguration and applies the resolved
+		/// font to itself
 		/// </summary>
 		/********************************************************************/
-		private void ApplyResolvedFont()
+		private void ClampHeight()
 		{
-			Font resolvedFont = GetResolvedFont();
-			if (resolvedFont == null)
-				return;
-
-			nostalgicTextBoxInternal.Font = resolvedFont;
-
-			// Re-clamp the current height. Growing the font bumps the height
-			// up; shrinking it keeps a larger height (the computed value is
-			// only a floor, enforced live in SetBoundsCore - never stored in
-			// MinimumSize so the designer cannot serialize a stale value)
 			int minHeight = CalculateMinimumHeight();
 			if (Height < minHeight)
 				Height = minHeight;
