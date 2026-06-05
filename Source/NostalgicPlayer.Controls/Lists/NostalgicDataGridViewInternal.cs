@@ -93,7 +93,13 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			set
 			{
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged -= FontConfiguration_FontChanged;
+
 				fontConfiguration = value;
+
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged += FontConfiguration_FontChanged;
 
 				if (IsHandleCreated)
 				{
@@ -417,6 +423,24 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		private void ParentControl_Resize(object sender, EventArgs e)
 		{
 			UpdateScrollBars();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// React when the attached FontConfiguration recalculates its font
+		/// (e.g. theme manager just initialized, or one of FontType /
+		/// FontStyle / FontSize changed at runtime)
+		/// </summary>
+		/********************************************************************/
+		private void FontConfiguration_FontChanged(object sender, EventArgs e)
+		{
+			if (IsHandleCreated)
+			{
+				UpdateFont();
+				Invalidate();
+			}
 		}
 		#endregion
 
