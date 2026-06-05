@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility.Extensions
 		/// Remove trailing empty lines
 		/// </summary>
 		/********************************************************************/
-		public static void RemoveTrailingEmptyLines(this List<string> lines)
+		public static List<string> RemoveTrailingEmptyLines(this List<string> lines)
 		{
 			if (lines.Count > 0)
 			{
@@ -29,6 +29,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility.Extensions
 						break;
 				}
 			}
+
+			return lines;
 		}
 	}
 }

@@ -1391,6 +1391,14 @@
             <uap:DisplayName>Software Visions</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mlfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ml">.ml</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Musicline Editor</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

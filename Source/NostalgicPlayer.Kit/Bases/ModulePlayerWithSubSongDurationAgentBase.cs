@@ -56,11 +56,11 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 					currentTotalTime = 0.0f;
 					float lastSnapshotTime = 0.0f;
 
-					InitDuration(currentSubSong);
-
 					try
 					{
 						channelsDone = new bool[ModuleChannelCount];
+
+						InitDuration(currentSubSong);
 
 						int totalPositions = GetTotalNumberOfPositions();
 						positionTimes = new float[totalPositions];
