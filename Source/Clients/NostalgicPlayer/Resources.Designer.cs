@@ -1616,16 +1616,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ResourceManager.GetString("IDS_ERR_UNKNOWN_LIST_FORMAT", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Could not open the help viewer.
+        ///{0}.
         /// </summary>
         internal static string IDS_ERR_WEBVIEW2_FAILED {
             get {
                 return ResourceManager.GetString("IDS_ERR_WEBVIEW2_FAILED", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The Microsoft Edge WebView2 Runtime is not installed, so the help can&apos;t be shown. Please install it from https://go.microsoft.com/fwlink/p/?LinkId=2124703 and try again..
         /// </summary>
@@ -1634,7 +1635,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ResourceManager.GetString("IDS_ERR_WEBVIEW2_MISSING", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
@@ -1789,6 +1790,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This will reset all opened windows to the position and sizes last saved.
+        ///
+        ///Do you want to continue?.
+        /// </summary>
+        internal static string IDS_MAIN_RESET_POSITIONS {
+            get {
+                return ResourceManager.GetString("IDS_MAIN_RESET_POSITIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to NostalgicPlayer.
         /// </summary>
         internal static string IDS_MAIN_TITLE {
@@ -1911,6 +1923,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MENU_WINDOW_MODLIBRARY {
             get {
                 return ResourceManager.GetString("IDS_MENU_WINDOW_MODLIBRARY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset positions….
+        /// </summary>
+        internal static string IDS_MENU_WINDOW_RESET_POSITIONS {
+            get {
+                return ResourceManager.GetString("IDS_MENU_WINDOW_RESET_POSITIONS", resourceCulture);
             }
         }
         

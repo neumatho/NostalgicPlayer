@@ -17,7 +17,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 	/// </summary>
 	public partial class EqualizerWindowForm : WindowFormBase
 	{
-		private const string WindowSettingsName = "EqualizerWindow";
 		private readonly EqualizerControl equalizerControl;
 
 		private IMixerConfigurationFactory mixerConfigurationFactory;
@@ -60,14 +59,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			// Set window title
 			Text = Resources.IDS_SETTINGS_MIXER_EQUALIZER;
 
-			// Initialize the window
-			LoadWindowSettings(WindowSettingsName);
-
 			// Load settings into control
 			LoadEqualizerSettings();
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "EqualizerWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page

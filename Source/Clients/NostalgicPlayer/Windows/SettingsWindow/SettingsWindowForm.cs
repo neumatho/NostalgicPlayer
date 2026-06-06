@@ -61,7 +61,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow
 			navigator.Button.ContextButtonDisplay = ButtonDisplay.Hide;
 
 			// Load window settings
-			LoadWindowSettings("SettingsWindow");
 			windowSettings = new SettingsWindowSettings(allWindowSettings);
 
 			// Set the title of the window
@@ -98,6 +97,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "SettingsWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page

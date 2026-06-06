@@ -54,7 +54,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 			this.database = database;
 
 			// Load window settings
-			LoadWindowSettings("FavoriteSongSystemWindow");
 			settings = new FavoriteSongSystemWindowSettings(allWindowSettings);
 
 			// Set the title of the window
@@ -127,8 +126,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 			favoriteDataGridView.Rows.Clear();
 
 			// Define sorting method
-			var sortMethod1 = (KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.ListenCount;
-			var sortMethod2 = (KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.LastLoaded;
+			int SortMethod1(KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.ListenCount;
+			DateTime SortMethod2(KeyValuePair<string, ModuleDatabaseInfo> p) => p.Value.LastLoaded;
 
 			// Now add the items
 			IEnumerable<KeyValuePair<string, ModuleDatabaseInfo>> list = database.RetrieveAllInformation().Where(p => p.Value.ListenCount > 0);
@@ -137,19 +136,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 			{
 				case FavoriteSongSystemWindowSettings.WhatToShow.Top10:
 				{
-					list = list.OrderByDescending(sortMethod1).ThenByDescending(sortMethod2).Take(10);
+					list = list.OrderByDescending(SortMethod1).ThenByDescending(SortMethod2).Take(10);
 					break;
 				}
 
 				case FavoriteSongSystemWindowSettings.WhatToShow.Top50:
 				{
-					list = list.OrderByDescending(sortMethod1).ThenByDescending(sortMethod2).Take(50);
+					list = list.OrderByDescending(SortMethod1).ThenByDescending(SortMethod2).Take(50);
 					break;
 				}
 
 				case FavoriteSongSystemWindowSettings.WhatToShow.Top100:
 				{
-					list = list.OrderByDescending(sortMethod1).ThenByDescending(sortMethod2).Take(100);
+					list = list.OrderByDescending(SortMethod1).ThenByDescending(SortMethod2).Take(100);
 					break;
 				}
 
@@ -158,25 +157,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 					if (!int.TryParse(otherNumberTextBox.Text, out int number))
 						number = 0;
 
-					list = list.OrderByDescending(sortMethod1).ThenByDescending(sortMethod2).Take(number);
+					list = list.OrderByDescending(SortMethod1).ThenByDescending(SortMethod2).Take(number);
 					break;
 				}
 
 				case FavoriteSongSystemWindowSettings.WhatToShow.Bottom10:
 				{
-					list = list.OrderBy(sortMethod1).ThenBy(sortMethod2).Take(10);
+					list = list.OrderBy(SortMethod1).ThenBy(SortMethod2).Take(10);
 					break;
 				}
 
 				case FavoriteSongSystemWindowSettings.WhatToShow.Bottom50:
 				{
-					list = list.OrderBy(sortMethod1).ThenBy(sortMethod2).Take(50);
+					list = list.OrderBy(SortMethod1).ThenBy(SortMethod2).Take(50);
 					break;
 				}
 
 				case FavoriteSongSystemWindowSettings.WhatToShow.Bottom100:
 				{
-					list = list.OrderBy(sortMethod1).ThenBy(sortMethod2).Take(100);
+					list = list.OrderBy(SortMethod1).ThenBy(SortMethod2).Take(100);
 					break;
 				}
 
@@ -185,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 					if (!int.TryParse(otherNumberTextBox.Text, out int number))
 						number = 0;
 
-					list = list.OrderBy(sortMethod1).ThenBy(sortMethod2).Take(number);
+					list = list.OrderBy(SortMethod1).ThenBy(SortMethod2).Take(number);
 					break;
 				}
 			}
@@ -219,6 +218,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "FavoriteSongSystemWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page

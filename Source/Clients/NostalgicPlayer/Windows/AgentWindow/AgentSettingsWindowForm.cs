@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 		private AgentInfo agentInfo;
 
 		private ISettingsControl settingsControl;
+		private string windowSettingsName;
 		private string helpUrl;
 
 		/********************************************************************/
@@ -89,6 +90,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => windowSettingsName;
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page
@@ -187,7 +197,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 		private void LoadSettings()
 		{
 			// Load window settings
-			LoadWindowSettings($"{agentInfo.TypeName.Replace(" ", string.Empty)}SettingsWindow");
+			windowSettingsName = $"{agentInfo.TypeName.Replace(" ", string.Empty)}SettingsWindow";
+			LoadWindowSettings();
 
 			// Load all the settings
 			settingsControl.ReadSettings();

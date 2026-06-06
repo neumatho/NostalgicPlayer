@@ -49,7 +49,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			this.moduleSettings = moduleSettings;
 
 			// Load window settings
-			LoadWindowSettings("ModuleInfoWindow");
 			settings = new ModuleInfoWindowSettings(allWindowSettings);
 
 			// Set the title of the window
@@ -122,6 +121,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "ModuleInfoWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page

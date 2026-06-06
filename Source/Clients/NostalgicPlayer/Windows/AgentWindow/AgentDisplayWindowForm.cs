@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 		private IModuleHandlerService moduleHandler;
 
 		private IVisualAgent visualAgent;
+		private string windowSettingsName;
 		private string helpUrl;
 
 		/********************************************************************/
@@ -116,10 +117,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 			}
 
 			// Load window settings
-			LoadWindowSettings($"{agentInfo.TypeName.Replace(" ", string.Empty)}DisplayWindow");
+			windowSettingsName = $"{agentInfo.TypeName.Replace(" ", string.Empty)}DisplayWindow";
+			LoadWindowSettings();
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => windowSettingsName;
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page

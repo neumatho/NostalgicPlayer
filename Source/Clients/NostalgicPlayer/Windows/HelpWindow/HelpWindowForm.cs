@@ -55,12 +55,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 			webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
 			Controls.Add(webView);
 
-			// Load window settings
-			LoadWindowSettings("HelpWindow");
-
 			// Set the title of the window
 			Text = Resources.IDS_HELP_TITLE;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "HelpWindow";
 
 
 

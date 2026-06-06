@@ -88,9 +88,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 
 			Font = FontPalette.GetRegularFont(9.0f);
 
-			// Load window settings
-			LoadWindowSettings("AboutWindow");
-
 			// Set the size of the window to a fixed size
 			ClientSize = new Size(AreaWidth + (pictureBox.Location.X * 2), AreaHeight + (pictureBox.Location.Y * 2));
 
@@ -145,6 +142,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			// Start the timer
 			pulseTimer.Start();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "AboutWindow";
 
 
 
@@ -365,6 +371,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 									showMode = Mode.Text;
 									linesToScroll = outsideHeight;
 								}
+
 								break;
 							}
 
@@ -402,6 +409,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 										g.DrawString(str, Font, brush, x, y);
 									}
 								}
+
 								break;
 							}
 
@@ -598,6 +606,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 										}
 									}
 								}
+
 								break;
 							}
 						}

@@ -105,9 +105,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			searchModeComboBox.Items.AddRange(Resources.IDS_MODLIBRARY_SEARCHMODE_FILENAME_AND_PATH,
 				Resources.IDS_MODLIBRARY_SEARCHMODE_FILENAME_ONLY, Resources.IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY);
 
-			// Load window settings
-			LoadWindowSettings("ModLibraryWindow");
-
 			// Remember initial path
 			initialModLibraryPath = GetCurrentModLibraryPath();
 
@@ -166,6 +163,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "ModLibraryWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page

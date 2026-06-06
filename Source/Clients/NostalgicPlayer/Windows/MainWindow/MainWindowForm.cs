@@ -132,6 +132,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private FavoriteSongSystemForm favoriteSongSystemWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
 		private AudiusWindowForm audiusWindow = null;
+		private ModLibraryWindowForm modLibraryWindow = null;
 		private EqualizerWindowForm equalizerWindow = null;
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
@@ -233,6 +234,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "MainWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page
@@ -1608,6 +1618,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// User selected the Reset position menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_ResetPositions_Click(object sender, EventArgs e)
+		{
+			if (ShowQuestion(Resources.IDS_MAIN_RESET_POSITIONS))
+			{
+				foreach (WindowFormBase window in GetAllOpenedWindows())
+					window.LoadWindowSettings();
+
+				LoadWindowSettings();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// User selected the Audius menu item
 		/// </summary>
 		/********************************************************************/
@@ -1625,6 +1653,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				audiusWindow = formCreatorService.GetFormInstance<AudiusWindowForm>();
 				audiusWindow.Disposed += (o, args) => { audiusWindow = null; };
 				audiusWindow.Show();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected the Module Library menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_ModLibrary_Click(object sender, EventArgs e)
+		{
+			if (IsModLibraryWindowOpen())
+			{
+				if (modLibraryWindow.WindowState == FormWindowState.Minimized)
+					modLibraryWindow.WindowState = FormWindowState.Normal;
+
+				modLibraryWindow.Activate();
+			}
+			else
+			{
+				modLibraryWindow = formCreatorService.GetFormInstance<ModLibraryWindowForm>();
+				modLibraryWindow.Disposed += (o, args) => { modLibraryWindow = null; };
+				modLibraryWindow.Show();
 			}
 		}
 
@@ -3101,7 +3153,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void InitSettings()
 		{
-			LoadWindowSettings("MainWindow");
 			mainWindowSettings = new MainWindowSettings(allWindowSettings);
 
 			// Set the time format
@@ -3187,6 +3238,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_SETTINGS);
 			menuItem.Click += Menu_Window_Settings_Click;
+			windowMenuItem.DropDownItems.Add(menuItem);
+
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_RESET_POSITIONS);
+			menuItem.Click += Menu_Window_ResetPositions_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
 			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
@@ -3599,8 +3654,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			if (IsModLibraryWindowOpen())
 				yield return modLibraryWindow;
 
-			foreach (WindowFormBase window in EnumerateEqualizerWindow())
-				yield return window;
+			if (IsEqualizerWindowOpen())
+				yield return equalizerWindow;
 
 			if (IsSettingsWindowOpen())
 				yield return settingsWindow;
@@ -3718,12 +3773,36 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Check to see if Equalizer window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsEqualizerWindowOpen()
+		{
+			return (equalizerWindow != null) && !equalizerWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Check if the Audius window is open
 		/// </summary>
 		/********************************************************************/
 		private bool IsAudiusWindowOpen()
 		{
 			return (audiusWindow != null) && !audiusWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check to see if Module Library window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsModLibraryWindowOpen()
+		{
+			return (modLibraryWindow != null) && !modLibraryWindow.IsDisposed;
 		}
 
 
@@ -5576,32 +5655,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		#endregion
 
 		#region Module Library
-		private ModLibraryWindowForm modLibraryWindow = null;
-
-		/********************************************************************/
-		/// <summary>
-		/// User selected the Module Library menu item
-		/// </summary>
-		/********************************************************************/
-		private void Menu_Window_ModLibrary_Click(object sender, EventArgs e)
-		{
-			if (IsModLibraryWindowOpen())
-			{
-				if (modLibraryWindow.WindowState == FormWindowState.Minimized)
-					modLibraryWindow.WindowState = FormWindowState.Normal;
-
-				modLibraryWindow.Activate();
-			}
-			else
-			{
-				modLibraryWindow = formCreatorService.GetFormInstance<ModLibraryWindowForm>();
-				modLibraryWindow.Disposed += (o, args) => { modLibraryWindow = null; };
-				modLibraryWindow.Show();
-			}
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Find a module in the module list by file path
@@ -5679,18 +5732,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					SelectAndPlayModule(item);
 			}
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Check to see if Module Library window is open
-		/// </summary>
-		/********************************************************************/
-		private bool IsModLibraryWindowOpen()
-		{
-			return (modLibraryWindow != null) && !modLibraryWindow.IsDisposed;
-		}
 		#endregion
 
 		#endregion
@@ -5698,10 +5739,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		#region Equalizer
 		/********************************************************************/
 		/// <summary>
-		/// User selected the Equalizer menu item
+		/// Event handler for the equalizer button click
 		/// </summary>
 		/********************************************************************/
-		private void Menu_Window_Equalizer_Click(object sender, EventArgs e)
+		private void EqualizerButton_Click(object sender, EventArgs e)
 		{
 			if (IsEqualizerWindowOpen())
 			{
@@ -5716,19 +5757,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				equalizerWindow.Disposed += (o, args) => { equalizerWindow = null; };
 				equalizerWindow.Show();
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Event handler for the equalizer button click
-		/// </summary>
-		/********************************************************************/
-		private void EqualizerButton_Click(object sender, EventArgs e)
-		{
-			// Call the same method as the menu item
-			Menu_Window_Equalizer_Click(sender, e);
 		}
 
 
@@ -5762,31 +5790,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			equalizerWindow = null;
 			mainWindowSettings.OpenEqualizerWindow = openAgain;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Enumerate Equalizer window if open
-		/// </summary>
-		/********************************************************************/
-		private IEnumerable<Form> EnumerateEqualizerWindow()
-		{
-			if (IsEqualizerWindowOpen())
-				yield return equalizerWindow;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Check to see if Equalizer window is open
-		/// </summary>
-		/********************************************************************/
-		private bool IsEqualizerWindowOpen()
-		{
-			return (equalizerWindow != null) && !equalizerWindow.IsDisposed;
 		}
 		#endregion
 	}

@@ -43,9 +43,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		public void InitializeForm(IPictureDownloaderFactory pictureDownloaderFactory)
 		{
-			// Load window settings
-			LoadWindowSettings("AudiusWindow");
-
 			// Initialize picture downloader
 			pictureDownloader = pictureDownloaderFactory.GetDownloader();
 			pictureDownloader.SetMaxNumberInCache(100);
@@ -63,6 +60,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		}
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "AudiusWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page

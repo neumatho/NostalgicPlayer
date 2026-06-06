@@ -56,7 +56,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			moduleHandler = moduleHandlerService;
 
 			// Load window settings
-			LoadWindowSettings("SampleInfoWindow");
 			settings = new SampleInfoWindowSettings(allWindowSettings);
 
 			// Set the title of the window
@@ -144,6 +143,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 		#endregion
 
 		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected override string WindowSettingsName => "SampleInfoWindow";
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the URL to the help page
