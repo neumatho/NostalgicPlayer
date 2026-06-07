@@ -13,7 +13,7 @@
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Description>Music player with an user interface</Description>
-    <Version>3.3.1</Version>
+    <Version>3.4.0</Version>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
     <!-- The WebView2 package ships an unused WPF assembly that references a different WindowsBase version. We only use the WinForms control, so demote that harmless reference conflict to a message -->
