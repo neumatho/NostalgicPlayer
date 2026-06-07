@@ -358,7 +358,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				uint macroOffs = offsets[i];
 				uint macroEnd = offsets[i + 1];
 
-				if (macroEnd <= macroOffs)
+				if ((macroEnd <= macroOffs) || (macroOffs >= moduleStream.Length) || (macroEnd >= moduleStream.Length))
 					break;
 
 				bool foundStop = false;
