@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
@@ -24,6 +25,9 @@ namespace Polycode.NostalgicPlayer.Controls.Composition
 		{
 			container.RegisterSingleton<IThemeManager, ThemeManager>();
 			container.RegisterSingleton<INostalgicImageBank, NostalgicImageBank>();
+
+			container.RegisterSingleton<IFormCreatorService, FormCreatorService>();
+			container.RegisterSingleton<IControlInitializerService, ControlInitializerService>();
 		}
 	}
 }
