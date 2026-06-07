@@ -8,15 +8,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
+namespace Polycode.NostalgicPlayer.Controls.Forms
 {
 	/// <summary>
 	/// Initialize controls with dependency injection
 	/// </summary>
-	public class ControlInitializerService : IControlInitializerService
+	internal class ControlInitializerService : IControlInitializerService
 	{
 		private readonly IApplicationContext applicationContext;
 
