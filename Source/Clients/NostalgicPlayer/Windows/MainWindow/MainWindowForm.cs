@@ -30,6 +30,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Extensions;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Lists;
 using Polycode.NostalgicPlayer.Controls.Menus;
