@@ -10,7 +10,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Forms;
-using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -72,6 +71,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 				else
 					ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
 			}
+
+			LoadWindowSettings();
 		}
 
 
@@ -104,9 +105,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Call this to load window settings
 		/// </summary>
 		/********************************************************************/
-		protected void LoadWindowSettings(string windowSettingsName)
+		public void LoadWindowSettings()
 		{
 			// Load the windows settings
+			string windowSettingsName = WindowSettingsName;
+			if (string.IsNullOrEmpty(windowSettingsName))
+				return;
+
 			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);
@@ -136,6 +141,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 					WindowState = maximized.Value ? FormWindowState.Maximized : FormWindowState.Normal;
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the window settings name
+		/// </summary>
+		/********************************************************************/
+		protected virtual string WindowSettingsName => null;
 
 
 
