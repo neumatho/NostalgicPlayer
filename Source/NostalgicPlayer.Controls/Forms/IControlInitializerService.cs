@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
+namespace Polycode.NostalgicPlayer.Controls.Forms
 {
 	/// <summary>
 	/// Initialize controls with dependency injection

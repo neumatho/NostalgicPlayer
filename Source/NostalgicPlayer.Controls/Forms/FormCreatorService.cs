@@ -8,12 +8,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
+namespace Polycode.NostalgicPlayer.Controls.Forms
 {
 	/// <summary>
 	/// Helper to instance Windows Form objects
 	/// </summary>
-	public class FormCreatorService : IFormCreatorService
+	internal class FormCreatorService : IFormCreatorService
 	{
 		private readonly IApplicationContext applicationContext;
 		private readonly IControlInitializerService controlInitializerService;
