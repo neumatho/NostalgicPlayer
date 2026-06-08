@@ -16,5 +16,25 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Gets the logo image
 		/// </summary>
 		Bitmap Logo { get; }
+
+		/// <summary>
+		/// Gets the message box error icon
+		/// </summary>
+		Bitmap Error { get; }
+
+		/// <summary>
+		/// Gets the message box warning icon
+		/// </summary>
+		Bitmap Warning { get; }
+
+		/// <summary>
+		/// Gets the message box information icon
+		/// </summary>
+		Bitmap Information { get; }
+
+		/// <summary>
+		/// Gets the message box question icon
+		/// </summary>
+		Bitmap Question { get; }
 	}
 }

@@ -13,6 +13,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 	public interface IImageColors
 	{
 		/// <summary></summary>
+		Color MessageBoxErrorColor { get; }
+		/// <summary></summary>
+		Color MessageBoxWarningColor { get; }
+		/// <summary></summary>
+		Color MessageBoxInformationColor { get; }
+		/// <summary></summary>
+		Color MessageBoxQuestionColor { get; }
+
+		/// <summary></summary>
 		Color InformationColor { get; }
 		/// <summary></summary>
 		Color MuteColor { get; }
