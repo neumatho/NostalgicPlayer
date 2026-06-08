@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 		/********************************************************************/
 		public ChannelLevelMeterSettings()
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
 			settings.LoadSettings("ChannelLevelMeter");
 		}
 

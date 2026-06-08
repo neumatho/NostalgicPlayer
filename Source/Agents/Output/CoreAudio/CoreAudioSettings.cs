@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		public CoreAudioSettings()
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
 			settings.LoadSettings("CoreAudio");
 
 			// Remove obsolete settings

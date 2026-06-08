@@ -19,9 +19,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public RememberListSettings(ISettings settings)
+		public RememberListSettings(ISettingsFactory settingsFactory)
 		{
-			this.settings = settings;
+			settings = settingsFactory.GetSettings();
 			settings.LoadSettings("__RememberList");
 		}
 

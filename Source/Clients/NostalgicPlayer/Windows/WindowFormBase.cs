@@ -42,11 +42,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings)
+		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettingsFactory settingsFactory, OptionSettings optionSettings)
 		{
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
-			allWindowSettings = settings;
+			allWindowSettings = settingsFactory.GetSettings();
 
 			// Set how the window should act in the task bar and task switcher.
 			// Only apply to child windows - the main window (where mainWindowApi.Form

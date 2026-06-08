@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/********************************************************************/
 		public DiskSaverSettings()
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
 			settings.LoadSettings("DiskSaver");
 		}
 

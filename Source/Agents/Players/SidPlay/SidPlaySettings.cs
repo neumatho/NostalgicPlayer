@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public SidPlaySettings()
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
 			settings.LoadSettings("SidPlay");
 
 			// Remove obsolete settings

@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public OscilloscopeSettings()
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettings>();
+			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
 			settings.LoadSettings("Oscilloscope");
 		}
 
