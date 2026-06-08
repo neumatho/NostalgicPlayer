@@ -29,6 +29,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.OpenUrlWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow;
 using Polycode.NostalgicPlayer.Controls.Components;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
 using Polycode.NostalgicPlayer.Controls.Extensions;
 using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Images;
@@ -38,7 +39,6 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
-using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public bool ShowQuestion(string question)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
+			using (CustomMessageBox dialog = formCreatorService.GetMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
 			{
 				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
 				dialog.AddButton(Resources.IDS_BUT_NO, 'n');
@@ -334,7 +334,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public void ShowSimpleErrorMessage(IWin32Window owner, string message)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
+			using (CustomMessageBox dialog = formCreatorService.GetMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
 				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
 				dialog.ShowDialog(owner);
@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			{
 				case ModuleSettings.ModuleErrorAction.ShowError:
 				{
-					using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
+					using (CustomMessageBox dialog = formCreatorService.GetMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 					{
 						dialog.AddButton(Resources.IDS_BUT_SKIP, 'S');
 						dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, 'r');

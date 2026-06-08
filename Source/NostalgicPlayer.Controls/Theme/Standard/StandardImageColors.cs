@@ -15,6 +15,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 	{
 		private readonly ILabelColors labelColors = new StandardLabelColors();
 
+		private static readonly Color messageBoxErrorColor = Color.FromArgb(185, 6, 10);
+		private static readonly Color messageBoxWarningColor = Color.FromArgb(255, 235, 45);
+		private static readonly Color messageBoxInformationColor = Color.FromArgb(26, 64, 171);
+		private static readonly Color messageBoxQuestionColor = Color.FromArgb(26, 64, 171);
+
 		private static readonly Color informationColor = Color.FromArgb(0, 0, 0);
 		private static readonly Color muteColor = Color.FromArgb(0, 0, 0);
 		private static readonly Color addColor = Color.FromArgb(63, 204, 65);
@@ -43,6 +48,42 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color samplePingPongColor = Color.FromArgb(16, 43, 147);
 		private static readonly Color sampleStereoColor = Color.FromArgb(255, 120, 70);
 		private static readonly Color sampleMultiOctavesColor = Color.FromArgb(119, 137, 201);
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color MessageBoxErrorColor => messageBoxErrorColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color MessageBoxWarningColor => messageBoxWarningColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color MessageBoxInformationColor => messageBoxInformationColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color MessageBoxQuestionColor => messageBoxQuestionColor;
+
+
 
 		/********************************************************************/
 		/// <summary>

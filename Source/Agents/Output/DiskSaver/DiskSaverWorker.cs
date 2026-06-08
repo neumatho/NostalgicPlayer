@@ -10,13 +10,15 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
-using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
@@ -29,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		private const int MixerBufferSize = 65536;
 
 		private readonly ISettingsFactory settingsFactory;
+
+		private readonly IFormCreatorService formCreatorService;
 
 		private readonly AgentInfo[] outputAgents;
 		private readonly AgentInfo[] sampleConverterAgents;
@@ -298,7 +302,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				fileName = Path.Combine(settings.DiskPath, Path.ChangeExtension(Path.GetFileName(fileName), converterInUse.FileExtension));
 				if (File.Exists(fileName))
 				{
-					using (CustomMessageBox dialog = new CustomMessageBox(string.Format(Resources.IDS_MSG_OVERWRITE_FILE, fileName), Resources.IDS_NAME, CustomMessageBox.IconType.Question))
+					using (CustomMessageBox dialog = formCreatorService.GetMessageBox(string.Format(Resources.IDS_MSG_OVERWRITE_FILE, fileName), Resources.IDS_NAME, CustomMessageBox.IconType.Question))
 					{
 						dialog.AddButton(Resources.IDS_BUT_YES, 'y');
 						dialog.AddButton(Resources.IDS_BUT_NO, 'N');
