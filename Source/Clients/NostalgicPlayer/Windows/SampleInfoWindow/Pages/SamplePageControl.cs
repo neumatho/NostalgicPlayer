@@ -14,7 +14,9 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
 using Polycode.NostalgicPlayer.Controls.Events;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Lists;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
@@ -34,6 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		private IAgentManager agentManager;
 		private IThemeManager themeManager;
 		private INostalgicImageBank imageBank;
+		private IFormCreatorService formCreatorService;
 
 		private readonly Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
 
@@ -74,11 +77,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeControl(IAgentManager agentManager, IThemeManager themeManager, INostalgicImageBank imageBank)
+		public void InitializeControl(IAgentManager agentManager, IThemeManager themeManager, INostalgicImageBank imageBank, IFormCreatorService formCreatorService)
 		{
 			this.agentManager = agentManager;
 			this.themeManager = themeManager;
 			this.imageBank = imageBank;
+			this.formCreatorService = formCreatorService;
 
 			themeManager.ThemeChanged += ThemeChanged;
 		}

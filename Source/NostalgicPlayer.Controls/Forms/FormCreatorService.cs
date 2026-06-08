@@ -6,6 +6,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Forms
@@ -41,16 +42,44 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		{
 			T form = new T();
 
+			CallAllInitializeMethods(form, extraArguments);
+
+			return form;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will create a new instance of the message box
+		/// </summary>
+		/********************************************************************/
+		public CustomMessageBox GetMessageBox(string message, string title, CustomMessageBox.IconType icon)
+		{
+			CustomMessageBox messageBox = new CustomMessageBox();
+
+			CallAllInitializeMethods(messageBox, message, title, icon);
+
+			return messageBox;
+		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Call all dependency injection methods
+		/// </summary>
+		/********************************************************************/
+		private void CallAllInitializeMethods(Form form, params object[] extraArguments)
+		{
 			controlInitializerService.InitializeControls(form);
 
 			CallInitializeMethod(form, "InitializeNostalgicForm");
 			CallInitializeMethod(form, "InitializeBaseForm");
 			CallInitializeMethod(form, "InitializeForm", extraArguments);
-
-			return form;
 		}
 
-		#region Private methods
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Try to find the given method and call it
