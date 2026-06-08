@@ -13,12 +13,13 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
 using Polycode.NostalgicPlayer.Controls.Events;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Lists;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
@@ -34,6 +35,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		private IAgentManager agentManager;
 		private IThemeManager themeManager;
 		private INostalgicImageBank imageBank;
+		private IFormCreatorService formCreatorService;
 
 		private readonly Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
 
@@ -74,11 +76,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeControl(IAgentManager agentManager, IThemeManager themeManager, INostalgicImageBank imageBank)
+		public void InitializeControl(IAgentManager agentManager, IThemeManager themeManager, INostalgicImageBank imageBank, IFormCreatorService formCreatorService)
 		{
 			this.agentManager = agentManager;
 			this.themeManager = themeManager;
 			this.imageBank = imageBank;
+			this.formCreatorService = formCreatorService;
 
 			themeManager.ThemeChanged += ThemeChanged;
 		}
@@ -607,7 +610,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		/********************************************************************/
 		private void ShowSimpleErrorMessage(string message)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
+			using (CustomMessageBox dialog = formCreatorService.GetMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
 				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
 				dialog.ShowDialog(this);

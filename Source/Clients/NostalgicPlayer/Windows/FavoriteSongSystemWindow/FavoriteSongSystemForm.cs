@@ -11,7 +11,8 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Controls.Components;
-using Polycode.NostalgicPlayer.Kit.Gui.Controls;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Logic.Databases;
 
@@ -24,6 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 	{
 		private IMainWindowApi mainWindowApi;
 		private IModuleDatabase database;
+		private IFormCreatorService formCreatorService;
 
 		private FavoriteSongSystemWindowSettings settings;
 
@@ -46,11 +48,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IMainWindowApi mainWindowApi, IModuleDatabase database)
+		public void InitializeForm(IMainWindowApi mainWindowApi, IModuleDatabase database, IFormCreatorService formCreatorService)
 		{
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 			this.database = database;
+			this.formCreatorService = formCreatorService;
 
 			// Load window settings
 			settings = new FavoriteSongSystemWindowSettings(allWindowSettings);
@@ -407,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		/********************************************************************/
 		private void ResetButton_Click(object sender, EventArgs e)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(Resources.IDS_FAVORITE_RESET, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
+			using (CustomMessageBox dialog = formCreatorService.GetMessageBox(Resources.IDS_FAVORITE_RESET, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
 			{
 				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
 				dialog.AddButton(Resources.IDS_BUT_NO, 'N');
