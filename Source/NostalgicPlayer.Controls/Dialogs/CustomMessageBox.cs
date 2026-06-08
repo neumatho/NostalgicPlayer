@@ -4,18 +4,19 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Controls.Buttons;
 using Polycode.NostalgicPlayer.Controls.Extensions;
+using Polycode.NostalgicPlayer.Controls.Forms;
+using Polycode.NostalgicPlayer.Controls.Images;
 
-namespace Polycode.NostalgicPlayer.Kit.Gui.Controls
+namespace Polycode.NostalgicPlayer.Controls.Dialogs
 {
 	/// <summary>
 	/// Show a message box with customized buttons
 	/// </summary>
-	public partial class CustomMessageBox : KryptonForm
+	public partial class CustomMessageBox : NostalgicForm
 	{
 		/// <summary></summary>
 		public enum IconType
@@ -30,43 +31,41 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Controls
 			Error
 		}
 
+		private const int ButtonSpacing = 5;
+
+		private INostalgicImageBank imageBank;
+
 		private int buttonNumber = 1;
 		private char result;
 
 		private int lastWidth = 0;
 		private string originalMessage;
 
-		private readonly List<Image> imageList;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public CustomMessageBox()
+		internal CustomMessageBox()
 		{
 			InitializeComponent();
-
-			imageList = new List<Image>
-			{
-				Resources.Information,
-				Resources.Question,
-				Resources.Warning,
-				Resources.Error
-			};
-
-			result = '\0';		// Default, if the window is closed without pressing any button
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Initialize the form
+		///
+		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public CustomMessageBox(string message, string title, IconType icon) : this()
+		public void InitializeForm(string message, string title, IconType icon, INostalgicImageBank imageBank)
 		{
+			this.imageBank = imageBank;
+
+			result = '\0';		// Default, if the window is closed without pressing any button
+
 			SetMessage(message);
 			SetTitle(title);
 			SetIcon(icon);
@@ -93,7 +92,35 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Controls
 		/********************************************************************/
 		public void SetIcon(IconType iconType)
 		{
-			pictureBox.Image = imageList[(int)iconType];
+			switch (iconType)
+			{
+				case IconType.Error:
+				{
+					pictureBox.Image = imageBank.General.Error;
+					break;
+				}
+
+				case IconType.Warning:
+				{
+					pictureBox.Image = imageBank.General.Warning;
+					break;
+				}
+
+				case IconType.Information:
+				{
+					pictureBox.Image = imageBank.General.Information;
+					break;
+				}
+
+				case IconType.Question:
+				{
+					pictureBox.Image = imageBank.General.Question;
+					break;
+				}
+
+				default:
+					throw new NotImplementedException($"Icon type of {iconType} not implemented");
+			}
 		}
 
 
@@ -120,23 +147,20 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Controls
 		/********************************************************************/
 		public void AddButton(string label, char result)
 		{
-			KryptonButton button = new KryptonButton();
+			NostalgicButton button = new NostalgicButton();
 			button.Name = $"button_{buttonNumber}";
 			button.TabIndex = buttonNumber;
 			button.Text = label;
 			button.Tag = result;
 			button.AutoSize = true;
 			button.DialogResult = DialogResult.Cancel;
-			button.Palette = fontPalette;
 			button.Click += Button_Click;
 
-			if (buttonNumber == 1)
-				button.Location = new Point(0, 0);
-			else
-			{
-				KryptonButton previousButton = (KryptonButton)buttonPanel.Controls[buttonNumber - 2];
-				button.Location = new Point(previousButton.Location.X + previousButton.Size.Width + 5, 0);
-			}
+			// The horizontal position is set in LayoutButtons() once the
+			// buttons have their final auto-sized width (the theme font is not
+			// applied until the form handle is created, so the width is not
+			// known yet here)
+			button.Location = new Point(0, 0);
 
 			if (char.IsUpper(result))
 			{
@@ -171,7 +195,69 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Controls
 		/********************************************************************/
 		private void Button_Click(object sender, EventArgs e)
 		{
-			result = (char)((KryptonButton)sender).Tag;
+			result = (char)((NostalgicButton)sender).Tag;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Lay out the buttons in a row and position the button panel just
+		/// below the tallest of the icon and the message. Because the icon is
+		/// taller than two lines of text, one and two line messages keep the
+		/// same height, while three or more lines push the buttons down and
+		/// grow the form
+		/// </summary>
+		/********************************************************************/
+		protected override void OnLayout(LayoutEventArgs levent)
+		{
+			if (!IsHandleCreated)
+				return;
+
+			base.OnLayout(levent);
+
+			if (buttonPanel == null)
+				return;
+
+			LayoutButtons();
+			PositionButtonPanel();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Place the buttons next to each other from left to right, using
+		/// their final auto-sized widths
+		/// </summary>
+		/********************************************************************/
+		private void LayoutButtons()
+		{
+			int x = 0;
+
+			foreach (Control button in buttonPanel.Controls)
+			{
+				if (button.Left != x)
+					button.Left = x;
+
+				x += button.Width + ButtonSpacing;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Position the button panel just below the icon and the message
+		/// </summary>
+		/********************************************************************/
+		private void PositionButtonPanel()
+		{
+			int contentBottom = Math.Max(pictureBox.Bottom, messagePanel.Bottom);
+			int desiredTop = contentBottom + buttonPanel.Margin.Top;
+
+			if (buttonPanel.Top != desiredTop)
+				buttonPanel.Top = desiredTop;
 		}
 
 

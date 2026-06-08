@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
 
 namespace Polycode.NostalgicPlayer.Controls.Forms
 {
@@ -17,5 +18,10 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/// InitializeForm() on it while resolving dependencies
 		/// </summary>
 		T GetFormInstance<T>(params object[] extraArguments) where T : Form, new();
+
+		/// <summary>
+		/// Will create a new instance of the message box
+		/// </summary>
+		CustomMessageBox GetMessageBox(string message, string title, CustomMessageBox.IconType icon);
 	}
 }

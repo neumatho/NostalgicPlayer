@@ -15,6 +15,11 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	{
 		private const string Category = "General";
 
+		private Bitmap error;
+		private Bitmap warning;
+		private Bitmap information;
+		private Bitmap question;
+
 		private Bitmap logo;
 		/********************************************************************/
 		/// <summary>
@@ -50,6 +55,15 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		{
 			logo?.Dispose();
 			logo = null;
+
+			error?.Dispose();
+			error = null;
+			warning?.Dispose();
+			warning = null;
+			information?.Dispose();
+			information = null;
+			question?.Dispose();
+			question = null;
 		}
 
 
@@ -67,6 +81,78 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 					logo = GetBitmap(Category, "Logo.png");
 
 				return logo;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the message box error icon
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Error
+		{
+			get
+			{
+				if (error == null)
+					error = GetSvgBitmap(Category, nameof(IGeneralImages.Error), CurrentColors.MessageBoxErrorColor, 32, 32);
+
+				return error;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the message box warning icon
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Warning
+		{
+			get
+			{
+				if (warning == null)
+					warning = GetSvgBitmap(Category, nameof(IGeneralImages.Warning), CurrentColors.MessageBoxWarningColor, 32, 32);
+
+				return warning;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the message box information icon
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Information
+		{
+			get
+			{
+				if (information == null)
+					information = GetSvgBitmap(Category, nameof(IGeneralImages.Information), CurrentColors.MessageBoxInformationColor, 32, 32);
+
+				return information;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the message box question icon
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Question
+		{
+			get
+			{
+				if (question == null)
+					question = GetSvgBitmap(Category, nameof(IGeneralImages.Question), CurrentColors.MessageBoxQuestionColor, 32, 32);
+
+				return question;
 			}
 		}
 	}
