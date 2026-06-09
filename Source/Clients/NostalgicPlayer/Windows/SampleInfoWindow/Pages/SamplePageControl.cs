@@ -263,7 +263,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			settings.SampSortKey = sampleDataGridView.SortedColumn.Index;
 			settings.SampSortOrder = sampleDataGridView.SortOrder;
 
-			settings.SampleSaveFormat = ((AgentInfo)((KryptonListItem)saveFormatComboBox.SelectedItem).Tag).TypeId;
+			KryptonListItem selectedFormat = (KryptonListItem)saveFormatComboBox.SelectedItem;
+			if (selectedFormat?.Tag != null)
+				settings.SampleSaveFormat = ((AgentInfo)selectedFormat.Tag).TypeId;
 		}
 
 
