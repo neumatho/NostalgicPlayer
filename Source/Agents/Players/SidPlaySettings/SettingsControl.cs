@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 {
@@ -23,13 +24,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		public SettingsControl()
 		{
 			InitializeComponent();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize control.
+		///
+		/// Called from ControlFactory
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(ISettingsFactory settingsFactory)
+		{
+			settings = new SidPlay.SidPlaySettings(settingsFactory);
 
 			// Add items in mixer combo control
-			mixerComboBox.Items.AddRange(new object[]
-			{
+			mixerComboBox.Items.AddRange(
+			[
 				Resources.IDS_SETTINGS_OPTIONS_MIXER_INTERPOLATE,
 				Resources.IDS_SETTINGS_OPTIONS_MIXER_RESAMPLE
-			});
+			]);
 		}
 
 		#region ISettingsControl implementation
@@ -40,8 +55,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			settings = new SidPlay.SidPlaySettings();
-
 			return this;
 		}
 

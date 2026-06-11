@@ -21,6 +21,18 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 	{
 		private static readonly Guid agent1Id = Guid.Parse("B9CEF7E4-C74C-4AF0-B01D-802F0D1B4CC7");
 
+		private readonly IAgentWorkerFactory agentWorkerFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public CoreAudio(IAgentWorkerFactory agentWorkerFactory)
+		{
+			this.agentWorkerFactory = agentWorkerFactory;
+		}
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -50,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new CoreAudioWorker();
+			return agentWorkerFactory.GetWorkerInstance<CoreAudioWorker>(typeId);
 		}
 		#endregion
 	}

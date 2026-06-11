@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility.Factories;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using SimpleInjector;
 

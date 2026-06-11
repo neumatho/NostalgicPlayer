@@ -17,6 +17,7 @@ using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 {
@@ -26,6 +27,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 	internal class DiskSaverWorker : OutputAgentBase, IAgentSettingsRegistrar
 	{
 		private const int MixerBufferSize = 65536;
+
+		private readonly ISettingsFactory settingsFactory;
 
 		private readonly AgentInfo[] outputAgents;
 		private readonly AgentInfo[] sampleConverterAgents;
@@ -54,8 +57,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DiskSaverWorker(AgentInfo[] outputAgents, AgentInfo[] sampleConverterAgents)
+		public DiskSaverWorker(AgentInfo[] outputAgents, AgentInfo[] sampleConverterAgents, ISettingsFactory settingsFactory)
 		{
+			this.settingsFactory = settingsFactory;
+
 			this.outputAgents = outputAgents;
 			this.sampleConverterAgents = sampleConverterAgents;
 		}
@@ -79,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		{
 			errorMessage = string.Empty;
 
-			settings = new DiskSaverSettings();
+			settings = new DiskSaverSettings(settingsFactory);
 
 			// Is there selected any converters
 			if (settings.OutputFormat == Guid.Empty)

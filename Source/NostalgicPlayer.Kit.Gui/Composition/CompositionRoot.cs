@@ -3,23 +3,25 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Gui.Factories;
+using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using SimpleInjector;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.Kit.Gui.Composition
 {
 	/// <summary>
-	/// Helper class to use dependency injection
+	/// Register all classes/interfaces into the dependency injection container
 	/// </summary>
-	public static class DependencyInjection
+	public static class CompositionRoot
 	{
 		/********************************************************************/
 		/// <summary>
-		/// The container object.
-		///
-		/// This is only temporary and used until everything has been moved
-		/// into the DI container
+		/// Register all kit specific classes into the container
 		/// </summary>
 		/********************************************************************/
-		public static Container Container { get; set; }
+		public static void RegisterGuiKit(this Container container)
+		{
+			container.RegisterSingleton<IControlFactory, ControlFactory>();
+		}
 	}
 }

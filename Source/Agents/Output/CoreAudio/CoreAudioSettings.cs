@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
@@ -20,9 +19,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public CoreAudioSettings()
+		public CoreAudioSettings(ISettingsFactory settingsFactory)
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
+			settings = settingsFactory.GetSettings();
 			settings.LoadSettings("CoreAudio");
 
 			// Remove obsolete settings

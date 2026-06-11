@@ -17,7 +17,19 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 	/// </summary>
 	internal class ChannelLevelMeterWorker : IChannelChangeVisualAgent, IAgentGuiDisplay
 	{
+		private readonly IControlFactory controlFactory;
+
 		private ChannelLevelMeterControl userControl;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ChannelLevelMeterWorker(IControlFactory controlFactory)
+		{
+			this.controlFactory = controlFactory;
+		}
 
 		#region IAgentDisplay implementation
 		/********************************************************************/
@@ -36,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			userControl = new ChannelLevelMeterControl();
+			userControl = controlFactory.GetInstance<ChannelLevelMeterControl>();
 			return userControl;
 		}
 

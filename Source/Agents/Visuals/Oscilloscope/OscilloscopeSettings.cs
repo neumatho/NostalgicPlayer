@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Containers;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
@@ -22,9 +21,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OscilloscopeSettings()
+		public OscilloscopeSettings(ISettingsFactory settingsFactory)
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
+			settings = settingsFactory.GetSettings();
 			settings.LoadSettings("Oscilloscope");
 		}
 

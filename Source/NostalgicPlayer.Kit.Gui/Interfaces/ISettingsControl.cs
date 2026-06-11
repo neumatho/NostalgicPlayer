@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Kit.Gui.Interfaces
 	/// <summary>
 	/// Implement this interface on your user control showing your settings
 	/// </summary>
-	public interface ISettingsControl
+	public interface ISettingsControl : IControl
 	{
 		/// <summary>
 		/// Return the user control holding the settings

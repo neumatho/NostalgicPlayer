@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Kit.Composition;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Composition;
@@ -97,7 +96,6 @@ namespace Polycode.NostalgicPlayer.Library.Application
 			IApplicationContext context = InitializeApplicationContext();
 
 			container = context.Container;
-			DependencyInjection.Container = context.Container;
 
 			if (initialize != null)
 				initialize();

@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Factories;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility.Composition;
 using SimpleInjector;
 
@@ -21,6 +23,8 @@ namespace Polycode.NostalgicPlayer.Kit.Composition
 		public static void RegisterKit(this Container container)
 		{
 			container.RegisterUtility();
+
+			container.RegisterSingleton<IAgentWorkerFactory, AgentWorkerFactory>();
 		}
 	}
 }

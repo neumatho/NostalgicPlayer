@@ -21,6 +21,18 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 	{
 		private static readonly Guid agent1Id = Guid.Parse("4FA350E5-B774-4BEC-80A1-21CBF851D388");
 
+		private readonly IAgentWorkerFactory agentWorkerFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public Oscilloscope(IAgentWorkerFactory agentWorkerFactory)
+		{
+			this.agentWorkerFactory = agentWorkerFactory;
+		}
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -50,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new OscilloscopeWorker();
+			return agentWorkerFactory.GetWorkerInstance<OscilloscopeWorker>(typeId);
 		}
 		#endregion
 	}

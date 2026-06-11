@@ -9,6 +9,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 {
@@ -24,14 +26,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 	/// <summary>
 	/// The user control showing the channel level meter
 	/// </summary>
-	internal partial class ChannelLevelMeterControl : UserControl
+	internal partial class ChannelLevelMeterControl : UserControl, IControl
 	{
 		private const int SpaceBetweenMeters = 4;
+
+		private ChannelLevelMeterSettings settings;
 
 		private Bitmap backgroundBitmap;
 		private int channelCount;
 		private Orientation currentOrientation;
-		private readonly ChannelLevelMeterSettings settings;
 
 		/********************************************************************/
 		/// <summary>
@@ -41,9 +44,21 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 		public ChannelLevelMeterControl()
 		{
 			InitializeComponent();
+		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize control.
+		///
+		/// Called from ControlFactory
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(ISettingsFactory settingsFactory)
+		{
 			// Load settings
-			settings = new ChannelLevelMeterSettings();
+			settings = new ChannelLevelMeterSettings(settingsFactory);
 
 			// Apply loaded settings
 			currentOrientation = settings.Orientation;

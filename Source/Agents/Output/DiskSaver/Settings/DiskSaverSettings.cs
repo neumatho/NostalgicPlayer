@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
@@ -37,9 +36,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DiskSaverSettings()
+		public DiskSaverSettings(ISettingsFactory settingsFactory)
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
+			settings = settingsFactory.GetSettings();
 			settings.LoadSettings("DiskSaver");
 		}
 

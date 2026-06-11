@@ -25,6 +25,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	{
 		private static readonly Guid agent1Id = Guid.Parse("1048D3BB-EA39-4CF2-91F0-619AC7270946");
 
+		private readonly IAgentWorkerFactory agentWorkerFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public SidPlay(IAgentWorkerFactory agentWorkerFactory)
+		{
+			this.agentWorkerFactory = agentWorkerFactory;
+		}
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -63,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new SidPlayWorker();
+			return agentWorkerFactory.GetWorkerInstance<SidPlayWorker>(typeId);
 		}
 		#endregion
 	}

@@ -19,6 +19,18 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 	/// </summary>
 	public class CoreAudioGuiSettings : IAgentGuiSettings
 	{
+		private readonly IControlFactory controlFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public CoreAudioGuiSettings(IControlFactory controlFactory)
+		{
+			this.controlFactory = controlFactory;
+		}
+
 		#region IAgentGuiSettings implementation
 		/********************************************************************/
 		/// <summary>
@@ -46,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		/********************************************************************/
 		public ISettingsControl GetSettingsControl()
 		{
-			return new SettingsControl();
+			return controlFactory.GetInstance<SettingsControl>();
 		}
 
 

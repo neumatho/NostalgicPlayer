@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
@@ -21,9 +20,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelLevelMeterSettings()
+		public ChannelLevelMeterSettings(ISettingsFactory settingsFactory)
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
+			settings = settingsFactory.GetSettings();
 			settings.LoadSettings("ChannelLevelMeter");
 		}
 

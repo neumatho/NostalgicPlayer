@@ -12,6 +12,7 @@ using System.Runtime.Loader;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Containers;
 
 namespace Polycode.NostalgicPlayer.Library.Agent
@@ -46,6 +47,8 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 			"Lib"
 		];
 
+		private readonly IApplicationContext applicationContext;
+
 		private readonly Lock listLock = new Lock();
 		private readonly Dictionary<Guid, AgentLoadInfo> agentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
 		private readonly Dictionary<AgentType, List<AgentInfo>> agentsByAgentType = new Dictionary<AgentType, List<AgentInfo>>();
@@ -53,6 +56,18 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 		private readonly Dictionary<Guid, AgentSettingsLoadInfo> settingAgents = new Dictionary<Guid, AgentSettingsLoadInfo>();
 
 		private readonly List<IVisualAgent> registeredVisualAgents = new List<IVisualAgent>();
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public AgentManager(IApplicationContext applicationContext)
+		{
+			this.applicationContext = applicationContext;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -349,7 +364,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 							{
 								try
 								{
-									IAgent agent = (IAgent)Activator.CreateInstance(type);
+									IAgent agent = CreateAgentInstance<IAgent>(type);
 
 									// Check the NostalgicPlayer version the agent is compiled against
 									if (agent.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
@@ -400,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 							{
 								try
 								{
-									IAgentSettings agentSettings = (IAgentSettings)Activator.CreateInstance(t);
+									IAgentSettings agentSettings = CreateAgentInstance<IAgentSettings>(t);
 
 									// Check the NostalgicPlayer version the agent is compiled against
 									if (agentSettings.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
@@ -436,6 +451,23 @@ namespace Polycode.NostalgicPlayer.Library.Agent
 					}
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create new instance of an agent and solve dependency injections
+		/// </summary>
+		/********************************************************************/
+		private T CreateAgentInstance<T>(Type type)
+		{
+			ConstructorInfo ctor = type.GetConstructors().Single();
+			object[] arguments = ctor.GetParameters()
+				.Select(x => applicationContext.Container.GetInstance(x.ParameterType))
+				.ToArray();
+
+			return (T)ctor.Invoke(arguments);
 		}
 
 

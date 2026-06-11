@@ -10,6 +10,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 {
@@ -18,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 	/// </summary>
 	internal partial class SettingsControl : UserControl, ISettingsControl
 	{
-		private static readonly int[] frequencyTable = { 8268, 11025, 22050, 33075, 44100, 48000 };
+		private static readonly int[] frequencyTable = [ 8268, 11025, 22050, 33075, 44100, 48000 ];
 
 		private DiskSaverSettings settings;
 
@@ -27,9 +28,23 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsControl(AgentInfo[] outputAgents, AgentInfo[] sampleConverterAgents)
+		public SettingsControl()
 		{
 			InitializeComponent();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize control.
+		///
+		/// Called from ControlFactory
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(AgentInfo[] outputAgents, AgentInfo[] sampleConverterAgents, ISettingsFactory settingsFactory)
+		{
+			settings = new DiskSaverSettings(settingsFactory);
 
 			// Add "None" to pass through
 			passThroughComboBox.Items.Add(new KryptonListItem(Resources.IDS_SETTINGS_PASSTHROUGH_NONE));
@@ -61,8 +76,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			settings = new DiskSaverSettings();
-
 			return this;
 		}
 

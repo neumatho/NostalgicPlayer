@@ -19,6 +19,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 	/// </summary>
 	public class SidPlayGuiSettings : IAgentGuiSettings
 	{
+		private readonly IControlFactory controlFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public SidPlayGuiSettings(IControlFactory controlFactory)
+		{
+			this.controlFactory = controlFactory;
+		}
+
 		#region IAgentGuiSettings implementation
 		/********************************************************************/
 		/// <summary>
@@ -46,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		/********************************************************************/
 		public ISettingsControl GetSettingsControl()
 		{
-			return new SettingsControl();
+			return controlFactory.GetInstance<SettingsControl>();
 		}
 
 

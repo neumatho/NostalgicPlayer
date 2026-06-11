@@ -18,8 +18,20 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 	/// </summary>
 	public class DiskSaverGuiSettings : IAgentGuiSettings, IWantOutputAgents, IWantSampleConverterAgents
 	{
+		private readonly IControlFactory controlFactory;
+
 		private AgentInfo[] loadedOutputAgents;
 		private AgentInfo[] loadedSampleConverterAgents;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public DiskSaverGuiSettings(IControlFactory controlFactory)
+		{
+			this.controlFactory = controlFactory;
+		}
 
 		#region IAgentGuiSettings implementation
 		/********************************************************************/
@@ -48,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/********************************************************************/
 		public ISettingsControl GetSettingsControl()
 		{
-			return new SettingsControl(loadedOutputAgents, loadedSampleConverterAgents);
+			return controlFactory.GetInstance<SettingsControl>(loadedOutputAgents, loadedSampleConverterAgents);
 		}
 
 

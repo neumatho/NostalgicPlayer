@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
@@ -102,9 +101,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SidPlaySettings()
+		public SidPlaySettings(ISettingsFactory settingsFactory)
 		{
-			settings = DependencyInjection.Container.GetInstance<ISettingsFactory>().GetSettings();
+			settings = settingsFactory.GetSettings();
 			settings.LoadSettings("SidPlay");
 
 			// Remove obsolete settings

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Krypton.Toolkit;
 using NAudio.CoreAudioApi;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 {
@@ -43,6 +44,20 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize control.
+		///
+		/// Called from ControlFactory
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(ISettingsFactory settingsFactory)
+		{
+			settings = new CoreAudio.CoreAudioSettings(settingsFactory);
+		}
+
 		#region ISettingsControl implementation
 		/********************************************************************/
 		/// <summary>
@@ -51,8 +66,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			settings = new CoreAudio.CoreAudioSettings();
-
 			return this;
 		}
 

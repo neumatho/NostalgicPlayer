@@ -15,6 +15,7 @@ using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
@@ -27,6 +28,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	{
 		private const int BufferSize = 512;
 		private const int ClockCyclesToPlay = 5000;
+
+		private readonly ISettingsFactory settingsFactory;
 
 		private SidTune sidTune;
 
@@ -63,6 +66,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		private DurationInfo[] allDurationInfo;
 
 		private const int InfoClockSpeedLine = 8;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public SidPlayWorker(ISettingsFactory settingsFactory)
+		{
+			this.settingsFactory = settingsFactory;
+		}
 
 		#region Settings registration
 		/********************************************************************/
@@ -137,7 +150,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			try
 			{
-				settings = new SidPlaySettings();
+				settings = new SidPlaySettings(settingsFactory);
 
 				SidTuneInfo tuneInfo = sidTune.GetInfo();
 

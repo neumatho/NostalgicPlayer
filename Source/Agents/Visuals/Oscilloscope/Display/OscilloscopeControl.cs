@@ -9,17 +9,19 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 {
 	/// <summary>
 	/// The user control showing the oscilloscope
 	/// </summary>
-	internal partial class OscilloscopeControl : UserControl
+	internal partial class OscilloscopeControl : UserControl, IControl
 	{
 		private const int PanelMargin = 8;
 
-		private readonly OscilloscopeSettings settings;
+		private OscilloscopeSettings settings;
 
 		private SpeakerFlag speakers;
 		private int numberOfRows;
@@ -32,12 +34,24 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		public OscilloscopeControl()
 		{
 			InitializeComponent();
+		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize control.
+		///
+		/// Called from ControlFactory
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(ISettingsFactory settingsFactory)
+		{
 			// Set tooltip
 			toolTip.SetToolTip(this, Resources.IDS_OSCIL_TOOLTIP);
 
 			// Initialize settings
-			settings = new OscilloscopeSettings();
+			settings = new OscilloscopeSettings(settingsFactory);
 		}
 
 

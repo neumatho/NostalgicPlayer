@@ -21,6 +21,18 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 	{
 		private static readonly Guid agent1Id = Guid.Parse("2F3A4B5C-6D7E-8F9A-0B1C-2D3E4F5A6B7C");
 
+		private readonly IAgentWorkerFactory agentWorkerFactory;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ChannelLevelMeter(IAgentWorkerFactory agentWorkerFactory)
+		{
+			this.agentWorkerFactory = agentWorkerFactory;
+		}
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -50,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new ChannelLevelMeterWorker();
+			return agentWorkerFactory.GetWorkerInstance<ChannelLevelMeterWorker>(typeId);
 		}
 		#endregion
 	}

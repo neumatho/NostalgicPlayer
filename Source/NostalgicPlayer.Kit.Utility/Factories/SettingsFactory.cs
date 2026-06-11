@@ -5,7 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.Kit.Utility.Factories
 {
 	/// <summary>
 	/// Factory for creating ISettings instances

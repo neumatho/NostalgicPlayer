@@ -22,8 +22,20 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 	{
 		internal static readonly Guid Agent1Id = Guid.Parse("53BE1DF8-83E1-4616-81DE-2ED537CF7D5A");
 
+		private readonly IAgentWorkerFactory agentWorkerFactory;
+
 		private AgentInfo[] loadedOutputAgents;
 		private AgentInfo[] loadedSampleConverterAgents;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public DiskSaver(IAgentWorkerFactory agentWorkerFactory)
+		{
+			this.agentWorkerFactory = agentWorkerFactory;
+		}
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -54,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new DiskSaverWorker(loadedOutputAgents, loadedSampleConverterAgents);
+			return agentWorkerFactory.GetWorkerInstance<DiskSaverWorker>(typeId, loadedOutputAgents, loadedSampleConverterAgents);
 		}
 		#endregion
 

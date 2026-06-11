@@ -17,7 +17,19 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 	/// </summary>
 	internal class OscilloscopeWorker : ISampleDataVisualAgent, IAgentGuiDisplay
 	{
+		private readonly IControlFactory controlFactory;
+
 		private OscilloscopeControl userControl;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public OscilloscopeWorker(IControlFactory controlFactory)
+		{
+			this.controlFactory = controlFactory;
+		}
 
 		#region IAgentDisplay implementation
 		/********************************************************************/
@@ -36,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			userControl = new OscilloscopeControl();
+			userControl = controlFactory.GetInstance<OscilloscopeControl>();
 			return userControl;
 		}
 

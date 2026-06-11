@@ -17,6 +17,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 {
@@ -64,6 +65,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		private const int LatencyMilliseconds = 200;
 
+		private readonly ISettingsFactory settingsFactory;
+
 		private Lock streamLock;
 		private SoundStream stream;
 
@@ -96,6 +99,16 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private CoreAudioSettings settings;
 		private string currentEndpointId;
 
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public CoreAudioWorker(ISettingsFactory settingsFactory)
+		{
+			this.settingsFactory = settingsFactory;
+		}
+
 		#region IOutputAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -108,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			try
 			{
-				settings = new CoreAudioSettings();
+				settings = new CoreAudioSettings(settingsFactory);
 
 				stream = null;
 				streamLock = new Lock();
@@ -656,6 +669,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 											FillBuffer(numFramesAvailable);
 									}
 								}
+
 								break;
 							}
 
@@ -673,7 +687,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 								settingsChangedEvent.Reset();
 
 								// Reload the settings
-								settings = new CoreAudioSettings();
+								settings = new CoreAudioSettings(settingsFactory);
 
 								// Switch the endpoint if needed
 								TriggerSwitch();
