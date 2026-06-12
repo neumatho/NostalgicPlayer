@@ -18,7 +18,6 @@ using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
@@ -31,7 +30,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		private const int MixerBufferSize = 65536;
 
 		private readonly ISettingsFactory settingsFactory;
-
 		private readonly IFormCreatorService formCreatorService;
 
 		private readonly AgentInfo[] outputAgents;
@@ -61,9 +59,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DiskSaverWorker(AgentInfo[] outputAgents, AgentInfo[] sampleConverterAgents, ISettingsFactory settingsFactory)
+		public DiskSaverWorker(AgentInfo[] outputAgents, AgentInfo[] sampleConverterAgents, ISettingsFactory settingsFactory, IFormCreatorService formCreatorService)
 		{
 			this.settingsFactory = settingsFactory;
+			this.formCreatorService = formCreatorService;
 
 			this.outputAgents = outputAgents;
 			this.sampleConverterAgents = sampleConverterAgents;
