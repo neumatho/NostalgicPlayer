@@ -248,13 +248,13 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		/********************************************************************/
 		static NostalgicBox()
 		{
-			TypeDescriptor.AddProvider(new NostalgicTabTypeDescriptionProvider(), typeof(NostalgicBox));
+			TypeDescriptor.AddProvider(new NostalgicBoxTypeDescriptionProvider(), typeof(NostalgicBox));
 		}
 
 		/// <summary>
 		/// Filter out properties we do not want to show in the designer
 		/// </summary>
-		private sealed class NostalgicTabTypeDescriptionProvider : TypeDescriptionProvider
+		private sealed class NostalgicBoxTypeDescriptionProvider : TypeDescriptionProvider
 		{
 			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(Panel));
 
@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public NostalgicTabTypeDescriptionProvider() : base(parent)
+			public NostalgicBoxTypeDescriptionProvider() : base(parent)
 			{
 			}
 
