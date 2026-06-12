@@ -31,7 +31,7 @@
 			nostalgicDataGridViewInternal = new NostalgicDataGridViewInternal();
 			nostalgicVScrollBar = new NostalgicVScrollBar();
 			nostalgicHScrollBar = new NostalgicHScrollBar();
-			cornerPanel = new System.Windows.Forms.Panel();
+			cornerPanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel();
 			nostalgicBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			((System.ComponentModel.ISupportInitialize)nostalgicDataGridViewInternal).BeginInit();
 			nostalgicBox.SuspendLayout();
@@ -115,7 +115,7 @@
 		private NostalgicDataGridViewInternal nostalgicDataGridViewInternal;
 		private NostalgicVScrollBar nostalgicVScrollBar;
 		private NostalgicHScrollBar nostalgicHScrollBar;
-		private System.Windows.Forms.Panel cornerPanel;
-		private Containers.NostalgicBox nostalgicBox;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel cornerPanel;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox nostalgicBox;
 	}
 }
