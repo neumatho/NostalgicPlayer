@@ -64,6 +64,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			// 
 			// AboutWindowForm
 			// 
+			AllowResizing = false;
 			ClientSize = new System.Drawing.Size(358, 188);
 			Controls.Add(nostalgicBox);
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");

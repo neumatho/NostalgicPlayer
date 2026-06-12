@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 				// Update the settings with the window position
 				windowSettings.Location = Location;
 
-				if (FormBorderStyle == FormBorderStyle.Sizable)
+				if (AllowResizing)
 					windowSettings.Size = Size;
 
 				windowSettings.Geometry = ScreensGeometry();
@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 				Location = windowSettings.Location;
 			}
 
-			if (FormBorderStyle == FormBorderStyle.Sizable)
+			if (AllowResizing)
 			{
 				Size windowSize = windowSettings.Size;
 
