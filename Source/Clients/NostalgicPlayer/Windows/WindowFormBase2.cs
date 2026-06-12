@@ -47,11 +47,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettings settings, OptionSettings optionSettings, IThemeManager themeManager)
+		public void InitializeBaseForm(IMainWindowApi mainWindowApi, ISettingsFactory settingsFactory, OptionSettings optionSettings, IThemeManager themeManager)
 		{
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
-			allWindowSettings = settings;
+			allWindowSettings = settingsFactory.GetSettings();
 			this.themeManager = themeManager;
 
 			// Find current theme ID
