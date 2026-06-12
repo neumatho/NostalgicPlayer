@@ -30,8 +30,8 @@
 		{
 			messageLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
 			pictureBox = new System.Windows.Forms.PictureBox();
-			messagePanel = new System.Windows.Forms.Panel();
-			buttonPanel = new System.Windows.Forms.Panel();
+			messagePanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel();
+			buttonPanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel();
 			((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
 			messagePanel.SuspendLayout();
 			SuspendLayout();
@@ -108,7 +108,7 @@
 
 		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel messageLabel;
 		private System.Windows.Forms.PictureBox pictureBox;
-		private System.Windows.Forms.Panel messagePanel;
-		private System.Windows.Forms.Panel buttonPanel;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel messagePanel;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel buttonPanel;
 	}
 }
