@@ -9,19 +9,19 @@ using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// Purple theme colors for boxes
+	/// Purple theme colors for group boxes
 	/// </summary>
-	internal class PurpleBoxColors : IBoxColors
+	internal class PurpleGroupBoxColors : IGroupBoxColors
 	{
-		private static readonly Color backgroundColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color borderColor = Color.FromArgb(140, 125, 160);
+		private readonly IBoxColors boxColors = new PurpleBoxColors();
+		private readonly ILabelColors labelColors = new PurpleLabelColors();
 
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color BackgroundColor => backgroundColor;
+		public Color BorderColor => boxColors.BorderColor;
 
 
 
@@ -30,6 +30,6 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color BorderColor => borderColor;
+		public Color HeaderColor => labelColors.TextColor;
 	}
 }
