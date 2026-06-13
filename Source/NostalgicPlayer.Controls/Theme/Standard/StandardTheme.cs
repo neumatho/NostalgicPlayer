@@ -16,6 +16,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardImageColors imageColors = new StandardImageColors();
 		private static readonly StandardFormColors formColors = new StandardFormColors();
 		private static readonly StandardBoxColors boxColors = new StandardBoxColors();
+		private static readonly StandardGroupBoxColors groupBoxColors = new StandardGroupBoxColors();
 		private static readonly StandardButtonColors buttonColors = new StandardButtonColors();
 		private static readonly StandardComboBoxColors comboBoxColors = new StandardComboBoxColors();
 		private static readonly StandardTextBoxColors textBoxColors = new StandardTextBoxColors();
@@ -92,10 +93,19 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by box
+		/// Return a collection of colors used by boxes
 		/// </summary>
 		/********************************************************************/
 		public IBoxColors BoxColors => boxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by group boxes
+		/// </summary>
+		/********************************************************************/
+		public IGroupBoxColors GroupBoxColors => groupBoxColors;
 
 
 

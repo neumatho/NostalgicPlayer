@@ -8,23 +8,13 @@ using System.Drawing;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 {
 	/// <summary>
-	/// Holds all the fonts
+	/// Holds all the colors used by a GroupBox container
 	/// </summary>
-	public interface IFonts
+	public interface IGroupBoxColors
 	{
 		/// <summary></summary>
-		Font FormTitleFont { get; }
-
+		Color BorderColor { get; }
 		/// <summary></summary>
-		Font RegularFont { get; }
-
-		/// <summary></summary>
-		Font MonospaceFont { get; }
-
-		/// <summary></summary>
-		Font TabFont { get; }
-
-		/// <summary></summary>
-		Font GroupFont { get; }
+		Color HeaderColor { get; }
 	}
 }

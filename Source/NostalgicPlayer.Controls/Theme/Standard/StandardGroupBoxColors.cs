@@ -6,22 +6,22 @@
 using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
+namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {
 	/// <summary>
-	/// Purple theme colors for boxes
+	/// Standard theme colors for group boxes
 	/// </summary>
-	internal class PurpleBoxColors : IBoxColors
+	internal class StandardGroupBoxColors : IGroupBoxColors
 	{
-		private static readonly Color backgroundColor = Color.FromArgb(255, 255, 255);
-		private static readonly Color borderColor = Color.FromArgb(140, 125, 160);
+		private readonly IBoxColors boxColors = new StandardBoxColors();
+		private readonly ILabelColors labelColors = new StandardLabelColors();
 
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color BackgroundColor => backgroundColor;
+		public Color BorderColor => boxColors.BorderColor;
 
 
 
@@ -30,6 +30,6 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color BorderColor => borderColor;
+		public Color HeaderColor => labelColors.TextColor;
 	}
 }
