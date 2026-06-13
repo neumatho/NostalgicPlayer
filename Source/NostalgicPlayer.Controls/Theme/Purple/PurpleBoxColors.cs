@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// Purple theme colors for Box
+	/// Purple theme colors for boxes
 	/// </summary>
 	internal class PurpleBoxColors : IBoxColors
 	{
