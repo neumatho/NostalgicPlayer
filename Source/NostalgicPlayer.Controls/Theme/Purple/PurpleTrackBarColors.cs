@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 	{
 		private readonly IButtonColors buttonColors = new PurpleButtonColors();
 
-		private static readonly Color backgroundColor = Color.FromArgb(245, 240, 250);
+		private static readonly Color backgroundColor = Color.FromArgb(225, 220, 230);
 
 		private static readonly Color normalTrackBorderColor = Color.FromArgb(140, 125, 160);
 		private static readonly Color normalTrackBackgroundColor = Color.FromArgb(225, 215, 235);
