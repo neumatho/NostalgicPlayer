@@ -18,6 +18,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleImageColors imageColors = new PurpleImageColors();
 		private static readonly PurpleFormColors formColors = new PurpleFormColors();
 		private static readonly PurpleBoxColors boxColors = new PurpleBoxColors();
+		private static readonly PurpleGroupBoxColors groupBoxColors = new PurpleGroupBoxColors();
 		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
 		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
 		private static readonly PurpleTextBoxColors textBoxColors = new PurpleTextBoxColors();
@@ -94,10 +95,19 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a collection of colors used by box
+		/// Return a collection of colors used by boxes
 		/// </summary>
 		/********************************************************************/
 		public IBoxColors BoxColors => boxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by group boxes
+		/// </summary>
+		/********************************************************************/
+		public IGroupBoxColors GroupBoxColors => groupBoxColors;
 
 
 

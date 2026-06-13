@@ -23,5 +23,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 
 		/// <summary></summary>
 		Font TabFont { get; }
+
+		/// <summary></summary>
+		Font GroupFont { get; }
 	}
 }
