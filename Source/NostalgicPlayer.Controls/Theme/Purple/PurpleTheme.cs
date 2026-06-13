@@ -1,4 +1,4 @@
-/******************************************************************************/
+﻿/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
@@ -20,6 +20,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleBoxColors boxColors = new PurpleBoxColors();
 		private static readonly PurpleGroupBoxColors groupBoxColors = new PurpleGroupBoxColors();
 		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
+		private static readonly PurpleCheckBoxColors checkBoxColors = new PurpleCheckBoxColors();
 		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
 		private static readonly PurpleTextBoxColors textBoxColors = new PurpleTextBoxColors();
 		private static readonly PurpleRichTextViewColors richTextViewColors = new PurpleRichTextViewColors();
@@ -117,6 +118,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public IButtonColors ButtonColors => buttonColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by check boxes
+		/// </summary>
+		/********************************************************************/
+		public ICheckBoxColors CheckBoxColors => checkBoxColors;
 
 
 
