@@ -1,4 +1,4 @@
-/******************************************************************************/
+﻿/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
@@ -9,59 +9,46 @@ using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
 	/// <summary>
-	/// Purple theme colors for track bar
+	/// Different purple inspired colors used by check boxes
 	/// </summary>
-	internal class PurpleTrackBarColors : ITrackBarColors
+	internal class PurpleCheckBoxColors : ICheckBoxColors
 	{
-		private readonly IButtonColors buttonColors = new PurpleButtonColors();
+        private static readonly Color normalBorderColor = Color.FromArgb(140, 125, 160);
+        private static readonly Color normalBackgroundStartColor = Color.FromArgb(230, 225, 235);
+        private static readonly Color normalBackgroundStopColor = Color.FromArgb(210, 200, 230);
+		private static readonly Color normalCheckMarkColor = Color.FromArgb(55, 30, 85);
+		private static readonly Color normalTextColor = Color.FromArgb(55, 30, 85);
 
-		private static readonly Color backgroundColor = Color.FromArgb(225, 220, 230);
+        private static readonly Color hoverBorderColor = Color.FromArgb(90, 100, 205);
+        private static readonly Color hoverBackgroundStartColor = Color.FromArgb(190, 195, 250);
+        private static readonly Color hoverBackgroundStopColor = Color.FromArgb(165, 170, 200);
+		private static readonly Color hoverCheckMarkColor = Color.FromArgb(55, 30, 85);
+		private static readonly Color hoverTextColor = Color.FromArgb(55, 30, 85);
 
-		private static readonly Color normalTrackBorderColor = Color.FromArgb(140, 125, 160);
-		private static readonly Color normalTrackBackgroundColor = Color.FromArgb(225, 215, 235);
-		private static readonly Color normalTrackFillStartColor = Color.FromArgb(150, 120, 200);
-		private static readonly Color normalTrackFillStopColor = Color.FromArgb(95, 70, 145);
-		private static readonly Color normalTickColor = Color.FromArgb(150, 120, 200);
+        private static readonly Color pressedBorderColor = Color.FromArgb(110, 90, 140);
+        private static readonly Color pressedBackgroundStartColor = Color.FromArgb(195, 183, 215);
+        private static readonly Color pressedBackgroundStopColor = Color.FromArgb(185, 170, 205);
+		private static readonly Color pressedCheckMarkColor = Color.FromArgb(55, 30, 85);
+		private static readonly Color pressedTextColor = Color.FromArgb(55, 30, 85);
 
-		private static readonly Color disabledTrackBorderColor = Color.FromArgb(140, 125, 160);
-		private static readonly Color disabledTrackBackgroundColor = Color.FromArgb(225, 215, 235);
-		private static readonly Color disabledTrackFillStartColor = Color.FromArgb(200, 200, 200);
-		private static readonly Color disabledTrackFillStopColor = Color.FromArgb(200, 200, 200);
-		private static readonly Color disabledTickColor = Color.FromArgb(200, 200, 200);
+        private static readonly Color focusedBorderColor = Color.FromArgb(255, 255, 255);
+        private static readonly Color focusedBackgroundStartColor = Color.FromArgb(235, 230, 240);
+        private static readonly Color focusedBackgroundStopColor = Color.FromArgb(225, 215, 242);
+        private static readonly Color focusedCheckMarkColor = Color.FromArgb(55, 30, 85);
+        private static readonly Color focusedTextColor = Color.FromArgb(55, 30, 85);
 
-		/********************************************************************/
-		/// <summary>
-		///
-		/// </summary>
-		/********************************************************************/
-		public Color BackgroundColor => backgroundColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		///
-		/// </summary>
-		/********************************************************************/
-		public Color NormalTrackBorderColor => normalTrackBorderColor;
-
-
+        private static readonly Color disabledBorderColor = Color.FromArgb(180, 180, 180);
+        private static readonly Color disabledBackgroundStartColor = Color.FromArgb(235, 235, 235);
+        private static readonly Color disabledBackgroundStopColor = Color.FromArgb(235, 235, 235);
+		private static readonly Color disabledCheckMarkColor = Color.FromArgb(168, 168, 168);
+		private static readonly Color disabledTextColor = Color.FromArgb(168, 168, 168);
 
 		/********************************************************************/
 		/// <summary>
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalTrackBackgroundColor => normalTrackBackgroundColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		///
-		/// </summary>
-		/********************************************************************/
-		public Color NormalTrackFillStartColor => normalTrackFillStartColor;
+		public Color NormalBorderColor => normalBorderColor;
 
 
 
@@ -70,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalTrackFillStopColor => normalTrackFillStopColor;
+		public Color NormalBackgroundStartColor => normalBackgroundStartColor;
 
 
 
@@ -79,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalTickColor => normalTickColor;
+		public Color NormalBackgroundStopColor => normalBackgroundStopColor;
 
 
 
@@ -88,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalThumbBorderColor => buttonColors.NormalBorderColor;
+		public Color NormalCheckMarkColor => normalCheckMarkColor;
 
 
 
@@ -97,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalThumbBackgroundStartColor => buttonColors.NormalBackgroundStartColor;
+		public Color NormalTextColor => normalTextColor;
 
 
 
@@ -106,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalThumbBackgroundStopColor => buttonColors.NormalBackgroundStopColor;
+		public Color HoverBorderColor => hoverBorderColor;
 
 
 
@@ -115,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color HoverThumbBorderColor => buttonColors.HoverBorderColor;
+		public Color HoverBackgroundStartColor => hoverBackgroundStartColor;
 
 
 
@@ -124,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color HoverThumbBackgroundStartColor => buttonColors.HoverBackgroundStartColor;
+		public Color HoverBackgroundStopColor => hoverBackgroundStopColor;
 
 
 
@@ -133,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color HoverThumbBackgroundStopColor => buttonColors.HoverBackgroundStopColor;
+		public Color HoverCheckMarkColor => hoverCheckMarkColor;
 
 
 
@@ -142,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color PressedThumbBorderColor => buttonColors.PressedBorderColor;
+		public Color HoverTextColor => hoverTextColor;
 
 
 
@@ -151,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color PressedThumbBackgroundStartColor => buttonColors.PressedBackgroundStartColor;
+		public Color PressedBorderColor => pressedBorderColor;
 
 
 
@@ -160,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color PressedThumbBackgroundStopColor => buttonColors.PressedBackgroundStopColor;
+		public Color PressedBackgroundStartColor => pressedBackgroundStartColor;
 
 
 
@@ -169,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color FocusedThumbBorderColor => buttonColors.FocusedBorderColor;
+		public Color PressedBackgroundStopColor => pressedBackgroundStopColor;
 
 
 
@@ -178,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color FocusedThumbBackgroundStartColor => buttonColors.FocusedBackgroundStartColor;
+		public Color PressedCheckMarkColor => pressedCheckMarkColor;
 
 
 
@@ -187,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color FocusedThumbBackgroundStopColor => buttonColors.FocusedBackgroundStopColor;
+		public Color PressedTextColor => pressedTextColor;
 
 
 
@@ -196,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledTrackBorderColor => disabledTrackBorderColor;
+		public Color FocusedBorderColor => focusedBorderColor;
 
 
 
@@ -205,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledTrackBackgroundColor => disabledTrackBackgroundColor;
+		public Color FocusedBackgroundStartColor => focusedBackgroundStartColor;
 
 
 
@@ -214,7 +201,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledTrackFillStartColor => disabledTrackFillStartColor;
+		public Color FocusedBackgroundStopColor => focusedBackgroundStopColor;
 
 
 
@@ -223,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledTrackFillStopColor => disabledTrackFillStopColor;
+		public Color FocusedCheckMarkColor => focusedCheckMarkColor;
 
 
 
@@ -232,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledTickColor => disabledTickColor;
+		public Color FocusedTextColor => focusedTextColor;
 
 
 
@@ -241,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledThumbBorderColor => buttonColors.DisabledBorderColor;
+		public Color DisabledBorderColor => disabledBorderColor;
 
 
 
@@ -250,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledThumbBackgroundStartColor => buttonColors.DisabledBackgroundStartColor;
+		public Color DisabledBackgroundStartColor => disabledBackgroundStartColor;
 
 
 
@@ -259,6 +246,24 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledThumbBackgroundStopColor => buttonColors.DisabledBackgroundStopColor;
+		public Color DisabledBackgroundStopColor => disabledBackgroundStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledCheckMarkColor => disabledCheckMarkColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTextColor => disabledTextColor;
 	}
 }
