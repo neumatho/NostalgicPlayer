@@ -48,6 +48,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		IButtonColors ButtonColors { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by check boxes
+		/// </summary>
+		ICheckBoxColors CheckBoxColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by combo boxes
 		/// </summary>
 		IComboBoxColors ComboBoxColors { get; }

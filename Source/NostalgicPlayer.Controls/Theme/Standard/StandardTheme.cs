@@ -18,6 +18,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardBoxColors boxColors = new StandardBoxColors();
 		private static readonly StandardGroupBoxColors groupBoxColors = new StandardGroupBoxColors();
 		private static readonly StandardButtonColors buttonColors = new StandardButtonColors();
+		private static readonly StandardCheckBoxColors checkBoxColors = new StandardCheckBoxColors();
 		private static readonly StandardComboBoxColors comboBoxColors = new StandardComboBoxColors();
 		private static readonly StandardTextBoxColors textBoxColors = new StandardTextBoxColors();
 		private static readonly StandardRichTextViewColors richTextViewColors = new StandardRichTextViewColors();
@@ -115,6 +116,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public IButtonColors ButtonColors => buttonColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by check boxes
+		/// </summary>
+		/********************************************************************/
+		public ICheckBoxColors CheckBoxColors => checkBoxColors;
 
 
 
