@@ -63,6 +63,14 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			// Force DropDownStyle to DropDownList for custom rendering
 			DropDownStyle = ComboBoxStyle.DropDownList;
+
+			// Make the themed font available before the designer's first layout
+			// pass. Otherwise the font would first arrive in OnHandleCreated,
+			// after deserialization, and the combo box would re-fit its height
+			// to the new font on every reload, changing the serialized size and
+			// making the designer keep marking the file as changed
+			if (DesignerHelper.IsInDesignMode())
+				SetTheme(new StandardTheme());
 		}
 
 		#region Designer properties
