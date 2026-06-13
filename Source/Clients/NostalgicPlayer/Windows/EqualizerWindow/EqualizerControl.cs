@@ -7,8 +7,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.Library.Containers;
-using Polycode.NostalgicPlayer.Library.Sound.Equalizer;
+using Polycode.NostalgicPlayer.Logic.Equalizer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 {

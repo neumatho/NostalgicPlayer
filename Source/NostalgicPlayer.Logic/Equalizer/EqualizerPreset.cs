@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Library.Containers
+namespace Polycode.NostalgicPlayer.Logic.Equalizer
 {
 	/// <summary>
 	/// Equalizer preset types

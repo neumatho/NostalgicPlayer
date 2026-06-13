@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Logic {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,159 @@ namespace Polycode.NostalgicPlayer.Logic {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acoustic.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_ACOUSTIC {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_ACOUSTIC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bass Boost.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_BASSBOOST {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_BASSBOOST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Classical.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_CLASSICAL {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_CLASSICAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_CUSTOM {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_CUSTOM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dance.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_DANCE {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_DANCE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Electronic.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_ELECTRONIC {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_ELECTRONIC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flat.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_FLAT {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_FLAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full Bass.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_FULLBASS {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_FULLBASS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full Treble.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_FULLTREBLE {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_FULLTREBLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hip-Hop.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_HIPHOP {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_HIPHOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jazz.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_JAZZ {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_JAZZ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Metal.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_METAL {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_METAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pop.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_POP {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_POP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rock.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_ROCK {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_ROCK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Soft.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_SOFT {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_SOFT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Treble Boost.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_TREBLEBOOST {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_TREBLEBOOST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vocal Boost.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRESET_VOCALBOOST {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRESET_VOCALBOOST", resourceCulture);
             }
         }
         

@@ -4,9 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Library.Containers;
 
-namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
+namespace Polycode.NostalgicPlayer.Logic.Equalizer
 {
 	/// <summary>
 	/// Equalizer presets (Winamp-style)
@@ -60,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Equalizer
 		/********************************************************************/
 		public static EqualizerPreset[] GetAllPresets()
 		{
-			return (EqualizerPreset[])Enum.GetValues(typeof(EqualizerPreset));
+			return Enum.GetValues<EqualizerPreset>();
 		}
 
 
