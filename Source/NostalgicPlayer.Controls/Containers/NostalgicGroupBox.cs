@@ -45,6 +45,15 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		public NostalgicGroupBox()
 		{
 			SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor | ControlStyles.ResizeRedraw, true);
+
+			// Make the themed font available before the designer's first layout
+			// pass, so DisplayRectangle/HeaderHeight is identical at serialize
+			// time and on every reload. Otherwise the docked children would be
+			// re-laid-out after deserialization (once the font arrives in
+			// OnHandleCreated), shifting them a pixel and making the designer
+			// keep marking the file as changed
+			if (DesignerHelper.IsInDesignMode())
+				SetTheme(new StandardTheme());
 		}
 
 		#region Designer properties

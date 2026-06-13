@@ -26,10 +26,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/********************************************************************/
 		public StandardFonts()
 		{
-			regularFont = new Font("Microsoft Sans", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
+			regularFont = new Font("Microsoft Sans Serif", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
 			monospaceFont = new Font("Lucida Console", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
-			tabFont = new Font("Microsoft Sans", 10.0f, FontStyle.Regular, GraphicsUnit.Point);
-			groupFont = new Font("Microsoft Sans", 9.0f, FontStyle.Regular, GraphicsUnit.Point);
+			tabFont = new Font("Microsoft Sans Serif", 10.0f, FontStyle.Regular, GraphicsUnit.Point);
+			groupFont = new Font("Microsoft Sans Serif", 9.0f, FontStyle.Regular, GraphicsUnit.Point);
 		}
 
 
