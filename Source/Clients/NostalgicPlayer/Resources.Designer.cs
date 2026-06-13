@@ -1081,6 +1081,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use equalizer.
+        /// </summary>
+        internal static string IDS_EQUALIZER_ENABLE {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_ENABLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Frequency Bands.
+        /// </summary>
+        internal static string IDS_EQUALIZER_FREQUENCY_BANDS {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_FREQUENCY_BANDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pre.
+        /// </summary>
+        internal static string IDS_EQUALIZER_PRE {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_PRE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Equalizer.
+        /// </summary>
+        internal static string IDS_EQUALIZER_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_EQUALIZER_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to add items into the list:
         ///{0}.
         /// </summary>
@@ -3352,33 +3388,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_MIXER_CHANNELS_48_63 {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_MIXER_CHANNELS_48_63", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Equalizer.
-        /// </summary>
-        internal static string IDS_SETTINGS_MIXER_EQUALIZER {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_MIXER_EQUALIZER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Use equalizer.
-        /// </summary>
-        internal static string IDS_SETTINGS_MIXER_EQUALIZER_ENABLE {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_MIXER_EQUALIZER_ENABLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Frequency Bands.
-        /// </summary>
-        internal static string IDS_SETTINGS_MIXER_EQUALIZER_FREQUENCY_BANDS {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_MIXER_EQUALIZER_FREQUENCY_BANDS", resourceCulture);
             }
         }
         
