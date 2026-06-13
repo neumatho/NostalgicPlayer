@@ -119,6 +119,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Containers\NostalgicPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Containers\NostalgicGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Dialogs\CustomMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
