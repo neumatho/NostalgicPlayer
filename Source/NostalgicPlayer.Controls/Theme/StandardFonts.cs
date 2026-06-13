@@ -17,6 +17,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		private Font regularFont;
 		private Font monospaceFont;
 		private Font tabFont;
+		private Font groupFont;
 
 		/********************************************************************/
 		/// <summary>
@@ -28,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 			regularFont = new Font("Microsoft Sans", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
 			monospaceFont = new Font("Lucida Console", 8.0f, FontStyle.Regular, GraphicsUnit.Point);
 			tabFont = new Font("Microsoft Sans", 10.0f, FontStyle.Regular, GraphicsUnit.Point);
+			groupFont = new Font("Microsoft Sans", 9.0f, FontStyle.Regular, GraphicsUnit.Point);
 		}
 
 
@@ -42,10 +44,12 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 			regularFont.Dispose();
 			monospaceFont.Dispose();
 			tabFont.Dispose();
+			groupFont.Dispose();
 
 			regularFont = null;
 			monospaceFont = null;
 			tabFont = null;
+			groupFont = null;
 		}
 
 
@@ -83,5 +87,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/// </summary>
 		/********************************************************************/
 		public Font TabFont => tabFont;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Font GroupFont => groupFont;
 	}
 }
