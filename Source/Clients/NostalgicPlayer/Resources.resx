@@ -1002,13 +1002,13 @@ what has changed since your previous version.</value>
   <data name="IDS_SETTINGS_MIXER_OUPUT_SETTINGS" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="IDS_SETTINGS_MIXER_EQUALIZER" xml:space="preserve">
+  <data name="IDS_EQUALIZER_TITLE" xml:space="preserve">
     <value>Equalizer</value>
   </data>
-  <data name="IDS_SETTINGS_MIXER_EQUALIZER_ENABLE" xml:space="preserve">
+  <data name="IDS_EQUALIZER_ENABLE" xml:space="preserve">
     <value>Use equalizer</value>
   </data>
-  <data name="IDS_SETTINGS_MIXER_EQUALIZER_FREQUENCY_BANDS" xml:space="preserve">
+  <data name="IDS_EQUALIZER_FREQUENCY_BANDS" xml:space="preserve">
     <value>Frequency Bands</value>
   </data>
   <data name="IDS_SETTINGS_MODULES_LOADING" xml:space="preserve">
@@ -1690,5 +1690,8 @@ This will delete the local database file and clear all data from memory.</value>
     <value>This will reset all opened windows to the position and sizes last saved.
 
 Do you want to continue?</value>
+  </data>
+  <data name="IDS_EQUALIZER_PRE" xml:space="preserve">
+    <value>Pre</value>
   </data>
 </root>
