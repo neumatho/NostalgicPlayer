@@ -38,6 +38,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		IBoxColors BoxColors { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by group box
+		/// </summary>
+		IGroupBoxColors GroupBoxColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by buttons
 		/// </summary>
 		IButtonColors ButtonColors { get; }
