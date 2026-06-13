@@ -15,10 +15,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 	/// <summary>
 	/// Equalizer window form
 	/// </summary>
-	public partial class EqualizerWindowForm : WindowFormBase
+	public partial class EqualizerWindowForm : WindowFormBase2
 	{
-		private readonly EqualizerControl equalizerControl;
-
 		private IMixerConfigurationFactory mixerConfigurationFactory;
 		private IModuleHandlerService moduleHandler;
 		private SoundSettings soundSettings;
@@ -31,13 +29,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 		public EqualizerWindowForm()
 		{
 			InitializeComponent();
-
-			// Create and configure equalizer control
-			equalizerControl = new EqualizerControl {Dock = DockStyle.Fill};
-			equalizerPanel.Controls.Add(equalizerControl);
-
-			// Hook up event handler
-			equalizerControl.EqualizerChanged += EqualizerControl_EqualizerChanged;
 		}
 
 
@@ -57,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			this.soundSettings = soundSettings;
 
 			// Set window title
-			Text = Resources.IDS_SETTINGS_MIXER_EQUALIZER;
+			Text = Resources.IDS_EQUALIZER_TITLE;
 
 			// Load settings into control
 			LoadEqualizerSettings();
