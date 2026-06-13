@@ -23,6 +23,22 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 
 		private FontConfiguration fontConfiguration;
 
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public NostalgicLabel()
+		{
+			// Make the themed font available before the designer's first layout
+			// pass. Otherwise the font would first arrive in OnHandleCreated,
+			// after deserialization, and the AutoSize re-measure would change
+			// the serialized size on every reload, making the designer keep
+			// marking the file as changed
+			if (DesignerHelper.IsInDesignMode())
+				SetTheme(new StandardTheme());
+		}
+
 		#region Designer properties
 		/********************************************************************/
 		/// <summary>
