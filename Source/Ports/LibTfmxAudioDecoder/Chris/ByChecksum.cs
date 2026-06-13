@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			udword[] t1_Checksums =
 			[
 				0x73868fda,		// Title, credits, highscore
-				0x93730029,		// Title
+				0x93730029,		// Title (old rips from 1990)
 				0x6e799869,		// World 1
 				0x3d00fc52,		// World 2
 				0xd76d33ed,		// World 3
@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// with different execution order of macros and effects
 			if (t2_Checksums.Contains(crc1))
 				variant.ExecOrder = ExecOrder.Mod_Mac_Seq;
-			// Turrican (1990) is a TFMXv1 variant and strictly requires old
+			// Turrican (1990) is a TFMX v1/v2 variant and strictly requires old
 			// features such as non-scaled vibrato/portamento
 			else if (t1_Checksums.Contains(crc1))
 			{
@@ -100,6 +100,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			{
 				SetTfmxV1();
 				variant.MacroLoopExtraWait = true;
+
+				// If it's the bad rip where the first 192 samples are missing,
+				// blacklist it. See README_BAD.md file. Checking for minimum
+				// sample file size 116160 would work, too
+				if (0xe8ff20f9 != MyEndian.ReadBEUdword(sBuf, offsets.SampleData + 4) || (0xe8f700fd != MyEndian.ReadBEUdword(sBuf, offsets.SampleData + 0xbc)))
+					blacklisted = true;
 			}
 			// The Adventures of Quik & Silva
 			else if ((crc1 == 0x04f469a6) || (crc1 == 0xd37c9008))
@@ -112,6 +118,60 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			else if (crc1 == 0xda279570)
 			{
 				SetTfmxV1();
+			}
+			// Particularly non-scaled vibrato is required by these old TFMX v1
+			// modules. There may be a few more that could be set to v1, e.g.
+			// Wanted Team's EP_TFMX.lha mentions a list, but whether it would
+			// be audible remains to be investigated
+			//
+			// Grand Monster Slam
+			else if ((crc1 == 0xb54457fc) || (crc1 == 0x97707404) ||
+			// Circus Attractions
+			(crc1 == 0x5f04d9af) || (crc1 == 0x72ef7307) ||
+			// Gordian Tomb
+			(crc1 == 0xf2292eae) ||
+			// Oxxonian
+			(crc1 == 0x0629665d) ||
+			// X-Out
+			(crc1 == 0x9264f036) ||		// Title
+			(crc1 == 0x22a86efb) ||		// Level 1
+			(crc1 == 0x711d8520) ||		// Level 2
+			(crc1 == 0x2f525ee0) ||		// Level 3
+			(crc1 == 0x8412d8d5) ||		// Level 4
+			(crc1 == 0xc0376a19) ||		// Level 5
+			(crc1 == 0xade39424) ||		// End
+			(crc1 == 0x2adbf5f9) ||		// High-scores
+			(crc1 == 0x236d305d) ||		// Load
+			(crc1 == 0x14adce8c))		// Shop (?)
+			{
+				SetTfmxV1();
+			}
+			// Z-Out uses an unusual player variant newer than TFMX v2.2, which
+			// uses scaled vibrato/portamento already but not delayed channel on yet.
+			// The macro scripts of some instruments strictly require immediate
+			// channel on, or else sounds will stay silent.
+			// 
+			// Alternative versions of the Z-Out soundtrack are not affected,
+			// and their checksums differ.
+			// 
+			// This also fixes an uneven sample start address, which isn't illegal,
+			// but an accident that causes audible side-effects. Also is the proper
+			// fix for the Wanted Team's rip "Z-Out 5" where the sample file would be
+			// one byte too short for the sample parameters in this macro
+			else if ((crc1 == 0x8648904b) ||					// Title
+				(crc1 == 0xb7f700b2) || (crc1 == 0x0eabbc61) ||	// Ingame
+				(crc1 == 0x999c8c6b) || (crc1 == 0xdb5e4afc) ||	// Ingame
+				(crc1 == 0x9d652521) || (crc1 == 0xa1dc3139))	// Ingame
+			{
+				variant.NoDelayedDmaOn = true;	// Strictly required
+
+				// Repair one instrument. The preceding sample area (in macro 2)
+				// is from 0x789a to 0x884e, and there's no indication that it's
+				// not an off-by-one bug in macro 10
+				udword mo = GetMacroOffset(0x10);
+
+				if (MyEndian.ReadBEUdword(pBuf, mo + 4) == 0x0200884f)
+					pBuf[mo + 4 + 3] = 0x4e;	// Set begin to 0x884e
 			}
 			// Software Manager - Title 2
 			else if (crc1 == 0xa8566760)
@@ -135,6 +195,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 					 (crc1 == 0xe60babf2))		// Magnetic Fields IV (aka Oxygen)
 			{
 				SetTfmxV1();
+
+				// Without summing up the findings in ticket #16 (like questionable
+				// start/end points), the three main guitar samples are shifted
+				// into only the positive side of value range of signed samples.
+				// That causes clicks also because it leads to three defective,
+				// negative peak values sticking out in each of them. It could be
+				// that with real Amiga hardware, those samples are less of an issue.
+				// The following centers the samples properly around zero,
+				// which reduces the primary problem with them
+				if (crc1 == 0x0eed9c91)			// Danubius Replay (aka Gitar)
+				{
+					for (int i = 4; i < 0x303e4; i++)
+						pBuf[offsets.SampleData + (udword)i] -= 0x38;
+				}
 			}
 			else if (crc1 == 0x5fb2f54e)		// Puzzy
 			{
@@ -150,11 +224,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				// Fix song start/end. Song table is wrecked
 				pBuf[offsets.Header + 0x101] = 0x04;
 				pBuf[offsets.Header + 0x141] = 0x6b;
+
+				// Invalidate track 0 of step 0 as to avoid subsongs starting at 0
+				pBuf[offsets.TrackTable] = 0xff;
 			}
 			// File "mdat.blade of destiny - titel (7ch)" is bad/corrupted
 			else if (crc1 == 0xc83b701b)
 			{
 				blacklisted = true;
+			}
+			// Bundesliga Manager HATTRICK features only a single title theme
+			// using 7V mode. The second song is a fragment of the title theme
+			// but without proper track commands to initialize 7V mode
+			else if (crc1 == 0x3c2eb450)
+			{
+				int song = 1;
+
+				// Set start step to 0x1ff to make song invalid
+				pBuf[(udword)(offsets.Header + 0x100 + (song << 1))] = 0x01;
+				pBuf[(udword)(offsets.Header + 0x100 + (song << 1) + 1)] = 0xff;
 			}
 		}
 	}

@@ -569,10 +569,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private void MacroFunc_AddBegin(VoiceVars voice)
 		{
-			// If count is non-zero, that's extra behaviour for any TFMX
-			// similar to TFMX Pro. Old TFMX doesn't use that, so it can
-			// become the default
-			voice.AddBeginCount = voice.AddBeginArg = playerInfo.Cmd.Bb;
+			// If the .bb parameter is non-zero, that's extra behaviour not
+			// supported by old TFMX (particularly not by the official v1.5
+		    // and v2.2 releases and some variants used during that era).
+		    // Those don't use that parameter, it defaults to 0, and they
+		    // accept only a 16-bit offset. Lacking the count parameter,
+		    // the AddBegin macro command had to be run whenever wanting
+		    // to apply the sample offset.
+		    //
+		    // Modernized TFMX variants introduced the count parameter as
+		    // to trigger automatic updates of the sample offset during
+		    // modulation/effects processing.
+		    //
+		    // So, the core of this macro implementation can become the default.
+		    //
+		    // However: Some music files based on the old TFMX design set
+		    // that parameter by mistake when entering a negative offset
+		    // (and expanding the two's complement value to 24 bits and
+		    // storing the upper bits in the first .bb parameter). That would
+		    // activate the modernized behaviour and cause a conflict, if
+		    // the player added automatic updates to the effect.
+		    //
+		    // NB! We handle variant.noAddBeginCount during modulation
+		    voice.AddBeginCount = voice.AddBeginArg = playerInfo.Cmd.Bb;
 			sdword offset = (sword)MyEndian.MakeWord(playerInfo.Cmd.Cd, playerInfo.Cmd.Ee);
 			voice.AddBeginOffset = offset;
 

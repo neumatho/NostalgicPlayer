@@ -76,6 +76,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 					playerInfo.Sequencer.Step.Current = playerInfo.Sequencer.Step.First = s1;
 					playerInfo.Sequencer.Step.Last = s2;
 
+					// Reset some sequencer values we rely on
+					songEnd = false;
+
+					for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
+						playerInfo.Track[t].Pt = 0xff;
+
 					ProcessTrackStep();
 
 					c_int countInactive = 0;
@@ -88,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 							countInactive++;
 					}
 
-					if (countInactive == playerInfo.Sequencer.Tracks)
+					if ((countInactive == playerInfo.Sequencer.Tracks) || songEnd)	// Track command STOP can cause immediate song end
 						continue;
 
 					if (s1 != playerInfo.Sequencer.Step.Current)

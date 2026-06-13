@@ -697,6 +697,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			macroCmdFuncs[0x28] = MacroFunc_28;
 			macroCmdFuncs[0x29] = MacroFunc_29;
 
+			// TFMX v1.x up to and including v2.2 cannot be distinguished from
+			// the later TFMX and/or variants. Unless the very rarely used old
+			// header tag is used. And since the old-style effects (particularly
+			// non-scaled vibrato and portamento) may be strictly required by
+			// music created with v1/v2, a checksum based detection of specific
+			// modules may be the only way. And the differences between v1 and v2
+			// are of little use when detecting file contents
+
 			// TFMX v1.x
 			if (((MyEndian.ReadBEUdword(pBuf, offsets.Header) == Tfmx_Hex) && (pBuf[offsets.Header + 4] == 0x20)) || (input.VersionHint == 1))
 				SetTfmxV1();
@@ -1005,7 +1013,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// TFMX v2.2 is mostly like TFMX v1.x, but it adds macros 0x1a to
+		/// 0x1e and enhances a few (like Addvol -> Addvol+note). There is no
+		/// setTFMXv2() method, because it can be treated as a variant of v1
 		/// </summary>
 		/********************************************************************/
 		private void SetTfmxV1()
@@ -1230,6 +1240,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			if (--playerInfo.Admin.Count < 0)
 			{
 				playerInfo.Admin.Count = playerInfo.Admin.Speed;	// Reload
+				int evalMaxLoops = Recurse_Limit;
 
 				do
 				{
@@ -1279,7 +1290,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 						break;
 					}
 				}
-				while (playerInfo.Sequencer.Step.Next);
+				while (playerInfo.Sequencer.Step.Next && (--evalMaxLoops > 0));
 			}
 		}
 
