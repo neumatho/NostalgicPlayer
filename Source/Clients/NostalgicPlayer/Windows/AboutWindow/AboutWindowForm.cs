@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Components;
 using Polycode.NostalgicPlayer.Library.Agent;
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 	/// <summary>
 	/// This shows the about information
 	/// </summary>
-	public partial class AboutWindowForm : WindowFormBase
+	public partial class AboutWindowForm : WindowFormBase2
 	{
 		private const int AreaWidth = 340;
 		private const int AreaHeight = 170;
@@ -81,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IAgentManager agentManager)
+		public void InitializeForm(IAgentManager agentManager, INostalgicImageBank imageBank)
 		{
 			// Remember the arguments
 			this.agentManager = agentManager;
@@ -120,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			}
 
 			// Make a copy of the logo
-			logoBitmap = new Bitmap(Resources.IDB_ABOUT_LOGO);
+			logoBitmap = new Bitmap(imageBank.General.Logo);
 
 			// Initialize variables
 			showMode = Mode.Text;
@@ -163,15 +164,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 		{
 			base.OnFormClosed(e);
 
-			if (bitmap != null)
-			{
-				// Do some cleanup
-				bitmap.Dispose();
-				bitmap = null;
+			// Do some cleanup
+			bitmap?.Dispose();
+			bitmap = null;
 
-				logoBitmap.Dispose();
-				logoBitmap = null;
-			}
+			logoBitmap?.Dispose();
+			logoBitmap = null;
 		}
 
 

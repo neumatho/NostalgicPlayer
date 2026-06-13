@@ -256,6 +256,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibReSidFp.Test", "Ports\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusiclineEditor", "Agents\Players\MusiclineEditor\MusiclineEditor.csproj", "{6144F918-2F51-428B-9569-0BC18B2A9CE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Controls", "NostalgicPlayer.Controls\NostalgicPlayer.Controls.csproj", "{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2036,6 +2038,22 @@ Global
 		{6144F918-2F51-428B-9569-0BC18B2A9CE3}.Release|x64.Build.0 = Release|Any CPU
 		{6144F918-2F51-428B-9569-0BC18B2A9CE3}.Release|x86.ActiveCfg = Release|Any CPU
 		{6144F918-2F51-428B-9569-0BC18B2A9CE3}.Release|x86.Build.0 = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x64.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|ARM64.Build.0 = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x64.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x64.Build.0 = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{5139E6B3-9767-4969-BE9B-8DC9ECA100A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,110 @@
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
+using System;
+
+namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
+{
+	/// <summary>
+	/// Different themes implement this interface
+	/// </summary>
+	public interface ITheme
+	{
+		/// <summary>
+		/// Returns a unique ID for the theme
+		/// </summary>
+		Guid Id { get; }
+
+		/// <summary>
+		/// Return a collection of standard fonts
+		/// </summary>
+		IFonts StandardFonts { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by images
+		/// </summary>
+		internal IImageColors ImageColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by forms
+		/// </summary>
+		IFormColors FormColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by box
+		/// </summary>
+		IBoxColors BoxColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by group box
+		/// </summary>
+		IGroupBoxColors GroupBoxColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by buttons
+		/// </summary>
+		IButtonColors ButtonColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by check boxes
+		/// </summary>
+		ICheckBoxColors CheckBoxColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by combo boxes
+		/// </summary>
+		IComboBoxColors ComboBoxColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by text boxes
+		/// </summary>
+		ITextBoxColors TextBoxColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by RichText views
+		/// </summary>
+		IRichTextViewColors RichTextViewColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by DataGridView
+		/// </summary>
+		IDataGridViewColors DataGridViewColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by scroll bars
+		/// </summary>
+		IScrollBarColors ScrollBarColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by tab controls
+		/// </summary>
+		ITabColors TabColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by label controls
+		/// </summary>
+		ILabelColors LabelColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by module list control
+		/// </summary>
+		IModuleListColors ModuleListColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by track bars
+		/// </summary>
+		ITrackBarColors TrackBarColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by progress bars
+		/// </summary>
+		IProgressBarColors ProgressBarColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by menu strips
+		/// </summary>
+		IMenuStripColors MenuStripColors { get; }
+	}
+}
