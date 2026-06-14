@@ -55,7 +55,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			// 
 			// tabInstrumentPage
 			// 
-			tabInstrumentPage.BackColor = System.Drawing.Color.Transparent;
 			tabInstrumentPage.Controls.Add(instrumentPageControl);
 			tabInstrumentPage.Location = new System.Drawing.Point(1, 24);
 			tabInstrumentPage.MinimumSize = new System.Drawing.Size(50, 50);
@@ -73,7 +72,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 			// 
 			// tabSamplePage
 			// 
-			tabSamplePage.BackColor = System.Drawing.Color.Transparent;
 			tabSamplePage.Controls.Add(samplePageControl);
 			tabSamplePage.Location = new System.Drawing.Point(1, 24);
 			tabSamplePage.MinimumSize = new System.Drawing.Size(50, 50);
