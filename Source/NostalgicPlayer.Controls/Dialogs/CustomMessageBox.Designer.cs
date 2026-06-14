@@ -38,7 +38,6 @@
 			// 
 			// messageLabel
 			// 
-			messageLabel.AutoSize = true;
 			messageLabel.Location = new System.Drawing.Point(0, 0);
 			messageLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			messageLabel.Name = "messageLabel";
