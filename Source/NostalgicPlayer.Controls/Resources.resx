@@ -120,6 +120,9 @@
   <data name="IDS_DEFAULT_SUBSONG" xml:space="preserve">
     <value>#{0}</value>
   </data>
+  <data name="IDS_DEFAULT_TAB_NAME" xml:space="preserve">
+    <value>Tab page</value>
+  </data>
   <data name="IDS_TIMEFORMAT" xml:space="preserve">
     <value>hh\:mm\:ss</value>
   </data>

@@ -764,6 +764,21 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Return the text to show on a tab. Falls back to a default name
+		/// when the page has no text set
+		/// </summary>
+		/********************************************************************/
+		private string GetTabText(int realIndex)
+		{
+			string text = TabPages[realIndex].Text;
+
+			return string.IsNullOrEmpty(text) ? Resources.IDS_DEFAULT_TAB_NAME : text;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return whether a page should be shown in the tab strip
 		/// </summary>
 		/********************************************************************/
@@ -846,7 +861,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 					if (realIndex >= TabCount)
 						return Rectangle.Empty;
 
-					string text = TabPages[realIndex].Text;
+					string text = GetTabText(realIndex);
 
 					int textWidth = TextRenderer.MeasureText(g, text, font).Width;
 					int tabWidth = textWidth + 5;
@@ -1037,7 +1052,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 				DrawTabBorder(g, tabPath);
 			}
 
-			DrawTabText(g, TabPages[realIndex].Text, rect, font, tabStateColors);
+			DrawTabText(g, GetTabText(realIndex), rect, font, tabStateColors);
 
 			// Draw focus rectangle on the selected tab
 			if (isSelected && Focused)
