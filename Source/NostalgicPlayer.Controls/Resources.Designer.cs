@@ -70,6 +70,15 @@ namespace Polycode.NostalgicPlayer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tab page.
+        /// </summary>
+        internal static string IDS_DEFAULT_TAB_NAME {
+            get {
+                return ResourceManager.GetString("IDS_DEFAULT_TAB_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to hh\:mm\:ss.
         /// </summary>
         internal static string IDS_TIMEFORMAT {
