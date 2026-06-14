@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Design;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Components;
@@ -21,14 +22,15 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 	/// <summary>
 	/// Themed tab control
 	/// </summary>
+	[Designer(typeof(NostalgicTabDesigner))]
 	public class NostalgicTab : TabControl, IThemeControl, IFontConfiguration, ISupportInitialize
 	{
 		#region NostalgicTabPageCollection
 		/// <summary>
 		/// Typed wrapper around TabPages that returns NostalgicTabPage
-		/// instances so that the shadowed Visible property is accessible
 		/// </summary>
-		public sealed class NostalgicTabPageCollection : IList<NostalgicTabPage>
+		[TypeConverter(typeof(CollectionConverter))]
+		public sealed class NostalgicTabPageCollection : IList<NostalgicTabPage>, IList
 		{
 			private readonly NostalgicTab owner;
 
@@ -199,6 +201,127 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			{
 				return GetEnumerator();
 			}
+
+			#region Non-generic IList implementation
+			// The designer's PropertyGrid and CollectionConverter only treat
+			// a value as a collection if it implements the non-generic IList /
+			// ICollection. Without this, the Pages property shows up as a
+			// disabled type name instead of an editable "(Collection)"
+
+			/********************************************************************/
+			/// <summary>
+			/// Get or set a page by index
+			/// </summary>
+			/********************************************************************/
+			object IList.this[int index]
+			{
+				get => this[index];
+				set => throw new NotSupportedException();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			bool IList.IsFixedSize => false;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			bool ICollection.IsSynchronized => false;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			object ICollection.SyncRoot => this;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Add a page
+			/// </summary>
+			/********************************************************************/
+			int IList.Add(object value)
+			{
+				Add((NostalgicTabPage)value);
+
+				return Count - 1;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Check if a page is in the collection
+			/// </summary>
+			/********************************************************************/
+			bool IList.Contains(object value)
+			{
+				return (value is NostalgicTabPage page) && Contains(page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Return the index of a page
+			/// </summary>
+			/********************************************************************/
+			int IList.IndexOf(object value)
+			{
+				return (value is NostalgicTabPage page) ? IndexOf(page) : -1;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Insert a page at the given index
+			/// </summary>
+			/********************************************************************/
+			void IList.Insert(int index, object value)
+			{
+				Insert(index, (NostalgicTabPage)value);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Remove a page
+			/// </summary>
+			/********************************************************************/
+			void IList.Remove(object value)
+			{
+				if (value is NostalgicTabPage page)
+					Remove(page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Copy pages to an array
+			/// </summary>
+			/********************************************************************/
+			void ICollection.CopyTo(Array array, int index)
+			{
+				for (int i = 0; i < Count; i++)
+					array.SetValue(this[i], index + i);
+			}
+			#endregion
 		}
 		#endregion
 
@@ -264,6 +387,27 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 				Invalidate();
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Typed collection that provides access to tab pages as
+		/// NostalgicTabPage, so the shadowed Visible property works
+		/// correctly.
+		///
+		/// This is the only supported way to add pages in the designer (the
+		/// inherited TabPages property is hidden, because it does not work
+		/// with how this control is implemented). The collection itself is
+		/// never serialized - the pages are written to the form as part of
+		/// the Controls collection instead
+		/// </summary>
+		/********************************************************************/
+		[Category("Behavior")]
+		[Description("The pages in this tab control.")]
+		[Editor(typeof(NostalgicTabPageCollectionEditor), typeof(UITypeEditor))]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public NostalgicTabPageCollection Pages { get; }
 		#endregion
 
 		#region ISupportInitialize
@@ -324,19 +468,6 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		}
 		#endregion
 
-		#region Public properties
-		/********************************************************************/
-		/// <summary>
-		/// Typed collection that provides access to tab pages as
-		/// NostalgicTabPage, so the shadowed Visible property works
-		/// correctly
-		/// </summary>
-		/********************************************************************/
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public NostalgicTabPageCollection Pages { get; }
-		#endregion
-
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
@@ -364,7 +495,10 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		protected override void OnControlAdded(ControlEventArgs e)
 		{
 			if (!isInitializing && (e.Control is NostalgicTabPage))
+			{
 				RebuildVisibleTabList();
+				Invalidate();
+			}
 
 			base.OnControlAdded(e);
 		}
@@ -379,7 +513,10 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		protected override void OnControlRemoved(ControlEventArgs e)
 		{
 			if (!isInitializing && (e.Control is NostalgicTabPage))
+			{
 				RebuildVisibleTabList();
+				Invalidate();
+			}
 
 			base.OnControlRemoved(e);
 		}
@@ -700,6 +837,15 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 				for (int i = 0; i <= visibleIndex; i++)
 				{
 					int realIndex = visibleTabIndices[i];
+
+					// visibleTabIndices can briefly be out of sync with the
+					// actual pages - for example when the last tab is removed
+					// in the designer, a repaint can happen before the list is
+					// rebuilt. Bail out instead of indexing past the end of
+					// TabPages (the list is rebuilt and repainted right after)
+					if (realIndex >= TabCount)
+						return Rectangle.Empty;
+
 					string text = TabPages[realIndex].Text;
 
 					int textWidth = TextRenderer.MeasureText(g, text, font).Width;
@@ -1013,6 +1159,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 				nameof(DrawMode),
 				nameof(Appearance),
 				nameof(HotTrack),
+				nameof(TabPages),
 			];
 
 			/********************************************************************/
