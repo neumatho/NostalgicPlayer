@@ -666,6 +666,11 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 				int y = textRect.Y + ((textRect.Height - height) / 2);
 
 				Rectangle focusRect = new Rectangle(textRect.X - 1, y, Math.Min(textSize.Width, textRect.Width) + 2, height);
+
+				// Keep the focus rectangle inside the control, so the right edge is not clipped
+				// when the text fills the available width
+				focusRect.Intersect(ClientRectangle);
+
 				ControlPaint.DrawFocusRectangle(g, focusRect);
 			}
 		}
