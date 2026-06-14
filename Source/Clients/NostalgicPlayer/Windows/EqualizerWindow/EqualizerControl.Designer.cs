@@ -72,7 +72,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			topPanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel();
 			enableEqualizerCheckBox = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicCheckBox();
 			presetComboBox = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicComboBox();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
 			equalizerGroupBox.SuspendLayout();
 			controlsPanel.SuspendLayout();
@@ -581,13 +580,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			presetComboBox.TabIndex = 1;
 			presetComboBox.SelectedIndexChanged += PresetComboBox_SelectedIndexChanged;
 			// 
-			// fontPalette
-			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
-			// 
 			// EqualizerControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -605,7 +597,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 		#endregion
 
 		private Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource controlResource;
-		private Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette fontPalette;
 		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicGroupBox equalizerGroupBox;
 		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel topPanel;
 		private Polycode.NostalgicPlayer.Controls.Buttons.NostalgicCheckBox enableEqualizerCheckBox;
