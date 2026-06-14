@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Designer;
@@ -30,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 		/********************************************************************/
 		public NostalgicLabel()
 		{
+			AutoSize = true;
+
 			// Make the themed font available before the designer's first layout
 			// pass. Otherwise the font would first arrive in OnHandleCreated,
 			// after deserialization, and the AutoSize re-measure would change
@@ -40,6 +43,21 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 		}
 
 		#region Designer properties
+		/********************************************************************/
+		/// <summary>
+		/// Indicates whether the control is automatically resized to fit its
+		/// contents. Defaults to true for this control
+		/// </summary>
+		/********************************************************************/
+		[DefaultValue(true)]
+		public override bool AutoSize
+		{
+			get => base.AutoSize;
+			set => base.AutoSize = value;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Set the FontConfiguration component to use for this control
@@ -100,7 +118,9 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 			colors = theme.LabelColors;
 			fonts = theme.StandardFonts;
 
+			BackColor = Color.Transparent;
 			ForeColor = colors.TextColor;
+
 			UpdateFont();
 
 			Invalidate();
