@@ -1,4 +1,4 @@
-﻿/******************************************************************************/
+/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
@@ -16,11 +16,11 @@ using Polycode.NostalgicPlayer.Controls.Theme.Standard;
 namespace Polycode.NostalgicPlayer.Controls.Buttons
 {
 	/// <summary>
-	/// Themed check box with custom rendering
+	/// Themed radio button with custom rendering
 	/// </summary>
-	public class NostalgicCheckBox : CheckBox, IThemeControl, IFontConfiguration
+	public class NostalgicRadioButton : RadioButton, IThemeControl, IFontConfiguration
 	{
-		// Gap between the box and the text
+		// Gap between the circle and the text
 		private const int TextGap = 2;
 
 		private struct StateColors
@@ -28,11 +28,11 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 			public Color BorderColor { get; init; }
 			public Color BackgroundStartColor { get; init; }
 			public Color BackgroundStopColor { get; init; }
-			public Color CheckMarkColor { get; init; }
+			public Color DotColor { get; init; }
 			public Color TextColor { get; init; }
 		}
 
-		private ICheckBoxColors colors;
+		private IRadioButtonColors colors;
 		private IFonts fonts;
 
 		private FontConfiguration fontConfiguration;
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NostalgicCheckBox()
+		public NostalgicRadioButton()
 		{
 			SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor | ControlStyles.ResizeRedraw, true);
 		}
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		public void SetTheme(ITheme theme)
 		{
-			colors = theme.CheckBoxColors;
+			colors = theme.RadioButtonColors;
 			fonts = theme.StandardFonts;
 
 			Invalidate();
@@ -352,20 +352,6 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		///
 		/// </summary>
 		/********************************************************************/
-		protected override void OnCheckStateChanged(EventArgs e)
-		{
-			Invalidate();
-
-			base.OnCheckStateChanged(e);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		///
-		/// </summary>
-		/********************************************************************/
 		protected override void OnEnabledChanged(EventArgs e)
 		{
 			if (!Enabled)
@@ -407,12 +393,12 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 			Font font = GetFont();
 			StateColors stateColors = GetColors();
 
-			Rectangle boxRect = GetBoxRectangle(rect, font);
+			Rectangle circleRect = GetCircleRectangle(rect, font);
 
 			ClearBackground(g);
-			DrawBox(g, boxRect, stateColors);
-			DrawCheckMark(g, boxRect, stateColors);
-			DrawText(g, rect, boxRect, font, stateColors, out Rectangle textRect);
+			DrawCircle(g, circleRect, stateColors);
+			DrawDot(g, circleRect, stateColors);
+			DrawText(g, rect, circleRect, font, stateColors, out Rectangle textRect);
 			DrawFocus(g, font, textRect);
 		}
 		#endregion
@@ -446,18 +432,18 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the bounds of the check box glyph, vertically centered
+		/// Return the bounds of the radio circle glyph, vertically centered
 		/// against the text
 		/// </summary>
 		/********************************************************************/
-		private Rectangle GetBoxRectangle(Rectangle rect, Font font)
+		private Rectangle GetCircleRectangle(Rectangle rect, Font font)
 		{
-			int boxSize = Math.Max(13, font.Height - 2);
-			boxSize = Math.Min(boxSize, rect.Height - 1);
+			int circleSize = Math.Max(13, font.Height - 2);
+			circleSize = Math.Min(circleSize, rect.Height - 1);
 
-			int y = rect.Y + ((rect.Height - boxSize) / 2);
+			int y = rect.Y + ((rect.Height - circleSize) / 2);
 
-			return new Rectangle(rect.X, y, boxSize, boxSize);
+			return new Rectangle(rect.X, y, circleSize, circleSize);
 		}
 
 
@@ -476,7 +462,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 					BorderColor = colors.DisabledBorderColor,
 					BackgroundStartColor = colors.DisabledBackgroundStartColor,
 					BackgroundStopColor = colors.DisabledBackgroundStopColor,
-					CheckMarkColor = colors.DisabledCheckMarkColor,
+					DotColor = colors.DisabledDotColor,
 					TextColor = colors.DisabledTextColor
 				};
 			}
@@ -488,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 					BorderColor = colors.PressedBorderColor,
 					BackgroundStartColor = colors.PressedBackgroundStartColor,
 					BackgroundStopColor = colors.PressedBackgroundStopColor,
-					CheckMarkColor = colors.PressedCheckMarkColor,
+					DotColor = colors.PressedDotColor,
 					TextColor = colors.PressedTextColor
 				};
 			}
@@ -500,7 +486,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 					BorderColor = colors.HoverBorderColor,
 					BackgroundStartColor = colors.HoverBackgroundStartColor,
 					BackgroundStopColor = colors.HoverBackgroundStopColor,
-					CheckMarkColor = colors.HoverCheckMarkColor,
+					DotColor = colors.HoverDotColor,
 					TextColor = colors.HoverTextColor
 				};
 			}
@@ -512,7 +498,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 					BorderColor = colors.FocusedBorderColor,
 					BackgroundStartColor = colors.FocusedBackgroundStartColor,
 					BackgroundStopColor = colors.FocusedBackgroundStopColor,
-					CheckMarkColor = colors.FocusedCheckMarkColor,
+					DotColor = colors.FocusedDotColor,
 					TextColor = colors.FocusedTextColor
 				};
 			}
@@ -522,7 +508,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 				BorderColor = colors.NormalBorderColor,
 				BackgroundStartColor = colors.NormalBackgroundStartColor,
 				BackgroundStopColor = colors.NormalBackgroundStopColor,
-				CheckMarkColor = colors.NormalCheckMarkColor,
+				DotColor = colors.NormalDotColor,
 				TextColor = colors.NormalTextColor
 			};
 		}
@@ -566,68 +552,45 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 
 		/********************************************************************/
 		/// <summary>
-		/// Draw the check box glyph background and border
+		/// Draw the radio circle glyph background and border
 		/// </summary>
 		/********************************************************************/
-		private void DrawBox(Graphics g, Rectangle boxRect, StateColors stateColors)
+		private void DrawCircle(Graphics g, Rectangle circleRect, StateColors stateColors)
 		{
-			Rectangle outerRect = new Rectangle(boxRect.X, boxRect.Y, boxRect.Width - 1, boxRect.Height - 1);
-
-			// The border is a sharp rectangle, so keep the edges crisp
-			SmoothingMode oldMode = g.SmoothingMode;
-			g.SmoothingMode = SmoothingMode.None;
+			Rectangle outerRect = new Rectangle(circleRect.X, circleRect.Y, circleRect.Width - 1, circleRect.Height - 1);
 
 			using (LinearGradientBrush brush = new LinearGradientBrush(outerRect, stateColors.BackgroundStartColor, stateColors.BackgroundStopColor, LinearGradientMode.Vertical))
 			{
-				g.FillRectangle(brush, outerRect);
+				g.FillEllipse(brush, outerRect);
 			}
 
 			using (Pen p = new Pen(stateColors.BorderColor))
 			{
-				g.DrawRectangle(p, outerRect);
+				g.DrawEllipse(p, outerRect);
 			}
-
-			g.SmoothingMode = oldMode;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Draw the check mark or the indeterminate marker, depending on the
-		/// current check state
+		/// Draw the filled dot when the radio button is checked
 		/// </summary>
 		/********************************************************************/
-		private void DrawCheckMark(Graphics g, Rectangle boxRect, StateColors stateColors)
+		private void DrawDot(Graphics g, Rectangle circleRect, StateColors stateColors)
 		{
-			if (CheckState == CheckState.Checked)
+			if (Checked)
 			{
-				// Keep the mark one pixel narrower, so it does not touch the right border
-				int markWidth = boxRect.Width - 1;
+				// Center the dot on the same ellipse DrawCircle fills, so the two are concentric
+				Rectangle outerRect = new Rectangle(circleRect.X, circleRect.Y, circleRect.Width - 1, circleRect.Height - 1);
 
-				PointF p1 = new PointF(boxRect.Left + (markWidth * 0.22f), boxRect.Top + (boxRect.Height * 0.52f));
-				PointF p2 = new PointF(boxRect.Left + (markWidth * 0.42f), boxRect.Top + (boxRect.Height * 0.72f));
-				PointF p3 = new PointF(boxRect.Left + (markWidth * 0.78f), boxRect.Top + (boxRect.Height * 0.28f));
+				float diameter = outerRect.Width * 0.5f;
+				float x = outerRect.X + ((outerRect.Width - diameter) / 2.0f);
+				float y = outerRect.Y + ((outerRect.Height - diameter) / 2.0f);
 
-				float penWidth = Math.Max(2.0f, boxRect.Width / 7.0f);
-
-				using (Pen p = new Pen(stateColors.CheckMarkColor, penWidth))
+				using (SolidBrush brush = new SolidBrush(stateColors.DotColor))
 				{
-					p.StartCap = LineCap.Round;
-					p.EndCap = LineCap.Round;
-					p.LineJoin = LineJoin.Round;
-
-					g.DrawLines(p, [ p1, p2, p3 ]);
-				}
-			}
-			else if (CheckState == CheckState.Indeterminate)
-			{
-				int inset = (int)Math.Round(boxRect.Width * 0.28f);
-				Rectangle fillRect = Rectangle.Inflate(boxRect, -inset, -inset);
-
-				using (SolidBrush brush = new SolidBrush(stateColors.CheckMarkColor))
-				{
-					g.FillRectangle(brush, fillRect);
+					g.FillEllipse(brush, x, y, diameter, diameter);
 				}
 			}
 		}
@@ -639,9 +602,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/// Draw the label text and report the rectangle it was drawn into
 		/// </summary>
 		/********************************************************************/
-		private void DrawText(Graphics g, Rectangle rect, Rectangle boxRect, Font font, StateColors stateColors, out Rectangle textRect)
+		private void DrawText(Graphics g, Rectangle rect, Rectangle circleRect, Font font, StateColors stateColors, out Rectangle textRect)
 		{
-			int x = boxRect.Right + TextGap;
+			int x = circleRect.Right + TextGap;
 
 			textRect = new Rectangle(x, rect.Y, rect.Width - x, rect.Height);
 
@@ -682,9 +645,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/// Register a provider that filters properties for the designer
 		/// </summary>
 		/********************************************************************/
-		static NostalgicCheckBox()
+		static NostalgicRadioButton()
 		{
-			TypeDescriptor.AddProvider(new NostalgicCheckBoxTypeDescriptionProvider(), typeof(NostalgicCheckBox));
+			TypeDescriptor.AddProvider(new NostalgicRadioButtonTypeDescriptionProvider(), typeof(NostalgicRadioButton));
 		}
 
 		/// <summary>
@@ -692,9 +655,9 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/// This is needed for properties that we cannot override, but we do
 		/// it for all our hidden properties to be sure
 		/// </summary>
-		private sealed class NostalgicCheckBoxTypeDescriptionProvider : TypeDescriptionProvider
+		private sealed class NostalgicRadioButtonTypeDescriptionProvider : TypeDescriptionProvider
 		{
-			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(CheckBox));
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(RadioButton));
 
 			private static readonly string[] propertiesToHide =
 			[
@@ -724,7 +687,7 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public NostalgicCheckBoxTypeDescriptionProvider() : base(parent)
+			public NostalgicRadioButtonTypeDescriptionProvider() : base(parent)
 			{
 			}
 
