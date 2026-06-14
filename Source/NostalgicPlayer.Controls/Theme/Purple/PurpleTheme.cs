@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleGroupBoxColors groupBoxColors = new PurpleGroupBoxColors();
 		private static readonly PurpleButtonColors buttonColors = new PurpleButtonColors();
 		private static readonly PurpleCheckBoxColors checkBoxColors = new PurpleCheckBoxColors();
+		private static readonly PurpleRadioButtonColors radioButtonColors = new PurpleRadioButtonColors();
 		private static readonly PurpleComboBoxColors comboBoxColors = new PurpleComboBoxColors();
 		private static readonly PurpleTextBoxColors textBoxColors = new PurpleTextBoxColors();
 		private static readonly PurpleRichTextViewColors richTextViewColors = new PurpleRichTextViewColors();
@@ -127,6 +128,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public ICheckBoxColors CheckBoxColors => checkBoxColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by radio buttons
+		/// </summary>
+		/********************************************************************/
+		public IRadioButtonColors RadioButtonColors => radioButtonColors;
 
 
 
