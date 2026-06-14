@@ -53,6 +53,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		ICheckBoxColors CheckBoxColors { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by radio buttons
+		/// </summary>
+		IRadioButtonColors RadioButtonColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by combo boxes
 		/// </summary>
 		IComboBoxColors ComboBoxColors { get; }
