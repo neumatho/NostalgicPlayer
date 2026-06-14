@@ -36,16 +36,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			tabInfoPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			tabCommentPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			commentPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.CommentPageControl();
-			tabPicturesPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
-			picturesPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.PicturesPageControl();
 			tabLyricsPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			lyricsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.LyricsPageControl();
+			tabPicturesPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
+			picturesPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pages.PicturesPageControl();
 			((System.ComponentModel.ISupportInitialize)tabControl).BeginInit();
 			tabControl.SuspendLayout();
 			tabInfoPage.SuspendLayout();
 			tabCommentPage.SuspendLayout();
-			tabPicturesPage.SuspendLayout();
 			tabLyricsPage.SuspendLayout();
+			tabPicturesPage.SuspendLayout();
 			SuspendLayout();
 			// 
 			// infoPageControl
@@ -71,7 +71,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			// 
 			// tabInfoPage
 			// 
-			tabInfoPage.BackColor = System.Drawing.Color.Transparent;
 			tabInfoPage.Controls.Add(infoPageControl);
 			tabInfoPage.Location = new System.Drawing.Point(1, 24);
 			tabInfoPage.MinimumSize = new System.Drawing.Size(50, 50);
@@ -81,7 +80,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			// 
 			// tabCommentPage
 			// 
-			tabCommentPage.BackColor = System.Drawing.Color.Transparent;
 			tabCommentPage.Controls.Add(commentPageControl);
 			tabCommentPage.Location = new System.Drawing.Point(1, 24);
 			tabCommentPage.MinimumSize = new System.Drawing.Size(50, 50);
@@ -97,27 +95,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			commentPageControl.Size = new System.Drawing.Size(282, 157);
 			commentPageControl.TabIndex = 0;
 			// 
-			// tabPicturesPage
-			// 
-			tabPicturesPage.BackColor = System.Drawing.Color.Transparent;
-			tabPicturesPage.Controls.Add(picturesPageControl);
-			tabPicturesPage.Location = new System.Drawing.Point(1, 24);
-			tabPicturesPage.MinimumSize = new System.Drawing.Size(50, 50);
-			tabPicturesPage.Name = "tabPicturesPage";
-			tabPicturesPage.Size = new System.Drawing.Size(282, 157);
-			tabPicturesPage.TabIndex = 3;
-			// 
-			// picturesPageControl
-			// 
-			picturesPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			picturesPageControl.Location = new System.Drawing.Point(0, 0);
-			picturesPageControl.Name = "picturesPageControl";
-			picturesPageControl.Size = new System.Drawing.Size(282, 157);
-			picturesPageControl.TabIndex = 0;
-			// 
 			// tabLyricsPage
 			// 
-			tabLyricsPage.BackColor = System.Drawing.Color.Transparent;
 			tabLyricsPage.Controls.Add(lyricsPageControl);
 			tabLyricsPage.Location = new System.Drawing.Point(1, 24);
 			tabLyricsPage.MinimumSize = new System.Drawing.Size(50, 50);
@@ -133,6 +112,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			lyricsPageControl.Size = new System.Drawing.Size(282, 157);
 			lyricsPageControl.TabIndex = 0;
 			// 
+			// tabPicturesPage
+			// 
+			tabPicturesPage.Controls.Add(picturesPageControl);
+			tabPicturesPage.Location = new System.Drawing.Point(1, 24);
+			tabPicturesPage.MinimumSize = new System.Drawing.Size(50, 50);
+			tabPicturesPage.Name = "tabPicturesPage";
+			tabPicturesPage.Size = new System.Drawing.Size(282, 157);
+			tabPicturesPage.TabIndex = 3;
+			// 
+			// picturesPageControl
+			// 
+			picturesPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			picturesPageControl.Location = new System.Drawing.Point(0, 0);
+			picturesPageControl.Name = "picturesPageControl";
+			picturesPageControl.Size = new System.Drawing.Size(282, 157);
+			picturesPageControl.TabIndex = 0;
+			// 
 			// ModuleInfoWindowForm
 			// 
 			ClientSize = new System.Drawing.Size(300, 200);
@@ -146,8 +142,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow
 			tabControl.ResumeLayout(false);
 			tabInfoPage.ResumeLayout(false);
 			tabCommentPage.ResumeLayout(false);
-			tabPicturesPage.ResumeLayout(false);
 			tabLyricsPage.ResumeLayout(false);
+			tabPicturesPage.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
