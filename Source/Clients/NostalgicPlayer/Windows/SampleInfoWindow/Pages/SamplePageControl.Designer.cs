@@ -44,7 +44,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			// saveFormatLabel
 			// 
 			saveFormatLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-			saveFormatLabel.AutoSize = true;
 			saveFormatLabel.Location = new System.Drawing.Point(123, 124);
 			saveFormatLabel.Name = "saveFormatLabel";
 			controlResource.SetResourceKey(saveFormatLabel, "IDS_SAMPLE_INFO_SAMP_SAVEFORMAT");
@@ -78,7 +77,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			// polyphonyLabel
 			// 
 			polyphonyLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-			polyphonyLabel.AutoSize = true;
 			polyphonyLabel.Location = new System.Drawing.Point(75, 124);
 			polyphonyLabel.Name = "polyphonyLabel";
 			polyphonyLabel.Size = new System.Drawing.Size(13, 13);
@@ -105,7 +103,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			// octaveLabel
 			// 
 			octaveLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-			octaveLabel.AutoSize = true;
 			octaveLabel.Location = new System.Drawing.Point(4, 124);
 			octaveLabel.Name = "octaveLabel";
 			octaveLabel.Size = new System.Drawing.Size(13, 13);
