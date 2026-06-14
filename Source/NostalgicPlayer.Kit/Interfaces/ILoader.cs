@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// 
 		/// You need to dispose the returned stream when done
 		/// </summary>
-		ModuleStream OpenExtraFileByFileName(string fullFileName, bool addSize);
+		ModuleStream OpenExtraFileByFileName(string fullFileName, bool addSize = true);
 
 		/// <summary>
 		/// Will try to open an external file in the "Instruments" directory.

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -124,9 +125,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				if (!isSingleFile)
 				{
 					// Two file format. Find the other file and read the samples from it
-					ModuleStream sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("smpl");
+					ModuleStream sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("sam");
 					if (sampleStream == null)
-						sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("sam");
+					{
+						sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("smpl");
+						if (sampleStream == null)
+						{
+							// Einmal Kanzler Sein have a single set sample file, check for that
+							sampleStream = fileInfo.Loader?.OpenExtraFileByFileName(Path.Combine(Path.GetDirectoryName(fileInfo.FileName), "set.sam"));
+							if (sampleStream == null)
+								sampleStream = fileInfo.Loader?.OpenExtraFileByFileName(Path.Combine(Path.GetDirectoryName(fileInfo.FileName), "smpl.set"));
+						}
+					}
 
 					if (sampleStream == null)
 					{

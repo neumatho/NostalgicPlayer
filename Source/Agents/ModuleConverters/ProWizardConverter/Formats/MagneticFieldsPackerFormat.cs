@@ -261,7 +261,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 					newFileName += ".set";
 
-					sampleStream = fileInfo.Loader.OpenExtraFileByFileName(newFileName, true);
+					sampleStream = fileInfo.Loader.OpenExtraFileByFileName(newFileName);
 					if (sampleStream != null)
 						break;
 				}
