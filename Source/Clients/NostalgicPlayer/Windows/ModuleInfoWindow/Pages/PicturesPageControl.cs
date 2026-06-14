@@ -249,14 +249,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		private void Picture_Paint(object sender, PaintEventArgs e)
 		{
-			lock (animationLock)
+			if (animationLock != null)
 			{
-				if (currentPictureBitmap != null)
-					e.Graphics.DrawImage(currentPictureBitmap, currentXPos, 0);
+				lock (animationLock)
+				{
+					if (currentPictureBitmap != null)
+						e.Graphics.DrawImage(currentPictureBitmap, currentXPos, 0);
 
-				Bitmap bitmapToDraw = fadePictureBitmap ?? newPictureBitmap;
-				if (bitmapToDraw != null)
-					e.Graphics.DrawImage(bitmapToDraw, newXPos, 0);
+					Bitmap bitmapToDraw = fadePictureBitmap ?? newPictureBitmap;
+					if (bitmapToDraw != null)
+						e.Graphics.DrawImage(bitmapToDraw, newXPos, 0);
+				}
 			}
 		}
 
@@ -269,14 +272,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/********************************************************************/
 		private void PictureLabel_Paint(object sender, PaintEventArgs e)
 		{
-			lock (animationLock)
+			if (animationLock != null)
 			{
-				Bitmap bitmapToDraw = currentFadeLabelBitmap ?? currentLabelBitmap;
-				if (bitmapToDraw != null)
-					e.Graphics.DrawImage(bitmapToDraw, 0, 0);
+				lock (animationLock)
+				{
+					Bitmap bitmapToDraw = currentFadeLabelBitmap ?? currentLabelBitmap;
+					if (bitmapToDraw != null)
+						e.Graphics.DrawImage(bitmapToDraw, 0, 0);
 
-				if (newFadeLabelBitmap != null)
-					e.Graphics.DrawImage(newFadeLabelBitmap, 0, 0);
+					if (newFadeLabelBitmap != null)
+						e.Graphics.DrawImage(newFadeLabelBitmap, 0, 0);
+				}
 			}
 		}
 		#endregion
