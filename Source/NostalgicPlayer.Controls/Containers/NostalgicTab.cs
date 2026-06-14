@@ -408,6 +408,32 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		[Editor(typeof(NostalgicTabPageCollectionEditor), typeof(UITypeEditor))]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public NostalgicTabPageCollection Pages { get; }
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The currently selected page. This is a design-time helper used
+		/// to switch between the pages in the designer It is never
+		/// serialized - it just maps to the selected tab.
+		///
+		/// NOTE: Do not use this from code. Use SelectedTab instead
+		/// </summary>
+		/********************************************************************/
+		[Category("Behavior")]
+		[Description("The currently selected page. Use this to switch between the pages in the designer.")]
+		[TypeConverter(typeof(SelectedTabPageConverter))]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public NostalgicTabPage SelectedPage
+		{
+			get => SelectedTab as NostalgicTabPage;
+
+			set
+			{
+				if ((value != null) && (value != SelectedTab))
+					SelectedTab = value;
+			}
+		}
 		#endregion
 
 		#region ISupportInitialize
