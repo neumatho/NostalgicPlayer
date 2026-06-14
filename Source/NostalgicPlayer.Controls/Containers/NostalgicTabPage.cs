@@ -3,9 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Designer;
 
 namespace Polycode.NostalgicPlayer.Controls.Containers
 {
@@ -16,8 +18,6 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 	/// </summary>
 	public class NostalgicTabPage : TabPage
 	{
-		private bool tabVisible = true;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -41,16 +41,70 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public new bool Visible
 		{
-			get => tabVisible;
+			get;
 
 			set
 			{
-				if (tabVisible != value)
+				if (field != value)
 				{
-					tabVisible = value;
+					field = value;
 					(Parent as NostalgicTab)?.NotifyTabPageVisibilityChanged();
 				}
 			}
+		} = true;
+
+		#region Designer filtering (hide properties from PropertyGrid)
+		/********************************************************************/
+		/// <summary>
+		/// Register a provider that filters properties for the designer
+		/// </summary>
+		/********************************************************************/
+		static NostalgicTabPage()
+		{
+			TypeDescriptor.AddProvider(new NostalgicTabTypeDescriptionProvider(), typeof(NostalgicTabPage));
 		}
+
+		/// <summary>
+		/// Filter out properties we do not want to show in the designer
+		/// </summary>
+		private sealed class NostalgicTabTypeDescriptionProvider : TypeDescriptionProvider
+		{
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(TabPage));
+
+			private static readonly string[] propertiesToHide =
+			[
+				nameof(BackColor),
+				nameof(BackgroundImage),
+				nameof(BackgroundImageLayout),
+				nameof(Font),
+				nameof(ForeColor),
+				nameof(BorderStyle),
+				nameof(RightToLeft),
+				nameof(DrawMode),
+				nameof(Appearance),
+			];
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public NostalgicTabTypeDescriptionProvider() : base(parent)
+			{
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
+			{
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance), propertiesToHide);
+			}
+		}
+		#endregion
 	}
 }
