@@ -42,6 +42,8 @@ namespace Polycode.NostalgicPlayer.Platform.Native
 		/// <summary></summary>
 		LBUTTONDBLCLK = 0x0203,
 		/// <summary></summary>
+		MOUSEWHEEL = 0x020A,
+		/// <summary></summary>
 		NCMOUSELEAVE = 0x02A2,
 
 		// Undocumented messages used by UxTheme to draw themed captions/frames
