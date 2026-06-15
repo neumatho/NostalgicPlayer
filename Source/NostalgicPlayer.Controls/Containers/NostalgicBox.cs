@@ -127,6 +127,22 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Redraw the border when the control is resized
+		/// </summary>
+		/********************************************************************/
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+
+			// The border lives in the non-client area, which is not covered
+			// by ResizeRedraw, so redraw it explicitly when the size changes
+			DrawCustomNonClient();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Process Windows messages to handle non-client area
 		/// </summary>
 		/********************************************************************/
