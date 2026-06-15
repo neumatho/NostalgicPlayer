@@ -74,7 +74,8 @@ namespace Polycode.NostalgicPlayer.Controls.Buttons
 		/********************************************************************/
 		protected virtual void OnCheckedChanged(EventArgs e)
 		{
-			CheckedChanged?.Invoke(this, e);
+			if (CheckedChanged != null)
+				CheckedChanged(this, e);
 		}
 		#endregion
 
