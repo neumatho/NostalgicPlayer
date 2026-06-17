@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly StandardScrollBarColors scrollBarColors = new StandardScrollBarColors();
 		private static readonly StandardTabColors tabColors = new StandardTabColors();
 		private static readonly StandardLabelColors labelColors = new StandardLabelColors();
+		private static readonly StandardSeparatorColors separatorColors = new StandardSeparatorColors();
 		private static readonly StandardModuleListColors moduleListColors = new StandardModuleListColors();
 		private static readonly StandardTrackBarColors trackBarColors = new StandardTrackBarColors();
 		private static readonly StandardProgressBarColors progressBarColors = new StandardProgressBarColors();
@@ -198,6 +199,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public ILabelColors LabelColors => labelColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by separator controls
+		/// </summary>
+		/********************************************************************/
+		public ISeparatorColors SeparatorColors => separatorColors;
 
 
 
