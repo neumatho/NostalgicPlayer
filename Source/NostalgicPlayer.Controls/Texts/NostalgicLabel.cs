@@ -24,6 +24,11 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 
 		private FontConfiguration fontConfiguration;
 
+		// The bottom edge (in parent coordinates) the designer intended for a
+		// bottom-anchored label, captured from the placeholder size before
+		// AutoSize discards it. int.MinValue means not captured yet
+		private int anchoredBottom = int.MinValue;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -107,6 +112,74 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 		}
 		#endregion
 
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// The default WinForms AutoSize keeps the top left corner fixed
+		/// and grows the width to the right and the height downwards. For a
+		/// label that is anchored to the right and/or bottom edge (but not
+		/// the opposite edge), that pushes the text past that edge instead
+		/// of keeping the edge fixed. The old KryptonLabel grew towards the
+		/// anchored edge, so mimic that by moving the location so the
+		/// anchored edge stays put when the size changes due to auto-sizing
+		/// </summary>
+		/********************************************************************/
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
+		{
+			if (AutoSize && !DesignerHelper.IsInDesignMode(this))
+			{
+				// A bottom-anchored auto-size label grows downwards from its top
+				// left, so its bottom edge ends up below where the designer
+				// placed it. The designer's intended bottom is Location.Y plus
+				// the small placeholder height it assigned - but AutoSize discards
+				// that explicit size right after, so this explicit size set is the
+				// only place to read the intended bottom edge. The placeholder is
+				// an explicit size shorter than the text content needs
+				bool placeholder = ((specified & BoundsSpecified.Size) != 0) && (height < base.GetPreferredSize(Size.Empty).Height);
+
+				if (placeholder && IsBottomAnchoredOnly())
+					anchoredBottom = y + height;
+
+				// Right-anchored (but not left): keep the right edge fixed when
+				// the text grows the width, so the label grows to the left
+				if ((width != Width) && !placeholder && IsRightAnchoredOnly())
+					x = Right - width;
+
+				// Bottom-anchored (but not top): pin the bottom edge to the
+				// captured design value. This must run on every (non-placeholder)
+				// call, not just when the height grows: the default WinForms
+				// anchor captures its distance while the label is still grown
+				// downwards and would otherwise drag it back down on a later
+				// layout. The card height is fixed, so the captured bottom never
+				// goes stale
+				if (!placeholder && IsBottomAnchoredOnly() && (anchoredBottom != int.MinValue))
+					y = anchoredBottom - height;
+			}
+
+			base.SetBoundsCore(x, y, width, height, specified);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// When the label is anchored to the far (right/bottom) edge, the
+		/// size set in the designer defines the fixed anchor corner. Keep
+		/// that size at design time instead of letting auto-size collapse it
+		/// to the (empty) text size, so the corner stays where it was placed.
+		/// This is what allowed the old KryptonLabel to keep a fixed size
+		/// like 6;2 here
+		/// </summary>
+		/********************************************************************/
+		public override Size GetPreferredSize(Size proposedSize)
+		{
+			if (DesignerHelper.IsInDesignMode(this) && IsAnchoredToFarEdge())
+				return Size;
+
+			return base.GetPreferredSize(proposedSize);
+		}
+		#endregion
+
 		#region Theme
 		/********************************************************************/
 		/// <summary>
@@ -154,6 +227,43 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 		private void UpdateFont()
 		{
 			Font = fontConfiguration?.Font ?? fonts.RegularFont;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is the label anchored to the right edge, but not the left
+		/// </summary>
+		/********************************************************************/
+		private bool IsRightAnchoredOnly()
+		{
+			return ((Anchor & AnchorStyles.Right) != 0) && ((Anchor & AnchorStyles.Left) == 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is the label anchored to the bottom edge, but not the top
+		/// </summary>
+		/********************************************************************/
+		private bool IsBottomAnchoredOnly()
+		{
+			return ((Anchor & AnchorStyles.Bottom) != 0) && ((Anchor & AnchorStyles.Top) == 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is the label anchored to a far (right or bottom) edge, where the
+		/// designer size defines the fixed anchor corner
+		/// </summary>
+		/********************************************************************/
+		private bool IsAnchoredToFarEdge()
+		{
+			return IsRightAnchoredOnly() || IsBottomAnchoredOnly();
 		}
 		#endregion
 
