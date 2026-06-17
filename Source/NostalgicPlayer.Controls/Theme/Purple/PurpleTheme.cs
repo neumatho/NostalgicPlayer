@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleScrollBarColors scrollBarColors = new PurpleScrollBarColors();
 		private static readonly PurpleTabColors tabColors = new PurpleTabColors();
 		private static readonly PurpleLabelColors labelColors = new PurpleLabelColors();
+		private static readonly PurpleSeparatorColors separatorColors = new PurpleSeparatorColors();
 		private static readonly PurpleModuleListColors moduleListColors = new PurpleModuleListColors();
 		private static readonly PurpleTrackBarColors trackBarColors = new PurpleTrackBarColors();
 		private static readonly PurpleProgressBarColors progressBarColors = new PurpleProgressBarColors();
@@ -200,6 +201,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public ILabelColors LabelColors => labelColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by separator controls
+		/// </summary>
+		/********************************************************************/
+		public ISeparatorColors SeparatorColors => separatorColors;
 
 
 
