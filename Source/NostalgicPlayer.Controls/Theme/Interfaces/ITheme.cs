@@ -93,6 +93,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		ILabelColors LabelColors { get; }
 
 		/// <summary>
+		/// Return a collection of colors used by separator controls
+		/// </summary>
+		ISeparatorColors SeparatorColors { get; }
+
+		/// <summary>
 		/// Return a collection of colors used by module list control
 		/// </summary>
 		IModuleListColors ModuleListColors { get; }
