@@ -133,26 +133,33 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 				// placed it. The designer's intended bottom is Location.Y plus
 				// the small placeholder height it assigned - but AutoSize discards
 				// that explicit size right after, so this explicit size set is the
-				// only place to read the intended bottom edge. The placeholder is
-				// an explicit size shorter than the text content needs
+				// only place to read it. The placeholder is an explicit size
+				// shorter than the text content needs
 				bool placeholder = ((specified & BoundsSpecified.Size) != 0) && (height < base.GetPreferredSize(Size.Empty).Height);
 
 				if (placeholder && IsBottomAnchoredOnly())
+				{
+					// Capture the intended bottom and immediately move the label
+					// so its real (auto-sized) height sits with that bottom edge.
+					// Doing it here - before the first layout captures the anchor
+					// distance - lets the WinForms bottom anchor then track from
+					// the correct edge, so the label still follows the parent on
+					// resize (it must not be pinned to an absolute position)
 					anchoredBottom = y + height;
+					y = anchoredBottom - base.GetPreferredSize(Size.Empty).Height;
+				}
 
 				// Right-anchored (but not left): keep the right edge fixed when
 				// the text grows the width, so the label grows to the left
 				if ((width != Width) && !placeholder && IsRightAnchoredOnly())
 					x = Right - width;
 
-				// Bottom-anchored (but not top): pin the bottom edge to the
-				// captured design value. This must run on every (non-placeholder)
-				// call, not just when the height grows: the default WinForms
-				// anchor captures its distance while the label is still grown
-				// downwards and would otherwise drag it back down on a later
-				// layout. The card height is fixed, so the captured bottom never
-				// goes stale
-				if (!placeholder && IsBottomAnchoredOnly() && (anchoredBottom != int.MinValue))
+				// Bottom-anchored (but not top): keep the bottom edge fixed when
+				// the text auto-sizes the height (a size change), so the label
+				// grows upwards. Not on anchor repositioning (height unchanged) -
+				// that is left to the anchor so the label follows the parent on
+				// resize
+				if ((height != Height) && !placeholder && IsBottomAnchoredOnly() && (anchoredBottom != int.MinValue))
 					y = anchoredBottom - height;
 			}
 
