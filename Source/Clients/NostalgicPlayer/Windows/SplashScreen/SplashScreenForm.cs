@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Controls.Images;
@@ -37,22 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen
 		/********************************************************************/
 		public void InitializeForm(INostalgicImageBank imageBank)
 		{
-			logoPictureBox.Image = new Bitmap(imageBank.General.Logo);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the form is closed
-		/// </summary>
-		/********************************************************************/
-		protected override void OnFormClosed(FormClosedEventArgs e)
-		{
-			base.OnFormClosed(e);
-
-			logoPictureBox.Image?.Dispose();
-			logoPictureBox.Image = null;
+			logoPictureBox.Image = imageBank.General.Logo;
 		}
 
 		#region ILoadProgressCallback implementation

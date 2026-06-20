@@ -58,9 +58,6 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		{
 			if (!bitmaps.TryGetValue(color, out Bitmap bitmap))
 			{
-				if (bitmaps.Count == 2)
-					FlushBitmaps();
-
 				bitmap = GetSvgBitmap(category, resourceName, color, width, height);
 				bitmaps.Add(color, bitmap);
 			}
