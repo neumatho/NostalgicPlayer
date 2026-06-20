@@ -89,9 +89,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 
 			Font = FontPalette.GetRegularFont(9.0f);
 
-			// Set the size of the window to a fixed size
-			ClientSize = new Size(AreaWidth + (pictureBox.Location.X * 2), AreaHeight + (pictureBox.Location.Y * 2));
-
 			// Set the title of the window
 			Text = Resources.IDS_ABOUT_TITLE;
 
@@ -120,8 +117,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 				}
 			}
 
-			// Make a copy of the logo
-			logoBitmap = new Bitmap(imageBank.General.Logo);
+			logoBitmap = imageBank.General.Logo;
 
 			// Initialize variables
 			showMode = Mode.Text;
@@ -167,9 +163,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow
 			// Do some cleanup
 			bitmap?.Dispose();
 			bitmap = null;
-
-			logoBitmap?.Dispose();
-			logoBitmap = null;
 		}
 
 

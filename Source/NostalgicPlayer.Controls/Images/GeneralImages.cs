@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		private Bitmap question;
 
 		private Bitmap logo;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor

@@ -28,13 +28,10 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		{
 			captionClose?.Dispose();
 			captionClose = null;
-
 			captionMaximize?.Dispose();
 			captionMaximize = null;
-
 			captionMinimize?.Dispose();
 			captionMinimize = null;
-
 			captionNormalize?.Dispose();
 			captionNormalize = null;
 		}
