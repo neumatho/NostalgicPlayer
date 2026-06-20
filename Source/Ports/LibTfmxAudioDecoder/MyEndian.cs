@@ -45,6 +45,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void WriteBEWord(SmartPtr<ubyte> ptr, udword offset, uword someWord)
+		{
+			ptr[offset + 1] = (ubyte)(someWord & 0xff);
+			ptr[offset + 0] = (ubyte)(someWord >> 8);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static uword MakeWord(ubyte hi, ubyte lo)
 		{
 			return (uword)((hi << 8) | lo);

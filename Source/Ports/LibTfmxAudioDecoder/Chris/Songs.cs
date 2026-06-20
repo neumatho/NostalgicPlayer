@@ -73,6 +73,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				// but in corner-cases the tracks don't advance either
 				if (s1 == s2)
 				{
+					ResetSequencer();
+
 					playerInfo.Sequencer.Step.Current = playerInfo.Sequencer.Step.First = s1;
 					playerInfo.Sequencer.Step.Last = s2;
 

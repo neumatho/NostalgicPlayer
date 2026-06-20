@@ -165,6 +165,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			else
 				voice.Macro.DelayedOn = true;
 
+			voice.Macro.Step++;
+
 			// Variants of the player can set the macro wait value here.
 			// The high byte (in cmd.aa) is set to zero early, so only the
 			// low byte (in cmd.bb) would matter. However, as the low byte
@@ -183,13 +185,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				voice.EffectsMode = 1;
 
 				if (variant.ExecOrder == ExecOrder.Mod_Mac_Seq)
-				{
 					ProcessModulation(voice);
-					return;
-				}
 			}
 
-			voice.Macro.Step++;
 			playerInfo.MacroEvalAgain = true;
 		}
 

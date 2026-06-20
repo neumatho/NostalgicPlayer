@@ -418,15 +418,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 					errorMessage = Resources.IDS_ERR_NOT_INITIALIZED;
 					return false;
 				}
-
-				data = input.Buf;
-				length = input.Len;
 			}
 			else
 			{
 				// Invalidate what has been found out before
 				input.SmplLoaded = false;
 				input.MdatSize = input.SmplSize = 0;
+
+				if (!Detect(data, length))
+				{
+					errorMessage = Resources.IDS_ERR_UNKNOWN_FORMAT;
+					return false;
+				}
 
 				// If we still have a sufficiently large buffer, reuse it
 				udword newLen = length;
@@ -443,12 +446,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 				// Set up smart pointer for unsigned input buffer access
 				pBuf.SetBuffer(input.Buf, input.BufLen);
-
-				if (!Detect(input.Buf, input.BufLen))
-				{
-					errorMessage = Resources.IDS_ERR_UNKNOWN_FORMAT;
-					return false;
-				}
 			}
 
 			// Check whether it's a single-file format.
@@ -1125,7 +1122,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				paulaVoice.Paula.Length = (uword)((input.Len - v.PaulaOrig.Offset) >> 1);
 				paulaVoice.Paula.Start = MakeSamplePtr(v.PaulaOrig.Offset);
 			}
-
+			// an "else" case here (see DNSDecoder.cpp) is not needed by players
+			// that always set start before length
 			paulaVoice.TakeNextBuf();
 		}
 

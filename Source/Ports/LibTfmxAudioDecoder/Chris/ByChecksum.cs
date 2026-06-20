@@ -28,8 +28,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			udword crc1 = CrcLight.Get(sBuf, p0, 0x100);
 
 			// Gem'X. No checksum based adjustments required, but the soundtrack
-			// strictly requires a special variant of $00 DMAoff as well as the
-			// set of macro commands $22 to $29. Macro commands used:
+			// strictly requires a special variant of $00 DMAoff and $01 DMAon
+			// as well as the set of macro commands $22 to $29. The original machine
+			// code player seems to be unique and does funky (most likely experimental)
+			// things with its combination of variants of the macros $00 and $01.
+			// Such as optionally controlling delayed channel on after waiting for
+			// several vertical raster lines or setting Paula period 4 on channel off
+			// (with the result being hardware dependent and uncertain).
+			// Macro commands used:
 			// 000000000000000011111111111111112222222222222222
 			// 0123456789abcdef0123456789abcdef0123456789abcdef
 			// XXXXX XXXX  XX X    X   XXX       XXXXXXXX    
@@ -48,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				0xb762f2dc		// Bonus
 			];
 
-			// Turrican II
+			// Turrican II (excl. loader jingle)
 			udword[] t2_Checksums =
 			[
 				0xe2d6b5e0,		// World 1
@@ -56,8 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				0x19ac72c3,		// World 3
 				0x03854473,		// World 4
 				0x9430d9de,		// World 5
-				0xc1ac5e1c,		// Loader
-				0xcbb842b0,		// Loading
+				0xcbb842b0,		// Loader (original "unfixed", not "fixed" version)
 				0x78cd70f9		// Demo
 			];
 
@@ -241,8 +246,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				int song = 1;
 
 				// Set start step to 0x1ff to make song invalid
-				pBuf[(udword)(offsets.Header + 0x100 + (song << 1))] = 0x01;
-				pBuf[(udword)(offsets.Header + 0x100 + (song << 1) + 1)] = 0xff;
+				MyEndian.WriteBEWord(pBuf, (udword)(offsets.Header + 0x100 + (song << 1)), 0x1ff);
 			}
 		}
 	}
