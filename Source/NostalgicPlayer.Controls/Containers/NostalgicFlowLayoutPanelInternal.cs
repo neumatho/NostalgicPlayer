@@ -21,6 +21,12 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 	{
 		private const int WheelLineStep = 16;
 
+		// How far the mouse wheel scrolls the content vertically per line. This is
+		// deliberately larger than the scroll bar SmallChange (which is kept small
+		// for precise arrow-button clicks), so the wheel feels like the old native
+		// AutoScroll panel, which scrolled roughly this much per line
+		private const int WheelPixelsPerLine = 40;
+
 		private NostalgicVScrollBar vScrollBar;
 		private NostalgicHScrollBar hScrollBar;
 		private Panel corner;
@@ -182,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			if ((Parent == null) || !Parent.IsHandleCreated)
 				return false;
 
-			if (((vScrollBar == null) || !vScrollBar.Visible) && ((hScrollBar == null) || !hScrollBar.Visible))
+			if (!HasVisibleScrollBar)
 				return false;
 
 			// The mouse position is in screen coordinates in the low/high word of lParam
@@ -259,13 +265,19 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		/********************************************************************/
 		private void ScrollByWheel(int delta)
 		{
+			int notches = delta / 120;
+			int linesToScroll = SystemInformation.MouseWheelScrollLines;
+
 			if (vScrollBar.Visible)
 			{
-				int linesToScroll = SystemInformation.MouseWheelScrollLines;
-				vScrollBar.Value -= delta / 120 * linesToScroll * Math.Max(1, vScrollBar.SmallChange);
+				// -1 means the system is set to scroll one page per notch
+				if (linesToScroll < 0)
+					vScrollBar.Value -= notches * Math.Max(1, vScrollBar.LargeChange);
+				else
+					vScrollBar.Value -= notches * linesToScroll * WheelPixelsPerLine;
 			}
 			else if (hScrollBar.Visible)
-				hScrollBar.Value -= delta / 120 * Math.Max(1, hScrollBar.SmallChange);
+				hScrollBar.Value -= notches * Math.Max(1, hScrollBar.SmallChange);
 		}
 
 
@@ -306,14 +318,19 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		/********************************************************************/
 		/// <summary>
 		/// Walk up the parent chain and return the first flow layout panel
-		/// found (or null)
+		/// that can actually scroll (or null).
+		///
+		/// Panels without a visible scroll bar are skipped, so the wheel
+		/// event bubbles up to the nearest scrollable ancestor. Without
+		/// this, hovering a nested panel that has no scroll bar would
+		/// swallow the wheel and nothing would scroll at all
 		/// </summary>
 		/********************************************************************/
 		private NostalgicFlowLayoutPanelInternal FindOwningPanel(Control control)
 		{
 			while (control != null)
 			{
-				if (control is NostalgicFlowLayoutPanelInternal panel)
+				if ((control is NostalgicFlowLayoutPanelInternal panel) && panel.HasVisibleScrollBar)
 					return panel;
 
 				control = control.Parent;
@@ -321,6 +338,16 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 			return null;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return true if this panel currently has at least one scroll bar
+		/// visible, and can therefore react to the mouse wheel
+		/// </summary>
+		/********************************************************************/
+		private bool HasVisibleScrollBar => ((vScrollBar != null) && vScrollBar.Visible) || ((hScrollBar != null) && hScrollBar.Visible);
 
 
 
