@@ -216,8 +216,6 @@ namespace Polycode.NostalgicPlayer.Controls.Components
 				}
 
 				OnFontChanged(EventArgs.Empty);
-
-				themeManager.RefreshControls();
 			}
 		}
 		#endregion

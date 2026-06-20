@@ -66,6 +66,8 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/********************************************************************/
 		public void InitializeSingleControl(Control control)
 		{
+			CallComponentInitializeMethod(control);
+
 			if (control is IDependencyInjectionControl diControl)
 				CallControlInitializeMethod(diControl);
 

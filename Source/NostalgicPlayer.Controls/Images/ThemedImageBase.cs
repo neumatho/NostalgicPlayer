@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Controls.Images
@@ -23,8 +22,6 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		protected ThemedImageBase(IThemeManager themeManager)
 		{
 			this.themeManager = themeManager;
-
-			themeManager.ThemeChanged += ThemeChanged;
 		}
 
 
@@ -35,19 +32,6 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// </summary>
 		/********************************************************************/
 		public override void Dispose()
-		{
-			themeManager.ThemeChanged -= ThemeChanged;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the theme changes. Update all controls and redraw
-		/// itself
-		/// </summary>
-		/********************************************************************/
-		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
 		{
 			FlushImages();
 		}
