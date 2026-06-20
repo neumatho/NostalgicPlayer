@@ -19,6 +19,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color messageBoxWarningColor = Color.FromArgb(255, 235, 45);
 		private static readonly Color messageBoxInformationColor = Color.FromArgb(26, 64, 171);
 		private static readonly Color messageBoxQuestionColor = Color.FromArgb(26, 64, 171);
+		private static readonly Color searchColor = Color.FromArgb(0, 0, 0);
 
 		private static readonly Color informationColor = Color.FromArgb(0, 0, 0);
 		private static readonly Color muteColor = Color.FromArgb(0, 0, 0);
@@ -48,6 +49,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color samplePingPongColor = Color.FromArgb(16, 43, 147);
 		private static readonly Color sampleStereoColor = Color.FromArgb(255, 120, 70);
 		private static readonly Color sampleMultiOctavesColor = Color.FromArgb(119, 137, 201);
+
+		private static readonly Color repostColor = Color.FromArgb(237, 105, 255);
+		private static readonly Color favoriteColor = Color.FromArgb(237, 105, 255);
+		private static readonly Color showProfileInfoColor = Color.FromArgb(0, 0, 0);
 
 		/********************************************************************/
 		/// <summary>
@@ -82,6 +87,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public Color MessageBoxQuestionColor => messageBoxQuestionColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color SearchColor => searchColor;
 
 
 
@@ -343,5 +357,32 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public Color SampleMultiOctavesColor => sampleMultiOctavesColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color RepostColor => repostColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color FavoriteColor => favoriteColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color ShowProfileInfoColor => showProfileInfoColor;
 	}
 }
