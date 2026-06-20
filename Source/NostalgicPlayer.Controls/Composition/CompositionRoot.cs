@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Controls.Composition
 			container.RegisterSingleton<INostalgicImageBank, NostalgicImageBank>();
 
 			container.RegisterSingleton<IFormCreatorService, FormCreatorService>();
+			container.RegisterSingleton<IControlCreatorService, ControlCreatorService>();
 			container.RegisterSingleton<IControlInitializerService, ControlInitializerService>();
 		}
 	}
