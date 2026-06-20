@@ -15,12 +15,14 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	{
 		private const string Category = "General";
 
+		private Bitmap logo;
+
 		private Bitmap error;
 		private Bitmap warning;
 		private Bitmap information;
 		private Bitmap question;
 
-		private Bitmap logo;
+		private Bitmap search;
 
 		/********************************************************************/
 		/// <summary>
@@ -65,6 +67,9 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			information = null;
 			question?.Dispose();
 			question = null;
+
+			search?.Dispose();
+			search = null;
 		}
 
 
@@ -154,6 +159,24 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 					question = GetSvgBitmap(Category, nameof(IGeneralImages.Question), CurrentColors.MessageBoxQuestionColor, 32, 32);
 
 				return question;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the search button image
+		/// </summary>
+		/********************************************************************/
+		public Bitmap Search
+		{
+			get
+			{
+				if (search == null)
+					search = GetSvgBitmap(Category, nameof(IGeneralImages.Search), CurrentColors.SearchColor, 20, 20);
+
+				return search;
 			}
 		}
 	}

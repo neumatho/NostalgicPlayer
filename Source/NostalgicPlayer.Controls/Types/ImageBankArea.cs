@@ -13,10 +13,14 @@ namespace Polycode.NostalgicPlayer.Controls.Types
 		/// <summary></summary>
 		None,
 		/// <summary></summary>
+		General,
+		/// <summary></summary>
 		Main,
 		/// <summary></summary>
 		ModuleInformation,
 		/// <summary></summary>
 		SampleInformation,
+		/// <summary></summary>
+		Audius,
 	}
 }

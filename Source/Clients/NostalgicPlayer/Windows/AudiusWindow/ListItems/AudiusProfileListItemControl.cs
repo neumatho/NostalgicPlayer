@@ -7,7 +7,11 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
+using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Extensions;
+using Polycode.NostalgicPlayer.Controls.Images;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Download;
 
@@ -16,8 +20,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 	/// <summary>
 	/// Render a single profile item in an Audius list
 	/// </summary>
-	public partial class AudiusProfileListItemControl : UserControl, IAudiusProfileListItem
+	public partial class AudiusProfileListItemControl : UserControl, IDependencyInjectionControl, IAudiusProfileListItem
 	{
+		private IThemeManager themeManager;
+		private INostalgicImageBank imageBank;
+
 		private AudiusProfileListItem item;
 
 		private TaskHelper taskHelper;
@@ -33,6 +40,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 			InitializeComponent();
 
 			Disposed += AudiusProfileListItemControl_Disposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(IThemeManager themeManager, INostalgicImageBank imageBank)
+		{
+			this.themeManager = themeManager;
+			this.imageBank = imageBank;
+
+			themeManager.ThemeChanged += ThemeChanged;
 		}
 
 		#region IAudiusListItem implementation
@@ -55,6 +79,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 			item = (AudiusProfileListItem)listItem;
 
 			SetupControls();
+			InitializePictures();
 
 			taskHelper = new TaskHelper();
 		}
@@ -112,9 +137,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 		/********************************************************************/
 		private void AudiusProfileListItemControl_Disposed(object sender, EventArgs e)
 		{
+			themeManager.ThemeChanged -= ThemeChanged;
+
 			taskHelper.CancelTask();
 
 			profileBitmap?.Dispose();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes
+		/// </summary>
+		/********************************************************************/
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			InitializePictures();
 		}
 
 
@@ -143,6 +182,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 			positionLabel.Text = item.Position.ToString();
 			nameLabel.Text = item.User.Name;
 			handleLabel.Text = "@" + item.User.Handle;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will render the picture images
+		/// </summary>
+		/********************************************************************/
+		private void InitializePictures()
+		{
+			if (profileBitmap == null)
+				itemPictureBox.Image = imageBank.Audius.UnknownProfile;
 		}
 		#endregion
 	}

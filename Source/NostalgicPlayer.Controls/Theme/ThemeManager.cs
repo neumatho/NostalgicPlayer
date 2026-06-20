@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Events;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Purple;
@@ -118,6 +119,39 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 				currentTheme = embeddedThemes[0];
 
 			RefreshControls();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set theme on the given control and all child controls
+		/// </summary>
+		/********************************************************************/
+		public void SetThemeOnControl(Control control)
+		{
+			if (control is IThemeControl themeControl)
+				themeControl.SetTheme(currentTheme);
+
+			SetThemeOnControls(control.Controls);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set theme on the given control collection
+		/// </summary>
+		/********************************************************************/
+		public void SetThemeOnControls(Control.ControlCollection controls)
+		{
+			foreach (Control control in controls)
+			{
+				if (control is IThemeControl themedControl)
+					themedControl.SetTheme(currentTheme);
+
+				SetThemeOnControls(control.Controls);
+			}
 		}
 
 

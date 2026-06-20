@@ -28,32 +28,30 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
-			playButton = new Krypton.Toolkit.KryptonButton();
-			addButton = new Krypton.Toolkit.KryptonButton();
-			durationLabel = new Krypton.Toolkit.KryptonLabel();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			titleLabel = new Krypton.Toolkit.KryptonLabel();
+			playButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			addButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			durationLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			titleLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
 			SuspendLayout();
 			// 
 			// playButton
 			// 
+			playButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
+			playButton.ImageName = "Play";
 			playButton.Location = new System.Drawing.Point(4, 4);
 			playButton.Name = "playButton";
 			playButton.Size = new System.Drawing.Size(24, 24);
 			playButton.TabIndex = 0;
-			playButton.Values.Image = Resources.IDB_PLAY;
-			playButton.Values.Text = "";
 			playButton.Click += Play_Click;
 			// 
 			// addButton
 			// 
+			addButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
+			addButton.ImageName = "Add";
 			addButton.Location = new System.Drawing.Point(32, 4);
 			addButton.Name = "addButton";
 			addButton.Size = new System.Drawing.Size(24, 24);
 			addButton.TabIndex = 1;
-			addButton.Values.Image = Resources.IDB_ADD;
-			addButton.Values.Text = "";
 			addButton.Click += Add_Click;
 			// 
 			// durationLabel
@@ -61,18 +59,8 @@
 			durationLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
 			durationLabel.Location = new System.Drawing.Point(449, 8);
 			durationLabel.Name = "durationLabel";
-			durationLabel.Palette = fontPalette;
-			durationLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			durationLabel.Size = new System.Drawing.Size(6, 2);
 			durationLabel.TabIndex = 3;
-			durationLabel.Values.Text = "";
-			// 
-			// fontPalette
-			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// titleLabel
 			// 
@@ -80,11 +68,8 @@
 			titleLabel.AutoSize = false;
 			titleLabel.Location = new System.Drawing.Point(56, 8);
 			titleLabel.Name = "titleLabel";
-			titleLabel.Palette = fontPalette;
-			titleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			titleLabel.Size = new System.Drawing.Size(358, 19);
 			titleLabel.TabIndex = 2;
-			titleLabel.Values.Text = "";
 			// 
 			// AudiusTrackListItemControl
 			// 
@@ -102,10 +87,9 @@
 		}
 
 		#endregion
-		private Krypton.Toolkit.KryptonButton playButton;
-		private Krypton.Toolkit.KryptonButton addButton;
-		private Kit.Gui.Components.FontPalette fontPalette;
-		private Krypton.Toolkit.KryptonLabel titleLabel;
-		private Krypton.Toolkit.KryptonLabel durationLabel;
+		private Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton playButton;
+		private Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton addButton;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel titleLabel;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel durationLabel;
 	}
 }
