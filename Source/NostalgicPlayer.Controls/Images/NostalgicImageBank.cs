@@ -13,11 +13,19 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 	/// </summary>
 	internal class NostalgicImageBank : INostalgicImageBank, IDisposable
 	{
-		private readonly GeneralImages generalImages;
-		private readonly FormImages formImages;
-		private readonly MainImages mainImages;
-		private readonly ModuleInformationImages moduleInformationImages;
-		private readonly SampleInformationImages sampleInformationImages;
+		private readonly IThemeManager themeManager;
+
+		private GeneralImages generalImages;
+		private FormImages formImages;
+		private MainImages mainImages;
+		private ModuleInformationImages moduleInformationImages;
+		private SampleInformationImages sampleInformationImages;
+
+		private GeneralImages generalImagesCopy;
+		private FormImages formImagesCopy;
+		private MainImages mainImagesCopy;
+		private ModuleInformationImages moduleInformationImagesCopy;
+		private SampleInformationImages sampleInformationImagesCopy;
 
 		/********************************************************************/
 		/// <summary>
@@ -26,11 +34,12 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		public NostalgicImageBank(IThemeManager themeManager)
 		{
-			generalImages = new GeneralImages(themeManager);
-			formImages = new FormImages();
-			mainImages = new MainImages(themeManager);
-			moduleInformationImages = new ModuleInformationImages(themeManager);
-			sampleInformationImages = new SampleInformationImages(themeManager);
+			this.themeManager = themeManager;
+
+			themeManager.BeforeThemeChange += BeforeThemeChange;
+			themeManager.AfterThemeChange += AfterThemeChange;
+
+			CreateImageContainers();
 		}
 
 
@@ -42,6 +51,9 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		public void Dispose()
 		{
+			themeManager.BeforeThemeChange -= BeforeThemeChange;
+			themeManager.AfterThemeChange -= AfterThemeChange;
+
 			generalImages.Dispose();
 			formImages.Dispose();
 			mainImages.Dispose();
@@ -93,5 +105,66 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// </summary>
 		/********************************************************************/
 		public ISampleInformationImages SampleInformation => sampleInformationImages;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called right before the theme changes. Make a copy of all
+		/// bitmaps
+		/// </summary>
+		/********************************************************************/
+		private void BeforeThemeChange(object sender, EventArgs e)
+		{
+			generalImagesCopy = generalImages;
+			formImagesCopy = formImages;
+			mainImagesCopy = mainImages;
+			moduleInformationImagesCopy = moduleInformationImages;
+			sampleInformationImagesCopy = sampleInformationImages;
+
+			CreateImageContainers();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called after the theme changes. At this time, all controls
+		/// will reference new bitmaps, so it is safe to dispose the old ones
+		/// </summary>
+		/********************************************************************/
+		private void AfterThemeChange(object sender, EventArgs e)
+		{
+			generalImagesCopy.Dispose();
+			generalImagesCopy = null;
+
+			formImagesCopy.Dispose();
+			formImagesCopy = null;
+
+			mainImagesCopy.Dispose();
+			mainImagesCopy = null;
+
+			moduleInformationImagesCopy.Dispose();
+			moduleInformationImagesCopy = null;
+
+			sampleInformationImagesCopy.Dispose();
+			sampleInformationImagesCopy = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create new instances of the image containers
+		/// </summary>
+		/********************************************************************/
+		private void CreateImageContainers()
+		{
+			generalImages = new GeneralImages(themeManager);
+			formImages = new FormImages();
+			mainImages = new MainImages(themeManager);
+			moduleInformationImages = new ModuleInformationImages(themeManager);
+			sampleInformationImages = new SampleInformationImages(themeManager);
+		}
 	}
 }
