@@ -14,7 +14,6 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Controls;
-using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.External.Download;
 using Polycode.NostalgicPlayer.Logic.Containers;
 
@@ -26,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 	public partial class AudiusListControl : UserControl, IDependencyInjectionControl
 	{
 		private IMainWindowApi mainWindowApi;
-		private IControlInitializerService controlInitializerService;
+		private IControlCreatorService controlCreatorService;
 		private IPictureDownloader pictureDownloader;
 		private IAudiusLoaderFactory audiusLoaderFactory;
 
@@ -38,8 +37,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		public AudiusListControl()
 		{
 			InitializeComponent();
-
-			flowLayoutPanel.MouseWheel += FlowLayout_MouseWheel;
 		}
 
 
@@ -51,10 +48,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeControl(IMainWindowApi mainWindowApi, IControlInitializerService controlInitializerService, IAudiusLoaderFactory audiusLoaderFactory)
+		public void InitializeControl(IMainWindowApi mainWindowApi, IControlCreatorService controlCreatorService, IAudiusLoaderFactory audiusLoaderFactory)
 		{
 			this.mainWindowApi = mainWindowApi;
-			this.controlInitializerService = controlInitializerService;
+			this.controlCreatorService = controlCreatorService;
 			this.audiusLoaderFactory = audiusLoaderFactory;
 		}
 
@@ -96,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		public void SetItems(List<AudiusListItem> items)
 		{
-			flowLayoutPanel.SuspendLayout();
+			flowLayoutPanel.BeginUpdate();
 
 			try
 			{
@@ -119,36 +116,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 						if (item is AudiusMusicListItem musicItem)
 						{
 							if (musicItem.Tracks != null)
-								listItem = new AudiusPlaylistListItemControl();
+								listItem = controlCreatorService.GetInstance<AudiusPlaylistListItemControl>();
 							else
-								listItem = new AudiusMusicListItemControl();
+								listItem = controlCreatorService.GetInstance<AudiusMusicListItemControl>();
 
 							((IAudiusMusicListItem)listItem).PlayTracks += MusicListItem_PlayTracks;
 							((IAudiusMusicListItem)listItem).AddTracks += MusicListItem_AddTracks;
 						}
 						else if (item is AudiusProfileListItem)
 						{
-							listItem = new AudiusProfileListItemControl();
+							listItem = controlCreatorService.GetInstance<AudiusProfileListItemControl>();
 
 							((IAudiusProfileListItem)listItem).ShowProfile += ProfileListItem_ShowInfo;
 						}
 						else
 							continue;
 
-						controlInitializerService.InitializeSingleControl(listItem as Control);
 						listItem.Initialize(item);
 
-						flowLayoutPanel.Controls.Add(listItem.Control);
+						flowLayoutPanel.AddControl(listItem.Control);
 					}
 				}
 			}
 			finally
 			{
-				flowLayoutPanel.ResumeLayout();
+				flowLayoutPanel.EndUpdate();
 			}
 
 			// This need to be done after the layout is resumed, otherwise it will not work correctly
-			if (flowLayoutPanel.Controls.Count > 0)
+			if (flowLayoutPanel.FlowControls.Count > 0)
 			{
 				SetItemWidths();
 
@@ -166,21 +162,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		public void ClearItems()
 		{
-			flowLayoutPanel.SuspendLayout();
+			flowLayoutPanel.BeginUpdate();
 
 			try
 			{
-				while (flowLayoutPanel.Controls.Count > 0)
+				while (flowLayoutPanel.FlowControls.Count > 0)
 				{
 					// When disposing the control, it is automatically removed from the collection
-					flowLayoutPanel.Controls[0].Dispose();
+					flowLayoutPanel.FlowControls[0].Dispose();
 				}
 
-				flowLayoutPanel.Controls.Clear();
+				flowLayoutPanel.FlowControls.Clear();
 			}
 			finally
 			{
-				flowLayoutPanel.ResumeLayout();
+				flowLayoutPanel.EndUpdate();
 			}
 		}
 
@@ -218,18 +214,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// </summary>
 		/********************************************************************/
 		private void FlowLayout_Scroll(object sender, ScrollEventArgs e)
-		{
-			UpdateVisibleItems();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the flow layout scrolls via mouse wheel
-		/// </summary>
-		/********************************************************************/
-		private void FlowLayout_MouseWheel(object sender, MouseEventArgs e)
 		{
 			UpdateVisibleItems();
 		}
@@ -299,16 +283,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/********************************************************************/
 		private void SetItemWidths()
 		{
-			flowLayoutPanel.SuspendLayout();
+			flowLayoutPanel.BeginUpdate();
 
 			try
 			{
-				foreach (Control ctrl in flowLayoutPanel.Controls)
-					ctrl.Width = flowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+				foreach (Control ctrl in flowLayoutPanel.FlowControls)
+					ctrl.Width = flowLayoutPanel.ViewportSize.Width - ctrl.Margin.Horizontal;
 			}
 			finally
 			{
-				flowLayoutPanel.ResumeLayout();
+				flowLayoutPanel.EndUpdate();
 			}
 		}
 
@@ -323,15 +307,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		{
 			int i;
 
-			int startYOfVisibleArea = Math.Abs(flowLayoutPanel.AutoScrollPosition.Y);
-			int endYOfVisibleArea = startYOfVisibleArea + flowLayoutPanel.Height;
+			int startYOfVisibleArea = flowLayoutPanel.ScrollPosition.Y;
+			int endYOfVisibleArea = startYOfVisibleArea + flowLayoutPanel.ViewportSize.Height;
 
 			int itemYPosition = 0;
 
 			// First skip all items that are not visible (has been scrolled up)
-			for (i = 0; i < flowLayoutPanel.Controls.Count; i++)
+			for (i = 0; i < flowLayoutPanel.FlowControls.Count; i++)
 			{
-				IAudiusListItem item = (IAudiusListItem)flowLayoutPanel.Controls[i];
+				IAudiusListItem item = (IAudiusListItem)flowLayoutPanel.FlowControls[i];
 				int itemHeight = item.Control.Height + item.Control.Margin.Vertical;
 
 				// Stop loop if item is visible
@@ -342,9 +326,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 			}
 
 			// Update all visible items
-			for (; i < flowLayoutPanel.Controls.Count; i++)
+			for (; i < flowLayoutPanel.FlowControls.Count; i++)
 			{
-				IAudiusListItem item = (IAudiusListItem)flowLayoutPanel.Controls[i];
+				IAudiusListItem item = (IAudiusListItem)flowLayoutPanel.FlowControls[i];
 				int itemHeight = item.Control.Height + item.Control.Margin.Vertical;
 
 				// If the item is not visible, then stop the loop
