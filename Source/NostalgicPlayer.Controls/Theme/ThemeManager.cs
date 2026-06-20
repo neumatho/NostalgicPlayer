@@ -60,10 +60,28 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 
 		/********************************************************************/
 		/// <summary>
+		/// Is called before the theme changes
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler BeforeThemeChange;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the theme changes
 		/// </summary>
 		/********************************************************************/
 		public event ThemeChangedEventHandler ThemeChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called after the theme has changed
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler AfterThemeChange;
 
 
 
@@ -111,8 +129,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme
 		/********************************************************************/
 		public void RefreshControls()
 		{
+			if (BeforeThemeChange != null)
+				BeforeThemeChange(this, EventArgs.Empty);
+
 			if (ThemeChanged != null)
 				ThemeChanged(this, new ThemeChangedEventArgs(currentTheme));
+
+			if (AfterThemeChange != null)
+				AfterThemeChange(this, EventArgs.Empty);
 		}
 
 		#region Private methods
