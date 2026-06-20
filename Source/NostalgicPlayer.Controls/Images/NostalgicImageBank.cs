@@ -20,12 +20,14 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		private MainImages mainImages;
 		private ModuleInformationImages moduleInformationImages;
 		private SampleInformationImages sampleInformationImages;
+		private AudiusImages audiusImages;
 
 		private GeneralImages generalImagesCopy;
 		private FormImages formImagesCopy;
 		private MainImages mainImagesCopy;
 		private ModuleInformationImages moduleInformationImagesCopy;
 		private SampleInformationImages sampleInformationImagesCopy;
+		private AudiusImages audiusImagesCopy;
 
 		/********************************************************************/
 		/// <summary>
@@ -59,6 +61,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			mainImages.Dispose();
 			moduleInformationImages.Dispose();
 			sampleInformationImages.Dispose();
+			audiusImages.Dispose();
 		}
 
 
@@ -110,6 +113,15 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
+		/// Holds all the images needed by the Audius window
+		/// </summary>
+		/********************************************************************/
+		public IAudiusImages Audius => audiusImages;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called right before the theme changes. Make a copy of all
 		/// bitmaps
 		/// </summary>
@@ -121,6 +133,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			mainImagesCopy = mainImages;
 			moduleInformationImagesCopy = moduleInformationImages;
 			sampleInformationImagesCopy = sampleInformationImages;
+			audiusImagesCopy = audiusImages;
 
 			CreateImageContainers();
 		}
@@ -149,6 +162,9 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 			sampleInformationImagesCopy.Dispose();
 			sampleInformationImagesCopy = null;
+
+			audiusImagesCopy.Dispose();
+			audiusImagesCopy = null;
 		}
 
 
@@ -165,6 +181,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			mainImages = new MainImages(themeManager);
 			moduleInformationImages = new ModuleInformationImages(themeManager);
 			sampleInformationImages = new SampleInformationImages(themeManager);
+			audiusImages = new AudiusImages(themeManager);
 		}
 	}
 }

@@ -63,49 +63,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_ADD {
-            get {
-                object obj = ResourceManager.GetObject("IDB_ADD", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_CHECKMARK {
             get {
                 object obj = ResourceManager.GetObject("IDB_CHECKMARK", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_CLOSE_BLACK {
-            get {
-                object obj = ResourceManager.GetObject("IDB_CLOSE_BLACK", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_CLOSE_WHITE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_CLOSE_WHITE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_FAVORITE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_FAVORITE", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,69 +83,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap IDB_PLAY {
-            get {
-                object obj = ResourceManager.GetObject("IDB_PLAY", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_REPOST {
-            get {
-                object obj = ResourceManager.GetObject("IDB_REPOST", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap IDB_SEARCH {
             get {
                 object obj = ResourceManager.GetObject("IDB_SEARCH", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_SHOW_PROFILE_INFO {
-            get {
-                object obj = ResourceManager.GetObject("IDB_SHOW_PROFILE_INFO", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_UNKNOWN_ALBUM_COVER {
-            get {
-                object obj = ResourceManager.GetObject("IDB_UNKNOWN_ALBUM_COVER", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_UNKNOWN_PROFILE {
-            get {
-                object obj = ResourceManager.GetObject("IDB_UNKNOWN_PROFILE", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap IDB_UNKNOWN_PROFILE_SMALL {
-            get {
-                object obj = ResourceManager.GetObject("IDB_UNKNOWN_PROFILE_SMALL", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

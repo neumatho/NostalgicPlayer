@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 	/// <summary>
 	/// This shows the Audius window
 	/// </summary>
-	public partial class AudiusWindowForm : WindowFormBase, IAudiusWindowApi
+	public partial class AudiusWindowForm : WindowFormBase2, IAudiusWindowApi
 	{
 		private const int Page_Trending = 0;
 		private const int Page_Search = 1;
@@ -51,8 +51,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 			Text = Resources.IDS_AUDIUS_TITLE;
 
 			// Set the tab titles
-			navigator.Pages[Page_Trending].Text = Resources.IDS_AUDIUS_TAB_TRENDING;
-			navigator.Pages[Page_Search].Text = Resources.IDS_AUDIUS_TAB_SEARCH;
+			tabControl.Pages[Page_Trending].Text = Resources.IDS_AUDIUS_TAB_TRENDING;
+			tabControl.Pages[Page_Search].Text = Resources.IDS_AUDIUS_TAB_SEARCH;
 
 			// Initialize all pages
 			trendingPageControl.Initialize(this, pictureDownloader, null);
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// Is called when a tab is selected
 		/// </summary>
 		/********************************************************************/
-		private void Navigator_SelectedPageChanged(object sender, EventArgs e)
+		private void Tab_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			RefreshCurrentPage();
 		}
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 			currentPage?.CleanupPage();
 			currentPage = null;
 
-			switch (navigator.SelectedIndex)
+			switch (tabControl.SelectedIndex)
 			{
 				case Page_Trending:
 				{
