@@ -30,7 +30,12 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		{
 			InitializeComponent();
 
-			nostalgicTextBoxInternal.TextChanged += NostalgicRichTextBox_TextChanged;
+			nostalgicTextBoxInternal.TextChanged += NostalgicTextBoxInternal_TextChanged;
+
+			nostalgicTextBoxInternal.KeyDown += NostalgicTextBoxInternal_KeyDown;
+			nostalgicTextBoxInternal.KeyUp += NostalgicTextBoxInternal_KeyUp;
+			nostalgicTextBoxInternal.KeyPress += NostalgicTextBoxInternal_KeyPress;
+
 			nostalgicTextBoxInternal.FontChanged += NostalgicTextBoxInternal_FontChanged;
 		}
 
@@ -163,6 +168,25 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 
 			base.SetBoundsCore(x, y, width, height, specified);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The inner control owns the keyboard input. When the wrapper is
+		/// focused (e.g. a caller does Focus() or the user tabs in),
+		/// redirect the focus to the inner control so it receives key events
+		/// - without this the wrapper would keep the focus and no key events
+		/// would fire
+		/// </summary>
+		/********************************************************************/
+		protected override void OnGotFocus(EventArgs e)
+		{
+			base.OnGotFocus(e);
+
+			if (!nostalgicTextBoxInternal.Focused)
+				nostalgicTextBoxInternal.Focus();
+		}
 		#endregion
 
 		#region Event handlers
@@ -171,9 +195,45 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		/// Re-raise the inner text box TextChanged event as our own
 		/// </summary>
 		/********************************************************************/
-		private void NostalgicRichTextBox_TextChanged(object sender, EventArgs e)
+		private void NostalgicTextBoxInternal_TextChanged(object sender, EventArgs e)
 		{
 			OnTextChanged(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Re-raise the inner text box KeyDown event as our own
+		/// </summary>
+		/********************************************************************/
+		private void NostalgicTextBoxInternal_KeyDown(object sender, KeyEventArgs e)
+		{
+			OnKeyDown(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Re-raise the inner text box KeyUp event as our own
+		/// </summary>
+		/********************************************************************/
+		private void NostalgicTextBoxInternal_KeyUp(object sender, KeyEventArgs e)
+		{
+			OnKeyUp(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Re-raise the inner text box KeyPress event as our own
+		/// </summary>
+		/********************************************************************/
+		private void NostalgicTextBoxInternal_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			OnKeyPress(e);
 		}
 
 
