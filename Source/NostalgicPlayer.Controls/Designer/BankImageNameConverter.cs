@@ -30,9 +30,11 @@ namespace Polycode.NostalgicPlayer.Controls.Designer
 		{
 			return area switch
 			{
+				ImageBankArea.General => typeof(IGeneralImages),
 				ImageBankArea.Main => typeof(IMainImages),
 				ImageBankArea.ModuleInformation => typeof(IModuleInformationImages),
 				ImageBankArea.SampleInformation => typeof(ISampleInformationImages),
+				ImageBankArea.Audius => typeof(IAudiusImages),
 				_ => null
 			};
 		}
@@ -48,9 +50,11 @@ namespace Polycode.NostalgicPlayer.Controls.Designer
 		{
 			return area switch
 			{
+				ImageBankArea.General => bank.General,
 				ImageBankArea.Main => bank.Main,
 				ImageBankArea.ModuleInformation => bank.ModuleInformation,
 				ImageBankArea.SampleInformation => bank.SampleInformation,
+				ImageBankArea.Audius => bank.Audius,
 				_ => null
 			};
 		}

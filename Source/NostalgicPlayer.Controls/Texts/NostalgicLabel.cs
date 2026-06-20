@@ -119,9 +119,9 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 		/// and grows the width to the right and the height downwards. For a
 		/// label that is anchored to the right and/or bottom edge (but not
 		/// the opposite edge), that pushes the text past that edge instead
-		/// of keeping the edge fixed. The old KryptonLabel grew towards the
-		/// anchored edge, so mimic that by moving the location so the
-		/// anchored edge stays put when the size changes due to auto-sizing
+		/// of keeping the edge fixed. We want the label to grow towards the
+		/// anchored edge instead, so move the location so the anchored edge
+		/// stays put when the size changes due to auto-sizing
 		/// </summary>
 		/********************************************************************/
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
@@ -173,9 +173,9 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 		/// When the label is anchored to the far (right/bottom) edge, the
 		/// size set in the designer defines the fixed anchor corner. Keep
 		/// that size at design time instead of letting auto-size collapse it
-		/// to the (empty) text size, so the corner stays where it was placed.
-		/// This is what allowed the old KryptonLabel to keep a fixed size
-		/// like 6;2 here
+		/// to the (empty) text size, so the corner stays where it was
+		/// placed. This is what allows the label to keep a fixed size like
+		/// 6;2 here
 		/// </summary>
 		/********************************************************************/
 		public override Size GetPreferredSize(Size proposedSize)

@@ -29,79 +29,51 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			flowLayoutPanel = new Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedFlowLayoutPanel();
-			controlGroup = new Krypton.Toolkit.KryptonGroup();
-			statusLabel = new Krypton.Toolkit.KryptonLabel();
-			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			((System.ComponentModel.ISupportInitialize)controlGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).BeginInit();
-			controlGroup.Panel.SuspendLayout();
+			flowLayoutPanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicFlowLayoutPanel();
+			statusLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			fontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			SuspendLayout();
 			// 
 			// flowLayoutPanel
 			// 
-			flowLayoutPanel.AutoScroll = true;
-			flowLayoutPanel.BackColor = System.Drawing.Color.Transparent;
 			flowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			flowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			flowLayoutPanel.Name = "flowLayoutPanel";
-			flowLayoutPanel.Size = new System.Drawing.Size(274, 173);
+			flowLayoutPanel.Size = new System.Drawing.Size(276, 175);
 			flowLayoutPanel.TabIndex = 0;
 			flowLayoutPanel.WrapContents = false;
-			flowLayoutPanel.Scroll += FlowLayout_Scroll;
+			flowLayoutPanel.ContentScrolled += FlowLayout_Scroll;
 			flowLayoutPanel.Resize += FlowLayout_Resize;
-			// 
-			// controlGroup
-			// 
-			controlGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-			controlGroup.Location = new System.Drawing.Point(0, 0);
-			controlGroup.Name = "controlGroup";
-			// 
-			// 
-			// 
-			controlGroup.Panel.Controls.Add(statusLabel);
-			controlGroup.Panel.Controls.Add(flowLayoutPanel);
-			controlGroup.Size = new System.Drawing.Size(276, 175);
-			controlGroup.TabIndex = 1;
 			// 
 			// statusLabel
 			// 
 			statusLabel.Location = new System.Drawing.Point(44, 78);
 			statusLabel.Name = "statusLabel";
-			statusLabel.Palette = bigFontPalette;
-			statusLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			statusLabel.Size = new System.Drawing.Size(6, 2);
+			statusLabel.Size = new System.Drawing.Size(0, 15);
 			statusLabel.TabIndex = 1;
-			statusLabel.Values.Text = "";
+			statusLabel.UseFont = fontConfiguration;
 			statusLabel.Visible = false;
 			// 
-			// bigFontPalette
+			// fontConfiguration
 			// 
-			bigFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			bigFontPalette.BaseFontSize = 9F;
-			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
+			fontConfiguration.FontSize = 1;
 			// 
 			// AudiusListControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			Controls.Add(controlGroup);
+			Controls.Add(statusLabel);
+			Controls.Add(flowLayoutPanel);
 			Name = "AudiusListControl";
 			Size = new System.Drawing.Size(276, 175);
-			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).EndInit();
-			controlGroup.Panel.ResumeLayout(false);
-			controlGroup.Panel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)controlGroup).EndInit();
 			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
 
-		private Kit.Gui.Controls.ImprovedFlowLayoutPanel flowLayoutPanel;
-		private Krypton.Toolkit.KryptonGroup controlGroup;
-		private Krypton.Toolkit.KryptonLabel statusLabel;
-		private Kit.Gui.Components.FontPalette bigFontPalette;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicFlowLayoutPanel flowLayoutPanel;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel statusLabel;
+		private NostalgicPlayer.Controls.Components.FontConfiguration fontConfiguration;
 	}
 }

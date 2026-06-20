@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls.Events;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
@@ -42,6 +43,16 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Switch to the new theme given
 		/// </summary>
 		void SwitchTheme(Guid themeId);
+
+		/// <summary>
+		/// Set theme on the given control and all child controls
+		/// </summary>
+		void SetThemeOnControl(Control control);
+
+		/// <summary>
+		/// Set theme on the given control collection
+		/// </summary>
+		void SetThemeOnControls(Control.ControlCollection controls);
 
 		/// <summary>
 		/// Refresh all controls

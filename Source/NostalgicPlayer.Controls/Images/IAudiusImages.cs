@@ -3,41 +3,43 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Drawing;
+
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Contains all the images used in NostalgicPlayer
+	/// Holds all the images needed by the Audius window
 	/// </summary>
-	public interface INostalgicImageBank
+	public interface IAudiusImages
 	{
 		/// <summary>
-		/// Holds all the general usable images
+		/// Gets the repost image
 		/// </summary>
-		IGeneralImages General { get; }
+		Bitmap Repost { get; }
 
 		/// <summary>
-		/// Holds all the images needed by the form
+		/// Gets the favorite image
 		/// </summary>
-		internal IFormImages Form { get; }
+		Bitmap Favorite { get; }
 
 		/// <summary>
-		/// Holds all the images needed by the Main window
+		/// Gets the show profile information image
 		/// </summary>
-		IMainImages Main { get; }
+		Bitmap ShowProfileInfo { get; }
 
 		/// <summary>
-		/// Holds all the images needed by the Module Information window
+		/// Gets the close profile image
 		/// </summary>
-		IModuleInformationImages ModuleInformation { get; }
+		Bitmap Close { get; }
 
 		/// <summary>
-		/// Holds all the images needed by the Sample Information window
+		/// Gets the unknown album cover image
 		/// </summary>
-		ISampleInformationImages SampleInformation { get; }
+		Bitmap UnknownAlbumCover { get; }
 
 		/// <summary>
-		/// Holds all the images needed by the Audius window
+		/// Gets the unknown profile image
 		/// </summary>
-		IAudiusImages Audius { get; }
+		Bitmap UnknownProfile { get; }
 	}
 }

@@ -36,5 +36,10 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Gets the message box question icon
 		/// </summary>
 		Bitmap Question { get; }
+
+		/// <summary>
+		/// Gets the search button image
+		/// </summary>
+		Bitmap Search { get; }
 	}
 }
