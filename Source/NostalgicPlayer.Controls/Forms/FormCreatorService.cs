@@ -12,7 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 namespace Polycode.NostalgicPlayer.Controls.Forms
 {
 	/// <summary>
-	/// Helper to instance Windows Form objects
+	/// Helper to instance Form objects
 	/// </summary>
 	internal class FormCreatorService : IFormCreatorService
 	{

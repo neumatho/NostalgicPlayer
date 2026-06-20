@@ -20,6 +20,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color MessageBoxInformationColor { get; }
 		/// <summary></summary>
 		Color MessageBoxQuestionColor { get; }
+		/// <summary></summary>
+		Color SearchColor { get; }
 
 		/// <summary></summary>
 		Color InformationColor { get; }
@@ -81,5 +83,12 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color SampleStereoColor { get; }
 		/// <summary></summary>
 		Color SampleMultiOctavesColor { get; }
+
+		/// <summary></summary>
+		Color RepostColor { get; }
+		/// <summary></summary>
+		Color FavoriteColor { get; }
+		/// <summary></summary>
+		Color ShowProfileInfoColor { get; }
 	}
 }

@@ -9,27 +9,28 @@ using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 namespace Polycode.NostalgicPlayer.Controls.Images
 {
 	/// <summary>
-	/// Holds all the general usable images
+	/// Holds all the images needed by the Main window
 	/// </summary>
-	internal class GeneralImages : ThemedImageBase, IGeneralImages
+	internal class AudiusImages : ThemedImageBase, IAudiusImages
 	{
-		private const string Category = "General";
+		private const string Category = "Audius";
 
-		private Bitmap logo;
+		private Bitmap repost;
+		private Bitmap favorite;
 
-		private Bitmap error;
-		private Bitmap warning;
-		private Bitmap information;
-		private Bitmap question;
+		private Bitmap showProfileInfo;
 
-		private Bitmap search;
+		private Bitmap close;
+
+		private Bitmap unknownAlbum;
+		private Bitmap unknownProfile;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public GeneralImages(IThemeManager themeManager) : base(themeManager)
+		public AudiusImages(IThemeManager themeManager) : base(themeManager)
 		{
 		}
 
@@ -56,37 +57,38 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/********************************************************************/
 		protected override void FlushImages()
 		{
-			logo?.Dispose();
-			logo = null;
+			repost?.Dispose();
+			repost = null;
+			favorite?.Dispose();
+			favorite = null;
 
-			error?.Dispose();
-			error = null;
-			warning?.Dispose();
-			warning = null;
-			information?.Dispose();
-			information = null;
-			question?.Dispose();
-			question = null;
+			showProfileInfo?.Dispose();
+			showProfileInfo = null;
 
-			search?.Dispose();
-			search = null;
+			close?.Dispose();
+			close = null;
+
+			unknownAlbum?.Dispose();
+			unknownAlbum = null;
+			unknownProfile?.Dispose();
+			unknownProfile = null;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the logo image
+		/// Gets the repost image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap Logo
+		public Bitmap Repost
 		{
 			get
 			{
-				if (logo == null)
-					logo = GetBitmap(Category, "Logo.png");
+				if (repost == null)
+					repost = GetSvgBitmap(Category, nameof(IAudiusImages.Repost), CurrentColors.RepostColor, 16, 16);
 
-				return logo;
+				return repost;
 			}
 		}
 
@@ -94,17 +96,17 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the message box error icon
+		/// Gets the favorite image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap Error
+		public Bitmap Favorite
 		{
 			get
 			{
-				if (error == null)
-					error = GetSvgBitmap(Category, nameof(IGeneralImages.Error), CurrentColors.MessageBoxErrorColor, 32, 32);
+				if (favorite == null)
+					favorite = GetSvgBitmap(Category, nameof(IAudiusImages.Favorite), CurrentColors.FavoriteColor, 16, 16);
 
-				return error;
+				return favorite;
 			}
 		}
 
@@ -112,17 +114,17 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the message box warning icon
+		/// Gets the show profile information image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap Warning
+		public Bitmap ShowProfileInfo
 		{
 			get
 			{
-				if (warning == null)
-					warning = GetSvgBitmap(Category, nameof(IGeneralImages.Warning), CurrentColors.MessageBoxWarningColor, 32, 32);
+				if (showProfileInfo == null)
+					showProfileInfo = GetSvgBitmap(Category, nameof(IAudiusImages.ShowProfileInfo), CurrentColors.ShowProfileInfoColor, 20, 20);
 
-				return warning;
+				return showProfileInfo;
 			}
 		}
 
@@ -130,17 +132,17 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the message box information icon
+		/// Gets the close profile image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap Information
+		public Bitmap Close
 		{
 			get
 			{
-				if (information == null)
-					information = GetSvgBitmap(Category, nameof(IGeneralImages.Information), CurrentColors.MessageBoxInformationColor, 32, 32);
+				if (close == null)
+					close = GetSvgBitmap(Category, nameof(IAudiusImages.Close), Color.White, 16, 16);
 
-				return information;
+				return close;
 			}
 		}
 
@@ -148,17 +150,17 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the message box question icon
+		/// Gets the unknown album cover image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap Question
+		public Bitmap UnknownAlbumCover
 		{
 			get
 			{
-				if (question == null)
-					question = GetSvgBitmap(Category, nameof(IGeneralImages.Question), CurrentColors.MessageBoxQuestionColor, 32, 32);
+				if (unknownAlbum == null)
+					unknownAlbum = GetBitmap(Category, "UnknownAlbumCover.png");
 
-				return question;
+				return unknownAlbum;
 			}
 		}
 
@@ -166,17 +168,17 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the search button image
+		/// Gets the unknown profile image
 		/// </summary>
 		/********************************************************************/
-		public Bitmap Search
+		public Bitmap UnknownProfile
 		{
 			get
 			{
-				if (search == null)
-					search = GetSvgBitmap(Category, nameof(IGeneralImages.Search), CurrentColors.SearchColor, 20, 20);
+				if (unknownProfile == null)
+					unknownProfile = GetBitmap(Category, "UnknownProfile.png");
 
-				return search;
+				return unknownProfile;
 			}
 		}
 	}
