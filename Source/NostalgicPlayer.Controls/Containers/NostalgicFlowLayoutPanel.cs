@@ -171,12 +171,20 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		#region Public methods
 		/********************************************************************/
 		/// <summary>
-		/// Call this if you have added a lot of controls
+		/// Call this to add new controls to the panel instead of calling
+		/// FlowControls.Add
 		/// </summary>
 		/********************************************************************/
-		public void RefreshControls()
+		public void AddControl(Control ctrl)
 		{
-			UpdateThemesOnControls(FlowControls);
+			ITheme currentTheme = themeManager.CurrentTheme;
+
+			if (ctrl is IThemeControl themeControl)
+				themeControl.SetTheme(currentTheme);
+
+			UpdateThemesOnControls(ctrl.Controls);
+
+			FlowControls.Add(ctrl);
 		}
 		#endregion
 
