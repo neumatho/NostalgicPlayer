@@ -36,11 +36,11 @@ namespace Polycode.NostalgicPlayer.Controls
 		/// method if exists with dependency injections and setup themes
 		/// </summary>
 		/********************************************************************/
-		public T GetInstance<T>() where T : Control, new()
+		public T GetInstance<T>(params object[] extraArguments) where T : Control, new()
 		{
 			T control = new T();
 
-			controlInitializerService.InitializeSingleControl(control);
+			controlInitializerService.InitializeSingleControl(control, extraArguments);
 			themeManager.SetThemeOnControl(control);
 
 			return control;
