@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -12,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 	/// <summary>
 	/// The SidPlay settings
 	/// </summary>
-	internal partial class SettingsControl : UserControl, ISettingsControl
+	internal partial class SettingsControl : UserControl, IDependencyInjectionControl, ISettingsControl
 	{
 		private SidPlay.SidPlaySettings settings;
 
@@ -32,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		/// <summary>
 		/// Initialize control.
 		///
-		/// Called from ControlFactory
+		/// Called from ControlCreatorService
 		/// </summary>
 		/********************************************************************/
 		public void InitializeControl(ISettingsFactory settingsFactory)

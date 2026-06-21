@@ -64,12 +64,12 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/// dependency injections
 		/// </summary>
 		/********************************************************************/
-		public void InitializeSingleControl(Control control)
+		public void InitializeSingleControl(Control control, params object[] extraArguments)
 		{
 			CallComponentInitializeMethod(control);
 
 			if (control is IDependencyInjectionControl diControl)
-				CallControlInitializeMethod(diControl);
+				CallControlInitializeMethod(diControl, extraArguments);
 
 			InitializeControls(control.Controls);
 		}
@@ -115,16 +115,16 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/// Try to find the initialize method and call it
 		/// </summary>
 		/********************************************************************/
-		private void CallControlInitializeMethod(IDependencyInjectionControl control)
+		private void CallControlInitializeMethod(IDependencyInjectionControl control, params object[] extraArguments)
 		{
 			MethodInfo initializeMethod = control.GetType().GetMethod("InitializeControl", BindingFlags.Public | BindingFlags.Instance);
 
 			if (initializeMethod != null)
 			{
 				ParameterInfo[] parameters = initializeMethod.GetParameters();
-				object[] arguments = parameters.Select(p => applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
+				object[] arguments = parameters.Skip(extraArguments.Length).Select(p => applicationContext.Container.GetInstance(p.ParameterType)).ToArray();
 
-				initializeMethod.Invoke(control, arguments);
+				initializeMethod.Invoke(control, extraArguments.Union(arguments).ToArray());
 			}
 		}
 
