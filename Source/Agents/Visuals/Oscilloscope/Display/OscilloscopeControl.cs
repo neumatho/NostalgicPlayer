@@ -7,9 +7,9 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Containers;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
-using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 	/// <summary>
 	/// The user control showing the oscilloscope
 	/// </summary>
-	internal partial class OscilloscopeControl : UserControl, IControl
+	internal partial class OscilloscopeControl : UserControl, IDependencyInjectionControl
 	{
 		private const int PanelMargin = 8;
 
