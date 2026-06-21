@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using NAudio.CoreAudioApi;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -15,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 	/// <summary>
 	/// The core audio settings
 	/// </summary>
-	internal partial class SettingsControl : UserControl, ISettingsControl
+	internal partial class SettingsControl : UserControl, IDependencyInjectionControl, ISettingsControl
 	{
 		private CoreAudio.CoreAudioSettings settings;
 
@@ -50,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		/// <summary>
 		/// Initialize control.
 		///
-		/// Called from ControlFactory
+		/// Called from ControlCreatorService
 		/// </summary>
 		/********************************************************************/
 		public void InitializeControl(ISettingsFactory settingsFactory)
