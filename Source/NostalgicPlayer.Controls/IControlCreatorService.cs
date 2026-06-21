@@ -16,6 +16,6 @@ namespace Polycode.NostalgicPlayer.Controls
 		/// Create a new control instance. Will call the InitializeControl
 		/// method if exists with dependency injections and setup themes
 		/// </summary>
-		T GetInstance<T>() where T : Control, new();
+		T GetInstance<T>(params object[] extraArguments) where T : Control, new();
 	}
 }

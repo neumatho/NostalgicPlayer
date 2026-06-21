@@ -26,6 +26,6 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 		/// Initialize a single control and its child controls with
 		/// dependency injections
 		/// </summary>
-		void InitializeSingleControl(Control control);
+		void InitializeSingleControl(Control control, params object[] extraArguments);
 	}
 }

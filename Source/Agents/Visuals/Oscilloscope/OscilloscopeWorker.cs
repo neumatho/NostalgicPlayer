@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
@@ -17,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 	/// </summary>
 	internal class OscilloscopeWorker : ISampleDataVisualAgent, IAgentGuiDisplay
 	{
-		private readonly IControlFactory controlFactory;
+		private readonly IControlCreatorService controlCreatorService;
 
 		private OscilloscopeControl userControl;
 
@@ -26,9 +27,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OscilloscopeWorker(IControlFactory controlFactory)
+		public OscilloscopeWorker(IControlCreatorService controlCreatorService)
 		{
-			this.controlFactory = controlFactory;
+			this.controlCreatorService = controlCreatorService;
 		}
 
 		#region IAgentDisplay implementation
@@ -48,7 +49,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			userControl = controlFactory.GetInstance<OscilloscopeControl>();
+			userControl = controlCreatorService.GetInstance<OscilloscopeControl>();
+
 			return userControl;
 		}
 
