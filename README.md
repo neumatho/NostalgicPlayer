@@ -87,6 +87,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
+| Dynamic Synthesizer | .dns | | TFMX |
 | Epic Games UMX | .umx | Module Converter | \* |
 | Epic MegaGames MASI | .psm | | Xmp |
 | Epic MegaGames MASI 16 | .psm | | Xmp |

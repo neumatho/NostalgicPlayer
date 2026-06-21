@@ -1399,6 +1399,14 @@
             <uap:DisplayName>Musicline Editor</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dnsfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dns">.dns</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Dynamic Synthesizer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -111,6 +111,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player on the Amiga by Chris Hülsbeck.
+        ///C player created by Michael Schwendt.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This format is like a migration format made by Chris Hülsbeck while moving from C64 to Amiga. He used it briefly and it&apos;s the base for the TFMX format..
+        /// </summary>
+        internal static string IDS_TFMX_DESCRIPTION_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_TFMX_DESCRIPTION_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module.
         /// </summary>
         internal static string IDS_TFMX_ERR_LOADING {
@@ -224,6 +237,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         internal static string IDS_TFMX_NAME_AGENT3 {
             get {
                 return ResourceManager.GetString("IDS_TFMX_NAME_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dynamic Synthesizer.
+        /// </summary>
+        internal static string IDS_TFMX_NAME_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_TFMX_NAME_AGENT4", resourceCulture);
             }
         }
     }

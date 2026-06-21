@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
@@ -24,12 +25,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		private static readonly Guid agent1Id = Guid.Parse("E41B630B-0C68-41D5-9D09-2771581A0D22");
 		private static readonly Guid agent2Id = Guid.Parse("E9333E11-4CD4-4631-B758-507C4607AB8A");
 		private static readonly Guid agent3Id = Guid.Parse("AFB99395-AA4B-4F35-BA5E-4B1513615B51");
+		private static readonly Guid agent4Id = Guid.Parse("2B850AB9-CE0D-47DB-9C7B-9D238B1499BC");
 
 		private static readonly Dictionary<ModuleType, Guid> moduleTypeLookup = new Dictionary<ModuleType, Guid>
 		{
 			{ ModuleType.Tfmx15, agent1Id },
 			{ ModuleType.TfmxPro, agent2Id },
-			{ ModuleType.Tfmx7V, agent3Id }
+			{ ModuleType.Tfmx7V, agent3Id },
+			{ ModuleType.DynamicSynthesizer, agent4Id }
 		};
 
 		#region IAgent implementation
@@ -60,7 +63,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		[
 			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT1, Resources.IDS_TFMX_DESCRIPTION_AGENT1, agent1Id),
 			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT2, Resources.IDS_TFMX_DESCRIPTION_AGENT2, agent2Id),
-			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT3, Resources.IDS_TFMX_DESCRIPTION_AGENT3, agent3Id)
+			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT3, Resources.IDS_TFMX_DESCRIPTION_AGENT3, agent3Id),
+			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT4, Resources.IDS_TFMX_DESCRIPTION_AGENT4, agent4Id)
 		];
 
 
@@ -72,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new TfmxWorker();
+			return typeId == agent4Id ? new DynamicSynthesizerWorker() : new TfmxWorker();
 		}
 		#endregion
 
@@ -83,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// can be returned in IdentifyFormat()
 		/// </summary>
 		/********************************************************************/
-		public string[] FileExtensions => TfmxIdentifier.FileExtensions;
+		public string[] FileExtensions => TfmxIdentifier.FileExtensions.Union(DynamicSynthesizerIdentifier.FileExtensions).ToArray();
 
 
 
@@ -96,10 +100,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		public IdentifyFormatInfo IdentifyFormat(PlayerFileInfo fileInfo)
 		{
 			var identifyResult = TfmxIdentifier.TestModule(fileInfo);
-			if (identifyResult.moduleType == ModuleType.Unknown)
-				return null;
+			if (identifyResult.moduleType != ModuleType.Unknown)
+				return new IdentifyFormatInfo(new TfmxWorker(identifyResult.moduleType, identifyResult.singleFile), moduleTypeLookup[identifyResult.moduleType]);
 
-			return new IdentifyFormatInfo(new TfmxWorker(identifyResult.moduleType, identifyResult.singleFile), moduleTypeLookup[identifyResult.moduleType]);
+			identifyResult = DynamicSynthesizerIdentifier.TestModule(fileInfo);
+			if (identifyResult.moduleType != ModuleType.Unknown)
+				return new IdentifyFormatInfo(new DynamicSynthesizerWorker(), moduleTypeLookup[identifyResult.moduleType]);
+
+			return null;
 		}
 		#endregion
 	}

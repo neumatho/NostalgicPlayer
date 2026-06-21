@@ -107,6 +107,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public virtual void Restart()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public virtual void SetPaulaVoice(ubyte v, PaulaVoice p)
 		{
 		}
@@ -276,7 +287,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		}
 		#endregion
 
-		#region THE: Added extra methods for snapshot support
+		#region TNE: Added extra methods for snapshot support
 		/********************************************************************/
 		/// <summary>
 		/// 

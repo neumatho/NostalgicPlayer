@@ -5,19 +5,15 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris;
+using Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns;
 using Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Containers;
 using Decoder = Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Decoder;
 
@@ -26,30 +22,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class TfmxWorker : ModulePlayerWithSubSongDurationAgentBase
+	internal class DynamicSynthesizerWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
-		private readonly ModuleType currentModuleType;
-		private readonly bool isSingleFile;
-
 		private byte[] musicData;
 		private int musicLen;
 
 		private sbyte[] sampleData;
 		private int sampleLen;
 
-		private string moduleName;
-		private string author;
-
-		private string[] comment;
-
 		private int songCount;
-		private int voiceCount;
 		private int trackCount;
 
 		private Decoder decoder;
-
-		private uint currentRate;
-		private int currentSpeed;
 
 		private int positionCount;
 		private int currentPosition;
@@ -57,23 +41,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		private TfmxVoice[] voices;
 
-		private SampleInfo[] sampleInfo;
-
 		private const int InfoPositionLine = 2;
 		private const int InfoTrackLine = 3;
-		private const int InfoSpeedLine = 4;
-		private const int InfoTempoLine = 5;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public TfmxWorker(ModuleType moduleType = ModuleType.Unknown, bool singleFile = false)
-		{
-			currentModuleType = moduleType;
-			isSingleFile = singleFile;
-		}
 
 		#region Identify
 		/********************************************************************/
@@ -81,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => TfmxIdentifier.FileExtensions;
+		public override string[] FileExtensions => DynamicSynthesizerIdentifier.FileExtensions;
 
 
 
@@ -122,48 +91,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					return AgentResult.Error;
 				}
 
-				if (!isSingleFile)
+				// Find the other file and read the samples from it
+				ModuleStream sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("smp");
+				if (sampleStream == null)
 				{
-					// Two file format. Find the other file and read the samples from it
-					ModuleStream sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("sam");
-					if (sampleStream == null)
-					{
-						sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("smpl");
-						if (sampleStream == null)
-						{
-							// Einmal Kanzler Sein have a single set sample file, check for that
-							sampleStream = fileInfo.Loader?.OpenExtraFileByFileName(Path.Combine(Path.GetDirectoryName(fileInfo.FileName), "set.sam"));
-							if (sampleStream == null)
-								sampleStream = fileInfo.Loader?.OpenExtraFileByFileName(Path.Combine(Path.GetDirectoryName(fileInfo.FileName), "smpl.set"));
-						}
-					}
+					errorMessage = Resources.IDS_TFMX_ERR_LOADING_SAMPLE;
+					Cleanup();
 
-					if (sampleStream == null)
+					return AgentResult.Error;
+				}
+
+				try
+				{
+					// Read the samples
+					sampleLen = (int)sampleStream.Length;
+					sampleData = sampleStream.ReadSampleData(0, sampleLen, out int readBytes);
+
+					if (readBytes != sampleLen)
 					{
 						errorMessage = Resources.IDS_TFMX_ERR_LOADING_SAMPLE;
 						Cleanup();
 
 						return AgentResult.Error;
 					}
-
-					try
-					{
-						// Read the samples
-						sampleLen = (int)sampleStream.Length;
-						sampleData = sampleStream.ReadSampleData(0, sampleLen, out int readBytes);
-
-						if (readBytes != sampleLen)
-						{
-							errorMessage = Resources.IDS_TFMX_ERR_LOADING_SAMPLE;
-							Cleanup();
-
-							return AgentResult.Error;
-						}
-					}
-					finally
-					{
-						sampleStream.Dispose();
-					}
+				}
+				finally
+				{
+					sampleStream.Dispose();
 				}
 			}
 			catch (Exception)
@@ -188,7 +142,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			if (!base.InitPlayer(out errorMessage))
 				return false;
 
-			decoder = new TfmxDecoder();
+			decoder = new DnsDecoder();
 
 			if (!decoder.Init(musicData.ToPointer(), (uint)musicLen, sampleData.ToPointer(), (uint)sampleLen, out errorMessage))
 				return false;
@@ -198,31 +152,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			musicData = null;
 			sampleData = null;
 
-			// Get number of songs and voices
 			songCount = decoder.GetSongs();
-			voiceCount = decoder.GetVoices();
-
-			if (voiceCount == 8)
-				voiceCount--;
-
-			if (((currentModuleType == ModuleType.Tfmx7V) && (voiceCount != 7)) || ((currentModuleType != ModuleType.Tfmx7V) && (voiceCount != 4)))
-			{
-				errorMessage = Resources.IDS_TFMX_ERR_VOICE_COUNT;
-				return false;
-			}
-
 			trackCount = decoder.GetTracks();
-
-			// Get information strings
-			moduleName = decoder.GetInfoString("game");
-			if (!string.IsNullOrEmpty(moduleName))
-				moduleName += " - " + decoder.GetInfoString("title");
-
-			author = decoder.GetInfoString("artist");
-
-			string commentStr = decoder.GetInfoString("comment");
-			if (!string.IsNullOrEmpty(commentStr))
-				comment = commentStr.Split('\n');
 
 			return true;
 		}
@@ -273,42 +204,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			foreach (TfmxVoice voice in voices)
 				voice.UpdateRegisters();
 
-			RefreshRate();
 			RefreshModuleInformation();
 
 			if (decoder.GetSongEndFlag())
-				OnEndReachedOnAllChannels(0);
+				OnEndReachedOnAllChannels(decoder.GetPlayingPosition());
 		}
 		#endregion
 
 		#region Information
-		/********************************************************************/
-		/// <summary>
-		/// Return the title
-		/// </summary>
-		/********************************************************************/
-		public override string Title => moduleName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the author
-		/// </summary>
-		/********************************************************************/
-		public override string Author => author;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the comment separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Comment => comment;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Return information about sub-songs
@@ -320,20 +223,51 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the module use
-		/// </summary>
-		/********************************************************************/
-		public override int ModuleChannelCount => voiceCount;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns all the samples available in the module. If none, null
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override IEnumerable<SampleInfo> Samples => sampleInfo;
+		public override IEnumerable<SampleInfo> Samples
+		{
+			get
+			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 4 * 12; j++)
+					frequencies[36 + j] = PeriodToFrequency(Tables.Periods[13 + j]);
+
+				foreach (Sample sample in decoder.GetSamples())
+				{
+					ReadOnlyMemory<byte> sampleBuffer = sample.Start.AsMemory();
+
+					if (MemoryMarshal.TryGetArray(sampleBuffer, out ArraySegment<byte> segment))
+					{
+						SampleInfo sampleInfo = new SampleInfo
+						{
+							Name = string.Empty,
+							Flags = SampleInfo.SampleFlag.None,
+							Type = SampleInfo.SampleType.Sample,
+							Panning = -1,
+							Volume = 256,
+							Sample = segment.Array,
+							SampleOffset = (uint)segment.Offset,
+							Length = sample.Length,
+							NoteFrequencies = frequencies
+						};
+
+						if (sample.LoopLength > 2)
+						{
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+							sampleInfo.LoopStart = sample.LoopStartOffset;
+							sampleInfo.LoopLength = sample.LoopLength;
+						}
+
+						yield return sampleInfo;
+					}
+				}
+			}
+		}
 
 
 
@@ -384,15 +318,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				case 4:
 				{
 					description = Resources.IDS_TFMX_INFODESCLINE4;
-					value = FormatSpeed();
-					break;
-				}
-
-				// Current tempo (Hz)
-				case 5:
-				{
-					description = Resources.IDS_TFMX_INFODESCLINE5;
-					value = FormatTempo();
+					value = decoder.GetSpeed().ToString();
 					break;
 				}
 
@@ -425,15 +351,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the duration calculation is done for all sub-songs
+		/// Return the total number of positions. You only need to derive
+		/// from this method, if your player have one position list for all
+		/// channels and can restart on another position than 0
 		/// </summary>
 		/********************************************************************/
-		protected override void DurationDone()
+		protected override int GetTotalNumberOfPositions()
 		{
-			// At this point, it is possible to extract the sample data.
-			// We cannot do it in InitPlayer(), because we need to know
-			// which macros has been used
-			ExtractSampleInfo();
+			return decoder.GetPositions();
 		}
 
 
@@ -471,31 +396,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Refresh the playing frequency
-		/// </summary>
-		/********************************************************************/
-		private void RefreshRate()
-		{
-			uint newRate = decoder.GetRate();
-			if (newRate != currentRate)
-			{
-				currentRate = newRate;
-				PlayingFrequency = (float)newRate / 256;
-				ShowTempo();
-			}
-
-			int newSpeed = decoder.GetSpeed();
-			if (newSpeed != currentSpeed)
-			{
-				currentSpeed = newSpeed;
-				ShowSpeed();
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Refresh the different module information
 		/// </summary>
 		/********************************************************************/
@@ -506,6 +406,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{
 				currentPosition = newPosition;
 				ShowSongPosition();
+
+				MarkPositionAsVisited(newPosition);
 			}
 
 			byte[] newTracks = decoder.GetPlayingTracks();
@@ -515,9 +417,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{
 				if (newTracks[i] != currentTracks[i])
 				{
-					if ((newTracks[i] >= 0x80) && (newTracks[i] < 0x90))
-						continue;
-
 					currentTracks[i] = newTracks[i];
 					changed = true;
 				}
@@ -536,28 +435,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		private void InitializeSound(int songNumber)
 		{
-			currentRate = (uint)(PlayingFrequency * 256);
-			currentSpeed = 0;
-
 			decoder.InitSong(songNumber);
 			decoder.SetLoopMode(true);
 
 			positionCount = decoder.GetPositions();
 			currentPosition = 0;
-			currentTracks = Enumerable.Repeat((byte)0xff, voiceCount).ToArray();
+			currentTracks = new byte[4];
 
-			voices = new TfmxVoice[voiceCount];
-
-			ChannelPanningType[] pannings = voiceCount == 7 ? Tables.Pan7 : Tables.Pan4;
+			voices = new TfmxVoice[4];
+			SampleInfo[] samples = Samples.ToArray();
 
 			for (byte i = 0; i < voices.Length; i++)
 			{
-				TfmxVoice voice = new TfmxVoice(VirtualChannels[i], sampleInfo);
+				TfmxVoice voice = new TfmxVoice(VirtualChannels[i], samples);
 
 				voices[i] = voice;
 				decoder.SetPaulaVoice(i, voice);
-				VirtualChannels[i].SetPanning((ushort)pannings[i]);
 			}
+
+			MarkPositionAsVisited(0);
 		}
 
 
@@ -580,68 +476,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Extract the sample information by parsing the instrument macros
-		/// </summary>
-		/********************************************************************/
-		private void ExtractSampleInfo()
-		{
-			// Build frequency table
-			uint[] frequencies = new uint[10 * 12];
-
-			for (int j = 0; j < Tables.Periods.Length; j++)
-				frequencies[(2 * 12) - 1 + j] = PeriodToFrequency(Tables.Periods[j]);
-
-			List<SampleInfo> samples = new List<SampleInfo>();
-
-			foreach (Sample sample in decoder.GetSamples())
-			{
-				ReadOnlyMemory<byte> sampleBuffer = sample.Start.AsMemory();
-
-				if (MemoryMarshal.TryGetArray(sampleBuffer, out ArraySegment<byte> segment))
-				{
-					SampleInfo info = new SampleInfo
-					{
-						Name = string.Empty,
-						Flags = SampleInfo.SampleFlag.None,
-						Type = SampleInfo.SampleType.Sample,
-						Panning = -1,
-						Volume = 256,
-						Sample = segment.Array,
-						SampleOffset = (uint)segment.Offset,
-						Length = sample.Length,
-						NoteFrequencies = frequencies
-					};
-
-					if (sample.LoopLength != 0)
-					{
-						info.Flags |= SampleInfo.SampleFlag.Loop;
-						info.LoopStart = sample.LoopStartOffset;
-						info.LoopLength = sample.LoopLength;
-					}
-
-					samples.Add(info);
-				}
-			}
-
-			sampleInfo = samples.ToArray();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will set local variables to hold different information shown to
 		/// the user
 		/// </summary>
 		/********************************************************************/
 		private void SetModuleInformation()
 		{
-			currentRate = decoder.GetRate();
-			currentSpeed = decoder.GetSpeed();
 			currentPosition = decoder.GetPlayingPosition();
 			currentTracks = decoder.GetPlayingTracks();
-
-			PlayingFrequency = (float)currentRate / 256;
 		}
 
 
@@ -672,30 +514,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Will update the module information with current speed
-		/// </summary>
-		/********************************************************************/
-		private void ShowSpeed()
-		{
-			OnModuleInfoChanged(InfoSpeedLine, FormatSpeed());
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will update the module information with current tempo
-		/// </summary>
-		/********************************************************************/
-		private void ShowTempo()
-		{
-			OnModuleInfoChanged(InfoTempoLine, FormatTempo());
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will update the module information with all dynamic values
 		/// </summary>
 		/********************************************************************/
@@ -703,8 +521,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		{
 			ShowSongPosition();
 			ShowTracks();
-			ShowSpeed();
-			ShowTempo();
 		}
 
 
@@ -732,7 +548,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			foreach (byte track in decoder.GetPlayingTracks())
 			{
-				if (track >= 0x90)
+				if (track == 0)
 					sb.Append("-, ");
 				else
 				{
@@ -744,30 +560,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			sb.Remove(sb.Length - 2, 2);
 
 			return sb.ToString();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return a string containing the current speed
-		/// </summary>
-		/********************************************************************/
-		private string FormatSpeed()
-		{
-			return currentSpeed.ToString();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return a string containing the current tempo
-		/// </summary>
-		/********************************************************************/
-		private string FormatTempo()
-		{
-			return PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
 		}
 		#endregion
 	}

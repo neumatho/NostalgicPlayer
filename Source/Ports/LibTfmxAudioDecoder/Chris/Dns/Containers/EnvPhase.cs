@@ -3,17 +3,16 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns.Containers
 {
 	/// <summary>
-	/// Holds the different module types
+	/// 
 	/// </summary>
-	internal enum ModuleType
+	internal enum EnvPhase
 	{
-		Unknown = 0,
-		Tfmx15,
-		TfmxPro,
-		Tfmx7V,
-		DynamicSynthesizer
+		Attack = 3,
+		Decay = 2,
+		Release = 1,
+		End = 0
 	}
 }

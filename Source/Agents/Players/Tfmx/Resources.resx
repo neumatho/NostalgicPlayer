@@ -145,6 +145,13 @@ Converted to C# by Thomas Neumann.
 
 This is the 7 voices version of this format. Chris used Jochen Hippel mixer, because Jochen had written a great mixer routine on the Amiga. The player can play both one and two file formats.</value>
   </data>
+  <data name="IDS_TFMX_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>Original player on the Amiga by Chris Hülsbeck.
+C player created by Michael Schwendt.
+Converted to C# by Thomas Neumann.
+
+This format is like a migration format made by Chris Hülsbeck while moving from C64 to Amiga. He used it briefly and it's the base for the TFMX format.</value>
+  </data>
   <data name="IDS_TFMX_ERR_LOADING" xml:space="preserve">
     <value>Can't read the module</value>
   </data>
@@ -183,5 +190,8 @@ This is the 7 voices version of this format. Chris used Jochen Hippel mixer, bec
   </data>
   <data name="IDS_TFMX_NAME_AGENT3" xml:space="preserve">
     <value>TFMX 7 voices</value>
+  </data>
+  <data name="IDS_TFMX_NAME_AGENT4" xml:space="preserve">
+    <value>Dynamic Synthesizer</value>
   </data>
 </root>

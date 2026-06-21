@@ -144,9 +144,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		public TfmxDecoder()
 		{
+			playerInfo = new PlayerInfo
+			{
+				Admin = new Admin(),
+				Track = ArrayHelper.InitializeArray<Track>(Tracks_Max),
+				Cmd = new Cmd()
+			};
+
 			input.Buf.SetToNull();
 			input.BufLen = input.Len = 0;
 			input.SmplLoaded = false;
+
+			playerInfo.Admin.Initialized = false;
 
 			// Set up some dummy voices to decouple the decoder from the mixer
 			for (ubyte v = 0; v < Voices_Max; v++)
@@ -396,13 +405,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		public override bool Init(IPointer data, udword length, IPointer sample, udword sampleLength, out string errorMessage)
 		{
 			errorMessage = string.Empty;
-
-			playerInfo = new PlayerInfo
-			{
-				Admin = new Admin(),
-				Track = ArrayHelper.InitializeArray<Track>(Tracks_Max),
-				Cmd = new Cmd()
-			};
 
 			realMacrosUsed = new HashSet<ubyte>();
 
@@ -778,6 +780,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 		/********************************************************************/
 		/// <summary>
+		/// With an initialized decoder, calling this should (re)start the
+		/// decoder currently chosen song
+		/// </summary>
+		/********************************************************************/
+		public override void Restart()
+		{
+			Reset();
+
+			uword so = (uword)(vSongs[playerInfo.Admin.StartSong] << 1);
+			playerInfo.Sequencer.Step.First = playerInfo.Sequencer.Step.Current = MyEndian.ReadBEUword(pBuf, offsets.Header + 0x100 + so);
+			playerInfo.Sequencer.Step.Last = MyEndian.ReadBEUword(pBuf, offsets.Header + 0x140 + so);
+			playerInfo.Admin.Speed = (sword)MyEndian.ReadBEUword(pBuf, offsets.Header + 0x180 + so);
+
+			if (playerInfo.Admin.Speed >= 0x10)
+			{
+				SetBpm((uword)playerInfo.Admin.Speed);
+				playerInfo.Admin.Speed = 0;
+
+				if (variant.BpmSpeed5)
+					playerInfo.Admin.Speed = 5;
+			}
+
+			playerInfo.Admin.StartSpeed = playerInfo.Admin.Speed;
+			playerInfo.Admin.Count = 0;		// Quick start
+
+			SoftRestart();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -940,38 +974,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			for (c_int m = 0; m < 0x40; m++)
 				macroCmdUsed[m] = false;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// With an initialized decoder, calling this should (re)start the
-		/// decoder currently chosen song
-		/// </summary>
-		/********************************************************************/
-		private void Restart()
-		{
-			Reset();
-
-			uword so = (uword)(vSongs[playerInfo.Admin.StartSong] << 1);
-			playerInfo.Sequencer.Step.First = playerInfo.Sequencer.Step.Current = MyEndian.ReadBEUword(pBuf, offsets.Header + 0x100 + so);
-			playerInfo.Sequencer.Step.Last = MyEndian.ReadBEUword(pBuf, offsets.Header + 0x140 + so);
-			playerInfo.Admin.Speed = (sword)MyEndian.ReadBEUword(pBuf, offsets.Header + 0x180 + so);
-
-			if (playerInfo.Admin.Speed >= 0x10)
-			{
-				SetBpm((uword)playerInfo.Admin.Speed);
-				playerInfo.Admin.Speed = 0;
-
-				if (variant.BpmSpeed5)
-					playerInfo.Admin.Speed = 5;
-			}
-
-			playerInfo.Admin.StartSpeed = playerInfo.Admin.Speed;
-			playerInfo.Admin.Count = 0;		// Quick start
-
-			SoftRestart();
 		}
 
 
