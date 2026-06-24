@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		private static WaveformCalculator instance = null;
 
-		private readonly matrix_t wfTable;
+		private readonly rc_matrix_t wfTable;
 		private readonly Dictionary<CombinedWaveformConfig[], matrix_t> pulldownCache = new Dictionary<CombinedWaveformConfig[], Matrix<short>>();
 		private readonly Lock pulldownCache_Lock = new Lock();
 
@@ -214,15 +214,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			wfTable = new matrix_t(4, 4096);
 
 			// Build waveform table
-			for (uint idx = 0; idx < (1U << 12); idx++)
+			for (uint idx = 0; idx < 4096; idx++)
 			{
-				short saw = (short)idx;
-				short tri = (short)TriXor(idx);
+				int16_t saw = (int16_t)idx;
+				int16_t tri = (int16_t)TriXor(idx);
 
 				wfTable[0][idx] = 0xfff;
 				wfTable[1][idx] = tri;
 				wfTable[2][idx] = saw;
-				wfTable[3][idx] = (short)(saw & (saw << 1));
+				wfTable[3][idx] = (int16_t)(saw & (saw << 1));
 			}
 		}
 
@@ -248,7 +248,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Get the waveform table for use by WaveformGenerator
 		/// </summary>
 		/********************************************************************/
-		public matrix_t GetWaveTable()
+		public rc_matrix_t GetWaveTable()
 		{
 			return wfTable;
 		}
@@ -260,7 +260,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Build pulldown table for use by WaveformGenerator
 		/// </summary>
 		/********************************************************************/
-		public matrix_t BuildPulldownTable(ChipModel model, CombinedWaveforms cws)
+		public rc_matrix_t BuildPulldownTable(ChipModel model, CombinedWaveforms cws)
 		{
 			lock (pulldownCache_Lock)
 			{
@@ -309,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 						distanceTable[12 + i] = distFunc(cfg.distance2, i);
 					}
 
-					for (uint idx = 0; idx < (1U << 12);  idx++)
+					for (uint idx = 0; idx < 4096;  idx++)
 						pdTable[(uint)wav][idx] = CalculatePulldown(distanceTable, cfg.topBit, cfg.pulseStrength, cfg.threshold, idx);
 				}
 
@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Generate bitstate based on emulation of combined waves pulldown
 		/// </summary>
 		/********************************************************************/
-		private short CalculatePulldown(float[] distanceTable, float topBit, float pulseStrength, float threshold, uint accumulator)
+		private int16_t CalculatePulldown(float[] distanceTable, float topBit, float pulseStrength, float threshold, uint accumulator)
 		{
 			float[] bit = new float[12];
 
@@ -405,13 +405,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			}
 
 			// Get the predicted value
-			short value = 0;
+			int16_t value = 0;
 
 			for (int i = 0; i < 12; i++)
 			{
 				float bitValue = bit[i] > 0.0f ? 1.0f - pulldown[i] : 0.0f;
 				if (bitValue > threshold)
-					value |= (short)(1U << i);
+					value |= (int16_t)(1U << i);
 			}
 
 			return value;

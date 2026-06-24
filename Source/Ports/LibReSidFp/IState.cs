@@ -3,5 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-global using matrix_t = Polycode.NostalgicPlayer.Ports.LibReSidFp.Array.Matrix<short>;
-global using rc_matrix_t = Polycode.NostalgicPlayer.Ports.LibReSidFp.Array.Matrix<short>;
+namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
+{
+	/// <summary>
+	/// Holds a single state
+	/// </summary>
+	public interface IState
+	{
+	}
+}

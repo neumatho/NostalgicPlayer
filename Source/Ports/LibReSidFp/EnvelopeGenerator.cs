@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// The envelope state machine's distinct states. In addition to this,
 		/// envelope has a hold mode, which freezes envelope counter to zero
 		/// </summary>
-		private enum State
+		public enum State
 		{
 			ATTACK, DECAY_SUSTAIN, RELEASE
 		}
@@ -40,8 +40,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// (decay/release) and the rate counter is resetted.
 		//
 		// see [kevtris.org](http://blog.kevtris.org/?p=13)
-		private static readonly uint[] adsrTable = new uint[16]
-		{
+		private static readonly uint16_t[] adsrTable =
+		[
 			0x007f,
 			0x3000,
 			0x1e00,
@@ -58,37 +58,37 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			0x23f7,
 			0x5237,
 			0x64a8
-		};
+		];
 
 		/// <summary>
 		/// XOR shift register for ADSR prescaling
 		/// </summary>
-		private uint lfsr = 0x7fff;
+		internal uint16_t lfsr = 0x7fff;
 
 		/// <summary>
 		/// Comparison value (period) of the rate counter before next event
 		/// </summary>
-		private uint rate = 0;
+		internal uint16_t rate = 0;
 
 		/// <summary>
 		/// During release mode, the SID approximates envelope decay via piecewise
 		/// linear decay rate
 		/// </summary>
-		private uint exponential_counter = 0;
+		internal uint exponential_counter = 0;
 
 		// Comparison value (period) of the exponential decay counter before next decrement
-		private uint exponential_counter_period = 1;
-		private uint new_exponential_counter_period = 0;
+		internal uint exponential_counter_period = 1;
+		internal uint new_exponential_counter_period = 0;
 
-		private uint state_pipeline = 0;
+		internal uint state_pipeline = 0;
 
-		private uint envelope_pipeline = 0;
+		internal uint envelope_pipeline = 0;
 
-		private uint exponential_pipeline = 0;
+		internal uint exponential_pipeline = 0;
 
 		// Current envelope state
-		private State state = State.RELEASE;
-		private State next_state = State.RELEASE;
+		internal State state = State.RELEASE;
+		internal State next_state = State.RELEASE;
 
 		/// <summary>
 		/// Whether counter is enabled. Only switching to ATTACK can release envelope
@@ -98,46 +98,46 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// Gate bit
 		/// </summary>
-		private bool gate = false;
+		internal bool gate = false;
 
-		private bool resetLfsr = false;
+		internal bool resetLfsr = false;
 
 		/// <summary>
 		/// The current digital value of envelope output
 		/// </summary>
-		internal byte envelope_counter = 0xaa;
+		internal uint8_t envelope_counter = 0xaa;
 
 		/// <summary>
 		/// Attack register
 		/// </summary>
-		private byte attack = 0;
+		internal uint8_t attack = 0;
 
 		/// <summary>
 		/// Decay register
 		/// </summary>
-		private byte decay = 0;
+		internal uint8_t decay = 0;
 
 		/// <summary>
 		/// Sustain register
 		/// </summary>
-		private byte sustain = 0;
+		internal uint8_t sustain = 0;
 
 		/// <summary>
 		/// Release register
 		/// </summary>
-		private byte release = 0;
+		internal uint8_t release = 0;
 
 		/// <summary>
 		/// The ENV3 value, sampled at the first phase of the clock
 		/// </summary>
-		private byte env3 = 0;
+		internal uint8_t env3 = 0;
 
 		/********************************************************************/
 		/// <summary>
 		/// Get the Envelope Generator digital output
 		/// </summary>
 		/********************************************************************/
-		public uint Output()
+		public uint8_t Output()
 		{
 			return envelope_counter;
 		}
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write control register
 		/// </summary>
 		/********************************************************************/
-		public void WriteControl_Reg(byte control)
+		public void WriteControl_Reg(uint8_t control)
 		{
 			bool gate_next = (control & 0x01) != 0;
 
@@ -218,10 +218,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write attack/decay register
 		/// </summary>
 		/********************************************************************/
-		public void WriteAttack_Decay(byte attack_decay)
+		public void WriteAttack_Decay(uint8_t attack_decay)
 		{
-			attack = (byte)((attack_decay >> 4) & 0x0f);
-			decay = (byte)(attack_decay & 0x0f);
+			attack = (uint8_t)((attack_decay >> 4) & 0x0f);
+			decay = (uint8_t)(attack_decay & 0x0f);
 
 			if (state == State.ATTACK)
 				rate = adsrTable[attack];
@@ -236,7 +236,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write sustain/release register
 		/// </summary>
 		/********************************************************************/
-		public void WriteSustain_Release(byte sustain_release)
+		public void WriteSustain_Release(uint8_t sustain_release)
 		{
 			// From the sustain levels it follows that both the low and high 4 bits
 			// of the envelope counter are compared to the 4-bit sustain value
@@ -244,9 +244,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			//
 			// For a detailed description see:
 			// http://ploguechipsounds.blogspot.it/2010/11/new-research-on-sid-adsr.html
-			sustain = (byte)((sustain_release & 0xf0) | ((sustain_release >> 4) & 0x0f));
+			sustain = (uint8_t)((sustain_release & 0xf0) | ((sustain_release >> 4) & 0x0f));
 
-			release = (byte)(sustain_release & 0x0f);
+			release = (uint8_t)(sustain_release & 0x0f);
 
 			if (state == State.RELEASE)
 				rate = adsrTable[release];
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Return the envelope current value
 		/// </summary>
 		/********************************************************************/
-		public byte ReadEnv()
+		public uint8_t ReadEnv()
 		{
 			return env3;
 		}
@@ -355,8 +355,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			{
 				// It wasn't a match, clock the LFSR once
 				// by performing XOR on last 2 bits
-				uint feedback = ((lfsr << 14) ^ (lfsr << 13)) & 0x4000;
-				lfsr = (lfsr >> 1) | feedback;
+				uint feedback = (uint)(((lfsr << 14) ^ (lfsr << 13)) & 0x4000);
+				lfsr = (uint16_t)((lfsr >> 1) | (uint16_t)feedback);
 			}
 			else
 				resetLfsr = true;

@@ -260,12 +260,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// VCR + associated capacitor connected to highpass output
 		/// </summary>
-		private readonly Integrator8580 hpIntegrator;
+		internal readonly Integrator8580 hpIntegrator;
 
 		/// <summary>
 		/// VCR + associated capacitor connected to bandpass output
 		/// </summary>
-		private readonly Integrator8580 bpIntegrator;
+		internal readonly Integrator8580 bpIntegrator;
 
 		private double cp;
 
@@ -307,12 +307,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override int SolveIntegrators()
+		protected override int32_t SolveIntegrators()
 		{
 			vbp = hpIntegrator.Solve(vhp);
 			vlp = bpIntegrator.Solve(vbp);
 
-			int vFilt = 0;
+			int32_t vFilt = 0;
 
 			if (lp)
 				vFilt += vlp;
@@ -324,6 +324,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				vFilt += vhp;
 
 			return vFilt;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected override void RestartIntegrators()
+		{
+			hpIntegrator.Restart();
+			bpIntegrator.Restart();
 		}
 
 

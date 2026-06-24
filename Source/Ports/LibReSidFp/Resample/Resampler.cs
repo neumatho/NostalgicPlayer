@@ -19,9 +19,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public short GetOutput(int scaleFactor)
+		public int16_t GetOutput(int32_t scaleFactor)
 		{
-			int @out = (scaleFactor * Output()) / 2;
+			int32_t @out = (scaleFactor * Output()) / 2;
 			return Limiter.SoftClip(@out);
 		}
 
@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// ready with new sample
 		/// </summary>
 		/********************************************************************/
-		public abstract bool Input(int sample);
+		public abstract bool Input(int32_t sample);
 
 
 
@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public abstract int Output();
+		public abstract int32_t Output();
 		#endregion
 	}
 }

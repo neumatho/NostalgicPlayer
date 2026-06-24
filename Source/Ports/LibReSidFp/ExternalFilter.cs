@@ -67,16 +67,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// Lowpass filter voltage
 		/// </summary>
-		private int vlp;
+		internal int32_t vlp;
 
 		/// <summary>
 		/// Highpass filter voltage
 		/// </summary>
-		private int vhp;
+		internal int32_t vhp;
 
-		private int w0lp_1_s7 = 0;
+		private int32_t w0lp_1_s7 = 0;
 
-		private int w0hp_1_s17 = 0;
+		private int32_t w0hp_1_s17 = 0;
 
 		/********************************************************************/
 		/// <summary>
@@ -101,11 +101,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 			// Low-pass:  R = 10kOhm, C = 1000pF; w0l = dt/(dt+RC) = 1e-6/(1e-6+1e4*1e-9) = 0.091
 			// Cutoff 1/2*PI*RC = 1/2*PI*1e4*1e-9 = 15915.5 Hz
-			w0lp_1_s7 = (int)((dt / (dt + GetRc(10e3, 1000e-12))) * (1 << 7) + 0.5);
+			w0lp_1_s7 = (int32_t)(((dt / (dt + GetRc(10e3, 1000e-12))) * (1 << 7)) + 0.5);
 
 			// High-pass: R = 10kOhm, C = 10uF;   w0h = dt/(dt+RC) = 1e-6/(1e-6+1e4*1e-5) = 0.00000999
 			// Cutoff 1/2*PI*RC = 1/2*PI*1e4*1e-5 = 1.59155 Hz
-			w0hp_1_s17 = (int)((dt / (dt + GetRc(10e3, 10e-6))) * (1 << 17) + 0.5);
+			w0hp_1_s17 = (int32_t)(((dt / (dt + GetRc(10e3, 10e-6))) * (1 << 17)) + 0.5);
 		}
 
 
@@ -130,11 +130,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Clock(int input)
+		public int32_t Clock(int32_t input)
 		{
-			int vi = input << 11;
-			int dVlp = (w0lp_1_s7 * (vi - vlp) >> 7);
-			int dVhp = (w0hp_1_s17 * (vlp - vhp) >> 17);
+			int32_t vi = input << 11;
+			int32_t dVlp = ((w0lp_1_s7 * (vi - vlp)) >> 7);
+			int32_t dVhp = ((w0hp_1_s17 * (vlp - vhp)) >> 17);
 
 			vlp += dVlp;
 			vhp += dVhp;

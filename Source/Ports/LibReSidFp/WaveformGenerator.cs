@@ -107,76 +107,76 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				(1U << 22) 		// Bit  0
 			);
 
-		private matrix_t model_wave = null;
-		private matrix_t model_pulldown = null;
+		private rc_matrix_t model_wave = null;
+		private rc_matrix_t model_pulldown = null;
 
-		private short[] wave = null;
-		private short[] pulldown = null;
+		private int16_t[] wave = null;
+		private int16_t[] pulldown = null;
 
 		/// <summary>
 		/// PWout = (PWn/40.95)%
 		/// </summary>
-		private uint pw = 0;
+		internal uint32_t pw = 0;
 
-		internal uint shift_register = 0;
+		internal uint32_t shift_register = 0;
 
 		/// <summary>
 		/// Shift register is latched when transitioning to shift phase 1
 		/// </summary>
-		internal uint shift_latch = 0;
+		internal uint32_t shift_latch = 0;
 
 		/// <summary>
 		/// Emulation of pipeline causing bit 19 to clock the shift register
 		/// </summary>
-		private int shift_pipeline = 0;
+		internal int shift_pipeline = 0;
 
-		private uint ring_msb_mask = 0;
-		private uint no_noise = 0;
-		internal uint noise_output = 0;
-		private uint no_noise_or_noise_output = 0;
-		private uint no_pulse = 0;
-		private uint pulse_output = 0;
+		internal uint32_t ring_msb_mask = 0;
+		internal uint32_t no_noise = 0;
+		internal uint32_t noise_output = 0;
+		internal uint32_t no_noise_or_noise_output = 0;
+		internal uint32_t no_pulse = 0;
+		internal uint32_t pulse_output = 0;
 
-		/// <summary>
-		/// The control register right-shifted 4 bits; used for output function table lookup
-		/// </summary>
-		internal uint waveform = 0;
-
-		private uint waveform_output = 0;
+		internal uint32_t waveform_output = 0;
 
 		/// <summary>
 		/// Current accumulator value
 		/// </summary>
-		private uint accumulator = 0x555555;	// Accumulator's even bits are high on powerup
+		internal uint32_t accumulator = 0x555555;	// Accumulator's even bits are high on powerup
 
 		/// <summary>
 		/// Fout = (Fn*Fclk/16777216)Hz
 		/// </summary>
-		private uint freq = 0;
+		internal uint32_t freq = 0;
 
 		/// <summary>
 		/// 8580 tri/saw pipeline
 		/// </summary>
-		private uint tri_saw_pipeline = 0x555;
+		internal uint32_t tri_saw_pipeline = 0x555;
 
 		/// <summary>
 		/// The OSC3 value
 		/// </summary>
-		private uint osc3 = 0;
+		internal uint32_t osc3 = 0;
 
 		/// <summary>
 		/// Remaining time to fully reset shift register
 		/// </summary>
-		private uint shift_register_reset = 0;
+		internal uint shift_register_reset = 0;
 
 		/// <summary>
 		/// The wave signal TTL when no waveform is selected
 		/// </summary>
-		private uint floating_output_ttl = 0;
+		internal uint floating_output_ttl = 0;
+
+		/// <summary>
+		/// The control register right-shifted 4 bits; used for output function table lookup
+		/// </summary>
+		internal uint8_t waveform = 0;
 
 		// The control register bits. Gate is handled by EnvelopeGenerator
-		private bool test = false;
-		private bool sync = false;
+		internal bool test = false;
+		internal bool sync = false;
 
 		/// <summary>
 		/// Test bit is latched at phi2 for the noise XOR
@@ -186,7 +186,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// Tell whether the accumulator MSB was set high on this cycle
 		/// </summary>
-		private bool msb_rising = false;
+		internal bool msb_rising = false;
 
 		private bool is6581;	// This is initialized in the SID constructor
 
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetWaveformModels(matrix_t models)
+		public void SetWaveformModels(rc_matrix_t models)
 		{
 			model_wave = models;
 		}
@@ -211,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetPulldownModels(matrix_t models)
+		public void SetPulldownModels(rc_matrix_t models)
 		{
 			model_pulldown = models;
 		}
@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write FREQ LO register
 		/// </summary>
 		/********************************************************************/
-		public void WriteFreq_Lo(byte freq_lo)
+		public void WriteFreq_Lo(uint8_t freq_lo)
 		{
 			freq = (freq & 0xff00) | (uint)(freq_lo & 0xff);
 		}
@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write FREQ HI register
 		/// </summary>
 		/********************************************************************/
-		public void WriteFreq_Hi(byte freq_hi)
+		public void WriteFreq_Hi(uint8_t freq_hi)
 		{
 			freq = ((uint)freq_hi << 8 & 0xff00) | (freq & 0xff);
 		}
@@ -291,7 +291,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write PW LO register
 		/// </summary>
 		/********************************************************************/
-		public void WritePw_Lo(byte pw_lo)
+		public void WritePw_Lo(uint8_t pw_lo)
 		{
 			pw = (pw & 0xf00) | (uint)(pw_lo & 0x0ff);
 		}
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write PW HI register
 		/// </summary>
 		/********************************************************************/
-		public void WritePw_Hi(byte pw_hi)
+		public void WritePw_Hi(uint8_t pw_hi)
 		{
 			pw = ((uint)pw_hi << 8 & 0xf00) | (pw & 0x0ff);
 		}
@@ -315,12 +315,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write CONTROL REGISTER register
 		/// </summary>
 		/********************************************************************/
-		public void WriteControl_Reg(byte control)
+		public void WriteControl_Reg(uint8_t control)
 		{
-			uint waveform_prev = waveform;
+			uint8_t waveform_prev = waveform;
 			bool test_prev = test;
 
-			waveform = (uint)(control >> 4) & 0x0f;
+			waveform = (uint8_t)((control >> 4) & 0x0f);
 			test = (control & 0x08) != 0;
 			sync = (control & 0x02) != 0;
 
@@ -330,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			if (waveform != waveform_prev)
 			{
 				// Set up waveform tables
-				wave = model_wave[waveform & 0x3];
+				wave = model_wave[waveform & 0x3U];
 
 				// We assume tha combinations include noise
 				// behave the same as without
@@ -465,9 +465,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Read OSC3 value
 		/// </summary>
 		/********************************************************************/
-		public byte ReadOsc()
+		public uint8_t ReadOsc()
 		{
-			return (byte)(osc3 >> 4);
+			return (uint8_t)(osc3 >> 4);
 		}
 
 
@@ -477,7 +477,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Read accumulator value
 		/// </summary>
 		/********************************************************************/
-		public uint ReadAccumulator()
+		public uint32_t ReadAccumulator()
 		{
 			return accumulator;
 		}
@@ -489,7 +489,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Read freq value
 		/// </summary>
 		/********************************************************************/
-		public uint ReadFreq()
+		public uint32_t ReadFreq()
 		{
 			return freq;
 		}
@@ -548,11 +548,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			else
 			{
 				// Calculate new accumulator value
-				uint accumulator_old = accumulator;
+				uint32_t accumulator_old = accumulator;
 				accumulator = (accumulator + freq) & 0xffffff;
 
 				// Check which bit have changed from low to high
-				uint accumulator_bits_set = ~accumulator_old & accumulator;
+				uint32_t accumulator_bits_set = ~accumulator_old & accumulator;
 
 				// Check whether the MSB is set high. This is used for synchronization
 				msb_rising = (accumulator_bits_set & 0x800000) != 0;
@@ -594,18 +594,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public uint Output()
+		public uint32_t Output()
 		{
 			// Set output value
 			if (waveform != 0)
 			{
-				uint ix = (accumulator ^ (~prevVoice.accumulator & ring_msb_mask)) >> 12;
+				uint32_t ix = (accumulator ^ (~prevVoice.accumulator & ring_msb_mask)) >> 12;
 
 				// The bit masks no_pulse and no_noise are used to achieve branch-free
 				// calculation of the output value
-				waveform_output = (uint)(wave[ix] & (no_pulse | pulse_output) & no_noise_or_noise_output);
+				waveform_output = (uint32_t)(wave[ix] & (no_pulse | pulse_output) & no_noise_or_noise_output);
 				if (pulldown != null)
-					waveform_output = (uint)pulldown[waveform_output];
+					waveform_output = (uint32_t)pulldown[waveform_output];
 
 				// Triangle/Sawtooth output is delayed half cycle on 8580.
 				// This will appear as a one cycle delay on OSC3 as it is latched
@@ -614,9 +614,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				{
 					osc3 = tri_saw_pipeline & (no_pulse | pulse_output) & no_noise_or_noise_output;
 					if (pulldown != null)
-						osc3 = (uint)pulldown[osc3];
+						osc3 = (uint32_t)pulldown[osc3];
 
-					tri_saw_pipeline = (uint)wave[ix];
+					tri_saw_pipeline = (uint32_t)wave[ix];
 				}
 				else
 					osc3 = waveform_output;
@@ -650,12 +650,77 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 			// The result of the pulse width compare is delayed one cycle.
 			// Push next pulse level into pulse level pipeline
-			pulse_output = ((accumulator >> 12) >= pw) ? (uint)0xfff : 0x000;
+			pulse_output = ((accumulator >> 12) >= pw) ? (uint32_t)0xfff : 0x000;
 
 			return waveform_output;
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal void SetWave()
+		{
+			wave = model_wave[waveform & 3U];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal void SetPulldown()
+		{
+			// We assume tha combinations including noise
+			// behave the same as without
+			switch (waveform & 0x7)
+			{
+				case 3:
+				{
+					pulldown = model_pulldown[0];
+					break;
+				}
+
+				case 4:
+				{
+					pulldown = (waveform & 0x8) != 0 ? model_pulldown[4] : null;
+					break;
+				}
+
+				case 5:
+				{
+					pulldown = model_pulldown[1];
+					break;
+				}
+
+				case 6:
+				{
+					pulldown = model_pulldown[2];
+					break;
+				}
+
+				case 7:
+				{
+					pulldown = model_pulldown[3];
+					break;
+				}
+
+				default:
+				{
+					pulldown = null;
+					break;
+				}
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// This is what happens when the lfsr is clocked:
@@ -754,7 +819,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// normal cycles.
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Do_Writeback(uint waveform_old, uint waveform_new, bool is6581)
+		private bool Do_Writeback(uint8_t waveform_old, uint8_t waveform_new, bool is6581)
 		{
 			// No writeback without combined waveforms
 			if (waveform_old <= 8)
@@ -848,7 +913,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// the test bit latched during the previous phi2 cycle
 		/// </summary>
 		/********************************************************************/
-		internal void Shift_Phase2(uint waveform_old, uint waveform_new)
+		internal void Shift_Phase2(uint8_t waveform_old, uint8_t waveform_new)
 		{
 			if (Do_Writeback(waveform_old, waveform_new, is6581))
 			{

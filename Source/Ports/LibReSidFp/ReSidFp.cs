@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Exceptions;
 
@@ -102,6 +103,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		public void Input(int value)
 		{
 			sid.Input(value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read registers without altering state
+		/// </summary>
+		/********************************************************************/
+		public byte Peek(int offset)
+		{
+			return sid.Peek(offset);
 		}
 
 
@@ -222,6 +235,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		/// <summary>
 		/// Clock SID forward with no audio production.
+		/// Only the digital parts are emulated, the analog stage is ignored
+		/// </summary>
+		/********************************************************************/
+		public void ClockDigital(uint cycles)
+		{
+			sid.ClockDigital(cycles);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clock SID forward with no audio production.
 		///
 		/// Note:
 		/// You can't mix this method of clocking with the audio-producing
@@ -293,6 +319,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		public void EnableOld6581Caps(bool enable)
 		{
 			sid.EnableOld6581Caps(enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set paddle coordinates
+		/// </summary>
+		/********************************************************************/
+		public void SetPaddle(byte x, byte y)
+		{
+			sid.SetPaddle(x, y);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Save current state.
+		///
+		/// Note: The save state is not portable across different builds and
+		/// may change in future versions
+		/// </summary>
+		/********************************************************************/
+		public IState SaveState()
+		{
+			return State.SaveState(sid);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Restore saved state
+		/// </summary>
+		/********************************************************************/
+		public void RestoreState(IState state)
+		{
+			State.RestoreState(sid, state);
 		}
 	}
 }

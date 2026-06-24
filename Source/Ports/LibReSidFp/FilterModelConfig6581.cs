@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		private readonly Dac dac;
 
 		// Voltage Controlled Resistors
-		private readonly ushort[] vcr_nVg = new ushort[1 << 16];
+		private readonly uint16_t[] vcr_nVg = new uint16_t[1 << 16];
 		private readonly double[] vcr_n_ids_term = new double[1 << 16];
 
 		private double vcr_Mult;
@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		{
 			wl_vcr = 9.0 / 1.0;
 			wl_snake = 1.0 / 115.0;
-			dac_zero = 6.65;
+			dac_zero = 7.15;
 			dac_scale = 2.63;
 			dac = new Dac(DAC_BITS);
 			oldCaps = false;
@@ -170,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				{
 					// The table index is right-shifted 16 times in order to fit in
 					// 16 bits; the argument to sqrt is thus multiplied by (1 << 16)
-					vcr_nVg[i] = To_UShort(nVddt - Math.Sqrt(i << 16));
+					vcr_nVg[i] = To_UInt16(nVddt - Math.Sqrt(i << 16));
 				}
 			}
 
@@ -277,11 +277,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// responsible of freeing the object when done
 		/// </summary>
 		/********************************************************************/
-		public ushort[] GetDac(double adjustment)
+		public uint16_t[] GetDac(double adjustment)
 		{
 			double new_dac_zero = GetDacZero(adjustment);
 
-			ushort[] f0_dac = new ushort[1 << DAC_BITS];
+			uint16_t[] f0_dac = new uint16_t[1 << DAC_BITS];
 
 			for (uint i = 0; i < (1 << DAC_BITS); i++)
 			{
@@ -313,7 +313,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort GetVcr_nVg(uint i)
+		public uint16_t GetVcr_nVg(uint i)
 		{
 			return vcr_nVg[i];
 		}
@@ -326,9 +326,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort GetVcr_n_Ids_Term(int i)
+		public uint16_t GetVcr_n_Ids_Term(int i)
 		{
-			return To_UShort(vcr_n_ids_term[i] * vcr_Mult);
+			return To_UInt16(vcr_n_ids_term[i] * vcr_Mult);
 		}
 
 
@@ -340,7 +340,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected override double GetVoiceDc(uint env)
+		protected override double GetVoiceDc(uint8_t env)
 		{
 			return voiceDc[env];
 		}
@@ -366,7 +366,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		private double GetDacZero(double adjustment)
 		{
-			return dac_zero + (3.0 * adjustment) - 1.0;
+			return dac_zero + (2.0 * adjustment) - 1.0;
 		}
 
 

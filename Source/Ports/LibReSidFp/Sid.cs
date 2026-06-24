@@ -117,28 +117,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// Filter used, if model is set to 6581
 		/// </summary>
-		private readonly Filter6581 filter6581;
+		internal readonly Filter6581 filter6581;
 
 		/// <summary>
 		/// Filter used, if model is set to 8580
 		/// </summary>
-		private readonly Filter8580 filter8580;
+		internal readonly Filter8580 filter8580;
 
 		/// <summary>
 		/// Resampler used by audio generation code
 		/// </summary>
-		private Resampler resampler;
+		internal Resampler resampler;
 
 		/// <summary>
 		/// External filter that provides high-pass and low-pass filtering
 		/// to adjust sound tone slightly
 		/// </summary>
-		private readonly ExternalFilter externalFilter = new ExternalFilter();
+		internal readonly ExternalFilter externalFilter = new ExternalFilter();
 
 		/// <summary>
 		/// SID voices
 		/// </summary>
-		private readonly Voice[] voice =  ArrayHelper.InitializeArray<Voice>(3);
+		internal readonly Voice[] voice =  ArrayHelper.InitializeArray<Voice>(3);
 
 		/// <summary>
 		/// Used to amplify the output by x/2 to get an adequate playback volume
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// Time to live for the last written value
 		/// </summary>
-		private int busValueTtl;
+		internal int busValueTtl;
 
 		/// <summary>
 		/// Current chip model's bus value TTL
@@ -158,22 +158,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// Time until VoiceSync() must run
 		/// </summary>
-		private uint nextVoiceSync;
+		internal uint nextVoiceSync;
 
 		/// <summary>
 		/// Currently active chip model
 		/// </summary>
-		private ChipModel model;
+		internal ChipModel model;
 
 		/// <summary>
 		/// Currently selected combined waveforms strength
 		/// </summary>
-		private CombinedWaveforms cws;
+		internal CombinedWaveforms cws;
 
 		/// <summary>
 		/// Last written value
 		/// </summary>
-		private byte busValue;
+		internal uint8_t busValue;
+
+		/// <summary>
+		/// Paddle coordinates
+		/// </summary>
+		internal uint8_t paddleX = 0xff;
+		internal uint8_t paddleY = 0xff;
 
 		/// <summary>
 		/// Emulated non-linearity of the envelope DAC
@@ -184,6 +190,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Emulated non-linearity of the oscillator DAC
 		/// </summary>
 		private readonly float[] oscDac = new float[4096];
+
+		internal Params p;
 
 		/********************************************************************/
 		/// <summary>
@@ -196,6 +204,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			filter8580 = new Filter8580();
 			resampler = null;
 			cws = CombinedWaveforms.AVERAGE;
+			p = new Params();
 
 			voice[0].SetOtherVoices(voice[2], voice[1]);
 			voice[1].SetOtherVoices(voice[0], voice[2]);
@@ -214,6 +223,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter6581Curve(double filterCurve)
 		{
+			p.FilterCurve6581 = filterCurve;
 			filter6581.SetFilterCurve(filterCurve);
 		}
 
@@ -226,6 +236,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter6581Range(double adjustment)
 		{
+			p.FilterRange6581 = adjustment;
 			filter6581.SetFilterRange(adjustment);
 		}
 
@@ -238,6 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter8580Curve(double filterCurve)
 		{
+			p.FilterCurve8580 = filterCurve;
 			filter8580.SetFilterCurve(filterCurve);
 		}
 
@@ -263,6 +275,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void EnableOld6581Caps(bool enable)
 		{
+			p.Old6581Caps = enable;
 			filter6581.EnableOldCaps(enable);
 		}
 
@@ -300,8 +313,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			model = new_model;
 
 			// Calculate waveform-related tables
-			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
-			matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model, cws);
+			rc_matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
+			rc_matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model, cws);
 
 			// Calculate envelope DAC table
 			{
@@ -338,6 +351,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				voice[i].Wave().SetWaveformModels(waveTables);
 				voice[i].Wave().SetPulldownModels(pulldownTables);
 			}
+
+			filter.Restart();
 		}
 
 
@@ -376,7 +391,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			cws = new_cws;
 
 			// Rebuild waveform related tables
-			matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model, cws);
+			rc_matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model, cws);
 
 			for (int i = 0; i < 3; i++)
 				voice[i].Wave().SetPulldownModels(pulldownTables);
@@ -426,6 +441,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Read registers without altering state
+		/// </summary>
+		/********************************************************************/
+		public uint8_t Peek(int offset)
+		{
+			switch (offset)
+			{
+				// X value of paddle
+				case 0x19:
+					return paddleX;
+
+				// Y value of paddle
+				case 0x1a:
+					return paddleY;
+
+				// Voice #3 waveform output
+				case 0x1b:
+					return voice[2].Wave().ReadOsc();
+
+				// Voice #3 ADSR output
+				case 0x1c:
+					return voice[2].Envelope().ReadEnv();
+
+				default:
+					return busValue;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read registers.
 		///
 		/// Reading a write only register returns the last char written to
@@ -451,7 +498,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				// X value of paddle
 				case 0x19:
 				{
-					busValue = 0xff;
+					busValue = paddleX;
 					busValueTtl = modelTtl;
 					break;
 				}
@@ -459,7 +506,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				// Y value of paddle
 				case 0x1a:
 				{
-					busValue = 0xff;
+					busValue = paddleY;
 					busValueTtl = modelTtl;
 					break;
 				}
@@ -699,9 +746,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Clock(uint cycles, short[] buf, int bufPos)
+		public int Clock(uint cycles, int16_t[] buf, int bufPos)
 		{
-			AgeBusValue(cycles);
+			AgeBusValue((int)cycles);
 			int s = bufPos;
 
 			while (cycles != 0)
@@ -715,7 +762,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 						ClockWaveGen();
 						ClockEnvGen();
 
-						int output = ClockFilt();
+						int32_t output = ClockFilt();
 
 						if (resampler.Input(output))
 							buf[s++] = resampler.GetOutput(scaleFactor);
@@ -740,7 +787,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Clock(short[] buf, int bufPos, int bufSize)
+		public int Clock(int16_t[] buf, int bufPos, int bufSize)
 		{
 			int cycles = 0;
 
@@ -758,7 +805,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 						ClockWaveGen();
 						ClockEnvGen();
 
-						int output = ClockFilt();
+						int32_t output = ClockFilt();
 
 						if (resampler.Input(output))
 						{
@@ -778,7 +825,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 					VoiceSync(true);
 			}
 
-			AgeBusValue((uint)cycles);
+			AgeBusValue(cycles);
 
 			return cycles;
 		}
@@ -836,6 +883,47 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				default:
 					throw new SidErrorException(Resources.IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD);
 			}
+
+			p.Method = method;
+			p.ClockFrequency = clockFrequency;
+			p.SamplingFrequency = samplingFrequency;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clock SID forward with no audio production.
+		/// Only the digital parts are emulated, the analog stage is ignored
+		/// </summary>
+		/********************************************************************/
+		public void ClockDigital(uint cycles)
+		{
+			AgeBusValue((int)cycles);
+
+			while (cycles != 0)
+			{
+				int delta_t = (int)Math.Min(nextVoiceSync, cycles);
+
+				if (delta_t > 0)
+				{
+					for (int i = 0; i < delta_t; i++)
+					{
+						ClockWaveGen();
+						ClockEnvGen();
+
+						voice[0].Wave().Output();
+						voice[1].Wave().Output();
+						voice[2].Wave().Output();
+					}
+
+					cycles = (uint)(cycles - delta_t);
+					nextVoiceSync = (uint)(nextVoiceSync - delta_t);
+				}
+
+				if (nextVoiceSync == 0)
+					VoiceSync(true);
+			}
 		}
 
 
@@ -852,7 +940,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void ClockSilent(uint cycles)
 		{
-			AgeBusValue(cycles);
+			AgeBusValue((int)cycles);
 
 			while (cycles != 0)
 			{
@@ -882,6 +970,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				if (nextVoiceSync == 0)
 					VoiceSync(true);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set paddle coordinates
+		/// </summary>
+		/********************************************************************/
+		public void SetPaddle(uint8_t x, uint8_t y)
+		{
+			paddleX = x;
+			paddleY = y;
 		}
 
 		#region Private methods
@@ -921,10 +1022,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int ClockFilt()
+		private int32_t ClockFilt()
 		{
-			ushort filtOutput = filter.Clock(voice[0], voice[1], voice[2]);
-			int exFiltInput = filtOutput + short.MinValue;
+			uint16_t filtOutput = filter.Clock(voice[0], voice[1], voice[2]);
+			int32_t exFiltInput = filtOutput + int16_t.MinValue;
 
 			return externalFilter.Clock(exFiltInput);
 		}
@@ -973,7 +1074,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void AgeBusValue(uint n)
+		private void AgeBusValue(int n)
 		{
 			if (busValueTtl != 0)
 			{

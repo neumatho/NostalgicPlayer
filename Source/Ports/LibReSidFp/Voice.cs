@@ -78,8 +78,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public float Output()
 		{
-			uint wav = waveformGenerator.Output();
-			uint env = envelopeGenerator.Output();
+			uint32_t wav = waveformGenerator.Output();
+			int env = envelopeGenerator.Output();
 
 			// DAC imperfections are emulated by using the digital output
 			// as an index into a DAC lookup table
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Write control register
 		/// </summary>
 		/********************************************************************/
-		public void WriteControl_Reg(byte control)
+		public void WriteControl_Reg(uint8_t control)
 		{
 			waveformGenerator.WriteControl_Reg(control);
 			envelopeGenerator.WriteControl_Reg(control);

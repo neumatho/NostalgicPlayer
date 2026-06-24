@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// </summary>
 		private readonly matrix_t firTable;
 
-		private int sampleIndex = 0;
+		internal int sampleIndex = 0;
 
 		/// <summary>
 		/// Filter resolution
@@ -54,9 +54,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		private readonly int firN;
 
 		private readonly int cyclesPerSample;
-		private int sampleOffset = 0;
-		private int outputValue = 0;
-		private readonly int[] sample = new int[RingSize * 2];
+		internal int sampleOffset = 0;
+		internal int outputValue = 0;
+		internal readonly int[] sample = new int[RingSize * 2];
 
 		/********************************************************************/
 		/// <summary>
@@ -144,7 +144,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 					double wt = wc * x * inv_CyclesPerSampleD;
 					double sincWt = Math.Abs(wt) >= 1e-8 ? Math.Sin(wt) / wt : 1.0;
 
-					firTable[(uint)i][j] = (short)(scale * sincWt * kaiserXt);
+					firTable[(uint)i][j] = (int16_t)(scale * sincWt * kaiserXt);
 				}
 			}
 		}
@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override bool Input(int input)
+		public override bool Input(int32_t input)
 		{
 			bool ready = false;
 
@@ -234,7 +234,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private int Fir(int subCycle)
+		private int32_t Fir(int subCycle)
 		{
 			// Find the first of the nearest fir tables close to the phase
 			int firTableFirst = (subCycle * firRes >> 10);
@@ -243,7 +243,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 			// Find firN most recent samples, plus one extra in case the FIR wraps
 			int sampleStart = sampleIndex - firN + RingSize - 1;
 
-			int v1 = Convolve(sampleStart, firTable[(uint)firTableFirst], firN);
+			int32_t v1 = Convolve(sampleStart, firTable[(uint)firTableFirst], firN);
 
 			// Use next FIR table, wrap around to first FIR table using
 			// previous sample
@@ -253,11 +253,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 				++sampleStart;
 			}
 
-			int v2 = Convolve(sampleStart, firTable[(uint)firTableFirst], firN);
+			int32_t v2 = Convolve(sampleStart, firTable[(uint)firTableFirst], firN);
 
 			// Linear interpolation between the sinc tables yields good
 			// approximation for the exact value
-			return v1 + (firTableOffset * (v2 - v1) >> 10);
+			return v1 + ((firTableOffset * (v2 - v1)) >> 10);
 		}
 
 
@@ -267,9 +267,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// Calculate convolution with sample and sinc
 		/// </summary>
 		/********************************************************************/
-		private int Convolve(int a, short[] b, int bLength)
+		private int32_t Convolve(int32_t a, int16_t[] b, int bLength)
 		{
-			int @out = 0;
+			int32_t @out = 0;
 
 			for (int i = 0; i < bLength; i++)
 				@out += sample[a + i] * b[i];

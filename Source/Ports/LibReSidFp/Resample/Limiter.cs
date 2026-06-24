@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 	internal static class Limiter
 	{
 		/// <summary></summary>
-		public const int threshold = 28000;
+		public const int32_t threshold = 28000;
 
 		/********************************************************************/
 		/// <summary>
@@ -22,9 +22,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static short SoftClip(int x)
+		public static int16_t SoftClip(int32_t x)
 		{
-			return (short)(SoftClipImpl(x));
+			return (int16_t)(SoftClipImpl(x));
 		}
 
 		#region Private methods
@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int Clipper(int x, int m)
+		private static int32_t Clipper(int32_t x, int32_t m)
 		{
 			if (x < threshold)
 				return x;
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 			double value = (x - threshold) / max_val;
 			value = a * CMath.tanh(b * value);
 
-			return (int)(threshold + (value * max_val));
+			return (int32_t)(threshold + (value * max_val));
 		}
 
 

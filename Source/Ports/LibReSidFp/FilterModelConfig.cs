@@ -120,13 +120,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		protected double currFactorCoeff;
 
 		// Lookup tables for gain and summer op-amps in output stage / filter
-		protected readonly ushort[] mixer;			// This is initialized in the derived class constructor
-		protected readonly ushort[] summer;			// This is initialized in the derived class constructor
-		protected readonly ushort[] volume;			// This is initialized in the derived class constructor
-		protected readonly ushort[] resonance;		// This is initialized in the derived class constructor
+		protected readonly uint16_t[] mixer;		// This is initialized in the derived class constructor
+		protected readonly uint16_t[] summer;		// This is initialized in the derived class constructor
+		protected readonly uint16_t[] volume;		// This is initialized in the derived class constructor
+		protected readonly uint16_t[] resonance;	// This is initialized in the derived class constructor
 
 		// Reverse op-amp transfer function
-		protected readonly ushort[] opamp_rev = new ushort[1 << 16];	// This is initialized in the derived class constructor
+		protected readonly uint16_t[] opamp_rev = new uint16_t[1 << 16];	// This is initialized in the derived class constructor
 
 		private readonly RandomNoise rnd = new RandomNoise();
 
@@ -149,10 +149,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			n16 = norm * UInt16.MaxValue;
 			currFactorCoeff = denorm * (uCox / 2.0 * 1.0e-6 / c);
 			voice_voltage_range = vvr;
-			mixer = new ushort[Mixer_Offset.Value(8)];
-			summer = new ushort[Summer_Offset.Value(5)];
-			volume = new ushort[16 * (1 << 16)];
-			resonance = new ushort[16 * (1 << 16)];
+			mixer = new uint16_t[Mixer_Offset.Value(8)];
+			summer = new uint16_t[Summer_Offset.Value(5)];
+			volume = new uint16_t[16 * (1 << 16)];
+			resonance = new uint16_t[16 * (1 << 16)];
 
 			CalcCurrFactorCoeff();
 
@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				Spline.Point @out = s.Evaluate(x);
 
 				// When interpolating outside range the first element may be negative
-				opamp_rev[x] = (ushort)(@out.x > 0.0f ? To_UShort(@out.x) : 0);
+				opamp_rev[x] = (uint16_t)(@out.x > 0.0f ? To_UInt16(@out.x) : 0);
 			}
 		}
 
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[] GetVolume()
+		public uint16_t[] GetVolume()
 		{
 			return volume;
 		}
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[] GetResonance()
+		public uint16_t[] GetResonance()
 		{
 			return resonance;
 		}
@@ -212,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[] GetSummer()
+		public uint16_t[] GetSummer()
 		{
 			return summer;
 		}
@@ -224,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[] GetMixer()
+		public uint16_t[] GetMixer()
 		{
 			return mixer;
 		}
@@ -237,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort GetOpampRev(int i)
+		public uint16_t GetOpampRev(int i)
 		{
 			return opamp_rev[i];
 		}
@@ -275,10 +275,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected ushort To_UShort_Dither(double x, double d_Noise)
+		protected uint16_t To_UInt16_Dither(double x, double d_Noise)
 		{
 			int tmp = (int)(x + d_Noise);
-			return (ushort)tmp;
+			return (uint16_t)tmp;
 		}
 
 
@@ -289,9 +289,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected ushort To_UShort(double x)
+		protected uint16_t To_UInt16(double x)
 		{
-			return To_UShort_Dither(x, 0.5);
+			return To_UInt16_Dither(x, 0.5);
 		}
 
 
@@ -302,9 +302,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort GetNormalizedValue(double value)
+		public uint16_t GetNormalizedValue(double value)
 		{
-			return To_UShort_Dither(n16 * (value - vMin), rnd.GetNoise());
+			return To_UInt16_Dither(n16 * (value - vMin), rnd.GetNoise());
 		}
 
 
@@ -315,9 +315,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort GetNormalizedCurrentFactor(int N, double wl)
+		public uint16_t GetNormalizedCurrentFactor(int N, double wl)
 		{
-			return To_UShort((1 << N) * currFactorCoeff * wl);
+			return To_UInt16((1 << N) * currFactorCoeff * wl);
 		}
 
 
@@ -328,9 +328,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort GetNVMin()
+		public uint16_t GetNVMin()
 		{
-			return To_UShort(n16 * vMin);
+			return To_UInt16(n16 * vMin);
 		}
 
 
@@ -341,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int GetNormalizedVoice(float value, uint env)
+		public int32_t GetNormalizedVoice(float value, uint8_t env)
 		{
 			return GetNormalizedValue(GetVoiceVoltage(value, env));
 		}
@@ -498,7 +498,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected abstract double GetVoiceDc(uint env);
+		protected abstract double GetVoiceDc(uint8_t env);
 		#endregion
 
 		#region Private methods
@@ -508,9 +508,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private double GetVoiceVoltage(float value, uint env)
+		private double GetVoiceVoltage(float value, uint8_t env)
 		{
-			return value * voice_voltage_range + GetVoiceDc(env);
+			return (value * voice_voltage_range) + GetVoiceDc(env);
 		}
 		#endregion
 	}

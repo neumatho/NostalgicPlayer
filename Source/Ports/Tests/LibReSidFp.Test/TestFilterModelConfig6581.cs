@@ -3,25 +3,30 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp;
+
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibReSidFp.Test
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal abstract class Integrator
+	[TestClass]
+	public class TestFilterModelConfig6581
 	{
-		internal int32_t vx;
-		internal int32_t vc;
-
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// 
 		/// </summary>
 		/********************************************************************/
-		protected Integrator()
+		[TestMethod]
+		public void TestFilterCurve()
 		{
-			vx = 0;
-			vc = 0;
+			// Check that values in the filter curve range do not
+			// trigger assertions
+			c_ushort[] dac = FilterModelConfig6581.GetInstance().GetDac(0.0);
+
+			dac = FilterModelConfig6581.GetInstance().GetDac(1.0);
 		}
 
 
@@ -31,19 +36,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public abstract int32_t Solve(int32_t vi);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void Restart()
+		[TestMethod]
+		public void TestFilterRange()
 		{
-			vx = 16384;
-			vc = 16384;
+			FilterModelConfig6581.GetInstance().SetFilterRange(0.0);
+
+			FilterModelConfig6581.GetInstance().SetFilterRange(1.0);
 		}
 	}
 }

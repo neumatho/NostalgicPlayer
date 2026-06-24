@@ -135,11 +135,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		private readonly double wlSnake;
 
-		private uint nVddt_vw_2;
+		internal uint32_t nVddt_vw_2;
 
-		private readonly ushort nVddt;
-		private readonly ushort nVt;
-		private readonly ushort nVMin;
+		private readonly uint16_t nVddt;
+		private readonly uint16_t nVt;
+		private readonly uint16_t nVMin;
 
 		private readonly FilterModelConfig6581 fmc;
 
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetVw(ushort vw)
+		public void SetVw(uint16_t vw)
 		{
 			nVddt_vw_2 = (uint)(((nVddt - vw) * (nVddt - vw)) >> 1);
 		}
@@ -177,37 +177,37 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override int Solve(int vi)
+		public override int32_t Solve(int32_t vi)
 		{
 			// "Snake" voltages for triode mode calculation
-			uint vgst = (uint)(nVddt - vx);
-			uint vgdt = (uint)(nVddt - vi);
+			uint32_t vgst = (uint)(nVddt - vx);
+			uint32_t vgdt = (uint)(nVddt - vi);
 
-			uint vgst_2 = vgst * vgst;
-			uint vgdt_2 = vgdt * vgdt;
+			uint32_t vgst_2 = vgst * vgst;
+			uint32_t vgdt_2 = vgdt * vgdt;
 
 			// "Snake" current, scaled by (1/m)*2^13*m*2^16*m*2^16*2^-15 = m*2^30
-			int n_I_snake = fmc.GetNormalizedCurrentFactor(13, wlSnake) * ((int)(vgst_2 - vgdt_2) >> 15);
+			int32_t n_I_snake = fmc.GetNormalizedCurrentFactor(13, wlSnake) * ((int32_t)(vgst_2 - vgdt_2) >> 15);
 
 			// VCR gate voltage.		// Scaled by m*2^16
 			// Vg = Vddt - sqrt(((Vddt - vW)^2 + Vgdt^2)/2)
-			int nVg = fmc.GetVcr_nVg((nVddt_vw_2 + (vgdt_2 >> 1)) >> 16);
-			int kVgt = (nVg - nVt) - nVMin;
+			int32_t nVg = fmc.GetVcr_nVg((nVddt_vw_2 + (vgdt_2 >> 1)) >> 16);
+			int32_t kVgt = (nVg - nVt) - nVMin;
 
 			// VCR voltages for EKV model table lookup
-			int kVgt_Vs = (kVgt - vx) - Int16.MinValue;
-			int kVgt_Vd = (kVgt - vi) - Int16.MinValue;
+			int32_t kVgt_Vs = (kVgt - vx) - Int16.MinValue;
+			int32_t kVgt_Vd = (kVgt - vi) - Int16.MinValue;
 
 			// VCR current, scaled by m*2^15*2^15 = m*2^30
-			uint @if = (uint)(fmc.GetVcr_n_Ids_Term(kVgt_Vs)) << 15;
-			uint ir = (uint)(fmc.GetVcr_n_Ids_Term(kVgt_Vd)) << 15;
-			int n_I_vcr = (int)(@if - ir);
+			uint32_t @if = (uint32_t)(fmc.GetVcr_n_Ids_Term(kVgt_Vs)) << 15;
+			uint32_t ir = (uint32_t)(fmc.GetVcr_n_Ids_Term(kVgt_Vd)) << 15;
+			int32_t n_I_vcr = (int32_t)(@if - ir);
 
 			// Change in capacitor charge
 			vc += n_I_snake + n_I_vcr;
 
 			// vx = g(vc)
-			int tmp = (vc >> 15) - Int16.MinValue;
+			int32_t tmp = (vc >> 15) - Int16.MinValue;
 			vx = fmc.GetOpampRev(tmp);
 
 			// Return vo

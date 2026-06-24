@@ -12,8 +12,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 	/// </summary>
 	internal sealed class TwoPassSincResampler : Resampler
 	{
-		private readonly SincResampler s1;
-		private readonly SincResampler s2;
+		internal readonly SincResampler s1;
+		internal readonly SincResampler s2;
 
 		/********************************************************************/
 		/// <summary>
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override bool Input(int sample)
+		public override bool Input(int32_t sample)
 		{
 			return s1.Input(sample) && s2.Input(s1.Output());
 		}
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override int Output()
+		public override int32_t Output()
 		{
 			return s2.Output();
 		}

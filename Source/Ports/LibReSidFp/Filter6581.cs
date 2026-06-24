@@ -297,14 +297,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// VCR + associated capacitor connected to highpass output
 		/// </summary>
-		private readonly Integrator6581 hpIntegrator;
+		internal readonly Integrator6581 hpIntegrator;
 
 		/// <summary>
 		/// VCR + associated capacitor connected to bandpass output
 		/// </summary>
-		private readonly Integrator6581 bpIntegrator;
+		internal readonly Integrator6581 bpIntegrator;
 
-		private ushort[] f0_dac;
+		private uint16_t[] f0_dac;
 
 		/********************************************************************/
 		/// <summary>
@@ -363,12 +363,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override int SolveIntegrators()
+		protected override int32_t SolveIntegrators()
 		{
 			vbp = hpIntegrator.Solve(vhp);
 			vlp = bpIntegrator.Solve(vbp);
 
-			int vFilt = 0;
+			int32_t vFilt = 0;
 
 			if (lp)
 				vFilt += vlp;
@@ -381,12 +381,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 			// The filter input resistors are slightly bigger than the voice ones
 			// Scale the values accordingly
-			int filterGain = (int)(0.93 * (1 << 12));
+			int32_t filterGain = (int32_t)(0.93 * (1 << 12));
 
 			// Scaling unsigned values adds a DC offset
-			int offset = 32767 * ((1 << 12) - filterGain);
+			int32_t offset = 32767 * ((1 << 12) - filterGain);
 
 			return ((vFilt * filterGain) + offset) >> 12;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected override void RestartIntegrators()
+		{
+			hpIntegrator.Restart();
+			bpIntegrator.Restart();
 		}
 
 
@@ -398,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		protected override void UpdateCenterFrequency()
 		{
-			ushort vw = f0_dac[GetFc()];
+			uint16_t vw = f0_dac[GetFc()];
 			hpIntegrator.SetVw(vw);
 			bpIntegrator.SetVw(vw);
 		}

@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 	internal sealed class PassThrough : Resampler
 	{
 		// Last sample
-		private int outputValue;
+		internal int outputValue;
 
 		/********************************************************************/
 		/// <summary>

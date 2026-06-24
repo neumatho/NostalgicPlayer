@@ -13,19 +13,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// <summary>
 		/// Last sample
 		/// </summary>
-		private int cachedSample;
+		internal int32_t cachedSample;
 
 		/// <summary>
 		/// Number of cycles per sample
 		/// </summary>
 		private readonly int cyclesPerSample;
 
-		private int sampleOffset;
+		internal int sampleOffset;
 
 		/// <summary>
 		/// Calculated sample
 		/// </summary>
-		private int outputValue;
+		internal int32_t outputValue;
 
 		/********************************************************************/
 		/// <summary>
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override int Output()
+		public override int32_t Output()
 		{
 			return outputValue;
 		}
