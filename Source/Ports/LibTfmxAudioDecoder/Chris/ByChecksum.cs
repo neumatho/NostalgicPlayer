@@ -83,6 +83,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				macroCmdFuncs[0x1c] = MacroFunc_SplitKey;
 				macroCmdFuncs[0x1d] = MacroFunc_SplitVolume;
 			}
+			// Turrican 3 level 5 / world 5
+			else if (crc1 == 0xc7ae8de6)
+			{
+				if (MyEndian.ReadBEUdword(pBuf, 4 + GetMacroOffset(0x4c)) != 0x02008c0e)
+					blacklisted = true;
+			}
 			// Danger Freak (1989) seems to be a special TFMX v1 variant
 			else if ((crc1 == 0x48960d8c) || (crc1 == 0x5dcd624f) || (crc1 == 0x3f0b151f))
 			{

@@ -14,7 +14,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// For the publicly available TFMX modules, the array of offsets to
+		/// each macro script is located either at the end of the file (for
+		/// compressed MDAT) or before the track table (for uncompressed
+		/// MDAT) and, apparently, always _not before_ the array of pattern
+		/// offsets.
+		///
+		/// Thus, for truncated (!) MDAT one or more macro offsets may be
+		/// undefined. For example, if the memory following the MDAT were
+		/// cleared to 0 on Amiga, it would point at the beginning of the
+		/// MDAT which would be wrong. Or it may point anywhere, if other
+		/// data or the SMPL data are stored directly after the MDAT.
+		/// Furthermore, macro script data may be missing, too.
+		///
+		/// With smart pointer access, an OOB offset is no threat. The
+		/// underlying implementation would read value 0. Since we store
+		/// MDAT+SMPL data within the same buffer, for truncated MDAT we may
+		/// read from SMPL space by mistake. But, and that is an important
+		/// BUT, we cannot fix truncated data. Imagine cases like a Goto/Cont
+		/// macro command jumping to a bad offset. Rejecting that would be
+		/// wrong. And it could also be damaged data, not just truncated
+		/// data.
+		///
+		/// So, nothing is won if trying to reject obviously bad offsets here
+		/// by applying range checks (e.g. to see whether an offset is
+		/// ‹ input.mdatSize) and handling the return value in the calling
+		/// function, too
 		/// </summary>
 		/********************************************************************/
 		private udword GetMacroOffset(ubyte macro)
@@ -309,6 +334,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			voice.Macro.Offset = GetMacroOffset((ubyte)(playerInfo.Cmd.Bb & 0x7f));
 			voice.Macro.Step = MyEndian.MakeWord(playerInfo.Cmd.Cd, playerInfo.Cmd.Ee);
 			voice.Macro.Loop = 0xff;
+			voice.Macro.BranchIfSame = false;
 
 			playerInfo.MacroEvalAgain = true;
 		}
@@ -1086,6 +1112,49 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				voice.Sid.Op3.Delta = 0;
 			}
 
+			playerInfo.MacroEvalAgain = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Macro command $30. Available in e.g. Gem'Z and Turrican III
+		/// players, used also by Denny (unreleased game), but the way it's
+		/// used, it only triggers in Gem'Z soundtrack, because on new note
+		/// and Cont/Goto the boolean variable is reset.
+		/// 
+		/// If this voice uses the same macro script since last note, branch
+		/// to specified macro position
+		/// </summary>
+		/********************************************************************/
+		private void MacroFunc_BranchIfSame(VoiceVars voice)
+		{
+			playerInfo.MacroEvalAgain = true;
+
+			if (voice.Macro.BranchIfSame)
+				voice.Macro.Step = MyEndian.MakeWord(playerInfo.Cmd.Cd, playerInfo.Cmd.Ee);
+			else
+			{
+				voice.Macro.BranchIfSame = true;
+				voice.Macro.Step++;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Macro command $31. Available in e.g. Gem'Z and Turrican III
+		/// players, but only used by T3 title
+		/// </summary>
+		/********************************************************************/
+		private void MacroFunc_KeyUp(VoiceVars voice)
+		{
+			playerInfo.Cmd.Aa = 0xf5;	// Key up command
+			NoteCmd();					// with cmd.cd = channel number
+
+			voice.Macro.Step++;
 			playerInfo.MacroEvalAgain = true;
 		}
 	}

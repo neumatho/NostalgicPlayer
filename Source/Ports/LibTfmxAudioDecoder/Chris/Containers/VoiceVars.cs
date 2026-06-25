@@ -38,7 +38,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Containers
 			sbyte State,	// -1 = enabled, 0 = skip, 1 = init
 			bool ExtraWait,
 			bool DelayedOff,
-			bool DelayedOn
+			bool DelayedOn,
+			bool BranchIfSame
 		) Macro;
 
 		public sword WaitOnDmaCount;

@@ -586,6 +586,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			SetRate(50 << 8);
 			voices = 4;
 
+			// Move these, if ever encapsulating sequencer.
+			// So far, they have been constant, btw
 			playerInfo.Sequencer.StepSeenBefore = new bool[Track_Steps_Max];
 			playerInfo.Sequencer.Tracks = 8;
 			playerInfo.Sequencer.Step.Size = 16;
@@ -695,6 +697,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			macroCmdFuncs[0x28] = MacroFunc_28;
 			macroCmdFuncs[0x29] = MacroFunc_29;
+
+			macroCmdFuncs[0x30] = MacroFunc_BranchIfSame;
+			macroCmdFuncs[0x31] = MacroFunc_KeyUp;
 
 			// TFMX v1.x up to and including v2.2 cannot be distinguished from
 			// the later TFMX and/or variants. Unless the very rarely used old
@@ -907,11 +912,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		{
 			playerInfo.Cmd.Aa = playerInfo.Cmd.Bb = playerInfo.Cmd.Cd = playerInfo.Cmd.Ee = 0;
 
-			for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
+			for (ubyte t = 0; t < Tracks_Max; t++)
 			{
 				Track tr = playerInfo.Track[t];
 
-				tr.On = GetTrackMute(t);
+				tr.On = false;
 				tr.Pt = 0xff;
 				tr.Tr = 0;
 				tr.Pattern.Offset = tr.Pattern.Step = 0;
@@ -919,7 +924,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				tr.Pattern.Loops = -1;
 			}
 
-			for (ubyte v = 0; v < voices; v++)
+			for (ubyte v = 0; v < Voices_Max; v++)
 			{
 				VoiceVars voice = voiceVars[v];
 				PaulaVoice paulaVoice = paulaVoices[v];
@@ -949,6 +954,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				voice.Macro.Loop = 0xff;
 				voice.Macro.ExtraWait = true;
 				voice.Macro.DelayedOff = voice.Macro.DelayedOn = false;
+				voice.Macro.Offset = 0;
+				voice.Macro.BranchIfSame = false;
 
 				voice.Sid.TargetOffset = (0x100U * v) + 4U;
 				voice.Sid.TargetLength = 0;
@@ -1444,8 +1451,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				v.NotePrevious = v.Note;
 				v.Note = playerInfo.Cmd.Aa;
 				v.KeyUp = false;
-				v.Macro.Offset = GetMacroOffset((ubyte)(playerInfo.Cmd.Bb & 0x7f));
-				v.Macro.State = 1;
+
+				udword mo  = GetMacroOffset((ubyte)(playerInfo.Cmd.Bb & 0x7f));
+				if (mo != v.Macro.Offset)
+					v.Macro.BranchIfSame = false;
+
+				v.Macro.Offset = mo;
+				v.Macro.State = 1;		// Delayed macro init
 			}
 			else						// Portamento note
 			{
