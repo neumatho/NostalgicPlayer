@@ -109,6 +109,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			libXmp = LibXmp.Xmp_Create_Context();
 
+			libXmp.Xmp_Set_Player(Xmp_Player.DefPan, 100);
+
 			libXmp.Xmp_Set_Load_Format(currentFormat.Id);
 			int retVal = libXmp.Xmp_Load_Module_From_File(fileInfo.ModuleStream);
 
