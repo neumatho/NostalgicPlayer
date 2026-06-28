@@ -17,6 +17,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 	/// </summary>
 	internal sealed class FilterModelConfig6581 : FilterModelConfig
 	{
+		/// <summary>
+		/// The ratio of the resistors of the mixer input for filter signals
+		/// compared to the voice ones.
+		/// See the 6581 filter schematic
+		/// </summary>
+		public const double VF_TR_RATIO = 1.07;
+
 		private const int DAC_BITS = 11;
 
 		// Power bricks generate voltages slightly out of spec
@@ -140,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			void FilterMixer()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-				BuildMixerTable(opAmpModel, 8.0 / 6.0);
+				BuildMixerTable(opAmpModel, 8.0 / (6.0 * VF_TR_RATIO));
 			}
 
 			void FilterGain()

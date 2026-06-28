@@ -274,10 +274,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Filter8580() : base(FilterModelConfig8580.GetInstance())
+		public Filter8580() : this(new Integrator8580(FilterModelConfig8580.GetInstance()), new Integrator8580(FilterModelConfig8580.GetInstance()))
 		{
-			hpIntegrator = new Integrator8580(FilterModelConfig8580.GetInstance());
-			bpIntegrator = new Integrator8580(FilterModelConfig8580.GetInstance());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		private Filter8580(Integrator8580 hpIntegrator, Integrator8580 bpIntegrator) : base(FilterModelConfig8580.GetInstance(), hpIntegrator, bpIntegrator)
+		{
+			this.hpIntegrator = hpIntegrator;
+			this.bpIntegrator = bpIntegrator;
 			SetFilterCurve(0.5);
 		}
 
@@ -307,23 +318,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override int32_t SolveIntegrators()
+		protected override void RestartIntegrators()
 		{
-			vbp = hpIntegrator.Solve(vhp);
-			vlp = bpIntegrator.Solve(vbp);
-
-			int32_t vFilt = 0;
-
-			if (lp)
-				vFilt += vlp;
-
-			if (bp)
-				vFilt += vbp;
-
-			if (hp)
-				vFilt += vhp;
-
-			return vFilt;
+			hpIntegrator.Restart();
+			bpIntegrator.Restart();
 		}
 
 
@@ -333,10 +331,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void RestartIntegrators()
+		protected override int32_t GetNormalizedMixerVoice(float v, uint8_t env)
 		{
-			hpIntegrator.Restart();
-			bpIntegrator.Restart();
+			return GetNormalizedVoice(v, env);
 		}
 
 

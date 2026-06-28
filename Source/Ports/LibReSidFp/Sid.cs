@@ -17,11 +17,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 	/// </summary>
 	public class Sid
 	{
-		#if false
-		Note: this needs more in-depth analysis.
-		With the implementation of the 6581 DC drift the digis become too loud.
-		Also there is no evidence in the schematics for a DC offset in the 8580.
-
 		// The waveform D/A converter introduces a DC offset in the signal
 		// to the envelope multiplying D/A converter. The "zero" level of
 		// the waveform D/A converter can be found as follows:
@@ -84,9 +79,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// To me that seems as regular 8580s have somewhat wide 0-level range,
 		// whereas that digi-compatible 8580 has it very narrow.
 		// On my 6581R4AR has 0x3A as the only value giving the same output level as 1.prg
+		//
+		// Note: this needs more in-depth analysis.
+		// There is no evidence in the schematics for a DC offset in the 8580
+		// and it would make digis too loud
 		private const uint OFFSET_6581 = 0x380;
 		private const uint OFFSET_8580 = 0x9c0;
-		#endif
 
 		private const uint ENV_DAC_BITS = 8;
 		private const uint OSC_DAC_BITS = 12;
@@ -333,7 +331,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				dacBuilder.KinkedDac(model);
 
 				//double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : OFFSET_8580);
-				double offset = dacBuilder.GetOutput(0x7ff, is6581);
+				double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : 0x7ff, is6581);
 
 				for (uint i = 0; i < (1 << (int)OSC_DAC_BITS); i++)
 				{

@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		private readonly int32_t[] Vhp = new int32_t[2];
 		private readonly int32_t[] Vbp = new int32_t[2];
 		private readonly int32_t[] Vlp = new int32_t[2];
-		private readonly int32_t[] Ve = new int32_t[2];
+		private readonly float[] ExtIn = new float[2];
 		private readonly uint8_t[] fc = new uint8_t[2];
 		private readonly uint8_t[] vol = new uint8_t[2];
 		private readonly uint8_t[] filt = new uint8_t[2];
@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				state.Vhp[i] = f.vhp;
 				state.Vbp[i] = f.vbp;
 				state.Vlp[i] = f.vlp;
-				state.Ve[i] = f.ve;
+				state.ExtIn[i] = f.extIn;
 				state.fc[i] = (uint8_t)f.fc;
 				state.filt1[i] = f.filt1;
 				state.filt2[i] = f.filt2;
@@ -318,7 +318,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				f.vhp = state.Vhp[i];
 				f.vbp = state.Vbp[i];
 				f.vlp = state.Vlp[i];
-				f.ve = state.Ve[i];
+				f.extIn = state.ExtIn[i];
 				f.fc = state.fc[i];
 				f.filt1 = state.filt1[i];
 				f.filt2 = state.filt2[i];

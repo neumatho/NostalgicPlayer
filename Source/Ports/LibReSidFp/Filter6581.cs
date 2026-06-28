@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// $17           |   |                    (CAP2B)     |  (CAP1B)     |
 		// 0=to mixer    |   +--R8--+  +---R8--+      +---C---o      +---C---o
 		// 1=to filter   |          |  |       |      |       |      |       |
-		//                ------R8--o--o--[A>--o--Rw--o--[A>--o--Rw--o--[A>--o
+		//               +------R8--o--o--[A>--o--Rw--o--[A>--o--Rw--o--[A>--o
 		//     ve (EXT IN)          |          |              |              |
 		// D3  \ ---------------R8--o          |              | (CAP2A)      | (CAP1A)
 		//     |   v3               |          | vhp          | vbp          | vlp
@@ -311,10 +311,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Filter6581() : base(FilterModelConfig6581.GetInstance())
+		public Filter6581() : this(new Integrator6581(FilterModelConfig6581.GetInstance()), new Integrator6581(FilterModelConfig6581.GetInstance()))
 		{
-			hpIntegrator = new Integrator6581(FilterModelConfig6581.GetInstance());
-			bpIntegrator = new Integrator6581(FilterModelConfig6581.GetInstance());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		private Filter6581(Integrator6581 hpIntegrator, Integrator6581 bpIntegrator) : base(FilterModelConfig6581.GetInstance(), hpIntegrator, bpIntegrator)
+		{
+			this.hpIntegrator = hpIntegrator;
+			this.bpIntegrator = bpIntegrator;
 			f0_dac = FilterModelConfig6581.GetInstance().GetDac(0.5);
 		}
 
@@ -363,43 +374,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override int32_t SolveIntegrators()
+		protected override void RestartIntegrators()
 		{
-			vbp = hpIntegrator.Solve(vhp);
-			vlp = bpIntegrator.Solve(vbp);
-
-			int32_t vFilt = 0;
-
-			if (lp)
-				vFilt += vlp;
-
-			if (bp)
-				vFilt += vbp;
-
-			if (hp)
-				vFilt += vhp;
-
-			// The filter input resistors are slightly bigger than the voice ones
-			// Scale the values accordingly
-			int32_t filterGain = (int32_t)(0.93 * (1 << 12));
-
-			// Scaling unsigned values adds a DC offset
-			int32_t offset = 32767 * ((1 << 12) - filterGain);
-
-			return ((vFilt * filterGain) + offset) >> 12;
+			hpIntegrator.Restart();
+			bpIntegrator.Restart();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// The filter input resistors on the 6581 are slightly bigger than
+		/// the voice ones, scale the values accordingly
 		/// </summary>
 		/********************************************************************/
-		protected override void RestartIntegrators()
+		protected override int32_t GetNormalizedMixerVoice(float v, uint8_t env)
 		{
-			hpIntegrator.Restart();
-			bpIntegrator.Restart();
+			return GetNormalizedVoice(v * (float)FilterModelConfig6581.VF_TR_RATIO, env);
 		}
 
 

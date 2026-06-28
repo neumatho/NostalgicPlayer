@@ -42,7 +42,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// 
 		/// </summary>
-		private readonly FilterModelConfig fmc;
+		private readonly FilterModelConfig m_fmc;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		private readonly Integrator m_hpIntegrator;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		private readonly Integrator m_bpIntegrator;
 
 		/// <summary>
 		/// Current filter/voice mixer setting
@@ -82,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// <summary>
 		/// Filter external input
 		/// </summary>
-		internal int32_t ve = 0;
+		internal float extIn = 0;
 
 		/// <summary>
 		/// Filter cutoff frequency
@@ -129,13 +139,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected Filter(FilterModelConfig new_Fmc)
+		protected Filter(FilterModelConfig fmc, Integrator hpIntegrator, Integrator bpIntegrator)
 		{
-			mixer = new_Fmc.GetMixer();
-			summer = new_Fmc.GetSummer();
-			resonance = new_Fmc.GetResonance();
-			volume = new_Fmc.GetVolume();
-			fmc = new_Fmc;
+			mixer = fmc.GetMixer();
+			summer = fmc.GetSummer();
+			resonance = fmc.GetResonance();
+			volume = fmc.GetVolume();
+			m_fmc = fmc;
+			m_hpIntegrator = hpIntegrator;
+			m_bpIntegrator = bpIntegrator;
 
 			Input(0);
 		}
@@ -218,38 +230,50 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public uint16_t Clock(Voice voice1, Voice voice2, Voice voice3)
 		{
-			int32_t V1 = GetNormalizedVoice(voice1);
-			int32_t V2 = GetNormalizedVoice(voice2);
+			// Waveform outputs
+			float wav1 = voice1.Output();
+			float wav2 = voice2.Output();
+			float wav3 = voice3.Output();
+
+			// Envelope outputs
+			uint8_t env1 = voice1.Envelope().Output();
+			uint8_t env2 = voice2.Envelope().Output();
+			uint8_t env3 = voice3.Envelope().Output();
+
+			// Voltage summer for filter input
+			int32_t Vsum = 0;
+			Vsum += filt1 ? GetNormalizedVoice(wav1, env1) : 0;
+			Vsum += filt2 ? GetNormalizedVoice(wav2, env2) : 0;
+			Vsum += filt3 ? GetNormalizedVoice(wav3, env3) : 0;
+			Vsum += filtE ? GetNormalizedVoice(extIn, 0) : 0;
+			Vsum += vlp;
+			Vsum += currentResonance[vbp];
+
+			// Filter
+			vhp = currentSummer[Vsum];
+			vbp = m_hpIntegrator.Solve(vhp);
+			vlp = m_bpIntegrator.Solve(vbp);
+
+			int32_t Vfilt = 0;
+
+			if (lp)
+				Vfilt += vlp;
+
+			if (bp)
+				Vfilt += vbp;
+
+			if (hp)
+				Vfilt += vhp;
+
+			// Voltage summer for mixer input
+			int32_t Vmix = 0;
+			Vmix += filt1 ? 0 : GetNormalizedMixerVoice(wav1, env1);
+			Vmix += filt2 ? 0 : GetNormalizedMixerVoice(wav2, env2);
 
 			// Voice 3 is silenced by voice3off if it is not routed through the filter
-			int32_t V3 = (filt3 || !voice3Off) ? GetNormalizedVoice(voice3) : GetSilentVoice(voice3);
-
-			int32_t Vsum = 0;
-			int32_t Vmix = 0;
-
-			if (filt1)
-				Vsum += V1;
-			else
-				Vmix += V1;
-
-			if (filt2)
-				Vsum += V2;
-			else
-				Vmix += V2;
-
-			if (filt3)
-				Vsum += V3;
-			else
-				Vmix += V3;
-
-			if (filtE)
-				Vsum += ve;
-			else
-				Vmix += ve;
-
-			vhp = currentSummer[currentResonance[vbp] + vlp + Vsum];
-
-			Vmix += SolveIntegrators();
+			Vmix += filt3 || voice3Off ? 0 : GetNormalizedMixerVoice(wav3, env3);
+			Vmix += filtE ? 0 : GetNormalizedMixerVoice(extIn, 0);
+			Vmix += Vfilt;
 
 			return currentVolume[currentMixer[Vmix]];
 		}
@@ -295,7 +319,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void Input(int16_t input)
 		{
-			ve = fmc.GetNormalizedVoice(input / 32768.0f, 0);
+			extIn = input / 65535.0f;
 		}
 
 
@@ -326,10 +350,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Update filter cutoff frequency
+		/// 
 		/// </summary>
 		/********************************************************************/
-		protected abstract int32_t SolveIntegrators();
+		protected abstract void RestartIntegrators();
 
 
 
@@ -338,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected abstract void RestartIntegrators();
+		protected abstract int32_t GetNormalizedMixerVoice(float v, uint8_t env);
 		#endregion
 
 		#region Helper methods
@@ -352,37 +376,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		{
 			return fc;
 		}
-		#endregion
 
-		#region Private methods
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int32_t GetNormalizedVoice(Voice v)
+		protected int32_t GetNormalizedVoice(float v, uint8_t env)
 		{
-			return fmc.GetNormalizedVoice(v.Output(), v.Envelope().Output());
+			return m_fmc.GetNormalizedVoice(v, env);
 		}
+		#endregion
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// If voice 3 is off we still need to clock the waveform generator
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static int32_t GetSilentVoice(Voice v)
-		{
-			v.Wave().Output();
-
-			return 0;
-		}
-
-
-
+		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Update filter resonance
