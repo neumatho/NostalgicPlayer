@@ -50,6 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public ushort VibDegree { get; set; }		// Vibrato degree
 		public short SustainCounter { get; set; }	// Sustain time counter
 		public short StarVolume { get; set; }		// Calculated volume from synth samples (0-256)
+		public ushort SynthPeriod { get; set; }
 
 		// For His Master's Noise synths
 		public byte DataCounter { get; set; }

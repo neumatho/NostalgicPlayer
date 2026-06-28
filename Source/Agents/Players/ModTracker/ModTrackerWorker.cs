@@ -800,7 +800,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					{
 						// Allocate memory to hold the tracks
 						for (int j = 0; j < channelNum; j++)
-							line[j] = tracks[i * channelNum + j] = new TrackLine[patternLength];
+							line[j] = tracks[(i * channelNum) + j] = new TrackLine[patternLength];
 
 						if (currentModuleType == ModuleType.StarTrekker8)
 						{
@@ -832,7 +832,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				for (int i = 0; i < maxPattern; i++)
 				{
 					for (int j = 0; j < channelNum; j++)
-						sequences[j, i] = (ushort)(i * channelNum + j);
+						sequences[j, i] = (ushort)((i * channelNum) + j);
 				}
 
 				byte[] decodeTable = null;
@@ -1458,6 +1458,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				modChan.VibDegree = 0;
 				modChan.SustainCounter = 0;
 				modChan.StarVolume = 0;
+				modChan.SynthPeriod = 0;
 
 				modChan.DataCounter = 0;
 				modChan.HmnVolume = 0;
@@ -1571,7 +1572,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			if (currentModuleType == ModuleType.HisMastersNoise)
 			{
 				// Do special fine tuning
-				period = (ushort)(period + (period * modChan.FineTuneHmn) / 256);
+				period = (ushort)(period + ((period * modChan.FineTuneHmn) / 256));
 			}
 
 			chan.SetAmigaPeriod(period);
@@ -1820,6 +1821,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								modChan.StarVolume = (short)amSample.StartAmp;
 								modChan.VibDegree = 0;
 								modChan.Period = (ushort)(modChan.Period << amSample.BaseFreq);
+								modChan.SynthPeriod = modChan.Period;
 							}
 						}
 						else if (currentModuleType == ModuleType.HisMastersNoise)
@@ -2580,6 +2582,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						}
 
 						// Do the pitch fall
+						modChan.SynthPeriod += amSamp.PitchFall;
 						modChan.Period += amSamp.PitchFall;
 
 						// Do vibrato
@@ -2601,7 +2604,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						}
 
 						// Set new frequency
-						SetPeriod((ushort)(modChan.Period + vibVal), chan, modChan);
+						SetPeriod((ushort)(modChan.SynthPeriod + vibVal), chan, modChan);
 
 						modChan.VibDegree += amSamp.VibSpeed;
 						if (modChan.VibDegree >= 360)
@@ -2694,6 +2697,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				period = modChan.Period;
 			}
 
+			modChan.SynthPeriod = period;
 			SetPeriod(period, chan, modChan);
 		}
 
@@ -2737,6 +2741,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 			playingInfo.LowMask = 0xff;
 
+			modChan.SynthPeriod = modChan.Period;
 			SetPeriod(modChan.Period, chan, modChan);
 		}
 
@@ -2755,6 +2760,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 			playingInfo.LowMask = 0xff;
 
+			modChan.SynthPeriod = modChan.Period;
 			SetPeriod(modChan.Period, chan, modChan);
 		}
 
@@ -2825,6 +2831,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					period = Tables.Periods[modChan.FineTune, i - 1];
 				}
 
+				modChan.SynthPeriod = (ushort)period;
 				SetPeriod((ushort)period, chan, modChan);
 			}
 		}
@@ -2893,6 +2900,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			else
 				period += addVal;
 
+			modChan.SynthPeriod = period;
 			SetPeriod(period, chan, modChan);
 
 			modChan.VibratoPos += (sbyte)((modChan.VibratoCmd / 4) & 0x3c);
