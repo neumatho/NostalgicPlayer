@@ -1162,7 +1162,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 0x12345678, unchecked((int)0xabcdef01) ];
 			CPointer<int> intPtr = new CPointer<int>(buffer, 0);
 
-			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+			CPointer<byte> bytePtr = intPtr.Cast<byte>();
 
 			Assert.IsTrue(bytePtr.IsNotNull);
 			Assert.AreEqual(0, bytePtr.Offset);
@@ -1204,7 +1204,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			byte[] buffer = [ 0x78, 0x56, 0x34, 0x12, 0x01, 0xef, 0xcd, 0xab ];
 			CPointer<byte> bytePtr = new CPointer<byte>(buffer, 0);
 
-			CPointer<int> intPtr = bytePtr.Cast<byte, int>();
+			CPointer<int> intPtr = bytePtr.Cast<int>();
 
 			Assert.IsTrue(intPtr.IsNotNull);
 			Assert.AreEqual(0, intPtr.Offset);
@@ -1234,7 +1234,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			short[] buffer = [ 0x1234, 0x5678, unchecked((short)0xabcd) ];
 			CPointer<short> shortPtr = new CPointer<short>(buffer, 0);
 
-			CPointer<byte> bytePtr = shortPtr.Cast<short, byte>();
+			CPointer<byte> bytePtr = shortPtr.Cast<byte>();
 
 			Assert.IsTrue(bytePtr.IsNotNull);
 			Assert.AreEqual(0, bytePtr.Offset);
@@ -1272,7 +1272,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			byte[] buffer = [ 0x34, 0x12, 0x78, 0x56, 0xcd, 0xab ];
 			CPointer<byte> bytePtr = new CPointer<byte>(buffer, 0);
 
-			CPointer<short> shortPtr = bytePtr.Cast<byte, short>();
+			CPointer<short> shortPtr = bytePtr.Cast<short>();
 
 			Assert.IsTrue(shortPtr.IsNotNull);
 			Assert.AreEqual(0, shortPtr.Offset);
@@ -1304,7 +1304,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 0x11111111, 0x22222222, 0x33333333, 0x44444444 ];
 			CPointer<int> intPtr = new CPointer<int>(buffer, 1);
 
-			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+			CPointer<byte> bytePtr = intPtr.Cast<byte>();
 
 			Assert.IsTrue(bytePtr.IsNotNull);
 			Assert.AreEqual(4, bytePtr.Offset);
@@ -1324,7 +1324,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			byte[] buffer = [ 0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22, 0x22, 0x33, 0x33, 0x33, 0x33, 0x44, 0x44, 0x44, 0x44 ];
 			CPointer<byte> bytePtr = new CPointer<byte>(buffer, 8);
 
-			CPointer<int> intPtr = bytePtr.Cast<byte, int>();
+			CPointer<int> intPtr = bytePtr.Cast<int>();
 
 			Assert.IsTrue(intPtr.IsNotNull);
 			Assert.AreEqual(2, intPtr.Offset);
@@ -1344,7 +1344,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			long[] buffer = [ 0x1234567890abcdef ];
 			CPointer<long> longPtr = new CPointer<long>(buffer, 0);
 
-			CPointer<int> intPtr = longPtr.Cast<long, int>();
+			CPointer<int> intPtr = longPtr.Cast<int>();
 
 			Assert.IsTrue(intPtr.IsNotNull);
 			Assert.AreEqual(0, intPtr.Offset);
@@ -1374,7 +1374,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 0x12345678 ];
 			CPointer<int> intPtr = new CPointer<int>(buffer, 0);
 
-			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+			CPointer<byte> bytePtr = intPtr.Cast<byte>();
 
 			if (BitConverter.IsLittleEndian)
 			{
@@ -1401,7 +1401,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			float[] buffer = [ 1.5f, 2.5f ];
 			CPointer<float> floatPtr = new CPointer<float>(buffer, 0);
 
-			CPointer<int> intPtr = floatPtr.Cast<float, int>();
+			CPointer<int> intPtr = floatPtr.Cast<int>();
 
 			Assert.IsTrue(intPtr.IsNotNull);
 			Assert.AreEqual(0, intPtr.Offset);
@@ -1422,8 +1422,8 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 0x12345678, unchecked((int)0xabcdef01) ];
 			CPointer<int> intPtr1 = new CPointer<int>(buffer, 0);
 
-			CPointer<byte> bytePtr = intPtr1.Cast<int, byte>();
-			CPointer<int> intPtr2 = bytePtr.Cast<byte, int>();
+			CPointer<byte> bytePtr = intPtr1.Cast<byte>();
+			CPointer<int> intPtr2 = bytePtr.Cast<int>();
 
 			bytePtr[0] = 0x42;
 
@@ -1541,7 +1541,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 0x12345678, unchecked((int)0xabcdef01) ];
 			CPointer<int> intPtr = new CPointer<int>(buffer, 0);
 
-			CPointer<byte> bytePtr = intPtr.Cast<int, byte>();
+			CPointer<byte> bytePtr = intPtr.Cast<byte>();
 
 			CPointer<byte> result = bytePtr.ToPointer<byte>();
 

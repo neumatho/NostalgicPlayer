@@ -85,6 +85,78 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		}
 		#endregion
 
+		#region CastMemoryManager class (single generic)
+		private sealed class CastMemoryManager<TTo> : MemoryManager<TTo> where TTo : unmanaged
+		{
+			private readonly Memory<T> fromMemory;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public CastMemoryManager(Memory<T> from)
+			{
+				fromMemory = from;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Do the casting. The source type is the outer T, which is never
+			/// constrained, so the reinterpret is done with Unsafe.As and
+			/// MemoryMarshal.CreateSpan (neither carries an unmanaged
+			/// constraint). The length is recalculated the same way
+			/// MemoryMarshal.Cast does it
+			/// </summary>
+			/********************************************************************/
+			public override Span<TTo> GetSpan()
+			{
+				Span<T> from = fromMemory.Span;
+				ref TTo to = ref Unsafe.As<T, TTo>(ref MemoryMarshal.GetReference(from));
+				int length = (int)((long)from.Length * Unsafe.SizeOf<T>() / Unsafe.SizeOf<TTo>());
+
+				return MemoryMarshal.CreateSpan(ref to, length);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			protected override void Dispose(bool disposing)
+			{
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public override MemoryHandle Pin(int elementIndex = 0)
+			{
+				throw new NotSupportedException();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public override void Unpin()
+			{
+				throw new NotSupportedException();
+			}
+		}
+		#endregion
+
 		private Memory<T> internalBuffer;
 		private int bufferOffset;
 		private bool bufferSet;
@@ -729,6 +801,25 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			int newOffset = (int)(((float)Unsafe.SizeOf<TFrom>() / Unsafe.SizeOf<TTo>()) * bufferOffset);
 
 			return new CPointer<TTo>(new CastMemoryManager<TFrom, TTo>((Memory<TFrom>)(object)internalBuffer).Memory, newOffset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cast a pointer to another type. The source type is taken from
+		/// the pointer itself (T), so only the destination type needs to be
+		/// given
+		/// </summary>
+		/********************************************************************/
+		public CPointer<TTo> Cast<TTo>() where TTo : unmanaged
+		{
+			if (typeof(T) == typeof(TTo))
+				return new CPointer<TTo>((Memory<TTo>)(object)internalBuffer, bufferOffset);
+
+			int newOffset = (int)(((float)Unsafe.SizeOf<T>() / Unsafe.SizeOf<TTo>()) * bufferOffset);
+
+			return new CPointer<TTo>(new CastMemoryManager<TTo>(internalBuffer).Memory, newOffset);
 		}
 
 
