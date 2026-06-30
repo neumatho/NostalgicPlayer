@@ -124,7 +124,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SimpleInjector" Version="5.5.2" />
+    <PackageReference Include="SimpleInjector" Version="5.6.0" />
     <PackageReference Include="Svg.Skia" Version="4.6.0" />
   </ItemGroup>
 
