@@ -6,6 +6,7 @@
 using System;
 using System.Windows.Forms;
 using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
@@ -17,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 	/// <summary>
 	/// The disk saver settings
 	/// </summary>
-	internal partial class SettingsControl : UserControl, ISettingsControl
+	internal partial class SettingsControl : UserControl, IDependencyInjectionControl, ISettingsControl
 	{
 		private static readonly int[] frequencyTable = [ 8268, 11025, 22050, 33075, 44100, 48000 ];
 
@@ -39,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/// <summary>
 		/// Initialize control.
 		///
-		/// Called from ControlFactory
+		/// Called from ControlCreatorService
 		/// </summary>
 		/********************************************************************/
 		public void InitializeControl(AgentInfo[] outputAgents, AgentInfo[] sampleConverterAgents, ISettingsFactory settingsFactory)
