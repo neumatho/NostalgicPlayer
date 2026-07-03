@@ -517,24 +517,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				byte[] pos = new byte[128];
 				moduleStream.ReadInto(pos, 0, 128);
 
-				if (maybeWow)
+				// Check the sample lengths and accumulate them
+				for (int i = 0; i < 31; i++)
 				{
-					// Check the sample lengths and accumulate them
-					for (int i = 0; i < 31; i++)
+					moduleStream.Seek(20 + (i * 30) + 22, SeekOrigin.Begin);
+
+					ushort sampleLength = moduleStream.Read_B_UINT16();
+					ushort fineTuneVolume = moduleStream.Read_B_UINT16();
+
+					if (sampleLength >= 0x8000)
+						return ModuleType.Unknown;	// It is an OpenMPT module
+
+					totalSampleLength += (uint)sampleLength << 1;
+					if ((sampleLength != 0) && (fineTuneVolume != 0x0040))
 					{
-						moduleStream.Seek(20 + i * 30 + 22, SeekOrigin.Begin);
-
-						ushort sampleLength = moduleStream.Read_B_UINT16();
-						ushort fineTuneVolume = moduleStream.Read_B_UINT16();
-
-						totalSampleLength += (uint)sampleLength << 1;
-						if ((sampleLength != 0) && (fineTuneVolume != 0x0040))
-						{
-							// Mod's Grave .WOW files are converted from .669 and thus
-							// do not have sample fine tune or volume
-							maybeWow = false;
-							break;
-						}
+						// Mod's Grave .WOW files are converted from .669 and thus
+						// do not have sample fine tune or volume
+						maybeWow = false;
 					}
 				}
 
@@ -566,7 +565,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 					for (int i = 0; i < usedPatterns.Length; i++)
 					{
-						moduleStream.Seek(1084 + usedPatterns[i] * 1024, SeekOrigin.Begin);
+						moduleStream.Seek(1084 + (usedPatterns[i] * 1024), SeekOrigin.Begin);
 
 						for (int j = 0; j < 4 * 64; j++)
 						{
