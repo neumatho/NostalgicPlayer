@@ -36,6 +36,11 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		CPointer<TTo> Cast<TFrom, TTo>() where TFrom : unmanaged where TTo : unmanaged;
 
 		/// <summary>
+		/// Cast a pointer from one type to another
+		/// </summary>
+		CPointer<TTo> Cast<TTo>() where TTo : unmanaged;
+
+		/// <summary>
 		/// Return a pointer from the interface
 		/// </summary>
 		CPointer<TTo> ToPointer<TTo>() where TTo : unmanaged;

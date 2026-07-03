@@ -381,6 +381,34 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Convert the pointer to a span. This overload takes a size_t
+		/// length, so it can be called directly with the unsigned C types
+		/// without casting to int
+		/// </summary>
+		/********************************************************************/
+		public Span<T> AsSpan(size_t length)
+		{
+			return internalBuffer.Slice(bufferOffset, (int)length).Span;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a span. This overload takes size_t
+		/// arguments, so it can be called directly with the unsigned C types
+		/// without casting to int
+		/// </summary>
+		/********************************************************************/
+		public Span<T> AsSpan(size_t offset, size_t length)
+		{
+			return internalBuffer.Slice(bufferOffset + (int)offset, (int)length).Span;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert the pointer to a memory
 		/// </summary>
 		/********************************************************************/

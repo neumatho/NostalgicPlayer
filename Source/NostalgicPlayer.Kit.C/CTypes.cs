@@ -15,6 +15,7 @@ global using c_uint = System.UInt32;
 global using c_ulong = System.UInt64;
 global using c_ulong_long = System.UInt64;
 
+global using c_byte = System.Byte;
 global using c_float = System.Single;
 global using c_double = System.Double;
 

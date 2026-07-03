@@ -592,7 +592,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 				else
 					description = $"{type}: {Encoding.UTF8.GetString(tag.Description.AsSpan(tag.Description.Length - 1))}";
 
-				return new PictureInfo(tag.Data.AsSpan((int)tag.Data_Length).ToArray(), description);
+				return new PictureInfo(tag.Data.AsSpan(tag.Data_Length).ToArray(), description);
 			}
 			catch (Exception)
 			{

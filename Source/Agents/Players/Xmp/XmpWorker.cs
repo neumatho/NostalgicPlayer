@@ -59,6 +59,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			currentFormat = LibXmp.Xmp_Get_Format_Info_List().SkipLast(1).First(x => x.Id == formatId);
 		}
 
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return some flags telling what the player supports

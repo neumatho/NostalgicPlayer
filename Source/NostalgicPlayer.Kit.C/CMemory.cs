@@ -98,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				return ptr;
 
 			T[] newArray = new T[newSize];
-			ptr.AsSpan(Math.Min((int)newSize, ptr.Length)).CopyTo(newArray);
+			ptr.AsSpan(Math.Min(newSize, ptr.Size())).CopyTo(newArray);
 
 			return new CPointer<T>(newArray);
 		}
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 			T[] newArray = new T[newSize];
 			size_t copyLength = Math.Min(newSize, (size_t)ptr.Length);
-			ptr.AsSpan((int)copyLength).CopyTo(newArray);
+			ptr.AsSpan(copyLength).CopyTo(newArray);
 
 			for (size_t i = copyLength; i < newSize; i++)
 				newArray[i] = new T();
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memmove<T>(CPointer<T> dest, CPointer<T> source, size_t length)
 		{
 			if (length > 0)
-				source.AsSpan((int)length).CopyTo(dest.AsSpan());
+				source.AsSpan(length).CopyTo(dest.AsSpan());
 		}
 
 
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memcpy<T>(CPointer<T> dest, CPointer<T> source, size_t length)
 		{
 			if (length > 0)
-				source.AsSpan((int)length).CopyTo(dest.AsSpan());
+				source.AsSpan(length).CopyTo(dest.AsSpan());
 		}
 
 
@@ -365,7 +365,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void memset<T>(CPointer<T> ptr, T value, size_t length)
 		{
-			ptr.AsSpan((int)length).Fill(value);
+			ptr.AsSpan(length).Fill(value);
 		}
 
 
@@ -378,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void fill<T>(CPointer<T> ptr, T value, size_t length)
 		{
-			ptr.AsSpan((int)length).Fill(value);
+			ptr.AsSpan(length).Fill(value);
 		}
 
 
