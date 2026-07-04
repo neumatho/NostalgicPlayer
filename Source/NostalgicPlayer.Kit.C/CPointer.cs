@@ -345,6 +345,32 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Return a pointer to the first element
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public CPointer<T> Begin()
+		{
+			return this;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a pointer to just after the last element
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public CPointer<T> End()
+		{
+			return new CPointer<T>(this, Length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert the pointer to a span
 		/// </summary>
 		/********************************************************************/

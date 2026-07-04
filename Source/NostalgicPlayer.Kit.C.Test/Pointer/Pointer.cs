@@ -276,6 +276,124 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 		}
 		#endregion
 
+		#region Begin/End tests
+		/********************************************************************/
+		/// <summary>
+		/// Test that Begin returns the current pointer position
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Begin()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 2);
+
+			CPointer<int> begin = ptr.Begin();
+
+			Assert.AreEqual(buffer, begin.GetOriginalArray());
+			Assert.AreEqual(2, begin.Offset);
+			Assert.AreEqual(3, begin.Length);
+			Assert.AreEqual(30, begin[0]);
+			Assert.IsTrue(begin == ptr);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test that End points to just after the last element
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_End()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 2);
+
+			CPointer<int> end = ptr.End();
+
+			Assert.AreEqual(buffer, end.GetOriginalArray());
+			Assert.AreEqual(5, end.Offset);
+			Assert.AreEqual(0, end.Length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test that the distance between End and Begin equals the length
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_EndMinusBegin_EqualsLength()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			int count = ptr.End() - ptr.Begin();
+
+			Assert.AreEqual(ptr.Length, count);
+			Assert.AreEqual(4, count);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test that Begin/End can be used to iterate the range
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_BeginEnd_Iterate()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 1);
+
+			int sum = 0;
+
+			for (CPointer<int> it = ptr.Begin(); it < ptr.End(); it++)
+				sum += it[0];
+
+			Assert.AreEqual(20 + 30 + 40 + 50, sum);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test that Begin does not modify the original pointer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Begin_DoesNotModifyOriginal()
+		{
+			int[] buffer = [ 10, 20, 30, 40, 50 ];
+			CPointer<int> ptr = new CPointer<int>(buffer, 2);
+
+			ptr.Begin();
+			ptr.End();
+
+			Assert.AreEqual(2, ptr.Offset);
+			Assert.AreEqual(30, ptr[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test Begin/End on a null pointer
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_BeginEnd_Null()
+		{
+			CPointer<int> ptr = new CPointer<int>();
+
+			Assert.IsTrue(ptr.Begin().IsNull);
+			Assert.IsTrue(ptr.End().IsNull);
+		}
+		#endregion
+
 		#region Indexer tests
 		/********************************************************************/
 		/// <summary>
