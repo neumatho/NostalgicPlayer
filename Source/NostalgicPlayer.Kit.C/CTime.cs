@@ -22,6 +22,24 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the current calendar time as the number of seconds since
+		/// 1970-01-01 00:00:00 UTC. If tloc is not null, the return value
+		/// is also stored in the object it points to (like C time())
+		/// </summary>
+		/********************************************************************/
+		public static time_t time(out time_t tloc)
+		{
+			time_t result = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+			tloc = result;
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Thread-safe conversion from time_t (seconds since
 		/// 1970-01-01 00:00:00 UTC) to broken down UTC time. Fills the
 		/// supplied tm buffer and returns it

@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memcpy<T>(CPointer<T> dest, Span<T> source, size_t length)
 		{
 			if (length > 0)
-				source.Slice((int)length).CopyTo(dest.AsSpan());
+				source.Slice(0, (int)length).CopyTo(dest.AsSpan());
 		}
 
 
