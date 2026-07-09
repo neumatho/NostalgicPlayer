@@ -18,17 +18,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Snapshot(GlobalPlayingInfo playingInfo, ChannelInfo[] channels)
+		public Snapshot(GlobalPlayingInfo playingInfo, ChannelInfo[] channels, int tick)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Channels = ArrayHelper.CloneObjectArray(channels);
+			Tick = tick;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
 		public GlobalPlayingInfo PlayingInfo
@@ -40,10 +41,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/********************************************************************/
 		public ChannelInfo[] Channels
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public int Tick
 		{
 			get;
 		}

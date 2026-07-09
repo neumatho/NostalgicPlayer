@@ -697,6 +697,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					mixerConfiguration.ChannelsEnabled[i] = enabled;
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Apply the current mixer settings to the player
+		/// </summary>
+		/********************************************************************/
+		public void ApplyCurrentMixerSettings()
+		{
+			MixerConfiguration configuration = mixerConfigurationFactory.GetCurrentSettings();
+
+			Array.Copy(GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);
+			ChangeMixerSettings(configuration);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the active module player if one is loaded
+		/// </summary>
+		/********************************************************************/
+		public IModulePlayer GetActiveModulePlayer()
+		{
+			return GetActivePlayer() as IModulePlayer;
+		}
 		#endregion
 
 		#region Event handlers

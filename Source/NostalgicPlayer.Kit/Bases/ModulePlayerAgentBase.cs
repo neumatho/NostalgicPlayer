@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
+using System.Text;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -278,6 +279,14 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public event SubSongChangedEventHandler SubSongChanged;
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the song row changes
+		/// </summary>
+		/********************************************************************/
+		public event SongRowChangedEventHandler SongRowChanged;
 		#endregion
 
 		#region Helper methods
@@ -290,6 +299,76 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			if (!doNotTrigEvents && (SubSongChanged != null))
 				SubSongChanged(this, e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Override this method to return pattern data for the current song.
+		/// Return null if the player doesn't support patterns or if no patterns are available.
+		/// </summary>
+		/********************************************************************/
+		public virtual SongPatternsResult GetSongPatterns()
+		{
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Override this method to return the current track/block/pattern numbers for each channel.
+		/// Return null if the player doesn't track this information.
+		/// Array index = channel number, value = track/block/pattern number (null if not playing)
+		/// </summary>
+		/********************************************************************/
+		public virtual uint?[] GetCurrentChannelTracks()
+		{
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Helper method to format channel tracks as a comma-separated string.
+		/// Used by players that implement GetCurrentChannelTracks() for their FormatTracks() method.
+		/// </summary>
+		/********************************************************************/
+		protected static string FormatChannelTracks(uint?[] tracks)
+		{
+			if (tracks == null)
+				return string.Empty;
+
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < tracks.Length; i++)
+			{
+				sb.Append(tracks[i]?.ToString() ?? "-");
+				if (i < tracks.Length - 1)
+					sb.Append(", ");
+			}
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this every time the song row changes
+		/// </summary>
+		/********************************************************************/
+		protected void OnSongRowChanged(SongRowChangedEventArgs e)
+		{
+			if (!doNotTrigEvents && (SongRowChanged != null))
+			{
+				// Automatically populate ChannelTracks from the player
+				e.RowInfo.ChannelTracks = GetCurrentChannelTracks();
+
+				SongRowChanged(this, e);
+			}
 		}
 
 

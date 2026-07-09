@@ -8,6 +8,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Library.Players;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
@@ -161,5 +162,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Set the enable status for a given range of channels
 		/// </summary>
 		void EnableChannels(bool enabled, int startChannel, int stopChannel = -1);
+
+		/// <summary>
+		/// Apply the current mixer settings to the player
+		/// </summary>
+		void ApplyCurrentMixerSettings();
+
+		/// <summary>
+		/// Get the active module player if one is loaded
+		/// </summary>
+		IModulePlayer GetActiveModulePlayer();
 	}
 }
