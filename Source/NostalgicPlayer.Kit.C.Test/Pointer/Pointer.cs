@@ -722,19 +722,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr1 = new CPointer<int>([ 1, 2, 3 ], 1);
 			CPointer<int> ptr2 = new CPointer<int>([ 4, 5, 6 ], 1);
 
-			bool exceptionThrown = false;
-
-			try
-			{
-				// ReSharper disable once UnusedVariable
-				int diff = ptr1 - ptr2;
-			}
-			catch (ArgumentException)
-			{
-				exceptionThrown = true;
-			}
-
-			Assert.IsTrue(exceptionThrown);
+			Assert.ThrowsExactly<ArgumentException>(() => _ = ptr1 - ptr2);
 		}
 		#endregion
 
@@ -1170,19 +1158,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr1 = new CPointer<int>([ 1, 2, 3 ], 1);
 			CPointer<int> ptr2 = new CPointer<int>([ 4, 5, 6 ], 1);
 
-			bool exceptionThrown = false;
-
-			try
-			{
-				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-				ptr1.CompareTo(ptr2);
-			}
-			catch (ArgumentException)
-			{
-				exceptionThrown = true;
-			}
-
-			Assert.IsTrue(exceptionThrown);
+			Assert.ThrowsExactly<ArgumentException>(() => _ = ptr1.CompareTo(ptr2));
 		}
 
 
@@ -1611,19 +1587,9 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 10, 20, 30 ];
 			CPointer<int> ptr = new CPointer<int>(buffer, 0);
 
-			bool exceptionThrown = false;
+			ArgumentException ex = Assert.ThrowsExactly<ArgumentException>(() => _ = ptr.ToPointer<byte>());
 
-			try
-			{
-				ptr.ToPointer<byte>();
-			}
-			catch (ArgumentException ex)
-			{
-				exceptionThrown = true;
-				Assert.AreEqual("Generic type is not the right type (Parameter 'TTo')", ex.Message);
-			}
-
-			Assert.IsTrue(exceptionThrown);
+			Assert.AreEqual("Generic type is not the right type (Parameter 'TTo')", ex.Message);
 		}
 
 

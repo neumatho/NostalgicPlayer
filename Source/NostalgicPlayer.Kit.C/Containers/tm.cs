@@ -7,14 +7,16 @@ namespace Polycode.NostalgicPlayer.Kit.C.Containers
 {
 #pragma warning disable CS8981
 	/// <summary>
-	/// Structure containing a calendar date and time broken down into its components
+	/// Structure containing a calendar date and time broken down into its
+	/// components
 	/// </summary>
 	public struct tm
 	{
 #pragma warning restore CS8981
 		/// <summary>
 		/// Seconds after the minute (0 - 61)
-		/// It's generally 0-59. The extra range is to accommodate for leap seconds in certain systems
+		/// It's generally 0-59. The extra range is to accommodate for leap
+		/// seconds in certain systems
 		/// </summary>
 		public c_int tm_Sec;
 

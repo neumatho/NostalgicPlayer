@@ -82,18 +82,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			variant<int, string> v = 5;
 
-			bool exceptionThrown = false;
-
-			try
-			{
-				v.get<string>();
-			}
-			catch (bad_variant_access)
-			{
-				exceptionThrown = true;
-			}
-
-			Assert.IsTrue(exceptionThrown);
+			Assert.ThrowsExactly<bad_variant_access>(() => _ = v.get<string>());
 		}
 
 
@@ -149,18 +138,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			variant<int, string> v = 1;
 
-			bool exceptionThrown = false;
-
-			try
-			{
-				v.emplace<double>(2.0);
-			}
-			catch (bad_variant_access)
-			{
-				exceptionThrown = true;
-			}
-
-			Assert.IsTrue(exceptionThrown);
+			Assert.ThrowsExactly<bad_variant_access>(() => _ = v.emplace<double>(2.0));
 		}
 
 
