@@ -98,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				return ptr;
 
 			T[] newArray = new T[newSize];
-			ptr.AsSpan(Math.Min(newSize, ptr.Size())).CopyTo(newArray);
+			ptr.AsMemory(Math.Min(newSize, ptr.Size())).CopyTo(newArray);
 
 			return new CPointer<T>(newArray);
 		}
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 			T[] newArray = new T[newSize];
 			size_t copyLength = Math.Min(newSize, (size_t)ptr.Length);
-			ptr.AsSpan(copyLength).CopyTo(newArray);
+			ptr.AsMemory(copyLength).CopyTo(newArray);
 
 			for (size_t i = copyLength; i < newSize; i++)
 				newArray[i] = new T();
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memmove<T>(CPointer<T> dest, CPointer<T> source, size_t length)
 		{
 			if (length > 0)
-				source.AsSpan(length).CopyTo(dest.AsSpan());
+				source.AsMemory(length).CopyTo(dest.AsMemory());
 		}
 
 
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memcpy<T>(CPointer<T> dest, CPointer<T> source, size_t length)
 		{
 			if (length > 0)
-				source.AsSpan(length).CopyTo(dest.AsSpan());
+				source.AsMemory(length).CopyTo(dest.AsMemory());
 		}
 
 
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static void memcpy<T>(CPointer<T> dest, T[] source, size_t length)
 		{
 			if (length > 0)
-				source.AsSpan(0, (int)length).CopyTo(dest.AsSpan());
+				source.AsMemory(0, (int)length).CopyTo(dest.AsMemory());
 		}
 
 
@@ -256,6 +256,21 @@ namespace Polycode.NostalgicPlayer.Kit.C
 					Buffer.BlockCopy(srcArray, srcByteOffset, destArray, destByteOffset, byteLength);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void copy<T>(CPointer<T> first, CPointer<T> last, CPointer<T> d_First)
+		{
+			int length = last - first;
+
+			first.AsMemory(length).CopyTo(d_First.AsMemory());
 		}
 
 

@@ -471,6 +471,30 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Convert the pointer to a memory
+		/// </summary>
+		/********************************************************************/
+		public Memory<T> AsMemory(size_t length)
+		{
+			return internalBuffer.Slice(bufferOffset, (int)length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the pointer to a memory
+		/// </summary>
+		/********************************************************************/
+		public Memory<T> AsMemory(size_t offset, size_t length)
+		{
+			return internalBuffer.Slice(bufferOffset + (int)offset, (int)length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert the pointer to an array. Note that this will copy the
 		/// data into a new array
 		/// </summary>

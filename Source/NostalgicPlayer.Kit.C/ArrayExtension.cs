@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Kit.C
@@ -21,6 +22,18 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static CPointer<T> ToPointer<T>(this T[] e)
 		{
 			return new CPointer<T>(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resize the given array
+		/// </summary>
+		/********************************************************************/
+		public static void resize<T>(this T[] e, size_t newSize)
+		{
+			Array.Resize(ref e, (int)newSize);
 		}
 	}
 }
