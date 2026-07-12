@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
+using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.C.Std
@@ -346,28 +347,59 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		#region Iterators
 		/********************************************************************/
 		/// <summary>
-		/// Returns a pointer to the first element of the container
+		/// Returns an iterator to the first element of the container
 		/// (C++ begin())
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public CPointer<T> begin()
+		public forward_iterator<T> begin()
 		{
-			return new CPointer<T>(buffer, 0);
+			return new forward_iterator<T>(new CPointer<T>(buffer, 0));
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a pointer to just after the last element of the container
-		/// (C++ end())
+		/// Returns an iterator to just after the last element of the
+		/// container (C++ end())
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public CPointer<T> end()
+		public forward_iterator<T> end()
 		{
-			return new CPointer<T>(buffer, count);
+			return new forward_iterator<T>(new CPointer<T>(buffer, count));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a reverse iterator to the first element of the reversed
+		/// container. It corresponds to the last element of the non-reversed
+		/// container (C++ rbegin())
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public reverse_iterator<T> rbegin()
+		{
+			return new reverse_iterator<T>(end());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a reverse iterator to the element following the last
+		/// element of the reversed container. It corresponds to the element
+		/// preceding the first element of the non-reversed container
+		/// (C++ rend())
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public reverse_iterator<T> rend()
+		{
+			return new reverse_iterator<T>(begin());
 		}
 		#endregion
 
