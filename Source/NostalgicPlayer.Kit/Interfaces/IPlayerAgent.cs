@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -38,5 +39,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// null or an empty string, nothing extra is shown
 		/// </summary>
 		string ExtraFormatInfo { get; }
+
+		/// <summary>
+		/// Return all events that needs to be triggered from the player
+		/// </summary>
+		EventArgs[] GetTriggeredEvents();
 	}
 }

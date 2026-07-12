@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		internal bool doNotTrigEvents;
 
 		private readonly Dictionary<int, ModuleInfoChanged> changedModuleInfo = new Dictionary<int, ModuleInfoChanged>();
+		private readonly List<EventArgs> events = new List<EventArgs>();
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -62,6 +64,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual string ExtraFormatInfo => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all events that needs to be triggered from the player
+		/// </summary>
+		/********************************************************************/
+		public virtual EventArgs[] GetTriggeredEvents()
+		{
+			EventArgs[] result = events.ToArray();
+			events.Clear();
+
+			return result;
+		}
 		#endregion
 
 		#region IModuleInformation implementation
@@ -194,6 +211,20 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			if (!doNotTrigEvents)
 				changedModuleInfo[line] = new ModuleInfoChanged(line, newValue);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this so put an event on the queue instead of trigger it
+		/// directly
+		/// </summary>
+		/********************************************************************/
+		protected void AddEventToQueue(EventArgs e)
+		{
+			if (!doNotTrigEvents)
+				events.Add(e);
 		}
 		#endregion
 	}

@@ -667,6 +667,10 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 									timedEventHandler.AddEvent(new ModuleInfoChangedEvent(this, moduleInfoChanged), framesTakenSinceLastCall);
 							}
 
+							// Check for other player events
+							foreach (EventArgs e in currentPlayer.GetTriggeredEvents())
+								timedEventHandler.AddEvent(new PlayerEvent(this, e), framesTakenSinceLastCall);
+
 							framesTakenSinceLastCall = 0;
 
 							if (bufferDirect)
