@@ -72,7 +72,7 @@
   <ItemGroup>
     <PackageReference Include="Krypton.Navigator" Version="85.24.10.288" />
     <PackageReference Include="Krypton.Toolkit" Version="85.24.10.288" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3967.48" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4078.44" />
   </ItemGroup>
 
   <ItemGroup>
