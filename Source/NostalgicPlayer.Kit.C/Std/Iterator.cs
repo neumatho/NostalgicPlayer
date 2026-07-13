@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 
 namespace Polycode.NostalgicPlayer.Kit.C.Std
@@ -27,6 +28,37 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		public static ptrdiff_t distance<TIt>(TIt first, TIt last) where TIt : IRandom_Access_Iterator<TIt>
 		{
 			return last.DistanceFrom(first);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns an iterator to the first element of the given array. Like
+		/// C++ begin(T (＆array)[N]), which yields a plain pointer, this
+		/// returns a CPointer‹T› (which is itself a random access iterator)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<T> begin<T>(T[] array)
+		{
+			return new CPointer<T>(array, 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns an iterator to just after the last element of the given
+		/// array. Like C++ end(T (＆array)[N]), which yields a plain pointer,
+		/// this returns a CPointer‹T› (which is itself a random access
+		/// iterator)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<T> end<T>(T[] array)
+		{
+			return new CPointer<T>(array, array.Length);
 		}
 	}
 }
