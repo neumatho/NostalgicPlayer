@@ -59,6 +59,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 	/// </summary>
 	public partial class MainWindowForm : WindowFormBase2, IExtraChannels
 	{
+		private static readonly ExplorerCommandDefinition[] ModuleListExplorerCommandDefinitions =
+		[
+			new ExplorerCommandDefinition(new Guid("DF9672B2-B7C8-49F8-AE48-054B361C1448"), renderTopLevelIcon: false)
+		];
+
 		private class AgentEntry
 		{
 			public Guid TypeId { get; set; }
@@ -109,6 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private ToolStripSeparator fileActionsSeparatorMenuItem;
 		private NostalgicToolStripMenuItem showInFileExplorerMenuItem;
 		private NostalgicToolStripMenuItem propertiesMenuItem;
+		private readonly List<ExplorerCommandToolStripMenu> moduleListExplorerCommandMenus = new List<ExplorerCommandToolStripMenu>();
 		private ModuleListListItem moduleListContextItem;
 
 		// Timer variables
@@ -1459,6 +1465,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			using (new SleepCursor())
 			{
+				DisposeModuleListExplorerCommandMenus();
+
 				// Remember list/module properties
 				int rememberSelected, rememberPosition, rememberSong;
 
@@ -2004,6 +2012,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			showInFileExplorerMenuItem.Enabled = fileActionAvailable;
 			propertiesMenuItem.Enabled = fileActionAvailable;
+
+			// Build optional Explorer commands for the selected physical files
+			UpdateModuleListExplorerCommandMenus(hasSelection, fileActionsVisible);
 		}
 
 
@@ -2068,6 +2079,66 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				return ArchivePath.GetArchiveName(listItem.Source);
 
 			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Rebuild all configured Explorer commands for the selected files
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleListExplorerCommandMenus(bool hasSelection, bool fileActionsVisible)
+		{
+			if (moduleListExplorerCommandMenus.Count == 0)
+				return;
+
+			string[] fileNames = fileActionsVisible && hasSelection ? GetSelectedPhysicalFileNames() : null;
+			foreach (ExplorerCommandToolStripMenu commandMenu in moduleListExplorerCommandMenus)
+			{
+				if (fileNames != null)
+					commandMenu.Update(Handle, fileNames);
+				else
+					commandMenu.Clear();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all selected files, or null if an item is not a physical
+		/// non-archive file
+		/// </summary>
+		/********************************************************************/
+		private string[] GetSelectedPhysicalFileNames()
+		{
+			HashSet<string> fileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (ModuleListListItem selectedItem in moduleList.SelectedItems)
+			{
+				if ((selectedItem.ListItem is not SingleFileModuleListItem fileItem) || !File.Exists(fileItem.Source))
+					return null;
+
+				fileNames.Add(fileItem.Source);
+			}
+
+			return fileNames.Count > 0 ? fileNames.ToArray() : null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Release all configured Explorer command menus
+		/// </summary>
+		/********************************************************************/
+		private void DisposeModuleListExplorerCommandMenus()
+		{
+			foreach (ExplorerCommandToolStripMenu commandMenu in moduleListExplorerCommandMenus)
+				commandMenu.Dispose();
+
+			moduleListExplorerCommandMenus.Clear();
 		}
 
 
@@ -3651,6 +3722,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// File actions
 			fileActionsSeparatorMenuItem = new ToolStripSeparator();
 			moduleListContextMenu.Items.Add(fileActionsSeparatorMenuItem);
+
+			if (!Env.IsWindows10S)
+			{
+				foreach (ExplorerCommandDefinition definition in ModuleListExplorerCommandDefinitions)
+				{
+					ExplorerCommandToolStripMenu commandMenu = new ExplorerCommandToolStripMenu(definition, ex => ShowSimpleErrorMessage(ex.Message));
+					moduleListExplorerCommandMenus.Add(commandMenu);
+					moduleListContextMenu.Items.Add(commandMenu.MenuItem);
+				}
+			}
 
 			showInFileExplorerMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER);
 			showInFileExplorerMenuItem.Click += ModuleListMenu_ShowInFileExplorer;
