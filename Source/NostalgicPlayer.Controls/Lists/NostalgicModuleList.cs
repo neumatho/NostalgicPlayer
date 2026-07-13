@@ -687,6 +687,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void ListItemControl_MouseDown(object sender, MouseEventArgs e)
+		{
+			OnMouseDown(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private void ListItemControl_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			OnKeyPress(e);

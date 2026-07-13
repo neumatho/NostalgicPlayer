@@ -26,7 +26,8 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 
 		private INostalgicImageBank imageBank;
 
-		private MethodInfo cachedImageProperty;
+		private PropertyInfo cachedImageProperty;
+		private MethodInfo cachedImageMethod;
 		private object cachedAreaObject;
 
 		/********************************************************************/
@@ -102,7 +103,10 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		/********************************************************************/
 		internal Bitmap GetImage(Color color)
 		{
-			return cachedImageProperty?.Invoke(cachedAreaObject, [ color ]) as Bitmap;
+			if (cachedImageMethod != null)
+				return cachedImageMethod.Invoke(cachedAreaObject, [color]) as Bitmap;
+
+			return cachedImageProperty?.GetValue(cachedAreaObject) as Bitmap;
 		}
 
 
@@ -139,6 +143,7 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		private void UpdateImageBinding()
 		{
 			cachedImageProperty = null;
+			cachedImageMethod = null;
 			cachedAreaObject = null;
 
 			if ((imageBank == null) || (imageArea == ImageBankArea.None) || string.IsNullOrEmpty(imageName))
@@ -149,7 +154,8 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 				return;
 
 			Type interfaceType = BankImageNameConverter.GetAreaInterfaceType(imageArea);
-			cachedImageProperty = interfaceType?.GetMethod(imageName, BindingFlags.Public | BindingFlags.Instance);
+			cachedImageMethod = interfaceType?.GetMethod(imageName, BindingFlags.Public | BindingFlags.Instance);
+			cachedImageProperty = interfaceType?.GetProperty(imageName, BindingFlags.Public | BindingFlags.Instance);
 		}
 
 

@@ -74,6 +74,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			neverEndingTimer = new System.Windows.Forms.Timer(components);
 			addContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			moduleList = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicModuleList();
+			moduleListContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			searchPopupControl = new SearchPopupControl();
 			infoBox.SuspendLayout();
 			listButtonsBox.SuspendLayout();
@@ -441,6 +442,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			addContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			addContextMenu.Name = "addContextMenu";
 			// 
+			// moduleListContextMenu
+			// 
+			moduleListContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
+			moduleListContextMenu.Name = "moduleListContextMenu";
+			// 
 			// moduleList
 			// 
 			moduleList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -532,6 +538,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private NostalgicPlayer.Controls.Lists.NostalgicModuleList moduleList;
 		private SearchPopupControl searchPopupControl;
 		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
+		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu moduleListContextMenu;
 	}
 }
 

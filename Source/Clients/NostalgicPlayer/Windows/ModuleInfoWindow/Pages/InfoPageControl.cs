@@ -3,9 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Diagnostics;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Controls.Extensions;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -265,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 						fileName = ArchivePath.GetArchiveName(fileName);
 
 					// Start File Explorer and select the file
-					Process.Start("explorer.exe", $"/select,\"{fileName}\"");
+					WindowsShellHelper.ShowInFileExplorer(fileName);
 				}
 			}
 		}

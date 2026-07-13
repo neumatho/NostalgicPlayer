@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Mappers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
@@ -39,6 +40,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -98,6 +100,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		// Context menus
 		private NostalgicToolStripMenuItem setSubSongMenuItem;
 		private NostalgicToolStripMenuItem clearSubSongMenuItem;
+		private NostalgicToolStripMenuItem removeModulesMenuItem;
+		private NostalgicToolStripMenuItem sortModulesMenuItem;
+		private NostalgicToolStripMenuItem moveModulesUpMenuItem;
+		private NostalgicToolStripMenuItem moveModulesDownMenuItem;
+		private NostalgicToolStripMenuItem moduleListSetSubSongMenuItem;
+		private NostalgicToolStripMenuItem moduleListClearSubSongMenuItem;
+		private ToolStripSeparator fileActionsSeparatorMenuItem;
+		private NostalgicToolStripMenuItem showInFileExplorerMenuItem;
+		private NostalgicToolStripMenuItem propertiesMenuItem;
+		private ModuleListListItem moduleListContextItem;
 
 		// Timer variables
 		private MainWindowSettings.TimeFormat timeFormat;
@@ -1048,6 +1060,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// Module list
 			moduleList.SelectedIndexChanged += ModuleListControl_SelectedIndexChanged;
 			moduleList.MouseDoubleClick += ModuleListControl_MouseDoubleClick;
+			moduleList.MouseDown += ModuleListControl_MouseDown;
 			moduleList.KeyPress += ModuleListControl_KeyPress;
 			moduleList.DragDrop += ModuleListControl_DragDrop;
 
@@ -1932,6 +1945,129 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				// Load and play the selected module
 				LoadAndPlayModule(index);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User clicked a mouse button in the module list box.
+		/// If it is the right mouse button, show the context menu
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListControl_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button != MouseButtons.Right)
+				return;
+
+			int index = moduleList.IndexFromPoint(e.Location);
+			moduleListContextItem = index != -1 ? moduleList.Items[index] : null;
+
+			if ((index != -1) && !moduleList.SelectedIndexes.Contains(index))
+				moduleList.SelectedIndex = index;
+
+			moduleListContextMenu.Show(moduleList, e.Location);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called right before the module list context menu is opened
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListContextMenu_Opening(object sender, CancelEventArgs e)
+		{
+			// Determine whether the menu was opened on a selected list item
+			IReadOnlyList<int> selectedIndexes = moduleList.SelectedIndexes;
+			bool hasSelection = (moduleListContextItem != null) && (selectedIndexes.Count > 0);
+
+			// Update the list editing actions based on the current items and selection
+			removeModulesMenuItem.Enabled = hasSelection;
+			sortModulesMenuItem.Enabled = moduleList.Items.Count > 0;
+			moveModulesUpMenuItem.Enabled = hasSelection && selectedIndexes.Any(index => (index > 0) && !selectedIndexes.Contains(index - 1));
+			moveModulesDownMenuItem.Enabled = hasSelection && selectedIndexes.Any(index => ((index + 1) < moduleList.Items.Count) && !selectedIndexes.Contains(index + 1));
+
+			// Update the default sub-song actions from the playback and selection state
+			moduleListSetSubSongMenuItem.Enabled = moduleHandler.IsModuleLoaded;
+			moduleListClearSubSongMenuItem.Enabled = hasSelection && moduleList.SelectedItems.Any(x => x.DefaultSubSong.HasValue);
+
+			// Hide unsupported Windows shell actions when running on Windows 10 S
+			bool fileActionsVisible = !Env.IsWindows10S;
+			fileActionsSeparatorMenuItem.Visible = fileActionsVisible;
+			showInFileExplorerMenuItem.Visible = fileActionsVisible;
+			propertiesMenuItem.Visible = fileActionsVisible;
+
+			// Enable file actions only for an existing local file selected from an item
+			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			bool fileActionAvailable = hasSelection && fileActionsVisible && !string.IsNullOrEmpty(fileName) && File.Exists(fileName);
+
+			showInFileExplorerMenuItem.Enabled = fileActionAvailable;
+			propertiesMenuItem.Enabled = fileActionAvailable;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects "Show in File Explorer"
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListMenu_ShowInFileExplorer(object sender, EventArgs e)
+		{
+			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			try
+			{
+				WindowsShellHelper.ShowInFileExplorer(fileName);
+			}
+			catch (Exception ex)
+			{
+				ShowSimpleErrorMessage(ex.Message);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects "Properties"
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListMenu_Properties(object sender, EventArgs e)
+		{
+			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			try
+			{
+				WindowsShellHelper.ShowProperties(fileName);
+			}
+			catch (Exception ex)
+			{
+				ShowSimpleErrorMessage(ex.Message);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the physical file represented by the module list item
+		/// </summary>
+		/********************************************************************/
+		private static string GetPhysicalFilePath(IModuleListItem listItem)
+		{
+			if (listItem is SingleFileModuleListItem)
+				return listItem.Source;
+
+			if (listItem is ArchiveFileModuleListItem)
+				return ArchivePath.GetArchiveName(listItem.Source);
+
+			return null;
 		}
 
 
@@ -3190,6 +3326,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			CreateSortContextMenu();
 			CreateListContextMenu();
 			CreateDiskContextMenu();
+			CreateModuleListContextMenu();
 
 			// Set tooltip on all controls
 			SetTooltips();
@@ -3395,6 +3532,133 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			item.ImageName = nameof(IMainImages.Save);
 			item.Click += DiskMenu_SaveList;
 			diskContextMenu.Items.Add(item);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create the module list context menu (right click an item within the module list)
+		/// </summary>
+		/********************************************************************/
+		private void CreateModuleListContextMenu()
+		{
+			// Note:  Context menu item filtering is done in the Opening event
+
+			moduleListContextMenu.Opening += ModuleListContextMenu_Opening;
+
+			// Add
+			NostalgicToolStripMenuItem addSubMenu = new NostalgicToolStripMenuItem(Resources.IDS_FAVORITE_BUTTON_ADD);
+			addSubMenu.ImageName = nameof(IMainImages.Add);
+			moduleListContextMenu.Items.Add(addSubMenu);
+
+			NostalgicToolStripMenuItem addItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES);
+			addItem.ImageName = nameof(IMainImages.File);
+			addItem.Click += AddMenu_Files;
+			addSubMenu.DropDownItems.Add(addItem);
+
+			addItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY);
+			addItem.ImageName = nameof(IMainImages.Directory);
+			addItem.Click += AddMenu_Directory;
+			addSubMenu.DropDownItems.Add(addItem);
+
+
+			// Remove
+			removeModulesMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_FAVORITE_BUTTON_REMOVE);
+			removeModulesMenuItem.ImageName = nameof(IMainImages.Remove);
+			removeModulesMenuItem.Click += RemoveModuleButton_Click;
+			moduleListContextMenu.Items.Add(removeModulesMenuItem);
+
+
+			// Sort
+			sortModulesMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SORT);
+			sortModulesMenuItem.ImageName = nameof(IMainImages.Sort);
+			moduleListContextMenu.Items.Add(sortModulesMenuItem);
+
+			NostalgicToolStripMenuItem sortItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ);
+			sortItem.ImageName = nameof(IMainImages.AZ);
+			sortItem.Click += SortMenu_AZ;
+			sortModulesMenuItem.DropDownItems.Add(sortItem);
+
+			sortItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA);
+			sortItem.ImageName = nameof(IMainImages.ZA);
+			sortItem.Click += SortMenu_ZA;
+			sortModulesMenuItem.DropDownItems.Add(sortItem);
+
+			sortItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE);
+			sortItem.ImageName = nameof(IMainImages.Shuffle);
+			sortItem.Click += SortMenu_Shuffle;
+			sortModulesMenuItem.DropDownItems.Add(sortItem);
+
+			// Move
+			moveModulesUpMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_MOVE_UP);
+			moveModulesUpMenuItem.ImageName = nameof(IMainImages.MoveUp);
+			moveModulesUpMenuItem.Click += MoveModulesUpButton_Click;
+			moduleListContextMenu.Items.Add(moveModulesUpMenuItem);
+
+			moveModulesDownMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN);
+			moveModulesDownMenuItem.ImageName = nameof(IMainImages.MoveDown);
+			moveModulesDownMenuItem.Click += MoveModulesDownButton_Click;
+			moduleListContextMenu.Items.Add(moveModulesDownMenuItem);
+
+
+			// Other actions
+			NostalgicToolStripMenuItem otherActionsSubMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS);
+			otherActionsSubMenu.ImageName = nameof(IMainImages.List);
+			moduleListContextMenu.Items.Add(otherActionsSubMenu);
+
+			NostalgicToolStripMenuItem otherActionsItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL);
+			otherActionsItem.Click += ListMenu_SelectAll;
+			otherActionsSubMenu.DropDownItems.Add(otherActionsItem);
+
+			otherActionsItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE);
+			otherActionsItem.Click += ListMenu_SelectNone;
+			otherActionsSubMenu.DropDownItems.Add(otherActionsItem);
+
+			otherActionsSubMenu.DropDownItems.Add(new ToolStripSeparator());
+
+			moduleListSetSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG);
+			moduleListSetSubSongMenuItem.ImageName = nameof(IMainImages.SetSubSong);
+			moduleListSetSubSongMenuItem.Click += ListMenu_SetDefaultSubSong;
+			otherActionsSubMenu.DropDownItems.Add(moduleListSetSubSongMenuItem);
+
+			moduleListClearSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG);
+			moduleListClearSubSongMenuItem.ImageName = nameof(IMainImages.ClearSubSong);
+			moduleListClearSubSongMenuItem.Click += ListMenu_ClearDefaultSubSong;
+			otherActionsSubMenu.DropDownItems.Add(moduleListClearSubSongMenuItem);
+
+
+			// Load/save
+			NostalgicToolStripMenuItem loadSaveSubMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE);
+			loadSaveSubMenu.ImageName = nameof(IMainImages.Disk);
+			moduleListContextMenu.Items.Add(loadSaveSubMenu);
+
+			NostalgicToolStripMenuItem loadSaveItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD);
+			loadSaveItem.ImageName = nameof(IMainImages.Load);
+			loadSaveItem.Click += DiskMenu_LoadList;
+			loadSaveSubMenu.DropDownItems.Add(loadSaveItem);
+
+			loadSaveItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_APPEND);
+			loadSaveItem.Click += DiskMenu_AppendList;
+			loadSaveSubMenu.DropDownItems.Add(loadSaveItem);
+
+			loadSaveItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE);
+			loadSaveItem.ImageName = nameof(IMainImages.Save);
+			loadSaveItem.Click += DiskMenu_SaveList;
+			loadSaveSubMenu.DropDownItems.Add(loadSaveItem);
+
+
+			// File actions
+			fileActionsSeparatorMenuItem = new ToolStripSeparator();
+			moduleListContextMenu.Items.Add(fileActionsSeparatorMenuItem);
+
+			showInFileExplorerMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER);
+			showInFileExplorerMenuItem.Click += ModuleListMenu_ShowInFileExplorer;
+			moduleListContextMenu.Items.Add(showInFileExplorerMenuItem);
+
+			propertiesMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_PROPERTIES);
+			propertiesMenuItem.Click += ModuleListMenu_Properties;
+			moduleListContextMenu.Items.Add(propertiesMenuItem);
 		}
 
 
