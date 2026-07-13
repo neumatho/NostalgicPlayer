@@ -40,8 +40,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			public c_int Stereo;								// 0 = Old stereo, ff = Panoramic stereo (>=2.04)
 			public c_int Depth;									// Global sample depth used by pre-2.04 modules
 			public c_int C2Spd;									// Global sample rate used by pre-2.04 modules
-			public c_int Version;
-			public c_int Version_Derived;
+			public c_uint Version;
+			public c_uint Version_Derived;
 			public c_int Format;
 			public c_int RealPat;
 			public c_int Last_Pat;
@@ -70,11 +70,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		// Note that there's a later Digital Tracker release series for BeOS
 		// using a completely new format that this loader doesn't support
 
-		private const int DTM_V2015 = 2015;						// Digital Tracker 2.015 and 2.02
-		private const int DTM_V203 = 2030;						// Digital Tracker 2.03
-		private const int DTM_V204 = 2040;						// Digital Tracker 2.04 thru 1.9
-		private const int DTM_V19 = (19 << 8);					// Digital Tracker 1.9 (later vers)
-		private const int DTM_V21 = (21 << 8);					// Digital Home Studio
+		private const c_uint DTM_V2015 = 2015;						// Digital Tracker 2.015 and 2.02
+		private const c_uint DTM_V203 = 2030;						// Digital Tracker 2.03
+		private const c_uint DTM_V204 = 2040;						// Digital Tracker 2.04 thru 1.9
+		private const c_uint DTM_V19 = (19 << 8);					// Digital Tracker 1.9 (later vers)
+		private const c_uint DTM_V21 = (21 << 8);					// Digital Home Studio
 
 		// Pattern format versions, which don't correspond directly to file
 		// format versions. Versions 2.015 thru 2.03 have all zero bytes here and
@@ -634,7 +634,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			data.Vers_Flag = true;
 
-			data.Version = (c_int)f.Hio_Read32B();
+			data.Version = f.Hio_Read32B();
 
 			return 0;
 		}

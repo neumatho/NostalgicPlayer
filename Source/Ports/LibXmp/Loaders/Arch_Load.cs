@@ -687,7 +687,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Xxs[i].Lpe = (c_int)f.Hio_Read32L();
 
 			if (f.Hio_Read32B() != Magic_SDAT)      // SDAT
-				return -1;
+			{
+				// This is corrupt in the final sample of 5-OverPar.
+				// TODO: a more robust IFF handler for these fields would
+				// be better
+				mod.Xxs[i].Len = 0;
+			}
 
 			f.Hio_Read32L();
 			f.Hio_Read32L();    // 0x00000000

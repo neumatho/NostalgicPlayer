@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -102,11 +103,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			c_int i = 0;
+
+			Array.Clear(f.Id);
+
 			for (; (i < 4) && id.IsNotNull && (id[i] != 0); i++)
 				f.Id[i] = id[i];
-
-			for (; i < 4; i++)
-				f.Id[i] = 0;
 
 			f.Loader = loader;
 			f.Next = null;

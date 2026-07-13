@@ -683,7 +683,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 								}
 								else if ((t3 >= 0xc0) || (t3 <= 0x40))
 								{
-									c_int pan = ((int8)t3 << 1) + 0x80;
+									c_int pan = ((int8)t3 * 2) + 0x80;
 
 									fxT = Effects.Fx_SetPan;
 									fxP = (uint8)Math.Min(0xff, pan);

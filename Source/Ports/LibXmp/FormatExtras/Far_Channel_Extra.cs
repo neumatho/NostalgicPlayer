@@ -272,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 				{
 					if (note != 0)
 					{
-						c_int delay = me.Tempo_Mode != 0 ? fxP : fxP << Far_Module_Extra.Far_Old_Tempo_Shift;
+						c_int delay = me.Tempo_Mode != 0 ? fxP : fxP * Far_Module_Extra.Far_Old_Tempo_Mult;
 						Set(xc, Channel_Flag.Retrig);
 
 						xc.Retrig.Val = delay != 0 ? delay : 1;
@@ -393,15 +393,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 			else
 			{
 				// Effects divide by 2, timer increments by 2 (round up).
-				// Old tempo mode handles every 8th tick (<< FAR_OLD_TEMPO_SHIFT).
+				// Old tempo mode handles every 8th tick (* FAR_OLD_TEMPO_MULT).
 				// Delay values >4 result in no retrigger
-				delay = (((delay >> 1) + 1) >> 1) << Far_Module_Extra.Far_Old_Tempo_Shift;
+				delay = (((delay >> 1) + 1) >> 1) * Far_Module_Extra.Far_Old_Tempo_Mult;
 
-				if (delay >= 16)
+				if (delay >= (4 * Far_Module_Extra.Far_Old_Tempo_Mult))
 					return -1;
 
-				if (delay < (1 << Far_Module_Extra.Far_Old_Tempo_Shift))
-					return (1 << Far_Module_Extra.Far_Old_Tempo_Shift);
+				if (delay < Far_Module_Extra.Far_Old_Tempo_Mult)
+					return Far_Module_Extra.Far_Old_Tempo_Mult;
 
 				return delay;
 			}

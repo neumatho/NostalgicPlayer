@@ -80,11 +80,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			try
 			{
-				c_int a = Read_Byte(f);
-				c_int b = Read_Byte(f);
+				int32 a = Read_Byte(f);
+				int32 b = Read_Byte(f);
 
 				err = 0;
-				return (uint16)((b << 8) | a);
+				return (uint16)(((uint32)b << 8) | (uint32)a);
 			}
 			catch (EndOfStreamException)
 			{
@@ -109,8 +109,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			try
 			{
-				c_int a = Read_Byte(f);
-				c_int b = Read_Byte(f);
+				int32 a = Read_Byte(f);
+				int32 b = Read_Byte(f);
 
 				err = 0;
 				return (uint16)((a << 8) | b);
@@ -138,9 +138,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			try
 			{
-				c_int a = Read_Byte(f);
-				c_int b = Read_Byte(f);
-				c_int c = Read_Byte(f);
+				int32 a = Read_Byte(f);
+				int32 b = Read_Byte(f);
+				int32 c = Read_Byte(f);
 
 				err = 0;
 				return (uint32)((c << 16) | (b << 8) | a);
@@ -168,9 +168,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			try
 			{
-				c_int a = Read_Byte(f);
-				c_int b = Read_Byte(f);
-				c_int c = Read_Byte(f);
+				int32 a = Read_Byte(f);
+				int32 b = Read_Byte(f);
+				int32 c = Read_Byte(f);
 
 				err = 0;
 				return (uint32)((a << 16) | (b << 8) | c);
@@ -198,13 +198,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			try
 			{
-				c_int a = Read_Byte(f);
-				c_int b = Read_Byte(f);
-				c_int c = Read_Byte(f);
-				c_int d = Read_Byte(f);
+				int32 a = Read_Byte(f);
+				int32 b = Read_Byte(f);
+				int32 c = Read_Byte(f);
+				int32 d = Read_Byte(f);
 
 				err = 0;
-				return (uint32)((d << 24) | (c << 16) | (b << 8) | a);
+				return ((uint32)d << 24) | ((uint32)c << 16) | ((uint32)b << 8) | (uint32)a;
 			}
 			catch (EndOfStreamException)
 			{
@@ -229,13 +229,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			try
 			{
-				c_int a = Read_Byte(f);
-				c_int b = Read_Byte(f);
-				c_int c = Read_Byte(f);
-				c_int d = Read_Byte(f);
+				int32 a = Read_Byte(f);
+				int32 b = Read_Byte(f);
+				int32 c = Read_Byte(f);
+				int32 d = Read_Byte(f);
 
 				err = 0;
-				return (uint32)((a << 24) | (b << 16) | (c << 8) | d);
+				return ((uint32)a << 24) | ((uint32)b << 16) | ((uint32)c << 8) | (uint32)d;
 			}
 			catch (EndOfStreamException)
 			{

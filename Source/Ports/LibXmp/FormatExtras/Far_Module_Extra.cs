@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 			256, 128, 64, 42, 32, 25, 21, 18, 16, 14, 12, 11, 10, 9, 9, 8
 		];
 
-		public const c_int Far_Old_Tempo_Shift = 2;		// Power of multiplier for old tempo mode
+		public const c_int Far_Old_Tempo_Mult = 1 << 2;	// Number of real ticks for each FAR "tick" in old tempo mode. In the real replayer, this is 8
 		public const c_int Far_Gus_Channels = 17;
 
 		private readonly LibXmp lib;
@@ -136,7 +136,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 				while (divisor > 0xffff)
 				{
 					divisor >>= 1;
-					tempo <<= 1;
 					speed++;
 				}
 
@@ -149,16 +148,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras
 				// remaining count before decrementing it but after handling
 				// each tick, i.e. a count of "3" executes 4 ticks
 				speed++;
-				bpm = tempo;
+
+				// TODO: Non-integer BPMs: use PIT Hz here, make time factor 4.0?
+				bpm = (c_int)(1197255U / divisor);
 			}
 			else
 			{
 				// "Old" FAR tempo
 				// This runs into the XMP_MIN_BPM limit, but nothing uses it anyway.
 				// Old tempo mode in the original FAR replayer has 32 ticks,
-				// but ignores all except every 8th
-				speed = 4 << Far_Old_Tempo_Shift;
-				bpm = (Far_Tempos[coarse] + fine * 2) << Far_Old_Tempo_Shift;
+				// but ignores all except every 8th.
+				// TODO: This is also is affected by bad division math
+				speed = 4 * Far_Old_Tempo_Mult;
+				bpm = (Far_Tempos[coarse] + (fine * 2)) * Far_Old_Tempo_Mult;
 			}
 
 			if (bpm < Constants.Xmp_Min_Bpm)

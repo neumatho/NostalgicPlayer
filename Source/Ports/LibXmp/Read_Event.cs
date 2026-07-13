@@ -1530,7 +1530,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				xc.Note = note;
 
 			if ((note >= 0) || tonePorta_Offset)
-				lib.virt.LibXmp_Virt_VoicePos(chn, xc.Offset.Val);
+			{
+				c_int off = 0;
+
+				// Offset >length starts at 0 (it_high_offset_memory.it) or at
+				// sample end for old FX (it_high_offset_memory_oldfx.it)
+				if (Test(xc, Channel_Flag.Offset) && (Common.Has_Quirk(m, Quirk_Flag.ItOldFx) || (Is_Valid_Sample(mod, xc.Smp) && (xc.Offset.Val < mod.Xxs[xc.Smp].Len))))
+					off = xc.Offset.Val;
+
+				lib.virt.LibXmp_Virt_VoicePos(chn, off);
+			}
 
 			if (use_Ins_Vol && !Test(xc, Channel_Flag.New_Vol))
 				xc.Volume = sub.Vol;

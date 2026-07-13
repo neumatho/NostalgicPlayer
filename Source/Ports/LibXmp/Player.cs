@@ -1399,6 +1399,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Module_Data m = ctx.M;
 			Xmp_Module mod = m.Mod;
 
+			// Default instrument memory: 0 = no ins., 1 = ins. 0, etc.
+			// This should be no ins. for FT2 (ft2_instrument_memory_default.xm,
+			// "playful girl" by Drozerix) and IT (it_instrument_memory_default.it)
+			const c_int old_Ins = 0;
+
 			for (c_int i = 0; i < p.Virt.Virt_Channels; i++)
 			{
 				Channel_Data xc = p.Xc_Data[i];
@@ -1408,7 +1413,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				lib.extras.LibXmp_Reset_Channel_Extras(xc);
 				xc.Ins = -1;
-				xc.Old_Ins = -1;	// Raw value
+				xc.Old_Ins = old_Ins;
 				xc.Key = -1;
 				xc.Volume = m.VolBase;
 			}
@@ -2003,7 +2008,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				// IT pitch envelopes are always linear, even in Amiga period
 				// mode. Each unit in the envelope scale is 1/25 semitone
-				linear_Bend += frq_Envelope << 7;
+				linear_Bend += frq_Envelope * 128;
 			}
 
 			// Arpeggio

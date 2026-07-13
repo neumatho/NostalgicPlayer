@@ -34,7 +34,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		public override string OriginalFormat => Resources.IDS_PROWIZ_NAME_AGENT71;
 		#endregion
 
-
 		#region ProWizardConverterWorkerBase implementation
 		/********************************************************************/
 		/// <summary>

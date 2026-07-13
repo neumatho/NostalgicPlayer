@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			switch (m.Period_Type)
 			{
 				case Containers.Common.Period.Linear:
-					return (c_int)(100 * (8 * (((240 - n) << 4) - p)));
+					return (c_int)(100 * (8 * (((240 - n) * 16) - p)));
 
 				case Containers.Common.Period.CSpd:
 				{

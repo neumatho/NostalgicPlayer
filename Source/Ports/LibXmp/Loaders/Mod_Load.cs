@@ -611,7 +611,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					xxs.Lpe = xxs.Len;
 
 				xxs.Flg = ((mh.Ins[i].Loop_Size > 1) && (xxs.Lpe >= 4)) ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
-				sub.Fin = (int8)(mh.Ins[i].FineTune << 4);
+				sub.Fin = (int8)((uint8)mh.Ins[i].FineTune << 4);
 				sub.Vol = mh.Ins[i].Volume;
 				sub.Pan = Constants.Xmp_Inst_No_Default_Pan;
 				sub.Sid = i;

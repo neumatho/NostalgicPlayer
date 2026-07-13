@@ -415,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			c_int fineTune = 0;
 
 			if (data.Sinaria)
-				fineTune = (int8)(f.Hio_Read8S() << 4);
+				fineTune = (int8)(f.Hio_Read8() << 4);
 
 			sub.Vol = (f.Hio_Read8() / 2) + 1;
 			f.Hio_Read32L();

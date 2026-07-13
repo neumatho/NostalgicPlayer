@@ -1436,7 +1436,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -1503,7 +1503,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -1618,7 +1618,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -1686,7 +1686,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -1823,7 +1823,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -1833,7 +1833,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;
@@ -1925,7 +1925,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -1935,7 +1935,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;
@@ -2091,7 +2091,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2101,7 +2101,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;
@@ -2195,7 +2195,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2205,7 +2205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;
@@ -2341,7 +2341,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2422,7 +2422,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2555,7 +2555,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2637,7 +2637,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2792,7 +2792,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2802,7 +2802,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;
@@ -2899,7 +2899,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -2909,7 +2909,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;
@@ -3074,7 +3074,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -3084,7 +3084,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;
@@ -3183,7 +3183,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						#region FILTER_LEFT
 						{
-							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl64 = ((a0 * Common.Xmp_Asl(smp_In_L, PreAmp_Bits)) + (b0 * fl1) + (b1 * fl2)) >> Constants.Filter_Shift;
 							sl = Mix_Filter_Clamp(sl64);
 							fl2 = fl1;
 							fl1 = sl;
@@ -3193,7 +3193,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 						#region FILTER_RIGHT
 						{
-							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr64 = ((a0 * Common.Xmp_Asl(smp_In_R, PreAmp_Bits)) + (b0 * fr1) + (b1 * fr2)) >> Constants.Filter_Shift;
 							sr = Mix_Filter_Clamp(sr64);
 							fr2 = fr1;
 							fr1 = sr;

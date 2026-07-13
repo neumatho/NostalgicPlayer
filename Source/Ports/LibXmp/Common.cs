@@ -115,6 +115,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int Xmp_Asl(c_int x, c_int e)
+		{
+			return (c_int)((c_uint)x << e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static c_int Track_Num(Module_Data m, c_int a, c_int c)
 		{
 			return m.Mod.Xxp[a].Index[c];

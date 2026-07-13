@@ -91,17 +91,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// TODO: Bxx Dxx jumps, then breaks (IMF, TT)
 		/// </summary>
-		Jump_Then_Break = (1 << 29),
+		Jump_Then_Break = (1 << 28),
 
 		/// <summary>
 		/// TODO: Jump queues next position (ST2)
 		/// </summary>
-		Jump_Queued = (1 << 30),
+		Jump_Queued = (1 << 29),
 
 		/// <summary>
 		/// Jump doesn't set break row to 0 (ST3/IT)
 		/// </summary>
-		Jump_No_Row_Set = (1 << 31),
+		Jump_No_Row_Set = (1 << 30),
 
 		Mode_Generic = None,
 		Loop_Global = (Loop_Global_Target | Loop_Global_Count),

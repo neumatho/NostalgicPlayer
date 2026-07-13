@@ -180,7 +180,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 						if ((inBuf[3] & 0x80) != 0)
 						{
 							size++;
-							a |= (inBuf[4] & 0x3f) << 27;
+							a |= (int)((uint)(inBuf[4] & 0x3f) << 27);
 						}
 					}
 				}

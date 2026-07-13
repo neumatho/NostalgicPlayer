@@ -800,7 +800,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private c_int Rtm_Convert_Pan(int8 pan)
 		{
-			c_int v = ((c_int)pan << 1) + 0x80;
+			c_int v = (pan * 2) + 0x80;
 			Ports.LibXmp.Common.Clamp(ref v, 0, 255);
 
 			return v;
