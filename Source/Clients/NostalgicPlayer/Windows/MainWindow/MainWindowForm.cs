@@ -3987,6 +3987,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			UpdateListCount();
 			UpdateTimes();
 			UpdateTapeDeck();
+			UpdateListControls();
 		}
 
 
@@ -4101,6 +4102,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void UpdateListControls()
 		{
+			if (moduleListControl.Items.Count > 0)
+			{
+				sortModulesButton.Enabled = true;
+				listButton.Enabled = true;
+			}
+			else
+			{
+				sortModulesButton.Enabled = false;
+				listButton.Enabled = false;
+			}
+
 			if (moduleListControl.SelectedIndex == -1)
 			{
 				// No items are selected
