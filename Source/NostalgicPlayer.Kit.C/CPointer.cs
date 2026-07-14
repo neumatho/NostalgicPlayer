@@ -7,6 +7,7 @@ using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.C
@@ -19,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct CPointer<T> : IPointerInternal, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
+	public struct CPointer<T> : IPointerInternal, IIterator<CPointer<T>, T>, IRandom_Access_Iterator<CPointer<T>>, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
 	{
 		#region CastMemoryManager class
 		private sealed class CastMemoryManager<TFrom, TTo> : MemoryManager<TTo> where TFrom : unmanaged where TTo : unmanaged
@@ -1040,6 +1041,47 @@ namespace Polycode.NostalgicPlayer.Kit.C
 				return new CPointer<T>();
 
 			return new CPointer<T>(internalBuffer.ToArray(), bufferOffset);
+		}
+		#endregion
+
+		#region IIterator implementation
+		/********************************************************************/
+		/// <summary>
+		/// The element the pointer currently refers to (C++ *it). This makes
+		/// a CPointer usable as a random access iterator, matching how a raw
+		/// pointer is itself an iterator in C++
+		/// </summary>
+		/********************************************************************/
+		ref T IIterator<CPointer<T>, T>.Value
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => ref this[0];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a copy of the pointer advanced one element (C++ ++it)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		CPointer<T> IIterator<CPointer<T>>.Next()
+		{
+			return this + 1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the number of elements between other and this pointer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		ptrdiff_t IRandom_Access_Iterator<CPointer<T>>.DistanceFrom(CPointer<T> other)
+		{
+			return this - other;
 		}
 		#endregion
 
