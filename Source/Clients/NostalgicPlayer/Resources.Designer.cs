@@ -1434,6 +1434,69 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Load/save.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move down.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move up.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_MODULELIST_MOVE_UP {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_MOVE_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other actions.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Properties.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_MODULELIST_PROPERTIES {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_PROPERTIES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in File Explorer.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_MODULELIST_SORT {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_SORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shuffle.
         /// </summary>
         internal static string IDS_CONTEXTMENU_SORT_SHUFFLE {

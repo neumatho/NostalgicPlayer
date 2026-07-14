@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -35,6 +36,8 @@ using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
+using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -137,6 +140,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
+
+		// Context menu variables
+		// List of all the Explorer commands that we want to support
+		private const string ProductivityPlusPack_Rate_ExplorerCommandGuid = "DF9672B2-B7C8-49F8-AE48-054B361C1448";
+		private static readonly ExplorerCommandDefinition[] ModuleListExplorerCommandDefinitions =
+		[
+			new ExplorerCommandDefinition(new Guid(ProductivityPlusPack_Rate_ExplorerCommandGuid), renderTopLevelIcon: false)
+		];
+		private readonly List<ExplorerCommandToolStripMenu> moduleListExplorerCommandMenus = new List<ExplorerCommandToolStripMenu>();
+		private ModuleListItem moduleListContextItem = null;
+		private KryptonContextMenuItem contextMenuItemRemove = null;
+		private KryptonContextMenuItem contextMenuItemMoveUp = null;
+		private KryptonContextMenuItem contextMenuItemMoveDown = null;
+		private KryptonContextMenuItem contextMenuSortMenu = null;
+		private KryptonContextMenuItem contextMenuItemSetSubSong = null;
+		private KryptonContextMenuItem contextMenuItemClearSubSong = null;
+		private KryptonContextMenuSeparator contextMenuItemFileSeparator = null;
+		private KryptonContextMenuItem contextMenuItemShowInFileExplorer = null;
+		private KryptonContextMenuItem contextMenuItemProperties = null;
 
 		/********************************************************************/
 		/// <summary>
@@ -1043,6 +1065,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// Module list
 			moduleListControl.SelectedIndexChanged += ModuleListControl_SelectedIndexChanged;
 			moduleListControl.MouseDoubleClick += ModuleListControl_MouseDoubleClick;
+			moduleListControl.MouseDown += ModuleListControl_MouseDown;
 			moduleListControl.KeyPress += ModuleListControl_KeyPress;
 			moduleListControl.DragDrop += ModuleListControl_DragDrop;
 
@@ -1441,6 +1464,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			using (new SleepCursor())
 			{
+				// Dispose the module list explorer command menus
+				DisposeModuleListExplorerCommandMenus();
+
 				// Remember list/module properties
 				int rememberSelected, rememberPosition, rememberSong;
 
@@ -1927,6 +1953,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				// Load and play the selected module
 				LoadAndPlayModule(index);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User clicked a mouse button in the module list box.
+		/// If it is the right mouse button, show the context menu
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListControl_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button != MouseButtons.Right)
+				return;
+
+			int index = moduleListControl.IndexFromPoint(e.Location);
+
+			moduleListContextItem = index != -1 ? moduleListControl.Items[index] : null;
+
+			if ((index != -1) && !moduleListControl.SelectedIndexes.Contains(index))
+				moduleListControl.SelectedIndex = index;
+
+			moduleListContextMenu.Show(moduleListControl, moduleListControl.PointToScreen(e.Location));
 		}
 
 
@@ -3185,6 +3234,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			CreateSortContextMenu();
 			CreateListContextMenu();
 			CreateDiskContextMenu();
+			CreateModuleListContextMenu();
 
 			// Set tooltip on all controls
 			SetTooltips();
@@ -3406,6 +3456,132 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			menuItems.Items.Add(item);
 
 			diskContextMenu.Items.Add(menuItems);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create the module list context menu
+		/// </summary>
+		/********************************************************************/
+		private void CreateModuleListContextMenu()
+		{
+			moduleListContextMenu.Opening += ModuleListContextMenu_Opening;
+
+			// Context menu container
+			KryptonContextMenuItems contextMenuItems = new KryptonContextMenuItems();
+
+
+
+			// Add
+			KryptonContextMenuItem addMenu = new KryptonContextMenuItem(Resources.IDS_FAVORITE_BUTTON_ADD, Resources.IDB_ADD, null);
+			addMenu.Items.Add(new KryptonContextMenuItems(
+				new KryptonContextMenuItemBase[]
+				{
+					new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES, Resources.IDB_FILE, AddMenu_Files),
+					new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY, Resources.IDB_DIRECTORY, AddMenu_Directory)
+				}));
+			contextMenuItems.Items.Add(addMenu);
+
+
+
+			// Remove
+			contextMenuItemRemove = new KryptonContextMenuItem(Resources.IDS_FAVORITE_BUTTON_REMOVE, Resources.IDB_REMOVE, RemoveModuleButton_Click);
+			contextMenuItems.Items.Add(contextMenuItemRemove);
+
+
+
+			// Sort
+			contextMenuSortMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SORT, Resources.IDB_SORT, null);
+			KryptonContextMenuItem contextMenuItemSortAZ = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ, Resources.IDB_AZ, SortMenu_AZ);
+			KryptonContextMenuItem contextMenuItemSortZA = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA, Resources.IDB_ZA, SortMenu_ZA);
+			KryptonContextMenuItem contextMenuItemSortShuffle = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE, Resources.IDB_SHUFFLE, SortMenu_Shuffle);
+			contextMenuSortMenu.Items.Add(new KryptonContextMenuItems(
+				new KryptonContextMenuItemBase[]
+				{
+					contextMenuItemSortAZ,
+					contextMenuItemSortZA,
+					contextMenuItemSortShuffle
+				}));
+			contextMenuItems.Items.Add(contextMenuSortMenu);
+
+
+
+			// Move
+			contextMenuItemMoveUp = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_MOVE_UP, Resources.IDB_MOVE_UP, MoveModulesUpButton_Click);
+			contextMenuItemMoveDown = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN, Resources.IDB_MOVE_DOWN, MoveModulesDownButton_Click);
+			contextMenuItems.Items.Add(contextMenuItemMoveUp);
+			contextMenuItems.Items.Add(contextMenuItemMoveDown);
+
+
+
+			// Other actions
+			KryptonContextMenuItem moreMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, Resources.IDB_LIST, null);
+
+			KryptonContextMenuItem contextMenuItemSelectAll = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL, ListMenu_SelectAll);
+			KryptonContextMenuItem contextMenuItemSelectNone = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE, ListMenu_SelectNone);
+			contextMenuItemSetSubSong = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, Resources.IDB_SET_SUBSONG, ListMenu_SetDefaultSubSong);
+			contextMenuItemClearSubSong = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG, Resources.IDB_CLEAR_SUBSONG, ListMenu_ClearDefaultSubSong);
+
+			moreMenu.Items.Add(new KryptonContextMenuItems(
+				new KryptonContextMenuItemBase[]
+				{
+					contextMenuItemSelectAll,
+					contextMenuItemSelectNone,
+					new KryptonContextMenuSeparator(),
+					contextMenuItemSetSubSong,
+					contextMenuItemClearSubSong
+				}));
+			contextMenuItems.Items.Add(moreMenu);
+
+
+
+			// Disk 
+			KryptonContextMenuItem diskMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE, Resources.IDB_DISK, null);
+
+			KryptonContextMenuItem contextMenuItemLoad = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD, Resources.IDB_LOAD, DiskMenu_LoadList);
+			KryptonContextMenuItem contextMenuItemAppend = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_APPEND, DiskMenu_AppendList);
+			KryptonContextMenuItem contextMenuItemSave = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE, Resources.IDB_SAVE, DiskMenu_SaveList);
+
+			diskMenu.Items.Add(new KryptonContextMenuItems(
+				new KryptonContextMenuItemBase[]
+				{
+					contextMenuItemLoad,
+					contextMenuItemAppend,
+					contextMenuItemSave
+				}));
+			contextMenuItems.Items.Add(diskMenu);
+
+
+
+			// Add File Explorer actions if we are not in Windows 10 S mode
+			if (!Env.IsWindows10S)
+			{
+				contextMenuItemFileSeparator = new KryptonContextMenuSeparator();
+				contextMenuItems.Items.Add(contextMenuItemFileSeparator);
+
+				// Add all the explorer command definitions to the context menu
+				foreach (ExplorerCommandDefinition definition in ModuleListExplorerCommandDefinitions)
+				{
+					ExplorerCommandToolStripMenu commandMenu = new ExplorerCommandToolStripMenu(definition, ex => ShowSimpleErrorMessage(ex.Message));
+					moduleListExplorerCommandMenus.Add(commandMenu);
+					contextMenuItems.Items.Add(commandMenu.MenuItem);
+				}
+
+				// Show in File Explorer
+				contextMenuItemShowInFileExplorer = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER, ModuleListMenu_ShowInFileExplorer);
+				contextMenuItems.Items.Add(contextMenuItemShowInFileExplorer);
+
+				// Properties
+				contextMenuItemProperties = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_PROPERTIES, ModuleListMenu_Properties);
+				contextMenuItems.Items.Add(contextMenuItemProperties);
+			}
+
+
+
+			// Done creating the context menu
+			moduleListContextMenu.Items.Add(contextMenuItems);
 		}
 
 
@@ -5664,6 +5840,158 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				// Ignore any kind of exception
 			}
 		}
+
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the physical file represented by the module list item
+		/// </summary>
+		/********************************************************************/
+		private static string GetPhysicalFilePath(IModuleListItem listItem)
+		{
+			if (listItem is SingleFileModuleListItem)
+				return listItem.Source;
+
+			if (listItem is ArchiveFileModuleListItem)
+				return ArchivePath.GetArchiveName(listItem.Source);
+
+			return null;
+		}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all selected files, or null if an item is not a physical
+		/// non-archive file
+		/// </summary>
+		/********************************************************************/
+		private string[] GetSelectedPhysicalFileNames()
+		{
+			HashSet<string> fileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (ModuleListItem selectedItem in moduleListControl.SelectedItems)
+			{
+				if ((selectedItem.ListItem is not SingleFileModuleListItem fileItem) || !File.Exists(fileItem.Source))
+					return null;
+
+				fileNames.Add(fileItem.Source);
+			}
+
+			return fileNames.Count > 0 ? fileNames.ToArray() : null;
+		}
+
+		#endregion
+
+		#region Module list - context menu
+		private void UpdateModuleListExplorerCommandMenus(bool hasSelection, bool fileActionsVisible)
+		{
+			if (moduleListExplorerCommandMenus.Count == 0)
+				return;
+
+			string[] fileNames = fileActionsVisible && hasSelection ? GetSelectedPhysicalFileNames() : null;
+			foreach (ExplorerCommandToolStripMenu commandMenu in moduleListExplorerCommandMenus)
+			{
+				if (fileNames != null)
+					commandMenu.Update(Handle, fileNames);
+				else
+					commandMenu.Clear();
+			}
+		}
+		/********************************************************************/
+		/// <summary>
+		/// Release all configured Explorer command menus
+		/// </summary>
+		/********************************************************************/
+		private void DisposeModuleListExplorerCommandMenus()
+		{
+			foreach (ExplorerCommandToolStripMenu commandMenu in moduleListExplorerCommandMenus)
+				commandMenu.Dispose();
+
+			moduleListExplorerCommandMenus.Clear();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects "Show in File Explorer"
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListMenu_ShowInFileExplorer(object sender, EventArgs e)
+		{
+			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			try
+			{
+				WindowsShellHelper.ShowInFileExplorer(fileName);
+			}
+			catch (Exception ex)
+			{
+				ShowSimpleErrorMessage(ex.Message);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects "Properties"
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListMenu_Properties(object sender, EventArgs e)
+		{
+			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			try
+			{
+				WindowsShellHelper.ShowProperties(fileName);
+			}
+			catch (Exception ex)
+			{
+				ShowSimpleErrorMessage(ex.Message);
+			}
+		}
+		#endregion
+
+		#region Module list - context menu events
+		private void ModuleListContextMenu_Opening(object sender, CancelEventArgs e)
+		{
+			// Determine whether the menu was opened on a selected list item
+			IReadOnlyList<int> selectedIndexes = moduleListControl.SelectedIndexes;
+			bool hasSelection = (moduleListContextItem != null) && (selectedIndexes.Count > 0);
+
+			// Update the list editing actions based on the current items and selection
+			contextMenuItemRemove.Enabled = hasSelection;
+			contextMenuSortMenu.Enabled = moduleListControl.Items.Count > 0;
+			contextMenuItemMoveUp.Enabled = hasSelection && selectedIndexes.Any(index => (index > 0) && !selectedIndexes.Contains(index - 1));
+			contextMenuItemMoveDown.Enabled = hasSelection && selectedIndexes.Any(index => ((index + 1) < moduleListControl.Items.Count) && !selectedIndexes.Contains(index + 1));
+
+			// Update the default sub-song actions from the playback and selection state
+			contextMenuItemSetSubSong.Enabled = moduleHandler.IsModuleLoaded;
+			contextMenuItemClearSubSong.Enabled = hasSelection && moduleListControl.SelectedItems.Any(x => x.DefaultSubSong.HasValue);
+
+			//// Determine whether Windows shell actions were created for this system
+			bool fileActionsVisible = contextMenuItemFileSeparator != null;
+
+			// Enable file actions only for an existing local file selected from an item
+			string fileName = fileActionsVisible ? GetPhysicalFilePath(moduleListContextItem?.ListItem) : null;
+			bool fileActionAvailable = hasSelection && fileActionsVisible && !string.IsNullOrEmpty(fileName) && File.Exists(fileName);
+
+			if (fileActionsVisible)
+			{
+				contextMenuItemShowInFileExplorer.Enabled = fileActionAvailable;
+				contextMenuItemProperties.Enabled = fileActionAvailable;
+			}
+
+			// Build optional Explorer commands for the selected physical files
+			UpdateModuleListExplorerCommandMenus(hasSelection, fileActionsVisible);
+		}
 		#endregion
 
 		#region Module Library
@@ -5804,5 +6132,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			mainWindowSettings.OpenEqualizerWindow = openAgain;
 		}
 		#endregion
+
 	}
 }

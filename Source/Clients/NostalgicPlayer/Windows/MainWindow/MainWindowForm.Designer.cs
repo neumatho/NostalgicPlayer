@@ -72,6 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			sortContextMenu = new KryptonContextMenu();
 			listContextMenu = new KryptonContextMenu();
 			diskContextMenu = new KryptonContextMenu();
+			moduleListContextMenu = new KryptonContextMenu();
 			neverEndingTimer = new System.Windows.Forms.Timer(components);
 			addContextMenu = new KryptonContextMenu();
 			moduleListControl = new ModuleListControl();
@@ -491,6 +492,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleListControl.Name = "moduleListControl";
 			moduleListControl.Size = new System.Drawing.Size(377, 116);
 			moduleListControl.TabIndex = 5;
+			// 
+			// moduleListContextMenu
+			// 
+			moduleListContextMenu.Palette = fontPalette;
 			//
 			// searchPopupControl
 			//
@@ -583,6 +588,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private KryptonContextMenu sortContextMenu;
 		private KryptonContextMenu listContextMenu;
 		private KryptonContextMenu diskContextMenu;
+		private KryptonContextMenu moduleListContextMenu;
 		private System.Windows.Forms.Timer neverEndingTimer;
 		private KryptonContextMenu addContextMenu;
 		private KryptonButton favoritesButton;

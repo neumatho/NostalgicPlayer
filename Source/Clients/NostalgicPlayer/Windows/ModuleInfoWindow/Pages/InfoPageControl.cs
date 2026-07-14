@@ -266,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 						fileName = ArchivePath.GetArchiveName(fileName);
 
 					// Start File Explorer and select the file
-					Process.Start("explorer.exe", $"/select,\"{fileName}\"");
+					WindowsShellHelper.ShowInFileExplorer(fileName);
 				}
 			}
 		}
