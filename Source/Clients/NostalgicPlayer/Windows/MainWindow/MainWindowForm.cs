@@ -2000,18 +2000,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleListSetSubSongMenuItem.Enabled = moduleHandler.IsModuleLoaded;
 			moduleListClearSubSongMenuItem.Enabled = hasSelection && moduleList.SelectedItems.Any(x => x.DefaultSubSong.HasValue);
 
-			// Hide unsupported Windows shell actions when running on Windows 10 S
-			bool fileActionsVisible = !Env.IsWindows10S;
-			fileActionsSeparatorMenuItem.Visible = fileActionsVisible;
-			showInFileExplorerMenuItem.Visible = fileActionsVisible;
-			propertiesMenuItem.Visible = fileActionsVisible;
+			// Determine whether Windows shell actions were created for this system
+			bool fileActionsVisible = fileActionsSeparatorMenuItem != null;
 
 			// Enable file actions only for an existing local file selected from an item
-			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			string fileName = fileActionsVisible ? GetPhysicalFilePath(moduleListContextItem?.ListItem) : null;
 			bool fileActionAvailable = hasSelection && fileActionsVisible && !string.IsNullOrEmpty(fileName) && File.Exists(fileName);
 
-			showInFileExplorerMenuItem.Enabled = fileActionAvailable;
-			propertiesMenuItem.Enabled = fileActionAvailable;
+			if (fileActionsVisible)
+			{
+				showInFileExplorerMenuItem.Enabled = fileActionAvailable;
+				propertiesMenuItem.Enabled = fileActionAvailable;
+			}
 
 			// Build optional Explorer commands for the selected physical files
 			UpdateModuleListExplorerCommandMenus(hasSelection, fileActionsVisible);
@@ -3719,27 +3719,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			loadSaveSubMenu.DropDownItems.Add(loadSaveItem);
 
 
-			// File actions
-			fileActionsSeparatorMenuItem = new ToolStripSeparator();
-			moduleListContextMenu.Items.Add(fileActionsSeparatorMenuItem);
-
 			if (!Env.IsWindows10S)
 			{
+				// File actions
+				fileActionsSeparatorMenuItem = new ToolStripSeparator();
+				moduleListContextMenu.Items.Add(fileActionsSeparatorMenuItem);
+
 				foreach (ExplorerCommandDefinition definition in ModuleListExplorerCommandDefinitions)
 				{
 					ExplorerCommandToolStripMenu commandMenu = new ExplorerCommandToolStripMenu(definition, ex => ShowSimpleErrorMessage(ex.Message));
 					moduleListExplorerCommandMenus.Add(commandMenu);
 					moduleListContextMenu.Items.Add(commandMenu.MenuItem);
 				}
+
+				showInFileExplorerMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER);
+				showInFileExplorerMenuItem.Click += ModuleListMenu_ShowInFileExplorer;
+				moduleListContextMenu.Items.Add(showInFileExplorerMenuItem);
+
+				propertiesMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_PROPERTIES);
+				propertiesMenuItem.Click += ModuleListMenu_Properties;
+				moduleListContextMenu.Items.Add(propertiesMenuItem);
 			}
-
-			showInFileExplorerMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER);
-			showInFileExplorerMenuItem.Click += ModuleListMenu_ShowInFileExplorer;
-			moduleListContextMenu.Items.Add(showInFileExplorerMenuItem);
-
-			propertiesMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_PROPERTIES);
-			propertiesMenuItem.Click += ModuleListMenu_Properties;
-			moduleListContextMenu.Items.Add(propertiesMenuItem);
 		}
 
 
