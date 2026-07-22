@@ -64,21 +64,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual string ExtraFormatInfo => null;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return all events that needs to be triggered from the player
-		/// </summary>
-		/********************************************************************/
-		public virtual EventArgs[] GetTriggeredEvents()
-		{
-			EventArgs[] result = events.ToArray();
-			events.Clear();
-
-			return result;
-		}
 		#endregion
 
 		#region IModuleInformation implementation
@@ -184,6 +169,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		public virtual bool HasEndReached
 		{
 			get; set;
+		}
+		#endregion
+
+		#region IEvent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return all events that needs to be triggered from the player
+		/// </summary>
+		/********************************************************************/
+		public virtual EventArgs[] GetTriggeredEvents()
+		{
+			EventArgs[] result = events.ToArray();
+			events.Clear();
+
+			return result;
 		}
 		#endregion
 

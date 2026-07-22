@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// <summary>
 	/// Agents that can play samples or stream samples must implement this interface
 	/// </summary>
-	public interface ISampleAgent : IModuleInformation, IEndDetection
+	public interface ISampleAgent : IModuleInformation, IEndDetection, IEvent
 	{
 		/// <summary>
 		/// Will load and decode a data block and store it in the buffer

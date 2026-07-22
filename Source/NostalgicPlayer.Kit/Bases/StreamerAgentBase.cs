@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		private PictureInfo[] pictures;
 
 		private readonly Dictionary<int, ModuleInfoChanged> changedModuleInfo = new Dictionary<int, ModuleInfoChanged>();
+		private readonly List<EventArgs> events = new List<EventArgs>();
 
 		#region IStreamerAgent implementation
 		/********************************************************************/
@@ -270,6 +272,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		}
 		#endregion
 
+		#region IEvent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return all events that needs to be triggered from the player
+		/// </summary>
+		/********************************************************************/
+		public virtual EventArgs[] GetTriggeredEvents()
+		{
+			EventArgs[] result = events.ToArray();
+			events.Clear();
+
+			return result;
+		}
+		#endregion
+
 		#region Helper methods
 		/********************************************************************/
 		/// <summary>
@@ -293,6 +310,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected void OnModuleInfoChanged(int line, string newValue)
 		{
 			changedModuleInfo[line] = new ModuleInfoChanged(line, newValue);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this so put an event on the queue instead of trigger it
+		/// directly
+		/// </summary>
+		/********************************************************************/
+		protected void AddEventToQueue(EventArgs e)
+		{
+			events.Add(e);
 		}
 		#endregion
 	}

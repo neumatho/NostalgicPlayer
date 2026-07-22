@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// <summary>
 	/// Agents of this type can play some kind of file
 	/// </summary>
-	public interface IPlayerAgent : IModuleInformation, IEndDetection, IAgentWorker
+	public interface IPlayerAgent : IModuleInformation, IEndDetection, IEvent, IAgentWorker
 	{
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -39,10 +39,5 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// null or an empty string, nothing extra is shown
 		/// </summary>
 		string ExtraFormatInfo { get; }
-
-		/// <summary>
-		/// Return all events that needs to be triggered from the player
-		/// </summary>
-		EventArgs[] GetTriggeredEvents();
 	}
 }
