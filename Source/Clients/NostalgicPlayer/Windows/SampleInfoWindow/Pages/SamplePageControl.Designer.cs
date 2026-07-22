@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 			// octaveLabel
 			// 
 			octaveLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-			octaveLabel.Location = new System.Drawing.Point(4, 124);
+			octaveLabel.Location = new System.Drawing.Point(8, 124);
 			octaveLabel.Name = "octaveLabel";
 			octaveLabel.Size = new System.Drawing.Size(13, 13);
 			octaveLabel.TabIndex = 1;
