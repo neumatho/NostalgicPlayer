@@ -24,9 +24,10 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 
 		private FontConfiguration fontConfiguration;
 
-		// The bottom edge (in parent coordinates) the designer intended for a
-		// bottom-anchored label, captured from the placeholder size before
-		// AutoSize discards it. int.MinValue means not captured yet
+		// The right / bottom edge (in parent coordinates) the designer intended
+		// for a right / bottom anchored label, captured from the designer size
+		// before AutoSize discards it. int.MinValue means not captured yet
+		private int anchoredRight = int.MinValue;
 		private int anchoredBottom = int.MinValue;
 
 		/********************************************************************/
@@ -128,14 +129,47 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 		{
 			if (AutoSize && !DesignerHelper.IsInDesignMode(this))
 			{
-				// A bottom-anchored auto-size label grows downwards from its top
-				// left, so its bottom edge ends up below where the designer
-				// placed it. The designer's intended bottom is Location.Y plus
-				// the small placeholder height it assigned - but AutoSize discards
-				// that explicit size right after, so this explicit size set is the
-				// only place to read it. The placeholder is an explicit size
-				// shorter than the text content needs
-				bool placeholder = ((specified & BoundsSpecified.Size) != 0) && (height < base.GetPreferredSize(Size.Empty).Height);
+				Size contentSize = base.GetPreferredSize(Size.Empty);
+				bool sizeSpecified = (specified & BoundsSpecified.Size) != 0;
+
+				// Right-anchored (but not left): the designer's right edge
+				// (Location.X + Width) is the fixed corner and the label grows to
+				// the left. The designer serializes that explicit width, but
+				// AutoSize re-measures to the content width right after (setting
+				// the bounds width to exactly the content width). So a width set
+				// that differs from the content width is the designer's one, and
+				// this is the only place to read the intended right edge before
+				// AutoSize discards it. Capture it there; on a later auto-size
+				// width change keep the CURRENT right edge - not the captured one
+				// - so a parent resize that already moved the label is respected
+				if (IsRightAnchoredOnly())
+				{
+					if (sizeSpecified && (width != contentSize.Width))
+					{
+						anchoredRight = x + width;
+						x = anchoredRight - contentSize.Width;
+
+						// Collapse the width to the content width right here too.
+						// Otherwise the wide designer width is applied for one
+						// layout pass (right edge = anchoredRight + designer width)
+						// before AutoSize shrinks it - and when the parent's layout
+						// is suspended during InitializeComponent, the WinForms
+						// anchor distance gets captured from that too-wide transient
+						// state, leaving the label anchored too far to the right
+						width = contentSize.Width;
+					}
+					else if (width != Width)
+						x = Right - width;
+				}
+
+				// Bottom-anchored (but not top): a bottom-anchored auto-size
+				// label grows downwards from its top left, so its bottom edge
+				// ends up below where the designer placed it. The designer's
+				// intended bottom is Location.Y plus the small placeholder height
+				// it assigned (shorter than the text content needs) - but
+				// AutoSize discards that explicit size right after, so this
+				// explicit size set is the only place to read it
+				bool placeholder = sizeSpecified && (height < contentSize.Height);
 
 				if (placeholder && IsBottomAnchoredOnly())
 				{
@@ -146,13 +180,8 @@ namespace Polycode.NostalgicPlayer.Controls.Texts
 					// the correct edge, so the label still follows the parent on
 					// resize (it must not be pinned to an absolute position)
 					anchoredBottom = y + height;
-					y = anchoredBottom - base.GetPreferredSize(Size.Empty).Height;
+					y = anchoredBottom - contentSize.Height;
 				}
-
-				// Right-anchored (but not left): keep the right edge fixed when
-				// the text grows the width, so the label grows to the left
-				if ((width != Width) && !placeholder && IsRightAnchoredOnly())
-					x = Right - width;
 
 				// Bottom-anchored (but not top): keep the bottom edge fixed when
 				// the text auto-sizes the height (a size change), so the label
