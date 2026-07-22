@@ -4257,7 +4257,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void UpdateListControls()
 		{
-			if (moduleListControl.Items.Count > 0)
+			if (moduleList.Items.Count > 0)
 			{
 				sortModulesButton.Enabled = true;
 				listButton.Enabled = true;
@@ -4268,7 +4268,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				listButton.Enabled = false;
 			}
 
-			if (moduleListControl.SelectedIndex == -1)
+			if (moduleList.SelectedIndex == -1)
 			{
 				// No items are selected
 				removeModuleButton.Enabled = false;
