@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>NostalgicPlayer manual</title>
+	<link rel="stylesheet" href="css/docstyles.css">
+</head>
+<body>
+<table class="bgtable">
+	<tr>
+		<td>
+			<table class="menutable">
+				<tr><th><div class="tableheader"><h2>Menu</h2></div></th></tr>
+				<tr><td><a href="features.html">Features</a></td></tr>
+				<tr><td><a href="howtouse.html"><b>How to use</b></a></td></tr>
+				<tr><td><a href="moduletypes.html">Module types</a></td></tr>
+				<tr><td><a href="requirements.html">Requirements</a></td></tr>
+				<tr><td><a href="thanks.html">Thanks</a></td></tr>
+			</table>
+		</td>
+		<td>
+			<table class="contenttable">
+				<tr><th><div class="tableheader"><h3>Pattern Viewer</h3></div></th></tr>
+				<tr><td>
+					<span>
+						<img src="images/patternviewerdisplay.png" alt="pattern viewer"/>
+						<br>
+						<p>The Pattern Viewer shows the pattern data of the playing module, just like it would look in a tracker. Each channel is shown as a column with the notes, instrument numbers, volume and effects. The row currently playing is highlighted and the view follows the playback in real-time. Not every player supports the Pattern Viewer yet, see <a href="#players">Supported players</a> for the details.</p>
+					</span>
+					<span>
+						<a name="display"><h3>The display</h3></a>
+						<p>At the top of the window, you find a header showing the module title together with the current position in the song, the pattern and row being played, the speed and BPM (the tempo of the music) and the number of tracks.</p>
+						<p>Below the header, you find the player control bar (if enabled) and the channel headers. Each channel header shows the channel number and a VU meter, which is a small bar that moves with the volume of the channel. Some module formats build their patterns out of separate tracks per channel. For these, the channel header also shows which track the channel is currently playing: e.g. <i>#02 [003]</i> means that channel 2 is playing track number 003. Formats that can transpose the notes additionally show the transpose value there, see the Transposed Notes description below.</p>
+						<p>Clicking on a channel header will mute or unmute that channel. If the module has more channels than fits in the window, small arrow buttons appear, which can be used to scroll through the channels.</p>
+						<p>Below the channel headers, the patterns are shown. While the module is playing, the view scrolls automatically, so the playing row always stays highlighted. When the player is paused, you can navigate through the patterns yourself by using the keyboard, see the list of keys below.</p>
+					</span>
+					<span>
+						<a name="contextmenu"><h3>Context menu</h3></a>
+						<p>Right-clicking anywhere in the pattern area opens the context menu, where the look and behaviour of the viewer can be changed. All settings are remembered between sessions.</p>
+						<br>
+						<table class="usage2table spaced">
+							<tr>
+								<td><b>Tracker Style</b></td>
+								<td>
+									<p>Selects the look of the viewer. The styles are grouped by category, and you can also switch between them with Ctrl+Shift and +/-.</p>
+									<p>The System styles <b>Light</b> and <b>Dark</b> show the patterns in a clean, modern look. Their <b>Colored</b> option draws notes, instruments, volume and effects in different colors, so the columns are easier to tell apart.</p>
+									<p>The other styles mimic classic trackers like ProTracker, AHX or OctaMED (Amiga) and FastTracker II, Scream Tracker or Impulse Tracker (PC) - more are added over time. They are adaptations, not exact copies: every style can show every module format, even with more channels, other effects or longer patterns than the original could handle. So you can even watch an XM file in the ProTracker look.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>VU Meters</b></td>
+								<td>
+									<p>Controls the VU meters in the channel headers:</p>
+									<ul>
+										<li><b>Off</b> - disables the VU meters completely.</li>
+										<li><b>Note Kick</b> - the meters jump every time a new note is triggered and then slowly fall back.</li>
+										<li><b>Real Volume</b> - the meters show the actual volume of each channel instead, so fade-outs and other volume effects are also visible.</li>
+									</ul>
+									<p>Below these modes, you can select the visual style of the VU meters. The styles mimic the look of the VU meters in the original trackers. If <b>Match Tracker</b> is selected, the VU meter style automatically follows the selected tracker style, so both always fit together.</p>
+									<p>Keep in mind that not every tracker had VU meters back then - the Pattern Viewer stays true to the original, so with <b>Match Tracker</b> enabled, such a tracker style is shown without VU meters as well.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Display Mode</b></td>
+								<td>
+									<p>Selects which columns to show for each channel. Some module formats can have more than one effect per channel and row:</p>
+									<ul>
+										<li><b>Multi Effect Mode</b> - shows all effects of each channel.</li>
+										<li><b>Single Effect Mode</b> - shows only the first effect of each channel, which saves a lot of space.</li>
+										<li><b>Compact Mode</b> - drops the effects and only shows the notes and instrument numbers.</li>
+										<li><b>Notes Only Mode</b> - shows just the notes.</li>
+									</ul>
+									<p>The narrower modes are useful for modules with many channels, so more channels fit in the window.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Scaling</b></td>
+								<td>
+									<p>Scales the whole display between 100% and 400%. This is useful on high resolution monitors or if you want to watch the patterns from a distance. You can also use Ctrl and +/- to change the scaling.</p>
+									<p>The Pattern Viewer draws with pixel fonts, like the original trackers did. At 100%, 200%, 300% and 400%, these are drawn natively - each pixel simply becomes 2, 3 or 4 pixels - which gives a pixel-perfect, sharp image. The sizes in between, like 125%, 150% and 175%, have to be scaled and can therefore look a little softer. That is technically unavoidable.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Player Control Bar</b></td>
+								<td>
+									<p>Shows or hides the player control bar at the top of the window.</p>
+									<p>The bar shows the playing time and position and has the same playback buttons as the main window: previous/next module, previous/next sub-song, skip backwards/forwards, restart, play/pause and stop. Clicking on the position bar jumps to that position in the module, so you can control the playback directly from the Pattern Viewer window.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Rolling Patterns</b></td>
+								<td>
+									<p>When enabled, the end of the previous pattern and the beginning of the next pattern roll into view, so the display scrolls seamlessly across pattern boundaries like one long song.</p>
+									<p>When disabled, only the current pattern is shown and the display jumps when a new pattern starts.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Hide Empty</b></td>
+								<td>Normally, empty pattern entries are shown with placeholder characters. When this option is enabled, the placeholders are left out, so only the real data is shown. This gives a cleaner view and makes it easier to spot the notes in patterns that only hold a few of them.</td>
+							</tr>
+							<tr>
+								<td><b>Transposed Notes</b></td>
+								<td>
+									<p>Some module formats can transpose the notes while playing, e.g. by playing the same notes a few semi-tones higher at a later position in the song. For these modules, the current transpose value of each channel is shown in its channel header: e.g. <i>#02 [+3]</i> - or <i>#02 [003+3]</i> together with a track number - means that the notes of channel 2 are currently played 3 semi-tones up.</p>
+									<p>This option controls how the notes are shown:</p>
+									<ul>
+										<li><b>Enabled</b> - the notes are shown as they actually sound, with the transpose applied.</li>
+										<li><b>Disabled</b> - the notes are shown as they are stored in the pattern data, which may differ from what you hear.</li>
+									</ul>
+									<p>For modules without transpose, this option makes no difference.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Compress Patterns</b></td>
+								<td>
+									<p>Some modules use long patterns with a lot of empty space, e.g. when only every second or fourth row holds a note. When compression is <b>On</b>, the Pattern Viewer tries to show such patterns in a shorter form by leaving out the empty rows. <b>Auto</b> lets the player decide, which is the recommended setting.</p>
+									<p>Compression only works when the empty rows follow a regular scheme, e.g. every second row of the pattern is empty - patterns that do not fit such a scheme are always shown unchanged. For this reason it also cannot help with players where the whole song is converted into one single long pattern.</p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Row Numbers</b></td>
+								<td>
+									<p>Selects how the row numbers are shown:</p>
+									<ul>
+										<li><b>Auto</b> - the selected tracker style decides.</li>
+										<li><b>Decimal</b> - normal decimal numbers.</li>
+										<li><b>Hexadecimal</b> - base-16 numbers, the digits A-F follow after 9.</li>
+									</ul>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Instrument</b></td>
+								<td>
+									<p>Selects how the instrument numbers are shown:</p>
+									<ul>
+										<li><b>Auto</b> - the selected tracker style decides.</li>
+										<li><b>Decimal</b> - normal decimal numbers.</li>
+										<li><b>Hexadecimal</b> - base-16 numbers.</li>
+									</ul>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Volume</b></td>
+								<td>
+									<p>Selects how the volume values are shown:</p>
+									<ul>
+										<li><b>Auto</b> - the selected tracker style decides.</li>
+										<li><b>Decimal</b> - normal decimal numbers.</li>
+										<li><b>Hexadecimal</b> - base-16 numbers.</li>
+									</ul>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Track/Pattern</b></td>
+								<td>
+									<p>Selects how the track and pattern numbers are shown:</p>
+									<ul>
+										<li><b>Auto</b> - follows the row number format.</li>
+										<li><b>Decimal</b> - normal decimal numbers.</li>
+										<li><b>Hexadecimal</b> - base-16 numbers.</li>
+									</ul>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Grid Lines</b></td>
+								<td>Shows or hides the grid lines between the channels (<b>On</b> / <b>Off</b>). <b>Auto</b> lets the selected tracker style decide.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="keys"><h3>Shortcuts & key combinations</h3></a>
+						<p>These keys can be used in the Pattern Viewer window. Row and pattern navigation only works while the player is paused:</p>
+						<br>
+						<table class="usage2table spaced">
+							<tr>
+								<td><b>Up / Down</b></td>
+								<td>Moves one row up or down.</td>
+							</tr>
+							<tr>
+								<td><b>PageUp /<br>PageDown</b></td>
+								<td>Moves 10 rows up or down.</td>
+							</tr>
+							<tr>
+								<td><b>Home / End</b></td>
+								<td>Jumps to the first or last row of the current pattern.</td>
+							</tr>
+							<tr>
+								<td><b>Ctrl+Left /<br>Ctrl+Right</b></td>
+								<td>Switches to the previous or next pattern.</td>
+							</tr>
+							<tr>
+								<td><b>Ctrl+Home /<br>Ctrl+End</b></td>
+								<td>Jumps to the first or last pattern.</td>
+							</tr>
+							<tr>
+								<td><b>Left / Right</b></td>
+								<td>Scrolls through the channels, if the module has more channels than fits in the window.</td>
+							</tr>
+							<tr>
+								<td><b>Ctrl and + / -</b></td>
+								<td>Changes the scaling of the display.</td>
+							</tr>
+							<tr>
+								<td><b>Ctrl+Shift<br>and + / -</b></td>
+								<td>Switches to the next or previous tracker style.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="patterns"><h3>Patterns and trackers</h3></a>
+						<p>Most of the music NostalgicPlayer plays was made with so called trackers, like ProTracker on the Amiga or FastTracker II and Scream Tracker on the PC. In a tracker, the music is not stored as a recording. Instead it is built from small sound samples, which are played by notes arranged in patterns.</p>
+						<p>A pattern is a table: each column is a channel (also called a track) and each row is a moment in time. A cell can hold a note, the number of the instrument to play it with, a volume and one or more effects, e.g. to bend the pitch or fade the volume. The song itself is just a list that tells in which order the patterns are played.</p>
+						<p>The Pattern Viewer shows these patterns while the module plays, so you can see exactly how the music is put together, note by note. If you have never seen a tracker before, just watch the highlighted row while the music plays - you will quickly get the idea.</p>
+						<p>And if you have worked with one of the trackers back in the days, you will feel right at home, because the Pattern Viewer aims to show the data the same way the original tracker did. Keep in mind though, that the tracker styles are adaptations and not exact copies of the original programs, see the Tracker Style description above.</p>
+					</span>
+					<span>
+						<a name="players"><h3>Supported players</h3></a>
+						<p>The Pattern Viewer needs help from the player that plays the module, because every module format stores its data differently. Not every player supports this yet. Support is added player by player, so more and more formats will show their patterns in future versions. If the current module is played by a player without this support, an information page is shown instead of the patterns.</p>
+						<p>NostalgicPlayer always tries to present the music as patterns, no matter which format the module has. So whether you play a MOD, an XM or a completely different format, the patterns are always shown in the same familiar view. Even music formats that were not made with a tracker at all are converted to pattern form. For some of these formats, the whole song ends up as one single, long pattern - that is normal and simply how the conversion works for that format.</p>
+					</span>
+				</td></tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

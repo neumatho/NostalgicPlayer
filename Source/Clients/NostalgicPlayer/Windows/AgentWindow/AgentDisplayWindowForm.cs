@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
+using Polycode.NostalgicPlayer.Library.Players;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 {
@@ -22,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 	{
 		private IAgentManager agentManager;
 		private IModuleHandlerService moduleHandler;
+		private IClientPlayerControl clientPlayer;
 
 		private IVisualAgent visualAgent;
 		private string windowSettingsName;
@@ -46,11 +48,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(AgentInfo agentInfo, IModuleHandlerService moduleHandlerService, IAgentManager agentManager)
+		public void InitializeForm(AgentInfo agentInfo, IModuleHandlerService moduleHandlerService, IAgentManager agentManager, IClientPlayerControl clientPlayer)
 		{
 			// Remember the arguments
 			moduleHandler = moduleHandlerService;
 			this.agentManager = agentManager;
+			this.clientPlayer = clientPlayer;
 
 			// Set the title of the window
 			Text = string.Format(Resources.IDS_AGENTDISPLAY_TITLE, agentInfo.TypeName);
@@ -62,6 +65,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 				// Add the control into the form
 				UserControl userControl = guiDisplay.GetUserControl();
 				userControl.Dock = DockStyle.Fill;
+
+				// If the user control wants the client player control, provide it
+				if (userControl is IWantClientPlayerControl wantClient)
+				{
+					wantClient.SetClientPlayerControl(clientPlayer);
+				}
 
 				Controls.Add(userControl);
 
@@ -98,6 +107,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AgentWindow
 
 				if (moduleHandler.IsModuleLoaded)
 				{
+					// Tell pattern visual agents about the loaded module (with patterns if available)
+					if (visualAgent is IPatternVisualAgent patternVisualAgent)
+					{
+						IModulePlayer modulePlayer = moduleHandler.GetActiveModulePlayer();
+						if (modulePlayer != null && modulePlayer.CurrentSongModule != null)
+						{
+							patternVisualAgent.SongModuleLoaded(modulePlayer.CurrentSongModule);
+						}
+					}
+
 					visualAgent.InitVisual(moduleHandler.StaticModuleInformation.Channels, moduleHandler.StaticModuleInformation.VirtualChannels, moduleHandler.StaticModuleInformation.PlayBackSpeakers);
 
 					if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)

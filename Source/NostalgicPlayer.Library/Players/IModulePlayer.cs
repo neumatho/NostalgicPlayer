@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 
 namespace Polycode.NostalgicPlayer.Library.Players
@@ -33,5 +34,10 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// Event called when the player change sub-song
 		/// </summary>
 		public event SubSongChangedEventHandler SubSongChanged;
+
+		/// <summary>
+		/// Get the current song module information (including patterns if available), or null if no module is loaded
+		/// </summary>
+		SongModule CurrentSongModule { get; }
 	}
 }

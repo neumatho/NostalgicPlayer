@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class DavidWhittakerWorker : ModulePlayerWithSubSongDurationAgentBase
+	internal partial class DavidWhittakerWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		private bool oldPlayer;
 
@@ -190,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			if (!base.InitPlayer(out errorMessage))
 				return false;
 
-			trackNumbers = tracks.Keys.Order().Select((key, index) => (key, index)).ToDictionary(x => x.key, x => x.index);
+			trackNumbers = tracks.Keys.Order().Select((key, index) => (key, number: index + 1)).ToDictionary(x => x.key, x => x.number);
 
 			return true;
 		}
@@ -225,6 +225,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 			// Remember the song number
 			currentSong = songNumber;
+			ResetCurrentRow();
 
 			return true;
 		}
@@ -238,6 +239,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		public override void Play()
 		{
+			patternRecorder.Tick();
+
 			if (enableDelayCounter)
 			{
 				playingInfo.DelayCounter += playingInfo.DelayCounterSpeed;
@@ -277,6 +280,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 			ChangeSquareWaveform();
 
+			bool anyChannelReadCommands = false;
+
 			for (int i = 0; i < numberOfChannels; i++)
 			{
 				ChannelInfo channelInfo = channels[i];
@@ -285,10 +290,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				channelInfo.SpeedCounter--;
 
 				if (channelInfo.SpeedCounter == 0)
+				{
 					ReadTrackCommands(channelInfo, channel);
+					anyChannelReadCommands = true;
+				}
 				else if (channelInfo.SpeedCounter > 1)
 					DoFrameStuff(channelInfo, channel);
 			}
+
+			if (anyChannelReadCommands)
+				IncrementCurrentRow();
 		}
 		#endregion
 
@@ -439,7 +450,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		protected override void InitDuration(int subSong)
 		{
+			currentSong = subSong;
 			InitializeSound(subSong);
+
+			SongInfo song = songInfoList[subSong];
+			patternRecorder.StartSong(subSong, string.Empty, song.Speed, numberOfChannels);
+			ResetCurrentRow();
 		}
 
 
@@ -451,7 +467,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		protected override ISnapshot CreateSnapshot()
 		{
-			return new Snapshot(playingInfo, channels);
+			return new Snapshot(playingInfo, channels, patternRecorder.CurrentTick);
 		}
 
 
@@ -467,10 +483,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 			// Start to make a clone of the snapshot
 			Snapshot currentSnapshot = (Snapshot)snapshot;
-			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels, currentSnapshot.Tick);
 
 			playingInfo = clonedSnapshot.PlayingInfo;
 			channels = clonedSnapshot.Channels;
+
+			patternRecorder.SetTick(clonedSnapshot.Tick);
 
 			UpdateModuleInformation();
 
@@ -2092,6 +2110,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 				if (HasEndReached)
 				{
+					// Song reached end and will restart
 					playingInfo.Transpose = 0;
 					playingInfo.VolumeFadeSpeed = 0;
 					playingInfo.GlobalVolumeFadeSpeed = 0;
@@ -2235,7 +2254,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private void StopModule()
 		{
+			ResetCurrentRow();
+
+			SongInfo song = songInfoList[currentSong];
+
 			playingInfo.Transpose = 0;
+			playingInfo.Speed = song.Speed;
 			playingInfo.VolumeFadeSpeed = 0;
 			playingInfo.GlobalVolume = 64;
 			playingInfo.GlobalVolumeFadeSpeed = 0;
@@ -2353,18 +2377,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < numberOfChannels; i++)
-			{
-				sb.Append(trackNumbers[channels[i].PositionList[channels[i].CurrentPosition - 1]]);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(GetCurrentChannelTracks());
 		}
+
+
+
 		#endregion
 	}
 }
