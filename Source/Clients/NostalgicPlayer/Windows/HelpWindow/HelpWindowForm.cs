@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 	/// <summary>
 	/// This shows the help documentation
 	/// </summary>
-	public partial class HelpWindowForm : WindowFormBase
+	public partial class HelpWindowForm : WindowFormBase2
 	{
 		private IMainWindowApi mainWindow;
 		private WebView2 webView;
