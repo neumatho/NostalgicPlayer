@@ -399,6 +399,72 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// A foreach loop must visit every element in order
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Foreach_Visits_All_Elements()
+		{
+			array<int> a = new array<int>(new[] { 10, 20, 30 });
+
+			int sum = 0;
+			int visited = 0;
+
+			foreach (int value in a)
+			{
+				sum += value;
+				visited++;
+			}
+
+			Assert.AreEqual(3, visited);
+			Assert.AreEqual(60, sum);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A foreach loop over a reference must be able to modify the elements
+		/// in place
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Foreach_By_Reference_Modifies_Elements()
+		{
+			array<int> a = new array<int>(new[] { 1, 2, 3 });
+
+			foreach (ref int value in a)
+				value *= 10;
+
+			Assert.AreEqual(10, a[0]);
+			Assert.AreEqual(20, a[1]);
+			Assert.AreEqual(30, a[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A foreach loop over an empty container must not visit any element
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Foreach_Empty_Visits_Nothing()
+		{
+			array<int> a = new array<int>((size_t)0);
+
+			int visited = 0;
+
+			foreach (int value in a)
+				visited++;
+
+			Assert.AreEqual(0, visited);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// A simple reference type that supports deep cloning, used to verify
 		/// the cloning behavior of the bulk operations
 		/// </summary>

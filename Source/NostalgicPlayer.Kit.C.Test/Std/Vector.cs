@@ -686,6 +686,96 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// A foreach loop must visit every element in order
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Foreach_Visits_All_Elements()
+		{
+			vector<int> v = new vector<int>(new[] { 10, 20, 30 });
+
+			int sum = 0;
+			int visited = 0;
+
+			foreach (int value in v)
+			{
+				sum += value;
+				visited++;
+			}
+
+			Assert.AreEqual(3, visited);
+			Assert.AreEqual(60, sum);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A foreach loop over a reference must be able to modify the elements
+		/// in place
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Foreach_By_Reference_Modifies_Elements()
+		{
+			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+
+			foreach (ref int value in v)
+				value *= 10;
+
+			Assert.AreEqual(10, v[0]);
+			Assert.AreEqual(20, v[1]);
+			Assert.AreEqual(30, v[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A foreach loop must only visit the elements up to size(), not the
+		/// unused capacity
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Foreach_Ignores_Unused_Capacity()
+		{
+			vector<int> v = new vector<int>();
+			v.reserve((size_t)16);
+			v.push_back(1);
+			v.push_back(2);
+
+			int visited = 0;
+
+			foreach (int value in v)
+				visited++;
+
+			Assert.AreEqual(2, visited);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A foreach loop over an empty container must not visit any element
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Foreach_Empty_Visits_Nothing()
+		{
+			vector<int> v = new vector<int>();
+
+			int visited = 0;
+
+			foreach (int value in v)
+				visited++;
+
+			Assert.AreEqual(0, visited);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// A simple reference type that supports deep cloning, used to verify
 		/// the cloning behavior of the bulk operations
 		/// </summary>

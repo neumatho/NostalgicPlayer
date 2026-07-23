@@ -401,6 +401,21 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		{
 			return new reverse_iterator<T>(begin());
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns an enumerator over the elements of the container, so that
+		/// it can be used in a C# foreach loop. The enumerator gives access
+		/// to each element by reference (see <see cref="Buffer_Enumerator{T}"/>)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Buffer_Enumerator<T> GetEnumerator()
+		{
+			return new Buffer_Enumerator<T>(buffer, count);
+		}
 		#endregion
 
 		#region Capacity

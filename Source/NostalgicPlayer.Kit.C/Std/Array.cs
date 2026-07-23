@@ -264,6 +264,21 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		{
 			return new reverse_iterator<T>(begin());
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns an enumerator over the elements of the container, so that
+		/// it can be used in a C# foreach loop. The enumerator gives access
+		/// to each element by reference (see <see cref="Buffer_Enumerator{T}"/>)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Buffer_Enumerator<T> GetEnumerator()
+		{
+			return new Buffer_Enumerator<T>(buffer, buffer.Length);
+		}
 		#endregion
 
 		#region Capacity
@@ -313,8 +328,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		/// <summary>
 		/// Assigns the given value to every element in the container
-		/// (C++ fill(const T＆ value)). Each element is an independent copy of
-		/// the value (see <see cref="Clone_Value"/>)
+		/// (C++ fill(const T＆ value)). Each element is an independent copy
+		/// of the value (see <see cref="Clone_Value"/>)
 		/// </summary>
 		/********************************************************************/
 		public void fill(T value)
