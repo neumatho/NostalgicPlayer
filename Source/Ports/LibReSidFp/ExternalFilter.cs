@@ -133,8 +133,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		public int32_t Clock(int32_t input)
 		{
 			int32_t vi = input << 11;
-			int32_t dVlp = ((w0lp_1_s7 * (vi - vlp)) >> 7);
-			int32_t dVhp = ((w0hp_1_s17 * (vlp - vhp)) >> 17);
+			int32_t dVlp = (w0lp_1_s7 * (vi - vlp)) >> 7;
+			int32_t dVhp = (w0hp_1_s17 * (vlp - vhp)) >> 17;
 
 			vlp += dVlp;
 			vhp += dVhp;
