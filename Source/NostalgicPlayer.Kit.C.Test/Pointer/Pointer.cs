@@ -25,7 +25,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 1, 2, 3, 4, 5 ];
 			CPointer<int> ptr = new CPointer<int>(buffer, 2);
 
-			Assert.AreEqual(buffer, ptr.GetOriginalArray());
+			Assert.AreSame(buffer, ptr.GetOriginalArray());
 			Assert.AreEqual(2, ptr.Offset);
 			Assert.AreEqual(3, ptr.Length);
 			Assert.IsFalse(ptr.IsNull);
@@ -45,7 +45,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 1, 2, 3, 4, 5 ];
 			CPointer<int> ptr = new CPointer<int>(buffer);
 
-			Assert.AreEqual(buffer, ptr.GetOriginalArray());
+			Assert.AreSame(buffer, ptr.GetOriginalArray());
 			Assert.AreEqual(0, ptr.Offset);
 			Assert.AreEqual(5, ptr.Length);
 		}
@@ -138,7 +138,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> sliced = ptr.Slice(2);
 
-			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreSame(buffer, sliced.GetOriginalArray());
 			Assert.AreEqual(3, sliced.Offset);
 			Assert.AreEqual(2, sliced.Length);
 			Assert.AreEqual(40, sliced[0]);
@@ -160,7 +160,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> sliced = ptr.Slice(0);
 
-			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreSame(buffer, sliced.GetOriginalArray());
 			Assert.AreEqual(2, sliced.Offset);
 			Assert.AreEqual(3, sliced.Length);
 			Assert.AreEqual(30, sliced[0]);
@@ -181,7 +181,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> sliced = ptr.Slice(-2);
 
-			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreSame(buffer, sliced.GetOriginalArray());
 			Assert.AreEqual(1, sliced.Offset);
 			Assert.AreEqual(4, sliced.Length);
 			Assert.AreEqual(20, sliced[0]);
@@ -204,7 +204,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> sliced1 = ptr.Slice(2);
 			CPointer<int> sliced2 = sliced1.Slice(1);
 
-			Assert.AreEqual(buffer, sliced2.GetOriginalArray());
+			Assert.AreSame(buffer, sliced2.GetOriginalArray());
 			Assert.AreEqual(4, sliced2.Offset);
 			Assert.AreEqual(3, sliced2.Length);
 			Assert.AreEqual(50, sliced2[0]);
@@ -248,7 +248,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> sliced = ptr.Slice(0);
 
-			Assert.AreEqual(buffer, sliced.GetOriginalArray());
+			Assert.AreSame(buffer, sliced.GetOriginalArray());
 			Assert.AreEqual(5, sliced.Offset);
 			Assert.AreEqual(0, sliced.Length);
 		}
@@ -290,7 +290,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> begin = ptr.Begin();
 
-			Assert.AreEqual(buffer, begin.GetOriginalArray());
+			Assert.AreSame(buffer, begin.GetOriginalArray());
 			Assert.AreEqual(2, begin.Offset);
 			Assert.AreEqual(3, begin.Length);
 			Assert.AreEqual(30, begin[0]);
@@ -312,7 +312,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> end = ptr.End();
 
-			Assert.AreEqual(buffer, end.GetOriginalArray());
+			Assert.AreSame(buffer, end.GetOriginalArray());
 			Assert.AreEqual(5, end.Offset);
 			Assert.AreEqual(0, end.Length);
 		}
@@ -532,7 +532,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -551,7 +551,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2U;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -570,7 +570,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2L;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -589,7 +589,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ptr + 2UL;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(3, ptr2.Offset);
 			Assert.AreEqual(40, ptr2[0]);
 		}
@@ -608,7 +608,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -627,7 +627,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2U;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -646,7 +646,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2L;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -665,7 +665,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = ptr - 2UL;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(1, ptr2.Offset);
 			Assert.AreEqual(20, ptr2[0]);
 		}
@@ -739,7 +739,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 1);
 			CPointer<int> ptr2 = ++ptr;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(2, ptr2.Offset);
 			Assert.AreEqual(30, ptr2[0]);
 		}
@@ -758,7 +758,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			CPointer<int> ptr = new CPointer<int>(buffer, 3);
 			CPointer<int> ptr2 = --ptr;
 
-			Assert.AreEqual(buffer, ptr2.GetOriginalArray());
+			Assert.AreSame(buffer, ptr2.GetOriginalArray());
 			Assert.AreEqual(2, ptr2.Offset);
 			Assert.AreEqual(30, ptr2[0]);
 		}
@@ -1176,7 +1176,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> clonedPtr = ptr.MakeDeepClone();
 
-			Assert.AreNotEqual(ptr.GetOriginalArray(), clonedPtr.GetOriginalArray());
+			Assert.AreNotSame(ptr.GetOriginalArray(), clonedPtr.GetOriginalArray());
 			Assert.AreEqual(ptr.Offset, clonedPtr.Offset);
 			Assert.AreEqual(ptr.Length, clonedPtr.Length);
 			Assert.AreEqual(30, clonedPtr[0]);
@@ -1216,7 +1216,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 			int[] buffer = [ 10, 20, 30, 40, 50 ];
 			CPointer<int> ptr = buffer;
 
-			Assert.AreEqual(buffer, ptr.GetOriginalArray());
+			Assert.AreSame(buffer, ptr.GetOriginalArray());
 			Assert.AreEqual(0, ptr.Offset);
 			Assert.AreEqual(5, ptr.Length);
 			Assert.AreEqual(10, ptr[0]);
@@ -1552,7 +1552,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<int> result = ptr.ToPointer<int>();
 
-			Assert.AreEqual(buffer, result.GetOriginalArray());
+			Assert.AreSame(buffer, result.GetOriginalArray());
 			Assert.AreEqual(2, result.Offset);
 			Assert.AreEqual(30, result[0]);
 		}
@@ -1607,7 +1607,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<byte> result = ptr.ToPointer<byte>();
 
-			Assert.AreEqual(buffer, result.GetOriginalArray());
+			Assert.AreSame(buffer, result.GetOriginalArray());
 			Assert.AreEqual(3, result.Offset);
 			Assert.AreEqual(4, result[0]);
 		}
@@ -1675,7 +1675,7 @@ namespace NostalgicPlayer.Kit.C.Test.Pointer
 
 			CPointer<long> ptr2 = ptr1.ToPointer<long>();
 
-			Assert.AreEqual(ptr1.GetOriginalArray(), ptr2.GetOriginalArray());
+			Assert.AreSame(ptr1.GetOriginalArray(), ptr2.GetOriginalArray());
 			Assert.AreEqual(ptr1.Offset, ptr2.Offset);
 			Assert.AreEqual(ptr1.Length, ptr2.Length);
 

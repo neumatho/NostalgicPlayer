@@ -1245,7 +1245,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			Assert.AreEqual(to.Num_Indices, from.Num_Indices);
 
 			if ((to.Indices == null) || (from.Indices == null))
-				Assert.AreEqual(to.Indices, from.Indices);
+				Assert.AreSame(to.Indices, from.Indices);
 			else
 			{
 				for (uint32_t i = 0; i < to.Num_Indices; i++)
