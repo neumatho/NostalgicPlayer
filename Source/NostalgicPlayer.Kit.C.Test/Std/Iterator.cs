@@ -79,5 +79,48 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 			Assert.AreEqual(4L, Iterator.distance(v.begin(), v.end()));
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// size must return the number of elements in the given array
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Size_Returns_Array_Length()
+		{
+			int[] data = new int[] { 1, 2, 3, 4, 5 };
+
+			Assert.AreEqual(5UL, Iterator.size(data));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// size must return zero for an empty array
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Size_Empty_Array_Returns_Zero()
+		{
+			Assert.AreEqual(0UL, Iterator.size(new int[0]));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// size must return the number of elements in an array container
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Size_Returns_Array_Container_Length()
+		{
+			array<int> data = new array<int>(7);
+
+			Assert.AreEqual(7UL, Iterator.size(data));
+		}
 	}
 }
