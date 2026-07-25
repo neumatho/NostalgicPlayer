@@ -1234,9 +1234,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			tracker_Id = FindInternalFormat(f, start);
 
-			if (!out_Of_Range && mkMark && (tracker_Id != InternalFormat.ModsGrave) && !LibXmp.UnitTestMode)
-				return ExternalFormat.Unknown;
-
 			switch (tracker_Id)
 			{
 				case InternalFormat.FastTracker:
