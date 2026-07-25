@@ -10,8 +10,8 @@ jobs:
         uses: actions/checkout@v7
         with:
           lfs: 'false'
-      - name: Fetch LFS files (excluding Ports/Tests)
-        run: git lfs pull --exclude="Source/Ports/Tests"
+      - name: Fetch LFS files needed to build
+        run: git lfs pull --exclude="Documentation,Source/Ports/Tests"
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
       - name: Setup NuGet

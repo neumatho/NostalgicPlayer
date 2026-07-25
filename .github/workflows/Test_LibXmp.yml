@@ -14,7 +14,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          lfs: 'true'
+          lfs: 'false'
+      - name: Fetch LFS files needed to build
+        run: git lfs pull --exclude="Documentation,Source/Ports/Tests"
+      - name: Fetch LFS test data
+        run: git lfs pull --include="Source/Ports/Tests/LibXmp.Test"
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
       - name: Setup NuGet
