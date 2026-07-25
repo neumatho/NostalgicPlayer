@@ -11,7 +11,7 @@ jobs:
         with:
           lfs: 'false'
       - name: Fetch LFS files (excluding Ports/Tests)
-        run: git lfs pull --exclude="Ports/Tests"
+        run: git lfs pull --exclude="Source/Ports/Tests"
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
       - name: Setup NuGet
