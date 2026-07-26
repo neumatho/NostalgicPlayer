@@ -25,6 +25,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		{
 			try
 			{
+				// Register application with the Windows shell before creating
+				// any UI, so Windows can associate it with the correct identity
+				WindowsApplicationRegistration.Register();
+
 				using (ApplicationBuilder builder = new ApplicationBuilder(Environment.GetCommandLineArgs()))
 				{
 					builder.ConfigureContainer(context =>
