@@ -874,6 +874,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public CPointer<TTo> Cast<TFrom, TTo>() where TFrom : unmanaged where TTo : unmanaged
 		{
+			if (IsNull)
+				return new CPointer<TTo>();
+
 			if (internalBuffer.GetType() == typeof(Memory<TTo>))
 				return new CPointer<TTo>((Memory<TTo>)(object)internalBuffer, bufferOffset);
 
@@ -893,6 +896,9 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/********************************************************************/
 		public CPointer<TTo> Cast<TTo>() where TTo : unmanaged
 		{
+			if (IsNull)
+				return new CPointer<TTo>();
+
 			if (typeof(T) == typeof(TTo))
 				return new CPointer<TTo>((Memory<TTo>)(object)internalBuffer, bufferOffset);
 
