@@ -400,6 +400,19 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_float pow(c_float x, c_float y)
+		{
+			return MathF.Pow(x, y);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static c_double round(c_double x)
 		{
 			return Math.Round(x, MidpointRounding.AwayFromZero);
