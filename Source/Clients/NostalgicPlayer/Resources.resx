@@ -651,12 +651,6 @@ Formats supported:
   <data name="IDS_CONTEXTMENU_MODULELIST_PROPERTIES" xml:space="preserve">
     <value>Properties</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN" xml:space="preserve">
-    <value>Move down</value>
-  </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_MOVE_UP" xml:space="preserve">
-    <value>Move up</value>
-  </data>
 	<data name="IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE" xml:space="preserve">
     <value>Load/save</value>
   </data>
