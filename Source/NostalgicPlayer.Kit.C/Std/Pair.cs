@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.C.Std
 {
@@ -42,8 +43,12 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	///
 	/// Like a C++ std::pair, this is a value type (a C# struct), so assigning
 	/// one pair‹T1, T2› variable to another copies the two values. That copy
-	/// is shallow, exactly as in C++: if an element is itself a mutable
-	/// reference type, both pairs end up referring to the same element object.
+	/// is shallow: if an element is itself a mutable reference type, both
+	/// pairs end up referring to the same element object. Use the copy
+	/// constructor pair‹T1, T2›(pair‹T1, T2›) to make an independent copy of
+	/// the elements as well. Constructing a pair from two values stores the
+	/// given instances directly, as it builds the pair from its elements
+	/// rather than copying an existing pair.
 	///
 	/// Notable differences from C++:
 	/// - The elements are value initialized to default(T). For a reference
@@ -109,8 +114,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public pair(pair<T1, T2> other)
 		{
-			first = other.first;
-			second = other.second;
+			first = Clone_Value(other.first);
+			second = Clone_Value(other.second);
 		}
 
 
@@ -251,6 +256,22 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Returns an independent copy of the given value. If the value
+		/// implements IDeepCloneable‹U›, its MakeDeepClone() is used to obtain
+		/// a new instance. Otherwise the value is returned unchanged, which is
+		/// the correct behavior for value types and immutable reference types
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static U Clone_Value<U>(U value)
+		{
+			return value is IDeepCloneable<U> cloneable ? cloneable.MakeDeepClone() : value;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Compares the two pairs lexicographically, returning a negative

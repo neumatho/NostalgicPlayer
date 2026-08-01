@@ -26,25 +26,32 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// assigning one vector‹T› variable to another makes both refer to the
 	/// same container. To make an independent copy (the behavior of C++ copy
 	/// construction and copy assignment), use the copy constructor
-	/// vector‹T›(vector‹T›).
+	/// vector‹T›(vector‹T›) or <see cref="MakeDeepClone"/>. To copy the
+	/// contents into an already existing container, use
+	/// <see cref="CopyTo"/>.
 	///
 	/// As with a C++ std::vector, any operation that changes the capacity (a
 	/// reallocation) invalidates all pointers, iterators and references that
 	/// refer to elements of the container.
 	///
-	/// The bulk operations that insert more than one element (copy
-	/// construction; the fill, range and initializer forms of the
+	/// Every operation that stores a value in the container makes an
+	/// independent copy of it, whether it stores one element (push_back, the
+	/// single value overload of insert, emplace and emplace_back) or many
+	/// (copy construction; the fill, range and initializer forms of the
 	/// constructor and assign; the fill and range overloads of insert; and
-	/// the fill overload of resize) make an independent copy of each source
-	/// element. If the element type implements IDeepCloneable‹T›, its
-	/// MakeDeepClone() is used to obtain that copy, so that mutable reference
-	/// type elements do not become shared between containers or between
-	/// elements. The single element operations (push_back, the single value
-	/// overload of insert, emplace and emplace_back) store the given instance
-	/// directly
+	/// the fill overload of resize). If the element type implements
+	/// IDeepCloneable‹T›, its MakeDeepClone() is used to obtain that copy, so
+	/// that mutable reference type elements never become shared with the
+	/// caller, between containers or between elements.
+	///
+	/// The operations that hand out a reference or a pointer instead
+	/// (<see cref="at(size_t)"/>, the indexer, <see cref="front"/>,
+	/// <see cref="back"/>, <see cref="data"/> and the iterators) cannot copy,
+	/// so assigning through one of those stores the given instance directly,
+	/// just as assigning through a C++ reference does
 	/// </summary>
 #pragma warning disable CS8981
-	public class vector<T> : IEquatable<vector<T>>
+	public class vector<T> : IEquatable<vector<T>>, IDeepCloneable<vector<T>>, ICopyTo<vector<T>>
 	{
 #pragma warning restore CS8981
 		private T[] buffer;
@@ -68,9 +75,10 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// Constructs the container with the given number of default inserted
 		/// elements (C++ vector(size_type count)).
 		///
-		/// Note that, unlike C++, the elements are value initialized to
-		/// default(T). For a reference type this means null, where C++ would
-		/// have default constructed an object
+		/// As in C++, an element type that has a parameterless constructor is
+		/// default constructed. A value type is value initialized to
+		/// default(T), and so is a reference type that cannot be default
+		/// constructed, such as string (see <see cref="Default_Insert{T}"/>)
 		/// </summary>
 		/********************************************************************/
 		public vector(size_t count)
@@ -79,6 +87,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			buffer = n > 0 ? new T[n] : Array.Empty<T>();
 			this.count = n;
+
+			Default_Insert<T>.Fill(buffer, 0, n);
 		}
 
 
@@ -526,8 +536,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts the given value before the given position. Returns a
-		/// pointer to the inserted element
+		/// Inserts a copy of the given value before the given position.
+		/// Returns a pointer to the inserted element
 		/// (C++ insert(const_iterator pos, const T＆ value))
 		/// </summary>
 		/********************************************************************/
@@ -536,7 +546,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			int index = To_Index(pos);
 
 			Make_Room(index, 1);
-			buffer[index] = value;
+			buffer[index] = Clone_Value(value);
 			count++;
 
 			return new CPointer<T>(buffer, index);
@@ -607,8 +617,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts a new element before the given position, constructed from
-		/// the given value. Returns a pointer to the inserted element
+		/// Inserts a new element before the given position, constructed as a
+		/// copy of the given value. Returns a pointer to the inserted element
 		/// (C++ emplace(const_iterator pos, Args＆＆... args))
 		/// </summary>
 		/********************************************************************/
@@ -670,29 +680,29 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Appends the given value to the end of the container
+		/// Appends a copy of the given value to the end of the container
 		/// (C++ push_back(const T＆ value))
 		/// </summary>
 		/********************************************************************/
 		public void push_back(T value)
 		{
 			Ensure_Capacity(count + 1);
-			buffer[count++] = value;
+			buffer[count++] = Clone_Value(value);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Appends a new element to the end of the container, constructed
-		/// from the given value. Returns a reference to the appended element
-		/// (C++ emplace_back(Args＆＆... args))
+		/// Appends a new element to the end of the container, constructed as a
+		/// copy of the given value. Returns a reference to the appended
+		/// element (C++ emplace_back(Args＆＆... args))
 		/// </summary>
 		/********************************************************************/
 		public ref T emplace_back(T value)
 		{
 			Ensure_Capacity(count + 1);
-			buffer[count] = value;
+			buffer[count] = Clone_Value(value);
 
 			return ref buffer[count++];
 		}
@@ -719,8 +729,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		/// <summary>
 		/// Resizes the container to contain the given number of elements. If
-		/// the container is grown, the new elements are value initialized to
-		/// default(T) (C++ resize(size_type count))
+		/// the container is grown, the new elements are default inserted, just
+		/// as by vector‹T›(size_t) (C++ resize(size_type count))
 		/// </summary>
 		/********************************************************************/
 		public void resize(size_t count)
@@ -736,6 +746,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			{
 				Ensure_Capacity(n);
 				Array.Clear(buffer, this.count, n - this.count);
+				Default_Insert<T>.Fill(buffer, this.count, n - this.count);
 				this.count = n;
 			}
 		}
@@ -928,6 +939,48 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 				hash.Add(buffer[i]);
 
 			return hash.ToHashCode();
+		}
+		#endregion
+
+		#region IDeepCloneable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns an independent copy of the container, holding a copy of
+		/// each element. This is the same as using the copy constructor
+		/// vector‹T›(vector‹T›)
+		/// </summary>
+		/********************************************************************/
+		public virtual vector<T> MakeDeepClone()
+		{
+			return new vector<T>(this);
+		}
+		#endregion
+
+		#region ICopyTo implementation
+		/********************************************************************/
+		/// <summary>
+		/// Replaces the contents of the given container with a copy of the
+		/// contents of this one, holding a copy of each element. This is the
+		/// same as C++ copy assignment (destination = *this), so it
+		/// invalidates all pointers, iterators and references that refer to
+		/// elements of the destination
+		/// </summary>
+		/********************************************************************/
+		public void CopyTo(vector<T> destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+
+			if (ReferenceEquals(destination, this))
+				return;
+
+			destination.Ensure_Capacity(count);
+			Copy_Cloned(buffer.AsSpan(0, count), destination.buffer, 0);
+
+			if (count < destination.count)
+				Array.Clear(destination.buffer, count, destination.count - count);
+
+			destination.count = count;
 		}
 		#endregion
 

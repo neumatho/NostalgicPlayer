@@ -32,17 +32,25 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// assigning one array‹T› variable to another makes both refer to the
 	/// same container. To make an independent copy (the behavior of C++ copy
 	/// construction and copy assignment), use the copy constructor
-	/// array‹T›(array‹T›).
+	/// array‹T›(array‹T›) or <see cref="MakeDeepClone"/>. To copy the
+	/// contents into an already existing container of the same size, use
+	/// <see cref="CopyTo"/>.
 	///
-	/// The bulk operations that copy more than one element (copy construction
-	/// and the fill overload of the constructor and <see cref="fill"/>) make
-	/// an independent copy of each source element. If the element type
-	/// implements IDeepCloneable‹T›, its MakeDeepClone() is used to obtain
-	/// that copy, so that mutable reference type elements do not become
-	/// shared between containers or between elements
+	/// Every operation that stores a value in the container (copy
+	/// construction, the items form of the constructor and
+	/// <see cref="fill"/>) makes an independent copy of it. If the element
+	/// type implements IDeepCloneable‹T›, its MakeDeepClone() is used to
+	/// obtain that copy, so that mutable reference type elements never become
+	/// shared with the caller, between containers or between elements.
+	///
+	/// The operations that hand out a reference or a pointer instead
+	/// (<see cref="at(size_t)"/>, the indexer, <see cref="front"/>,
+	/// <see cref="back"/>, <see cref="data"/> and the iterators) cannot copy,
+	/// so assigning through one of those stores the given instance directly,
+	/// just as assigning through a C++ reference does
 	/// </summary>
 #pragma warning disable CS8981
-	public class array<T> : IEquatable<array<T>>
+	public class array<T> : IEquatable<array<T>>, IDeepCloneable<array<T>>, ICopyTo<array<T>>
 	{
 #pragma warning restore CS8981
 		private readonly T[] buffer;
@@ -50,11 +58,12 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		/// <summary>
 		/// Constructs a container holding the given number of default
-		/// initialized elements (C++ std::array‹T, N›).
+		/// inserted elements (C++ std::array‹T, N›).
 		///
-		/// Note that, unlike C++, the elements are value initialized to
-		/// default(T). For a reference type this means null, where C++ would
-		/// have default constructed an object
+		/// As in C++, an element type that has a parameterless constructor
+		/// is default constructed. A value type is value initialized to
+		/// default(T), and so is a reference type that cannot be default
+		/// constructed, such as string (see <see cref="Default_Insert{T}"/>)
 		/// </summary>
 		/********************************************************************/
 		public array(size_t count)
@@ -62,6 +71,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			int n = (int)count;
 
 			buffer = n > 0 ? new T[n] : Array.Empty<T>();
+
+			Default_Insert<T>.Fill(buffer, 0, n);
 		}
 
 
@@ -89,8 +100,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Copy constructor. Constructs an independent container with a copy
 		/// of the contents of the given container (C++ array(const array＆)).
-		/// Elements that implement IDeepCloneable‹T› are deep cloned, so that
-		/// the two containers do not share element instances
+		/// Elements that implement IDeepCloneable‹T› are deep cloned, so
+		/// that the two containers do not share element instances
 		/// </summary>
 		/********************************************************************/
 		public array(array<T> other)
@@ -503,6 +514,44 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 				hash.Add(buffer[i]);
 
 			return hash.ToHashCode();
+		}
+		#endregion
+
+		#region IDeepCloneable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns an independent copy of the container, holding a copy of
+		/// each element. This is the same as using the copy constructor
+		/// array‹T›(array‹T›)
+		/// </summary>
+		/********************************************************************/
+		public virtual array<T> MakeDeepClone()
+		{
+			return new array<T>(this);
+		}
+		#endregion
+
+		#region ICopyTo implementation
+		/********************************************************************/
+		/// <summary>
+		/// Replaces the contents of the given container with a copy of the
+		/// contents of this one, holding a copy of each element. This is the
+		/// same as C++ copy assignment (destination = *this). As the size of
+		/// a container is fixed, both containers must have the same size
+		/// </summary>
+		/********************************************************************/
+		public void CopyTo(array<T> destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+
+			if (destination.buffer.Length != buffer.Length)
+				throw new ArgumentException("array.CopyTo: the two containers have different sizes");
+
+			if (ReferenceEquals(destination, this))
+				return;
+
+			Copy_Cloned(buffer, destination.buffer, 0);
 		}
 		#endregion
 

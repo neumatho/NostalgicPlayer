@@ -27,7 +27,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// assigning one map‹Key, T› variable to another makes both refer to the
 	/// same container. To make an independent copy (the behavior of C++ copy
 	/// construction and copy assignment), use the copy constructor
-	/// map‹Key, T›(map‹Key, T›).
+	/// map‹Key, T›(map‹Key, T›) or <see cref="MakeDeepClone"/>. To copy the
+	/// contents into an already existing container, use
+	/// <see cref="CopyTo"/>.
 	///
 	/// As with a C++ std::map, the container is node based: inserting an
 	/// element never invalidates iterators or references to other elements,
@@ -35,23 +37,26 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// that element. Iterators are bidirectional and can be moved with the
 	/// ++ and -- operators.
 	///
-	/// The copy constructor makes an independent copy of each source element.
-	/// If a key or a mapped value implements IDeepCloneable‹T›, its
+	/// Every operation that stores a key or a mapped value in the container
+	/// makes an independent copy of it, whether it stores one element (insert,
+	/// insert_or_assign, emplace, try_emplace and the iterator property
+	/// <see cref="iterator.second"/>) or many (copy construction, the items
+	/// forms of the constructor and insert, and <see cref="CopyTo"/>). If a
+	/// key or a mapped value implements IDeepCloneable‹T›, its
 	/// MakeDeepClone() is used to obtain that copy, so that mutable reference
-	/// type elements do not become shared between containers. The single
-	/// element operations (insert, insert_or_assign, emplace, try_emplace and
-	/// operator[]) store the given instance directly.
+	/// type elements never become shared with the caller or between
+	/// containers. The indexer copies the key it inserts and default inserts
+	/// the mapped value, but it hands out a reference to that value, so
+	/// assigning through the indexer stores the given instance directly, just
+	/// as assigning through a C++ reference does.
 	///
 	/// Notable differences from C++:
 	/// - The value type is pair‹Key, T› rather than pair‹const Key, T›, as C#
 	///   has no const. The key of a stored element must not be mutated, as
-	///   that would break the ordering of the tree.
-	/// - The elements are value initialized to default(T). For a reference
-	///   type this means null, where C++ would have default constructed an
-	///   object
+	///   that would break the ordering of the tree
 	/// </summary>
 #pragma warning disable CS8981
-	public class map<Key, T> : IEquatable<map<Key, T>>, IEnumerable<pair<Key, T>>
+	public class map<Key, T> : IEquatable<map<Key, T>>, IEnumerable<pair<Key, T>>, IDeepCloneable<map<Key, T>>, ICopyTo<map<Key, T>>
 	{
 #pragma warning restore CS8981
 		internal sealed class Node
@@ -111,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			if (items != null)
 			{
 				foreach (pair<Key, T> item in items)
-					Insert_Internal(Clone_Value(item.first), Clone_Value(item.second));
+					Insert_Internal(item.first, item.second);
 			}
 		}
 
@@ -123,6 +128,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// of the contents of the given container (C++ map(const map＆)). Keys
 		/// and mapped values implementing IDeepCloneable‹T› are deep cloned,
 		/// so that the two containers do not share element instances
+		/// (see <see cref="Insert_Internal"/>)
 		/// </summary>
 		/********************************************************************/
 		public map(map<Key, T> other)
@@ -134,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			Init_Empty();
 
 			for (Node n = other.Minimum(other.root); n != other.nil; n = other.Successor(n))
-				Insert_Internal(Clone_Value(n.value.first), Clone_Value(n.value.second));
+				Insert_Internal(n.value.first, n.value.second);
 		}
 
 		#region Element access
@@ -160,15 +166,18 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		/// <summary>
 		/// Returns a reference to the mapped value of the element with the
-		/// given key, inserting a new element with a default value
-		/// if no such element exists (C++ operator[](const Key＆ key))
+		/// given key, inserting a new element with a default inserted mapped
+		/// value if no such element exists
+		/// (C++ operator[](const Key＆ key)). As in C++, a mapped type that has
+		/// a parameterless constructor is default constructed rather than left
+		/// as null (see <see cref="Default_Insert{T}"/>)
 		/// </summary>
 		/********************************************************************/
 		public ref T this[Key key]
 		{
 			get
 			{
-				(Node node, _) = Insert_Internal(key, default);
+				(Node node, _) = Insert_Internal(key, default, true);
 
 				return ref node.value.second;
 			}
@@ -256,8 +265,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts the given element if the container does not contain
-		/// an element with an equivalent key (C++ insert(const value_type＆)).
+		/// Inserts a copy of the given element if the container does not
+		/// contain an element with an equivalent key
+		/// (C++ insert(const value_type＆)).
 		/// Returns a pair holding an iterator to the inserted element, or to
 		/// the element that prevented the insertion, and a bool that is true
 		/// if the insertion took place
@@ -274,9 +284,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts the given items, skipping every item whose key is already
-		/// present (C++ insert(InputIt first, InputIt last) and the
-		/// initializer list overload)
+		/// Inserts a copy of each of the given items, skipping every item whose
+		/// key is already present (C++ insert(InputIt first, InputIt last) and
+		/// the initializer list overload)
 		/// </summary>
 		/********************************************************************/
 		public void insert(pair<Key, T>[] items)
@@ -292,8 +302,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts a new element with the given key and value, or assigns the
-		/// given value to the element if the key is already present
+		/// Inserts a new element holding a copy of the given key and value, or
+		/// assigns a copy of the given value to the element if the key is
+		/// already present
 		/// (C++ insert_or_assign(const Key＆ key, M＆＆ obj)). Returns a pair
 		/// holding an iterator to the element and a bool that is true if the
 		/// insertion took place
@@ -304,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			(Node node, bool inserted) = Insert_Internal(key, value);
 
 			if (!inserted)
-				node.value.second = value;
+				node.value.second = Clone_Value(value);
 
 			return new pair<iterator, bool>(new iterator(this, node), inserted);
 		}
@@ -313,8 +324,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts a new element with the given key and value, or assigns
-		/// the given value to the element if the key is already present
+		/// Inserts a new element holding a copy of the given key and value, or
+		/// assigns a copy of the given value to the element if the key is
+		/// already present
 		/// (C++ insert_or_assign(const_iterator hint, const Key＆ key,
 		/// M＆＆ obj)). The hint is only an optimization and does not change
 		/// the result. Returns an iterator to the inserted or updated element
@@ -325,7 +337,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			(Node node, bool inserted) = Insert_Internal(key, value);
 
 			if (!inserted)
-				node.value.second = value;
+				node.value.second = Clone_Value(value);
 
 			return new iterator(this, node);
 		}
@@ -334,8 +346,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts a new element constructed from the given key and value if
-		/// the container does not already contain an element with an
+		/// Inserts a new element constructed as a copy of the given key and
+		/// value if the container does not already contain an element with an
 		/// equivalent key (C++ emplace(Args＆＆... args)). Returns a pair
 		/// holding an iterator to the element and a bool that is true if the
 		/// insertion took place
@@ -352,9 +364,10 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts an element with the given key and value if the container
-		/// does not already contain an element with an equivalent key. Unlike
-		/// emplace, the value is not consumed if no insertion takes place
+		/// Inserts an element holding a copy of the given key and value if the
+		/// container does not already contain an element with an equivalent
+		/// key. Unlike emplace, the value is not consumed if no insertion
+		/// takes place
 		/// (C++ try_emplace(const Key＆ key, Args＆＆... args)). Returns a pair
 		/// holding an iterator to the element and a bool that is true if the
 		/// insertion took place
@@ -735,6 +748,46 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		}
 		#endregion
 
+		#region IDeepCloneable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns an independent copy of the container, holding a copy of
+		/// each element. This is the same as using the copy constructor
+		/// map‹Key, T›(map‹Key, T›)
+		/// </summary>
+		/********************************************************************/
+		public virtual map<Key, T> MakeDeepClone()
+		{
+			return new map<Key, T>(this);
+		}
+		#endregion
+
+		#region ICopyTo implementation
+		/********************************************************************/
+		/// <summary>
+		/// Replaces the contents of the given container with a copy of the
+		/// contents of this one, holding a copy of each key and mapped value.
+		/// The key ordering is copied as well. This is the same as C++ copy
+		/// assignment (destination = *this), so it invalidates all iterators
+		/// and references that refer to elements of the destination
+		/// </summary>
+		/********************************************************************/
+		public void CopyTo(map<Key, T> destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+
+			if (ReferenceEquals(destination, this))
+				return;
+
+			destination.comparer = comparer;
+			destination.clear();
+
+			for (Node n = Minimum(root); n != nil; n = Successor(n))
+				destination.Insert_Internal(n.value.first, n.value.second);
+		}
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -786,12 +839,17 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts an element with the given key and value if no element with
-		/// an equivalent key exists. Returns the node and a flag that
-		/// says if a node was created. An existing node is never modified
+		/// Inserts an element holding a copy of the given key and value if no
+		/// element with an equivalent key exists. Returns the node and a flag
+		/// that says if a node was created. An existing node is never modified.
+		///
+		/// When defaultInsertValue is set, the given value is ignored and the
+		/// mapped value of a created element is default inserted instead, which
+		/// is what C++ operator[] does (see <see cref="Default_Insert{T}"/>).
+		/// Nothing is then created for an element that is already present
 		/// </summary>
 		/********************************************************************/
-		private (Node node, bool inserted) Insert_Internal(Key key, T value)
+		private (Node node, bool inserted) Insert_Internal(Key key, T value, bool defaultInsertValue = false)
 		{
 			Node y = nil;
 			Node x = root;
@@ -810,7 +868,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			Node z = new Node
 			{
-				value = new pair<Key, T>(key, value),
+				value = new pair<Key, T>(Clone_Value(key), defaultInsertValue ? Default_Insert<T>.Create() : Clone_Value(value)),
 				parent = y,
 				left = nil,
 				right = nil,
@@ -1348,15 +1406,15 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			/****************************************************************/
 			/// <summary>
-			/// Gets or sets the mapped value of the referred element
-			/// (C++ iterator-›second). Accessing this on the end iterator is
-			/// undefined
+			/// Gets the mapped value of the referred element, or sets it to a
+			/// copy of the given value (C++ iterator-›second). Accessing this
+			/// on the end iterator is undefined
 			/// </summary>
 			/****************************************************************/
 			public T second
 			{
 				get => node.value.second;
-				set => node.value.second = value;
+				set => node.value.second = Clone_Value(value);
 			}
 
 

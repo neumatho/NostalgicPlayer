@@ -372,6 +372,25 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Will search after a specific item
+		/// </summary>
+		/********************************************************************/
+		public int IndexOf(T search)
+		{
+			int count = Length;
+			for (int i = 0; i < count; i++)
+			{
+				if (this[i].Equals(search))
+					return i;
+			}
+
+			return -1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert the pointer to a span
 		/// </summary>
 		/********************************************************************/

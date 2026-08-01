@@ -54,8 +54,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructing with a count and a value must fill the container with
-		/// that value
+		/// Constructing with a count and a value must fill the container
+		/// with that value
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
@@ -621,8 +621,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// The copy constructor must deep clone the elements, so that the two
-		/// containers do not share element instances
+		/// The copy constructor must deep clone the elements, so that the
+		/// two containers do not share element instances
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
@@ -667,19 +667,32 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// push_back takes a single value and must store the given instance
-		/// directly, without cloning
+		/// The single value operations must deep clone the given value, so
+		/// that the container does not share the instance with the caller
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Push_Back_Does_Not_Clone()
+		public void Test_Single_Value_Operations_Deep_Clone()
 		{
 			Cloneable item = new Cloneable(5);
 
 			vector<Cloneable> v = new vector<Cloneable>();
 			v.push_back(item);
+			v.emplace_back(item);
+			v.insert(v.begin(), item);
+			v.emplace(v.begin(), item);
 
-			Assert.IsTrue(ReferenceEquals(item, v[0]));
+			for (size_t i = 0; i < v.size(); i++)
+			{
+				Assert.AreEqual(5, v[i].Value);
+				Assert.IsFalse(ReferenceEquals(item, v[i]));
+			}
+
+			// Mutating the source afterwards must not affect the container
+			item.Value = 99;
+
+			for (size_t i = 0; i < v.size(); i++)
+				Assert.AreEqual(5, v[i].Value);
 		}
 
 
@@ -711,8 +724,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// A foreach loop over a reference must be able to modify the elements
-		/// in place
+		/// A foreach loop over a reference must be able to modify the
+		/// elements in place
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
@@ -776,8 +789,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// A simple reference type that supports deep cloning, used to verify
-		/// the cloning behavior of the bulk operations
+		/// A simple reference type that supports deep cloning, used to
+		/// verify the cloning behavior of the bulk operations
 		/// </summary>
 		/********************************************************************/
 		private sealed class Cloneable : IDeepCloneable<Cloneable>

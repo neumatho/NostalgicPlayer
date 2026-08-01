@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.C.Std
 {
@@ -27,7 +28,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// Unlike a C++ std::bitset, this is a reference type (a C# class), so
 	/// assigning one bitset variable to another makes both refer to the same
 	/// container. To make an independent copy (the behavior of C++ copy
-	/// construction), use the copy constructor bitset(bitset).
+	/// construction), use the copy constructor bitset(bitset) or
+	/// <see cref="MakeDeepClone"/>. To copy the bits into an already
+	/// existing bitset of the same size, use <see cref="CopyTo"/>.
 	///
 	/// Notable differences from C++:
 	/// - The reference proxy returned by the non-const operator[] is not
@@ -38,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	///   instead, from which C# derives the compound forms
 	/// </summary>
 #pragma warning disable CS8981
-	public class bitset : IEquatable<bitset>
+	public class bitset : IEquatable<bitset>, IDeepCloneable<bitset>, ICopyTo<bitset>
 	{
 #pragma warning restore CS8981
 		private const int Bits_Per_Word = 64;
@@ -629,6 +632,41 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 				hash.Add(words[i]);
 
 			return hash.ToHashCode();
+		}
+		#endregion
+
+		#region IDeepCloneable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns an independent copy of the bitset, with the same size and
+		/// bits. This is the same as using the copy constructor
+		/// bitset(bitset)
+		/// </summary>
+		/********************************************************************/
+		public bitset MakeDeepClone()
+		{
+			return new bitset(this);
+		}
+		#endregion
+
+		#region ICopyTo implementation
+		/********************************************************************/
+		/// <summary>
+		/// Replaces the bits of the given bitset with the bits of this one.
+		/// This is the same as C++ copy assignment (destination = *this). As
+		/// the size of a bitset is fixed, both bitsets must have the same
+		/// size
+		/// </summary>
+		/********************************************************************/
+		public void CopyTo(bitset destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException(nameof(destination));
+
+			if (destination.nBits != nBits)
+				throw new ArgumentException("bitset.CopyTo: the two bitsets have different sizes");
+
+			Array.Copy(words, destination.words, words.Length);
 		}
 		#endregion
 
