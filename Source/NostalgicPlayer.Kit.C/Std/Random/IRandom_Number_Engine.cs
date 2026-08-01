@@ -13,30 +13,19 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Random
 	/// RandomNumberEngine named requirement and are used via templates
 	/// (duck typing). In C# it is needed so that a
 	/// <see cref="Discard_Block_Engine{TEngine, TResult}"/> can operate on its
-	/// wrapped base engine through a generic type constraint
+	/// wrapped base engine through a generic type constraint.
+	///
+	/// Every engine is also a
+	/// <see cref="IUniform_Random_Bit_Generator{TResult}"/>, which is where
+	/// min(), max() and the call operator come from. This interface only adds
+	/// what the RandomNumberEngine requirement has on top of that
 	/// </summary>
-	public interface IRandom_Number_Engine<TResult>
+	public interface IRandom_Number_Engine<TResult> : IUniform_Random_Bit_Generator<TResult>
 	{
 		/// <summary>
-		/// Returns the smallest value that the engine can produce (C++ min())
-		/// </summary>
-		TResult min();
-
-		/// <summary>
-		/// Returns the largest value that the engine can produce (C++ max())
-		/// </summary>
-		TResult max();
-
-		/// <summary>
-		/// Advances the engine's state and returns the generated value
-		/// (C++ operator())
-		/// </summary>
-		TResult Invoke();
-
-		/// <summary>
 		/// Advances the engine's state by z steps, as if by calling
-		/// <see cref="Invoke"/> z times and discarding the results
-		/// (C++ discard())
+		/// <see cref="IUniform_Random_Bit_Generator{TResult}.Invoke"/>
+		/// z times and discarding the results (C++ discard())
 		/// </summary>
 		void discard(c_ulong_long z);
 
