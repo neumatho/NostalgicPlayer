@@ -1443,24 +1443,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move down.
-        /// </summary>
-        internal static string IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN {
-            get {
-                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Move up.
-        /// </summary>
-        internal static string IDS_CONTEXTMENU_MODULELIST_MOVE_UP {
-            get {
-                return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_MOVE_UP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Other actions.
         /// </summary>
         internal static string IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS {

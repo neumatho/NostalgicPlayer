@@ -151,8 +151,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private readonly List<ExplorerCommandToolStripMenu> moduleListExplorerCommandMenus = new List<ExplorerCommandToolStripMenu>();
 		private ModuleListItem moduleListContextItem = null;
 		private KryptonContextMenuItem contextMenuItemRemove = null;
-		private KryptonContextMenuItem contextMenuItemMoveUp = null;
-		private KryptonContextMenuItem contextMenuItemMoveDown = null;
 		private KryptonContextMenuItem contextMenuSortMenu = null;
 		private KryptonContextMenuItem contextMenuItemSetSubSong = null;
 		private KryptonContextMenuItem contextMenuItemClearSubSong = null;
@@ -3508,14 +3506,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 
 
-			// Move
-			contextMenuItemMoveUp = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_MOVE_UP, Resources.IDB_MOVE_UP, MoveModulesUpButton_Click);
-			contextMenuItemMoveDown = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_MOVE_DOWN, Resources.IDB_MOVE_DOWN, MoveModulesDownButton_Click);
-			contextMenuItems.Items.Add(contextMenuItemMoveUp);
-			contextMenuItems.Items.Add(contextMenuItemMoveDown);
-
-
-
 			// Other actions
 			KryptonContextMenuItem moreMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, Resources.IDB_LIST, null);
 
@@ -5969,8 +5959,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// Update the list editing actions based on the current items and selection
 			contextMenuItemRemove.Enabled = hasSelection;
 			contextMenuSortMenu.Enabled = moduleListControl.Items.Count > 0;
-			contextMenuItemMoveUp.Enabled = hasSelection && selectedIndexes.Any(index => (index > 0) && !selectedIndexes.Contains(index - 1));
-			contextMenuItemMoveDown.Enabled = hasSelection && selectedIndexes.Any(index => ((index + 1) < moduleListControl.Items.Count) && !selectedIndexes.Contains(index + 1));
 
 			// Update the default sub-song actions from the playback and selection state
 			contextMenuItemSetSubSong.Enabled = moduleHandler.IsModuleLoaded;
