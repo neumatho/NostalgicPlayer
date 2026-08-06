@@ -276,6 +276,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Resampler
 					pendingEqualizerPreAmp = mixerConfiguration.EqualizerPreAmp;
 				}
 			}
+
+			// Tell visual agents about the mixer channel change
+			currentVisualizer?.TellAgentsAboutMixerChannelChange(mixerConfiguration.ChannelsEnabled);
 		}
 
 

@@ -480,7 +480,19 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		{
 			if (currentPlayer is IDuration durationPlayer)
 			{
-				DurationInfo[] allSongsInfo = durationPlayer.CalculateDuration();
+				durationPlayer.BeforeCalculateDuration();
+
+				DurationInfo[] allSongsInfo;
+
+				try
+				{
+					allSongsInfo = durationPlayer.CalculateDuration();
+				}
+				finally
+				{
+					durationPlayer.AfterCalculateDuration();
+				}
+
 				if ((allSongsInfo != null) && (allSongsInfo.Length > 0))
 				{
 					durationInfo = allSongsInfo[0];

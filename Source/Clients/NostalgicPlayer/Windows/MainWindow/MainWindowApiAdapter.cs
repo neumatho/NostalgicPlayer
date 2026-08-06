@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 	/// <summary>
 	/// Adapter that delegates IMainWindowApi calls to the MainWindowForm
 	/// </summary>
-	public class MainWindowApiAdapter : IMainWindowApi
+	public partial class MainWindowApiAdapter : IMainWindowApi
 	{
 		private MainWindowForm mainWindowForm;
 

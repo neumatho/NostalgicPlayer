@@ -135,5 +135,16 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Event called when the player change sub-song
 		/// </summary>
 		public event SubSongChangedEventHandler SubSongChanged;
+
+		/// <summary>
+		/// Event called when the pattern row changes
+		/// </summary>
+		public event SongRowChangedEventHandler SongRowChanged;
+
+		/// <summary>
+		/// Return pattern data for the current song, or null if patterns are not supported.
+		/// The result contains calculated patterns, and optionally recorded patterns for debugging.
+		/// </summary>
+		SongPatternsResult GetSongPatterns();
 	}
 }

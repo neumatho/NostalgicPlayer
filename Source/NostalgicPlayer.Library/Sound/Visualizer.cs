@@ -203,6 +203,39 @@ namespace Polycode.NostalgicPlayer.Library.Sound
 
 		/********************************************************************/
 		/// <summary>
+		/// Will call all pattern visual agents and tell them about pattern row change
+		/// </summary>
+		/********************************************************************/
+		public void TellAgentsAboutSongRowChange(SongRowChangeInfo info)
+		{
+			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+			{
+				if (visualAgent is IPatternVisualAgent patternVisualAgent)
+					patternVisualAgent.PatternRowChanged(info);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will call all visual agents that implement IMixerChannelChangeVisualAgent
+		/// and tell them about mixer channel enabled state changes
+		/// </summary>
+		/********************************************************************/
+		public void TellAgentsAboutMixerChannelChange(bool[] channelsEnabled)
+		{
+			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+			{
+				if (visualAgent is IMixerChannelChangeVisualAgent mixerChannelChangeVisualAgent)
+					mixerChannelChangeVisualAgent.MixerChannelsEnabledChanged(channelsEnabled);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will queue the given channel change information
 		/// </summary>
 		/********************************************************************/

@@ -32,6 +32,28 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		#region IModuleDuration implementation
 		/********************************************************************/
 		/// <summary>
+		/// Called before duration calculation starts
+		/// </summary>
+		/********************************************************************/
+		public virtual void BeforeCalculateDuration()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Called after duration calculation is complete
+		/// </summary>
+		/********************************************************************/
+		public virtual void AfterCalculateDuration()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Calculate the duration for all sub-songs
 		/// </summary>
 		/********************************************************************/
@@ -176,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the time into the song when restarting
 		/// </summary>
 		/********************************************************************/
-		public TimeSpan GetRestartTime()
+		public virtual TimeSpan GetRestartTime()
 		{
 			return playerRestartTime;
 		}

@@ -783,6 +783,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		#region Duration calculation
 		/********************************************************************/
 		/// <summary>
+		/// Called before duration calculation starts
+		/// </summary>
+		/********************************************************************/
+		public virtual void BeforeCalculateDuration()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Called after duration calculation is complete
+		/// </summary>
+		/********************************************************************/
+		public virtual void AfterCalculateDuration()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Calculate the duration for all sub-songs
 		/// </summary>
 		/********************************************************************/

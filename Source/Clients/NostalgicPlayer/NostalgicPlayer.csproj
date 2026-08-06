@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -146,6 +146,7 @@
     <ProjectReference Include="..\..\Agents\Visuals\ChannelLevelMeter\ChannelLevelMeter.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\LevelMeter\LevelMeter.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\Oscilloscope\Oscilloscope.csproj" />
+    <ProjectReference Include="..\..\Agents\Visuals\PatternViewer\PatternViewer.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\Piano\Piano.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\SpectrumAnalyzer\SpectrumAnalyzer.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\SpinningSquares\SpinningSquares.csproj" />
@@ -162,6 +163,10 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Windows\MainWindow\MainWindowForm.ClientPlayerControl.cs">
+      <DependentUpon>MainWindowForm.cs</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
