@@ -874,6 +874,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_ADD {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_ADD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add directory.
         /// </summary>
         internal static string IDS_CONTEXTMENU_ADD_DIRECTORY {
@@ -996,6 +1005,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_CONTEXTMENU_MODULELIST_SORT {
             get {
                 return ResourceManager.GetString("IDS_CONTEXTMENU_MODULELIST_SORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_REMOVE {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_REMOVE", resourceCulture);
             }
         }
         

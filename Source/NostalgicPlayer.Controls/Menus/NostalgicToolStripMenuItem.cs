@@ -49,6 +49,18 @@ namespace Polycode.NostalgicPlayer.Controls.Menus
 		{
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public NostalgicToolStripMenuItem(string text, string imageName) : base(text)
+		{
+			ImageName = imageName;
+		}
+
 		#region Designer properties
 		/********************************************************************/
 		/// <summary>
