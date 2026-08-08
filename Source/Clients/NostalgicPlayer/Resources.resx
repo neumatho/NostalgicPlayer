@@ -507,18 +507,18 @@ Formats supported:
   <data name="IDS_CONTEXTMENU_MODULELIST_PROPERTIES" xml:space="preserve">
     <value>Properties</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE" xml:space="preserve">
     <value>Load/save</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS" xml:space="preserve">
     <value>Other actions</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER" xml:space="preserve">
     <value>Show in File Explorer</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_SORT" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_SORT" xml:space="preserve">
     <value>Sort</value>
-  </data>	
+  </data>
   <data name="IDS_CONTEXTMENU_SORT_SHUFFLE" xml:space="preserve">
     <value>Shuffle</value>
   </data>
@@ -1678,5 +1678,11 @@ Do you want to continue?</value>
   </data>
   <data name="IDS_EQUALIZER_PRE" xml:space="preserve">
     <value>Pre</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_ADD" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_REMOVE" xml:space="preserve">
+    <value>Remove</value>
   </data>
 </root>

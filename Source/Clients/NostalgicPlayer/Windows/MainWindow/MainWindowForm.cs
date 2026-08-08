@@ -39,7 +39,6 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
-using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -145,22 +144,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
 		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
 
-		// Context menu variables
+		// Module list context menu variables
+
 		// List of all the Explorer commands that we want to support
 		private const string ProductivityPlusPack_Rate_ExplorerCommandGuid = "DF9672B2-B7C8-49F8-AE48-054B361C1448";
 		private static readonly ExplorerCommandDefinition[] ModuleListExplorerCommandDefinitions =
 		[
 			new ExplorerCommandDefinition(new Guid(ProductivityPlusPack_Rate_ExplorerCommandGuid), renderTopLevelIcon: false)
 		];
+
 		private readonly List<ExplorerCommandToolStripMenu> moduleListExplorerCommandMenus = new List<ExplorerCommandToolStripMenu>();
-		private ModuleListItem moduleListContextItem = null;
-		private KryptonContextMenuItem contextMenuItemRemove = null;
-		private KryptonContextMenuItem contextMenuSortMenu = null;
-		private KryptonContextMenuItem contextMenuItemSetSubSong = null;
-		private KryptonContextMenuItem contextMenuItemClearSubSong = null;
-		private KryptonContextMenuSeparator contextMenuItemFileSeparator = null;
-		private KryptonContextMenuItem contextMenuItemShowInFileExplorer = null;
-		private KryptonContextMenuItem contextMenuItemProperties = null;
+		private ModuleListListItem moduleListContextItem = null;
+		private NostalgicToolStripMenuItem contextMenuItemRemove = null;
+		private NostalgicToolStripMenuItem contextMenuSortMenu = null;
+		private NostalgicToolStripMenuItem contextMenuItemSetSubSong = null;
+		private NostalgicToolStripMenuItem contextMenuItemClearSubSong = null;
+		private ToolStripSeparator contextMenuItemFileSeparator = null;
+		private NostalgicToolStripMenuItem contextMenuItemShowInFileExplorer = null;
+		private NostalgicToolStripMenuItem contextMenuItemProperties = null;
 
 		/********************************************************************/
 		/// <summary>
@@ -1065,11 +1066,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleInfoButton.Click += ModuleInfoButton_Click;
 
 			// Module list
-			moduleListControl.SelectedIndexChanged += ModuleListControl_SelectedIndexChanged;
-			moduleListControl.MouseDoubleClick += ModuleListControl_MouseDoubleClick;
-			moduleListControl.MouseDown += ModuleListControl_MouseDown;
-			moduleListControl.KeyPress += ModuleListControl_KeyPress;
-			moduleListControl.DragDrop += ModuleListControl_DragDrop;
+			moduleList.SelectedIndexChanged += ModuleListControl_SelectedIndexChanged;
+			moduleList.MouseDoubleClick += ModuleListControl_MouseDoubleClick;
+			moduleList.MouseDown += ModuleListControl_MouseDown;
+			moduleList.KeyPress += ModuleListControl_KeyPress;
+			moduleList.DragDrop += ModuleListControl_DragDrop;
 
 			// Search popup
 			searchPopupControl.ItemSelected += SearchPopup_ItemSelected;
@@ -1970,14 +1971,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			if (e.Button != MouseButtons.Right)
 				return;
 
-			int index = moduleListControl.IndexFromPoint(e.Location);
+			int index = moduleList.IndexFromPoint(e.Location);
 
-			moduleListContextItem = index != -1 ? moduleListControl.Items[index] : null;
+			moduleListContextItem = index != -1 ? moduleList.Items[index] : null;
 
-			if ((index != -1) && !moduleListControl.SelectedIndexes.Contains(index))
-				moduleListControl.SelectedIndex = index;
+			if ((index != -1) && !moduleList.SelectedIndexes.Contains(index))
+				moduleList.SelectedIndex = index;
 
-			moduleListContextMenu.Show(moduleListControl, moduleListControl.PointToScreen(e.Location));
+			moduleListContextMenu.Show(moduleList, e.Location);
 		}
 
 
@@ -3014,6 +3015,90 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		}
 		#endregion
 
+		#region Module list - context menu events
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListContextMenu_Opening(object sender, CancelEventArgs e)
+		{
+			// Determine whether the menu was opened on a selected list item
+			IReadOnlyList<int> selectedIndexes = moduleList.SelectedIndexes;
+			bool hasSelection = (moduleListContextItem != null) && (selectedIndexes.Count > 0);
+
+			// Update the list editing actions based on the current items and selection
+			contextMenuItemRemove.Enabled = hasSelection;
+			contextMenuSortMenu.Enabled = moduleList.Items.Count > 0;
+
+			// Update the default sub-song actions from the playback and selection state
+			contextMenuItemSetSubSong.Enabled = moduleHandler.IsModuleLoaded;
+			contextMenuItemClearSubSong.Enabled = hasSelection && moduleList.SelectedItems.Any(x => x.DefaultSubSong.HasValue);
+
+			//// Determine whether Windows shell actions were created for this system
+			bool fileActionsVisible = contextMenuItemFileSeparator != null;
+
+			// Enable file actions only for an existing local file selected from an item
+			string fileName = fileActionsVisible ? GetPhysicalFilePath(moduleListContextItem?.ListItem) : null;
+			bool fileActionAvailable = hasSelection && fileActionsVisible && !string.IsNullOrEmpty(fileName) && File.Exists(fileName);
+
+			if (fileActionsVisible)
+			{
+				contextMenuItemShowInFileExplorer.Enabled = fileActionAvailable;
+				contextMenuItemProperties.Enabled = fileActionAvailable;
+			}
+
+			// Build optional Explorer commands for the selected physical files
+			UpdateModuleListExplorerCommandMenus(hasSelection, fileActionsVisible);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects "Show in File Explorer"
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListMenu_ShowInFileExplorer(object sender, EventArgs e)
+		{
+			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			try
+			{
+				WindowsShellHelper.ShowInFileExplorer(fileName);
+			}
+			catch (Exception ex)
+			{
+				ShowSimpleErrorMessage(ex.Message);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects "Properties"
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListMenu_Properties(object sender, EventArgs e)
+		{
+			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
+			if (string.IsNullOrEmpty(fileName))
+				return;
+
+			try
+			{
+				WindowsShellHelper.ShowProperties(fileName);
+			}
+			catch (Exception ex)
+			{
+				ShowSimpleErrorMessage(ex.Message);
+			}
+		}
+		#endregion
+
 		#endregion
 
 		#region Private methods
@@ -3353,13 +3438,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void CreateAddContextMenu()
 		{
-			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES);
-			item.ImageName = nameof(IMainImages.File);
+			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES, nameof(IMainImages.File));
 			item.Click += AddMenu_Files;
 			addContextMenu.Items.Add(item);
 
-			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY);
-			item.ImageName = nameof(IMainImages.Directory);
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY, nameof(IMainImages.Directory));
 			item.Click += AddMenu_Directory;
 			addContextMenu.Items.Add(item);
 		}
@@ -3373,18 +3456,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void CreateSortContextMenu()
 		{
-			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ);
-			item.ImageName = nameof(IMainImages.AZ);
+			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ, nameof(IMainImages.AZ));
 			item.Click += SortMenu_AZ;
 			sortContextMenu.Items.Add(item);
 
-			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA);
-			item.ImageName = nameof(IMainImages.ZA);
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA, nameof(IMainImages.ZA));
 			item.Click += SortMenu_ZA;
 			sortContextMenu.Items.Add(item);
 
-			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE);
-			item.ImageName = nameof(IMainImages.Shuffle);
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE, nameof(IMainImages.Shuffle));
 			item.Click += SortMenu_Shuffle;
 			sortContextMenu.Items.Add(item);
 		}
@@ -3409,13 +3489,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			ToolStripSeparator separatorItem = new ToolStripSeparator();
 			listContextMenu.Items.Add(separatorItem);
 
-			setSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG);
-			setSubSongMenuItem.ImageName = nameof(IMainImages.SetSubSong);
+			setSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, nameof(IMainImages.SetSubSong));
 			setSubSongMenuItem.Click += ListMenu_SetDefaultSubSong;
 			listContextMenu.Items.Add(setSubSongMenuItem);
 
-			clearSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG);
-			clearSubSongMenuItem.ImageName = nameof(IMainImages.ClearSubSong);
+			clearSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG, nameof(IMainImages.ClearSubSong));
 			clearSubSongMenuItem.Click += ListMenu_ClearDefaultSubSong;
 			listContextMenu.Items.Add(clearSubSongMenuItem);
 		}
@@ -3429,8 +3507,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void CreateDiskContextMenu()
 		{
-			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD);
-			item.ImageName = nameof(IMainImages.Load);
+			NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD, nameof(IMainImages.Load));
 			item.Click += DiskMenu_LoadList;
 			diskContextMenu.Items.Add(item);
 
@@ -3438,8 +3515,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			item.Click += DiskMenu_AppendList;
 			diskContextMenu.Items.Add(item);
 
-			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE);
-			item.ImageName = nameof(IMainImages.Save);
+			item = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE, nameof(IMainImages.Save));
 			item.Click += DiskMenu_SaveList;
 			diskContextMenu.Items.Add(item);
 		}
@@ -3455,111 +3531,101 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			moduleListContextMenu.Opening += ModuleListContextMenu_Opening;
 
-			// Context menu container
-			KryptonContextMenuItems contextMenuItems = new KryptonContextMenuItems();
-
-
-
 			// Add
-			KryptonContextMenuItem addMenu = new KryptonContextMenuItem(Resources.IDS_FAVORITE_BUTTON_ADD, Resources.IDB_ADD, null);
-			addMenu.Items.Add(new KryptonContextMenuItems(
-				new KryptonContextMenuItemBase[]
-				{
-					new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES, Resources.IDB_FILE, AddMenu_Files),
-					new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY, Resources.IDB_DIRECTORY, AddMenu_Directory)
-				}));
-			contextMenuItems.Items.Add(addMenu);
+			NostalgicToolStripMenuItem contextMenuAddMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD, nameof(IMainImages.Add));
+			moduleListContextMenu.Items.Add(contextMenuAddMenu);
 
+			NostalgicToolStripMenuItem contextMenuItemAddFile = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_FILES, nameof(IMainImages.File));
+			contextMenuItemAddFile.Click += AddMenu_Files;
+			contextMenuAddMenu.DropDownItems.Add(contextMenuItemAddFile);
 
+			NostalgicToolStripMenuItem contextMenuItemAddDirectory = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_ADD_DIRECTORY, nameof(IMainImages.Directory));
+			contextMenuItemAddDirectory.Click += AddMenu_Directory;
+			contextMenuAddMenu.DropDownItems.Add(contextMenuItemAddDirectory);
 
 			// Remove
-			contextMenuItemRemove = new KryptonContextMenuItem(Resources.IDS_FAVORITE_BUTTON_REMOVE, Resources.IDB_REMOVE, RemoveModuleButton_Click);
-			contextMenuItems.Items.Add(contextMenuItemRemove);
-
-
+			contextMenuItemRemove = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_REMOVE, nameof(IMainImages.Remove));
+			contextMenuItemRemove.Click += RemoveModuleButton_Click;
+			moduleListContextMenu.Items.Add(contextMenuItemRemove);
 
 			// Sort
-			contextMenuSortMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SORT, Resources.IDB_SORT, null);
-			KryptonContextMenuItem contextMenuItemSortAZ = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ, Resources.IDB_AZ, SortMenu_AZ);
-			KryptonContextMenuItem contextMenuItemSortZA = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA, Resources.IDB_ZA, SortMenu_ZA);
-			KryptonContextMenuItem contextMenuItemSortShuffle = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE, Resources.IDB_SHUFFLE, SortMenu_Shuffle);
-			contextMenuSortMenu.Items.Add(new KryptonContextMenuItems(
-				new KryptonContextMenuItemBase[]
-				{
-					contextMenuItemSortAZ,
-					contextMenuItemSortZA,
-					contextMenuItemSortShuffle
-				}));
-			contextMenuItems.Items.Add(contextMenuSortMenu);
+			contextMenuSortMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SORT, nameof(IMainImages.Sort));
+			moduleListContextMenu.Items.Add(contextMenuSortMenu);
 
+			NostalgicToolStripMenuItem contextMenuItemSortAz = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_AZ, nameof(IMainImages.AZ));
+			contextMenuItemSortAz.Click += SortMenu_AZ;
+			contextMenuSortMenu.DropDownItems.Add(contextMenuItemSortAz);
 
+			NostalgicToolStripMenuItem contextMenuItemSortZa = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SORT_ZA, nameof(IMainImages.ZA));
+			contextMenuItemSortZa.Click += SortMenu_ZA;
+			contextMenuSortMenu.DropDownItems.Add(contextMenuItemSortZa);
+
+			NostalgicToolStripMenuItem contextMenuItemSortShuffle = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_SORT_SHUFFLE, nameof(IMainImages.Shuffle));
+			contextMenuItemSortShuffle.Click += SortMenu_Shuffle;
+			contextMenuSortMenu.DropDownItems.Add(contextMenuItemSortShuffle);
 
 			// Other actions
-			KryptonContextMenuItem moreMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, Resources.IDB_LIST, null);
+			NostalgicToolStripMenuItem contextMenuMoreMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, nameof(IMainImages.List));
+			moduleListContextMenu.Items.Add(contextMenuMoreMenu);
 
-			KryptonContextMenuItem contextMenuItemSelectAll = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL, ListMenu_SelectAll);
-			KryptonContextMenuItem contextMenuItemSelectNone = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE, ListMenu_SelectNone);
-			contextMenuItemSetSubSong = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, Resources.IDB_SET_SUBSONG, ListMenu_SetDefaultSubSong);
-			contextMenuItemClearSubSong = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG, Resources.IDB_CLEAR_SUBSONG, ListMenu_ClearDefaultSubSong);
+			NostalgicToolStripMenuItem contextMenuItemSelectAll = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL);
+			contextMenuItemSelectAll.Click += ListMenu_SelectAll;
+			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemSelectAll);
 
-			moreMenu.Items.Add(new KryptonContextMenuItems(
-				new KryptonContextMenuItemBase[]
-				{
-					contextMenuItemSelectAll,
-					contextMenuItemSelectNone,
-					new KryptonContextMenuSeparator(),
-					contextMenuItemSetSubSong,
-					contextMenuItemClearSubSong
-				}));
-			contextMenuItems.Items.Add(moreMenu);
+			NostalgicToolStripMenuItem contextMenuItemSelectNone = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE);
+			contextMenuItemSelectNone.Click += ListMenu_SelectNone;
+			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemSelectNone);
 
+			contextMenuMoreMenu.DropDownItems.Add(new ToolStripSeparator());
 
+			contextMenuItemSetSubSong = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, nameof(IMainImages.SetSubSong));
+			contextMenuItemSetSubSong.Click += ListMenu_SetDefaultSubSong;
+			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemSetSubSong);
+
+			contextMenuItemClearSubSong = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG, nameof(IMainImages.ClearSubSong));
+			contextMenuItemClearSubSong.Click += ListMenu_ClearDefaultSubSong;
+			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemClearSubSong);
 
 			// Disk 
-			KryptonContextMenuItem diskMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE, Resources.IDB_DISK, null);
+			NostalgicToolStripMenuItem contextMenuDiskMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE, nameof(IMainImages.Disk));
+			moduleListContextMenu.Items.Add(contextMenuDiskMenu);
 
-			KryptonContextMenuItem contextMenuItemLoad = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD, Resources.IDB_LOAD, DiskMenu_LoadList);
-			KryptonContextMenuItem contextMenuItemAppend = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_APPEND, DiskMenu_AppendList);
-			KryptonContextMenuItem contextMenuItemSave = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE, Resources.IDB_SAVE, DiskMenu_SaveList);
+			NostalgicToolStripMenuItem contextMenuItemLoad = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_LOAD, nameof(IMainImages.Load));
+			contextMenuItemLoad.Click += DiskMenu_LoadList;
+			contextMenuDiskMenu.DropDownItems.Add(contextMenuItemLoad);
 
-			diskMenu.Items.Add(new KryptonContextMenuItems(
-				new KryptonContextMenuItemBase[]
-				{
-					contextMenuItemLoad,
-					contextMenuItemAppend,
-					contextMenuItemSave
-				}));
-			contextMenuItems.Items.Add(diskMenu);
+			NostalgicToolStripMenuItem contextMenuItemAppend = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_APPEND);
+			contextMenuItemAppend.Click += DiskMenu_AppendList;
+			contextMenuDiskMenu.DropDownItems.Add(contextMenuItemAppend);
 
-
+			NostalgicToolStripMenuItem contextMenuItemSave = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_DISK_SAVE, nameof(IMainImages.Save));
+			contextMenuItemSave.Click += DiskMenu_SaveList;
+			contextMenuDiskMenu.DropDownItems.Add(contextMenuItemSave);
 
 			// Add File Explorer actions if we are not in Windows 10 S mode
 			if (!Env.IsWindows10S)
 			{
-				contextMenuItemFileSeparator = new KryptonContextMenuSeparator();
-				contextMenuItems.Items.Add(contextMenuItemFileSeparator);
+				contextMenuItemFileSeparator = new ToolStripSeparator();
+				moduleListContextMenu.Items.Add(contextMenuItemFileSeparator);
 
 				// Add all the explorer command definitions to the context menu
 				foreach (ExplorerCommandDefinition definition in ModuleListExplorerCommandDefinitions)
 				{
 					ExplorerCommandToolStripMenu commandMenu = new ExplorerCommandToolStripMenu(definition, ex => ShowSimpleErrorMessage(ex.Message));
 					moduleListExplorerCommandMenus.Add(commandMenu);
-					contextMenuItems.Items.Add(commandMenu.MenuItem);
+					moduleListContextMenu.Items.Add(commandMenu.MenuItem);
 				}
 
 				// Show in File Explorer
-				contextMenuItemShowInFileExplorer = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER, ModuleListMenu_ShowInFileExplorer);
-				contextMenuItems.Items.Add(contextMenuItemShowInFileExplorer);
+				contextMenuItemShowInFileExplorer = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER);
+				contextMenuItemShowInFileExplorer.Click += ModuleListMenu_ShowInFileExplorer;
+				moduleListContextMenu.Items.Add(contextMenuItemShowInFileExplorer);
 
 				// Properties
-				contextMenuItemProperties = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_PROPERTIES, ModuleListMenu_Properties);
-				contextMenuItems.Items.Add(contextMenuItemProperties);
+				contextMenuItemProperties = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_PROPERTIES);
+				contextMenuItemProperties.Click += ModuleListMenu_Properties;
+				moduleListContextMenu.Items.Add(contextMenuItemProperties);
 			}
-
-
-
-			// Done creating the context menu
-			moduleListContextMenu.Items.Add(contextMenuItems);
 		}
 
 
@@ -5822,7 +5888,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 
 
-
 		/********************************************************************/
 		/// <summary>
 		/// Return the physical file represented by the module list item
@@ -5840,6 +5905,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Return all selected files, or null if an item is not a physical
@@ -5850,7 +5916,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			HashSet<string> fileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-			foreach (ModuleListItem selectedItem in moduleListControl.SelectedItems)
+			foreach (ModuleListListItem selectedItem in moduleList.SelectedItems)
 			{
 				if ((selectedItem.ListItem is not SingleFileModuleListItem fileItem) || !File.Exists(fileItem.Source))
 					return null;
@@ -5860,10 +5926,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			return fileNames.Count > 0 ? fileNames.ToArray() : null;
 		}
-
 		#endregion
 
 		#region Module list - context menu
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private void UpdateModuleListExplorerCommandMenus(bool hasSelection, bool fileActionsVisible)
 		{
 			if (moduleListExplorerCommandMenus.Count == 0)
@@ -5878,6 +5948,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					commandMenu.Clear();
 			}
 		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Release all configured Explorer command menus
@@ -5889,85 +5962,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				commandMenu.Dispose();
 
 			moduleListExplorerCommandMenus.Clear();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the user selects "Show in File Explorer"
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListMenu_ShowInFileExplorer(object sender, EventArgs e)
-		{
-			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
-			if (string.IsNullOrEmpty(fileName))
-				return;
-
-			try
-			{
-				WindowsShellHelper.ShowInFileExplorer(fileName);
-			}
-			catch (Exception ex)
-			{
-				ShowSimpleErrorMessage(ex.Message);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the user selects "Properties"
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListMenu_Properties(object sender, EventArgs e)
-		{
-			string fileName = GetPhysicalFilePath(moduleListContextItem?.ListItem);
-			if (string.IsNullOrEmpty(fileName))
-				return;
-
-			try
-			{
-				WindowsShellHelper.ShowProperties(fileName);
-			}
-			catch (Exception ex)
-			{
-				ShowSimpleErrorMessage(ex.Message);
-			}
-		}
-		#endregion
-
-		#region Module list - context menu events
-		private void ModuleListContextMenu_Opening(object sender, CancelEventArgs e)
-		{
-			// Determine whether the menu was opened on a selected list item
-			IReadOnlyList<int> selectedIndexes = moduleListControl.SelectedIndexes;
-			bool hasSelection = (moduleListContextItem != null) && (selectedIndexes.Count > 0);
-
-			// Update the list editing actions based on the current items and selection
-			contextMenuItemRemove.Enabled = hasSelection;
-			contextMenuSortMenu.Enabled = moduleListControl.Items.Count > 0;
-
-			// Update the default sub-song actions from the playback and selection state
-			contextMenuItemSetSubSong.Enabled = moduleHandler.IsModuleLoaded;
-			contextMenuItemClearSubSong.Enabled = hasSelection && moduleListControl.SelectedItems.Any(x => x.DefaultSubSong.HasValue);
-
-			//// Determine whether Windows shell actions were created for this system
-			bool fileActionsVisible = contextMenuItemFileSeparator != null;
-
-			// Enable file actions only for an existing local file selected from an item
-			string fileName = fileActionsVisible ? GetPhysicalFilePath(moduleListContextItem?.ListItem) : null;
-			bool fileActionAvailable = hasSelection && fileActionsVisible && !string.IsNullOrEmpty(fileName) && File.Exists(fileName);
-
-			if (fileActionsVisible)
-			{
-				contextMenuItemShowInFileExplorer.Enabled = fileActionAvailable;
-				contextMenuItemProperties.Enabled = fileActionAvailable;
-			}
-
-			// Build optional Explorer commands for the selected physical files
-			UpdateModuleListExplorerCommandMenus(hasSelection, fileActionsVisible);
 		}
 		#endregion
 
