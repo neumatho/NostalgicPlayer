@@ -56,6 +56,7 @@
 			moduleListInternal.DragDrop += ListItemControl_DragDrop;
 			moduleListInternal.KeyPress += ListItemControl_KeyPress;
 			moduleListInternal.MouseDoubleClick += ListItemControl_MouseDoubleClick;
+			moduleListInternal.MouseDown += ListItemControl_MouseDown;
 			// 
 			// moduleListScrollBar
 			// 
