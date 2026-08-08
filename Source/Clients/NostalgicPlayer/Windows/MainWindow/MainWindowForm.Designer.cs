@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			sortContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			listContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			diskContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
-			moduleListContextMenu = new KryptonContextMenu();
+			moduleListContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			neverEndingTimer = new System.Windows.Forms.Timer(components);
 			addContextMenu = new Polycode.NostalgicPlayer.Controls.Menus.NostalgicContextMenu(components);
 			moduleList = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicModuleList();
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			infoLabel.Location = new System.Drawing.Point(3, 3);
 			infoLabel.Name = "infoLabel";
-			infoLabel.Size = new System.Drawing.Size(374, 16);
+			infoLabel.Size = new System.Drawing.Size(0, 15);
 			infoLabel.TabIndex = 0;
 			infoLabel.UseFont = bigFontConfiguration;
 			// 
@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// 
 			timeLabel.Location = new System.Drawing.Point(4, 8);
 			timeLabel.Name = "timeLabel";
-			timeLabel.Size = new System.Drawing.Size(62, 18);
+			timeLabel.Size = new System.Drawing.Size(58, 15);
 			timeLabel.TabIndex = 0;
 			timeLabel.Text = "0:00/0:00";
 			timeLabel.UseFont = bigFontConfiguration;
@@ -437,6 +437,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			diskContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
 			diskContextMenu.Name = "diskContextMenu";
 			// 
+			// moduleListContextMenu
+			// 
+			moduleListContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
+			moduleListContextMenu.Name = "moduleListContextMenu";
+			// 
 			// addContextMenu
 			// 
 			addContextMenu.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Main;
@@ -450,10 +455,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleList.Size = new System.Drawing.Size(377, 116);
 			moduleList.TabIndex = 5;
 			// 
-			// moduleListContextMenu
-			// 
-			moduleListContextMenu.Palette = fontPalette;
-			//
 			// searchPopupControl
 			// 
 			searchPopupControl.Location = new System.Drawing.Point(35, 56);
@@ -484,8 +485,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			MinimumSize = new System.Drawing.Size(432, 320);
 			Name = "MainWindowForm";
 			infoBox.ResumeLayout(false);
+			infoBox.PerformLayout();
 			listButtonsBox.ResumeLayout(false);
 			listInfoBox.ResumeLayout(false);
+			listInfoBox.PerformLayout();
 			tapedeckBox.ResumeLayout(false);
 			functionsBox.ResumeLayout(false);
 			ResumeLayout(false);
@@ -531,7 +534,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu sortContextMenu;
 		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu listContextMenu;
 		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu diskContextMenu;
-		private KryptonContextMenu moduleListContextMenu;
+		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu moduleListContextMenu;
 		private System.Windows.Forms.Timer neverEndingTimer;
 		private NostalgicPlayer.Controls.Menus.NostalgicContextMenu addContextMenu;
 		private NostalgicPlayer.Controls.Buttons.NostalgicImageButton favoritesButton;
