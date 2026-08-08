@@ -28,7 +28,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// construction and copy assignment), use the copy constructor
 	/// vector‹T›(vector‹T›) or <see cref="MakeDeepClone"/>. To copy the
 	/// contents into an already existing container, use
-	/// <see cref="CopyTo"/>.
+	/// <see cref="CopyTo"/>. To hand the contents over to a new container,
+	/// leaving this one empty (the behavior of C++ move construction), use
+	/// <see cref="MoveFrom"/> or Utility.move.
 	///
 	/// As with a C++ std::vector, any operation that changes the capacity (a
 	/// reallocation) invalidates all pointers, iterators and references that
@@ -51,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// just as assigning through a C++ reference does
 	/// </summary>
 #pragma warning disable CS8981
-	public class vector<T> : IEquatable<vector<T>>, IDeepCloneable<vector<T>>, ICopyTo<vector<T>>
+	public class vector<T> : IEquatable<vector<T>>, IDeepCloneable<vector<T>>, ICopyTo<vector<T>>, IMoveable<vector<T>>
 	{
 #pragma warning restore CS8981
 		private T[] buffer;
@@ -981,6 +983,31 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 				Array.Clear(destination.buffer, count, destination.count - count);
 
 			destination.count = count;
+		}
+		#endregion
+
+		#region IMoveable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns a container that has taken over the contents of this
+		/// one, leaving this one empty. This is what C++ move construction
+		/// (vector(vector＆＆)) does: the elements are handed over as they
+		/// are and not copied, so the pointers, iterators and references
+		/// that refer to them stay valid and now refer to elements of the
+		/// returned container
+		/// </summary>
+		/********************************************************************/
+		public virtual vector<T> MoveFrom()
+		{
+			vector<T> moved = new vector<T>();
+
+			moved.buffer = buffer;
+			moved.count = count;
+
+			buffer = Array.Empty<T>();
+			count = 0;
+
+			return moved;
 		}
 		#endregion
 

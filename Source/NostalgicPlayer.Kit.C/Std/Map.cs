@@ -29,7 +29,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// construction and copy assignment), use the copy constructor
 	/// map‹Key, T›(map‹Key, T›) or <see cref="MakeDeepClone"/>. To copy the
 	/// contents into an already existing container, use
-	/// <see cref="CopyTo"/>.
+	/// <see cref="CopyTo"/>. To hand the contents over to a new container,
+	/// leaving this one empty (the behavior of C++ move construction), use
+	/// <see cref="MoveFrom"/> or Utility.move.
 	///
 	/// As with a C++ std::map, the container is node based: inserting an
 	/// element never invalidates iterators or references to other elements,
@@ -56,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	///   that would break the ordering of the tree
 	/// </summary>
 #pragma warning disable CS8981
-	public class map<Key, T> : IEquatable<map<Key, T>>, IEnumerable<pair<Key, T>>, IDeepCloneable<map<Key, T>>, ICopyTo<map<Key, T>>
+	public class map<Key, T> : IEquatable<map<Key, T>>, IEnumerable<pair<Key, T>>, IDeepCloneable<map<Key, T>>, ICopyTo<map<Key, T>>, IMoveable<map<Key, T>>
 	{
 #pragma warning restore CS8981
 		internal sealed class Node
@@ -785,6 +787,31 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			for (Node n = Minimum(root); n != nil; n = Successor(n))
 				destination.Insert_Internal(n.value.first, n.value.second);
+		}
+		#endregion
+
+		#region IMoveable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns a container that has taken over the contents of this
+		/// one, leaving this one empty. This is what C++ move construction
+		/// (map(map＆＆)) does: the elements and the key ordering are handed
+		/// over as they are and not copied, so the iterators and references
+		/// that refer to elements stay valid and now refer to elements of
+		/// the returned container
+		/// </summary>
+		/********************************************************************/
+		public virtual map<Key, T> MoveFrom()
+		{
+			map<Key, T> moved = new map<Key, T>(comparer);
+
+			moved.nil = nil;
+			moved.root = root;
+			moved.nodeCount = nodeCount;
+
+			Init_Empty();
+
+			return moved;
 		}
 		#endregion
 
