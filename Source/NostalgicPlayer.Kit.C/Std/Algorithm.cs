@@ -131,6 +131,67 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// Applies the given operation to every element in the range
+		/// (first1, last1), stores each result in the range beginning at
+		/// d_first, and returns the destination iterator one past the last
+		/// element written
+		/// (C++ transform(InputIt first1, InputIt last1, OutputIt d_first,
+		/// UnaryOp unary_op)).
+		///
+		/// The source and the destination are independent iterator types
+		/// with independent element types, so the operation may change the
+		/// element type. The two ranges may only overlap if they begin at
+		/// the same element. Each result is stored as an independent copy
+		/// (see <see cref="Clone_Value"/>), matching the copy assignment
+		/// that C++ transform performs on each element.
+		///
+		/// Note that the operation must have an explicitly typed parameter
+		/// (for example (int x) => ...) so the source element type can be
+		/// inferred
+		/// </summary>
+		/********************************************************************/
+		public static TDstIt transform<TSrcIt, TDstIt, TSrc, TDst>(TSrcIt first1, TSrcIt last1, TDstIt d_first, Func<TSrc, TDst> unary_op) where TSrcIt : IIterator<TSrcIt, TSrc> where TDstIt : IIterator<TDstIt, TDst>
+		{
+			for (; !first1.Equals(last1); first1 = first1.Next(), d_first = d_first.Next())
+				d_first.Value = Clone_Value(unary_op(first1.Value));
+
+			return d_first;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Applies the given operation to every pair of elements taken from
+		/// the range (first1, last1) and the range beginning at first2
+		/// (which must be at least as long), stores each result in the range
+		/// beginning at d_first, and returns the destination iterator one
+		/// past the last element written
+		/// (C++ transform(InputIt1 first1, InputIt1 last1, InputIt2 first2,
+		/// OutputIt d_first, BinaryOp binary_op)).
+		///
+		/// The three ranges use independent iterator types with independent
+		/// element types. Each result is stored as an independent copy (see
+		/// <see cref="Clone_Value"/>), matching the copy assignment that C++
+		/// transform performs on each element.
+		///
+		/// Note that the operation must have explicitly typed parameters
+		/// (for example (int x, int y) => ...) so the source element types
+		/// can be inferred
+		/// </summary>
+		/********************************************************************/
+		public static TDstIt transform<TSrcIt1, TSrcIt2, TDstIt, TSrc1, TSrc2, TDst>(TSrcIt1 first1, TSrcIt1 last1, TSrcIt2 first2, TDstIt d_first, Func<TSrc1, TSrc2, TDst> binary_op) where TSrcIt1 : IIterator<TSrcIt1, TSrc1> where TSrcIt2 : IIterator<TSrcIt2, TSrc2> where TDstIt : IIterator<TDstIt, TDst>
+		{
+			for (; !first1.Equals(last1); first1 = first1.Next(), first2 = first2.Next(), d_first = d_first.Next())
+				d_first.Value = Clone_Value(binary_op(first1.Value, first2.Value));
+
+			return d_first;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true if the range (first1, last1) and the range beginning
 		/// at first2 (which must be at least as long) compare element-wise
 		/// equal, and false otherwise

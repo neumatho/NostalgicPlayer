@@ -45,6 +45,27 @@ namespace Polycode.NostalgicPlayer.Kit.C
 
 		/********************************************************************/
 		/// <summary>
+		/// Calculates the length of a given string
+		/// </summary>
+		/********************************************************************/
+		public static size_t strlen(CPointer<byte> str)
+		{
+			if (str.IsNull)
+				throw new ArgumentNullException(nameof(str));
+
+			size_t len = 0;
+			size_t maxLength = (size_t)str.Length;
+
+			while ((len < maxLength) && (str[len] != 0x00))
+				len++;
+
+			return len;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Copies the C string pointed by source into the array pointed by
 		/// destination, including the terminating null character (and
 		/// stopping at that point)
@@ -346,6 +367,59 @@ namespace Polycode.NostalgicPlayer.Kit.C
 			{
 				bool isStr1End = str1[i] == '\0';
 				bool isStr2End = str2[i] == '\0';
+
+				if (isStr1End && isStr2End)
+					break;
+
+				if (isStr1End)
+					return -1;
+
+				if (isStr2End)
+					return 1;
+
+				if (str1[i] != str2[i])
+					return str1[i] - str2[i];
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Compares the first n characters of two strings and returns an
+		/// integer indicating which one is greater
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int strncmp(CPointer<byte> str1, string str2, size_t count)
+		{
+			return strncmp(str1, str2.ToPointer(), count);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Compares the first n characters of two strings and returns an
+		/// integer indicating which one is greater
+		/// </summary>
+		/********************************************************************/
+		public static c_int strncmp(CPointer<byte> str1, CPointer<byte> str2, size_t count)
+		{
+			if (str1.IsNull)
+				throw new ArgumentNullException(nameof(str1));
+
+			if (str2.IsNull)
+				throw new ArgumentNullException(nameof(str2));
+
+			count = Math.Min(count, (size_t)Math.Min(str1.Length, str2.Length));
+
+			for (size_t i = 0; i < count; i++)
+			{
+				bool isStr1End = str1[i] == 0x00;
+				bool isStr2End = str2[i] == 0x00;
 
 				if (isStr1End && isStr2End)
 					break;

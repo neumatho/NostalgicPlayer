@@ -56,6 +56,60 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// An array must convert implicitly to a container that uses the
+		/// array itself as its buffer, without copying the elements
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Implicit_Conversion_From_Array()
+		{
+			int[] items = [ 1, 2, 3, 4 ];
+
+			array<int> a = items;
+
+			Assert.AreEqual(4UL, a.size());
+			Assert.AreEqual(1, a[0]);
+			Assert.AreEqual(4, a[3]);
+
+			// The two must share their storage, so a change made through
+			// one of them is seen through the other
+			items[0] = 99;
+			Assert.AreEqual(99, a[0]);
+
+			a[1] = 88;
+			Assert.AreEqual(88, items[1]);
+
+			Assert.IsTrue(a.data() == new CPointer<int>(items));
+
+			int[] noItems = [];
+
+			array<int> empty = noItems;
+			Assert.AreEqual(0UL, empty.size());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The array constructor must still make an independent copy
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Construction_From_Array_Is_Independent()
+		{
+			int[] items = [ 1, 2, 3, 4 ];
+
+			array<int> a = new array<int>(items);
+
+			items[0] = 99;
+
+			Assert.AreEqual(1, a[0]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// The copy constructor must create an independent copy
 		/// </summary>
 		/********************************************************************/

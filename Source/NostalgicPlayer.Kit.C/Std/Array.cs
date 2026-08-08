@@ -43,6 +43,11 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// obtain that copy, so that mutable reference type elements never become
 	/// shared with the caller, between containers or between elements.
 	///
+	/// The implicit conversion from T[] is the one exception: it takes the
+	/// given array over as its buffer instead of copying it, just as the
+	/// conversion from T[] to CPointer‹T› does, so the container and the
+	/// array share their storage.
+	///
 	/// The operations that hand out a reference or a pointer instead
 	/// (<see cref="at(size_t)"/>, the indexer, <see cref="front"/>,
 	/// <see cref="back"/>, <see cref="data"/> and the iterators) cannot copy,
@@ -84,9 +89,29 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// std::array‹T, N› a = { ... })
 		/// </summary>
 		/********************************************************************/
-		public array(T[] items)
+		public array(T[] items) : this(items, true)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructs a container from the given items, either holding a
+		/// copy of them or using the given array itself as the buffer. The
+		/// latter is what the implicit conversion from T[] uses, where the
+		/// whole point is to avoid the copy
+		/// </summary>
+		/********************************************************************/
+		private array(T[] items, bool copyItems)
 		{
 			int n = items?.Length ?? 0;
+
+			if (!copyItems)
+			{
+				buffer = n > 0 ? items : Array.Empty<T>();
+				return;
+			}
 
 			buffer = n > 0 ? new T[n] : Array.Empty<T>();
 
@@ -454,6 +479,30 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		public static bool operator >=(array<T> left, array<T> right)
 		{
 			return Compare(left, right) >= 0;
+		}
+		#endregion
+
+		#region Conversion operators
+		/********************************************************************/
+		/// <summary>
+		/// Returns a container that uses the given array as its buffer, so
+		/// that a plain C# array can be used wherever a container is
+		/// expected.
+		///
+		/// The items are not copied, exactly as when an array is converted
+		/// to a CPointer‹T›, so the container and the array share their
+		/// storage and a change made through one of them is seen through
+		/// the other. Use the constructor array‹T›(T[]) instead when the
+		/// container must hold an independent copy.
+		///
+		/// A collection expression cannot use a conversion like this one,
+		/// so array‹int› a = [ 1, 2, 3 ] does not compile. Write
+		/// array‹int› a = new int[] { 1, 2, 3 } instead
+		/// </summary>
+		/********************************************************************/
+		public static implicit operator array<T>(T[] items)
+		{
+			return new array<T>(items, false);
 		}
 		#endregion
 
