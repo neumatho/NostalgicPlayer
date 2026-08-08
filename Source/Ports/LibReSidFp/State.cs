@@ -17,8 +17,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// SID
 		private int bus_Value_Ttl;
 		private uint nextVoiceSync;
+		private uint offset_6581;
 		private ChipModel model;
 		private CombinedWaveforms cws;
+		private double dacLeakage;
 		private uint8_t bus_Value;
 		private uint8_t paddle_X;
 		private uint8_t paddle_Y;
@@ -101,6 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		// External filter
 		private int32_t exVlp;
 		private int32_t exVhp;
+		private double ext_Res;
 
 		// Resampler
 		private double clockFrequency;
@@ -180,9 +183,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				state.env3[i] = envelope.env3;
 			}
 
+			state.dacLeakage = s.dacLeakage;
 			state.bus_Value = s.busValue;
 			state.bus_Value_Ttl = s.busValueTtl;
 			state.nextVoiceSync = s.nextVoiceSync;
+			state.offset_6581 = s.offset_6581;
 			state.paddle_X = s.paddleX;
 			state.paddle_Y = s.paddleY;
 			state.model = s.model;
@@ -232,9 +237,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 			state.exVlp = s.externalFilter.vlp;
 			state.exVhp = s.externalFilter.vhp;
+			state.ext_Res = s.externalFilter.m_Ext_Res;
+			state.clockFrequency = s.externalFilter.m_Frequency;
 
 			state.method = s.p.Method;
-			state.clockFrequency = s.p.ClockFrequency;
 			state.samplingFrequency = s.p.SamplingFrequency;
 
 			switch (s.p.Method)
@@ -301,9 +307,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		{
 			State state = (State)buffer;
 
+			s.dacLeakage = state.dacLeakage;
 			s.busValue = state.bus_Value;
 			s.busValueTtl = state.bus_Value_Ttl;
 			s.nextVoiceSync = state.nextVoiceSync;
+			s.offset_6581 = state.offset_6581;
 			s.paddleX = state.paddle_X;
 			s.paddleY = state.paddle_Y;
 			s.model = state.model;
@@ -355,8 +363,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 			s.externalFilter.vlp = state.exVlp;
 			s.externalFilter.vhp = state.exVhp;
+			s.externalFilter.m_Ext_Res = state.ext_Res;
 
 			s.SetSamplingParameters(state.clockFrequency, state.method, state.samplingFrequency);
+			s.externalFilter.RecalcParams();
 
 			for (int i = 0; i < 3; i++)
 			{

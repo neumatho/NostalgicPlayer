@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Build DAC model for specific chip
 		/// </summary>
 		/********************************************************************/
-		public void KinkedDac(ChipModel chipModel)
+		public void KinkedDac(ChipModel chipModel, double leakLevel = 1.0)
 		{
 			// Non-linearity parameter, 8580 DACs are perfectly linear
 			double _2r_div_r = chipModel == ChipModel.MOS6581 ? 2.20 : 2.00;
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			// 6581 DACs are not terminated by a 2R resistor
 			bool term = chipModel == ChipModel.CSG8580;
 
-			leakage = chipModel == ChipModel.MOS6581 ? MOSFET_LEAKAGE_6581 : MOSFET_LEAKAGE_8580;
+			leakage = leakLevel * (chipModel == ChipModel.MOS6581 ? MOSFET_LEAKAGE_6581 : MOSFET_LEAKAGE_8580);
 
 			double vSum = 0.0;
 

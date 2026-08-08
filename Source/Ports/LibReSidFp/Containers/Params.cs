@@ -14,9 +14,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers
 		public SamplingMethod Method;
 
 		/// <summary></summary>
-		public double ClockFrequency;
-
-		/// <summary></summary>
 		public double SamplingFrequency;
 
 		/// <summary></summary>

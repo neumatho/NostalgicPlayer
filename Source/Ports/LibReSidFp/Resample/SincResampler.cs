@@ -79,12 +79,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		{
 			cyclesPerSample = (int)(clockFrequency / samplingFrequency * 1024.0);
 
-			// 16-bits -> -96dB stopband attenuation
-			double a = -20.0 * Math.Log10(1.0 / (1 << Bits));
-
 			// A fraction of the bandwidth is allocated to the transition band, which we double
 			// because we design the filter to transition halfway at nyquist
-			double dw = (1.0 - 2.0 * highestAccurateFrequency / samplingFrequency) * Math.PI * 2.0;
+			double dw = (1.0 - (2.0 * highestAccurateFrequency / samplingFrequency)) * Math.PI * 2.0;
+
+			// 16-bits -> -96dB stopband attenuation
+			double a = -20.0 * Math.Log10(1.0 / (1 << Bits));
 
 			// For calculation of beta and N see the reference for the kaiserord
 			// function in the MATLAB Signal Processing Toolbox:
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 				// N >= (96.33 - 7.95)/(2 * pi * 2.285 * (maxfreq - passbandfreq) >= 123
 				// The filter order is equal to the number of zero crossings, i.e.
 				// it should be an even number (sinc is symmetric with respect to x = 0)
-				int n = (int)((a - 7.95) / (2.285 * dw) + 0.5);
+				int n = (int)(((a - 7.95) / (2.285 * dw)) + 0.5);
 				n += n & 1;
 
 				// The filter length is equal to the filter order + 1.
@@ -132,14 +132,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 
 			for (int i = 0; i < firRes; i++)
 			{
-				double jPhase = (double)i / firRes + firN2;
+				double jPhase = ((double)i / firRes) + firN2;
 
 				for (int j = 0; j < firN; j++)
 				{
 					double x = j - jPhase;
 
 					double xt = x / firN2;
-					double kaiserXt = Math.Abs(xt) < 1.0 ? I0(beta * Math.Sqrt(1.0 - xt * xt)) / i0Beta : 0.0;
+					double kaiserXt = Math.Abs(xt) < 1.0 ? I0(beta * Math.Sqrt(1.0 - (xt * xt))) / i0Beta : 0.0;
 
 					double wt = wc * x * inv_CyclesPerSampleD;
 					double sincWt = Math.Abs(wt) >= 1e-8 ? Math.Sin(wt) / wt : 1.0;

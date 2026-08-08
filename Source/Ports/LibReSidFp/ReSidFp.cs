@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Exceptions;
 
@@ -358,6 +357,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		public void RestoreState(IState state)
 		{
 			State.RestoreState(sid, state);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the DAC leakage level.
+		/// Affects the envelope and waveforms
+		/// </summary>
+		/********************************************************************/
+		public void SetDacLeakage(double level)
+		{
+			sid.SetDacLeakage(level);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the 6581 wave offset.
+		/// Affects the volume of digi samples
+		/// </summary>
+		/********************************************************************/
+		public void SetOffset6581(double offset)
+		{
+			sid.SetOffset6581(offset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the DC-Blocker resistance.
+		/// Affects the highpass cutoff frequency
+		/// </summary>
+		/********************************************************************/
+		public void SetDcbRes(double res)
+		{
+			sid.SetDcbRes(res);
 		}
 	}
 }

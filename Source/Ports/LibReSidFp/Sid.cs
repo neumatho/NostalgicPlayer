@@ -159,6 +159,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		internal uint nextVoiceSync;
 
 		/// <summary>
+		/// 
+		/// </summary>
+		internal uint offset_6581;
+
+		/// <summary>
 		/// Currently active chip model
 		/// </summary>
 		internal ChipModel model;
@@ -167,6 +172,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// Currently selected combined waveforms strength
 		/// </summary>
 		internal CombinedWaveforms cws;
+
+		/// <summary>
+		/// Dac leakage
+		/// </summary>
+		internal double dacLeakage;
 
 		/// <summary>
 		/// Last written value
@@ -201,7 +211,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			filter6581 = new Filter6581();
 			filter8580 = new Filter8580();
 			resampler = null;
+			offset_6581 = OFFSET_6581;
 			cws = CombinedWaveforms.AVERAGE;
+			dacLeakage = 1.0;
 			p = new Params();
 
 			voice[0].SetOtherVoices(voice[2], voice[1]);
@@ -221,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter6581Curve(double filterCurve)
 		{
-			p.FilterCurve6581 = filterCurve;
+			p.FilterCurve6581 = Clamp(filterCurve);
 			filter6581.SetFilterCurve(filterCurve);
 		}
 
@@ -234,7 +246,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter6581Range(double adjustment)
 		{
-			p.FilterRange6581 = adjustment;
+			p.FilterRange6581 = Clamp(adjustment);
 			filter6581.SetFilterRange(adjustment);
 		}
 
@@ -247,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter8580Curve(double filterCurve)
 		{
-			p.FilterCurve8580 = filterCurve;
+			p.FilterCurve8580 = Clamp(filterCurve);
 			filter8580.SetFilterCurve(filterCurve);
 		}
 
@@ -317,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			// Calculate envelope DAC table
 			{
 				Dac dacBuilder = new Dac(ENV_DAC_BITS);
-				dacBuilder.KinkedDac(model);
+				dacBuilder.KinkedDac(model, dacLeakage);
 
 				for (uint i = 0; i < (1 << (int)ENV_DAC_BITS); i++)
 					envDac[i] = (float)dacBuilder.GetOutput(i);
@@ -328,10 +340,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 			{
 				Dac dacBuilder = new Dac(OSC_DAC_BITS);
-				dacBuilder.KinkedDac(model);
+				dacBuilder.KinkedDac(model, dacLeakage);
 
-				//double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : OFFSET_8580);
-				double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : 0x7ff, is6581);
+				double offset = dacBuilder.GetOutput(is6581 ? offset_6581 : 0x800, is6581);
 
 				for (uint i = 0; i < (1 << (int)OSC_DAC_BITS); i++)
 				{
@@ -883,7 +894,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			}
 
 			p.Method = method;
-			p.ClockFrequency = clockFrequency;
 			p.SamplingFrequency = samplingFrequency;
 		}
 
@@ -981,6 +991,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		{
 			paddleX = x;
 			paddleY = y;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the DAC leakage level
+		/// </summary>
+		/********************************************************************/
+		public void SetDacLeakage(double level)
+		{
+			dacLeakage = Clamp(level);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the 6581 wave offset
+		/// </summary>
+		/********************************************************************/
+		public void SetOffset6581(double offset)
+		{
+			// TODO determine a reasonable range
+			offset_6581 = 0x380 + (uint)((1.0 - Clamp(offset)) * 0x200);
+			SetChipModel(model);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the DC-Blocker resistance
+		/// </summary>
+		/********************************************************************/
+		public void SetDcbRes(double res)
+		{
+			externalFilter.SetExtResistance(Clamp(res));
 		}
 
 		#region Private methods
@@ -1084,6 +1132,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 					busValueTtl = 0;
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clamp parameter in [0,1] range
+		/// </summary>
+		/********************************************************************/
+		private double Clamp(double param)
+		{
+			return Math.Clamp(param, 0.0, 1.0);
 		}
 		#endregion
 	}

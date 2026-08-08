@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		//                                  GND
 		// ~~~
 		//
-		// * Only for the 6581.
+		// * Pulldown resistor, only for the 6581.
 		// ** The C64c board additionally includes a [bootstrap] capacitor to increase
 		//    the input impedance of the common collector.
 		//
@@ -78,6 +78,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		private int32_t w0hp_1_s17 = 0;
 
+		internal double m_Frequency;
+
+		internal double m_Ext_Res = 10e3;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -97,15 +101,41 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetClockFrequency(double frequency)
 		{
-			double dt = 1.0 / frequency;
+			m_Frequency = frequency;
+			RecalcParams();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Setup of the external filter sampling parameters
+		/// </summary>
+		/********************************************************************/
+		public void SetExtResistance(double res)
+		{
+			m_Ext_Res = 1e3 + (res * 9e3);
+			RecalcParams();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void RecalcParams()
+		{
+			double dt = 1.0 / m_Frequency;
 
 			// Low-pass:  R = 10kOhm, C = 1000pF; w0l = dt/(dt+RC) = 1e-6/(1e-6+1e4*1e-9) = 0.091
-			// Cutoff 1/2*PI*RC = 1/2*PI*1e4*1e-9 = 15915.5 Hz
+			// Cutoff 1/(2*PI*RC) = 1/(2*PI*1e4*1e-9) = 15915.5 Hz
 			w0lp_1_s7 = (int32_t)(((dt / (dt + GetRc(10e3, 1000e-12))) * (1 << 7)) + 0.5);
 
-			// High-pass: R = 10kOhm, C = 10uF;   w0h = dt/(dt+RC) = 1e-6/(1e-6+1e4*1e-5) = 0.00000999
-			// Cutoff 1/2*PI*RC = 1/2*PI*1e4*1e-5 = 1.59155 Hz
-			w0hp_1_s17 = (int32_t)(((dt / (dt + GetRc(10e3, 10e-6))) * (1 << 17)) + 0.5);
+			// High-pass: R = 1-10kOhm, C = 10uF;  w0h = dt/(dt+RC)
+			// Cutoff 1/(2*PI*RC) ∈ [1.59155,15.9155] Hz
+			w0hp_1_s17 = (int32_t)(((dt / (dt + GetRc(m_Ext_Res, 10e-6))) * (1 << 17)) + 0.5);
 		}
 
 
