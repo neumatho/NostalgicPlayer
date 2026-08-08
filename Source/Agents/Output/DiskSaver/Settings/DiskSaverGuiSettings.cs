@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -18,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 	/// </summary>
 	public class DiskSaverGuiSettings : IAgentGuiSettings, IWantOutputAgents, IWantSampleConverterAgents
 	{
-		private readonly IControlFactory controlFactory;
+		private readonly IControlCreatorService controlCreatorService;
 
 		private AgentInfo[] loadedOutputAgents;
 		private AgentInfo[] loadedSampleConverterAgents;
@@ -28,9 +29,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DiskSaverGuiSettings(IControlFactory controlFactory)
+		public DiskSaverGuiSettings(IControlCreatorService controlCreatorService)
 		{
-			this.controlFactory = controlFactory;
+			this.controlCreatorService = controlCreatorService;
 		}
 
 		#region IAgentGuiSettings implementation
@@ -60,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/********************************************************************/
 		public ISettingsControl GetSettingsControl()
 		{
-			return controlFactory.GetInstance<SettingsControl>(loadedOutputAgents, loadedSampleConverterAgents);
+			return controlCreatorService.GetInstance<SettingsControl>(loadedOutputAgents, loadedSampleConverterAgents);
 		}
 
 
