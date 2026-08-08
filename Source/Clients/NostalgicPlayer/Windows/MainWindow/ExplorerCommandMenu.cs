@@ -10,7 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// COM service provider exposed to hosted Explorer commands
