@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetExtResistance(double res)
 		{
-			m_Ext_Res = 1e3 + (res * 9e3);
+			m_Ext_Res = 1e3 + ((1.0 - res) * 9e3);
 			RecalcParams();
 		}
 
