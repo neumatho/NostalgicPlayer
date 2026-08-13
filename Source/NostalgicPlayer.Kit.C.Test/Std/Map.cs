@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace NostalgicPlayer.Kit.C.Test.Std
 {
@@ -571,6 +572,90 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 			Assert.IsTrue(m.empty());
 			Assert.IsTrue(m.begin() == m.end());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A mapped value that only supports copying into an existing
+		/// instance must be copied into a new instance of its own type, so
+		/// that the container does not share the instance with the caller
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Operations_Use_CopyTo()
+		{
+			Copyable value = new Copyable(5);
+
+			map<int, Copyable> m = new map<int, Copyable>();
+			m.insert(new pair<int, Copyable>(1, value));
+
+			map<int, Copyable> copy = new map<int, Copyable>(m);
+
+			Assert.IsFalse(ReferenceEquals(value, m[1]));
+			Assert.IsFalse(ReferenceEquals(m[1], copy[1]));
+			Assert.AreEqual(5, copy[1].Value);
+
+			// Mutating the copy must not affect the original
+			copy[1].Value = 99;
+			Assert.AreEqual(5, m[1].Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Assigning to an element that is already present must copy into the
+		/// mapped value it already holds, so that everything referring to
+		/// that value sees the new value
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Assignment_Keeps_Existing_Mapped_Value()
+		{
+			map<int, Copyable> m = new map<int, Copyable>();
+			m.insert(new pair<int, Copyable>(1, new Copyable(5)));
+
+			Copyable existing = m[1];
+
+			m.insert_or_assign(1, new Copyable(7));
+
+			Assert.IsTrue(ReferenceEquals(existing, m[1]));
+			Assert.AreEqual(7, existing.Value);
+
+			map<int, Copyable>.iterator it = m.begin();
+			it.second = new Copyable(9);
+
+			Assert.IsTrue(ReferenceEquals(existing, m[1]));
+			Assert.AreEqual(9, existing.Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A simple reference type that can copy itself into an existing
+		/// instance, used to verify that the copying falls back to that way
+		/// </summary>
+		/********************************************************************/
+		private sealed class Copyable : ICopyTo<Copyable>
+		{
+			public int Value;
+
+			public Copyable()
+			{
+			}
+
+			public Copyable(int value)
+			{
+				Value = value;
+			}
+
+			public void CopyTo(Copyable destination)
+			{
+				destination.Value = Value;
+			}
 		}
 	}
 }

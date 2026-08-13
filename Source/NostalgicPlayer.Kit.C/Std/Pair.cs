@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.C.Std
 {
@@ -59,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	///   through the <see cref="first"/> and <see cref="second"/> fields
 	///   instead
 	/// </summary>
-	public struct pair<T1, T2> : IEquatable<pair<T1, T2>>
+	public struct pair<T1, T2> : IEquatable<pair<T1, T2>>, IComparable<pair<T1, T2>>
 	{
 #pragma warning restore CS8981
 		/// <summary>
@@ -108,14 +107,14 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Copy constructor. Constructs an independent pair with a copy of
 		/// the contents of the given pair (C++ pair(const pair＆)). Elements
-		/// that implement IDeepCloneable‹T› are deep cloned, so that the two
-		/// pairs do not share element instances
+		/// that implement IDeepCloneable‹T› or ICopyTo‹T› are copied, so that
+		/// the two pairs do not share element instances
 		/// </summary>
 		/********************************************************************/
 		public pair(pair<T1, T2> other)
 		{
-			first = Clone_Value(other.first);
-			second = Clone_Value(other.second);
+			first = Create_Value(other.first);
+			second = Create_Value(other.second);
 		}
 
 
@@ -167,7 +166,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public static bool operator <(pair<T1, T2> left, pair<T1, T2> right)
 		{
-			return Compare(left, right) < 0;
+			return left.CompareTo(right) < 0;
 		}
 
 
@@ -179,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public static bool operator <=(pair<T1, T2> left, pair<T1, T2> right)
 		{
-			return Compare(left, right) <= 0;
+			return left.CompareTo(right) <= 0;
 		}
 
 
@@ -191,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public static bool operator >(pair<T1, T2> left, pair<T1, T2> right)
 		{
-			return Compare(left, right) > 0;
+			return left.CompareTo(right) > 0;
 		}
 
 
@@ -203,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public static bool operator >=(pair<T1, T2> left, pair<T1, T2> right)
 		{
-			return Compare(left, right) >= 0;
+			return left.CompareTo(right) >= 0;
 		}
 		#endregion
 
@@ -245,6 +244,27 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		}
 		#endregion
 
+		#region IComparable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Compares this pair with the other pair lexicographically, first
+		/// elements first and, if they are equal, the second elements, and
+		/// returns a negative value, zero or a positive value. The elements
+		/// are ordered with Comparer‹T›.Default (which uses IComparable‹T›),
+		/// the C# equivalent of the element comparisons that the C++
+		/// operator‹=› does
+		/// </summary>
+		/********************************************************************/
+		public int CompareTo(pair<T1, T2> other)
+		{
+			int c = Comparer<T1>.Default.Compare(first, other.first);
+			if (c != 0)
+				return c;
+
+			return Comparer<T2>.Default.Compare(second, other.second);
+		}
+		#endregion
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns a string representation of both elements of the pair
@@ -258,33 +278,19 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Returns an independent copy of the given value. If the value
-		/// implements IDeepCloneable‹U›, its MakeDeepClone() is used to obtain
-		/// a new instance. Otherwise the value is returned unchanged, which is
-		/// the correct behavior for value types and immutable reference types
+		/// Returns the value to store in a new element, which is an
+		/// independent copy of the given value. If the value implements
+		/// IDeepCloneable‹U›, its MakeDeepClone() is used to obtain a new
+		/// instance, and if it implements ICopyTo‹U›, it is copied into a new
+		/// instance of its own type. Otherwise the value is returned
+		/// unchanged, which is the correct behavior for value types and
+		/// immutable reference types (see <see cref="Copy_Insert{T}"/>)
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static U Clone_Value<U>(U value)
+		private static U Create_Value<U>(U value)
 		{
-			return value is IDeepCloneable<U> cloneable ? cloneable.MakeDeepClone() : value;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Compares the two pairs lexicographically, returning a negative
-		/// value, zero or a positive value
-		/// </summary>
-		/********************************************************************/
-		private static int Compare(pair<T1, T2> left, pair<T1, T2> right)
-		{
-			int c = Comparer<T1>.Default.Compare(left.first, right.first);
-			if (c != 0)
-				return c;
-
-			return Comparer<T2>.Default.Compare(left.second, right.second);
+			return Copy_Insert<U>.Create(value);
 		}
 		#endregion
 	}

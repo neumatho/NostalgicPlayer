@@ -453,6 +453,66 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// An element type that only supports copying into an existing
+		/// instance must be copied into a new instance of its own type, so
+		/// that the containers do not share element instances
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Operations_Use_CopyTo()
+		{
+			Copyable prototype = new Copyable(7);
+
+			array<Copyable> a = new array<Copyable>((size_t)2);
+			a.fill(prototype);
+
+			array<Copyable> copy = new array<Copyable>(a);
+
+			Assert.IsFalse(ReferenceEquals(prototype, a[0]));
+			Assert.IsFalse(ReferenceEquals(a[0], a[1]));
+			Assert.IsFalse(ReferenceEquals(a[0], copy[0]));
+			Assert.AreEqual(7, copy[0].Value);
+
+			// Mutating the copy must not affect the original
+			copy[0].Value = 99;
+			Assert.AreEqual(7, a[0].Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// fill and CopyTo must copy into the elements the container already
+		/// holds, so that everything referring to them sees the new value
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Operations_Keep_Existing_Elements()
+		{
+			// The elements are default inserted, so each of them already
+			// holds an instance
+			array<Copyable> a = new array<Copyable>((size_t)2);
+
+			Copyable existing = a[0];
+
+			a.fill(new Copyable(7));
+
+			Assert.IsTrue(ReferenceEquals(existing, a[0]));
+			Assert.AreEqual(7, existing.Value);
+
+			array<Copyable> destination = new array<Copyable>((size_t)2);
+			Copyable existingDestination = destination[0];
+
+			a.CopyTo(destination);
+
+			Assert.IsTrue(ReferenceEquals(existingDestination, destination[0]));
+			Assert.AreEqual(7, existingDestination.Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// A foreach loop must visit every element in order
 		/// </summary>
 		/********************************************************************/
@@ -535,6 +595,33 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			public Cloneable MakeDeepClone()
 			{
 				return new Cloneable(Value);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A simple reference type that can copy itself into an existing
+		/// instance, used to verify that the copying falls back to that way
+		/// </summary>
+		/********************************************************************/
+		private sealed class Copyable : ICopyTo<Copyable>
+		{
+			public int Value;
+
+			public Copyable()
+			{
+			}
+
+			public Copyable(int value)
+			{
+				Value = value;
+			}
+
+			public void CopyTo(Copyable destination)
+			{
+				destination.Value = Value;
 			}
 		}
 	}

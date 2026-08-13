@@ -44,10 +44,12 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// insert_or_assign, emplace, try_emplace and the iterator property
 	/// <see cref="iterator.second"/>) or many (copy construction, the items
 	/// forms of the constructor and insert, and <see cref="CopyTo"/>). If a
-	/// key or a mapped value implements IDeepCloneable‹T›, its
-	/// MakeDeepClone() is used to obtain that copy, so that mutable reference
-	/// type elements never become shared with the caller or between
-	/// containers. The indexer copies the key it inserts and default inserts
+	/// key or a mapped value implements IDeepCloneable‹T›, the copy is a
+	/// clone, and if it implements ICopyTo‹T›, the value is copied into the
+	/// mapped value the element already holds, or into a new instance when
+	/// the element is a new one (see <see cref="Copy_Insert{T}"/>), so that
+	/// mutable reference type elements never become shared with the caller or
+	/// between containers. The indexer copies the key it inserts and default inserts
 	/// the mapped value, but it hands out a reference to that value, so
 	/// assigning through the indexer stores the given instance directly, just
 	/// as assigning through a C++ reference does.
@@ -128,8 +130,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Copy constructor. Constructs an independent container with a copy
 		/// of the contents of the given container (C++ map(const map＆)). Keys
-		/// and mapped values implementing IDeepCloneable‹T› are deep cloned,
-		/// so that the two containers do not share element instances
+		/// and mapped values implementing IDeepCloneable‹T› or ICopyTo‹T› are
+		/// copied, so that the two containers do not share element instances
 		/// (see <see cref="Insert_Internal"/>)
 		/// </summary>
 		/********************************************************************/
@@ -317,7 +319,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			(Node node, bool inserted) = Insert_Internal(key, value);
 
 			if (!inserted)
-				node.value.second = Clone_Value(value);
+				node.value.second = Copy_Value(node.value.second, value);
 
 			return new pair<iterator, bool>(new iterator(this, node), inserted);
 		}
@@ -339,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			(Node node, bool inserted) = Insert_Internal(key, value);
 
 			if (!inserted)
-				node.value.second = Clone_Value(value);
+				node.value.second = Copy_Value(node.value.second, value);
 
 			return new iterator(this, node);
 		}
@@ -838,15 +840,33 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns an independent copy of the given value. If the value
-		/// implements IDeepCloneable‹U›, its MakeDeepClone() is used to make
-		/// a new instance. Otherwise the value is returned as is, which is
-		/// the correct behavior for value types and immutable reference types
+		/// Returns the value to store in a new element, which is an
+		/// independent copy of the given value. If the value implements
+		/// IDeepCloneable‹U›, its MakeDeepClone() is used to make a new
+		/// instance, and if it implements ICopyTo‹U›, it is copied into a new
+		/// instance of its own type. Otherwise the value is returned as is,
+		/// which is the correct behavior for value types and immutable
+		/// reference types (see <see cref="Copy_Insert{T}"/>)
 		/// </summary>
 		/********************************************************************/
-		private static U Clone_Value<U>(U value)
+		private static U Create_Value<U>(U value)
 		{
-			return value is IDeepCloneable<U> cloneable ? cloneable.MakeDeepClone() : value;
+			return Copy_Insert<U>.Create(value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the value to store in an element that already holds the
+		/// given instance. A value implementing ICopyTo‹U› is copied into
+		/// that instance, so that everything referring to the element sees
+		/// the new value (see <see cref="Copy_Insert{T}"/>)
+		/// </summary>
+		/********************************************************************/
+		private static U Copy_Value<U>(U destination, U value)
+		{
+			return Copy_Insert<U>.Assign(destination, value);
 		}
 
 
@@ -895,7 +915,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			Node z = new Node
 			{
-				value = new pair<Key, T>(Clone_Value(key), defaultInsertValue ? Default_Insert<T>.Create() : Clone_Value(value)),
+				value = new pair<Key, T>(Create_Value(key), defaultInsertValue ? Default_Insert<T>.Create() : Create_Value(value)),
 				parent = y,
 				left = nil,
 				right = nil,
@@ -1395,7 +1415,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		{
 #pragma warning restore CS8981
 			private readonly map<Key, T> owner;
-			private Node node;
+			private readonly Node node;
 
 			/****************************************************************/
 			/// <summary>
@@ -1441,7 +1461,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			public T second
 			{
 				get => node.value.second;
-				set => node.value.second = Clone_Value(value);
+				set => node.value.second = Copy_Value(node.value.second, value);
 			}
 
 

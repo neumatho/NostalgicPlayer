@@ -22,8 +22,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// container stores the raw bytes it is given and never interprets them,
 	/// which is why the element type is uint8_t and not the C# char. Any
 	/// conversion to or from encoded text is up to the caller, apart from
-	/// the constructor <see cref="StdString(string)"/>, which encodes the
-	/// characters of a C# string as UTF-8.
+	/// the constructor <see cref="StdString(string)"/> and the implicit
+	/// conversion from a C# string, which both encode the characters of
+	/// the string as UTF-8.
 	///
 	/// The characters are stored in a single uint8_t[] buffer, so that a
 	/// pointer into the buffer (see <see cref="begin"/>, <see cref="end"/>,
@@ -2309,6 +2310,23 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		public size_t find_last_not_of(uint8_t ch)
 		{
 			return find_last_not_of(ch, npos);
+		}
+		#endregion
+
+		#region Conversion operators
+		/********************************************************************/
+		/// <summary>
+		/// Converts the given C# string to a container holding the
+		/// characters of it, encoded as UTF-8. This is the same as the
+		/// constructor <see cref="StdString(string)"/>, except that a null
+		/// string gives a null container. There is no C++ counterpart to
+		/// this one, as a std::string never knows the encoding of the
+		/// characters it holds
+		/// </summary>
+		/********************************************************************/
+		public static implicit operator StdString(string str)
+		{
+			return str == null ? null : new StdString(str);
 		}
 		#endregion
 

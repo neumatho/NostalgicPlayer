@@ -39,9 +39,12 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 	/// Every operation that stores a value in the container (copy
 	/// construction, the items form of the constructor and
 	/// <see cref="fill"/>) makes an independent copy of it. If the element
-	/// type implements IDeepCloneable‹T›, its MakeDeepClone() is used to
-	/// obtain that copy, so that mutable reference type elements never become
-	/// shared with the caller, between containers or between elements.
+	/// type implements IDeepCloneable‹T›, the copy is a clone, and if it
+	/// implements ICopyTo‹T›, the value is copied into the element the
+	/// container already holds, or into a new instance when it has no element
+	/// there (see <see cref="Copy_Insert{T}"/>), so that mutable reference
+	/// type elements never become shared with the caller, between containers
+	/// or between elements.
 	///
 	/// The implicit conversion from T[] is the one exception: it takes the
 	/// given array over as its buffer instead of copying it, just as the
@@ -116,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			buffer = n > 0 ? new T[n] : Array.Empty<T>();
 
 			if (n > 0)
-				Copy_Cloned(items, buffer, 0);
+				Copy_Range(items, buffer, 0);
 		}
 
 
@@ -125,8 +128,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Copy constructor. Constructs an independent container with a copy
 		/// of the contents of the given container (C++ array(const array＆)).
-		/// Elements that implement IDeepCloneable‹T› are deep cloned, so
-		/// that the two containers do not share element instances
+		/// Elements that implement IDeepCloneable‹T› or ICopyTo‹T› are
+		/// copied, so that the two containers do not share element instances
 		/// </summary>
 		/********************************************************************/
 		public array(array<T> other)
@@ -138,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			buffer = n > 0 ? new T[n] : Array.Empty<T>();
 
 			if (n > 0)
-				Copy_Cloned(other.buffer, buffer, 0);
+				Copy_Range(other.buffer, buffer, 0);
 		}
 
 		#region Element access
@@ -365,13 +368,13 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Assigns the given value to every element in the container
 		/// (C++ fill(const T＆ value)). Each element is an independent copy
-		/// of the value (see <see cref="Clone_Value"/>)
+		/// of the value (see <see cref="Copy_Value"/>)
 		/// </summary>
 		/********************************************************************/
 		public void fill(T value)
 		{
 			for (int i = 0; i < buffer.Length; i++)
-				buffer[i] = Clone_Value(value);
+				buffer[i] = Copy_Value(buffer[i], value);
 		}
 
 
@@ -600,24 +603,26 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			if (ReferenceEquals(destination, this))
 				return;
 
-			Copy_Cloned(buffer, destination.buffer, 0);
+			Copy_Range(buffer, destination.buffer, 0);
 		}
 		#endregion
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Returns an independent copy of the given value. If the value
+		/// Returns the value to store in the given element. If the value
 		/// implements IDeepCloneable‹T›, its MakeDeepClone() is used to
-		/// obtain a new instance. Otherwise the value is returned unchanged,
-		/// which is the correct behavior for value types and immutable
-		/// reference types
+		/// obtain a new instance, and if it implements ICopyTo‹T›, it is
+		/// copied into the instance the element already holds. Otherwise the
+		/// value is returned unchanged, which is the correct behavior for
+		/// value types and immutable reference types (see
+		/// <see cref="Copy_Insert{T}"/>)
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static T Clone_Value(T value)
+		private static T Copy_Value(T destination, T value)
 		{
-			return value is IDeepCloneable<T> cloneable ? cloneable.MakeDeepClone() : value;
+			return Copy_Insert<T>.Assign(destination, value);
 		}
 
 
@@ -626,13 +631,17 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Copies the source elements into the destination buffer starting at
 		/// the given index, making an independent copy of each element (see
-		/// <see cref="Clone_Value"/>)
+		/// <see cref="Copy_Value"/>)
 		/// </summary>
 		/********************************************************************/
-		private static void Copy_Cloned(ReadOnlySpan<T> source, T[] destination, int destinationIndex)
+		private static void Copy_Range(ReadOnlySpan<T> source, T[] destination, int destinationIndex)
 		{
 			for (int i = 0; i < source.Length; i++)
-				destination[destinationIndex + i] = Clone_Value(source[i]);
+			{
+				int index = destinationIndex + i;
+
+				destination[index] = Copy_Value(destination[index], source[i]);
+			}
 		}
 
 

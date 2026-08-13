@@ -699,6 +699,147 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// An element type that only supports copying into an existing
+		/// instance must be copied into a new instance of its own type, so
+		/// that the container does not share the instance with the caller
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Operations_Use_CopyTo()
+		{
+			Copyable item = new Copyable(5);
+
+			vector<Copyable> v = new vector<Copyable>();
+			v.push_back(item);
+
+			vector<Copyable> copy = new vector<Copyable>(v);
+
+			Assert.IsFalse(ReferenceEquals(item, v[0]));
+			Assert.IsFalse(ReferenceEquals(v[0], copy[0]));
+			Assert.AreEqual(5, v[0].Value);
+			Assert.AreEqual(5, copy[0].Value);
+
+			// Mutating the copy must not affect the original
+			copy[0].Value = 99;
+			Assert.AreEqual(5, v[0].Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// An element type that supports copying into an existing instance
+		/// must be copied into the element the container already holds, so
+		/// that everything referring to that element sees the new value
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_CopyTo_Keeps_Existing_Elements()
+		{
+			vector<Copyable> source = new vector<Copyable>();
+			source.push_back(new Copyable(1));
+
+			vector<Copyable> destination = new vector<Copyable>();
+			destination.push_back(new Copyable(9));
+
+			Copyable existing = destination[0];
+
+			source.CopyTo(destination);
+
+			Assert.IsTrue(ReferenceEquals(existing, destination[0]));
+			Assert.AreEqual(1, existing.Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// assign must copy into the elements the container already holds
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Assign_Keeps_Existing_Elements()
+		{
+			vector<Copyable> v = new vector<Copyable>();
+			v.push_back(new Copyable(1));
+			v.push_back(new Copyable(2));
+
+			Copyable existing = v[0];
+
+			v.assign((size_t)2, new Copyable(7));
+
+			Assert.IsTrue(ReferenceEquals(existing, v[0]));
+			Assert.AreEqual(7, v[0].Value);
+			Assert.AreEqual(7, v[1].Value);
+			Assert.IsFalse(ReferenceEquals(v[0], v[1]));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// An insertion must not copy into an element that was shifted to
+		/// make room for the inserted one
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Insert_Does_Not_Overwrite_Shifted_Elements()
+		{
+			vector<Copyable> v = new vector<Copyable>();
+			v.push_back(new Copyable(1));
+			v.push_back(new Copyable(2));
+
+			v.insert(v.begin(), new Copyable(3));
+
+			Assert.AreEqual(3UL, v.size());
+			Assert.AreEqual(3, v[0].Value);
+			Assert.AreEqual(1, v[1].Value);
+			Assert.AreEqual(2, v[2].Value);
+
+			Assert.IsFalse(ReferenceEquals(v[0], v[1]));
+			Assert.IsFalse(ReferenceEquals(v[1], v[2]));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// An element type that supports both ways of copying must be deep
+		/// cloned, as that is the way that comes first
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Deep_Clone_Comes_Before_CopyTo()
+		{
+			vector<Cloneable_Copyable> v = new vector<Cloneable_Copyable>();
+			v.push_back(new Cloneable_Copyable(5));
+
+			Assert.AreEqual(5, v[0].Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// An element type that cannot be given an instance to copy into
+		/// must be stored as it is, as there is no way to copy it
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Operations_Share_Value_Without_Constructor()
+		{
+			Uncopyable item = new Uncopyable(5);
+
+			vector<Uncopyable> v = new vector<Uncopyable>();
+			v.push_back(item);
+
+			Assert.IsTrue(ReferenceEquals(item, v[0]));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// A foreach loop must visit every element in order
 		/// </summary>
 		/********************************************************************/
@@ -805,6 +946,88 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			public Cloneable MakeDeepClone()
 			{
 				return new Cloneable(Value);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A simple reference type that can copy itself into an existing
+		/// instance, used to verify that the copying falls back to that way
+		/// </summary>
+		/********************************************************************/
+		private sealed class Copyable : ICopyTo<Copyable>
+		{
+			public int Value;
+
+			public Copyable()
+			{
+			}
+
+			public Copyable(int value)
+			{
+				Value = value;
+			}
+
+			public void CopyTo(Copyable destination)
+			{
+				destination.Value = Value;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A reference type that supports both ways of copying, where the
+		/// two ways can be told apart by the value they leave behind
+		/// </summary>
+		/********************************************************************/
+		private sealed class Cloneable_Copyable : IDeepCloneable<Cloneable_Copyable>, ICopyTo<Cloneable_Copyable>
+		{
+			public int Value;
+
+			public Cloneable_Copyable()
+			{
+			}
+
+			public Cloneable_Copyable(int value)
+			{
+				Value = value;
+			}
+
+			public Cloneable_Copyable MakeDeepClone()
+			{
+				return new Cloneable_Copyable(Value);
+			}
+
+			public void CopyTo(Cloneable_Copyable destination)
+			{
+				destination.Value = -1;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A reference type that can copy itself into an existing instance,
+		/// but cannot be given one, as it has no parameterless constructor
+		/// </summary>
+		/********************************************************************/
+		private sealed class Uncopyable : ICopyTo<Uncopyable>
+		{
+			public int Value;
+
+			public Uncopyable(int value)
+			{
+				Value = value;
+			}
+
+			public void CopyTo(Uncopyable destination)
+			{
+				destination.Value = Value;
 			}
 		}
 	}
