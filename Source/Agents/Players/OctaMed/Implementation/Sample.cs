@@ -10,27 +10,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 	/// </summary>
 	internal class Sample
 	{
-		private static readonly int[] multiOctaveCount = { 1, 5, 3, 2, 4, 6, 7 };
+		private static readonly int[] multiOctaveCount = [ 1, 5, 3, 2, 4, 6, 7 ];
 
 		private static readonly int[][] multiOctaveBufferIndex =
-		{
-			new[] { 4, 4, 3, 2, 2, 1 },				// 5
-			new[] { 2, 2, 2, 2, 2, 1 },				// 3
-			new[] { 1, 1, 0, 0, 0, 0 },				// 2
-			new[] { 3, 3, 2, 2, 2, 1 },				// 4
-			new[] { 5, 5, 5, 4, 3, 2 },				// 6
-			new[] { 6, 6, 6, 5, 4, 3 }				// 7
-		};
+		[
+			[ 4, 4, 3, 2, 2, 1 ],				// 5
+			[ 2, 2, 2, 2, 2, 1 ],				// 3
+			[ 1, 1, 0, 0, 0, 0 ],				// 2
+			[ 3, 3, 2, 2, 2, 1 ],				// 4
+			[ 5, 5, 5, 4, 3, 2 ],				// 6
+			[ 6, 6, 6, 5, 4, 3 ]				// 7
+		];
 
 		private static readonly int[][] multiOctaveStart =
-		{
-			new[] {  12,  12,   0, -12, -12, -24 },	// 5
-			new[] {   0,   0,   0,   0,   0, -12 },	// 3
-			new[] {   0,   0, -12, -12, -12, -12 },	// 2
-			new[] {   0,   0, -12, -12, -12, -24 },	// 4
-			new[] {   0,   0,   0, -12, -24, -36 },	// 6
-			new[] {   0,   0,   0, -12, -24, -36 }	// 7
-		};
+		[
+			[  12,  12,   0, -12, -12, -24 ],	// 5
+			[   0,   0,   0,   0,   0, -12 ],	// 3
+			[   0,   0, -12, -12, -12, -12 ],	// 2
+			[   0,   0, -12, -12, -12, -24 ],	// 4
+			[   0,   0,   0, -12, -24, -36 ],	// 6
+			[   0,   0,   0, -12, -24, -36 ]	// 7
+		];
 
 		private readonly OctaMedWorker worker;
 
@@ -80,6 +80,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public uint GetLength()
 		{
 			return length;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the length of a single octave block. In multi octave
+		/// samples, the sample length holds the length of all the octave
+		/// blocks together, where each block is twice as long as the
+		/// previous one. Loop start and loop length are stored relative to
+		/// the shortest block, so this is the length they should be
+		/// validated against
+		/// </summary>
+		/********************************************************************/
+		public uint GetOctaveLength()
+		{
+			// Synth sounds do not have any octave information at all
+			if (numberOfOctaves <= 1)
+				return length;
+
+			return length / (uint)((1 << numberOfOctaves) - 1);
 		}
 
 

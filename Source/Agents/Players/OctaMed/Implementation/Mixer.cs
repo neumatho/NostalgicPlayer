@@ -206,10 +206,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (chNum >= channels)
 				return;
 
-			// Fix out of range offsets
-			if (startOffs >= smp.GetLength())
-				startOffs = 0;
-
 			sbyte[] sampAdr = smp.GetPlayBuffer(note, ref loopStart, ref loopLen);
 			if (sampAdr != null)
 			{
@@ -231,8 +227,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				if ((flags & PlayFlag.Backwards) != 0)
 					playSampleFlag |= PlaySampleFlag.Backwards;
 
+				// Fix out of range offsets. In multi octave samples, only one of
+				// the octave blocks is played, so the offset has to be checked
+				// against the length of that block
+				if (startOffs >= len)
+					startOffs = 0;
+
 				// Okay, tell NostalgicPlayer to play the sample
-				worker.VirtualChannels[chNum].PlaySample((short)instNum, sampAdr, startOffs, len - startOffs, playSampleFlag);
+				if (len > startOffs)
+					worker.VirtualChannels[chNum].PlaySample((short)instNum, sampAdr, startOffs, len - startOffs, playSampleFlag);
 			}
 
 			// Set loop

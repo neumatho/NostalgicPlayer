@@ -400,7 +400,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 			if (sample != null)
 			{
-				uint length = sample.GetLength();
+				// For multi octave samples, the loop is relative to the shortest
+				// octave block, so it needs to be validated against the length of
+				// a single block instead of the whole sample
+				uint length = sample.GetOctaveLength();
 
 				if (length == 0)
 					KillLoop();

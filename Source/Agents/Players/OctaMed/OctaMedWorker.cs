@@ -1248,7 +1248,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					uint[] frequencies = new uint[10 * 12];
 
 					for (byte j = 0; j < 6 * 12; j++)
-						frequencies[2 * 12 + j] = plr.GetNoteFrequency(j, fineTune);
+						frequencies[(2 * 12) + j] = plr.GetNoteFrequency(j, fineTune);
 
 					SampleInfo sampleInfo;
 
@@ -1293,12 +1293,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 								uint repLen = sampleInfo.LoopLength;
 								NoteNum note = (NoteNum)(oct * 12);
 
-								sampleInfo.MultiOctaveSamples[oct + 1].Sample = sample.GetPlayBuffer(note, ref repeat, ref repLen);
-								sampleInfo.MultiOctaveSamples[oct + 1].SampleOffset = 0;
-								sampleInfo.MultiOctaveSamples[oct + 1].Length = (uint)sampleInfo.MultiOctaveSamples[oct + 1].Sample.Length;
-								sampleInfo.MultiOctaveSamples[oct + 1].LoopStart = repeat;
-								sampleInfo.MultiOctaveSamples[oct + 1].LoopLength = repLen;
-								sampleInfo.MultiOctaveSamples[oct + 1].NoteAdd = sample.GetNoteDifference(note);
+								ref SampleInfo.MultiOctaveInfo octaveInfo = ref sampleInfo.MultiOctaveSamples[oct + 1];
+
+								octaveInfo.Sample = sample.GetPlayBuffer(note, ref repeat, ref repLen);
+								octaveInfo.SampleOffset = 0;
+
+								// The buffer holds the number of bytes, so convert it to
+								// the number of samples for a single channel
+								uint octaveLength = (uint)octaveInfo.Sample.Length;
+
+								if (sample.Is16Bit())
+									octaveLength /= 2;
+
+								if (sample.IsStereo())
+									octaveLength /= 2;
+
+								octaveInfo.Length = octaveLength;
+								octaveInfo.LoopStart = repeat;
+								octaveInfo.LoopLength = repLen;
+								octaveInfo.NoteAdd = sample.GetNoteDifference(note);
 							}
 
 							// OctaMed only have 6 octaves, so the first and last will use the same buffer
