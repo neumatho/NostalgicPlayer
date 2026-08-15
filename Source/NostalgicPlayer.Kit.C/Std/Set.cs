@@ -6,90 +6,83 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.C.Std
 {
 	/// <summary>
-	/// C# port of the C++ standard library std::map
-	/// (see the C++ standard, [map]).
+	/// C# port of the C++ standard library std::set
+	/// (see the C++ standard, [set]).
 	///
-	/// A sorted associative container that holds key-value pairs with unique
-	/// keys. The keys are kept ordered by the comparison object (a std::less
-	/// like IComparer‹Key›, the default being Comparer‹Key›.Default), so an
-	/// in-order walk from <see cref="begin"/> to <see cref="end"/> visits the
-	/// elements in ascending key order. Search, insertion and removal have
-	/// logarithmic complexity, as the container is implemented as a balanced
-	/// (red-black) tree (see <see cref="Rb_Tree{TKey,TValue}"/>, which is
-	/// shared with <see cref="set{Key}"/>).
+	/// A sorted associative container that holds unique values. The values
+	/// are kept ordered by the comparison object (a std::less like
+	/// IComparer‹Key›, the default being Comparer‹Key›.Default), so an
+	/// in-order walk from <see cref="begin"/> to <see cref="end"/> visits
+	/// the elements in ascending order. Search, insertion and removal have
+	/// logarithmic complexity, as the container is implemented as a
+	/// balanced (red-black) tree (see <see cref="Rb_Tree{TKey,TValue}"/>,
+	/// which is shared with <see cref="map{Key,T}"/>).
 	///
-	/// Unlike a C++ std::map, this is a reference type (a C# class), so
-	/// assigning one map‹Key, T› variable to another makes both refer to the
-	/// same container. To make an independent copy (the behavior of C++ copy
-	/// construction and copy assignment), use the copy constructor
-	/// map‹Key, T›(map‹Key, T›) or <see cref="MakeDeepClone"/>. To copy the
+	/// Unlike a C++ std::set, this is a reference type (a C# class), so
+	/// assigning one set‹Key› variable to another makes both refer to the
+	/// same container. To make an independent copy (the behavior of C++
+	/// copy construction and copy assignment), use the copy constructor
+	/// set‹Key›(set‹Key›) or <see cref="MakeDeepClone"/>. To copy the
 	/// contents into an already existing container, use
 	/// <see cref="CopyTo"/>. To hand the contents over to a new container,
 	/// leaving this one empty (the behavior of C++ move construction), use
 	/// <see cref="MoveFrom"/> or Utility.move.
 	///
-	/// As with a C++ std::map, the container is node based: inserting an
-	/// element never invalidates iterators or references to other elements,
-	/// and erasing an element only invalidates iterators and references to
-	/// that element. Iterators are bidirectional and can be moved with the
-	/// ++ and -- operators.
+	/// As with a C++ std::set, the container is node based: inserting an
+	/// element never invalidates iterators or references to other
+	/// elements, and erasing an element only invalidates iterators and
+	/// references to that element. Iterators are bidirectional and can be
+	/// moved with the ++ and -- operators.
 	///
-	/// Every operation that stores a key or a mapped value in the container
-	/// makes an independent copy of it, whether it stores one element (insert,
-	/// insert_or_assign, emplace, try_emplace and the iterator property
-	/// <see cref="iterator.second"/>) or many (copy construction, the items
-	/// forms of the constructor and insert, and <see cref="CopyTo"/>). If a
-	/// key or a mapped value implements IDeepCloneable‹T›, the copy is a
-	/// clone, and if it implements ICopyTo‹T›, the value is copied into the
-	/// mapped value the element already holds, or into a new instance when
-	/// the element is a new one (see <see cref="Copy_Insert{T}"/>), so that
-	/// mutable reference type elements never become shared with the caller or
-	/// between containers. The indexer copies the key it inserts and default inserts
-	/// the mapped value, but it hands out a reference to that value, so
-	/// assigning through the indexer stores the given instance directly, just
-	/// as assigning through a C++ reference does.
+	/// Every operation that stores a value in the container makes an
+	/// independent copy of it, whether it stores one element (insert and
+	/// emplace) or many (copy construction, the items forms of the
+	/// constructor and insert, and <see cref="CopyTo"/>). If a value
+	/// implements IDeepCloneable‹Key›, the copy is a clone, and if it
+	/// implements ICopyTo‹Key›, it is copied into a new instance of its
+	/// own type (see <see cref="Copy_Insert{T}"/>), so that mutable
+	/// reference type elements never become shared with the caller or
+	/// between containers.
 	///
 	/// Notable differences from C++:
-	/// - The value type is pair‹Key, T› rather than pair‹const Key, T›, as C#
-	///   has no const. The key of a stored element must not be mutated, as
-	///   that would break the ordering of the tree
+	/// - The stored value is not const, as C# has no const. A stored value
+	///   must not be mutated, as that would break the ordering of the tree
 	/// </summary>
 #pragma warning disable CS8981
-	public class map<Key, T> : IEquatable<map<Key, T>>, IEnumerable<pair<Key, T>>, IDeepCloneable<map<Key, T>>, ICopyTo<map<Key, T>>, IMoveable<map<Key, T>>
+	public class set<Key> : IEquatable<set<Key>>, IEnumerable<Key>, IDeepCloneable<set<Key>>, ICopyTo<set<Key>>, IMoveable<set<Key>>
 	{
 #pragma warning restore CS8981
-		private static readonly Func<pair<Key, T>, Key> keyOfValue = element => element.first;
+		private static readonly Func<Key, Key> keyOfValue = element => element;
 
-		private readonly Rb_Tree<Key, pair<Key, T>> tree;
+		private readonly Rb_Tree<Key, Key> tree;
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructs an empty container using the default key ordering
-		/// (C++ map())
+		/// Constructs an empty container using the default ordering
+		/// (C++ set())
 		/// </summary>
 		/********************************************************************/
-		public map()
+		public set()
 		{
-			tree = new Rb_Tree<Key, pair<Key, T>>(Comparer<Key>.Default, keyOfValue);
+			tree = new Rb_Tree<Key, Key>(Comparer<Key>.Default, keyOfValue);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructs an empty container using the given key ordering
-		/// (C++ map(const Compare＆ comp))
+		/// Constructs an empty container using the given ordering
+		/// (C++ set(const Compare＆ comp))
 		/// </summary>
 		/********************************************************************/
-		public map(IComparer<Key> comparer)
+		public set(IComparer<Key> comparer)
 		{
-			tree = new Rb_Tree<Key, pair<Key, T>>(comparer, keyOfValue);
+			tree = new Rb_Tree<Key, Key>(comparer, keyOfValue);
 		}
 
 
@@ -97,18 +90,18 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		/// <summary>
 		/// Constructs the container with the given items
-		/// (C++ map(std::initializer_list‹value_type›)). If several items
-		/// share the same key, only the first one is kept
+		/// (C++ set(std::initializer_list‹value_type›)). If several
+		/// items are equivalent, only the first one is kept
 		/// </summary>
 		/********************************************************************/
-		public map(pair<Key, T>[] items)
+		public set(Key[] items)
 		{
-			tree = new Rb_Tree<Key, pair<Key, T>>(Comparer<Key>.Default, keyOfValue);
+			tree = new Rb_Tree<Key, Key>(Comparer<Key>.Default, keyOfValue);
 
 			if (items != null)
 			{
-				foreach (pair<Key, T> item in items)
-					Insert_Internal(item.first, item.second);
+				foreach (Key item in items)
+					Insert_Internal(item);
 			}
 		}
 
@@ -116,64 +109,23 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Copy constructor. Constructs an independent container with a copy
-		/// of the contents of the given container (C++ map(const map＆)).
-		/// Keys and mapped values implementing IDeepCloneable‹T› or
-		/// ICopyTo‹T› are copied, so that the two containers do not share
-		/// element instances (see <see cref="Insert_Internal"/>)
+		/// Copy constructor. Constructs an independent container with a
+		/// copy of the contents of the given container
+		/// (C++ set(const set＆)). Values implementing IDeepCloneable‹Key›
+		/// or ICopyTo‹Key› are copied, so that the two containers do not
+		/// share element instances (see <see cref="Insert_Internal"/>)
 		/// </summary>
 		/********************************************************************/
-		public map(map<Key, T> other)
+		public set(set<Key> other)
 		{
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
 
-			tree = new Rb_Tree<Key, pair<Key, T>>(other.tree.Comparer, keyOfValue);
+			tree = new Rb_Tree<Key, Key>(other.tree.Comparer, keyOfValue);
 
-			for (Rb_Node<pair<Key, T>> n = other.tree.First_Node(); n != other.tree.Nil; n = other.tree.Next_Node(n))
-				Insert_Internal(n.value.first, n.value.second);
+			for (Rb_Node<Key> n = other.tree.First_Node(); n != other.tree.Nil; n = other.tree.Next_Node(n))
+				Insert_Internal(n.value);
 		}
-
-		#region Element access
-		/********************************************************************/
-		/// <summary>
-		/// Returns a reference to the mapped value of the element with the
-		/// given key, with bounds checking (C++ at(const Key＆ key)). Throws
-		/// out_of_range if the container has no such element
-		/// </summary>
-		/********************************************************************/
-		public ref T at(Key key)
-		{
-			Rb_Node<pair<Key, T>> n = tree.Find_Node(key);
-
-			if (n == tree.Nil)
-				throw new out_of_range("map.at: key not found");
-
-			return ref n.value.second;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns a reference to the mapped value of the element with the
-		/// given key, inserting a new element with a default inserted
-		/// mapped value if no such element exists
-		/// (C++ operator[](const Key＆ key)). As in C++, a mapped type that
-		/// has a parameterless constructor is default constructed rather
-		/// than left as null (see <see cref="Default_Insert{T}"/>)
-		/// </summary>
-		/********************************************************************/
-		public ref T this[Key key]
-		{
-			get
-			{
-				(Rb_Node<pair<Key, T>> node, _) = Insert_Internal(key, default, true);
-
-				return ref node.value.second;
-			}
-		}
-		#endregion
 
 		#region Iterators
 		/********************************************************************/
@@ -192,8 +144,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns an iterator to one past the last element of the container
-		/// (C++ end())
+		/// Returns an iterator to one past the last element of the
+		/// container (C++ end())
 		/// </summary>
 		/********************************************************************/
 		public iterator end()
@@ -255,17 +207,17 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts a copy of the given element if the container does not
-		/// contain an element with an equivalent key
+		/// Inserts a copy of the given value if the container does not
+		/// already hold an equivalent value
 		/// (C++ insert(const value_type＆)).
-		/// Returns a pair holding an iterator to the inserted element, or to
-		/// the element that prevented the insertion, and a bool that is true
-		/// if the insertion took place
+		/// Returns a pair holding an iterator to the inserted element, or
+		/// to the element that prevented the insertion, and a bool that is
+		/// true if the insertion took place
 		/// </summary>
 		/********************************************************************/
-		public pair<iterator, bool> insert(pair<Key, T> value)
+		public pair<iterator, bool> insert(Key value)
 		{
-			(Rb_Node<pair<Key, T>> node, bool inserted) = Insert_Internal(value.first, value.second);
+			(Rb_Node<Key> node, bool inserted) = Insert_Internal(value);
 
 			return new pair<iterator, bool>(new iterator(this, node), inserted);
 		}
@@ -274,61 +226,17 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts a copy of each of the given items, skipping every item
-		/// whose key is already present (C++ insert(InputIt first, InputIt
-		/// last) and the initializer list overload)
+		/// Inserts a copy of the given value if the container does not
+		/// already hold an equivalent value
+		/// (C++ insert(const_iterator hint, const value_type＆)). The hint
+		/// is only an optimization and does not change the result. Returns
+		/// an iterator to the inserted element, or to the element that
+		/// prevented the insertion
 		/// </summary>
 		/********************************************************************/
-		public void insert(pair<Key, T>[] items)
+		public iterator insert(iterator hint, Key value)
 		{
-			if (items != null)
-			{
-				foreach (pair<Key, T> item in items)
-					Insert_Internal(item.first, item.second);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Inserts a new element holding a copy of the given key and value,
-		/// or assigns a copy of the given value to the element if the key
-		/// is already present
-		/// (C++ insert_or_assign(const Key＆ key, M＆＆ obj)). Returns a
-		/// pair holding an iterator to the element and a bool that is true
-		/// if the insertion took place
-		/// </summary>
-		/********************************************************************/
-		public pair<iterator, bool> insert_or_assign(Key key, T value)
-		{
-			(Rb_Node<pair<Key, T>> node, bool inserted) = Insert_Internal(key, value);
-
-			if (!inserted)
-				node.value.second = Copy_Value(node.value.second, value);
-
-			return new pair<iterator, bool>(new iterator(this, node), inserted);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Inserts a new element holding a copy of the given key and value,
-		/// or assigns a copy of the given value to the element if the key
-		/// is already present
-		/// (C++ insert_or_assign(const_iterator hint, const Key＆ key,
-		/// M＆＆ obj)). The hint is only an optimization and does not change
-		/// the result. Returns an iterator to the inserted or updated
-		/// element
-		/// </summary>
-		/********************************************************************/
-		public iterator insert_or_assign(iterator hint, Key key, T value)
-		{
-			(Rb_Node<pair<Key, T>> node, bool inserted) = Insert_Internal(key, value);
-
-			if (!inserted)
-				node.value.second = Copy_Value(node.value.second, value);
+			(Rb_Node<Key> node, _) = Insert_Internal(value);
 
 			return new iterator(this, node);
 		}
@@ -337,16 +245,34 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts a new element constructed as a copy of the given key and
-		/// value if the container does not already contain an element with
-		/// an equivalent key (C++ emplace(Args＆＆... args)). Returns a pair
-		/// holding an iterator to the element and a bool that is true if the
+		/// Inserts a copy of each of the given items, skipping every item
+		/// that is already present (C++ insert(InputIt first, InputIt
+		/// last) and the initializer list overload)
+		/// </summary>
+		/********************************************************************/
+		public void insert(Key[] items)
+		{
+			if (items != null)
+			{
+				foreach (Key item in items)
+					Insert_Internal(item);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Inserts a new element constructed as a copy of the given value
+		/// if the container does not already hold an equivalent value
+		/// (C++ emplace(Args＆＆... args)). Returns a pair holding an
+		/// iterator to the element and a bool that is true if the
 		/// insertion took place
 		/// </summary>
 		/********************************************************************/
-		public pair<iterator, bool> emplace(Key key, T value)
+		public pair<iterator, bool> emplace(Key value)
 		{
-			(Rb_Node<pair<Key, T>> node, bool inserted) = Insert_Internal(key, value);
+			(Rb_Node<Key> node, bool inserted) = Insert_Internal(value);
 
 			return new pair<iterator, bool>(new iterator(this, node), inserted);
 		}
@@ -355,20 +281,18 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Inserts an element holding a copy of the given key and value if
-		/// the container does not already contain an element with an
-		/// equivalent key. Unlike emplace, the value is not consumed if no
-		/// insertion takes place
-		/// (C++ try_emplace(const Key＆ key, Args＆＆... args)). Returns a
-		/// pair holding an iterator to the element and a bool that is true
-		/// if the insertion took place
+		/// Inserts a new element constructed as a copy of the given value
+		/// if the container does not already hold an equivalent value
+		/// (C++ emplace_hint(const_iterator hint, Args＆＆... args)). The
+		/// hint is only an optimization and does not change the result.
+		/// Returns an iterator to the element
 		/// </summary>
 		/********************************************************************/
-		public pair<iterator, bool> try_emplace(Key key, T value)
+		public iterator emplace_hint(iterator hint, Key value)
 		{
-			(Rb_Node<pair<Key, T>> node, bool inserted) = Insert_Internal(key, value);
+			(Rb_Node<Key> node, _) = Insert_Internal(value);
 
-			return new pair<iterator, bool>(new iterator(this, node), inserted);
+			return new iterator(this, node);
 		}
 
 
@@ -382,12 +306,12 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public iterator erase(iterator pos)
 		{
-			Rb_Node<pair<Key, T>> z = pos.Current_Node;
+			Rb_Node<Key> z = pos.Current_Node;
 
 			if (z == tree.Nil)
 				return end();
 
-			Rb_Node<pair<Key, T>> next = tree.Next_Node(z);
+			Rb_Node<Key> next = tree.Next_Node(z);
 
 			tree.Erase_Node(z);
 
@@ -398,14 +322,14 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Removes the element with the given key, if present
+		/// Removes the element with the given value, if present
 		/// (C++ erase(const Key＆ key)). Returns the number of removed
 		/// elements, which is either zero or one
 		/// </summary>
 		/********************************************************************/
 		public size_t erase(Key key)
 		{
-			Rb_Node<pair<Key, T>> z = tree.Find_Node(key);
+			Rb_Node<Key> z = tree.Find_Node(key);
 
 			if (z == tree.Nil)
 				return (size_t)0;
@@ -426,12 +350,12 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public iterator erase(iterator first, iterator last)
 		{
-			Rb_Node<pair<Key, T>> stop = last.Current_Node;
-			Rb_Node<pair<Key, T>> cur = first.Current_Node;
+			Rb_Node<Key> stop = last.Current_Node;
+			Rb_Node<Key> cur = first.Current_Node;
 
 			while (cur != stop)
 			{
-				Rb_Node<pair<Key, T>> next = tree.Next_Node(cur);
+				Rb_Node<Key> next = tree.Next_Node(cur);
 				tree.Erase_Node(cur);
 				cur = next;
 			}
@@ -444,10 +368,10 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		/// <summary>
 		/// Exchanges the contents of the container with those of the other
-		/// container (C++ swap(map＆ other))
+		/// container (C++ swap(set＆ other))
 		/// </summary>
 		/********************************************************************/
-		public void swap(map<Key, T> other)
+		public void swap(set<Key> other)
 		{
 			if (other == null)
 				throw new ArgumentNullException(nameof(other));
@@ -459,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		#region Lookup
 		/********************************************************************/
 		/// <summary>
-		/// Returns the number of elements with the given key, which is
+		/// Returns the number of elements with the given value, which is
 		/// either zero or one (C++ count(const Key＆ key))
 		/// </summary>
 		/********************************************************************/
@@ -472,9 +396,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Finds the element with the given key (C++ find(const Key＆ key)).
-		/// Returns an iterator to the element, or <see cref="end"/> when
-		/// no such element exists
+		/// Finds the element with the given value (C++ find(const Key＆
+		/// key)). Returns an iterator to the element, or <see cref="end"/>
+		/// when no such element exists
 		/// </summary>
 		/********************************************************************/
 		public iterator find(Key key)
@@ -486,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Checks if the container has an element with the given key
+		/// Checks if the container has an element with the given value
 		/// (C++ contains(const Key＆ key))
 		/// </summary>
 		/********************************************************************/
@@ -499,8 +423,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns an iterator to the first element with a key that is not
-		/// less than the given key (C++ lower_bound(const Key＆ key)), or
+		/// Returns an iterator to the first element that is not less than
+		/// the given value (C++ lower_bound(const Key＆ key)), or
 		/// <see cref="end"/> if no such element exists
 		/// </summary>
 		/********************************************************************/
@@ -513,9 +437,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns an iterator to the first element with a key greater
-		/// than the given key (C++ upper_bound(const Key＆ key)), or
-		/// <see cref="end"/> if no such element exists
+		/// Returns an iterator to the first element greater than the given
+		/// value (C++ upper_bound(const Key＆ key)), or <see cref="end"/>
+		/// if no such element exists
 		/// </summary>
 		/********************************************************************/
 		public iterator upper_bound(Key key)
@@ -527,9 +451,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the range of elements with the given key
-		/// (C++ equal_range(const Key＆ key)). As keys are unique, the range
-		/// holds at most one element. The returned pair is
+		/// Returns the range of elements with the given value
+		/// (C++ equal_range(const Key＆ key)). As values are unique, the
+		/// range holds at most one element. The returned pair is
 		/// [lower_bound, upper_bound)
 		/// </summary>
 		/********************************************************************/
@@ -542,11 +466,25 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		#region Observers
 		/********************************************************************/
 		/// <summary>
-		/// Returns the comparison object that orders the keys
+		/// Returns the comparison object that orders the values
 		/// (C++ key_comp())
 		/// </summary>
 		/********************************************************************/
 		public IComparer<Key> key_comp()
+		{
+			return tree.Comparer;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the comparison object that orders the elements
+		/// (C++ value_comp()). As the value of an element is its key, this
+		/// is the same object as the one <see cref="key_comp"/> returns
+		/// </summary>
+		/********************************************************************/
+		public IComparer<Key> value_comp()
 		{
 			return tree.Comparer;
 		}
@@ -559,7 +497,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// (C++ operator==)
 		/// </summary>
 		/********************************************************************/
-		public static bool operator ==(map<Key, T> left, map<Key, T> right)
+		public static bool operator ==(set<Key> left, set<Key> right)
 		{
 			if (ReferenceEquals(left, right))
 				return true;
@@ -578,7 +516,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// (C++ operator!=)
 		/// </summary>
 		/********************************************************************/
-		public static bool operator !=(map<Key, T> left, map<Key, T> right)
+		public static bool operator !=(set<Key> left, set<Key> right)
 		{
 			return !(left == right);
 		}
@@ -591,7 +529,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// (C++ operator‹)
 		/// </summary>
 		/********************************************************************/
-		public static bool operator <(map<Key, T> left, map<Key, T> right)
+		public static bool operator <(set<Key> left, set<Key> right)
 		{
 			return Compare(left, right) < 0;
 		}
@@ -604,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// (C++ operator‹=)
 		/// </summary>
 		/********************************************************************/
-		public static bool operator <=(map<Key, T> left, map<Key, T> right)
+		public static bool operator <=(set<Key> left, set<Key> right)
 		{
 			return Compare(left, right) <= 0;
 		}
@@ -617,7 +555,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// (C++ operator›)
 		/// </summary>
 		/********************************************************************/
-		public static bool operator >(map<Key, T> left, map<Key, T> right)
+		public static bool operator >(set<Key> left, set<Key> right)
 		{
 			return Compare(left, right) > 0;
 		}
@@ -630,7 +568,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// (C++ operator›=)
 		/// </summary>
 		/********************************************************************/
-		public static bool operator >=(map<Key, T> left, map<Key, T> right)
+		public static bool operator >=(set<Key> left, set<Key> right)
 		{
 			return Compare(left, right) >= 0;
 		}
@@ -643,7 +581,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// contents of the other container
 		/// </summary>
 		/********************************************************************/
-		public bool Equals(map<Key, T> other)
+		public bool Equals(set<Key> other)
 		{
 			if (other is null)
 				return false;
@@ -654,18 +592,14 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			if (tree.Count != other.tree.Count)
 				return false;
 
-			EqualityComparer<Key> keyComparer = EqualityComparer<Key>.Default;
-			EqualityComparer<T> valueComparer = EqualityComparer<T>.Default;
+			EqualityComparer<Key> valueComparer = EqualityComparer<Key>.Default;
 
-			Rb_Node<pair<Key, T>> a = tree.First_Node();
-			Rb_Node<pair<Key, T>> b = other.tree.First_Node();
+			Rb_Node<Key> a = tree.First_Node();
+			Rb_Node<Key> b = other.tree.First_Node();
 
 			while ((a != tree.Nil) && (b != other.tree.Nil))
 			{
-				if (!keyComparer.Equals(a.value.first, b.value.first))
-					return false;
-
-				if (!valueComparer.Equals(a.value.second, b.value.second))
+				if (!valueComparer.Equals(a.value, b.value))
 					return false;
 
 				a = tree.Next_Node(a);
@@ -685,7 +619,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		public override bool Equals(object obj)
 		{
-			return Equals(obj as map<Key, T>);
+			return Equals(obj as set<Key>);
 		}
 
 
@@ -699,11 +633,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		{
 			HashCode hash = new HashCode();
 
-			for (Rb_Node<pair<Key, T>> n = tree.First_Node(); n != tree.Nil; n = tree.Next_Node(n))
-			{
-				hash.Add(n.value.first);
-				hash.Add(n.value.second);
-			}
+			for (Rb_Node<Key> n = tree.First_Node(); n != tree.Nil; n = tree.Next_Node(n))
+				hash.Add(n.value);
 
 			return hash.ToHashCode();
 		}
@@ -712,13 +643,13 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		#region IEnumerable implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns an enumerator that walks the elements in ascending key
+		/// Returns an enumerator that walks the elements in ascending
 		/// order, allowing the container to be used in a foreach loop
 		/// </summary>
 		/********************************************************************/
-		public IEnumerator<pair<Key, T>> GetEnumerator()
+		public IEnumerator<Key> GetEnumerator()
 		{
-			for (Rb_Node<pair<Key, T>> n = tree.First_Node(); n != tree.Nil; n = tree.Next_Node(n))
+			for (Rb_Node<Key> n = tree.First_Node(); n != tree.Nil; n = tree.Next_Node(n))
 				yield return n.value;
 		}
 
@@ -726,7 +657,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns an enumerator that walks the elements in ascending key
+		/// Returns an enumerator that walks the elements in ascending
 		/// order
 		/// </summary>
 		/********************************************************************/
@@ -741,12 +672,12 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Returns an independent copy of the container, holding a copy of
 		/// each element. This is the same as using the copy constructor
-		/// map‹Key, T›(map‹Key, T›)
+		/// set‹Key›(set‹Key›)
 		/// </summary>
 		/********************************************************************/
-		public virtual map<Key, T> MakeDeepClone()
+		public virtual set<Key> MakeDeepClone()
 		{
-			return new map<Key, T>(this);
+			return new set<Key>(this);
 		}
 		#endregion
 
@@ -754,14 +685,14 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/********************************************************************/
 		/// <summary>
 		/// Replaces the contents of the given container with a copy of the
-		/// contents of this one, holding a copy of each key and mapped
-		/// value. The key ordering is copied as well. This is the same as
-		/// C++ copy assignment (destination = *this), so it invalidates all
+		/// contents of this one, holding a copy of each value. The
+		/// ordering is copied as well. This is the same as C++ copy
+		/// assignment (destination = *this), so it invalidates all
 		/// iterators and references that refer to elements of the
 		/// destination
 		/// </summary>
 		/********************************************************************/
-		public void CopyTo(map<Key, T> destination)
+		public void CopyTo(set<Key> destination)
 		{
 			if (destination == null)
 				throw new ArgumentNullException(nameof(destination));
@@ -772,8 +703,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			destination.tree.Comparer = tree.Comparer;
 			destination.clear();
 
-			for (Rb_Node<pair<Key, T>> n = tree.First_Node(); n != tree.Nil; n = tree.Next_Node(n))
-				destination.Insert_Internal(n.value.first, n.value.second);
+			for (Rb_Node<Key> n = tree.First_Node(); n != tree.Nil; n = tree.Next_Node(n))
+				destination.Insert_Internal(n.value);
 		}
 		#endregion
 
@@ -782,15 +713,15 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// <summary>
 		/// Returns a container that has taken over the contents of this
 		/// one, leaving this one empty. This is what C++ move construction
-		/// (map(map＆＆)) does: the elements and the key ordering are handed
-		/// over as they are and not copied, so the iterators and references
-		/// that refer to elements stay valid and now refer to elements of
-		/// the returned container
+		/// (set(set＆＆)) does: the elements and the ordering are handed
+		/// over as they are and not copied, so the iterators and
+		/// references that refer to elements stay valid and now refer to
+		/// elements of the returned container
 		/// </summary>
 		/********************************************************************/
-		public virtual map<Key, T> MoveFrom()
+		public virtual set<Key> MoveFrom()
 		{
-			map<Key, T> moved = new map<Key, T>(tree.Comparer);
+			set<Key> moved = new set<Key>(tree.Comparer);
 
 			moved.tree.Take_From(tree);
 
@@ -805,9 +736,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// independent copy of the given value. If the value implements
 		/// IDeepCloneable‹U›, its MakeDeepClone() is used to make a new
 		/// instance, and if it implements ICopyTo‹U›, it is copied into a
-		/// new instance of its own type. Otherwise the value is returned as
-		/// is, which is the correct behavior for value types and immutable
-		/// reference types (see <see cref="Copy_Insert{T}"/>)
+		/// new instance of its own type. Otherwise the value is returned
+		/// as is, which is the correct behavior for value types and
+		/// immutable reference types (see <see cref="Copy_Insert{T}"/>)
 		/// </summary>
 		/********************************************************************/
 		private static U Create_Value<U>(U value)
@@ -819,42 +750,19 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the value to store in an element that already holds the
-		/// given instance. A value implementing ICopyTo‹U› is copied into
-		/// that instance, so that everything referring to the element sees
-		/// the new value (see <see cref="Copy_Insert{T}"/>)
+		/// Inserts an element holding a copy of the given value if no
+		/// equivalent element exists. Returns the node and a flag that
+		/// says if a node was created. An existing node is never modified
 		/// </summary>
 		/********************************************************************/
-		private static U Copy_Value<U>(U destination, U value)
+		private (Rb_Node<Key> node, bool inserted) Insert_Internal(Key key)
 		{
-			return Copy_Insert<U>.Assign(destination, value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Inserts an element holding a copy of the given key and value if
-		/// no element with an equivalent key exists. Returns the node and a
-		/// flag that says if a node was created. An existing node is never
-		/// modified.
-		///
-		/// When defaultInsertValue is set, the given value is ignored and
-		/// the mapped value of a created element is default inserted
-		/// instead, which is what C++ operator[] does (see <see cref="Default_Insert{T}"/>).
-		/// Nothing is then created for an element that is already present
-		/// </summary>
-		/********************************************************************/
-		private (Rb_Node<pair<Key, T>> node, bool inserted) Insert_Internal(Key key, T value, bool defaultInsertValue = false)
-		{
-			Rb_Node<pair<Key, T>> existing = tree.Find_Insert_Position(key, out Rb_Node<pair<Key, T>> parent, out bool asLeftChild);
+			Rb_Node<Key> existing = tree.Find_Insert_Position(key, out Rb_Node<Key> parent, out bool asLeftChild);
 
 			if (existing != tree.Nil)
 				return (existing, false);
 
-			pair<Key, T> element = new pair<Key, T>(Create_Value(key), defaultInsertValue ? Default_Insert<T>.Create() : Create_Value(value));
-
-			return (tree.Insert_Node(parent, asLeftChild, element), true);
+			return (tree.Insert_Node(parent, asLeftChild, Create_Value(key)), true);
 		}
 
 
@@ -865,7 +773,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		/// returning a negative value, zero or a positive value
 		/// </summary>
 		/********************************************************************/
-		private static int Compare(map<Key, T> left, map<Key, T> right)
+		private static int Compare(set<Key> left, set<Key> right)
 		{
 			if (ReferenceEquals(left, right))
 				return 0;
@@ -876,19 +784,14 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			if (right is null)
 				return 1;
 
-			Comparer<Key> keyComparer = Comparer<Key>.Default;
-			Comparer<T> valueComparer = Comparer<T>.Default;
+			Comparer<Key> valueComparer = Comparer<Key>.Default;
 
-			Rb_Node<pair<Key, T>> a = left.tree.First_Node();
-			Rb_Node<pair<Key, T>> b = right.tree.First_Node();
+			Rb_Node<Key> a = left.tree.First_Node();
+			Rb_Node<Key> b = right.tree.First_Node();
 
 			while ((a != left.tree.Nil) && (b != right.tree.Nil))
 			{
-				int c = keyComparer.Compare(a.value.first, b.value.first);
-				if (c != 0)
-					return c;
-
-				c = valueComparer.Compare(a.value.second, b.value.second);
+				int c = valueComparer.Compare(a.value, b.value);
 				if (c != 0)
 					return c;
 
@@ -901,27 +804,30 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		#endregion
 
 		/// <summary>
-		/// A bidirectional iterator over the elements of a map‹Key, T›
-		/// (C++ map::iterator). It refers to a single element and stays valid
-		/// as long as that element is not erased. Use the ++ and -- operators
-		/// to move to the next or previous item, and the <see cref="first"/>
-		/// and <see cref="second"/> properties to access the key and the
-		/// mapped value of the referred element
+		/// A bidirectional iterator over the elements of a set‹Key›
+		/// (C++ set::iterator). It refers to a single element and stays
+		/// valid as long as that element is not erased. Use the ++ and --
+		/// operators to move to the next or previous item, and the
+		/// <see cref="Value"/> property to read the referred element.
+		///
+		/// As in C++, where a set iterator refers to a const element, the
+		/// element cannot be replaced through the iterator, as that would
+		/// break the ordering of the tree
 		/// </summary>
 #pragma warning disable CS8981
 		public struct iterator : IEquatable<iterator>
 		{
 #pragma warning restore CS8981
-			private readonly map<Key, T> owner;
-			private readonly Rb_Node<pair<Key, T>> node;
+			private readonly set<Key> owner;
+			private readonly Rb_Node<Key> node;
 
 			/****************************************************************/
 			/// <summary>
-			/// Constructs an iterator that refers to the given node of the
-			/// given container
+			/// Constructs an iterator that refers to the given node of
+			/// the given container
 			/// </summary>
 			/****************************************************************/
-			internal iterator(map<Key, T> owner, Rb_Node<pair<Key, T>> node)
+			internal iterator(set<Key> owner, Rb_Node<Key> node)
 			{
 				this.owner = owner;
 				this.node = node;
@@ -931,36 +837,21 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			/****************************************************************/
 			/// <summary>
-			/// Returns the node the iterator refers to, for the use of the
-			/// enclosing container
+			/// Returns the node the iterator refers to, for the use of
+			/// the enclosing container
 			/// </summary>
 			/****************************************************************/
-			internal Rb_Node<pair<Key, T>> Current_Node => node;
+			internal Rb_Node<Key> Current_Node => node;
 
 
 
 			/****************************************************************/
 			/// <summary>
-			/// Returns the key of the referred element (C++ iterator-›first).
-			/// Reading this on the end iterator is undefined
+			/// Returns the referred element (C++ *iterator). Reading this
+			/// on the end iterator is undefined
 			/// </summary>
 			/****************************************************************/
-			public Key first => node.value.first;
-
-
-
-			/****************************************************************/
-			/// <summary>
-			/// Gets the mapped value of the referred element, or sets it to
-			/// a copy of the given value (C++ iterator-›second). Accessing
-			/// this on the end iterator is undefined
-			/// </summary>
-			/****************************************************************/
-			public T second
-			{
-				get => node.value.second;
-				set => node.value.second = Copy_Value(node.value.second, value);
-			}
+			public Key Value => node.value;
 
 
 
@@ -978,7 +869,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			/****************************************************************/
 			/// <summary>
-			/// Moves the iterator to the previous element (C++ operator--)
+			/// Moves the iterator to the previous element
+			/// (C++ operator--)
 			/// </summary>
 			/****************************************************************/
 			public static iterator operator --(iterator it)
@@ -991,8 +883,9 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			/****************************************************************/
 			/// <summary>
 			/// Returns an iterator to the next element (C++ std::next).
-			/// Unlike the ++ operator, this can be applied to a value that
-			/// is not a variable, such as the result of a method call
+			/// Unlike the ++ operator, this can be applied to a value
+			/// that is not a variable, such as the result of a method
+			/// call
 			/// </summary>
 			/****************************************************************/
 			public iterator Next()
@@ -1004,9 +897,10 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			/****************************************************************/
 			/// <summary>
-			/// Returns an iterator to the previous element (C++ std::prev).
-			/// Unlike the -- operator, this can be applied to a value that
-			/// is not a variable, such as the result of a method call
+			/// Returns an iterator to the previous element
+			/// (C++ std::prev). Unlike the -- operator, this can be
+			/// applied to a value that is not a variable, such as the
+			/// result of a method call
 			/// </summary>
 			/****************************************************************/
 			public iterator Prev()
@@ -1057,8 +951,8 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 			/****************************************************************/
 			/// <summary>
-			/// Checks if the given object is an iterator that refers to the
-			/// same element as this one
+			/// Checks if the given object is an iterator that refers to
+			/// the same element as this one
 			/// </summary>
 			/****************************************************************/
 			public override bool Equals(object obj)
