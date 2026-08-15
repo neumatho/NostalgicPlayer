@@ -33,6 +33,24 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Create an array of the type given and fill it with newly created
+		/// objects of same type
+		/// </summary>
+		/********************************************************************/
+		public static T[] InitializeArray<T>(int length, Func<T> allocator)
+		{
+			T[] array = new T[length];
+
+			for (int i = 0; i < length; i++)
+				array[i] = allocator();
+
+			return array;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Create an array where each element holds an array of the type
 		/// given. The second array is filled with newly created objects of
 		/// same type

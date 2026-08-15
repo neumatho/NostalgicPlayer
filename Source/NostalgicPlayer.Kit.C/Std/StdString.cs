@@ -2328,6 +2328,22 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		{
 			return str == null ? null : new StdString(str);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Converts the given null terminated character array to a container
+		/// holding the characters of it, up to but not including the null
+		/// character. This is the same as the constructor taking a single
+		/// pointer, except that a null pointer gives a null container (C++
+		/// basic_string(const CharT* s), which is a converting constructor)
+		/// </summary>
+		/********************************************************************/
+		public static implicit operator StdString(CPointer<uint8_t> s)
+		{
+			return s.IsNull ? null : new StdString(s);
+		}
 		#endregion
 
 		#region Concatenation operators
