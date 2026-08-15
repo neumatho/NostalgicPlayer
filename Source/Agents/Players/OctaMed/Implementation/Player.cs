@@ -430,14 +430,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 									}
 									else
 									{
-										// Set default volume
-										data &= 0x7f;
-										if (data <= 64)
+										// Set default volume.
+										//
+										// Synth and hybrid sounds always play at full volume, so
+										// their default volume is ignored when loading. Therefore
+										// this command is skipped for them, else they would be
+										// silent for the rest of the song. "Push-Over - High Score"
+										// does this with a C82 command on a synth instrument
+										Sample smp = plrSong.GetSample(trkD.TrkPrevINum);
+										if ((smp == null) || !smp.IsSynthSound())
 										{
-											data *= 2;
+											data &= 0x7f;
+											if (data <= 64)
+											{
+												data *= 2;
 
-											trkD.TrkPrevVol = data;
-											plrSong.GetInstr(trkD.TrkPrevINum).SetVol(data);
+												trkD.TrkPrevVol = data;
+												plrSong.GetInstr(trkD.TrkPrevINum).SetVol(data);
+											}
 										}
 									}
 									break;
@@ -1859,7 +1869,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 							case SynthSound.WfCmdVbs:
 							{
-								sy.VibSpeed = snd.GetWfData(sy.WfCmdPos++);
+								sy.VibSpeed = (byte)(snd.GetWfData(sy.WfCmdPos++) + 1);
 								break;
 							}
 

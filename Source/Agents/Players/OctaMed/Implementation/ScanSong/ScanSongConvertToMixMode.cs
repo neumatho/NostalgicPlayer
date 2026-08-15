@@ -13,13 +13,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 	/// </summary>
 	internal class ScanSongConvertToMixMode : ScanSong
 	{
-		private static readonly sbyte[] panVals = { -16, 16, 16, -16, -16, 16, 16, -16 };
+		private static readonly sbyte[] panVals = [ -16, 16, 16, -16, -16, 16, 16, -16 ];
 
 		private readonly bool[] transpInstr = new bool[Constants.MaxInstr + 1];
 		private readonly int[] iTrans = new int[Constants.MaxInstr + 1];
 		private readonly bool[] isMidi = new bool[Constants.MaxInstr + 1];
 		private readonly bool[] isMultiOctave = new bool[Constants.MaxInstr + 1];
 		private bool type0;
+		private int playTransp;
 
 		/********************************************************************/
 		/// <summary>
@@ -83,6 +84,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 							note.NoteNum -= 12;
 					}
 
+					// The Amiga period table starts at C-1, so notes ending below
+					// that are transposed one octave up at a time by the original
+					// player. "Push-Over - High Score" depends on this
+					while ((((sbyte)note.NoteNum + iTrans[lastINum] + playTransp) < 1) && (note.NoteNum <= (0x7f - 24 - 12)))
+						note.NoteNum += 12;
+
 					// The actual transposition up
 					note.NoteNum += 24;
 				}
@@ -98,6 +105,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 		/********************************************************************/
 		protected override void SubSongOperation(SubSong ss)
 		{
+			// Remember the transpose, so the notes can be checked against the
+			// range of the Amiga period table
+			playTransp = ss.GetPlayTranspose();
+
 			// For each sub-song, set panning & stereo mode
 			ss.SetStereo(true);
 
