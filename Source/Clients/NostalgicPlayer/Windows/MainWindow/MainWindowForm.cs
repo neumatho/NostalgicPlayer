@@ -157,6 +157,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private ModuleListListItem moduleListContextItem = null;
 		private NostalgicToolStripMenuItem contextMenuItemRemove = null;
 		private NostalgicToolStripMenuItem contextMenuSortMenu = null;
+		private NostalgicToolStripMenuItem contextMenuOtherMenu = null;
 		private NostalgicToolStripMenuItem contextMenuItemSetSubSong = null;
 		private NostalgicToolStripMenuItem contextMenuItemClearSubSong = null;
 		private ToolStripSeparator contextMenuItemFileSeparator = null;
@@ -3025,11 +3026,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			// Determine whether the menu was opened on a selected list item
 			IReadOnlyList<int> selectedIndexes = moduleList.SelectedIndexes;
+			bool hasAny = moduleList.Items.Count > 0;
 			bool hasSelection = (moduleListContextItem != null) && (selectedIndexes.Count > 0);
 
 			// Update the list editing actions based on the current items and selection
 			contextMenuItemRemove.Enabled = hasSelection;
-			contextMenuSortMenu.Enabled = moduleList.Items.Count > 0;
+			contextMenuSortMenu.Enabled = hasAny;
+			contextMenuOtherMenu.Enabled = hasAny;
 
 			// Update the default sub-song actions from the playback and selection state
 			contextMenuItemSetSubSong.Enabled = moduleHandler.IsModuleLoaded;
@@ -3565,26 +3568,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			contextMenuSortMenu.DropDownItems.Add(contextMenuItemSortShuffle);
 
 			// Other actions
-			NostalgicToolStripMenuItem contextMenuMoreMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, nameof(IMainImages.List));
-			moduleListContextMenu.Items.Add(contextMenuMoreMenu);
+			contextMenuOtherMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, nameof(IMainImages.List));
+			moduleListContextMenu.Items.Add(contextMenuOtherMenu);
 
 			NostalgicToolStripMenuItem contextMenuItemSelectAll = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL);
 			contextMenuItemSelectAll.Click += ListMenu_SelectAll;
-			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemSelectAll);
+			contextMenuOtherMenu.DropDownItems.Add(contextMenuItemSelectAll);
 
 			NostalgicToolStripMenuItem contextMenuItemSelectNone = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE);
 			contextMenuItemSelectNone.Click += ListMenu_SelectNone;
-			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemSelectNone);
+			contextMenuOtherMenu.DropDownItems.Add(contextMenuItemSelectNone);
 
-			contextMenuMoreMenu.DropDownItems.Add(new ToolStripSeparator());
+			contextMenuOtherMenu.DropDownItems.Add(new ToolStripSeparator());
 
 			contextMenuItemSetSubSong = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, nameof(IMainImages.SetSubSong));
 			contextMenuItemSetSubSong.Click += ListMenu_SetDefaultSubSong;
-			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemSetSubSong);
+			contextMenuOtherMenu.DropDownItems.Add(contextMenuItemSetSubSong);
 
 			contextMenuItemClearSubSong = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG, nameof(IMainImages.ClearSubSong));
 			contextMenuItemClearSubSong.Click += ListMenu_ClearDefaultSubSong;
-			contextMenuMoreMenu.DropDownItems.Add(contextMenuItemClearSubSong);
+			contextMenuOtherMenu.DropDownItems.Add(contextMenuItemClearSubSong);
 
 			// Disk 
 			NostalgicToolStripMenuItem contextMenuDiskMenu = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE, nameof(IMainImages.Disk));
