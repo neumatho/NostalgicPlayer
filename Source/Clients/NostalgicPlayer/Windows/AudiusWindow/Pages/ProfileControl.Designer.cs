@@ -29,32 +29,30 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			infoPanel = new Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedPanel();
-			closeButton = new Krypton.Toolkit.KryptonButton();
-			handleLabel = new Krypton.Toolkit.KryptonLabel();
-			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			nameLabel = new Krypton.Toolkit.KryptonLabel();
-			extraBigBoldFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			infoPanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel();
+			closeButton = new System.Windows.Forms.PictureBox();
+			handleLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
+			nameLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			extraBigBoldFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			profilePictureBox = new System.Windows.Forms.PictureBox();
-			navigator = new Krypton.Navigator.KryptonNavigator();
-			navigatorTracksPage = new Krypton.Navigator.KryptonPage();
+			tabControl = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTab();
+			tabTracksPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			profileTracksPageControl = new ProfileTracksPageControl();
-			navigatorPlaylistsPage = new Krypton.Navigator.KryptonPage();
+			tabPlaylistsPage = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage();
 			profilePlaylistsPageControl = new ProfilePlaylistsPageControl();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			infoPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)closeButton).BeginInit();
 			((System.ComponentModel.ISupportInitialize)profilePictureBox).BeginInit();
-			((System.ComponentModel.ISupportInitialize)navigator).BeginInit();
-			((System.ComponentModel.ISupportInitialize)navigatorTracksPage).BeginInit();
-			navigatorTracksPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)navigatorPlaylistsPage).BeginInit();
-			navigatorPlaylistsPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)tabControl).BeginInit();
+			tabControl.SuspendLayout();
+			tabTracksPage.SuspendLayout();
+			tabPlaylistsPage.SuspendLayout();
 			SuspendLayout();
 			// 
 			// infoPanel
 			// 
 			infoPanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			infoPanel.BackColor = System.Drawing.Color.Transparent;
 			infoPanel.Controls.Add(closeButton);
 			infoPanel.Controls.Add(handleLabel);
 			infoPanel.Controls.Add(nameLabel);
@@ -70,11 +68,8 @@
 			closeButton.Location = new System.Drawing.Point(734, 8);
 			closeButton.Name = "closeButton";
 			closeButton.Size = new System.Drawing.Size(24, 24);
-			closeButton.StateCommon.Back.Draw = Krypton.Toolkit.InheritBool.False;
-			closeButton.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
 			closeButton.TabIndex = 3;
-			closeButton.Values.Image = Resources.IDB_CLOSE_WHITE;
-			closeButton.Values.Text = "";
+			closeButton.TabStop = false;
 			closeButton.Click += Close_Click;
 			closeButton.MouseEnter += Close_MouseEnter;
 			closeButton.MouseLeave += Close_MouseLeave;
@@ -83,40 +78,26 @@
 			// 
 			handleLabel.Location = new System.Drawing.Point(144, 155);
 			handleLabel.Name = "handleLabel";
-			handleLabel.Palette = bigFontPalette;
-			handleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			handleLabel.Size = new System.Drawing.Size(6, 2);
-			handleLabel.StateCommon.ShortText.Color1 = System.Drawing.Color.White;
+			handleLabel.Size = new System.Drawing.Size(0, 17);
 			handleLabel.TabIndex = 2;
-			handleLabel.Values.Text = "";
+			handleLabel.UseFont = bigFontConfiguration;
 			// 
-			// bigFontPalette
+			// bigFontConfiguration
 			// 
-			bigFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			bigFontPalette.BaseFontSize = 10F;
-			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
+			bigFontConfiguration.FontSize = 2;
 			// 
 			// nameLabel
 			// 
 			nameLabel.Location = new System.Drawing.Point(144, 126);
 			nameLabel.Name = "nameLabel";
-			nameLabel.Palette = extraBigBoldFontPalette;
-			nameLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			nameLabel.Size = new System.Drawing.Size(6, 2);
-			nameLabel.StateCommon.ShortText.Color1 = System.Drawing.Color.White;
+			nameLabel.Size = new System.Drawing.Size(0, 26);
 			nameLabel.TabIndex = 1;
-			nameLabel.Values.Text = "";
+			nameLabel.UseFont = extraBigBoldFontConfiguration;
 			// 
-			// extraBigBoldFontPalette
+			// extraBigBoldFontConfiguration
 			// 
-			extraBigBoldFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			extraBigBoldFontPalette.BaseFontSize = 16F;
-			extraBigBoldFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			extraBigBoldFontPalette.FontStyle = System.Drawing.FontStyle.Bold;
-			extraBigBoldFontPalette.ThemeName = "";
-			extraBigBoldFontPalette.UseKryptonFileDialogs = true;
+			extraBigBoldFontConfiguration.FontSize = 8;
+			extraBigBoldFontConfiguration.FontStyle = System.Drawing.FontStyle.Bold;
 			// 
 			// profilePictureBox
 			// 
@@ -126,48 +107,26 @@
 			profilePictureBox.TabIndex = 0;
 			profilePictureBox.TabStop = false;
 			// 
-			// navigator
+			// tabControl
 			// 
-			navigator.AllowPageReorder = false;
-			navigator.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			navigator.Button.ButtonDisplayLogic = Krypton.Navigator.ButtonDisplayLogic.Context;
-			navigator.Button.CloseButtonAction = Krypton.Navigator.CloseButtonAction.RemovePageAndDispose;
-			navigator.Button.CloseButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
-			navigator.Button.ContextButtonAction = Krypton.Navigator.ContextButtonAction.SelectPage;
-			navigator.Button.ContextButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
-			navigator.Button.ContextMenuMapImage = Krypton.Navigator.MapKryptonPageImage.Small;
-			navigator.Button.ContextMenuMapText = Krypton.Navigator.MapKryptonPageText.TextTitle;
-			navigator.Button.NextButtonAction = Krypton.Navigator.DirectionButtonAction.ModeAppropriateAction;
-			navigator.Button.NextButtonDisplay = Krypton.Navigator.ButtonDisplay.Logic;
-			navigator.Button.PreviousButtonAction = Krypton.Navigator.DirectionButtonAction.ModeAppropriateAction;
-			navigator.Button.PreviousButtonDisplay = Krypton.Navigator.ButtonDisplay.Logic;
-			navigator.ControlKryptonFormFeatures = false;
-			navigator.Location = new System.Drawing.Point(8, 232);
-			navigator.Name = "navigator";
-			navigator.NavigatorMode = Krypton.Navigator.NavigatorMode.BarTabGroup;
-			navigator.Owner = null;
-			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
-			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorTracksPage, navigatorPlaylistsPage });
-			navigator.Palette = fontPalette;
-			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			navigator.SelectedIndex = 0;
-			navigator.Size = new System.Drawing.Size(750, 128);
-			navigator.TabIndex = 1;
-			navigator.SelectedPageChanged += Navigator_SelectedPageChanged;
+			tabControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			tabControl.Controls.Add(tabTracksPage);
+			tabControl.Controls.Add(tabPlaylistsPage);
+			tabControl.Location = new System.Drawing.Point(8, 232);
+			tabControl.Name = "tabControl";
+			tabControl.SelectedIndex = 0;
+			tabControl.Size = new System.Drawing.Size(750, 128);
+			tabControl.TabIndex = 1;
+			tabControl.SelectedIndexChanged += Tab_SelectedIndexChanged;
 			// 
-			// navigatorTracksPage
+			// tabTracksPage
 			// 
-			navigatorTracksPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorTracksPage.Controls.Add(profileTracksPageControl);
-			navigatorTracksPage.Flags = 65534;
-			navigatorTracksPage.LastVisibleSet = true;
-			navigatorTracksPage.MinimumSize = new System.Drawing.Size(150, 50);
-			navigatorTracksPage.Name = "navigatorTracksPage";
-			navigatorTracksPage.Size = new System.Drawing.Size(748, 102);
-			navigatorTracksPage.Text = "";
-			navigatorTracksPage.ToolTipTitle = "Page ToolTip";
-			navigatorTracksPage.UniqueName = "6782b14423d84ca9964882855f0cc4fa";
+			tabTracksPage.Controls.Add(profileTracksPageControl);
+			tabTracksPage.Location = new System.Drawing.Point(1, 24);
+			tabTracksPage.MinimumSize = new System.Drawing.Size(150, 50);
+			tabTracksPage.Name = "tabTracksPage";
+			tabTracksPage.Size = new System.Drawing.Size(748, 101);
+			tabTracksPage.TabIndex = 0;
 			// 
 			// profileTracksPageControl
 			// 
@@ -175,21 +134,17 @@
 			profileTracksPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			profileTracksPageControl.Location = new System.Drawing.Point(0, 0);
 			profileTracksPageControl.Name = "profileTracksPageControl";
-			profileTracksPageControl.Size = new System.Drawing.Size(748, 102);
+			profileTracksPageControl.Size = new System.Drawing.Size(748, 101);
 			profileTracksPageControl.TabIndex = 2;
 			// 
-			// navigatorPlaylistsPage
+			// tabPlaylistsPage
 			// 
-			navigatorPlaylistsPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
-			navigatorPlaylistsPage.Controls.Add(profilePlaylistsPageControl);
-			navigatorPlaylistsPage.Flags = 65534;
-			navigatorPlaylistsPage.LastVisibleSet = true;
-			navigatorPlaylistsPage.MinimumSize = new System.Drawing.Size(150, 50);
-			navigatorPlaylistsPage.Name = "navigatorPlaylistsPage";
-			navigatorPlaylistsPage.Size = new System.Drawing.Size(748, 102);
-			navigatorPlaylistsPage.Text = "";
-			navigatorPlaylistsPage.ToolTipTitle = "Page ToolTip";
-			navigatorPlaylistsPage.UniqueName = "b6d6a1ed5b054a11b1216b6bb36c44f1";
+			tabPlaylistsPage.Controls.Add(profilePlaylistsPageControl);
+			tabPlaylistsPage.Location = new System.Drawing.Point(1, 24);
+			tabPlaylistsPage.MinimumSize = new System.Drawing.Size(150, 50);
+			tabPlaylistsPage.Name = "tabPlaylistsPage";
+			tabPlaylistsPage.Size = new System.Drawing.Size(748, 101);
+			tabPlaylistsPage.TabIndex = 1;
 			// 
 			// profilePlaylistsPageControl
 			// 
@@ -197,49 +152,41 @@
 			profilePlaylistsPageControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			profilePlaylistsPageControl.Location = new System.Drawing.Point(0, 0);
 			profilePlaylistsPageControl.Name = "profilePlaylistsPageControl";
-			profilePlaylistsPageControl.Size = new System.Drawing.Size(748, 102);
+			profilePlaylistsPageControl.Size = new System.Drawing.Size(748, 101);
 			profilePlaylistsPageControl.TabIndex = 2;
-			// 
-			// fontPalette
-			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// ProfileControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
-			Controls.Add(navigator);
+			Controls.Add(tabControl);
 			Controls.Add(infoPanel);
 			Name = "ProfileControl";
 			Size = new System.Drawing.Size(766, 368);
 			infoPanel.ResumeLayout(false);
 			infoPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)closeButton).EndInit();
 			((System.ComponentModel.ISupportInitialize)profilePictureBox).EndInit();
-			((System.ComponentModel.ISupportInitialize)navigator).EndInit();
-			((System.ComponentModel.ISupportInitialize)navigatorTracksPage).EndInit();
-			navigatorTracksPage.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)navigatorPlaylistsPage).EndInit();
-			navigatorPlaylistsPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)tabControl).EndInit();
+			tabControl.ResumeLayout(false);
+			tabTracksPage.ResumeLayout(false);
+			tabPlaylistsPage.ResumeLayout(false);
 			ResumeLayout(false);
 		}
 
 		#endregion
 
-		private Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedPanel infoPanel;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicPanel infoPanel;
 		private System.Windows.Forms.PictureBox profilePictureBox;
-		private Kit.Gui.Components.FontPalette extraBigBoldFontPalette;
-		private Kit.Gui.Components.FontPalette bigFontPalette;
-		private Krypton.Toolkit.KryptonLabel handleLabel;
-		private Krypton.Toolkit.KryptonLabel nameLabel;
-		private Krypton.Toolkit.KryptonButton closeButton;
-		private Krypton.Navigator.KryptonNavigator navigator;
-		private Kit.Gui.Components.FontPalette fontPalette;
-		private Krypton.Navigator.KryptonPage navigatorTracksPage;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel handleLabel;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel nameLabel;
+		private System.Windows.Forms.PictureBox closeButton;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicTab tabControl;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage tabTracksPage;
 		private ProfileTracksPageControl profileTracksPageControl;
-		private Krypton.Navigator.KryptonPage navigatorPlaylistsPage;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicTabPage tabPlaylistsPage;
 		private ProfilePlaylistsPageControl profilePlaylistsPageControl;
+		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
+		private NostalgicPlayer.Controls.Components.FontConfiguration extraBigBoldFontConfiguration;
 	}
 }

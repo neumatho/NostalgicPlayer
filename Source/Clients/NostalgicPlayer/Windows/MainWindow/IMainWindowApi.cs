@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
@@ -50,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// <summary>
 		/// Will show an error message to the user with options
 		/// </summary>
-		void ShowErrorMessage(string message, ModuleListItem listItem);
+		void ShowErrorMessage(string message, ModuleListListItem listItem);
 
 		/// <summary>
 		/// Will add all the given files to the module list
@@ -60,17 +61,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// <summary>
 		/// Will add the given module list items to the module list
 		/// </summary>
-		void AddItemsToModuleList(ModuleListItem[] items, bool clearAndPlay);
+		void AddItemsToModuleList(ModuleListListItem[] items, bool clearAndPlay);
 
 		/// <summary>
 		/// Will replace the given item with the new list of items
 		/// </summary>
-		void ReplaceItemInModuleList(ModuleListItem listItem, List<ModuleListItem> newItems);
+		void ReplaceItemInModuleList(ModuleListListItem listItem, List<ModuleListListItem> newItems);
 
 		/// <summary>
 		/// Will remove all the items in the given list from the module list
 		/// </summary>
-		void RemoveItemsFromModuleList(List<ModuleListItem> items);
+		void RemoveItemsFromModuleList(List<ModuleListListItem> items);
 
 		/// <summary>
 		/// Will update all the items in the given list on the module list

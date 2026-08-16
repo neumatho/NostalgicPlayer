@@ -29,54 +29,41 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
 			animationTimer = new System.Windows.Forms.Timer(components);
-			pictureGroup = new Krypton.Toolkit.KryptonGroup();
+			picturePanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
 			previousPictureButton = new System.Windows.Forms.PictureBox();
 			nextPictureButton = new System.Windows.Forms.PictureBox();
 			pictureBox = new System.Windows.Forms.PictureBox();
 			pictureLabelPictureBox = new System.Windows.Forms.PictureBox();
-			((System.ComponentModel.ISupportInitialize)pictureGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)pictureGroup.Panel).BeginInit();
-			pictureGroup.Panel.SuspendLayout();
+			picturePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)previousPictureButton).BeginInit();
 			((System.ComponentModel.ISupportInitialize)nextPictureButton).BeginInit();
 			((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)pictureLabelPictureBox).BeginInit();
 			SuspendLayout();
 			// 
-			// fontPalette
-			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
-			// 
 			// animationTimer
 			// 
 			animationTimer.Interval = 20;
 			animationTimer.Tick += AnimationTimer_Tick;
 			// 
-			// pictureGroup
+			// picturePanel
 			// 
-			pictureGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			pictureGroup.Location = new System.Drawing.Point(8, 8);
-			pictureGroup.Name = "pictureGroup";
-			// 
-			// 
-			// 
-			pictureGroup.Panel.Controls.Add(previousPictureButton);
-			pictureGroup.Panel.Controls.Add(nextPictureButton);
-			pictureGroup.Panel.Controls.Add(pictureBox);
-			pictureGroup.Panel.Controls.Add(pictureLabelPictureBox);
-			pictureGroup.Size = new System.Drawing.Size(266, 142);
-			pictureGroup.TabIndex = 0;
-			pictureGroup.Resize += PictureGroup_Resize;
+			picturePanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			picturePanel.Controls.Add(previousPictureButton);
+			picturePanel.Controls.Add(nextPictureButton);
+			picturePanel.Controls.Add(pictureBox);
+			picturePanel.Controls.Add(pictureLabelPictureBox);
+			picturePanel.Location = new System.Drawing.Point(8, 8);
+			picturePanel.Name = "picturePanel";
+			picturePanel.Size = new System.Drawing.Size(266, 142);
+			picturePanel.TabIndex = 0;
+			picturePanel.UseBackgroundColor = true;
+			picturePanel.Resize += PictureGroup_Resize;
 			// 
 			// previousPictureButton
 			// 
 			previousPictureButton.BackColor = System.Drawing.Color.Transparent;
-			previousPictureButton.Image = Resources.IDB_PREVIOUS_PICTURE;
 			previousPictureButton.Location = new System.Drawing.Point(8, 45);
 			previousPictureButton.Name = "previousPictureButton";
 			previousPictureButton.Size = new System.Drawing.Size(24, 24);
@@ -87,7 +74,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			// nextPictureButton
 			// 
 			nextPictureButton.BackColor = System.Drawing.Color.Transparent;
-			nextPictureButton.Image = Resources.IDB_NEXT_PICTURE;
 			nextPictureButton.Location = new System.Drawing.Point(234, 45);
 			nextPictureButton.Name = "nextPictureButton";
 			nextPictureButton.Size = new System.Drawing.Size(24, 24);
@@ -120,12 +106,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 			// PicturesPageControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			Controls.Add(pictureGroup);
+			Controls.Add(picturePanel);
 			Name = "PicturesPageControl";
 			Size = new System.Drawing.Size(282, 158);
-			((System.ComponentModel.ISupportInitialize)pictureGroup.Panel).EndInit();
-			pictureGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)pictureGroup).EndInit();
+			picturePanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)previousPictureButton).EndInit();
 			((System.ComponentModel.ISupportInitialize)nextPictureButton).EndInit();
 			((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
@@ -134,12 +118,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		}
 
 		#endregion
-		private Krypton.Toolkit.KryptonGroup pictureGroup;
+		private NostalgicPlayer.Controls.Containers.NostalgicBox picturePanel;
 		private System.Windows.Forms.PictureBox previousPictureButton;
 		private System.Windows.Forms.PictureBox nextPictureButton;
 		private System.Windows.Forms.PictureBox pictureBox;
 		private System.Windows.Forms.PictureBox pictureLabelPictureBox;
 		private System.Windows.Forms.Timer animationTimer;
-		private Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

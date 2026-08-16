@@ -1,0 +1,1229 @@
+/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Design;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Components;
+using Polycode.NostalgicPlayer.Controls.Designer;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard;
+using Polycode.NostalgicPlayer.Platform.Native;
+
+namespace Polycode.NostalgicPlayer.Controls.Containers
+{
+	/// <summary>
+	/// Themed tab control
+	/// </summary>
+	[Designer(typeof(NostalgicTabDesigner))]
+	public class NostalgicTab : TabControl, IThemeControl, IFontConfiguration, ISupportInitialize
+	{
+		#region NostalgicTabPageCollection
+		/// <summary>
+		/// Typed wrapper around TabPages that returns NostalgicTabPage
+		/// </summary>
+		[TypeConverter(typeof(CollectionConverter))]
+		public sealed class NostalgicTabPageCollection : IList<NostalgicTabPage>, IList
+		{
+			private readonly NostalgicTab owner;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			internal NostalgicTabPageCollection(NostalgicTab owner)
+			{
+				this.owner = owner;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Get or set a page by index
+			/// </summary>
+			/********************************************************************/
+			public NostalgicTabPage this[int index]
+			{
+				get => (NostalgicTabPage)owner.TabPages[index];
+				set => throw new NotSupportedException();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Return the number of pages
+			/// </summary>
+			/********************************************************************/
+			public int Count => owner.TabPages.Count;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public bool IsReadOnly => false;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Add a page
+			/// </summary>
+			/********************************************************************/
+			public void Add(NostalgicTabPage page)
+			{
+				owner.TabPages.Add(page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Insert a page at the given index
+			/// </summary>
+			/********************************************************************/
+			public void Insert(int index, NostalgicTabPage page)
+			{
+				owner.TabPages.Insert(index, page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Remove a page
+			/// </summary>
+			/********************************************************************/
+			public bool Remove(NostalgicTabPage page)
+			{
+				if (!owner.TabPages.Contains(page))
+					return false;
+
+				owner.TabPages.Remove(page);
+
+				return true;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Remove a page at the given index
+			/// </summary>
+			/********************************************************************/
+			public void RemoveAt(int index)
+			{
+				owner.TabPages.RemoveAt(index);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Remove all pages
+			/// </summary>
+			/********************************************************************/
+			public void Clear()
+			{
+				owner.TabPages.Clear();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Check if a page is in the collection
+			/// </summary>
+			/********************************************************************/
+			public bool Contains(NostalgicTabPage page)
+			{
+				return owner.TabPages.Contains(page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Return the index of a page
+			/// </summary>
+			/********************************************************************/
+			public int IndexOf(NostalgicTabPage page)
+			{
+				return owner.TabPages.IndexOf(page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Copy pages to an array
+			/// </summary>
+			/********************************************************************/
+			public void CopyTo(NostalgicTabPage[] array, int arrayIndex)
+			{
+				for (int i = 0; i < Count; i++)
+					array[arrayIndex + i] = this[i];
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public IEnumerator<NostalgicTabPage> GetEnumerator()
+			{
+				for (int i = 0; i < Count; i++)
+					yield return this[i];
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
+			}
+
+			#region Non-generic IList implementation
+			// The designer's PropertyGrid and CollectionConverter only treat
+			// a value as a collection if it implements the non-generic IList /
+			// ICollection. Without this, the Pages property shows up as a
+			// disabled type name instead of an editable "(Collection)"
+
+			/********************************************************************/
+			/// <summary>
+			/// Get or set a page by index
+			/// </summary>
+			/********************************************************************/
+			object IList.this[int index]
+			{
+				get => this[index];
+				set => throw new NotSupportedException();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			bool IList.IsFixedSize => false;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			bool ICollection.IsSynchronized => false;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			object ICollection.SyncRoot => this;
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Add a page
+			/// </summary>
+			/********************************************************************/
+			int IList.Add(object value)
+			{
+				Add((NostalgicTabPage)value);
+
+				return Count - 1;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Check if a page is in the collection
+			/// </summary>
+			/********************************************************************/
+			bool IList.Contains(object value)
+			{
+				return (value is NostalgicTabPage page) && Contains(page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Return the index of a page
+			/// </summary>
+			/********************************************************************/
+			int IList.IndexOf(object value)
+			{
+				return (value is NostalgicTabPage page) ? IndexOf(page) : -1;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Insert a page at the given index
+			/// </summary>
+			/********************************************************************/
+			void IList.Insert(int index, object value)
+			{
+				Insert(index, (NostalgicTabPage)value);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Remove a page
+			/// </summary>
+			/********************************************************************/
+			void IList.Remove(object value)
+			{
+				if (value is NostalgicTabPage page)
+					Remove(page);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Copy pages to an array
+			/// </summary>
+			/********************************************************************/
+			void ICollection.CopyTo(Array array, int index)
+			{
+				for (int i = 0; i < Count; i++)
+					array.SetValue(this[i], index + i);
+			}
+			#endregion
+		}
+		#endregion
+
+		private const int CornerRadius = 3;
+
+		private struct TabStateColors
+		{
+			public Color BackgroundStartColor { get; init; }
+			public Color BackgroundStopColor { get; init; }
+			public Color TextColor { get; init; }
+		}
+
+		private ITabColors colors;
+		private IFonts fonts;
+
+		private FontConfiguration fontConfiguration;
+
+		// Maps visible tab index to actual TabPages index
+		private readonly List<int> visibleTabIndices = new List<int>();
+
+		// True between BeginInit/EndInit - suppresses rebuilds
+		private bool isInitializing;
+
+		// Visible index of the tab the mouse is currently over, or -1
+		private int hoverVisibleIndex = -1;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public NostalgicTab()
+		{
+			SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+
+			Pages = new NostalgicTabPageCollection(this);
+		}
+
+		#region Designer properties
+		/********************************************************************/
+		/// <summary>
+		/// Set the FontConfiguration component to use for this control
+		/// </summary>
+		/********************************************************************/
+		[Category("Appearance")]
+		[Description("Which font configuration to use if you want to change the default font.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(null)]
+		public FontConfiguration UseFont
+		{
+			get => fontConfiguration;
+
+			set
+			{
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged -= FontConfiguration_FontChanged;
+
+				fontConfiguration = value;
+
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged += FontConfiguration_FontChanged;
+
+				Invalidate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Typed collection that provides access to tab pages as
+		/// NostalgicTabPage, so the shadowed Visible property works
+		/// correctly.
+		///
+		/// This is the only supported way to add pages in the designer (the
+		/// inherited TabPages property is hidden, because it does not work
+		/// with how this control is implemented). The collection itself is
+		/// never serialized - the pages are written to the form as part of
+		/// the Controls collection instead
+		/// </summary>
+		/********************************************************************/
+		[Category("Behavior")]
+		[Description("The pages in this tab control.")]
+		[Editor(typeof(NostalgicTabPageCollectionEditor), typeof(UITypeEditor))]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public NostalgicTabPageCollection Pages { get; }
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The currently selected page. This is a design-time helper used
+		/// to switch between the pages in the designer It is never
+		/// serialized - it just maps to the selected tab.
+		///
+		/// NOTE: Do not use this from code. Use SelectedTab instead
+		/// </summary>
+		/********************************************************************/
+		[Category("Behavior")]
+		[Description("The currently selected page. Use this to switch between the pages in the designer.")]
+		[TypeConverter(typeof(SelectedTabPageConverter))]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public NostalgicTabPage SelectedPage
+		{
+			get => SelectedTab as NostalgicTabPage;
+
+			set
+			{
+				if ((value != null) && (value != SelectedTab))
+					SelectedTab = value;
+			}
+		}
+		#endregion
+
+		#region ISupportInitialize
+		/********************************************************************/
+		/// <summary>
+		/// Called before batch initialization. Suppresses rebuilds until
+		/// EndInit is called
+		/// </summary>
+		/********************************************************************/
+		public void BeginInit()
+		{
+			isInitializing = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Called after batch initialization. Rebuilds the visible tab
+		/// list once
+		/// </summary>
+		/********************************************************************/
+		public void EndInit()
+		{
+			isInitializing = false;
+
+			RebuildVisibleTabList();
+		}
+		#endregion
+
+		#region Initialize
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control to use custom rendering
+		/// </summary>
+		/********************************************************************/
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			if (DesignerHelper.IsInDesignMode(this))
+				SetTheme(new StandardTheme());
+
+			base.OnHandleCreated(e);
+		}
+		#endregion
+
+		#region Theme
+		/********************************************************************/
+		/// <summary>
+		/// Will setup the theme for the control
+		/// </summary>
+		/********************************************************************/
+		public void SetTheme(ITheme theme)
+		{
+			colors = theme.TabColors;
+			fonts = theme.StandardFonts;
+
+			Invalidate();
+		}
+		#endregion
+
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public override Rectangle DisplayRectangle
+		{
+			get
+			{
+				Rectangle rect = base.DisplayRectangle;
+				rect.Inflate(rect.X - 1, 1);
+
+				return rect;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Rebuild visible list when a page is added
+		/// </summary>
+		/********************************************************************/
+		protected override void OnControlAdded(ControlEventArgs e)
+		{
+			if (!isInitializing && (e.Control is NostalgicTabPage))
+			{
+				RebuildVisibleTabList();
+				Invalidate();
+			}
+
+			base.OnControlAdded(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Rebuild visible list when a page is removed
+		/// </summary>
+		/********************************************************************/
+		protected override void OnControlRemoved(ControlEventArgs e)
+		{
+			if (!isInitializing && (e.Control is NostalgicTabPage))
+			{
+				RebuildVisibleTabList();
+				Invalidate();
+			}
+
+			base.OnControlRemoved(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected override void OnGotFocus(EventArgs e)
+		{
+			Invalidate();
+
+			base.OnGotFocus(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected override void OnLostFocus(EventArgs e)
+		{
+			Invalidate();
+
+			base.OnLostFocus(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Intercept mouse clicks before the native tab control processes
+		/// them. This prevents the native control from selecting hidden
+		/// tabs or changing internal state when clicking beside a tab
+		/// </summary>
+		/********************************************************************/
+		protected override void WndProc(ref Message m)
+		{
+			if ((WM)m.Msg == WM.LBUTTONDOWN)
+			{
+				Point pt = new Point((int)(m.LParam & 0xffff), (int)(m.LParam >> 16) & 0xffff);
+
+				int clickedVisible = GetVisibleTabIndexAtPoint(pt);
+
+				if (clickedVisible >= 0)
+				{
+					int realIndex = visibleTabIndices[clickedVisible];
+
+					if (realIndex != SelectedIndex)
+						SelectedIndex = realIndex;
+				}
+
+				Focus();
+
+				OnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, pt.X, pt.Y, 0));
+				return;
+			}
+
+			base.WndProc(ref m);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Track hover state as the mouse moves over tab headers
+		/// </summary>
+		/********************************************************************/
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			int newHover = GetVisibleTabIndexAtPoint(e.Location);
+
+			if (newHover != hoverVisibleIndex)
+			{
+				hoverVisibleIndex = newHover;
+				Invalidate();
+			}
+
+			base.OnMouseMove(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear hover state when the mouse leaves the control
+		/// </summary>
+		/********************************************************************/
+		protected override void OnMouseLeave(EventArgs e)
+		{
+			if (hoverVisibleIndex != -1)
+			{
+				hoverVisibleIndex = -1;
+				Invalidate();
+			}
+
+			base.OnMouseLeave(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Repaint when the selected tab changes
+		/// </summary>
+		/********************************************************************/
+		protected override void OnSelectedIndexChanged(EventArgs e)
+		{
+			Invalidate();
+
+			base.OnSelectedIndexChanged(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Intercept tab selection to prevent hidden tabs from being
+		/// selected
+		/// </summary>
+		/********************************************************************/
+		protected override void OnSelecting(TabControlCancelEventArgs e)
+		{
+			if ((e.TabPageIndex >= 0) && (e.TabPageIndex < TabCount) && !IsPageVisible(TabPages[e.TabPageIndex]))
+				e.Cancel = true;
+
+			base.OnSelecting(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle arrow keys before the base TabControl processes them
+		/// in WndProc. This ensures hidden tabs are skipped
+		/// </summary>
+		/********************************************************************/
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			Keys key = keyData & Keys.KeyCode;
+
+			if (Focused && ((key == Keys.Left) || (key == Keys.Right)))
+			{
+				int currentVisible = visibleTabIndices.IndexOf(SelectedIndex);
+
+				if ((currentVisible >= 0) && (visibleTabIndices.Count > 1))
+				{
+					int newVisible;
+
+					if (key == Keys.Left)
+						newVisible = currentVisible > 0 ? currentVisible - 1 : visibleTabIndices.Count - 1;
+					else
+						newVisible = currentVisible < visibleTabIndices.Count - 1 ? currentVisible + 1 : 0;
+
+					SelectedIndex = visibleTabIndices[newVisible];
+					Focus();
+				}
+
+				return true;
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Don't do anything, we have all painting in OnPaint
+		/// </summary>
+		/********************************************************************/
+		protected override void OnPaintBackground(PaintEventArgs e)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Paint the whole control
+		/// </summary>
+		/********************************************************************/
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			if (colors == null)
+				return;
+
+			Graphics g = e.Graphics;
+
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+			Font font = GetFont();
+
+			ClearBackground(g);
+			DrawBackground(g);
+			DrawTabs(g, font);
+		}
+		#endregion
+
+		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// React when the attached FontConfiguration recalculates its font
+		/// (e.g. theme manager just initialized, or one of FontType /
+		/// FontStyle / FontSize changed at runtime)
+		/// </summary>
+		/********************************************************************/
+		private void FontConfiguration_FontChanged(object sender, EventArgs e)
+		{
+			Invalidate();
+		}
+		#endregion
+
+		#region Internal methods
+		/********************************************************************/
+		/// <summary>
+		/// Called by NostalgicTabPage when its Visible property changes
+		/// </summary>
+		/********************************************************************/
+		internal void NotifyTabPageVisibilityChanged()
+		{
+			if (isInitializing)
+				return;
+
+			RebuildVisibleTabList();
+
+			// If the currently selected tab was hidden, select the first
+			// visible tab instead
+			if ((SelectedIndex >= 0) && (SelectedIndex < TabCount) && !IsPageVisible(TabPages[SelectedIndex]))
+			{
+				if (visibleTabIndices.Count > 0)
+					SelectedIndex = visibleTabIndices[0];
+			}
+
+			Invalidate();
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Return the text to show on a tab. Falls back to a default name
+		/// when the page has no text set
+		/// </summary>
+		/********************************************************************/
+		private string GetTabText(int realIndex)
+		{
+			string text = TabPages[realIndex].Text;
+
+			return string.IsNullOrEmpty(text) ? Resources.IDS_DEFAULT_TAB_NAME : text;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return whether a page should be shown in the tab strip
+		/// </summary>
+		/********************************************************************/
+		private bool IsPageVisible(TabPage page)
+		{
+			if (page is NostalgicTabPage ntp)
+				return ntp.Visible;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Rebuild the list of visible tab indices
+		/// </summary>
+		/********************************************************************/
+		private void RebuildVisibleTabList()
+		{
+			visibleTabIndices.Clear();
+
+			for (int i = 0; i < TabCount; i++)
+			{
+				if (IsPageVisible(TabPages[i]))
+					visibleTabIndices.Add(i);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the visible tab index at a given point, or -1 if none
+		/// </summary>
+		/********************************************************************/
+		private int GetVisibleTabIndexAtPoint(Point pt)
+		{
+			for (int i = 0; i < visibleTabIndices.Count; i++)
+			{
+				if (GetVisibleTabRect(i).Contains(pt))
+					return i;
+			}
+
+			return -1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the rectangle for a visible tab by its visible index
+		/// </summary>
+		/********************************************************************/
+		private Rectangle GetVisibleTabRect(int visibleIndex)
+		{
+			if ((visibleIndex < 0) || (visibleIndex >= visibleTabIndices.Count))
+				return Rectangle.Empty;
+
+			// Find the start on the first tab
+			Rectangle rect = Rectangle.Empty;
+
+			int tabTop = 2;
+			int tabHeight = DisplayRectangle.Y - tabTop;
+			int x = 2;
+
+			using (Graphics g = CreateGraphics())
+			{
+				Font font = GetFont();
+
+				for (int i = 0; i <= visibleIndex; i++)
+				{
+					int realIndex = visibleTabIndices[i];
+
+					// visibleTabIndices can briefly be out of sync with the
+					// actual pages - for example when the last tab is removed
+					// in the designer, a repaint can happen before the list is
+					// rebuilt. Bail out instead of indexing past the end of
+					// TabPages (the list is rebuilt and repainted right after)
+					if (realIndex >= TabCount)
+						return Rectangle.Empty;
+
+					string text = GetTabText(realIndex);
+
+					int textWidth = TextRenderer.MeasureText(g, text, font).Width;
+					int tabWidth = textWidth + 5;
+
+					if (i == visibleIndex)
+					{
+						rect = new Rectangle(x, tabTop, tabWidth, tabHeight);
+						break;
+					}
+
+					x += tabWidth + 1;
+				}
+			}
+
+			return rect;
+		}
+		#endregion
+
+		#region Drawing
+		/********************************************************************/
+		/// <summary>
+		/// Return the font to use
+		/// </summary>
+		/********************************************************************/
+		private Font GetFont()
+		{
+			return fontConfiguration?.Font ?? fonts.TabFont;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the colors for a tab based on its state
+		/// </summary>
+		/********************************************************************/
+		private TabStateColors GetTabColors(int visibleIndex)
+		{
+			int realIndex = visibleTabIndices[visibleIndex];
+
+			if (realIndex == SelectedIndex)
+			{
+				return new TabStateColors
+				{
+					BackgroundStartColor = colors.SelectedTabBackgroundStartColor,
+					BackgroundStopColor = colors.SelectedTabBackgroundStopColor,
+					TextColor = colors.SelectedTabTextColor
+				};
+			}
+
+			if (visibleIndex == hoverVisibleIndex)
+			{
+				return new TabStateColors
+				{
+					BackgroundStartColor = colors.HoverTabBackgroundStartColor,
+					BackgroundStopColor = colors.HoverTabBackgroundStopColor,
+					TextColor = colors.HoverTabTextColor
+				};
+			}
+
+			return new TabStateColors
+			{
+				BackgroundStartColor = colors.NormalTabBackgroundStartColor,
+				BackgroundStopColor = colors.NormalTabBackgroundStopColor,
+				TextColor = colors.NormalTabTextColor
+			};
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear the background with the parent background to avoid
+		/// artifacts
+		/// </summary>
+		/********************************************************************/
+		private void ClearBackground(Graphics g)
+		{
+			if (Parent != null)
+			{
+				GraphicsState state = g.Save();
+
+				try
+				{
+					g.TranslateTransform(-Left, -Top);
+
+					Rectangle parentRect = new Rectangle(Point.Empty, Parent.ClientSize);
+
+					using (PaintEventArgs e = new PaintEventArgs(g, parentRect))
+					{
+						InvokePaintBackground(Parent, e);
+						InvokePaint(Parent, e);
+					}
+				}
+				finally
+				{
+					g.Restore(state);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw the background and border
+		/// </summary>
+		/********************************************************************/
+		private void DrawBackground(Graphics g)
+		{
+			Rectangle rect = DisplayRectangle;
+			rect.Inflate(1, 1);
+
+			using (SolidBrush bgBrush = new SolidBrush(colors.BackgroundColor))
+			{
+				g.FillRectangle(bgBrush, rect);
+			}
+
+			using (Pen borderPen = new Pen(colors.BorderColor))
+			{
+				g.DrawRectangle(borderPen, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw all the tab headers (only visible ones)
+		/// </summary>
+		/********************************************************************/
+		private void DrawTabs(Graphics g, Font font)
+		{
+			int selectedVisible = visibleTabIndices.IndexOf(SelectedIndex);
+
+			// Draw non-selected visible tabs first
+			for (int i = 0; i < visibleTabIndices.Count; i++)
+			{
+				if (i != selectedVisible)
+					DrawTab(g, i, font);
+			}
+
+			// Draw selected tab last so it paints on top
+			if (selectedVisible >= 0)
+				DrawTab(g, selectedVisible, font);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw a single tab header by its visible index
+		/// </summary>
+		/********************************************************************/
+		private void DrawTab(Graphics g, int visibleIndex, Font font)
+		{
+			Rectangle rect = GetVisibleTabRect(visibleIndex);
+
+			if (rect.IsEmpty)
+				return;
+
+			int realIndex = visibleTabIndices[visibleIndex];
+			bool isSelected = (realIndex == SelectedIndex);
+
+			// Selected tab is a little bit bigger than the rest
+			if (isSelected)
+			{
+				rect.X -= 2;
+				rect.Width += 4;
+				rect.Height += rect.Y;
+				rect.Y = 0;
+			}
+
+			TabStateColors tabStateColors = GetTabColors(visibleIndex);
+
+			using (GraphicsPath tabPath = CreateTabPath(new Rectangle(rect.X, rect.Y, rect.Width, rect.Height - 1)))
+			{
+				if (isSelected)
+				{
+					using (GraphicsPath fullPath = CreateTabPath(rect))
+					{
+						DrawTabBackground(g, rect, fullPath, tabStateColors);
+					}
+				}
+				else
+					DrawTabBackground(g, rect, tabPath, tabStateColors);
+
+				DrawTabBorder(g, tabPath);
+			}
+
+			DrawTabText(g, GetTabText(realIndex), rect, font, tabStateColors);
+
+			// Draw focus rectangle on the selected tab
+			if (isSelected && Focused)
+			{
+				Rectangle focusRect = rect;
+				focusRect.Inflate(-3, -3);
+
+				if ((focusRect.Width > 0) && (focusRect.Height > 0))
+					ControlPaint.DrawFocusRectangle(g, focusRect);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw a single tab background
+		/// </summary>
+		/********************************************************************/
+		private void DrawTabBackground(Graphics g, Rectangle rect, GraphicsPath path, TabStateColors tabStateColors)
+		{
+			g.SmoothingMode = SmoothingMode.None;
+
+			using (LinearGradientBrush brush = new LinearGradientBrush(rect, tabStateColors.BackgroundStartColor, tabStateColors.BackgroundStopColor, LinearGradientMode.Vertical))
+			{
+				g.FillPath(brush, path);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw a single tab border
+		/// </summary>
+		/********************************************************************/
+		private void DrawTabBorder(Graphics g, GraphicsPath path)
+		{
+			using (Pen borderPen = new Pen(colors.BorderColor))
+			{
+				g.DrawPath(borderPen, path);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw a single tab text
+		/// </summary>
+		/********************************************************************/
+		private void DrawTabText(Graphics g, string text, Rectangle rect, Font font, TabStateColors tabStateColors)
+		{
+			TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis;
+
+			TextRenderer.DrawText(g, text, font, rect, tabStateColors.TextColor, flags);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a GraphicsPath for a tab shape with rounded top corners
+		/// and a flat bottom edge
+		/// </summary>
+		/********************************************************************/
+		private GraphicsPath CreateTabPath(Rectangle rect)
+		{
+			GraphicsPath path = new GraphicsPath();
+
+			int diameter = CornerRadius * 2;
+			int right = rect.Right - 1;
+			int bottom = rect.Bottom;
+
+			// Start at bottom-left and draw up the left side
+			path.AddLine(rect.Left, bottom, rect.Left, rect.Top + CornerRadius);
+
+			// Top-left arc (rounded corner)
+			path.AddArc(rect.Left, rect.Top, diameter, diameter, 180, 90);
+
+			// Top-right arc (rounded corner) - this also creates the top line
+			path.AddArc(right - diameter, rect.Top, diameter, diameter, 270, 90);
+
+			// Right side down to bottom
+			path.AddLine(right, rect.Top + CornerRadius, right, bottom);
+
+			// Path is not closed, so no bottom line is drawn
+
+			return path;
+		}
+		#endregion
+
+		#region Designer filtering (hide properties from PropertyGrid)
+		/********************************************************************/
+		/// <summary>
+		/// Register a provider that filters properties for the designer
+		/// </summary>
+		/********************************************************************/
+		static NostalgicTab()
+		{
+			TypeDescriptor.AddProvider(new NostalgicTabTypeDescriptionProvider(), typeof(NostalgicTab));
+		}
+
+		/// <summary>
+		/// Filter out properties we do not want to show in the designer
+		/// </summary>
+		private sealed class NostalgicTabTypeDescriptionProvider : TypeDescriptionProvider
+		{
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(TabControl));
+
+			private static readonly string[] propertiesToHide =
+			[
+				nameof(BackColor),
+				nameof(BackgroundImage),
+				nameof(BackgroundImageLayout),
+				nameof(Font),
+				nameof(ForeColor),
+				nameof(RightToLeft),
+				nameof(DrawMode),
+				nameof(Appearance),
+				nameof(HotTrack),
+				nameof(TabPages),
+			];
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public NostalgicTabTypeDescriptionProvider() : base(parent)
+			{
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
+			{
+				return new HidingTypeDescriptor(base.GetTypeDescriptor(objectType, instance), propertiesToHide);
+			}
+		}
+		#endregion
+	}
+}
