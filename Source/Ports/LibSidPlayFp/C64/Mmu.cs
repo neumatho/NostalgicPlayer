@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// <summary>
 		/// IO region handler
 		/// </summary>
-		private readonly IOBank ioBank;
+		private readonly IOBank m_ioBank;
 
 		/// <summary>
 		/// Kernal ROM
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		public Mmu(EventScheduler scheduler, IOBank ioBank)
 		{
 			eventScheduler = scheduler;
-			this.ioBank = ioBank;
+			m_ioBank = ioBank;
 			zeroRamBank = new ZeroRamBank(this, ramBank);
 
 			cpuReadMap[0] = ReadBank(zeroRamBank);
@@ -316,7 +316,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/********************************************************************/
 		private static uint8_t ReadIo(Mmu self, uint_least16_t addr)
 		{
-			return self.ioBank.Peek(addr);
+			return self.m_ioBank.Peek(addr);
 		}
 
 
@@ -335,7 +335,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 			if (charen && (loRam || hiRam))
 			{
 				cpuReadMap[0x0d] = ReadIo;
-				cpuWriteMap[0x0d] = ioBank;
+				cpuWriteMap[0x0d] = m_ioBank;
 			}
 			else
 			{

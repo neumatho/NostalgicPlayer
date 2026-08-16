@@ -202,15 +202,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/// <summary></summary>
 		protected readonly SidTuneInfoImpl info;
 
-		protected readonly uint_least8_t[] songSpeed = new uint_least8_t[MAX_SONGS];
-		protected readonly SidTuneInfo.clock_t[] clockSpeed = new SidTuneInfo.clock_t[MAX_SONGS];
+		protected readonly uint_least8_t[] m_songSpeed = new uint_least8_t[MAX_SONGS];
+		protected readonly SidTuneInfo.clock_t[] m_clockSpeed = new SidTuneInfo.clock_t[MAX_SONGS];
 
 		/// <summary>
 		/// For files with header: offset to real data
 		/// </summary>
-		protected uint_least32_t fileOffset;
+		protected uint_least32_t m_fileOffset;
 
-		protected buffer_t cache;
+		protected buffer_t m_cache;
 
 		/********************************************************************/
 		/// <summary>
@@ -220,13 +220,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		protected SidTuneBase()
 		{
 			info = new SidTuneInfoImpl();
-			fileOffset = 0;
+			m_fileOffset = 0;
 
 			// Initialize the object with some safe defaults
 			for (int si = 0; si < MAX_SONGS; si++)
 			{
-				songSpeed[si] = (uint_least8_t)info.songSpeed;
-				clockSpeed[si] = info.clockSpeed;
+				m_songSpeed[si] = (uint_least8_t)info.songSpeed;
+				m_clockSpeed[si] = info.clockSpeed;
 			}
 		}
 
@@ -291,18 +291,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 					// sidtunes, which have been converted from .SID format and vice versa.
 					// The .SID format does the bit-wise/song-wise evaluation of the SPEED
 					// value correctly, like it is described in the PlaySID documentation
-					info.songSpeed = songSpeed[(song - 1) & 31];
+					info.songSpeed = m_songSpeed[(song - 1) & 31];
 					break;
 				}
 
 				default:
 				{
-					info.songSpeed = songSpeed[song - 1];
+					info.songSpeed = m_songSpeed[song - 1];
 					break;
 				}
 			}
 
-			info.clockSpeed = clockSpeed[song - 1];
+			info.clockSpeed = m_clockSpeed[song - 1];
 
 			return info.currentSong;
 		}
@@ -328,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			mem.WriteMemWord(0xae, end);
 
 			// Copy data from cache to the correct destination
-			mem.FillRam(info.loadAddr, cache + fileOffset, info.c64DataLen);
+			mem.FillRam(info.loadAddr, m_cache + m_fileOffset, info.c64DataLen);
 		}
 
 
@@ -361,11 +361,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				info.startSong = 1;
 
 			info.dataFileLen = (uint_least32_t)buf.Length;
-			info.c64DataLen = (uint_least32_t)(buf.Length - fileOffset);
+			info.c64DataLen = (uint_least32_t)(buf.Length - m_fileOffset);
 
 			// Calculate any remaining addresses and then
 			// confirm all the file details are correct
-			ResolveAddrs(buf + fileOffset);
+			ResolveAddrs(buf + m_fileOffset);
 
 			if (!CheckRelocInfo())
 				throw new LoadErrorException(Resources.IDS_SID_ERR_BAD_RELOC);
@@ -378,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				// We only detect an offset of two. Some positions independent
 				// sid tunes contain a load address of 0xE000, but are loaded
 				// to 0x0FFE and call player at 0x1000
-				info.fixLoad = SidEndian.Endian_Little16(buf + fileOffset) == (info.loadAddr + 2);
+				info.fixLoad = SidEndian.Endian_Little16(buf + m_fileOffset) == (info.loadAddr + 2);
 			}
 
 			// Check the size of the data
@@ -388,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			if (info.c64DataLen == 0)
 				throw new LoadErrorException(Resources.IDS_SID_ERR_EMPTY);
 
-			cache = buf;
+			m_cache = buf;
 		}
 
 
@@ -408,8 +408,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 
 			for (uint s = 0; s < toDo; s++)
 			{
-				clockSpeed[s] = clock;
-				songSpeed[s] = (byte)((speed & 1) != 0 ? SidTuneInfo.SPEED_CIA_1A : SidTuneInfo.SPEED_VBI);
+				m_clockSpeed[s] = clock;
+				m_songSpeed[s] = (byte)((speed & 1) != 0 ? SidTuneInfo.SPEED_CIA_1A : SidTuneInfo.SPEED_VBI);
 
 				if (s < 31)
 					speed >>= 1;
@@ -688,7 +688,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 					throw new LoadErrorException(Resources.IDS_SID_ERR_CORRUPT);
 
 				info.loadAddr = SidEndian.Endian_16(c64Data[1], c64Data[0]);
-				fileOffset += 2;
+				m_fileOffset += 2;
 				info.c64DataLen -= 2;
 			}
 

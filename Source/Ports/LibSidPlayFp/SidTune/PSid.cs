@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			{
 				// The calculation is now simplified.
 				// All the header + all the data
-				return md5.ComputeHash(cache.ToArray(), 0, cache.Length);
+				return md5.ComputeHash(m_cache.ToArray(), 0, m_cache.Length);
 			}
 		}
 
@@ -258,7 +258,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				compatibility = SidTuneInfo.compatibility_t.COMPATIBILITY_R64;
 			}
 
-			fileOffset = header.Data;
+			m_fileOffset = header.Data;
 			info.loadAddr = header.Load;
 			info.initAddr = header.Init;
 			info.playAddr = header.Play;

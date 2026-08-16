@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			/********************************************************************/
 			public override void DoEvent()
 			{
-				parent.parent.SpInterrupt();
+				parent.m_parent.SpInterrupt();
 			}
 		}
 		#endregion
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// <summary>
 		/// Pointer to the MOS6526 which this Serial Port belongs to
 		/// </summary>
-		private readonly Mos652x parent;
+		private readonly Mos652x m_parent;
 
 		/// <summary>
 		/// Event context
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		public SerialPort(EventScheduler scheduler, Mos652x parent)
 		{
 			eventObject = new PrivateEvent("Serial Port interrupt", this);
-			this.parent = parent;
+			m_parent = parent;
 			eventScheduler = scheduler;
 			flipCntEvent = new EventCallback("flip CNT", FlipCnt);
 			flipFakeEvent = new EventCallback("flip fake", FlipFake);

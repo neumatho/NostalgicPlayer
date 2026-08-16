@@ -121,6 +121,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 			sid.EnableOld6581Caps(enable);
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the DAC leakage level.
+		/// Affects the envelope and waveforms
+		/// </summary>
+		/********************************************************************/
+		public void DacLeakage(c_double level)
+		{
+			sid.SetDacLeakage(level);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the 6581 wave offset.
+		/// Affects the volume of digi samples
+		/// </summary>
+		/********************************************************************/
+		public void Offset6581(c_double offset)
+		{
+			sid.SetOffset6581(offset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the DC-Blocker resistance.
+		/// Affects the highpass cutoff frequency
+		/// </summary>
+		/********************************************************************/
+		public void DcbRes(c_double res)
+		{
+			sid.SetDcbRes(res);
+		}
+
 		#region SidEmu overrides
 		/********************************************************************/
 		/// <summary>

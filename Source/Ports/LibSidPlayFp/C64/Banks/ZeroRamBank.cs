@@ -136,12 +136,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/// </summary>
 		private static readonly bool tape_sense = false;
 
-		private readonly IPla pla;
+		private readonly IPla m_pla;
 
 		/// <summary>
 		/// C64 RAM area
 		/// </summary>
-		private readonly SystemRamBank ramBank;
+		private readonly SystemRamBank m_RamBank;
 
 		// Unused bits of the data port
 		private readonly DataBit dataBit6 = new DataBit(6);
@@ -168,8 +168,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/********************************************************************/
 		public ZeroRamBank(IPla pla, SystemRamBank ramBank)
 		{
-			this.pla = pla;
-			this.ramBank = ramBank;
+			m_pla = pla;
+			m_RamBank = ramBank;
 		}
 
 
@@ -215,21 +215,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 					if ((dir & 0x40) == 0)
 					{
 						retVal &= unchecked((uint8_t)(~0x40));
-						retVal |= dataBit6.ReadBit(pla.GetPhi2Time());
+						retVal |= dataBit6.ReadBit(m_pla.GetPhi2Time());
 					}
 
 					// Set real value of bit 7
 					if ((dir & 0x80) == 0)
 					{
 						retVal &= unchecked((uint8_t)(~0x80));
-						retVal |= dataBit7.ReadBit(pla.GetPhi2Time());
+						retVal |= dataBit7.ReadBit(m_pla.GetPhi2Time());
 					}
 
 					return retVal;
 				}
 
 				default:
-					return ramBank.Peek(address);
+					return m_RamBank.Peek(address);
 			}
 		}
 
@@ -253,17 +253,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 					{
 						// Check if bit 6 has flipped from 1 to 0
 						if (((dir & 0x40) != 0) && ((value & 0x40) == 0))
-							dataBit6.WriteBit(pla.GetPhi2Time(), data);
+							dataBit6.WriteBit(m_pla.GetPhi2Time(), data);
 
 						// Check if bit 7 has flipped from 1 to 0
 						if (((dir & 0x80) != 0) && ((value & 0x80) == 0))
-							dataBit7.WriteBit(pla.GetPhi2Time(), data);
+							dataBit7.WriteBit(m_pla.GetPhi2Time(), data);
 
 						dir = value;
 						UpdateCpuPort();
 					}
 
-					value = pla.GetLastReadByte();
+					value = m_pla.GetLastReadByte();
 					break;
 				}
 
@@ -272,10 +272,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 					// When writing to an unused bit that is output, charge the "capacitor",
 					// otherwise don't touch it
 					if ((dir & 0x40) != 0)
-						dataBit6.WriteBit(pla.GetPhi2Time(), value);
+						dataBit6.WriteBit(m_pla.GetPhi2Time(), value);
 
 					if ((dir & 0x80) != 0)
-						dataBit7.WriteBit(pla.GetPhi2Time(), value);
+						dataBit7.WriteBit(m_pla.GetPhi2Time(), value);
 
 					if (data != value)
 					{
@@ -283,12 +283,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 						UpdateCpuPort();
 					}
 
-					value = pla.GetLastReadByte();
+					value = m_pla.GetLastReadByte();
 					break;
 				}
 			}
 
-			ramBank.Poke(address, value);
+			m_RamBank.Poke(address, value);
 		}
 		#endregion
 
@@ -305,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 
 			dataRead = (uint8_t)((data | ~dir) & (procPortPins | 0x17));
 
-			pla.SetCpuPort((uint8_t)((data | ~dir) & 0x07));
+			m_pla.SetCpuPort((uint8_t)((data | ~dir) & 0x07));
 
 			if ((dir & 0x20) == 0)
 				dataRead &= unchecked((uint8_t)~0x20);

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 	/// </summary>
 	internal sealed class DisconnectedBusBank : IBank
 	{
-		private readonly IPla pla;
+		private readonly IPla m_pla;
 
 		/********************************************************************/
 		/// <summary>
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/********************************************************************/
 		public DisconnectedBusBank(IPla pla)
 		{
-			this.pla = pla;
+			m_pla = pla;
 		}
 
 		#region IBank implementation
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/********************************************************************/
 		public uint8_t Peek(uint_least16_t address)
 		{
-			return pla.GetLastReadByte();
+			return m_pla.GetLastReadByte();
 		}
 		#endregion
 	}

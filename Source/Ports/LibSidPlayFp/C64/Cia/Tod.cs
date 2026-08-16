@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
@@ -88,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// <summary>
 		/// Pointer to the MOS6526 which this Timer belongs to
 		/// </summary>
-		private readonly Mos652x parent;
+		private readonly Mos652x m_parent;
 
 		private readonly uint8_t[] regs;
 
@@ -100,9 +99,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		private bool isLatched;
 		private bool isStopped;
 
-		private readonly uint8_t[] clock = new uint8_t[4];
-		private readonly uint8_t[] latch = new uint8_t[4];
-		private readonly uint8_t[] alarm = new uint8_t[4];
+		private readonly uint8_t[] m_clock = new uint8_t[4];
+		private readonly uint8_t[] m_latch = new uint8_t[4];
+		private readonly uint8_t[] m_alarm = new uint8_t[4];
 
 		/********************************************************************/
 		/// <summary>
@@ -113,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		{
 			eventObject = new PrivateEvent("CIA Time of Day", this);
 			eventScheduler = scheduler;
-			this.parent = parent;
+			m_parent = parent;
 			this.regs = regs;
 			period = ~0;		// Dummy
 			todTickCounter = 0;
@@ -131,10 +130,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			cycles = 0;
 			todTickCounter = 0;
 
-			Array.Clear(clock, 0, clock.Length);
-			clock[HOURS] = 1;	// The most common value
-			Array.Copy(clock, latch, latch.Length);
-			Array.Clear(alarm, 0, alarm.Length);
+			Array.Clear(m_clock, 0, m_clock.Length);
+			m_clock[HOURS] = 1;	// The most common value
+			Array.Copy(m_clock, m_latch, m_latch.Length);
+			Array.Clear(m_alarm, 0, m_alarm.Length);
 
 			isLatched = false;
 			isStopped = true;
@@ -156,14 +155,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			// keeps ticking all the time.
 			// Also note that this latching is different from the input one
 			if (!isLatched)
-				Array.Copy(clock, latch, latch.Length);
+				Array.Copy(m_clock, m_latch, m_latch.Length);
 
 			if (reg == TENTHS)
 				isLatched = false;
 			else if (reg == HOURS)
 				isLatched = true;
 
-			return latch[reg];
+			return m_latch[reg];
 		}
 
 
@@ -211,10 +210,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			if ((regs[Mos652x.CRB] & 0x80) != 0)
 			{
 				// Set alarm
-				if (alarm[reg] != data)
+				if (m_alarm[reg] != data)
 				{
 					changed = true;
-					alarm[reg] = data;
+					m_alarm[reg] = data;
 				}
 			}
 			else
@@ -234,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 				else if (reg == HOURS)
 					isStopped = true;
 
-				if (clock[reg] != data)
+				if (m_clock[reg] != data)
 				{
 					// see https://sourceforge.net/p/vice-emu/bugs/1988/
 					// Flip AM/PM on hour 12 on the rising edge of the comparator
@@ -242,7 +241,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 					//	data ^= 0x80;
 
 					changed = true;
-					clock[reg] = data;
+					m_clock[reg] = data;
 				}
 			}
 
@@ -275,14 +274,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			// Advance the counters
 			// - individual counters are 4 bit
 			//   except for sh and mh which are 3 bits
-			uint8_t ts = (uint8_t)(clock[TENTHS] & 0x0f);
-			uint8_t sl = (uint8_t)(clock[SECONDS] & 0x0f);
-			uint8_t sh = (uint8_t)((clock[SECONDS] >> 4) & 0x07);
-			uint8_t ml = (uint8_t)(clock[MINUTES] & 0x0f);
-			uint8_t mh = (uint8_t)((clock[MINUTES] >> 4) & 0x07);
-			uint8_t hl = (uint8_t)(clock[HOURS] & 0x0f);
-			uint8_t hh = (uint8_t)((clock[HOURS] >> 4) & 0x01);
-			uint8_t pm = (uint8_t)(clock[HOURS] & 0x80);
+			uint8_t ts = (uint8_t)(m_clock[TENTHS] & 0x0f);
+			uint8_t sl = (uint8_t)(m_clock[SECONDS] & 0x0f);
+			uint8_t sh = (uint8_t)((m_clock[SECONDS] >> 4) & 0x07);
+			uint8_t ml = (uint8_t)(m_clock[MINUTES] & 0x0f);
+			uint8_t mh = (uint8_t)((m_clock[MINUTES] >> 4) & 0x07);
+			uint8_t hl = (uint8_t)(m_clock[HOURS] & 0x0f);
+			uint8_t hh = (uint8_t)((m_clock[HOURS] >> 4) & 0x01);
+			uint8_t pm = (uint8_t)(m_clock[HOURS] & 0x80);
 
 			// Tenth seconds (0-9)
 			ts = (uint8_t)((ts + 1) & 0x0f);
@@ -332,10 +331,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 				}
 			}
 
-			clock[TENTHS] = ts;
-			clock[SECONDS] = (uint8_t)(sl | (sh << 4));
-			clock[MINUTES] = (uint8_t)(ml | (mh << 4));
-			clock[HOURS] = (uint8_t)(hl | (hh << 4) | pm);
+			m_clock[TENTHS] = ts;
+			m_clock[SECONDS] = (uint8_t)(sl | (sh << 4));
+			m_clock[MINUTES] = (uint8_t)(ml | (mh << 4));
+			m_clock[HOURS] = (uint8_t)(hl | (hh << 4) | pm);
 
 			CheckAlarm();
 		}
@@ -350,8 +349,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CheckAlarm()
 		{
-			if (clock.SequenceEqual(alarm))
-				parent.TodInterrupt();
+			if (m_clock.SequenceEqual(m_alarm))
+				m_parent.TodInterrupt();
 		}
 		#endregion
 	}

@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		{
 			// We pretend that we are CPU doing a write to ctrl register
 			SyncWithCpu();
-			state |= CIAT_STEP;
+			m_state |= CIAT_STEP;
 			WakeUpAfterSyncWithCpu();
 		}
 
@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/********************************************************************/
 		public bool Started()
 		{
-			return (state & CIAT_CR_START) != 0;
+			return (m_state & CIAT_CR_START) != 0;
 		}
 
 		#region Overrides
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/********************************************************************/
 		protected override void Underflow()
 		{
-			parent.UnderflowB();
+			m_parent.UnderflowB();
 		}
 		#endregion
 	}

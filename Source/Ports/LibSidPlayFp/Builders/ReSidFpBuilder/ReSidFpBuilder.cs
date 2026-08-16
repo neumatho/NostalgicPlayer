@@ -19,6 +19,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 			public Property<c_double> Filter8580Curve;
 			public Property<c_double> Filter6581Curve;
 			public Property<c_double> Filter6581Range;
+			public Property<c_double> DacLeak;
+			public Property<c_double> Offset6581;
+			public Property<c_double> DcbRes;
 			public Property<SidConfig.sid_cw_t> Cws;
 			public Property<bool> Old6581Caps;
 		}
@@ -114,6 +117,54 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 				((ReSidFpEmu)e).EnableOld6581Caps(enable);
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void DacLeakage(c_double level)
+		{
+			config.DacLeak = level;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).DacLeakage(level);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Offset6581(c_double offset)
+		{
+			config.Offset6581 = offset;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).Offset6581(offset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void DcbRes(c_double res)
+		{
+			config.DcbRes = res;
+
+			foreach (SidEmu e in sidObjs)
+				((ReSidFpEmu)e).DcbRes(res);
+		}
+
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
@@ -134,6 +185,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 
 				if (config.Filter6581Range.Has_Value())
 					sid.Filter6581Range(config.Filter6581Range.Value());
+
+				if (config.DacLeak.Has_Value())
+					sid.DacLeakage(config.DacLeak.Value());
+
+				if (config.Offset6581.Has_Value())
+					sid.Offset6581(config.Offset6581.Value());
+
+				if (config.DcbRes.Has_Value())
+					sid.DcbRes(config.DcbRes.Value());
 
 				if (config.Cws.Has_Value())
 					sid.CombinedWaveforms(config.Cws.Value());

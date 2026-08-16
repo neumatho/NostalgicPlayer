@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/********************************************************************/
 		protected override void Underflow()
 		{
-			parent.UnderflowA();
+			m_parent.UnderflowA();
 		}
 
 
@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/********************************************************************/
 		protected override void SerialPort()
 		{
-			parent.HandleSerialPort();
+			m_parent.HandleSerialPort();
 		}
 		#endregion
 	}

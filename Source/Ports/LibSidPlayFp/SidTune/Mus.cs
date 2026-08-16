@@ -682,8 +682,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				info.startSong = 1;
 				info.isMusFormat = true;
 
-				songSpeed[0] = SidTuneInfo.SPEED_CIA_1A;
-				clockSpeed[0] = SidTuneInfo.clock_t.CLOCK_ANY;
+				m_songSpeed[0] = SidTuneInfo.SPEED_CIA_1A;
+				m_clockSpeed[0] = SidTuneInfo.clock_t.CLOCK_ANY;
 			}
 
 			// Check setting compatibility for MUS playback
@@ -694,7 +694,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 				// All sub-tunes should be CIA
 				for (uint i = 0; i < info.songs; i++)
 				{
-					if (songSpeed[i] != SidTuneInfo.SPEED_CIA_1A)
+					if (m_songSpeed[i] != SidTuneInfo.SPEED_CIA_1A)
 						throw new LoadErrorException(Resources.IDS_SID_ERR_INVALID);
 				}
 			}

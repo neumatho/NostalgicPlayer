@@ -101,12 +101,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// <summary>
 		/// Pointer to the MOS6526 which this Timer belongs to
 		/// </summary>
-		protected readonly Mos652x parent;
+		protected readonly Mos652x m_parent;
 
 		/// <summary>
 		/// CRA/CRB control register / state
 		/// </summary>
-		protected int_least32_t state = 0;
+		protected int_least32_t m_state = 0;
 
 		/********************************************************************/
 		/// <summary>
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			eventObject = new PrivateEvent(name, this);
 			cycleSkippingEvent = new EventCallback("Skip CIA clock decrement cycles", CycleSkippingEvent);
 			eventScheduler = scheduler;
-			this.parent = parent;
+			m_parent = parent;
 		}
 
 
@@ -130,8 +130,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/********************************************************************/
 		public void SetControlRegister(uint8_t cr)
 		{
-			state &= ~CIAT_CR_MASK;
-			state |= (cr & CIAT_CR_MASK) ^ CIAT_PHI2IN;
+			m_state &= ~CIAT_CR_MASK;
+			m_state |= (cr & CIAT_CR_MASK) ^ CIAT_PHI2IN;
 			lastControlValue = cr;
 		}
 
@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 
 				// It's possible for CIA to determine that it wants to go to sleep starting from the next
 				// cycle, and then save its plans aborted by CPU. Thus, we must avoid modifying
-				// the CIA state if the first sleep clock was still in the future
+				// the CIA m_state if the first sleep clock was still in the future
 				if (elapsed >= 0)
 				{
 					timer -= (uint_least16_t)elapsed;
@@ -194,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			eventScheduler.Cancel(eventObject);
 			timer = latch = 0xffff;
 			pbToggle = false;
-			state = 0;
+			m_state = 0;
 			lastControlValue = 0;
 			ciaEventPauseTime = 0;
 			eventScheduler.Schedule(eventObject, 1, EventScheduler.event_phase_t.EVENT_CLOCK_PHI1);
@@ -210,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		public void LatchLo(uint8_t data)
 		{
 			SidEndian.Endian_16Lo8(ref latch, data);
-			if ((state & CIAT_LOAD) != 0)
+			if ((m_state & CIAT_LOAD) != 0)
 				timer = latch;
 		}
 
@@ -224,12 +224,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		public void LatchHi(uint8_t data)
 		{
 			SidEndian.Endian_16Hi8(ref latch, data);
-			if ((state & CIAT_LOAD) != 0)
+			if ((m_state & CIAT_LOAD) != 0)
 				timer = latch;
-			else if ((state & CIAT_CR_START) == 0)
+			else if ((m_state & CIAT_CR_START) == 0)
 			{
 				// Reload timer if stopped
-				state |= CIAT_LOAD1;
+				m_state |= CIAT_LOAD1;
 			}
 		}
 
@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int_least32_t GetState()
 		{
-			return state;
+			return m_state;
 		}
 
 
@@ -282,7 +282,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool GetPb(uint8_t reg)
 		{
-			return (reg & 0x04) != 0 ? pbToggle : (state & CIAT_OUT) != 0;
+			return (reg & 0x04) != 0 ? pbToggle : (m_state & CIAT_OUT) != 0;
 		}
 
 		#region Overrides
@@ -328,29 +328,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/********************************************************************/
 		private void Clock()
 		{
-			if ((state & CIAT_COUNT3) != 0)
+			if ((m_state & CIAT_COUNT3) != 0)
 				timer--;
 
 			// ciatimer.c block start
-			int_least32_t adj = state & (CIAT_CR_START | CIAT_CR_ONESHOT | CIAT_PHI2IN);
+			int_least32_t adj = m_state & (CIAT_CR_START | CIAT_CR_ONESHOT | CIAT_PHI2IN);
 
-			if ((state & (CIAT_CR_START | CIAT_PHI2IN)) == (CIAT_CR_START | CIAT_PHI2IN))
+			if ((m_state & (CIAT_CR_START | CIAT_PHI2IN)) == (CIAT_CR_START | CIAT_PHI2IN))
 				adj |= CIAT_COUNT2;
 
-			if (((state & CIAT_COUNT2) != 0) || ((state & (CIAT_STEP | CIAT_CR_START)) == (CIAT_STEP | CIAT_CR_START)))
+			if (((m_state & CIAT_COUNT2) != 0) || ((m_state & (CIAT_STEP | CIAT_CR_START)) == (CIAT_STEP | CIAT_CR_START)))
 				adj |= CIAT_COUNT3;
 
 			// CR_FLOAD -> LOAD1, CR_ONESHOT -> ONESHOT0, LOAD1 -> LOAD, ONESHOT0 -> ONESHOT
-			adj |= (state & (CIAT_CR_FLOAD | CIAT_CR_ONESHOT | CIAT_LOAD1 | CIAT_ONESHOT0)) << 8;
-			state = adj;
+			adj |= (m_state & (CIAT_CR_FLOAD | CIAT_CR_ONESHOT | CIAT_LOAD1 | CIAT_ONESHOT0)) << 8;
+			m_state = adj;
 			// ciatimer.c block end
 
-			if ((timer == 0) && ((state & CIAT_COUNT3) != 0))
+			if ((timer == 0) && ((m_state & CIAT_COUNT3) != 0))
 			{
-				state |= CIAT_LOAD | CIAT_OUT;
+				m_state |= CIAT_LOAD | CIAT_OUT;
 
-				if ((state & (CIAT_ONESHOT | CIAT_ONESHOT0)) != 0)
-					state &= ~(CIAT_CR_START | CIAT_COUNT2);
+				if ((m_state & (CIAT_ONESHOT | CIAT_ONESHOT0)) != 0)
+					m_state &= ~(CIAT_CR_START | CIAT_COUNT2);
 
 				// By setting bits 2&3 of the control register,
 				// PB6/PB7 will be toggled between high and low at each underflow
@@ -364,10 +364,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 				Underflow();
 			}
 
-			if ((state & CIAT_LOAD) != 0)
+			if ((m_state & CIAT_LOAD) != 0)
 			{
 				timer = latch;
-				state &= ~CIAT_COUNT3;
+				m_state &= ~CIAT_COUNT3;
 			}
 		}
 
@@ -392,18 +392,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			// Additionally, there are numerous flags that are present only in passing manner,
 			// but which we need to let cycle through the CIA state machine
 			int_least32_t unwanted = CIAT_OUT | CIAT_CR_FLOAD | CIAT_LOAD1 | CIAT_LOAD;
-			if ((state & unwanted) != 0)
+			if ((m_state & unwanted) != 0)
 			{
 				eventScheduler.Schedule(eventObject, 1);
 				return;
 			}
 
-			if ((state & CIAT_COUNT3) != 0)
+			if ((m_state & CIAT_COUNT3) != 0)
 			{
 				// Test the conditions that keep COUNT2 and thus COUNT3 alive, and also
 				// ensure that all of them are set indicating steady state operation
 				int_least32_t wanted = CIAT_CR_START | CIAT_PHI2IN | CIAT_COUNT2 | CIAT_COUNT3;
-				if ((timer > 2) && ((state & wanted) == wanted))
+				if ((timer > 2) && ((m_state & wanted) == wanted))
 				{
 					// We executed this cycle, therefore the pauseTime is +1. If we are called
 					// to execute on the very next clock, we need to get 0 because there's
@@ -425,7 +425,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 				int_least32_t unwanted1 = CIAT_CR_START | CIAT_PHI2IN;
 				int_least32_t unwanted2 = CIAT_CR_START | CIAT_STEP;
 
-				if (((state & unwanted1) == unwanted1) || ((state & unwanted2) == unwanted2))
+				if (((m_state & unwanted1) == unwanted1) || ((m_state & unwanted2) == unwanted2))
 				{
 					eventScheduler.Schedule(eventObject, 1);
 					return;

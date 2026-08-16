@@ -759,12 +759,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				// Setup base SID
 				SidConfig.sid_model_t userModel = GetSidModel(tuneInfo.SidModel(0), defaultModel, forced);
 
-				SidEmu s = builder.Lock(c64.GetEventScheduler(), userModel, digiBoost);
-				if (s == null)
+				SidEmu emu = builder.Lock(c64.GetEventScheduler(), userModel, digiBoost);
+				if (emu == null)
 					throw new ConfigErrorException(builder.Error());
 
-				c64.SetBaseSid(s);
-				chips.Add(s);
+				c64.SetBaseSid(emu);
+				chips.Add(emu);
 				info.sidModels.Add(GetSidModel(userModel));
 
 				// Setup extra SIDs if needed
@@ -778,17 +778,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 					for (uint i = 0; i < extraSidChips; i++)
 					{
-						userModel = GetSidModel(tuneInfo.SidModel(i + 1), defaultModel, forced);
+						SidConfig.sid_model_t extraUserModel = GetSidModel(tuneInfo.SidModel(i + 1), defaultModel, forced);
 
-						s = builder.Lock(c64.GetEventScheduler(), userModel, digiBoost);
-						if (s == null)
+						SidEmu extraEmu = builder.Lock(c64.GetEventScheduler(), extraUserModel, digiBoost);
+						if (extraEmu == null)
 							throw new ConfigErrorException(builder.Error());
 
-						if (!c64.AddExtraSid(s, (int)extraSidAddresses[(int)i]))
+						if (!c64.AddExtraSid(extraEmu, (int)extraSidAddresses[(int)i]))
 							throw new ConfigErrorException(Resources.IDS_SID_ERR_UNSUPPORTED_SID_ADDR);
 
-						chips.Add(s);
-						info.sidModels.Add(GetSidModel(userModel));
+						chips.Add(extraEmu);
+						info.sidModels.Add(GetSidModel(extraUserModel));
 					}
 				}
 			}

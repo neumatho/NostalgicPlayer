@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// <summary>
 		/// Pointer to the MOS6526 which this Interrupt belongs to
 		/// </summary>
-		private readonly Mos652x parent;
+		private readonly Mos652x m_parent;
 
 		/// <summary>
 		/// Event scheduler
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/********************************************************************/
 		protected InterruptSource(EventScheduler scheduler, Mos652x parent)
 		{
-			this.parent = parent;
+			m_parent = parent;
 			eventScheduler = scheduler;
 
 			interruptEvent = new EventCallback("CIA Interrupt", Interrupt);
@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			{
 				if (!asserted)
 				{
-					parent.Interrupt(true);
+					m_parent.Interrupt(true);
 					asserted = true;
 				}
 			}
@@ -296,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		{
 			if (asserted)
 			{
-				parent.Interrupt(false);
+				m_parent.Interrupt(false);
 				asserted = false;
 			}
 		}
