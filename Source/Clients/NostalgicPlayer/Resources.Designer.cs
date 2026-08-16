@@ -580,7 +580,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///
         ///Main programming: Thomas Neumann
         ///
-        ///Additional programming: Oliver Ickler
+        ///Additional programming:
+        ///Oliver Ickler &amp; Christian Gaarden Gaardmark
         ///
         ///Documentation: Thomas Neumann
         ///(based on the one written by Jaakko Leikas)
@@ -596,8 +597,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤CAdam Hathcock
         ///¤CDave Gandy
         ///¤COliver Ickler
-        ///¤COzkan Sezer, Alice Rowan and Miodrag Vallat
-        ///¤CTucker Byars and Jeremy [rest of string was truncated]&quot;;.
+        ///¤CChristian Gaarden Gaardmark
+        ///¤COzkan Se [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {

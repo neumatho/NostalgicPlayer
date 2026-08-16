@@ -281,7 +281,8 @@ Credits:
 
 Main programming: Thomas Neumann
 
-Additional programming: Oliver Ickler
+Additional programming:
+Oliver Ickler &amp; Christian Gaarden Gaardmark
 
 Documentation: Thomas Neumann
 (based on the one written by Jaakko Leikas)
@@ -297,6 +298,7 @@ Special thanks to these people:
 ¤CAdam Hathcock
 ¤CDave Gandy
 ¤COliver Ickler
+¤CChristian Gaarden Gaardmark
 ¤COzkan Sezer, Alice Rowan and Miodrag Vallat
 ¤CTucker Byars and Jeremy Yudkin
 ¤CNicolas Franck (Gryzor)
@@ -651,18 +653,18 @@ Formats supported:
   <data name="IDS_CONTEXTMENU_MODULELIST_PROPERTIES" xml:space="preserve">
     <value>Properties</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_LOAD_SAVE" xml:space="preserve">
     <value>Load/save</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS" xml:space="preserve">
     <value>Other actions</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_SHOW_IN_FILE_EXPLORER" xml:space="preserve">
     <value>Show in File Explorer</value>
   </data>
-	<data name="IDS_CONTEXTMENU_MODULELIST_SORT" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_MODULELIST_SORT" xml:space="preserve">
     <value>Sort</value>
-  </data>	
+  </data>
   <data name="IDS_CONTEXTMENU_SORT_SHUFFLE" xml:space="preserve">
     <value>Shuffle</value>
   </data>
