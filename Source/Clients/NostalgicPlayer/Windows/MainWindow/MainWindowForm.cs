@@ -36,7 +36,6 @@ using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
-using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -152,6 +151,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private ModuleListItem moduleListContextItem = null;
 		private KryptonContextMenuItem contextMenuItemRemove = null;
 		private KryptonContextMenuItem contextMenuSortMenu = null;
+		private KryptonContextMenuItem contextMenuOtherMenu = null;
 		private KryptonContextMenuItem contextMenuItemSetSubSong = null;
 		private KryptonContextMenuItem contextMenuItemClearSubSong = null;
 		private KryptonContextMenuSeparator contextMenuItemFileSeparator = null;
@@ -3507,14 +3507,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 
 			// Other actions
-			KryptonContextMenuItem moreMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, Resources.IDB_LIST, null);
+			contextMenuOtherMenu = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_MODULELIST_OTHER_ACTIONS, Resources.IDB_LIST, null);
 
 			KryptonContextMenuItem contextMenuItemSelectAll = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_ALL, ListMenu_SelectAll);
 			KryptonContextMenuItem contextMenuItemSelectNone = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SELECT_NONE, ListMenu_SelectNone);
 			contextMenuItemSetSubSong = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, Resources.IDB_SET_SUBSONG, ListMenu_SetDefaultSubSong);
 			contextMenuItemClearSubSong = new KryptonContextMenuItem(Resources.IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG, Resources.IDB_CLEAR_SUBSONG, ListMenu_ClearDefaultSubSong);
 
-			moreMenu.Items.Add(new KryptonContextMenuItems(
+			contextMenuOtherMenu.Items.Add(new KryptonContextMenuItems(
 				new KryptonContextMenuItemBase[]
 				{
 					contextMenuItemSelectAll,
@@ -3523,7 +3523,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					contextMenuItemSetSubSong,
 					contextMenuItemClearSubSong
 				}));
-			contextMenuItems.Items.Add(moreMenu);
+			contextMenuItems.Items.Add(contextMenuOtherMenu);
 
 
 
@@ -5954,11 +5954,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			// Determine whether the menu was opened on a selected list item
 			IReadOnlyList<int> selectedIndexes = moduleListControl.SelectedIndexes;
+			bool hasAny = moduleListControl.Items.Count > 0;
 			bool hasSelection = (moduleListContextItem != null) && (selectedIndexes.Count > 0);
 
 			// Update the list editing actions based on the current items and selection
 			contextMenuItemRemove.Enabled = hasSelection;
-			contextMenuSortMenu.Enabled = moduleListControl.Items.Count > 0;
+			contextMenuSortMenu.Enabled = hasAny;
+			contextMenuOtherMenu.Enabled = hasAny;
 
 			// Update the default sub-song actions from the playback and selection state
 			contextMenuItemSetSubSong.Enabled = moduleHandler.IsModuleLoaded;
