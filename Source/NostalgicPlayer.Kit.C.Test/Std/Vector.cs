@@ -79,7 +79,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Construction_From_Array()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3, 4 });
+			vector<int> v = new vector<int>([ 1, 2, 3, 4 ]);
 
 			Assert.AreEqual(4UL, v.size());
 			Assert.AreEqual(1, v[0]);
@@ -96,7 +96,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Construction_From_Range()
 		{
-			CPointer<int> source = new CPointer<int>(new[] { 10, 20, 30, 40, 50 });
+			CPointer<int> source = new CPointer<int>([ 10, 20, 30, 40, 50 ]);
 
 			vector<int> v = new vector<int>(source + 1, source + 4);
 
@@ -116,7 +116,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Copy_Construction_Is_Independent()
 		{
-			vector<int> original = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> original = new vector<int>([ 1, 2, 3 ]);
 			vector<int> copy = new vector<int>(original);
 
 			copy[0] = 99;
@@ -175,7 +175,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Pop_Back()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			v.pop_back();
 
@@ -193,7 +193,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Indexer_Returns_Modifiable_Reference()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			v[1] = 20;
 
@@ -210,7 +210,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_At_In_Range()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			Assert.AreEqual(2, v.at(1));
 		}
@@ -225,7 +225,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_At_Out_Of_Range_Throws()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			Assert.ThrowsExactly<out_of_range>(() => _ = v.at((size_t)3));
 		}
@@ -241,7 +241,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Iterate_With_Pointer()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3, 4 });
+			vector<int> v = new vector<int>([ 1, 2, 3, 4 ]);
 
 			int sum = 0;
 
@@ -261,7 +261,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Clear_Keeps_Capacity()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 			size_t capacityBefore = v.capacity();
 
 			v.clear();
@@ -281,7 +281,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Reserve()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			v.reserve((size_t)100);
 
@@ -321,7 +321,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Resize_Grow()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2 });
+			vector<int> v = new vector<int>([ 1, 2 ]);
 
 			v.resize((size_t)5);
 
@@ -340,7 +340,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Resize_Shrink()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3, 4, 5 });
+			vector<int> v = new vector<int>([ 1, 2, 3, 4, 5 ]);
 
 			v.resize((size_t)2);
 
@@ -358,7 +358,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Resize_Grow_With_Value()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2 });
+			vector<int> v = new vector<int>([ 1, 2 ]);
 
 			v.resize((size_t)4, 9);
 
@@ -377,7 +377,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Insert_Single()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 4 });
+			vector<int> v = new vector<int>([ 1, 2, 4 ]);
 
 			CPointer<int> result = v.insert(v.begin() + 2, 3);
 
@@ -399,7 +399,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Insert_Count()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 4 });
+			vector<int> v = new vector<int>([ 1, 4 ]);
 
 			v.insert(v.begin() + 1, (size_t)3, 9);
 
@@ -421,8 +421,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Insert_Range()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 5 });
-			CPointer<int> source = new CPointer<int>(new[] { 2, 3, 4 });
+			vector<int> v = new vector<int>([ 1, 5 ]);
+			CPointer<int> source = new CPointer<int>([ 2, 3, 4 ]);
 
 			v.insert(v.begin() + 1, source, source + 3);
 
@@ -444,7 +444,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Insert_At_End()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2 });
+			vector<int> v = new vector<int>([ 1, 2 ]);
 
 			v.insert(v.end(), 3);
 
@@ -463,7 +463,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Erase_Single()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3, 4 });
+			vector<int> v = new vector<int>([ 1, 2, 3, 4 ]);
 
 			CPointer<int> next = v.erase(v.begin() + 1);
 
@@ -484,7 +484,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Erase_Range()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3, 4, 5 });
+			vector<int> v = new vector<int>([ 1, 2, 3, 4, 5 ]);
 
 			v.erase(v.begin() + 1, v.begin() + 4);
 
@@ -503,7 +503,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Assign_Count_Value()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			v.assign((size_t)2, 8);
 
@@ -522,8 +522,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Swap()
 		{
-			vector<int> a = new vector<int>(new[] { 1, 2 });
-			vector<int> b = new vector<int>(new[] { 9, 8, 7 });
+			vector<int> a = new vector<int>([ 1, 2 ]);
+			vector<int> b = new vector<int>([ 9, 8, 7 ]);
 
 			a.swap(b);
 
@@ -543,9 +543,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Equality()
 		{
-			vector<int> a = new vector<int>(new[] { 1, 2, 3 });
-			vector<int> b = new vector<int>(new[] { 1, 2, 3 });
-			vector<int> c = new vector<int>(new[] { 1, 2, 4 });
+			vector<int> a = new vector<int>([ 1, 2, 3 ]);
+			vector<int> b = new vector<int>([ 1, 2, 3 ]);
+			vector<int> c = new vector<int>([ 1, 2, 4 ]);
 
 			Assert.IsTrue(a == b);
 			Assert.IsFalse(a == c);
@@ -562,9 +562,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Lexicographical_Compare()
 		{
-			vector<int> a = new vector<int>(new[] { 1, 2, 3 });
-			vector<int> b = new vector<int>(new[] { 1, 2, 4 });
-			vector<int> c = new vector<int>(new[] { 1, 2 });
+			vector<int> a = new vector<int>([ 1, 2, 3 ]);
+			vector<int> b = new vector<int>([ 1, 2, 4 ]);
+			vector<int> c = new vector<int>([ 1, 2 ]);
 
 			Assert.IsTrue(a < b);
 			Assert.IsTrue(b > a);
@@ -582,7 +582,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Data_Points_To_Buffer()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			CPointer<int> ptr = v.data();
 			ptr[1] = 20;
@@ -846,7 +846,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Foreach_Visits_All_Elements()
 		{
-			vector<int> v = new vector<int>(new[] { 10, 20, 30 });
+			vector<int> v = new vector<int>([ 10, 20, 30 ]);
 
 			int sum = 0;
 			int visited = 0;
@@ -872,7 +872,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Foreach_By_Reference_Modifies_Elements()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3 });
+			vector<int> v = new vector<int>([ 1, 2, 3 ]);
 
 			foreach (ref int value in v)
 				value *= 10;

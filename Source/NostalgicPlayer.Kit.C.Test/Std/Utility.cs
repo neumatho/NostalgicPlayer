@@ -173,7 +173,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			map<int, int> source = new map<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
 
-			foreach (int k in new[] { 1, 2, 3 })
+			int[] keys = [ 1, 2, 3 ];
+
+			foreach (int k in keys)
 				source[k] = k;
 
 			map<int, int> moved = Utility.move(source);
@@ -184,9 +186,13 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			foreach (pair<int, int> kv in moved)
 				movedKeys[i++] = kv.first;
 
-			CollectionAssert.AreEqual(new[] { 3, 2, 1 }, movedKeys);
+			int[] expectedMovedKeys = [ 3, 2, 1 ];
 
-			foreach (int k in new[] { 4, 5 })
+			CollectionAssert.AreEqual(expectedMovedKeys, movedKeys);
+
+			int[] moreKeys = [ 4, 5 ];
+
+			foreach (int k in moreKeys)
 				source[k] = k;
 
 			int[] sourceKeys = new int[2];
@@ -195,7 +201,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			foreach (pair<int, int> kv in source)
 				sourceKeys[i++] = kv.first;
 
-			CollectionAssert.AreEqual(new[] { 5, 4 }, sourceKeys);
+			int[] expectedSourceKeys = [ 5, 4 ];
+
+			CollectionAssert.AreEqual(expectedSourceKeys, sourceKeys);
 		}
 
 

@@ -124,8 +124,10 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			set<int> s = new set<int>();
 			s.insert([ 3, 1, 2, 1 ]);
 
+			int[] expected = [ 1, 2, 3 ];
+
 			Assert.AreEqual(3UL, s.size());
-			CollectionAssert.AreEqual(new[] { 1, 2, 3 }, s.ToList());
+			CollectionAssert.AreEqual(expected, s.ToList());
 		}
 
 
@@ -187,8 +189,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		public void Test_Iteration_Is_Ordered()
 		{
 			set<int> s = new set<int>();
+			int[] values = [ 5, 1, 4, 2, 3, 9, 7, 6, 8, 0 ];
 
-			foreach (int k in new[] { 5, 1, 4, 2, 3, 9, 7, 6, 8, 0 })
+			foreach (int k in values)
 				s.insert(k);
 
 			int expected = 0;
@@ -219,7 +222,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			foreach (int value in s)
 				values.Add(value);
 
-			CollectionAssert.AreEqual(new[] { 1, 2, 3 }, values);
+			int[] expected = [ 1, 2, 3 ];
+
+			CollectionAssert.AreEqual(expected, values);
 		}
 
 
@@ -499,7 +504,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 			s.insert([ 1, 2, 3 ]);
 
-			CollectionAssert.AreEqual(new[] { 3, 2, 1 }, s.ToList());
+			int[] expected = [ 3, 2, 1 ];
+
+			CollectionAssert.AreEqual(expected, s.ToList());
 			Assert.AreSame(comparer, s.key_comp());
 			Assert.AreSame(comparer, s.value_comp());
 			Assert.AreEqual(2, s.lower_bound(2).Value);

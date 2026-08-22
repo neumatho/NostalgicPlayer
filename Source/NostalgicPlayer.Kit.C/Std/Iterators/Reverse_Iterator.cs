@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 	/// reverse_iterator refers to. In other words, ＆*rit == ＆*(rit.base() -
 	/// 1), just like in C++
 	/// </summary>
-	public struct reverse_iterator<T> : IIterator<reverse_iterator<T>, T>, IRandom_Access_Iterator<reverse_iterator<T>>, IEquatable<reverse_iterator<T>>
+	public struct reverse_iterator<T> : IIterator<reverse_iterator<T>, T>, IRandom_Access_Iterator<reverse_iterator<T>, T>, IEquatable<reverse_iterator<T>>
 	{
 		private forward_iterator<T> current;
 
@@ -275,6 +275,20 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 		ptrdiff_t IRandom_Access_Iterator<reverse_iterator<T>>.DistanceFrom(reverse_iterator<T> other)
 		{
 			return other.current - current;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The element at the given distance from the one the iterator
+		/// refers to (C++ it[n])
+		/// </summary>
+		/********************************************************************/
+		ref T IRandom_Access_Iterator<reverse_iterator<T>, T>.this[ptrdiff_t index]
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => ref current[(int)(-index - 1)];
 		}
 		#endregion
 

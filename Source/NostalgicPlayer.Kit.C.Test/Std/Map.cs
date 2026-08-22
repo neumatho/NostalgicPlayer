@@ -40,12 +40,12 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Construction_From_Items()
 		{
-			map<int, string> m = new map<int, string>(new[]
-			{
+			map<int, string> m = new map<int, string>(
+			[
 				new pair<int, string>(2, "two"),
 				new pair<int, string>(1, "one"),
 				new pair<int, string>(3, "three")
-			});
+			]);
 
 			Assert.AreEqual(3UL, m.size());
 			Assert.AreEqual("one", m[1]);
@@ -64,11 +64,11 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Construction_Keeps_First_Duplicate()
 		{
-			map<int, string> m = new map<int, string>(new[]
-			{
+			map<int, string> m = new map<int, string>(
+			[
 				new pair<int, string>(1, "first"),
 				new pair<int, string>(1, "second")
-			});
+			]);
 
 			Assert.AreEqual(1UL, m.size());
 			Assert.AreEqual("first", m[1]);
@@ -242,8 +242,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		public void Test_Iteration_Is_Ordered()
 		{
 			map<int, int> m = new map<int, int>();
+			int[] keys = [ 5, 1, 4, 2, 3, 9, 7, 6, 8, 0 ];
 
-			foreach (int k in new[] { 5, 1, 4, 2, 3, 9, 7, 6, 8, 0 })
+			foreach (int k in keys)
 				m[k] = k * 10;
 
 			int expected = 0;
@@ -269,8 +270,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		public void Test_Foreach_Is_Ordered()
 		{
 			map<int, int> m = new map<int, int>();
+			int[] inserted = [ 3, 1, 2 ];
 
-			foreach (int k in new[] { 3, 1, 2 })
+			foreach (int k in inserted)
 				m[k] = k;
 
 			List<int> keys = new List<int>();
@@ -278,7 +280,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			foreach (pair<int, int> kv in m)
 				keys.Add(kv.first);
 
-			CollectionAssert.AreEqual(new[] { 1, 2, 3 }, keys);
+			int[] expected = [ 1, 2, 3 ];
+
+			CollectionAssert.AreEqual(expected, keys);
 		}
 
 
@@ -319,8 +323,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		public void Test_Bounds()
 		{
 			map<int, int> m = new map<int, int>();
+			int[] keys = [ 10, 20, 30, 40 ];
 
-			foreach (int k in new[] { 10, 20, 30, 40 })
+			foreach (int k in keys)
 				m[k] = k;
 
 			Assert.AreEqual(20, m.lower_bound(20).first);
@@ -515,7 +520,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			map<int, int> m = new map<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
 
-			foreach (int k in new[] { 1, 2, 3 })
+			int[] inserted = [ 1, 2, 3 ];
+
+			foreach (int k in inserted)
 				m[k] = k;
 
 			List<int> keys = new List<int>();
@@ -523,7 +530,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			foreach (pair<int, int> kv in m)
 				keys.Add(kv.first);
 
-			CollectionAssert.AreEqual(new[] { 3, 2, 1 }, keys);
+			int[] expected = [ 3, 2, 1 ];
+
+			CollectionAssert.AreEqual(expected, keys);
 		}
 
 

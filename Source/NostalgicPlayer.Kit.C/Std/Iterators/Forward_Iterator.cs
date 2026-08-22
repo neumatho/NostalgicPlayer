@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 	/// any code that expects a plain pointer, while still being a distinct
 	/// named type that mirrors <see cref="reverse_iterator{T}"/>
 	/// </summary>
-	public struct forward_iterator<T> : IIterator<forward_iterator<T>, T>, IRandom_Access_Iterator<forward_iterator<T>>, IEquatable<forward_iterator<T>>
+	public struct forward_iterator<T> : IIterator<forward_iterator<T>, T>, IRandom_Access_Iterator<forward_iterator<T>, T>, IEquatable<forward_iterator<T>>
 	{
 		private CPointer<T> current;
 
@@ -271,6 +271,20 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 		ptrdiff_t IRandom_Access_Iterator<forward_iterator<T>>.DistanceFrom(forward_iterator<T> other)
 		{
 			return current - other.current;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The element at the given distance from the one the iterator
+		/// refers to (C++ it[n])
+		/// </summary>
+		/********************************************************************/
+		ref T IRandom_Access_Iterator<forward_iterator<T>, T>.this[ptrdiff_t index]
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => ref current[index];
 		}
 		#endregion
 

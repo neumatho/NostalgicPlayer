@@ -83,7 +83,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Find_On_Vector()
 		{
-			vector<int> v = new vector<int>(new[] { 10, 20, 30, 40 });
+			vector<int> v = new vector<int>([ 10, 20, 30, 40 ]);
 
 			forward_iterator<int> result = Algorithm.find(v.begin(), v.end(), 30);
 
@@ -160,7 +160,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Find_If_On_Vector()
 		{
-			vector<int> v = new vector<int>(new[] { 10, 20, 30, 40 });
+			vector<int> v = new vector<int>([ 10, 20, 30, 40 ]);
 
 			forward_iterator<int> result = Algorithm.find_if(v.begin(), v.end(), (int x) => x > 25);
 
@@ -357,7 +357,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Replace_On_Vector()
 		{
-			vector<int> v = new vector<int>(new[] { 10, 20, 30, 20 });
+			vector<int> v = new vector<int>([ 10, 20, 30, 20 ]);
 
 			Algorithm.replace(v.begin(), v.end(), 20, 40);
 
@@ -550,9 +550,221 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		public void Test_Equal_Mixed_Iterator_Types()
 		{
 			CPointer<int> a = new int[] { 10, 20, 30 };
-			vector<int> v = new vector<int>(new[] { 10, 20, 30 });
+			vector<int> v = new vector<int>([ 10, 20, 30 ]);
 
 			Assert.IsTrue(Algorithm.equal<CPointer<int>, forward_iterator<int>, int>(a, a + 3, v.begin(), v.end()));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must put the smallest elements of the range in
+		/// ascending order at the beginning of it
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_Sorts_The_Smallest_Elements()
+		{
+			CPointer<int> data = new int[] { 5, 1, 9, 3, 7, 2 };
+			forward_iterator<int> begin = new forward_iterator<int>(data);
+			forward_iterator<int> end = new forward_iterator<int>(data.End());
+
+			Algorithm.partial_sort<forward_iterator<int>, int>(begin, begin + 3, end);
+
+			Assert.AreEqual(1, data[0]);
+			Assert.AreEqual(2, data[1]);
+			Assert.AreEqual(3, data[2]);
+
+			// The rest of the range holds the remaining elements in an
+			// unspecified order
+			int[] expected = [ 5, 7, 9 ];
+			int[] rest = [ data[3], data[4], data[5] ];
+
+			CollectionAssert.AreEquivalent(expected, rest);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must sort the whole range when middle is last
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_Whole_Range_Sorts_Everything()
+		{
+			CPointer<int> data = new int[] { 4, 8, 1, 1, 6, 3, 9, 2 };
+			forward_iterator<int> begin = new forward_iterator<int>(data);
+			forward_iterator<int> end = new forward_iterator<int>(data.End());
+
+			Algorithm.partial_sort<forward_iterator<int>, int>(begin, end, end);
+
+			int[] expected = [ 1, 1, 2, 3, 4, 6, 8, 9 ];
+			int[] actual = [ data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7] ];
+
+			CollectionAssert.AreEqual(expected, actual);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must do nothing when middle is first
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_Empty_Sort_Range_Does_Nothing()
+		{
+			CPointer<int> data = new int[] { 5, 1, 9 };
+			forward_iterator<int> begin = new forward_iterator<int>(data);
+			forward_iterator<int> end = new forward_iterator<int>(data.End());
+
+			Algorithm.partial_sort<forward_iterator<int>, int>(begin, begin, end);
+
+			int[] expected = [ 5, 1, 9 ];
+			int[] actual = [ data[0], data[1], data[2] ];
+
+			CollectionAssert.AreEqual(expected, actual);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort on an empty range must do nothing
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_Empty_Range_Does_Nothing()
+		{
+			CPointer<int> data = new int[] { 5, 1, 9 };
+			forward_iterator<int> first = new forward_iterator<int>(data.Begin());
+
+			Algorithm.partial_sort<forward_iterator<int>, int>(first, first, first);
+
+			int[] expected = [ 5, 1, 9 ];
+			int[] actual = [ data[0], data[1], data[2] ];
+
+			CollectionAssert.AreEqual(expected, actual);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must leave the elements outside the given range
+		/// untouched
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_Leaves_Elements_Outside_Range_Untouched()
+		{
+			CPointer<int> data = new int[] { 8, 8, 5, 1, 3, 8, 8 };
+
+			Algorithm.partial_sort<CPointer<int>, int>(data + 2, data + 4, data + 5);
+
+			Assert.AreEqual(8, data[0]);
+			Assert.AreEqual(8, data[1]);
+			Assert.AreEqual(1, data[2]);
+			Assert.AreEqual(3, data[3]);
+			Assert.AreEqual(5, data[4]);
+			Assert.AreEqual(8, data[5]);
+			Assert.AreEqual(8, data[6]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must keep every duplicate of the values it moves to
+		/// the beginning of the range
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_Handles_Duplicates()
+		{
+			CPointer<int> data = new int[] { 2, 1, 2, 1, 2, 1 };
+
+			Algorithm.partial_sort<CPointer<int>, int>(data, data + 4, data + 6);
+
+			int[] expected = [ 1, 1, 1, 2, 2, 2 ];
+			int[] actual = [ data[0], data[1], data[2], data[3], data[4], data[5] ];
+
+			CollectionAssert.AreEqual(expected, actual);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must use the given comparer, so that the largest
+		/// elements can be moved to the beginning of the range instead
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_With_Comparer()
+		{
+			CPointer<int> data = new int[] { 5, 1, 9, 3, 7, 2 };
+
+			Algorithm.partial_sort(data, data + 2, data + 6, (int a, int b) => a > b);
+
+			Assert.AreEqual(9, data[0]);
+			Assert.AreEqual(7, data[1]);
+
+			int[] expected = [ 1, 2, 3, 5 ];
+			int[] rest = [ data[2], data[3], data[4], data[5] ];
+
+			CollectionAssert.AreEquivalent(expected, rest);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must work on the [begin(), end()) range of a vector
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_On_Vector()
+		{
+			vector<int> v = new vector<int>([ 40, 10, 30, 20 ]);
+
+			Algorithm.partial_sort<forward_iterator<int>, int>(v.begin(), v.begin() + 2, v.end());
+
+			Assert.AreEqual(10, v[0]);
+			Assert.AreEqual(20, v[1]);
+
+			int[] expected = [ 30, 40 ];
+			int[] rest = [ v[2], v[3] ];
+
+			CollectionAssert.AreEquivalent(expected, rest);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// partial_sort must work on a reverse_iterator range, which sorts
+		/// the elements from the end of the range and backwards
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Partial_Sort_On_Reverse_Iterators()
+		{
+			CPointer<int> data = new int[] { 5, 1, 9, 3 };
+			reverse_iterator<int> rbegin = new reverse_iterator<int>(new forward_iterator<int>(data.End()));
+			reverse_iterator<int> rend = new reverse_iterator<int>(new forward_iterator<int>(data.Begin()));
+
+			Algorithm.partial_sort<reverse_iterator<int>, int>(rbegin, rbegin + 2, rend);
+
+			Assert.AreEqual(1, data[3]);
+			Assert.AreEqual(3, data[2]);
+
+			int[] expected = [ 5, 9 ];
+			int[] rest = [ data[0], data[1] ];
+
+			CollectionAssert.AreEquivalent(expected, rest);
 		}
 
 
@@ -635,7 +847,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Binary_Search_On_Vector()
 		{
-			vector<int> v = new vector<int>(new[] { 10, 20, 30, 40 });
+			vector<int> v = new vector<int>([ 10, 20, 30, 40 ]);
 
 			Assert.IsTrue(Algorithm.binary_search(v.begin(), v.end(), 40));
 			Assert.IsFalse(Algorithm.binary_search(v.begin(), v.end(), 35));

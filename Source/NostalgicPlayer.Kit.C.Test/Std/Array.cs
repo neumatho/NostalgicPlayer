@@ -45,7 +45,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Construction_From_Array()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3, 4 });
+			array<int> a = new array<int>([ 1, 2, 3, 4 ]);
 
 			Assert.AreEqual(4UL, a.size());
 			Assert.AreEqual(1, a[0]);
@@ -116,7 +116,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Copy_Construction_Is_Independent()
 		{
-			array<int> original = new array<int>(new[] { 1, 2, 3 });
+			array<int> original = new array<int>([ 1, 2, 3 ]);
 			array<int> copy = new array<int>(original);
 
 			copy[0] = 99;
@@ -169,7 +169,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Indexer_Returns_Modifiable_Reference()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
 
 			a[1] = 20;
 
@@ -186,7 +186,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Front_And_Back()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
 
 			Assert.AreEqual(1, a.front());
 			Assert.AreEqual(3, a.back());
@@ -202,7 +202,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_At_In_Range()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
 
 			Assert.AreEqual(2, a.at(1));
 		}
@@ -217,7 +217,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_At_Out_Of_Range_Throws()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
 
 			Assert.ThrowsExactly<out_of_range>(() => _ = a.at((size_t)3));
 		}
@@ -233,7 +233,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Iterate_With_Pointer()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3, 4 });
+			array<int> a = new array<int>([ 1, 2, 3, 4 ]);
 
 			int sum = 0;
 
@@ -253,7 +253,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Reverse_Iterate()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
 
 			int[] visited = new int[3];
 			int index = 0;
@@ -276,7 +276,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Data_Points_To_Buffer()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
 
 			CPointer<int> ptr = a.data();
 			ptr[1] = 20;
@@ -312,8 +312,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Swap()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
-			array<int> b = new array<int>(new[] { 9, 8, 7 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
+			array<int> b = new array<int>([ 9, 8, 7 ]);
 
 			a.swap(b);
 
@@ -349,9 +349,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Equality()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
-			array<int> b = new array<int>(new[] { 1, 2, 3 });
-			array<int> c = new array<int>(new[] { 1, 2, 4 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
+			array<int> b = new array<int>([ 1, 2, 3 ]);
+			array<int> c = new array<int>([ 1, 2, 4 ]);
 
 			Assert.IsTrue(a == b);
 			Assert.IsFalse(a == c);
@@ -368,8 +368,8 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Lexicographical_Compare()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
-			array<int> b = new array<int>(new[] { 1, 2, 4 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
+			array<int> b = new array<int>([ 1, 2, 4 ]);
 
 			Assert.IsTrue(a < b);
 			Assert.IsTrue(b > a);
@@ -519,7 +519,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Foreach_Visits_All_Elements()
 		{
-			array<int> a = new array<int>(new[] { 10, 20, 30 });
+			array<int> a = new array<int>([ 10, 20, 30 ]);
 
 			int sum = 0;
 			int visited = 0;
@@ -545,7 +545,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Foreach_By_Reference_Modifies_Elements()
 		{
-			array<int> a = new array<int>(new[] { 1, 2, 3 });
+			array<int> a = new array<int>([ 1, 2, 3 ]);
 
 			foreach (ref int value in a)
 				value *= 10;

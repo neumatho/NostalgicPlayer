@@ -24,4 +24,24 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 		/// </summary>
 		ptrdiff_t DistanceFrom(TSelf other);
 	}
+
+
+
+	/// <summary>
+	/// An <see cref="IRandom_Access_Iterator{TSelf}"/> that also gives
+	/// access to the elements it refers to. This is the interface the
+	/// algorithms that need to reach any element of a range in constant
+	/// time (like
+	/// <see cref="Algorithm.partial_sort{TIt, T}(TIt, TIt, TIt)"/>)
+	/// operate on
+	/// </summary>
+	public interface IRandom_Access_Iterator<TSelf, T> : IRandom_Access_Iterator<TSelf>, IIterator<TSelf, T> where TSelf : IRandom_Access_Iterator<TSelf, T>
+	{
+		/// <summary>
+		/// The element at the given distance from the one the iterator
+		/// refers to (C++ it[n]). Index 0 is the element the iterator
+		/// itself refers to
+		/// </summary>
+		ref T this[ptrdiff_t index] { get; }
+	}
 }

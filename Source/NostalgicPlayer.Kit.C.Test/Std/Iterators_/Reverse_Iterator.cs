@@ -23,7 +23,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std.Iterators_
 		[TestMethod]
 		public void Test_RBegin_Refers_To_Last_Element()
 		{
-			vector<int> v = new vector<int>(new[] { 10, 20, 30 });
+			vector<int> v = new vector<int>([ 10, 20, 30 ]);
 
 			reverse_iterator<int> rit = v.rbegin();
 
@@ -42,7 +42,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std.Iterators_
 		[TestMethod]
 		public void Test_Reverse_Iteration_Order()
 		{
-			vector<int> v = new vector<int>(new[] { 1, 2, 3, 4 });
+			vector<int> v = new vector<int>([ 1, 2, 3, 4 ]);
 
 			int[] visited = new int[4];
 			int i = 0;
@@ -50,7 +50,9 @@ namespace NostalgicPlayer.Kit.C.Test.Std.Iterators_
 			for (reverse_iterator<int> it = v.rbegin(); it != v.rend(); it++)
 				visited[i++] = it[0];
 
-			CollectionAssert.AreEqual(new[] { 4, 3, 2, 1 }, visited);
+			int[] expected = [ 4, 3, 2, 1 ];
+
+			CollectionAssert.AreEqual(expected, visited);
 		}
 
 
@@ -66,7 +68,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std.Iterators_
 		public void Test_Find_If_Reverse_Trimmed_Length()
 		{
 			// Three real values followed by two trailing -1 markers
-			vector<int> v = new vector<int>(new[] { 5, 7, 9, -1, -1 });
+			vector<int> v = new vector<int>([ 5, 7, 9, -1, -1 ]);
 
 			reverse_iterator<int> last = Algorithm.find_if(v.rbegin(), v.rend(), (int x) => x != -1);
 
@@ -85,7 +87,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std.Iterators_
 		[TestMethod]
 		public void Test_Find_If_Reverse_No_Match()
 		{
-			vector<int> v = new vector<int>(new[] { -1, -1, -1 });
+			vector<int> v = new vector<int>([ -1, -1, -1 ]);
 
 			reverse_iterator<int> last = Algorithm.find_if(v.rbegin(), v.rend(), (int x) => x != -1);
 

@@ -278,6 +278,90 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// Rearranges the elements in the range [first, last) so that
+		/// [first, middle) holds the smallest elements of the whole range
+		/// in ascending order, while the order of the elements left in
+		/// [middle, last) is unspecified
+		/// (C++ partial_sort(RandomIt first, RandomIt middle,
+		/// RandomIt last)).
+		///
+		/// Elements are ordered with Comparer‹T›.Default (which uses
+		/// IComparable‹T›), the C# equivalent of the C++ operator‹ that
+		/// partial_sort uses.
+		///
+		/// C# cannot infer the element type T from the iterator constraints
+		/// alone, so the type arguments must be given explicitly (for
+		/// example partial_sort‹forward_iterator‹int›, int›)
+		/// </summary>
+		/********************************************************************/
+		public static void partial_sort<TIt, T>(TIt first, TIt middle, TIt last) where TIt : IRandom_Access_Iterator<TIt, T>
+		{
+			partial_sort(first, middle, last, (T a, T b) => Comparer<T>.Default.Compare(a, b) < 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Rearranges the elements in the range [first, last) so that
+		/// [first, middle) holds the smallest elements of the whole range
+		/// in ascending order, while the order of the elements left in
+		/// [middle, last) is unspecified
+		/// (C++ partial_sort(RandomIt first, RandomIt middle,
+		/// RandomIt last, Compare comp)).
+		///
+		/// The comparer must return true if its first argument is ordered
+		/// before its second. Elements that are ordered neither before nor
+		/// after each other come out in an unspecified order, as
+		/// partial_sort is not stable.
+		///
+		/// The elements are picked and sorted through a heap, just like the
+		/// C++ one does, so the number of comparisons is at most N*log(M),
+		/// where N is the length of [first, last) and M the length of
+		/// [first, middle).
+		///
+		/// Note that the comparer must have explicitly typed parameters (for
+		/// example (int a, int b) => ...) so the element type T can be
+		/// inferred
+		/// </summary>
+		/********************************************************************/
+		public static void partial_sort<TIt, T>(TIt first, TIt middle, TIt last, Func<T, T, bool> comp) where TIt : IRandom_Access_Iterator<TIt, T>
+		{
+			ptrdiff_t sorted = middle.DistanceFrom(first);
+			if (sorted <= 0)
+				return;
+
+			ptrdiff_t count = last.DistanceFrom(first);
+
+			// Make a max heap out of the elements to be sorted
+			for (ptrdiff_t i = sorted / 2; i > 0; i--)
+				Sift_Down(first, i - 1, sorted, comp);
+
+			// Let every one of the remaining elements that is smaller than
+			// the largest element of the heap take its place, so that the
+			// heap ends up holding the smallest elements of the whole range
+			for (ptrdiff_t i = sorted; i < count; i++)
+			{
+				if (comp(first[i], first[0]))
+				{
+					Swap<TIt, T>(first, 0, i);
+					Sift_Down(first, 0, sorted, comp);
+				}
+			}
+
+			// Sort the heap by moving its largest element to the end of it,
+			// over and over
+			for (ptrdiff_t i = sorted - 1; i > 0; i--)
+			{
+				Swap<TIt, T>(first, 0, i);
+				Sift_Down(first, 0, i, comp);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true if an element equal to the given value is found in
 		/// the range [first, last), and false otherwise
 		/// (C++ binary_search(ForwardIt first, ForwardIt last,
@@ -359,6 +443,53 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 			}
 
 			return first;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Moves the element at the given index down into the max heap that
+		/// begins at first and holds count elements, until the element has
+		/// found the place where the heap condition holds again (C++ does
+		/// the same in its pop_heap and make_heap)
+		/// </summary>
+		/********************************************************************/
+		private static void Sift_Down<TIt, T>(TIt first, ptrdiff_t index, ptrdiff_t count, Func<T, T, bool> comp) where TIt : IRandom_Access_Iterator<TIt, T>
+		{
+			for (;;)
+			{
+				ptrdiff_t child = (index * 2) + 1;
+				if (child >= count)
+					break;
+
+				// Take the larger of the two children
+				if (((child + 1) < count) && comp(first[child], first[child + 1]))
+					child++;
+
+				if (!comp(first[index], first[child]))
+					break;
+
+				Swap<TIt, T>(first, index, child);
+				index = child;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Exchanges the two elements lying at the given distances from
+		/// first. The elements are exchanged just as they are, which is
+		/// what the C++ swap() used by the sorting algorithms does
+		/// </summary>
+		/********************************************************************/
+		private static void Swap<TIt, T>(TIt first, ptrdiff_t index1, ptrdiff_t index2) where TIt : IRandom_Access_Iterator<TIt, T>
+		{
+			T temp = first[index1];
+
+			first[index1] = first[index2];
+			first[index2] = temp;
 		}
 
 

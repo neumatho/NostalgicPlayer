@@ -75,7 +75,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		[TestMethod]
 		public void Test_Distance_On_Vector()
 		{
-			vector<int> v = new vector<int>(new[] { 10, 20, 30, 40 });
+			vector<int> v = new vector<int>([ 10, 20, 30, 40 ]);
 
 			Assert.AreEqual(4L, Iterator.distance(v.begin(), v.end()));
 		}
