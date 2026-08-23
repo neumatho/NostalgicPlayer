@@ -160,6 +160,47 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// Moves the elements in the range [first, last) to another range
+		/// ending at d_last, and returns the destination iterator that the
+		/// first element was moved to
+		/// (C++ move_backward(BidirIt1 first, BidirIt1 last,
+		/// BidirIt2 d_last)).
+		///
+		/// The elements are moved in backward order (the last element is
+		/// moved first), so the two ranges may overlap as long as d_last is
+		/// not inside (first, last]. Each element is handed over with
+		/// Utility.move, which leaves an element implementing IMoveable‹T›
+		/// in a moved-from state, matching the move assignment that C++
+		/// move_backward performs on each element.
+		///
+		/// The source and the destination iterators are independent types,
+		/// both implementing
+		/// <see cref="Iterators.IBidirectional_Iterator{TSelf, T}"/> (for
+		/// example a CPointer‹T›, a
+		/// <see cref="Iterators.forward_iterator{T}"/> or a
+		/// <see cref="Iterators.reverse_iterator{T}"/>). As with
+		/// <see cref="copy"/>, C# cannot infer the element type T from the
+		/// iterator constraints alone, so the type arguments must be given
+		/// explicitly
+		/// </summary>
+		/********************************************************************/
+		public static TDstIt move_backward<TSrcIt, TDstIt, T>(TSrcIt first, TSrcIt last, TDstIt d_last) where TSrcIt : IBidirectional_Iterator<TSrcIt, T> where TDstIt : IBidirectional_Iterator<TDstIt, T>
+		{
+			while (!first.Equals(last))
+			{
+				last = last.Prev();
+				d_last = d_last.Prev();
+
+				d_last.Value = Utility.move(last.Value);
+			}
+
+			return d_last;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Applies the given operation to every element in the range
 		/// (first1, last1), stores each result in the range beginning at
 		/// d_first, and returns the destination iterator one past the last

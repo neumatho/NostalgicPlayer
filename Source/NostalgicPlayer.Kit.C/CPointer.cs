@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct CPointer<T> : IPointerInternal, IIterator<CPointer<T>, T>, IRandom_Access_Iterator<CPointer<T>, T>, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
+	public struct CPointer<T> : IPointerInternal, IIterator<CPointer<T>, T>, IBidirectional_Iterator<CPointer<T>, T>, IRandom_Access_Iterator<CPointer<T>, T>, IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IClearable, IDeepCloneable<CPointer<T>>
 	{
 		#region CastMemoryManager class
 		private sealed class CastMemoryManager<TFrom, TTo> : MemoryManager<TTo> where TFrom : unmanaged where TTo : unmanaged
@@ -1094,6 +1094,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		CPointer<T> IIterator<CPointer<T>>.Next()
 		{
 			return this + 1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a copy of the pointer moved one element towards the
+		/// beginning of the range (C++ --it)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		CPointer<T> IBidirectional_Iterator<CPointer<T>>.Prev()
+		{
+			return this - 1;
 		}
 
 

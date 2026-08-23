@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 	/// reverse_iterator refers to. In other words, ＆*rit == ＆*(rit.base() -
 	/// 1), just like in C++
 	/// </summary>
-	public struct reverse_iterator<T> : IIterator<reverse_iterator<T>, T>, IRandom_Access_Iterator<reverse_iterator<T>, T>, IEquatable<reverse_iterator<T>>
+	public struct reverse_iterator<T> : IIterator<reverse_iterator<T>, T>, IBidirectional_Iterator<reverse_iterator<T>, T>, IRandom_Access_Iterator<reverse_iterator<T>, T>, IEquatable<reverse_iterator<T>>
 	{
 		private forward_iterator<T> current;
 
@@ -262,6 +262,21 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 		reverse_iterator<T> IIterator<reverse_iterator<T>>.Next()
 		{
 			return new reverse_iterator<T>(current - 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a copy of the iterator moved one element towards the
+		/// beginning of the range, which is towards the end of the
+		/// underlying range (C++ --it)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		reverse_iterator<T> IBidirectional_Iterator<reverse_iterator<T>>.Prev()
+		{
+			return new reverse_iterator<T>(current + 1);
 		}
 
 

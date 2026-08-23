@@ -486,6 +486,129 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// move_backward must move every element of the source range into
+		/// the range that ends at the given destination iterator
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Move_Backward_Moves_Whole_Range()
+		{
+			CPointer<int> source = new int[] { 1, 2, 3, 4 };
+			CPointer<int> dest = new int[4];
+
+			forward_iterator<int> result = Algorithm.move_backward<CPointer<int>, forward_iterator<int>, int>(source, source + 4, new forward_iterator<int>(dest.End()));
+
+			Assert.AreEqual(1, dest[0]);
+			Assert.AreEqual(2, dest[1]);
+			Assert.AreEqual(3, dest[2]);
+			Assert.AreEqual(4, dest[3]);
+
+			Assert.IsTrue(result == new forward_iterator<int>(dest));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// move_backward must return the destination iterator that the first
+		/// element was moved to, so a following move continues where it left
+		/// off
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Move_Backward_Returns_Start_Of_Destination()
+		{
+			CPointer<int> source = new int[] { 5, 6, 7 };
+			CPointer<int> dest = new int[5];
+
+			forward_iterator<int> mid = Algorithm.move_backward<CPointer<int>, forward_iterator<int>, int>(source + 1, source + 3, new forward_iterator<int>(dest.End()));
+			Algorithm.move_backward<CPointer<int>, forward_iterator<int>, int>(source, source + 1, mid);
+
+			Assert.AreEqual(0, dest[0]);
+			Assert.AreEqual(0, dest[1]);
+			Assert.AreEqual(5, dest[2]);
+			Assert.AreEqual(6, dest[3]);
+			Assert.AreEqual(7, dest[4]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// move_backward must handle two ranges that overlap, as long as the
+		/// destination ends after the source range does
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Move_Backward_Handles_Overlapping_Ranges()
+		{
+			CPointer<int> data = new int[] { 1, 2, 3, 4, 0 };
+
+			CPointer<int> result = Algorithm.move_backward<CPointer<int>, CPointer<int>, int>(data, data + 4, data + 5);
+
+			Assert.AreEqual(1, data[0]);
+			Assert.AreEqual(1, data[1]);
+			Assert.AreEqual(2, data[2]);
+			Assert.AreEqual(3, data[3]);
+			Assert.AreEqual(4, data[4]);
+
+			Assert.IsTrue(result == data + 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// move_backward on an empty range must not change the destination
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Move_Backward_Empty_Range_Does_Nothing()
+		{
+			CPointer<int> source = new int[] { 1, 2, 3 };
+			CPointer<int> dest = new int[] { 9, 9, 9 };
+			forward_iterator<int> d_last = new forward_iterator<int>(dest.End());
+
+			forward_iterator<int> result = Algorithm.move_backward<CPointer<int>, forward_iterator<int>, int>(source, source, d_last);
+
+			Assert.AreEqual(9, dest[0]);
+			Assert.AreEqual(9, dest[1]);
+			Assert.AreEqual(9, dest[2]);
+
+			Assert.IsTrue(result == d_last);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// move_backward must hand the data of each element over to the
+		/// destination when the element type implements IMoveable, leaving
+		/// the source elements in a moved-from state
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Move_Backward_Leaves_Source_Moved_From()
+		{
+			CPointer<Moveable> source = new Moveable[] { new Moveable(1), new Moveable(2) };
+			CPointer<Moveable> dest = new Moveable[2];
+
+			Algorithm.move_backward<CPointer<Moveable>, CPointer<Moveable>, Moveable>(source, source + 2, dest + 2);
+
+			Assert.AreEqual(1, dest[0].Value);
+			Assert.AreEqual(2, dest[1].Value);
+
+			Assert.AreEqual(0, source[0].Value);
+			Assert.AreEqual(0, source[1].Value);
+
+			Assert.IsFalse(ReferenceEquals(source[0], dest[0]));
+			Assert.IsFalse(ReferenceEquals(source[1], dest[1]));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// equal (three iterator form) must return true when the second range
 		/// matches the first element-wise, and false otherwise
 		/// </summary>
@@ -961,6 +1084,33 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			public void CopyTo(Copyable destination)
 			{
 				destination.Value = Value;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// A simple reference type that can hand its data over to a new
+		/// instance, used to verify the moving behavior of move_backward
+		/// </summary>
+		/********************************************************************/
+		private sealed class Moveable : IMoveable<Moveable>
+		{
+			public int Value;
+
+			public Moveable(int value)
+			{
+				Value = value;
+			}
+
+			public Moveable MoveFrom()
+			{
+				Moveable moved = new Moveable(Value);
+
+				Value = 0;
+
+				return moved;
 			}
 		}
 	}

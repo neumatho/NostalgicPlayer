@@ -6,16 +6,17 @@
 namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 {
 	/// <summary>
-	/// An <see cref="IIterator{TSelf}"/> whose elements are stored
-	/// contiguously, so that the distance between two iterators can be
-	/// computed in constant time. This is the interface
+	/// An <see cref="IBidirectional_Iterator{TSelf}"/> whose elements are
+	/// stored contiguously, so that the distance between two iterators can
+	/// be computed in constant time. This is the interface
 	/// <see cref="Iterator.distance{TIt}"/> operates on.
 	///
 	/// It matches the C++ random access iterator category. Iterator types
 	/// that are not random access (for example a future map iterator) should
-	/// implement only <see cref="IIterator{TSelf}"/>
+	/// implement only <see cref="IIterator{TSelf}"/> or
+	/// <see cref="IBidirectional_Iterator{TSelf}"/>
 	/// </summary>
-	public interface IRandom_Access_Iterator<TSelf> : IIterator<TSelf> where TSelf : IRandom_Access_Iterator<TSelf>
+	public interface IRandom_Access_Iterator<TSelf> : IBidirectional_Iterator<TSelf> where TSelf : IRandom_Access_Iterator<TSelf>
 	{
 		/// <summary>
 		/// Returns the number of elements between other and this iterator,
@@ -35,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 	/// <see cref="Algorithm.partial_sort{TIt, T}(TIt, TIt, TIt)"/>)
 	/// operate on
 	/// </summary>
-	public interface IRandom_Access_Iterator<TSelf, T> : IRandom_Access_Iterator<TSelf>, IIterator<TSelf, T> where TSelf : IRandom_Access_Iterator<TSelf, T>
+	public interface IRandom_Access_Iterator<TSelf, T> : IRandom_Access_Iterator<TSelf>, IBidirectional_Iterator<TSelf, T> where TSelf : IRandom_Access_Iterator<TSelf, T>
 	{
 		/// <summary>
 		/// The element at the given distance from the one the iterator

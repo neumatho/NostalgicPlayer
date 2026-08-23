@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 	/// any code that expects a plain pointer, while still being a distinct
 	/// named type that mirrors <see cref="reverse_iterator{T}"/>
 	/// </summary>
-	public struct forward_iterator<T> : IIterator<forward_iterator<T>, T>, IRandom_Access_Iterator<forward_iterator<T>, T>, IEquatable<forward_iterator<T>>
+	public struct forward_iterator<T> : IIterator<forward_iterator<T>, T>, IBidirectional_Iterator<forward_iterator<T>, T>, IRandom_Access_Iterator<forward_iterator<T>, T>, IEquatable<forward_iterator<T>>
 	{
 		private CPointer<T> current;
 
@@ -258,6 +258,20 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 		forward_iterator<T> IIterator<forward_iterator<T>>.Next()
 		{
 			return new forward_iterator<T>(current + 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a copy of the iterator moved one element towards the
+		/// beginning of the range (C++ --it)
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		forward_iterator<T> IBidirectional_Iterator<forward_iterator<T>>.Prev()
+		{
+			return new forward_iterator<T>(current - 1);
 		}
 
 
