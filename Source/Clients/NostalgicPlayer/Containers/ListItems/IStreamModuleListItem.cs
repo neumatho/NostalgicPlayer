@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Logic.Containers;
+
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.ListItems
 {
 	/// <summary>

@@ -7,21 +7,28 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
+using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Events;
+using Polycode.NostalgicPlayer.Controls.Extensions;
+using Polycode.NostalgicPlayer.Controls.Images;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Download;
-using Polycode.NostalgicPlayer.Kit.Gui.Extensions;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems
 {
 	/// <summary>
 	/// Render a single music item in an Audius list, such as a track or playlist
 	/// </summary>
-	public partial class AudiusMusicListItemControl : UserControl, IAudiusMusicListItem
+	public partial class AudiusMusicListItemControl : UserControl, IDependencyInjectionControl, IAudiusMusicListItem
 	{
+		private IThemeManager themeManager;
+		private INostalgicImageBank imageBank;
+
 		private AudiusMusicListItem item;
 
 		private TaskHelper taskHelper;
-		private Bitmap coverBitmap = null;
+		private Bitmap coverBitmap;
 
 		/********************************************************************/
 		/// <summary>
@@ -33,6 +40,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 			InitializeComponent();
 
 			Disposed += AudiusMusicListItemControl_Disposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(IThemeManager themeManager, INostalgicImageBank imageBank)
+		{
+			this.themeManager = themeManager;
+			this.imageBank = imageBank;
+
+			themeManager.ThemeChanged += ThemeChanged;
 		}
 
 		#region IAudiusListItem implementation
@@ -55,6 +79,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 			item = (AudiusMusicListItem)listItem;
 
 			SetupControls();
+			InitializePictures();
 
 			taskHelper = new TaskHelper();
 		}
@@ -117,9 +142,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 		/********************************************************************/
 		private void AudiusMusicListItemControl_Disposed(object sender, EventArgs e)
 		{
+			themeManager.ThemeChanged -= ThemeChanged;
+
 			taskHelper.CancelTask();
 
 			coverBitmap?.Dispose();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the theme changes
+		/// </summary>
+		/********************************************************************/
+		private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+		{
+			InitializePictures();
 		}
 
 
@@ -173,6 +212,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 			}
 			else
 				playsLabel.Visible = false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will render the picture images
+		/// </summary>
+		/********************************************************************/
+		private void InitializePictures()
+		{
+			repostsPictureBox.Image = imageBank.Audius.Repost;
+			favoritePictureBox.Image = imageBank.Audius.Favorite;
+
+			if (coverBitmap == null)
+				itemPictureBox.Image = imageBank.Audius.UnknownAlbumCover;
 		}
 		#endregion
 	}

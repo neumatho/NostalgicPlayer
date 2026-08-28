@@ -19,6 +19,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Library.Containers;
 using Polycode.NostalgicPlayer.Library.Loaders;
 using Polycode.NostalgicPlayer.Library.Players;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Polycode.NostalgicPlayer.Logic.Databases;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
@@ -31,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 	{
 		private class QueueInfo
 		{
-			public List<ModuleListItem> Items { get; set; }
+			public List<ModuleListListItem> Items { get; set; }
 		}
 
 		private readonly OptionSettings settings;
@@ -116,11 +117,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Will tell the scanner to scan the given range of items
 		/// </summary>
 		/********************************************************************/
-		public void ScanItems(IEnumerable<ModuleListItem> items)
+		public void ScanItems(IEnumerable<ModuleListListItem> items)
 		{
 			if (settings.ScanFiles)
 			{
-				List<ModuleListItem> list = items.ToList();
+				List<ModuleListListItem> list = items.ToList();
 				if (list.Count > 0)
 				{
 					lock (queue)
@@ -211,13 +212,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 			{
 				WaitHandle[] waitArray = [ shutdownEvent, breakEvent ];
 
-				List<ModuleListItem> itemsToRemove = new List<ModuleListItem>();
+				List<ModuleListListItem> itemsToRemove = new List<ModuleListListItem>();
 				List<ModuleListItemUpdateInfo> itemsToUpdate = new List<ModuleListItemUpdateInfo>();
 				int itemsToCheckBeforeUpdating = RandomGenerator.GetRandomNumber(10, 30);
 
 				breakEvent.Reset();
 
-				foreach (ModuleListItem listItem in queueInfo.Items)
+				foreach (ModuleListListItem listItem in queueInfo.Items)
 				{
 					if (WaitHandle.WaitAny(waitArray, 0) != WaitHandle.WaitTimeout)
 						return;
@@ -262,12 +263,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Will check the given file to see if it is a list or archive
 		/// </summary>
 		/********************************************************************/
-		private bool CheckForListOrArchive(ModuleListItem listItem, string fileName)
+		private bool CheckForListOrArchive(ModuleListListItem listItem, string fileName)
 		{
 			if (ArchivePath.IsArchivePath(fileName))
 				return false;
 
-			List<ModuleListItem> list = new List<ModuleListItem>();
+			List<ModuleListListItem> list = new List<ModuleListListItem>();
 
 			try
 			{
@@ -292,7 +293,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					if (isArchive)
 					{
 						foreach (string archiveFileName in archiveDetector.GetEntries(fileName))
-							list.Add(new ModuleListItem(new ArchiveFileModuleListItem(archiveFileName)));
+							list.Add(new ModuleListListItem(new ArchiveFileModuleListItem(archiveFileName)));
 					}
 				}
 
@@ -324,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// scanning settings
 		/// </summary>
 		/********************************************************************/
-		private void DoOtherScanningChecks(ModuleListItem moduleListItem, string fileName, List<ModuleListItem> itemsToRemove, List<ModuleListItemUpdateInfo> itemsToUpdate)
+		private void DoOtherScanningChecks(ModuleListListItem moduleListItem, string fileName, List<ModuleListListItem> itemsToRemove, List<ModuleListItemUpdateInfo> itemsToUpdate)
 		{
 			Loader loader = null;
 
@@ -440,11 +441,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Tell main window to update the list if needed
 		/// </summary>
 		/********************************************************************/
-		private void UpdateModuleList(List<ModuleListItem> itemsToRemove, List<ModuleListItemUpdateInfo> itemsToUpdate)
+		private void UpdateModuleList(List<ModuleListListItem> itemsToRemove, List<ModuleListItemUpdateInfo> itemsToUpdate)
 		{
 			if (itemsToRemove.Count > 0)
 			{
-				List<ModuleListItem> clonedList = new List<ModuleListItem>(itemsToRemove);
+				List<ModuleListListItem> clonedList = new List<ModuleListListItem>(itemsToRemove);
 				itemsToRemove.Clear();
 
 				mainWindowApi.Form.BeginInvoke(() =>

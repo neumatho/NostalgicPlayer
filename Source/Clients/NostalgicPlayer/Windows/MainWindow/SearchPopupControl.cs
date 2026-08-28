@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 	public partial class SearchPopupControl : UserControl
 	{
 		private readonly Timer debounceTimer;
-		private IEnumerable<ModuleListItem> dataSource;
+		private IEnumerable<ModuleListListItem> dataSource;
 		private CancellationTokenSource searchCancellationTokenSource;
 
 		/********************************************************************/
@@ -37,10 +37,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			searchTextBox.TextChanged += SearchTextBox_TextChanged;
 			searchTextBox.KeyDown += SearchTextBox_KeyDown;
-			resultsListControl.KeyPress += ResultsListControl_KeyPress;
-			resultsListControl.KeyDown += ResultsListControl_KeyDown;
-			resultsListControl.MouseDoubleClick += ResultsListControl_MouseDoubleClick;
+			resultsList.KeyPress += ResultsListControl_KeyPress;
+			resultsList.KeyDown += ResultsListControl_KeyDown;
+			resultsList.MouseDoubleClick += ResultsListControl_MouseDoubleClick;
 		}
+
 
 
 		/********************************************************************/
@@ -48,7 +49,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Raised when user selects an item
 		/// </summary>
 		/********************************************************************/
-		public event EventHandler<ModuleListItem> ItemSelected;
+		public event EventHandler<ModuleListListItem> ItemSelected;
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -58,15 +61,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		public event EventHandler SearchCancelled;
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Set the data source for searching
 		/// </summary>
 		/********************************************************************/
-		public void SetDataSource(IEnumerable<ModuleListItem> items)
+		public void SetDataSource(IEnumerable<ModuleListListItem> items)
 		{
 			dataSource = items;
 		}
+
 
 
 		/********************************************************************/
@@ -77,12 +82,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		public void SetInitialText(string text)
 		{
 			// Clear old results
-			resultsListControl.Items.Clear();
+			resultsList.Items.Clear();
 
 			searchTextBox.Text = text;
 			searchTextBox.SelectionStart = text.Length;
 			searchTextBox.Focus();
 		}
+
 
 
 		/********************************************************************/
@@ -92,11 +98,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		public void EnableListNumber(bool enable)
 		{
-			resultsListControl.EnableListNumber(enable);
+			resultsList.EnableListNumber(enable);
 		}
 
 		#region Event handlers
-
 		/********************************************************************/
 		/// <summary>
 		/// Is called when search text changes
@@ -112,6 +117,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			else
 				debounceTimer.Start();
 		}
+
 
 
 		/********************************************************************/
@@ -136,6 +142,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Perform the search asynchronously
@@ -156,15 +163,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				// Synchronize and update UI if not cancelled
 				if (searchCancellationTokenSource == cts && !cts.Token.IsCancellationRequested)
 				{
-					resultsListControl.Items.Clear();
+					resultsList.Items.Clear();
 
 					foreach (var item in results)
-						resultsListControl.Items.Add(item);
+						resultsList.Items.Add(item);
 
-					if (resultsListControl.Items.Count > 0)
+					if (resultsList.Items.Count > 0)
 					{
-						resultsListControl.SelectedIndex = 0;
-						resultsListControl.SetLastItemSelected(0);
+						resultsList.SelectedIndex = 0;
+						resultsList.SetLastItemSelected(0);
 					}
 
 					// Clear reference
@@ -178,6 +185,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when user presses key in search box
@@ -187,11 +195,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			if (e.KeyCode == Keys.Down)
 			{
-				if (resultsListControl.Items.Count > 1)
+				if (resultsList.Items.Count > 1)
 				{
-					resultsListControl.SelectedIndex = 1;
-					resultsListControl.SetLastItemSelected(1);
-					resultsListControl.Focus();
+					resultsList.SelectedIndex = 1;
+					resultsList.SetLastItemSelected(1);
+					resultsList.Focus();
 					e.Handled = true;
 				}
 			}
@@ -201,12 +209,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				e.Handled = true;
 			}
 			else if (e.KeyCode == Keys.Enter)
-				if (resultsListControl.SelectedItem != null)
+				if (resultsList.SelectedItem != null)
 				{
-					ItemSelected?.Invoke(this, resultsListControl.SelectedItem);
+					ItemSelected?.Invoke(this, resultsList.SelectedItem);
 					e.Handled = true;
 				}
 		}
+
 
 
 		/********************************************************************/
@@ -223,9 +232,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			}
 			else if (e.KeyChar == '\r') // Enter
 			{
-				if (resultsListControl.SelectedItem != null)
+				if (resultsList.SelectedItem != null)
 				{
-					ItemSelected?.Invoke(this, resultsListControl.SelectedItem);
+					ItemSelected?.Invoke(this, resultsList.SelectedItem);
 					e.Handled = true;
 				}
 			}
@@ -252,6 +261,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		}
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when user presses key down in results list
@@ -259,13 +269,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void ResultsListControl_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Up && resultsListControl.SelectedIndex == 0)
+			if (e.KeyCode == Keys.Up && resultsList.SelectedIndex == 0)
 			{
 				searchTextBox.Focus();
 				searchTextBox.SelectionStart = searchTextBox.Text.Length;
 				e.Handled = true;
 			}
 		}
+
 
 
 		/********************************************************************/
@@ -275,10 +286,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void ResultsListControl_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			if (resultsListControl.SelectedItem != null)
-				ItemSelected?.Invoke(this, resultsListControl.SelectedItem);
+			if (resultsList.SelectedItem != null)
+				ItemSelected?.Invoke(this, resultsList.SelectedItem);
 		}
-
 		#endregion
 	}
 }

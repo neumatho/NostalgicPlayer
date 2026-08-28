@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayer.Controls\NostalgicPlayer.Controls.csproj" />
     <ProjectReference Include="..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
   </ItemGroup>
 

@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
-using Polycode.NostalgicPlayer.Kit.Gui.Controls;
+using Polycode.NostalgicPlayer.Controls.Components;
+using Polycode.NostalgicPlayer.Controls.Dialogs;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Kit.Helpers;
 using Polycode.NostalgicPlayer.Logic.Databases;
 
@@ -21,10 +21,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 	/// <summary>
 	/// This shows the favorite song system
 	/// </summary>
-	public partial class FavoriteSongSystemForm : WindowFormBase
+	public partial class FavoriteSongSystemForm : WindowFormBase2
 	{
 		private IMainWindowApi mainWindowApi;
 		private IModuleDatabase database;
+		private IFormCreatorService formCreatorService;
 
 		private FavoriteSongSystemWindowSettings settings;
 
@@ -47,11 +48,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IMainWindowApi mainWindowApi, IModuleDatabase database)
+		public void InitializeForm(IMainWindowApi mainWindowApi, IModuleDatabase database, IFormCreatorService formCreatorService)
 		{
 			// Remember the arguments
 			this.mainWindowApi = mainWindowApi;
 			this.database = database;
+			this.formCreatorService = formCreatorService;
 
 			// Load window settings
 			settings = new FavoriteSongSystemWindowSettings(allWindowSettings);
@@ -60,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 			Text = Resources.IDS_FAVORITE_TITLE;
 
 			// Add the columns to the grid
-			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = "#",
 				Resizable = DataGridViewTriState.True,
@@ -70,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 				DisplayIndex = settings.Column1Pos
 			});
 
-			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = Resources.IDS_FAVORITE_COLUMN_NAME,
 				Resizable = DataGridViewTriState.True,
@@ -79,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 				DisplayIndex = settings.Column2Pos
 			});
 
-			favoriteDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+			favoriteDataGridView.Columns.Add(new DataGridViewTextBoxColumn
 			{
 				Name = Resources.IDS_FAVORITE_COLUMN_COUNT,
 				Resizable = DataGridViewTriState.True,
@@ -90,8 +92,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 			});
 
 			// Add items to the combo controls
-			showComboBox.Items.AddRange(new object[]
-			{
+			showComboBox.Items.AddRange(
+			[
 				Resources.IDS_FAVORITE_SHOW_TOP10,
 				Resources.IDS_FAVORITE_SHOW_TOP50,
 				Resources.IDS_FAVORITE_SHOW_TOP100,
@@ -100,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 				Resources.IDS_FAVORITE_SHOW_BOTTOM50,
 				Resources.IDS_FAVORITE_SHOW_BOTTOM100,
 				Resources.IDS_FAVORITE_SHOW_BOTTOMX
-			});
+			]);
 
 			showComboBox.SelectedIndex = (int)settings.Show;
 			otherNumberTextBox.Text = settings.ShowOther.ToString();
@@ -199,12 +201,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 				if (ArchivePath.IsArchivePath(fileName))
 					fileName = ArchivePath.GetEntryName(fileName);
 
-				row.Cells.AddRange(new DataGridViewCell[]
-				{
-					new KryptonDataGridViewTextBoxCell { Value = pos },
-					new KryptonDataGridViewTextBoxCell { Value = fileName },
-					new KryptonDataGridViewTextBoxCell { Value = pair.Value.ListenCount }
-				});
+				row.Cells.AddRange(
+				[
+					new DataGridViewTextBoxCell { Value = pos },
+					new DataGridViewTextBoxCell { Value = fileName },
+					new DataGridViewTextBoxCell { Value = pair.Value.ListenCount }
+				]);
 
 				row.Tag = pair.Key;
 
@@ -289,9 +291,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		/// Is called when a cell is double clicked in the list
 		/// </summary>
 		/********************************************************************/
-		private void FavoriteDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		private void FavoriteDataGridView_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			if (e.RowIndex >= 0)
+			DataGridView.HitTestInfo hitTest = favoriteDataGridView.HitTest(e.X, e.Y);
+
+			if ((hitTest.Type == DataGridViewHitTestType.Cell) && (hitTest.RowIndex >= 0))
 			{
 				DataGridViewSelectedRowCollection selectedRows = favoriteDataGridView.SelectedRows;
 				int count = selectedRows.Count;
@@ -406,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		/********************************************************************/
 		private void ResetButton_Click(object sender, EventArgs e)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(Resources.IDS_FAVORITE_RESET, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
+			using (CustomMessageBox dialog = formCreatorService.GetMessageBox(Resources.IDS_FAVORITE_RESET, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
 			{
 				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
 				dialog.AddButton(Resources.IDS_BUT_NO, 'N');

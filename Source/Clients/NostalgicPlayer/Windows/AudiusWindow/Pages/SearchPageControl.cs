@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems;
+using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.External;
 using Polycode.NostalgicPlayer.External.Audius;
 using Polycode.NostalgicPlayer.External.Audius.Interfaces;
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		private IAudiusWindowApi audiusWindowApi;
 		private IAudiusClientFactory clientFactory;
 		private IAudiusHelper audiusHelper;
-		private IControlInitializerService controlInitializerService;
+		private IControlCreatorService controlCreatorService;
 
 		private IPictureDownloader pictureDownloader;
 
@@ -57,11 +57,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeControl(IAudiusHelper audiusHelper, IAudiusClientFactory audiusClientFactory, IControlInitializerService controlInitializerService)
+		public void InitializeControl(IAudiusHelper audiusHelper, IAudiusClientFactory audiusClientFactory, IControlCreatorService controlCreatorService)
 		{
 			this.audiusHelper = audiusHelper;
 			clientFactory = audiusClientFactory;
-			this.controlInitializerService = controlInitializerService;
+			this.controlCreatorService = controlCreatorService;
 		}
 
 		#region IAudiusPage implementation
@@ -195,15 +195,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages
 			{
 				controlPanel.Visible = false;
 
-				profileControl = new ProfileControl();
+				profileControl = controlCreatorService.GetInstance<ProfileControl>();
 				profileControl.Dock = DockStyle.Fill;
 
 				profileControl.Close += Profile_Close;
 
-				Controls.Add(profileControl);
-
-				controlInitializerService.InitializeSingleControl(profileControl);
 				profileControl.Initialize(e.Item.User, audiusWindowApi, pictureDownloader);
+
+				Controls.Add(profileControl);
 			}
 		}
 

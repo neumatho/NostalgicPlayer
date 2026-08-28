@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
@@ -24,11 +24,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Search modules based on search text
 		/// </summary>
 		/********************************************************************/
-		public static async Task<ModuleListItem[]> SearchAsync(IEnumerable<ModuleListItem> items, string searchText,
-			CancellationToken cancellationToken)
+		public static async Task<ModuleListListItem[]> SearchAsync(IEnumerable<ModuleListListItem> items, string searchText, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrEmpty(searchText))
-				return Array.Empty<ModuleListItem>();
+				return Array.Empty<ModuleListListItem>();
 
 			// Perform search in background thread
 			return await Task.Run(() =>
@@ -45,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 					pattern = Regex.Escape(searchText);
 
 				// Filter module list
-				List<ModuleListItem> filteredModules = new();
+				List<ModuleListListItem> filteredModules = new List<ModuleListListItem>();
 				Regex regex = new(pattern, RegexOptions.IgnoreCase);
 
 				foreach (var item in items)

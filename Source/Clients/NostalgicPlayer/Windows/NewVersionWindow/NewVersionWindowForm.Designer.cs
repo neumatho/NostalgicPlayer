@@ -29,87 +29,75 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.NewVersionWindow
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewVersionWindowForm));
-			this.controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
-			this.label = new Krypton.Toolkit.KryptonLabel();
-			this.bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
-			this.kryptonButton1 = new Krypton.Toolkit.KryptonButton();
-			this.historyRichTextBox = new Krypton.Toolkit.KryptonRichTextBox();
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
-			this.SuspendLayout();
+			controlResource = new Polycode.NostalgicPlayer.Kit.Gui.Designer.ControlResource();
+			label = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			fontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
+			okButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicButton();
+			historyRichTextBox = new Polycode.NostalgicPlayer.Controls.Inputs.NostalgicRichTextView();
+			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
+			SuspendLayout();
 			// 
 			// controlResource
 			// 
-			this.controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
+			controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
 			// 
 			// label
 			// 
-			this.label.Location = new System.Drawing.Point(8, 8);
-			this.label.Name = "label";
-			this.label.Palette = this.bigFontPalette;
-			this.label.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.label, "IDS_NEWVERSION_MESSAGE");
-			this.label.Size = new System.Drawing.Size(451, 31);
-			this.label.TabIndex = 0;
-			this.label.Values.Text = "Congratulations! A new version of NostalgicPlayer has been installed. See below\r\n" +
-    "what has changed since your previous version.";
+			label.Location = new System.Drawing.Point(8, 8);
+			label.Name = "label";
+			controlResource.SetResourceKey(label, "IDS_NEWVERSION_MESSAGE");
+			label.Size = new System.Drawing.Size(451, 31);
+			label.TabIndex = 0;
+			label.Text = "Congratulations! A new version of NostalgicPlayer has been installed. See below\r\nwhat has changed since your previous version.";
+			label.UseFont = fontConfiguration;
 			// 
-			// bigFontPalette
+			// fontConfiguration
 			// 
-			this.bigFontPalette.BaseFontSize = 9F;
+			fontConfiguration.FontSize = 1;
 			// 
-			// kryptonButton1
+			// okButton
 			// 
-			this.kryptonButton1.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.kryptonButton1.Location = new System.Drawing.Point(369, 255);
-			this.kryptonButton1.Name = "kryptonButton1";
-			this.kryptonButton1.Palette = this.bigFontPalette;
-			this.kryptonButton1.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.kryptonButton1, "IDS_BUT_OK");
-			this.kryptonButton1.Size = new System.Drawing.Size(90, 25);
-			this.kryptonButton1.TabIndex = 2;
-			this.kryptonButton1.Values.Text = "Ok";
+			okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			okButton.Location = new System.Drawing.Point(369, 255);
+			okButton.Name = "okButton";
+			controlResource.SetResourceKey(okButton, "IDS_BUT_OK");
+			okButton.Size = new System.Drawing.Size(90, 25);
+			okButton.TabIndex = 2;
+			okButton.Text = "Ok";
+			okButton.UseFont = fontConfiguration;
 			// 
 			// historyRichTextBox
 			// 
-			this.historyRichTextBox.DetectUrls = false;
-			this.historyRichTextBox.Location = new System.Drawing.Point(8, 47);
-			this.historyRichTextBox.Name = "historyRichTextBox";
-			this.historyRichTextBox.ReadOnly = true;
-			this.controlResource.SetResourceKey(this.historyRichTextBox, null);
-			this.historyRichTextBox.Size = new System.Drawing.Size(451, 200);
-			this.historyRichTextBox.TabIndex = 3;
-			this.historyRichTextBox.Text = "";
+			historyRichTextBox.Location = new System.Drawing.Point(8, 47);
+			historyRichTextBox.Name = "historyRichTextBox";
+			historyRichTextBox.Size = new System.Drawing.Size(451, 200);
+			historyRichTextBox.TabIndex = 3;
 			// 
 			// NewVersionWindowForm
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(467, 288);
-			this.Controls.Add(this.historyRichTextBox);
-			this.Controls.Add(this.kryptonButton1);
-			this.Controls.Add(this.label);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "NewVersionWindowForm";
-			this.Palette = this.bigFontPalette;
-			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this, null);
-			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			AllowResizing = false;
+			ClientSize = new System.Drawing.Size(467, 288);
+			Controls.Add(historyRichTextBox);
+			Controls.Add(okButton);
+			Controls.Add(label);
+			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+			MaximizeBox = false;
+			MinimizeBox = false;
+			Name = "NewVersionWindowForm";
+			ShowInTaskbar = false;
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
+			ResumeLayout(false);
 
 		}
 
 		#endregion
 		private Kit.Gui.Designer.ControlResource controlResource;
-		private Krypton.Toolkit.KryptonLabel label;
-		private Krypton.Toolkit.KryptonButton kryptonButton1;
-		private Krypton.Toolkit.KryptonRichTextBox historyRichTextBox;
-		private Kit.Gui.Components.FontPalette bigFontPalette;
+		private NostalgicPlayer.Controls.Texts.NostalgicLabel label;
+		private NostalgicPlayer.Controls.Buttons.NostalgicButton okButton;
+		private NostalgicPlayer.Controls.Inputs.NostalgicRichTextView historyRichTextBox;
+		private NostalgicPlayer.Controls.Components.FontConfiguration fontConfiguration;
 	}
 }

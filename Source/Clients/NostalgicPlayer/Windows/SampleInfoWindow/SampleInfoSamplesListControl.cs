@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
-using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Controls.Lists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 {
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 	/// This class overrides some method in the DataGrid control
 	/// to implement wanted features
 	/// </summary>
-	public class SampleInfoSamplesListControl : KryptonDataGridView
+	public class SampleInfoSamplesListControl : NostalgicDataGridView
 	{
 		#region Keyboard shortcuts
 		/********************************************************************/

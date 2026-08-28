@@ -8,8 +8,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 	/// <summary>
 	/// The user control showing the channel level meter
 	/// </summary>
-	internal partial class ChannelLevelMeterControl : UserControl, IControl
+	internal partial class ChannelLevelMeterControl : UserControl, IDependencyInjectionControl
 	{
 		private const int SpaceBetweenMeters = 4;
 
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 		/// <summary>
 		/// Initialize control.
 		///
-		/// Called from ControlFactory
+		/// Called from ControlCreatorService
 		/// </summary>
 		/********************************************************************/
 		public void InitializeControl(ISettingsFactory settingsFactory)

@@ -4,10 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Library.Containers;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
@@ -90,17 +90,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// <summary>
 		/// Will load and play the module at the index given
 		/// </summary>
-		bool LoadAndPlayModule(ModuleListItem listItem, int subSong, int startPos);
+		bool LoadAndPlayModule(ModuleListListItem listItem, int subSong, int startPos);
 
 		/// <summary>
 		/// Load and/or initialize module
 		/// </summary>
-		bool LoadAndInitModule(ModuleListItem listItem, int? subSong = null, int? startPos = null, bool showError = true);
+		bool LoadAndInitModule(ModuleListListItem listItem, int? subSong = null, int? startPos = null, bool showError = true);
 
 		/// <summary>
 		/// Will start playing the given module
 		/// </summary>
-		bool PlayModule(ModuleListItem listItem);
+		bool PlayModule(ModuleListListItem listItem);
 
 		/// <summary>
 		/// Will stop and free the playing module if any
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// <summary>
 		/// Will start to play the song given
 		/// </summary>
-		bool StartSong(ModuleListItem listItem, int newSong);
+		bool StartSong(ModuleListListItem listItem, int newSong);
 
 		/// <summary>
 		/// Will tell the player to change to the position given
