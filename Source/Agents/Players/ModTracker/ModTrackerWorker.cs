@@ -21,12 +21,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class ModTrackerWorker : ModulePlayerWithPositionDurationAgentBase
+	internal partial class ModTrackerWorker : ModulePlayerWithPositionDurationAgentBase
 	{
 		private const int NumberOfNotes = 3 * 12;
 
 		private const int MinPeriod = 113;
 		private const int MaxPeriod = 856;
+
+		private const int DefaultSpeed = 6;
+		private const int DefaultTempo = 125;
 
 		private readonly ModuleType currentModuleType;
 		private bool packed;
@@ -1394,9 +1397,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// Initialize all the variables
 			playingInfo = new GlobalPlayingInfo
 			{
-				SpeedEven = 6,
-				SpeedOdd = 6,
-				LastShownSpeed = 6,
+				SpeedEven = DefaultSpeed,
+				SpeedOdd = DefaultSpeed,
+				LastShownSpeed = DefaultSpeed,
 				Tempo = initTempo,
 				PatternPos = 0,
 				Counter = 0,
@@ -1616,6 +1619,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private void GetNewNote()
 		{
+			// Notify pattern visuals about row change
+			NotifySongRowChanged();
+
 			// Get position information into temporary variables
 			ushort curSongPos = playingInfo.SongPos;
 			ushort curPattPos = playingInfo.PatternPos;
@@ -3645,17 +3651,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < channelNum; i++)
-			{
-				sb.Append(sequences[i, playingInfo.SongPos]);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(GetCurrentChannelTracks());
 		}
 
 

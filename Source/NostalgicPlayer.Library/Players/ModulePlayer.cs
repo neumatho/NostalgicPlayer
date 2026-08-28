@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -32,6 +33,8 @@ namespace Polycode.NostalgicPlayer.Library.Players
 
 		private IOutputAgent outputAgent;
 		private MixerStream soundStream;
+
+		private SongModule currentSongModule;
 
 		/********************************************************************/
 		/// <summary>
@@ -231,6 +234,44 @@ namespace Polycode.NostalgicPlayer.Library.Players
 					// Tell all visuals to start
 					bool channelChangeEnabled = ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) == 0) || ((currentPlayer.SupportFlags & (ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.Visualize)) == (ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.Visualize));
 
+					// Create song module info and get patterns from player
+					SongPatterns songPatterns = null;
+					SongPatternsResult patternsResult = null;
+					try
+					{
+						patternsResult = currentPlayer.GetSongPatterns();
+						if (patternsResult != null)
+							songPatterns = patternsResult.Patterns;
+					}
+					catch (Exception ex)
+					{
+						// If pattern retrieval fails, create a SongPatterns object with error message
+						// This ensures playback works even if pattern viewer has issues
+						songPatterns = new SongPatterns
+						{
+							SongLength = 0,
+							ModuleFormat = loaderInfo.Format ?? "Unknown",
+							ModuleTitle = StaticModuleInformation.Title ?? string.Empty,
+							InitialSpeed = 6,
+							InitialBpm = 125,
+							HasVolumeColumn = false,
+							TransposeMode = NoteTransposeMode.NoTranspose,
+							HasTrackNumber = false,
+							EffectCharCount = 3,
+							SongData = new List<SongPatternViewData>(),
+							ErrorMessage = $"Pattern load error: {ex.Message}\n\nStack trace:\n{ex.StackTrace}"
+						};
+					}
+
+					// Set subsong information (1-based for display)
+					if (songPatterns != null)
+					{
+						songPatterns.SubSongCurrent = PlayingModuleInformation.CurrentSong + 1;
+						songPatterns.SubSongTotal = StaticModuleInformation.MaxSongNumber;
+					}
+
+					currentSongModule = new SongModule(loaderInfo.PlayerName, loaderInfo.Source, loaderInfo.Format, songPatterns);
+
 					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 					{
 						visualAgent.CleanupVisual();
@@ -242,6 +283,13 @@ namespace Polycode.NostalgicPlayer.Library.Players
 
 						if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
 							channelChangeVisualAgent.SetNoteFrequencies(noteFrequencies);
+					}
+
+					// Notify pattern visual agents about the loaded module (with patterns if available)
+					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+					{
+						if (visualAgent is IPatternVisualAgent patternVisualAgent)
+							patternVisualAgent.SongModuleLoaded(currentSongModule);
 					}
 
 					outputAgent.Play();
@@ -480,8 +528,12 @@ namespace Polycode.NostalgicPlayer.Library.Players
 				{
 					lock (currentPlayer)
 					{
+						PositionInfo[] positions = PlayingModuleInformation.DurationInfo?.PositionInfo;
+						if (positions != null && (position < 0 || position >= positions.Length))
+							position = 0;
+
 						if (currentPlayer is IDuration durationPlayer)
-							durationPlayer.SetSongPosition(PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
+							durationPlayer.SetSongPosition(positions?[position]);
 
 						ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
 						if ((moduleInfoChanges != null) && (ModuleInfoChanged != null))
@@ -505,6 +557,18 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler PositionChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the current song module information, or null if no module is loaded
+		/// </summary>
+		/********************************************************************/
+		public SongModule CurrentSongModule => currentSongModule;
+
+
+
 		#endregion
 
 		#region Event handlers
@@ -596,6 +660,9 @@ namespace Polycode.NostalgicPlayer.Library.Players
 					ModuleInfoChanged(sender, e);
 			}
 		}
+
+
+
 		#endregion
 
 		#region Private methods
@@ -617,7 +684,17 @@ namespace Polycode.NostalgicPlayer.Library.Players
 				for (int i = 0; i < currentPlayer.VirtualChannels.Length; i++)
 					currentPlayer.VirtualChannels[i] = new DummyChannel();
 
-				allSongsInfo = durationPlayer.CalculateDuration();
+				durationPlayer.BeforeCalculateDuration();
+
+				try
+				{
+					allSongsInfo = durationPlayer.CalculateDuration();
+				}
+				finally
+				{
+					durationPlayer.AfterCalculateDuration();
+				}
+
 				if ((allSongsInfo != null) && (allSongsInfo.Length == 0))
 					allSongsInfo = null;
 			}

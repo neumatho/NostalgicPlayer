@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<AssemblyName>PatternViewer</AssemblyName>
+		<RootNamespace>Polycode.NostalgicPlayer.Agent.Visual.PatternViewer</RootNamespace>
+		<DocumentationFile>bin\PatternViewer.xml</DocumentationFile>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Authors>Oliver Ickler</Authors>
+		<Company>Polycode</Company>
+		<Product>NostalgicPlayer</Product>
+		<Description>Show tracker patterns in a Tracker-style grid display</Description>
+		<Version>3.1.0</Version>
+		<Nullable>disable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<DebugType>full</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DefineConstants>TRACE</DefineConstants>
+		<DebugType>pdbonly</DebugType>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
+		<ProjectReference Include="..\..\..\NostalgicPlayer.Kit.Gui\NostalgicPlayer.Kit.Gui.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	</ItemGroup>
+
+</Project>

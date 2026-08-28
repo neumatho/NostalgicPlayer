@@ -174,7 +174,7 @@ body {
 	padding-top: 40px;
 }
 
-.contenttable td p:not(first-child) {
+.contenttable td p:not(:first-child) {
 	padding-top: 10px;
 }
 
@@ -255,6 +255,10 @@ body {
 .usage2table td:nth-child(1) {
 	width: 140px;
 	padding-right: 8px;
+}
+
+.usage2table.spaced tr:not(:last-child) td {
+	padding-bottom: 14px;
 }
 
 .usage2table a {

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -117,6 +118,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
 				bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
 
+				// Subscribe to pattern events
+				currentPlayer.SongRowChanged += Player_SongRowChanged;
+
 				// Allocate and initialize he visual component
 				currentVisualizer = visualizerFactory.GetVisualizer();
 				currentVisualizer.Initialize();
@@ -204,6 +208,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			// Deallocate channel objects
 			if (currentPlayer != null)
 			{
+				// Unsubscribe from pattern events
+				currentPlayer.SongRowChanged -= Player_SongRowChanged;
+
 				currentPlayer.VirtualChannels = null;
 				currentPlayer = null;
 			}
@@ -435,6 +442,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			{
 				currentPlayer.ChangeMixerConfiguration(mixerInfo);
 			}
+
+			// Tell visual agents about the mixer channel change
+			currentVisualizer?.TellAgentsAboutMixerChannelChange(mixerConfiguration.ChannelsEnabled);
 		}
 
 
@@ -888,6 +898,18 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 					effectMaster.AddGlobalEffects(mixingBuffers, todoInFrames, (uint)mixerFrequency);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the pattern row changes
+		/// </summary>
+		/********************************************************************/
+		private void Player_SongRowChanged(object sender, SongRowChangedEventArgs e)
+		{
+			currentVisualizer?.TellAgentsAboutSongRowChange(e.RowInfo);
 		}
 		#endregion
 	}

@@ -19,9 +19,21 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		public const float NumberOfSecondsBetweenEachSnapshot = 3.0f;
 
 		/// <summary>
+		/// Called before duration calculation starts. Can be used to
+		/// initialize recording or other preparation
+		/// </summary>
+		void BeforeCalculateDuration();
+
+		/// <summary>
 		/// Calculate the duration for all sub-songs
 		/// </summary>
 		DurationInfo[] CalculateDuration();
+
+		/// <summary>
+		/// Called after duration calculation is complete. Can be used to
+		/// stop recording or finalize data
+		/// </summary>
+		void AfterCalculateDuration();
 
 		/// <summary>
 		/// Will tell the player to change its current state to match the

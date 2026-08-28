@@ -269,6 +269,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 		{
 			SetChannels();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Updates a specific channel checkbox state
+		/// </summary>
+		/********************************************************************/
+		public void UpdateChannel(int channel, bool enabled)
+		{
+			if (channel >= 0 && channel < MaxNumberOfChannels)
+			{
+				doNotTrigChannelChanged = true;
+				try
+				{
+					channelCheckBoxes[channel].Checked = enabled;
+				}
+				finally
+				{
+					doNotTrigChannelChanged = false;
+				}
+			}
+		}
 		#endregion
 
 		#region Event handlers
@@ -448,11 +471,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 		/********************************************************************/
 		private void SetMixerSettings()
 		{
-			MixerConfiguration configuration = mixerConfigurationFactory.GetCurrentSettings();
-
-			Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);
-
-			moduleHandler.ChangeMixerSettings(configuration);
+			moduleHandler.ApplyCurrentMixerSettings();
 		}
 
 

@@ -96,6 +96,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Updates a specific channel checkbox in the mixer page
+		/// </summary>
+		/********************************************************************/
+		public void UpdateMixerChannel(int channel, bool enabled)
+		{
+			mixerPageControl.UpdateChannel(channel, enabled);
+		}
+
 		#region WindowFormBase overrides
 		/********************************************************************/
 		/// <summary>
