@@ -458,7 +458,10 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/// sample on a stereo setup (and hear all channels) or in a real
 		/// surround setup.
 		///
-		/// Here is a diagram showing how it works:
+		/// Here is a diagram showing how it works. Everything from the
+		/// player call and down is repeated for each chunk of frames
+		/// mixed, so e.g. the Amiga filter is applied with the state
+		/// the player had, while that chunk was played:
 		///
 		/// Player is called which uses the virtual module channels
 		///                         |
@@ -470,6 +473,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/// left and right channel if configured
 		///                         |
 		/// Add Amiga filter if enabled
+		///                         |
+		/// Equalizer is applied if enabled
 		///                         |
 		/// Return mixed data to output agent
 		/// </summary>
@@ -496,29 +501,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			// Find out how many frames to process
 			int framesToProcess = Math.Min(frameCount, bufferSizeInFrames);
 
-			int totalFramesProcessed = DoMixing(currentMixerInfo, framesToProcess, out hasEndReached);
-			if (totalFramesProcessed > 0)
-			{
-				// Now convert the mixed data to real 32 bit samples
-				IEnumerable<int[]> buffersToConvert = mixerBufferMap.SelectMany(x => x).Union(mixingBuffers).Distinct();
-				foreach (int[] buffer in buffersToConvert)
-					currentMixer.ConvertMixedData(buffer, totalFramesProcessed);
-
-				// Add extra effects if enabled and mix all buffers into mixingBuffers
-				AddEffects(totalFramesProcessed);
-
-				// Convert to output format
-				downMixer.ConvertToOutputFormat(currentMixerInfo, mixingBuffers, outputBuffer, totalFramesProcessed);
-
-				// Add Amiga low-pass filter if enabled
-				if (currentMixerInfo.EmulateFilter && currentPlayer.AmigaFilter)
-					amigaFilter.Apply(outputBuffer, totalFramesProcessed);
-
-				// Add equalizer if enabled
-				if (currentMixerInfo.EnableEqualizer)
-					equalizer.Apply(outputBuffer, totalFramesProcessed);
-			}
-			else
+			int totalFramesProcessed = DoMixing(currentMixerInfo, outputBuffer, framesToProcess, out hasEndReached);
+			if (totalFramesProcessed == 0)
 				outputBuffer.Slice(0, frameCount * outputChannelCount).Clear();
 
 			// Mix extra channels into the output buffer
@@ -605,21 +589,17 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/********************************************************************/
 		/// <summary>
 		/// This is the main mixer method. It will call the right mixer and
-		/// mix the main module samples.
+		/// mix the main module samples. Each chunk of frames mixed is
+		/// converted and stored in the output buffer right away, so any
+		/// filter changes made by the player, are applied to the exact
+		/// part of the sound they belong to
 		/// </summary>
 		/********************************************************************/
-		private int DoMixing(MixerInfo currentMixerInfo, int framesToProcess, out bool hasEndReached)
+		private int DoMixing(MixerInfo currentMixerInfo, Span<int> outputBuffer, int framesToProcess, out bool hasEndReached)
 		{
 			hasEndReached = false;
 
 			int totalFrames = 0;
-
-			// Prepare the mixing buffers
-			foreach (int[] buffer in mixingBuffers)
-				Array.Clear(buffer, 0, buffer.Length);
-
-			foreach (int[] buffer in groupBuffers.Values.SelectMany(x => x))
-				Array.Clear(buffer, 0, buffer.Length);
 
 			if (playing)
 			{
@@ -716,8 +696,17 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 					// Call visualizers
 					currentVisualizer.TellAgentsAboutChannelChange(leftInFrames);
 
+					// Prepare the mixing buffers
+					ClearMixingBuffers(leftInFrames);
+
 					// And mix it
-					currentMixer.Mixing(currentMixerInfo, mixerBufferMap, totalFrames, leftInFrames, downMixer.PlayerSpeakerToChannelMap);
+					currentMixer.Mixing(currentMixerInfo, mixerBufferMap, 0, leftInFrames, downMixer.PlayerSpeakerToChannelMap);
+
+					// Add the effects and convert the mixed data into
+					// the output buffer. This is done for each chunk
+					// mixed, so e.g. the Amiga filter is applied with
+					// the state the player had, when the chunk played
+					ProcessMixedData(currentMixerInfo, outputBuffer.Slice(totalFrames * outputChannelCount, leftInFrames * outputChannelCount), leftInFrames);
 
 					// Calculate new values for the counter variables
 					framesTakenSinceLastCall += leftInFrames;
@@ -741,6 +730,60 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			}
 
 			return totalFrames;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear the part of the mixing buffers that are going to be used
+		/// </summary>
+		/********************************************************************/
+		private void ClearMixingBuffers(int todoInFrames)
+		{
+			foreach (int[] buffer in mixingBuffers)
+				Array.Clear(buffer, 0, todoInFrames);
+
+			foreach (int[][] buffers in groupBuffers.Values)
+			{
+				foreach (int[] buffer in buffers)
+					Array.Clear(buffer, 0, todoInFrames);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will add the effects to the mixed data and convert it into the
+		/// given output buffer
+		/// </summary>
+		/********************************************************************/
+		private void ProcessMixedData(MixerInfo currentMixerInfo, Span<int> outputBuffer, int todoInFrames)
+		{
+			// Now convert the mixed data to real 32 bit samples
+			foreach (int[] buffer in mixingBuffers)
+				currentMixer.ConvertMixedData(buffer, todoInFrames);
+
+			foreach (int[][] buffers in groupBuffers.Values)
+			{
+				foreach (int[] buffer in buffers)
+					currentMixer.ConvertMixedData(buffer, todoInFrames);
+			}
+
+			// Add extra effects if enabled and mix all buffers into mixingBuffers
+			AddEffects(todoInFrames);
+
+			// Convert to output format
+			downMixer.ConvertToOutputFormat(currentMixerInfo, mixingBuffers, outputBuffer, todoInFrames);
+
+			// Add Amiga low-pass filter if enabled
+			if (currentMixerInfo.EmulateFilter && currentPlayer.AmigaFilter)
+				amigaFilter.Apply(outputBuffer, todoInFrames);
+
+			// Add equalizer if enabled
+			if (currentMixerInfo.EnableEqualizer)
+				equalizer.Apply(outputBuffer, todoInFrames);
 		}
 
 
