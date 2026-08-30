@@ -17,6 +17,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 	/// </summary>
 	internal static class ModTrackerIdentifier
 	{
+		/// <summary>
+		/// Arbitrary threshold for deciding that 8xx effects are meant as
+		/// panning and not just as sync markers
+		/// </summary>
+		private const byte Enable_Mod_Panning_Threshold = 0x30;
+
 		/// <summary></summary>
 		public static readonly byte[] StSynthId1 = [ 0x53, 0x54, 0x31, 0x2e, 0x33, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f ];		// ST1.3 ModuleINFO
 		/// <summary></summary>
@@ -517,24 +523,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				byte[] pos = new byte[128];
 				moduleStream.ReadInto(pos, 0, 128);
 
+				// Information gathered from the sample headers, which is used
+				// to tell if the module was made by OpenMPT
+				bool hasLoop0 = false;
+				bool hasVolInEmptyIns = false;
+				bool hasConvertedSample = false;
+				bool hasEmptySampleWithLoop1 = false;
+				bool hasStIns = false;
+
+				byte[] sampleName = new byte[22];
+
 				// Check the sample lengths and accumulate them
 				for (int i = 0; i < 31; i++)
 				{
-					moduleStream.Seek(20 + (i * 30) + 22, SeekOrigin.Begin);
+					moduleStream.Seek(20 + (i * 30), SeekOrigin.Begin);
+
+					moduleStream.ReadInto(sampleName, 0, 22);
 
 					ushort sampleLength = moduleStream.Read_B_UINT16();
-					ushort fineTuneVolume = moduleStream.Read_B_UINT16();
+					byte fineTune = moduleStream.Read_UINT8();
+					byte volume = moduleStream.Read_UINT8();
+					moduleStream.Read_B_UINT16();		// Loop start
+					ushort loopLength = moduleStream.Read_B_UINT16();
 
 					if (sampleLength >= 0x8000)
 						return ModuleType.Unknown;	// It is an OpenMPT module
 
 					totalSampleLength += (uint)sampleLength << 1;
-					if ((sampleLength != 0) && (fineTuneVolume != 0x0040))
+					if ((sampleLength != 0) && ((fineTune != 0x00) || (volume != 0x40)))
 					{
 						// Mod's Grave .WOW files are converted from .669 and thus
 						// do not have sample fine tune or volume
 						maybeWow = false;
 					}
+
+					if (loopLength == 0)
+						hasLoop0 = true;
+
+					if (sampleLength == 0)
+					{
+						if (volume > 0)
+							hasVolInEmptyIns = true;
+
+						if (loopLength == 1)
+							hasEmptySampleWithLoop1 = true;
+					}
+					else if ((sampleLength == 1) && (volume == 0))
+						hasConvertedSample = true;
+
+					if (IsSoundTrackerSampleName(sampleName))
+						hasStIns = true;
 				}
 
 				// Mod's Grave .WOW files have an M.K. signature, but they're actually 8 channel.
@@ -553,6 +591,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					if ((moduleStream.Length & ~1) == wowLength)
 						return ModuleType.Unknown;
 				}
+
+				// Modules made by OpenMPT are played by the OpenMPT player
+				// agent, so reject them here
+				if (HasOpenMptSampleLayout(mark, restartByte, pos, hasLoop0, hasVolInEmptyIns, hasConvertedSample, hasEmptySampleWithLoop1, hasStIns))
+					return ModuleType.Unknown;
+
+				// Used to find out if the module uses the panning style only
+				// ModPlug Tracker / OpenMPT writes into MOD files
+				bool isOpenMpt = false;
+				bool leftPanning = false, extendedPanning = false;
+				byte maxPanning = 0;
 
 				if (mark != "M&K!")		// Skip check for most likely His Master's Noise format
 				{
@@ -584,7 +633,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								goto stopLoop;
 							}
 
-							// Is pitch between 28 and 856
+							// Is pitch between 113 and 856
 							uint temp = (((uint)a & 0x0f) << 8) | b;
 							if ((temp != 0) && ((temp < 113) || (temp > 856)))
 							{
@@ -600,6 +649,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								case Effect.SampleOffset:
 								{
 									retVal = ModuleType.ProTracker;
+									break;
+								}
+
+								case Effect.SetPanning:
+								{
+									// 8A4 is 7-bit panning + surround. No Amiga
+									// tracker can make that, so the module is
+									// made by OpenMPT
+									if (d == 0xa4)
+									{
+										isOpenMpt = true;
+										goto stopLoop;
+									}
+
+									if (d > maxPanning)
+										maxPanning = d;
+
+									if (d < 0x80)
+										leftPanning = true;
+									else if (d > 0x8f)
+										extendedPanning = true;
+
 									break;
 								}
 
@@ -626,6 +697,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 									if (d >= 16)
 										retVal = ModuleType.ProTracker;
 
+									// E8x is used as panning by ModPlug Tracker
+									// / OpenMPT as well
+									if ((d & 0xf0) == 0x80)
+									{
+										byte panning = (byte)((d & 0x0f) << 4);
+
+										if (panning > maxPanning)
+											maxPanning = panning;
+									}
+
 									break;
 								}
 							}
@@ -633,6 +714,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					}
 stopLoop:
 					;
+
+					// Same heuristic as OpenMPT uses to detect modules with
+					// 7-bit panning, which is how it stores panning in MOD files
+					if (isOpenMpt || (leftPanning && !extendedPanning && (maxPanning >= Enable_Mod_Panning_Threshold)))
+						return ModuleType.Unknown;
 				}
 
 				if ((retVal != ModuleType.Unknown) && (retVal != ModuleType.ProTracker))
@@ -744,6 +830,69 @@ stopLoop:
 		private static byte[] FindUsedPatterns(byte[] pos, byte songLen)
 		{
 			return pos.Take(songLen).Distinct().OrderBy(b => b).ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks if the sample name looks like one of the instruments
+		/// shipped with Ultimate Soundtracker, e.g. "st-01:"
+		/// </summary>
+		/********************************************************************/
+		private static bool IsSoundTrackerSampleName(byte[] name)
+		{
+			if (((name[0] != 's') && (name[0] != 'S')) || ((name[1] != 't') && (name[1] != 'T')))
+				return false;
+
+			if ((name[2] != '-') || (name[5] != ':'))
+				return false;
+
+			return char.IsAsciiDigit((char)name[3]) && char.IsAsciiDigit((char)name[4]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks if the sample headers have the layout which tells that the
+		/// module was made by OpenMPT. An empty sample having both a volume
+		/// and a loop length of one is what gives it away, but only when
+		/// nothing else points at another tracker
+		/// </summary>
+		/********************************************************************/
+		private static bool HasOpenMptSampleLayout(string mark, byte restartByte, byte[] pos, bool hasLoop0, bool hasVolInEmptyIns, bool hasConvertedSample, bool hasEmptySampleWithLoop1, bool hasStIns)
+		{
+			// Only plain ProTracker modules can be told apart this way
+			if (mark != "M.K.")
+				return false;
+
+			// Find the highest pattern number used in the order list
+			int pat = 0;
+
+			foreach (byte x in pos)
+			{
+				if (x > 0x7f)
+					break;
+
+				if (x > pat)
+					pat = x;
+			}
+
+			pat++;
+
+			// A restart position of 0x78 is NoiseTracker, 0x7f is
+			// ScreamTracker or a ProTracker clone and anything above that is
+			// unknown. None of them can be OpenMPT
+			if ((restartByte != pat) && ((restartByte == 0x78) || (restartByte >= 0x7f)))
+				return false;
+
+			// A loop length of zero, a one word long silent sample or the
+			// Ultimate Soundtracker instruments all point somewhere else
+			if (hasLoop0 || hasConvertedSample || hasStIns)
+				return false;
+
+			return hasEmptySampleWithLoop1 && hasVolInEmptyIns;
 		}
 		#endregion
 	}

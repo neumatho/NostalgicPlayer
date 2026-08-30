@@ -19,7 +19,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		Vibrato_VolSlide,			// 0x06
 		Tremolo,					// 0x07
 		MegaArp = 0x07,				// 0x07 (Only used in His Master's Noise)
-		SampleOffset = 0x09,		// 0x09
+		SetPanning,					// 0x08 (Not a ProTracker effect. Used by ModPlug Tracker / OpenMPT)
+		SampleOffset,				// 0x09
 		VolumeSlide,				// 0x0a
 		PosJump,					// 0x0b
 		SetVolume,					// 0x0c
