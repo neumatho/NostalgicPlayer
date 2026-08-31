@@ -141,6 +141,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		{
 			SyncCntHistory();
 
+			// https://sourceforge.net/p/vice-emu/code/45957/
+			// https://github.com/piciji/denise/commit/f8f02f5cb54fae93435a3d8669e56d75c4f538c8
+			if (((count > 1) && (count < 15)) || ((count == 15) && ((cntHistory & 0x04) == 0)))
+			{
+				eventScheduler.Cancel(eventObject);
+				eventScheduler.Schedule(eventObject, 2);
+			}
+
 			if (input)
 			{
 				uint8_t cntVal = (uint8_t)(model4485 ? 0x7 : 0x6);
