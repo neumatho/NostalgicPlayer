@@ -156,6 +156,67 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Update filter resonance
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void UpdateResonance(uint8_t res)
+		{
+			currentResonance = resonance + (res * (1 << 16));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixing configuration modified (offsets change)
+		/// </summary>
+		/********************************************************************/
+		public void UpdateMixing()
+		{
+			currentVolume = volume + (vol * (1 << 16));
+
+			int nSum = 0;
+			int nMix = 0;
+
+			if (filt1)
+				nSum++;
+			else
+				nMix++;
+
+			if (filt2)
+				nSum++;
+			else
+				nMix++;
+
+			if (filt3)
+				nSum++;
+			else if (!voice3Off)
+				nMix++;
+
+			if (filtE)
+				nSum++;
+			else
+				nMix++;
+
+			currentSummer = summer + summerIdx[nSum];
+
+			if (lp)
+				nMix++;
+
+			if (bp)
+				nMix++;
+
+			if (hp)
+				nMix++;
+
+			currentMixer = mixer + mixerIdx[nMix];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write frequency cutoff low register
 		/// </summary>
 		/********************************************************************/
@@ -388,66 +449,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		protected int32_t GetNormalizedVoice(float v, uint8_t env)
 		{
 			return m_fmc.GetNormalizedVoice(v, env);
-		}
-		#endregion
-
-		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Update filter resonance
-		/// </summary>
-		/********************************************************************/
-		private void UpdateResonance(uint8_t res)
-		{
-			currentResonance = resonance + (res * (1 << 16));
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixing configuration modified (offsets change)
-		/// </summary>
-		/********************************************************************/
-		private void UpdateMixing()
-		{
-			currentVolume = volume + (vol * (1 << 16));
-
-			int nSum = 0;
-			int nMix = 0;
-
-			if (filt1)
-				nSum++;
-			else
-				nMix++;
-
-			if (filt2)
-				nSum++;
-			else
-				nMix++;
-
-			if (filt3)
-				nSum++;
-			else if (!voice3Off)
-				nMix++;
-
-			if (filtE)
-				nSum++;
-			else
-				nMix++;
-
-			currentSummer = summer + summerIdx[nSum];
-
-			if (lp)
-				nMix++;
-
-			if (bp)
-				nMix++;
-
-			if (hp)
-				nMix++;
-
-			currentMixer = mixer + mixerIdx[nMix];
 		}
 		#endregion
 	}

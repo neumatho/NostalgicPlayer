@@ -339,6 +339,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				f.vol = state.vol[i];
 				f.enabled = state.enabled[i];
 				f.filt = state.filt[i];
+				f.UpdateResonance((uint8_t)((f.filt >> 4) & 0x0f));
+				f.UpdateMixing();
 			}
 
 			s.SetFilter6581Curve(state.filterCurve6581);
