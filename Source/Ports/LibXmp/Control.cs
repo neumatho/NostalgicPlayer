@@ -522,7 +522,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					if (val == 1)
 						s.Format |= Xmp_Format.Mono;
-					else if (val == 2)
+					else
 						s.Format &= ~Xmp_Format.Mono;
 
 					break;

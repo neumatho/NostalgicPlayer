@@ -598,7 +598,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Virt_Used = p.Virt.Virt_Used;
 
 			info.Sequence = p.Sequence;
-			info.Filter = p.Filter;
 
 			if (p.Xc_Data != null)
 			{

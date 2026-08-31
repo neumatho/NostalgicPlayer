@@ -117,10 +117,5 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// Current playing tracks
 		/// </summary>
 		public readonly c_int[] Playing_Tracks = new c_int[Constants.Xmp_Max_Channels];
-
-		/// <summary>
-		/// Status of the Amiga filter
-		/// </summary>
-		public bool Filter;
 	}
 }

@@ -264,8 +264,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			PlayBuffer(afterInfo);
 
-			AmigaFilter = afterInfo.Filter;
-
 			if (beforeInfo.Speed != afterInfo.Speed)
 			{
 				currentSpeed = afterInfo.Speed;
@@ -737,29 +735,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		private void PlayBuffer(Xmp_Frame_Info frameInfo)
 		{
-			int bufferSize = frameInfo.Buffer_Size / 2;
+			bool realSurroundEnabled = VirtualChannels.Length == 4;
+
+			int bufferSize = frameInfo.Buffer_Size / 2 / 2;
 			Span<short> buffer = MemoryMarshal.Cast<sbyte, short>(frameInfo.Buffer.AsSpan());
 
-			if (VirtualChannels.Length == 1)
+			if ((leftBuffer == null) || (leftBuffer.Length < bufferSize))
 			{
-				if ((leftBuffer == null) || (leftBuffer.Length < bufferSize))
-					leftBuffer = new short[bufferSize];
+				leftBuffer = new short[bufferSize];
+				rightBuffer = new short[bufferSize];
 
-				for (int i = 0; i < bufferSize; i++)
-					leftBuffer[i] = buffer[i];
+				if (realSurroundEnabled)
+				{
+					leftRearBuffer = new short[bufferSize];
+					rightRearBuffer = new short[bufferSize];
+				}
+			}
+
+			if (realSurroundEnabled)
+			{
+				Span<short> bufferRear = MemoryMarshal.Cast<sbyte, short>(frameInfo.BufferRear.AsSpan());
+
+				for (int i = 0, j = 0; i < bufferSize; i++)
+				{
+					leftBuffer[i] = buffer[j];
+					leftRearBuffer[i] = bufferRear[j++];
+					rightBuffer[i] = buffer[j];
+					rightRearBuffer[i] = bufferRear[j++];
+				}
 
 				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
+				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
+				VirtualChannels[2].PlayBuffer(leftRearBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
+				VirtualChannels[3].PlayBuffer(rightRearBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
 			}
 			else
 			{
-				bufferSize /= 2;
-
-				if ((leftBuffer == null) || (leftBuffer.Length < bufferSize))
-				{
-					leftBuffer = new short[bufferSize];
-					rightBuffer = new short[bufferSize];
-				}
-
 				for (int i = 0, j = 0; i < bufferSize; i++)
 				{
 					leftBuffer[i] = buffer[j++];
@@ -768,26 +779,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
 				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
-
-				if (VirtualChannels.Length == 4)
-				{
-					buffer = MemoryMarshal.Cast<sbyte, short>(frameInfo.BufferRear.AsSpan());
-
-					if ((leftRearBuffer == null) || (leftRearBuffer.Length < bufferSize))
-					{
-						leftRearBuffer = new short[bufferSize];
-						rightRearBuffer = new short[bufferSize];
-					}
-
-					for (int i = 0, j = 0; i < bufferSize; i++)
-					{
-						leftRearBuffer[i] = buffer[j++];
-						rightRearBuffer[i] = buffer[j++];
-					}
-
-					VirtualChannels[2].PlayBuffer(leftRearBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
-					VirtualChannels[3].PlayBuffer(rightRearBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
-				}
 			}
 		}
 
