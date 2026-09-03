@@ -21,7 +21,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Arbitrary threshold for deciding that 8xx effects are meant as
 		/// panning and not just as sync markers
 		/// </summary>
-		private const byte Enable_Mod_Panning_Threshold = 0x30;
+		private const byte Enable_Mod_Panning_Threshold = 0x38;
+
+		/// <summary>
+		/// Minimum number of panning effects needed, before they are
+		/// considered as real panning
+		/// </summary>
+		private const int Minimum_Mod_Panning_Effects = 4;
 
 		/// <summary></summary>
 		public static readonly byte[] StSynthId1 = [ 0x53, 0x54, 0x31, 0x2e, 0x33, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f ];		// ST1.3 ModuleINFO
@@ -497,6 +503,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				(mark == "LARD") ||								// judgement_day_gvine.mod
 				(mark == "NSMS"))								// kingdomofpleasure.mod
 			{
+				// Only these marks can be made by OpenMPT. This has to match
+				// the MaybeOpenMpt flag in the MOD prober in the LibOpenMpt
+				// port, or a module will either be claimed by both players or
+				// by none of them
+				bool maybeOpenMpt = (mark == "M.K.") || (mark == "M!K!");
+
 				bool maybeWow = true;
 				uint totalSampleLength = 0;
 
@@ -546,7 +558,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					moduleStream.Read_B_UINT16();		// Loop start
 					ushort loopLength = moduleStream.Read_B_UINT16();
 
-					if (sampleLength >= 0x8000)
+					if (maybeOpenMpt && (sampleLength >= 0x8000))
 						return ModuleType.Unknown;	// It is an OpenMPT module
 
 					totalSampleLength += (uint)sampleLength << 1;
@@ -602,6 +614,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				bool isOpenMpt = false;
 				bool leftPanning = false, extendedPanning = false;
 				byte maxPanning = 0;
+				int panningEffects = 0;
 
 				if (mark != "M&K!")		// Skip check for most likely His Master's Noise format
 				{
@@ -654,6 +667,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 								case Effect.SetPanning:
 								{
+									if (!maybeOpenMpt)
+										break;
+
+									panningEffects++;
+
 									// 8A4 is 7-bit panning + surround. No Amiga
 									// tracker can make that, so the module is
 									// made by OpenMPT
@@ -697,10 +715,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 									if (d >= 16)
 										retVal = ModuleType.ProTracker;
 
-									// E8x is used as panning by ModPlug Tracker
-									// / OpenMPT as well
-									if ((d & 0xf0) == 0x80)
+									// E8x is used as panning by ModPlug Tracker / OpenMPT as well
+									if (maybeOpenMpt && ((d & 0xf0) == 0x80))
 									{
+										panningEffects++;
+
 										byte panning = (byte)((d & 0x0f) << 4);
 
 										if (panning > maxPanning)
@@ -716,8 +735,10 @@ stopLoop:
 					;
 
 					// Same heuristic as OpenMPT uses to detect modules with
-					// 7-bit panning, which is how it stores panning in MOD files
-					if (isOpenMpt || (leftPanning && !extendedPanning && (maxPanning >= Enable_Mod_Panning_Threshold)))
+					// 7-bit panning, which is how it stores panning in MOD files.
+					// Only trust it, if enough panning effects are used, since a
+					// few of them are most likely just sync markers
+					if (maybeOpenMpt && (isOpenMpt || ((panningEffects >= Minimum_Mod_Panning_Effects) && leftPanning && !extendedPanning && (maxPanning >= Enable_Mod_Panning_Threshold))))
 						return ModuleType.Unknown;
 				}
 

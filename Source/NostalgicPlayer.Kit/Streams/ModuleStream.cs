@@ -78,6 +78,18 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Tell if the sample data is stored in a separate stream, which
+		/// means that GetSampleDataStream() will seek to the right position
+		/// by itself. If false, the sample data is read from the current
+		/// position in this stream
+		/// </summary>
+		/********************************************************************/
+		public bool HasSeparateSampleDataStream => (sampleStream != null) && hasSampleMarkers;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will read a line. The line is a character sequence which is
 		/// terminated by \0 or new-line characters
 		/// </summary>
