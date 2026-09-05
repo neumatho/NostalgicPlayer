@@ -1,0 +1,29 @@
+name: Run unit test for LibOpenMpt
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**/LibOpenMpt/**'
+      - '**/LibOpenMpt.Test/**'
+
+jobs:
+  Test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          lfs: 'false'
+      - name: Fetch LFS files needed to build
+        run: git lfs pull --exclude="Documentation,Source/Ports/Tests"
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v4
+      - name: Install dependencies
+        run: nuget restore Source\NostalgicPlayer.sln
+      - name: Build
+        run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Debug" -property:Platform="Any CPU"
+      - name: Test
+        run: dotnet test Source\Ports\Tests\LibOpenMpt.Test\LibOpenMpt.Test.csproj --no-build --verbosity normal

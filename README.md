@@ -16,6 +16,7 @@ NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/Nosta
 * FFmpeg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/FFmpeg/LICENSE">GNU Lesser General Public License version 2.1</a>)
 * libFLAC (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibFlac/LICENSE">BSD License</a>)
 * libOgg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOgg/LICENSE">BSD License</a>)
+* libOpenMPT (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpenMpt/LICENSE">BSD 3-Clause License</a>)
 * libOpus (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpus/LICENSE">BSD License</a>)
 * libOpusFile (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpusFile/LICENSE">BSD License</a>)
 * libTfmxAudioDecoder (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibTfmxAudioDecoder/LICENSE">GNU General Public License version 2</a>)
@@ -173,7 +174,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
 | OggMod | .oxm | | Xmp |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
-| OpenMPT MOD | .mod | | Xmp |
+| OpenMPT MOD | .mod | | OpenMPT |
 | Opus | .opus | | Opus |
 | Perfect Song 1 | .pf1 | ProWizard | ModTracker |
 | Perfect Song 2 | .pf2 | ProWizard | ModTracker |

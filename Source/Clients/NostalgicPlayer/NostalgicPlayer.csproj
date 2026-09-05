@@ -116,6 +116,7 @@
     <ProjectReference Include="..\..\Agents\Players\OctaMed\OctaMed.csproj" />
     <ProjectReference Include="..\..\Agents\Players\OggVorbis\OggVorbis.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Oktalyzer\Oktalyzer.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\OpenMpt\OpenMpt.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Opus\Opus.csproj" />
     <ProjectReference Include="..\..\Agents\Players\PumaTracker\PumaTracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\QuadraComposer\QuadraComposer.csproj" />

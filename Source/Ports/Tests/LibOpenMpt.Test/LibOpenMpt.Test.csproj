@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+
+    <IsPackable>false</IsPackable>
+
+    <RootNamespace>Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test</RootNamespace>
+
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+
+    <DocumentationFile>bin\LibOpenMpt.Test.xml</DocumentationFile>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\Common\MptPathTypes.cs" Link="MptPathTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\Common\MptRandomTypes.cs" Link="MptRandomTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\LibOpenMptTypes.cs" Link="LibXmpTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\Mpt\Crc\CrcTypes.cs" Link="CrcTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\Mpt\Endian\EndianTypes.cs" Link="EndianTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\Mpt\Random\Default_Engines.cs" Link="Default_Engines.cs" />
+    <Compile Include="..\..\LibOpenMpt\SoundBase\MixTypes.cs" Link="MixTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\LibOpenMpt\LibOpenMpt.csproj" />
+  </ItemGroup>
+
+</Project>

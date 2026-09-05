@@ -56,7 +56,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			FastTracker,
 			TakeTracker,
 			ScreamTracker3,
-			OpenMpt,
 			ModsGrave,
 			DigitalTracker,
 			Octalyser,
@@ -129,6 +128,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			new Mod_Magic(".M.K", true, InternalFormat.SoftwareVisions, 4)	// Software Visions DMF
 		];
 
+		/// <summary>
+		/// TNE: Arbitrary threshold for deciding that 8xx effects are meant
+		/// as panning and not just as sync markers
+		/// </summary>
+		private const uint8 Enable_Mod_Panning_Threshold = 0x38;
+
+		/// <summary>
+		/// TNE: Minimum number of panning effects needed, before they are
+		/// considered as real panning
+		/// </summary>
+		private const c_int Minimum_Mod_Panning_Effects = 4;
+
 		private readonly ExternalFormat format;
 		private readonly LibXmp lib;
 
@@ -165,15 +176,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Name = "Scream Tracker 3 MOD",
 			Description = "This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by Scream Tracker 3 when saving in this format.\n\n“Scream Tracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994.",
 			Create = Create_ScreamTracker3
-		};
-
-		/// <summary></summary>
-		public static readonly Format_Loader LibXmp_Loader_OpenMpt = new Format_Loader
-		{
-			Id = Guid.Parse("0FE3B659-4DF0-4192-AEA0-96376F20296C"),
-			Name = "OpenMPT MOD",
-			Description = "This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by OpenMPT when saving in this format.\n\n“OpenMPT” is currently maintained by Saga Musix a.k.a. Johannes Schultz.",
-			Create = Create_OpenMpt
 		};
 
 		/// <summary></summary>
@@ -275,18 +277,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_ScreamTracker3(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.ScreamTracker3);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Create a new instance of the loader
-		/// </summary>
-		/********************************************************************/
-		private static IFormatLoader Create_OpenMpt(LibXmp libXmp, Xmp_Context ctx)
-		{
-			return new Mod_Load(libXmp, ExternalFormat.OpenMpt);
 		}
 
 
@@ -1008,6 +998,150 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		/********************************************************************/
 		/// <summary>
+		/// TNE: Tell if the mark is one of those OpenMPT can write. Only
+		/// these marks are checked any further to see if the module was made
+		/// by OpenMPT
+		/// </summary>
+		/********************************************************************/
+		private static bool Is_Maybe_OpenMpt(CPointer<uint8> magic)
+		{
+			// ProTracker and compatible
+			if ((CMemory.strncmp(magic, "M.K.", 4) == 0) || (CMemory.strncmp(magic, "M!K!", 4) == 0))
+				return true;
+
+			// xCHN - Many trackers
+			if ((magic[0] >= '1') && (magic[0] <= '9') && (CMemory.strncmp(magic + 1, "CHN", 3) == 0))
+				return true;
+
+			// xxCH / xxCN - Many trackers
+			if ((magic[0] >= '1') && (magic[0] <= '9') && (magic[1] >= '0') && (magic[1] <= '9') &&
+			    ((CMemory.strncmp(magic + 2, "CH", 2) == 0) || (CMemory.strncmp(magic + 2, "CN", 2) == 0)))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// TNE: Scan the pattern data for the panning style only ModPlug
+		/// Tracker / OpenMPT writes into MOD files. 8A4 is 7-bit panning +
+		/// surround, and 8xx panning in the 00-80 range is how OpenMPT
+		/// stores panning at all. Other trackers either use the full 8-bit
+		/// range or do not write 8xx commands at all.
+		///
+		/// This is the same test as the one done in the MOD prober in the
+		/// LibOpenMpt port. Both need to agree, or a module will either be
+		/// claimed by both players or by none of them
+		/// </summary>
+		/********************************************************************/
+		private bool Has_OpenMpt_Panning(Hio f, c_int start, c_int chn, c_int smp_Size)
+		{
+			if (chn <= 0)
+				return false;
+
+			// Find the number of patterns stored in the file
+			c_int num_Pat = 0;
+
+			f.Hio_Seek(start + 952, SeekOrigin.Begin);
+
+			for (c_int i = 0; i < 128; i++)
+			{
+				uint8 x = f.Hio_Read8();
+
+				if ((x < 128) && (num_Pat <= x))
+					num_Pat = x + 1;
+			}
+
+			// Never scan into the sample data, in case the order list claims
+			// more patterns than the file really holds
+			c_int patLen = chn * 256;
+			c_long sizeWithoutPatterns = start + 1084 + smp_Size;
+			c_long fileSize = f.Hio_Size();
+			c_int max_Pat = (c_int)((fileSize > sizeWithoutPatterns ? fileSize - sizeWithoutPatterns : 0) / patLen);
+
+			if (num_Pat > max_Pat)
+				num_Pat = max_Pat;
+
+			if (num_Pat <= 0)
+				return false;
+
+			CPointer<uint8> patBuf = CMemory.malloc<uint8>((size_t)patLen);
+			if (patBuf.IsNull)
+				return false;
+
+			f.Hio_Seek(start + 1084, SeekOrigin.Begin);
+
+			bool has_Surround = false;
+			bool left_Panning = false, extended_Panning = false;
+			uint8 max_Panning = 0;
+			c_int panning_Effects = 0;
+
+			for (c_int i = 0; i < num_Pat; i++)
+			{
+				if (f.Hio_Read(patBuf, 1, (size_t)patLen) < (size_t)patLen)
+					break;
+
+				CPointer<uint8> mod_Event = patBuf;
+
+				for (c_int j = 0; j < (patLen / 4); j++, mod_Event += 4)
+				{
+					uint8 fxT = Ports.LibXmp.Common.Lsn(mod_Event[2]);
+					uint8 fxP = mod_Event[3];
+
+					if (fxT == 0x08)
+					{
+						panning_Effects++;
+
+						// 8A4 is 7-bit panning + surround. No Amiga tracker
+						// can make that, so the module is made by OpenMPT
+						if (fxP == 0xa4)
+						{
+							has_Surround = true;
+							goto Done;
+						}
+
+						if (fxP > max_Panning)
+							max_Panning = fxP;
+
+						if (fxP < 0x80)
+							left_Panning = true;
+						else if (fxP > 0x8f)
+							extended_Panning = true;
+					}
+					else if ((fxT == 0x0e) && ((fxP & 0xf0) == 0x80))
+					{
+						panning_Effects++;
+
+						uint8 panning = (uint8)((fxP & 0x0f) << 4);
+
+						if (panning > max_Panning)
+							max_Panning = panning;
+					}
+				}
+			}
+
+			Done:
+			CMemory.free(patBuf);
+
+			if (has_Surround)
+				return true;
+
+			// Only trust the panning, if enough panning effects are used,
+			// since a few of them are most likely just sync markers
+			if (panning_Effects < Minimum_Mod_Panning_Effects)
+				return false;
+
+			return left_Panning && !extended_Panning && (max_Panning >= Enable_Mod_Panning_Threshold);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -1246,9 +1380,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.ScreamTracker3:
 					return ExternalFormat.ScreamTracker3;
 
-				case InternalFormat.OpenMpt:
-					return ExternalFormat.OpenMpt;
-
 				case InternalFormat.ModsGrave:
 					return ExternalFormat.ModsGrave;
 
@@ -1276,6 +1407,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.NoiseTracker:
 				case InternalFormat.Probably_NoiseTracker:
 				case InternalFormat.ProTracker:
+				case InternalFormat.OpenMpt:
 					return LibXmp.UnitTestMode ? ExternalFormat.TestOnly : ExternalFormat.Unknown;
 			}
 
@@ -1319,6 +1451,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			CPointer<byte> magic = new CPointer<byte>(4);
 			CMemory.memcpy(magic, patBuf + 1080, 4);
 			mkMark = CMemory.strncmp(magic, "M.K.", 4) == 0;
+
+			// TNE: Only some marks can be made by OpenMPT
+			bool maybe_OpenMpt = Is_Maybe_OpenMpt(magic);
 
 			for (c_int i = 0; i < mod_Magic.Length; i++)
 			{
@@ -1396,7 +1531,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			pat++;
 			CMemory.free(patBuf);
 
-			if (has_Big_Samples)
+			if (has_Big_Samples && maybe_OpenMpt)
 			{
 				trackerId = InternalFormat.OpenMpt;
 				needs_Timing_Detection = false;
@@ -1417,7 +1552,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// format FLX. The FLX format is an extended version of the standard
 			// MOD file format with support for real-time sound effects like reverb
 			// and delay
-			if ((0x43c + pat * 4 * channels * 0x40 + smp_Size) < fileSize)
+			if ((0x43c + (pat * 4 * channels * 0x40) + smp_Size) < fileSize)
 			{
 				uint8[] idBuffer = new uint8[4];
 
@@ -1557,6 +1692,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				detected = true;
 			}
+
+			// TNE: Modules using ModPlug style panning are made by OpenMPT
+			// and are played by the LibOpenMpt port instead.
+			//
+			// Mod's Grave modules use the M.K. mark, but have 8 channels.
+			// The prober in the LibOpenMpt port does not know about that, so
+			// it scans them as 4 channel modules. Do the same here, or the
+			// two will not agree on the result
+			if (maybe_OpenMpt && (trackerId != InternalFormat.OpenMpt) && Has_OpenMpt_Panning(f, start, mkMark ? 4 : channels, smp_Size))
+				trackerId = InternalFormat.OpenMpt;
 
 			return trackerId;
 		}
