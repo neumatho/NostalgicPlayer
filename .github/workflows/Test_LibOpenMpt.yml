@@ -17,6 +17,8 @@ jobs:
           lfs: 'false'
       - name: Fetch LFS files needed to build
         run: git lfs pull --exclude="Documentation,Source/Ports/Tests"
+      - name: Fetch LFS test data
+        run: git lfs pull --include="Source/Ports/Tests/LibOpenMpt.Test"
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
       - name: Setup NuGet
