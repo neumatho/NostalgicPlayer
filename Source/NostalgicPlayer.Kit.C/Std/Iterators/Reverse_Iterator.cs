@@ -114,11 +114,39 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 		/********************************************************************/
 		/// <summary>
 		/// Return a new iterator moved the given number of elements towards
+		/// the beginning of the range
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static reverse_iterator<T> operator + (reverse_iterator<T> it, size_t n)
+		{
+			return new reverse_iterator<T>(it.current - n);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new iterator moved the given number of elements towards
 		/// the end of the range
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static reverse_iterator<T> operator - (reverse_iterator<T> it, int n)
+		{
+			return new reverse_iterator<T>(it.current + n);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new iterator moved the given number of elements towards
+		/// the end of the range
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static reverse_iterator<T> operator - (reverse_iterator<T> it, size_t n)
 		{
 			return new reverse_iterator<T>(it.current + n);
 		}
