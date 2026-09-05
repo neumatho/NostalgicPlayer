@@ -200,9 +200,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					byte byt2 = moduleStream.Read_UINT8();
 					byte byt3 = moduleStream.Read_UINT8();
 
+					// The 8xx effect was used to trigger effects in the Skizzo 1 demo.
+					// To avoid misdetection as a PC module, this effect will be
+					// removed from the pattern
+					if ((byt2 & 0x0f) == 0x08)
+					{
+						byt2 &= 0xf0;
+						byt3 = 0x00;
+					}
+
 					pattern[j * 4] = (byte)((byt1 >> 3) & 0x10);
-					pattern[j * 4 + 2] = byt2;
-					pattern[j * 4 + 3] = byt3;
+					pattern[(j * 4) + 2] = byt2;
+					pattern[(j * 4) + 3] = byt3;
 
 					byt1 &= 0x7f;
 					if (byt1 != 0)
@@ -210,10 +219,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 						byt1--;
 
 						pattern[j * 4] |= periods[byt1, 0];
-						pattern[j * 4 + 1] = periods[byt1, 1];
+						pattern[(j * 4) + 1] = periods[byt1, 1];
 					}
 					else
-						pattern[j * 4 + 1] = 0x00;
+						pattern[(j * 4) + 1] = 0x00;
 				}
 
 				yield return pattern;

@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 				return false;
 
 			// Check module length
-			if ((0x43c + numberOfPatterns * 1024 + samplesSize) > (moduleStream.Length + MaxNumberOfMissingBytes))
+			if ((0x43c + (numberOfPatterns * 1024) + samplesSize) > (moduleStream.Length + MaxNumberOfMissingBytes))
 				return false;
 
 			// Check pattern data
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 				if (temp > 0x13)
 					return false;
 
-				ushort temp1 = (ushort)((temp & 0x0f) * 256 + moduleStream.Read_UINT8());
+				ushort temp1 = (ushort)(((temp & 0x0f) * 256) + moduleStream.Read_UINT8());
 				if ((temp1 > 0) && (temp1 < 0x1c))
 					return false;
 
@@ -211,6 +211,21 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			for (int i = 0; i < numberOfPatterns; i++)
 			{
 				moduleStream.ReadInto(pattern, 0, 1024);
+
+				// The 8xx effect was used to trigger effects in the Skizzo 2 demo.
+				// To avoid misdetection as a PC module, this effect will be
+				// removed from the pattern
+				for (int j = 0; j < 4 * 64; j++)
+				{
+					byte c = pattern[(j * 4) + 2];
+
+					byte effect = (byte)(c & 0x0f);
+					if (effect == 0x08)
+					{
+						pattern[(j * 4) + 2] = (byte)(c & 0xf0);
+						pattern[(j * 4) + 3] = 0x00;
+					}
+				}
 
 				yield return pattern;
 			}
