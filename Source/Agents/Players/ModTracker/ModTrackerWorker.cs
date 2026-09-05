@@ -835,8 +835,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						sequences[j, i] = (ushort)((i * channelNum) + j);
 				}
 
-				byte[] decodeTable = null;
-
 				// Read the samples
 				for (int i = 0; i < sampleNum; i++)
 				{
@@ -849,57 +847,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, length))
 						{
-							// Check for Mod Plugin packed samples
-							sampleDataStream.ReadInto(buf, 0, 5);
-
-							if ((buf[0] == 0x41) && (buf[1] == 0x44) && (buf[2] == 0x50) && (buf[3] == 0x43) && (buf[4] == 0x4d))	// ADPCM
-							{
-								// It is, so read and depack it
-								packed = true;
-
-								// Read a 16 byte buffer with delta values
-								sbyte[] compressionTable = new sbyte[16];
-								sampleDataStream.ReadSigned(compressionTable, 0, 16);
-
-								if (decodeTable == null)
-									decodeTable = new byte[8192];
-
-								sbyte adpcmDelta = 0;
-								int offset = 0;
-								length /= 2;
-
-								while (length > 0)
-								{
-									int todo = Math.Min(decodeTable.Length, length);
-									int read = sampleDataStream.Read(decodeTable, 0, todo);
-									if (read != todo)
-									{
-										errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
-										Cleanup();
-
-										return AgentResult.Error;
-									}
-
-									for (int j = 0; j < todo; j++)
-									{
-										byte b = decodeTable[j];
-
-										adpcmDelta += compressionTable[b & 0x0f];
-										sampleBuffer[offset++] = adpcmDelta;
-										adpcmDelta += compressionTable[(b >> 4) & 0x0f];
-										sampleBuffer[offset++] = adpcmDelta;
-									}
-
-									length -= todo;
-								}
-
-								// Continue with next sample
-								continue;
-							}
-
-							// It is not, so seek back and read the sample
-							sampleDataStream.Seek(-5, SeekOrigin.Current);
-
 							// Check to see if we miss too much from the last sample
 							if (sampleDataStream.Length - sampleDataStream.Position < (length - 512))
 							{

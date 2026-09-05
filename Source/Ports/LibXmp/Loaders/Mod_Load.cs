@@ -1038,23 +1038,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// claimed by both players or by none of them
 		/// </summary>
 		/********************************************************************/
-		private bool Has_OpenMpt_Panning(Hio f, c_int start, c_int chn, c_int smp_Size)
+		private bool Has_OpenMpt_Panning(Hio f, c_int start, c_int chn, c_int num_Pat, c_int smp_Size)
 		{
 			if (chn <= 0)
 				return false;
-
-			// Find the number of patterns stored in the file
-			c_int num_Pat = 0;
-
-			f.Hio_Seek(start + 952, SeekOrigin.Begin);
-
-			for (c_int i = 0; i < 128; i++)
-			{
-				uint8 x = f.Hio_Read8();
-
-				if ((x < 128) && (num_Pat <= x))
-					num_Pat = x + 1;
-			}
 
 			// Never scan into the sample data, in case the order list claims
 			// more patterns than the file really holds
@@ -1136,6 +1123,52 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return false;
 
 			return left_Panning && !extended_Panning && (max_Panning >= Enable_Mod_Panning_Threshold);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// TNE: Tell if any of the samples are stored in ADPCM format. Only
+		/// ModPlug Tracker can save samples that way and since OpenMPT is
+		/// based on ModPlug Tracker, we want the LibOpenMpt port to play
+		/// these modules
+		/// </summary>
+		/********************************************************************/
+		private bool Has_Adpcm_Samples(Hio f, c_int start, c_int chn, c_int num_Pat, c_int[] smp_Len)
+		{
+			if (chn <= 0)
+				return false;
+
+			// Seek to the first sample
+			f.Hio_Seek(start + 1084 + (num_Pat * chn * 256), SeekOrigin.Begin);
+
+			uint8[] buf = new uint8[5];
+
+			for (c_int i = 0; i < 31; i++)
+			{
+				if (smp_Len[i] == 0)
+					continue;
+
+				Hio s = f.GetSampleHio(i, smp_Len[i]);
+
+				try
+				{
+					if (s.Hio_Read(buf, 1, 5) < 5)
+						break;
+
+					if (CMemory.memcmp(buf, "ADPCM", 5) == 0)
+						return true;
+				}
+				finally
+				{
+					s.Hio_Close();
+				}
+
+				f.Hio_Seek(smp_Len[i] - 5, SeekOrigin.Current);
+			}
+
+			return false;
 		}
 
 
@@ -1432,6 +1465,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			bool has_Big_Samples = false;
 			bool invert_loop = false;
 			c_long fileSize = f.Hio_Size();
+			c_int[] smp_Len = new c_int[31];
 
 			channels = 0;
 			restartPosition = 0;
@@ -1505,7 +1539,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (size >= 0x8000)
 					has_Big_Samples = true;
 
-				smp_Size += 2 * size;
+				smp_Len[i] = 2 * size;
+				smp_Size += smp_Len[i];
 			}
 
 			uint8 restart = patBuf[951];
@@ -1700,8 +1735,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// The prober in the LibOpenMpt port does not know about that, so
 			// it scans them as 4 channel modules. Do the same here, or the
 			// two will not agree on the result
-			if (maybe_OpenMpt && (trackerId != InternalFormat.OpenMpt) && Has_OpenMpt_Panning(f, start, mkMark ? 4 : channels, smp_Size))
-				trackerId = InternalFormat.OpenMpt;
+			if (maybe_OpenMpt && (trackerId != InternalFormat.ModsGrave))
+			{
+				if ((trackerId != InternalFormat.OpenMpt) && Has_OpenMpt_Panning(f, start, mkMark ? 4 : channels, pat, smp_Size))
+					trackerId = InternalFormat.OpenMpt;
+
+				// The same goes for modules storing their samples in ADPCM
+				// format. Only ModPlug Tracker can make those
+				if ((trackerId != InternalFormat.OpenMpt) && Has_Adpcm_Samples(f, start, mkMark ? 4 : channels, pat, smp_Len))
+					trackerId = InternalFormat.OpenMpt;
+			}
 
 			return trackerId;
 		}

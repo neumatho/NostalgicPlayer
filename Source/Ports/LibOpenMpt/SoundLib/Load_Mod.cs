@@ -593,7 +593,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						if (isMdKd && onlyAmigaNotes && !hasEmptySampleWithVolume)
 							sample.nLength = Math.Max(sample.nLength, sample.nLoopEnd);
 
-						sampleIO.ReadSample(sample, file, (SampleIndex)(smp - 1), sample.nLength);
+						sampleIO.ReadSample(sample, file, smp, sample.nLength);
 						file.Seek(nextSample);
 					}
 				}
@@ -751,7 +751,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			m_ModFormat.CharSet = EncoderCollection.Dos;	// TNE: Changed charset from Amiga to DOS, since this player won't play Amiga modules
 
 			if (anyAdpcm)
+			{
 				m_ModFormat.MadeWithTracker += " (ADPCM packed)";
+				m_ModFormat.ExtraInformation = Resources.IDS_MPT_MOD_ADPCM;
+			}
 
 			return true;
 		}
@@ -873,8 +876,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// TNE: Added extra checks so only OpenMPT modules are recognized.
 		/// The first two checks are ported from libxmp, which are the only
 		/// two things it uses to tell that a MOD file was made by OpenMPT.
-		/// The last one scans the pattern data for the panning style used
-		/// by ModPlug Tracker / OpenMPT
+		/// The last two scan the pattern data for the panning style used by
+		/// ModPlug Tracker / OpenMPT and look for ADPCM packed samples
 		/// </summary>
 		/********************************************************************/
 		private static ProbeResult ExtendedProbe(FileReader file, CPointer<byte> magic, ModMagicResult modMagicResult)
@@ -886,6 +889,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			bool hasEmptySampleWithLoop1 = false;
 			bool hasStIns = false;
 			size_t totalSampleBytes = 0;
+			SmpLength[] sampleLengths = new SmpLength[31];
 
 			file.Seek(20);
 
@@ -913,7 +917,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				if (IsSoundTrackerSampleName(sampleHeader.Name.ToString()))
 					hasStIns = true;
 
-				totalSampleBytes += sampleHeader.Length * 2U;
+				sampleLengths[smp - 1] = sampleHeader.Length * 2U;
+				totalSampleBytes += sampleLengths[smp - 1];
 			}
 
 			// A sample bigger than 64 KB cannot have been written by
@@ -924,10 +929,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			// The sample headers are followed by the order list
 			ModFileHeader fileHeader = ModTools.ReadAndSwap<ModFileHeader>.From(file, modMagicResult.SwapBytes);
 
-			if (HasOpenMptSampleLayout(magic, modMagicResult, fileHeader, hasLoop0, hasVolInEmptyIns, hasConvertedSample, hasEmptySampleWithLoop1, hasStIns))
+			// Find the number of patterns stored in the file
+			array<uint8> orderList = fileHeader.OrderList.ToArray();
+			PatternIndex numPatterns = 0;
+
+			for (OrderIndex ord = 0; ord < 128; ord++)
+			{
+				uint8 pat = orderList[ord];
+
+				if ((pat < 128) && (numPatterns <= pat))
+					numPatterns = (PatternIndex)(pat + 1);
+			}
+
+			if (HasOpenMptSampleLayout(magic, modMagicResult, fileHeader, hasLoop0, hasVolInEmptyIns, hasConvertedSample, hasEmptySampleWithLoop1, hasStIns, numPatterns))
 				return ProbeResult.Success;
 
-			return ScanPatternsForOpenMpt(file, modMagicResult, fileHeader, totalSampleBytes);
+			if (ScanPatternsForOpenMpt(file, modMagicResult, numPatterns, totalSampleBytes) == ProbeResult.Success)
+				return ProbeResult.Success;
+
+			if (HasAdpcmSamples(file, modMagicResult, numPatterns, sampleLengths))
+				return ProbeResult.Success;
+
+			return ProbeResult.Failure;
 		}
 
 
@@ -965,7 +988,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// but only when nothing else points at another tracker
 		/// </summary>
 		/********************************************************************/
-		private static bool HasOpenMptSampleLayout(CPointer<byte> magic, ModMagicResult modMagicResult, ModFileHeader fileHeader, bool hasLoop0, bool hasVolInEmptyIns, bool hasConvertedSample, bool hasEmptySampleWithLoop1, bool hasStIns)
+		private static bool HasOpenMptSampleLayout(CPointer<byte> magic, ModMagicResult modMagicResult, ModFileHeader fileHeader, bool hasLoop0, bool hasVolInEmptyIns, bool hasConvertedSample, bool hasEmptySampleWithLoop1, bool hasStIns, PatternIndex numPatterns)
 		{
 			// libxmp only reaches this test for M.K. modules. All the other
 			// magics either identify the tracker on their own or end up
@@ -973,29 +996,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if (!ModTools.IsMagic(magic, "M.K.") || (modMagicResult.NumChannels != 4))
 				return false;
 
-			// Find the highest pattern number used in the order list
-			array<uint8> orderList = fileHeader.OrderList.ToArray();
-			c_int pat = 0;
-
-			for (c_int i = 0; i < 128; i++)
-			{
-				uint8 x = orderList[i];
-
-				if (x > 0x7f)
-					break;
-
-				if (x > pat)
-					pat = x;
-			}
-
-			pat++;
-
-			// A restart position of 0x78 is NoiseTracker, 0x7f is
-			// ScreamTracker or a ProTracker clone and anything above that
-			// is unknown. None of them can be OpenMPT
+			// 0x78 is not a real restart position, but the default tempo of
+			// 120 BPM that (Ultimate) Soundtracker stored in this byte and
+			// which a lot of old modules kept. NoiseTracker itself stores a
+			// real restart position below 0x7f. 0x7f is ScreamTracker or a
+			// ProTracker clone and anything above that is unknown. None of
+			// them can be OpenMPT
 			uint8 restart = fileHeader.RestartPos;
 
-			if ((restart != pat) && ((restart == 0x78) || (restart >= 0x7f)))
+			if ((restart != numPatterns) && ((restart == 0x78) || (restart >= 0x7f)))
 				return false;
 
 			// A loop length of zero, a one word long silent sample or the
@@ -1017,24 +1026,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// at all
 		/// </summary>
 		/********************************************************************/
-		private static ProbeResult ScanPatternsForOpenMpt(FileReader file, ModMagicResult modMagicResult, ModFileHeader fileHeader, size_t totalSampleBytes)
+		private static ProbeResult ScanPatternsForOpenMpt(FileReader file, ModMagicResult modMagicResult, PatternIndex numPatterns, size_t totalSampleBytes)
 		{
 			ProbeResult noMatchResult = ProbeResult.Failure;
 
 			if (modMagicResult.NumChannels == 0)
 				return noMatchResult;
-
-			// Find the number of patterns stored in the file
-			array<uint8> orderList = fileHeader.OrderList.ToArray();
-			PatternIndex numPatterns = 0;
-
-			for (OrderIndex ord = 0; ord < 128; ord++)
-			{
-				uint8 pat = orderList[ord];
-
-				if ((pat < 128) && (numPatterns <= pat))
-					numPatterns = (PatternIndex)(pat + 1);
-			}
 
 			size_t patternSize = modMagicResult.NumChannels * 256U;
 			size_t sizeWithoutPatterns = modMagicResult.PatternDataOffset + totalSampleBytes;
@@ -1098,6 +1095,43 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				return ProbeResult.Success;
 
 			return noMatchResult;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return true if any of the samples are stored in ADPCM format.
+		/// Only ModPlug Tracker can save samples that way and since OpenMPT
+		/// is based on ModPlug Tracker, we want to play these modules
+		/// </summary>
+		/********************************************************************/
+		private static bool HasAdpcmSamples(FileReader file, ModMagicResult modMagicResult, PatternIndex numPatterns, SmpLength[] sampleLengths)
+		{
+			if (modMagicResult.NumChannels == 0)
+				return false;
+
+			// Seek to the first sample
+			size_t patternSize = modMagicResult.NumChannels * 256U;
+
+			if (!file.Seek(modMagicResult.PatternDataOffset + (numPatterns * patternSize)))
+				return false;
+
+			for (SampleIndex smp = 0; smp < 31; smp++)
+			{
+				if (sampleLengths[smp] == 0)
+					continue;
+
+				// ReadMagic() only moves the position forward on a match, so
+				// the whole sample is skipped when it is not packed
+				if (file.ReadMagic("ADPCM"))
+					return true;
+
+				if (!file.Skip(sampleLengths[smp]))
+					break;
+			}
+
+			return false;
 		}
 		#endregion
 	}

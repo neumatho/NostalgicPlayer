@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
-using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read;
@@ -390,20 +389,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/********************************************************************/
 		public size_t ReadSample(ModSample sample, FileReader file, SampleIndex smp, SmpLength sampleLength)
 		{
-			// Only take this path when the sample data is stored somewhere else than
-			// in the module stream itself (converted modules). If not, the sample data
-			// is placed at the current position in the file, which the normal
-			// ReadSample() method will read from
-			if ((file.DataContainer().GetStream() is ModuleStream moduleStream) && moduleStream.HasSeparateSampleDataStream)
-			{
-				using (Stream sampleStream = moduleStream.GetSampleDataStream(smp, (int)sampleLength))
-				{
-					FileReader sampleFile = new FileReader(FileCursor_StdStream.Make_FileCursor<PathString>(sampleStream));
-					return ReadSample(sample, sampleFile);
-				}
-			}
-
-			return ReadSample(sample, file);
+//XX			using (Stream sampleStream = file.DataContainer().GetSampleStream(smp, sampleLength))
+//			{
+//				FileReader sampleFile = new FileReader(FileCursor_StdStream.Make_FileCursor<PathString>(sampleStream));
+				return ReadSample(sample, file);
+//			}
 		}
 
 
@@ -526,7 +516,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			if (this == new SampleIO(BitDepth._8Bit, Channels.Mono, Endianness.LittleEndian, Encoding.Adpcm))
 			{
-				throw new NotImplementedException("ADPCM");
+				// 4-Bit ADPCM data
+				int8[] compressionTable = new int8[16];
+
+				if (file.ReadArray(compressionTable))
+				{
+					size_t readLength = (sample.nLength + 1) / 2;
+					OpenMpt.LimitMax(ref readLength, size_t.CreateSaturating(file.BytesLeft()));
+
+					CPointer<uint8> inBuf = sourceBuf.Cast<uint8>() + compressionTable.Length;
+					CPointer<int8> outBuf = sample.Sample8();
+					int8 delta = 0;
+
+					for (size_t i = readLength; i != 0; i--)
+					{
+						delta += compressionTable[inBuf[0] & 0x0f];
+						outBuf[0, 1] = delta;
+
+						delta += compressionTable[(inBuf[0] >> 4) & 0x0f];
+						outBuf[0, 1] = delta;
+
+						inBuf++;
+					}
+
+					bytesRead = compressionTable.Size() + readLength;
+				}
 			}
 			else if ((GetEncoding() == Encoding.It214) || (GetEncoding() == Encoding.It215))
 			{

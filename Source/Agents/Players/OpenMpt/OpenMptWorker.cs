@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 		private string title;
 		private string author;
 		private string comment;
+		private string extraInfo;
 		private SubSongInfo subSongs;
 		private DurationInfo[] durations;
 		private bool hasInstruments;
@@ -97,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 		// null or an empty string, nothing extra is shown
 		// </summary>
 		/********************************************************************/
-//XX		public override string ExtraFormatInfo => moduleInfo.Mod.Type.Equals(currentFormat.Name, StringComparison.InvariantCultureIgnoreCase) ? null : moduleInfo.Mod.Type;
+		public override string ExtraFormatInfo => extraInfo;
 		#endregion
 
 		#region Loading
@@ -113,10 +114,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 			try
 			{
 				module = new Module_Ext(fileInfo.ModuleStream, formatId);
+
+				INostalgicPlayer nostalgicPlayer = (INostalgicPlayer)module.Get_Interface("nostalgicplayer");
+				extraInfo = nostalgicPlayer.GetExtraInformation();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				errorMessage = Resources.IDS_MPT_ERR_LOADING;
+				errorMessage = string.Format(Resources.IDS_MPT_ERR_LOADING, ex.Message);
 				return AgentResult.Error;
 			}
 

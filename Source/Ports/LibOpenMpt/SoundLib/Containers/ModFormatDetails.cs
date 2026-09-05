@@ -47,5 +47,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		/// 
 		/// </summary>
 		public LogicalTimezone Timezone = LogicalTimezone.Unspecified;
+
+		/// <summary>
+		/// TNE: Extra information from the loader
+		/// </summary>
+		public string ExtraInformation;
 	}
 }

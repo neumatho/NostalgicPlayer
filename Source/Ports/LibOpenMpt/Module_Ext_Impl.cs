@@ -189,6 +189,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 
 			/********************************************************************/
 			/// <summary>
+			/// Return any extra information from the loader or null
+			/// </summary>
+			/********************************************************************/
+			public string GetExtraInformation()
+			{
+				return impl.m_SndFile.m_ModFormat.ExtraInformation;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
 			/// Return true if the module uses surround
 			/// </summary>
 			/********************************************************************/

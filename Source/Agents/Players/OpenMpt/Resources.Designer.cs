@@ -73,7 +73,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to load module.
+        ///   Looks up a localized string similar to Failed to load module
+        ///{0}.
         /// </summary>
         internal static string IDS_MPT_ERR_LOADING {
             get {

@@ -127,7 +127,8 @@ This player uses the LibOpenMpt. It is a continuation of ModPlug Tracker. This p
     <value>OpenMPT</value>
   </data>
   <data name="IDS_MPT_ERR_LOADING" xml:space="preserve">
-    <value>Failed to load module</value>
+    <value>Failed to load module
+{0}</value>
   </data>
   <data name="IDS_MPT_INFODESCLINE0" xml:space="preserve">
     <value>Number of positions:</value>

@@ -20,6 +20,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Extensions
 		SampleInformation GetSampleInformation(int32_t sampleNumber);
 
 		/// <summary>
+		/// Return any extra information from the loader or null
+		/// </summary>
+		string GetExtraInformation();
+
+		/// <summary>
 		/// Return true if the module uses surround
 		/// </summary>
 		bool DoesModuleUseSurround();

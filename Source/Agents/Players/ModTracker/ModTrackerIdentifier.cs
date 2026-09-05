@@ -542,6 +542,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				bool hasConvertedSample = false;
 				bool hasEmptySampleWithLoop1 = false;
 				bool hasStIns = false;
+				uint[] realSampleLengths = new uint[31];
 
 				byte[] sampleName = new byte[22];
 
@@ -561,7 +562,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					if (maybeOpenMpt && (sampleLength >= 0x8000))
 						return ModuleType.Unknown;	// It is an OpenMPT module
 
-					totalSampleLength += (uint)sampleLength << 1;
+					realSampleLengths[i] = (uint)sampleLength << 1;
+					totalSampleLength += realSampleLengths[i];
+
 					if ((sampleLength != 0) && ((fineTune != 0x00) || (volume != 0x40)))
 					{
 						// Mod's Grave .WOW files are converted from .669 and thus
@@ -742,6 +745,36 @@ stopLoop:
 						return ModuleType.Unknown;
 				}
 
+				if (maybeOpenMpt)
+				{
+					// Mod-plugin could save samples in ADPCM format and
+					// since OpenMPT is based on Mod-plugin, we want the
+					// OpenMPT player to play these
+					int maxPat = pos.Max() + 1;
+
+					// Seek to first sample
+					moduleStream.Seek(1084 + (maxPat * 1024), SeekOrigin.Begin);
+
+					// Check if any of the samples are ADPCM packed
+					byte[] buf = new byte[5];
+
+					for (int i = 0; i < 31; i++)
+					{
+						if (realSampleLengths[i] == 0)
+							continue;
+
+						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, (int)realSampleLengths[i]))
+						{
+							sampleDataStream.ReadInto(buf, 0, 5);
+
+							if ((buf[0] == 'A') && (buf[1] == 'D') && (buf[2] == 'P') && (buf[3] == 'C') && (buf[4] == 'M'))
+								return ModuleType.Unknown;	// The sample is packed
+						}
+
+						moduleStream.Seek(realSampleLengths[i] - 5, SeekOrigin.Current);
+					}
+				}
+
 				if ((retVal != ModuleType.Unknown) && (retVal != ModuleType.ProTracker))
 				{
 					// Well, now we want to be really really sure it's
@@ -902,9 +935,12 @@ stopLoop:
 
 			pat++;
 
-			// A restart position of 0x78 is NoiseTracker, 0x7f is
-			// ScreamTracker or a ProTracker clone and anything above that is
-			// unknown. None of them can be OpenMPT
+			// 0x78 is not a real restart position, but the default tempo of
+			// 120 BPM that (Ultimate) Soundtracker stored in this byte and
+			// which a lot of old modules kept. NoiseTracker itself stores a
+			// real restart position below 0x7f. 0x7f is ScreamTracker or a
+			// ProTracker clone and anything above that is unknown. None of
+			// them can be OpenMPT
 			if ((restartByte != pat) && ((restartByte == 0x78) || (restartByte >= 0x7f)))
 				return false;
 

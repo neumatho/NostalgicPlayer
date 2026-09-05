@@ -61,6 +61,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ADPCM packed.
+        /// </summary>
+        internal static string IDS_MPT_MOD_ADPCM {
+            get {
+                return ResourceManager.GetString("IDS_MPT_MOD_ADPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by OpenMPT when saving in this format..
         /// </summary>
         internal static string IDS_MPT_MOD_DESCRIPTION {
