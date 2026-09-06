@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
@@ -1108,7 +1109,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		public void Test_Comparison_With_Null()
 		{
 			StdString s = Str("abc");
-			StdString? nothing = null;
+			StdString nothing = null;
 
 			Assert.IsFalse(s == nothing);
 			Assert.IsTrue(s != nothing);
@@ -1132,7 +1133,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 			Assert.IsTrue(s1.Equals(s2));
 			Assert.IsFalse(s1.Equals(s3));
-			Assert.IsFalse(s1.Equals((object?)null));
+			Assert.IsFalse(s1.Equals((object)null));
 			Assert.AreEqual(s1.GetHashCode(), s2.GetHashCode());
 		}
 		#endregion

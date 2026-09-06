@@ -6,6 +6,7 @@
 using CRandom = Polycode.NostalgicPlayer.Kit.C.Std.Random;
 
 using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C.Std.Random;
 
 namespace NostalgicPlayer.Kit.C.Test.Std.Random_

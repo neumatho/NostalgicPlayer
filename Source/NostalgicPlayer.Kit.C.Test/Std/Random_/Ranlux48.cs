@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CRandom = Polycode.NostalgicPlayer.Kit.C.Std.Random;
 
 using Polycode.NostalgicPlayer.Kit.C;

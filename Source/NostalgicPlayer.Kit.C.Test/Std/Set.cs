@@ -3,6 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
@@ -607,7 +611,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 				destination.Value = Value;
 			}
 
-			public int CompareTo(Copyable? other)
+			public int CompareTo(Copyable other)
 			{
 				return other == null ? 1 : Value.CompareTo(other.Value);
 			}
