@@ -270,7 +270,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// sample data from the original stream
 		/// </summary>
 		/********************************************************************/
-		private bool Load(ILoader loader, out string errorMessage)
+		internal bool Load(ILoader loader, out string errorMessage)
 		{
 			bool result = FindPlayer(loader, out errorMessage);
 			if (result)
@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// given
 		/// </summary>
 		/********************************************************************/
-		private bool FindPlayer(ILoader loader, out string errorMessage)
+		internal bool FindPlayer(ILoader loader, out string errorMessage)
 		{
 			bool result = false;
 			errorMessage = string.Empty;
