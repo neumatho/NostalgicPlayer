@@ -5,10 +5,9 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Containers;
 
-namespace NostalgicPlayer.Kit.C.Test.Time
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Time
 {
 	/// <summary>
 	///

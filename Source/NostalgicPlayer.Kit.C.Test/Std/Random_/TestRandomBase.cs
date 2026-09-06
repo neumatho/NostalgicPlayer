@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace NostalgicPlayer.Kit.C.Test.Std.Random_
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std.Random_
 {
 	/// <summary>
 	///

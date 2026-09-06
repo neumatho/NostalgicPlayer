@@ -5,9 +5,8 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.C;
 
-namespace NostalgicPlayer.Kit.C.Test.Pointer
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Pointer
 {
 	/// <summary>
 	/// Test CPointer functionality

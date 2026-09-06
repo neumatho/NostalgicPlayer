@@ -8,7 +8,7 @@ using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Containers;
 using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
 
-namespace NostalgicPlayer.Kit.C.Test.Std
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std
 {
 	/// <summary>
 	///

@@ -6,7 +6,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C.Std.Containers;
 
-namespace NostalgicPlayer.Kit.C.Test.Std
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std
 {
 	/// <summary>
 	///

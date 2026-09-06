@@ -3,9 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.C;
-
-namespace NostalgicPlayer.Kit.C.Test.String
+namespace Polycode.NostalgicPlayer.Kit.C.Test.String
 {
 	/// <summary>
 	/// 

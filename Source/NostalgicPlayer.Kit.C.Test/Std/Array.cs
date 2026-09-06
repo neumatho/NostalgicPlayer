@@ -4,13 +4,12 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
 using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace NostalgicPlayer.Kit.C.Test.Std
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std
 {
 	/// <summary>
 	///

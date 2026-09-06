@@ -4,9 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.C;
 
-namespace NostalgicPlayer.Kit.C.Test.String
+namespace Polycode.NostalgicPlayer.Kit.C.Test.String
 {
 	/// <summary>
 	/// 

@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 
-namespace NostalgicPlayer.Kit.C.Test.Std.Iterators_
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std.Iterators_
 {
 	/// <summary>
 	///

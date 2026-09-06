@@ -5,11 +5,10 @@
 /******************************************************************************/
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace NostalgicPlayer.Kit.C.Test.Std
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std
 {
 	/// <summary>
 	///
@@ -28,7 +27,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			vector<int> source = new vector<int>([ 1, 2, 3 ]);
 
-			vector<int> moved = Utility.move(source);
+			vector<int> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			Assert.AreEqual(3UL, moved.size());
 			Assert.AreEqual(1, moved[0]);
@@ -52,7 +51,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			vector<int> source = new vector<int>([ 1, 2, 3 ]);
 
-			vector<int> moved = Utility.move(source);
+			vector<int> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			source.push_back(7);
 
@@ -81,7 +80,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 
 			Cloneable stored = source[0];
 
-			vector<Cloneable> moved = Utility.move(source);
+			vector<Cloneable> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			Assert.AreEqual(1UL, moved.size());
 			Assert.IsTrue(ReferenceEquals(stored, moved[0]));
@@ -102,7 +101,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			vector<int> source = new vector<int>([ 4, 5, 6 ]);
 			CPointer<int> pointer = source.data();
 
-			vector<int> moved = Utility.move(source);
+			vector<int> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			Assert.IsTrue(pointer == moved.data());
 
@@ -125,7 +124,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			source[1] = "one";
 			source[2] = "two";
 
-			map<int, string> moved = Utility.move(source);
+			map<int, string> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			Assert.AreEqual(2UL, moved.size());
 			Assert.AreEqual("one", moved[1]);
@@ -150,7 +149,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			map<int, string> source = new map<int, string>();
 			source[1] = "one";
 
-			map<int, string> moved = Utility.move(source);
+			map<int, string> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			source[7] = "seven";
 
@@ -179,7 +178,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 			foreach (int k in keys)
 				source[k] = k;
 
-			map<int, int> moved = Utility.move(source);
+			map<int, int> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			int[] movedKeys = new int[3];
 			int i = 0;
@@ -219,15 +218,15 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		public void Test_Move_Without_Move_Support_Returns_The_Value()
 		{
 			int number = 5;
-			Assert.AreEqual(5, Utility.move(number));
+			Assert.AreEqual(5, Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(number));
 			Assert.AreEqual(5, number);
 
 			string text = "hello";
-			Assert.AreEqual("hello", Utility.move(text));
+			Assert.AreEqual("hello", Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(text));
 			Assert.AreEqual("hello", text);
 
 			Cloneable element = new Cloneable(42);
-			Assert.IsTrue(ReferenceEquals(element, Utility.move(element)));
+			Assert.IsTrue(ReferenceEquals(element, Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(element)));
 		}
 
 
@@ -242,7 +241,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			vector<int> source = null!;
 
-			Assert.IsNull(Utility.move(source));
+			Assert.IsNull(Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source));
 		}
 
 
@@ -257,7 +256,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			vector<int> source = new vector<int>();
 
-			vector<int> moved = Utility.move(source);
+			vector<int> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			Assert.IsTrue(moved.empty());
 			Assert.IsTrue(source.empty());

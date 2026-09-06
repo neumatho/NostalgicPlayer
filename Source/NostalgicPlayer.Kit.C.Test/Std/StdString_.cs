@@ -4,12 +4,11 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace NostalgicPlayer.Kit.C.Test.Std
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std
 {
 	/// <summary>
 	///
@@ -1190,7 +1189,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			StdString source = Str("abc");
 
-			StdString moved = Utility.move(source);
+			StdString moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			Assert.AreEqual("abc", Text(moved));
 			Assert.IsTrue(source.empty());

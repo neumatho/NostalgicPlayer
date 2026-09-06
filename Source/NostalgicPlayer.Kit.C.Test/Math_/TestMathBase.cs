@@ -6,7 +6,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NostalgicPlayer.Kit.C.Test.Math_
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Math_
 {
 	/// <summary>
 	/// 

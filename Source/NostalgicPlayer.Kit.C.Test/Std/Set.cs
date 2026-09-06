@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
-namespace NostalgicPlayer.Kit.C.Test.Std
+namespace Polycode.NostalgicPlayer.Kit.C.Test.Std
 {
 	/// <summary>
 	///
@@ -433,7 +433,7 @@ namespace NostalgicPlayer.Kit.C.Test.Std
 		{
 			set<int> source = new set<int>([ 1, 2, 3 ]);
 
-			set<int> moved = Utility.move(source);
+			set<int> moved = Polycode.NostalgicPlayer.Kit.C.Std.Utility.move(source);
 
 			Assert.AreEqual(3UL, moved.size());
 			Assert.IsTrue(source.empty());
