@@ -176,8 +176,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					if (moduleStream.Length - moduleStream.Position < (length - MaxNumberOfMissingBytes))
 						return false;
 
-					moduleStream.SetSampleDataInfo(i, length);
-					converterStream.WriteSampleDataMarker(i, length);
+					converterStream.SetSampleDataMarker(moduleStream, length);
 				}
 			}
 
@@ -475,6 +474,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 						if ((channel.ProPatternData[2] & 0xf0) == 0xc0)
 							channel.ProPatternData[3]++;
 					}
+
 					break;
 				}
 
@@ -492,6 +492,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 						if (channel.ProPatternData[3] >= 0x80)
 							channel.ProPatternData[3] = (byte)-(sbyte)channel.ProPatternData[3];
 					}
+
 					break;
 				}
 

@@ -1789,16 +1789,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if ((file_Len > 0) && (left < min_Size))
 						Force_Sample_Length(xxs, xtra, (c_int)(left << 3));
 
-					Hio s = f.GetSampleHio(i, samples);
-
-					CPointer<uint8> decBuf = Unpack_It_Sample(xxs, ish, tmpBuf, s);
+					CPointer<uint8> decBuf = Unpack_It_Sample(xxs, ish, tmpBuf, f);
 					if (decBuf.IsNull)
-					{
-						s.Hio_Close();
 						return -1;
-					}
-
-					s.Hio_Close();
 
 					if ((ish.Flags & It_Smp_Flag._16Bit) != 0)
 					{
@@ -1812,7 +1805,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 				else
 				{
-					if (Sample.LibXmp_Load_Sample(m, f, cvt, mod.Xxs[i], null, i) < 0)
+					if (Sample.LibXmp_Load_Sample(m, f, cvt, mod.Xxs[i], null) < 0)
 						return -1;
 				}
 			}

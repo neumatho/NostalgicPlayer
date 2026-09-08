@@ -172,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 				{
 					if (samples[i].Length != 0)
 					{
-						samples[i].SampleData = moduleStream.ReadSampleData(i, (int)samples[i].Length, out int readBytes);
+						samples[i].SampleData = moduleStream.ReadSampleData((int)samples[i].Length, out int readBytes);
 
 						if (readBytes != samples[i].Length)
 						{
@@ -1224,6 +1224,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 								break;
 							}
 						}
+
 						break;
 					}
 				}
@@ -1313,6 +1314,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 								break;
 							}
 						}
+
 						break;
 					}
 				}

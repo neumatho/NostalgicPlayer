@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						if (inst.Length != 0)
 						{
 							// Read the sample data
-							inst.Adr = moduleStream.ReadSampleData(i, inst.Length, out int _);
+							inst.Adr = moduleStream.ReadSampleData(inst.Length, out int _);
 
 							if (moduleStream.EndOfStream)
 							{
@@ -985,6 +985,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						if (!cur.SynthMode)
 							VirtualChannels[voice].SetAmigaVolume(optionalData);
 					}
+
 					break;
 				}
 
@@ -1063,6 +1064,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 										endReached = true;
 								}
 							}
+
 							break;
 						}
 
@@ -1073,6 +1075,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 							break;
 						}
 					}
+
 					break;
 				}
 
@@ -1095,6 +1098,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						if (cur.AdsrControl == 0)
 							cur.AdsrControl = 1;
 					}
+
 					break;
 				}
 
@@ -1380,6 +1384,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						cur.FxCount = synthInst.FxSpeed;
 						Averaging(voice);
 					}
+
 					break;
 				}
 
@@ -1412,6 +1417,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 						Array.Copy(playingInfo.WaveTables, cur.SynthOffset + 64, playingInfo.WaveTables, cur.SynthOffset, 32);
 					}
+
 					break;
 				}
 			}

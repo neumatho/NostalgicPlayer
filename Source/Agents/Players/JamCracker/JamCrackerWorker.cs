@@ -180,7 +180,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 					if (instInfo.Size != 0)
 					{
-						instInfo.Address = moduleStream.ReadSampleData(i, (int)instInfo.Size, out _);
+						instInfo.Address = moduleStream.ReadSampleData((int)instInfo.Size, out _);
 
 						if (moduleStream.EndOfStream && (i != samplesNum - 1))
 						{

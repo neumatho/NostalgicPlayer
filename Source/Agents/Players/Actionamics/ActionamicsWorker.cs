@@ -847,7 +847,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Actionamics
 				{
 					int length = sample.Length * 2;
 
-					sample.SampleData = moduleStream.ReadSampleData(i, length, out int readBytes);
+					sample.SampleData = moduleStream.ReadSampleData(length, out int readBytes);
 					if (readBytes != length)
 						return false;
 				}
@@ -1285,6 +1285,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Actionamics
 							voiceInfo.FinalVolume = instr.AttackEndVolume;
 							voiceInfo.EnvelopeState = EnvelopeState.Decay;
 						}
+
 						break;
 					}
 

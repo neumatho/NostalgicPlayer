@@ -1342,83 +1342,74 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					smpBuf_Alloc = len;
 				}
 
-				Hio s = f.GetSampleHio(i, xxs.Len);
-
-				try
+				switch (data.PackInfo[i])
 				{
-					switch (data.PackInfo[i])
+					case 0:
 					{
-						case 0:
-						{
-							if (s.Hio_Read(smpBuf, 1, (size_t)len) < (size_t)len)
-								goto Err2;
+						if (f.Hio_Read(smpBuf, 1, (size_t)len) < (size_t)len)
+							goto Err2;
 
-							left -= len;
-							break;
-						}
-
-						case 1:
-						{
-							len = (c_int)s.Hio_Read32L();
-
-							// Sanity check
-							if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
-								goto Err2;
-
-							if ((len <= 0) || (len > Constants.Max_Sample_Size))		// Max compressed sample size
-								goto Err2;
-
-							buf = CMemory.malloc<uint8>((size_t)len + 4);
-							if (buf.IsNull)
-								goto Err2;
-
-							if (s.Hio_Read(buf, 1, (size_t)len) != (size_t)len)
-								goto Err3;
-
-							// The unpack function may read slightly beyond the end
-							buf[len] = buf[len + 1] = buf[len + 2] = buf[len + 3] = 0;
-
-							if (Unpack_Sample8(smpBuf, buf, len, xxs.Len) < 0)
-								goto Err3;
-
-							CMemory.free(buf);
-							left -= len + 4;
-							break;
-						}
-
-						case 2:
-						{
-							len = (c_int)s.Hio_Read32L();
-
-							// Sanity check
-							if ((~xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
-								goto Err2;
-
-							if ((len <= 0) || (len > Constants.Max_Sample_Size))
-								goto Err2;
-
-							buf = CMemory.malloc<uint8>((size_t)len + 4);
-							if (buf.IsNull)
-								goto Err2;
-
-							if (s.Hio_Read(buf, 1, (size_t)len) != (size_t)len)
-								goto Err3;
-
-							// The unpack function may read slightly beyond the end
-							buf[len] = buf[len + 1] = buf[len + 2] = buf[len + 3] = 0;
-
-							if (Unpack_Sample16(smpBuf, buf, len, xxs.Len) < 0)
-								goto Err3;
-
-							CMemory.free(buf);
-							left -= len + 4;
-							break;
-						}
+						left -= len;
+						break;
 					}
-				}
-				finally
-				{
-					s.Hio_Close();
+
+					case 1:
+					{
+						len = (c_int)f.Hio_Read32L();
+
+						// Sanity check
+						if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
+							goto Err2;
+
+						if ((len <= 0) || (len > Constants.Max_Sample_Size))		// Max compressed sample size
+							goto Err2;
+
+						buf = CMemory.malloc<uint8>((size_t)len + 4);
+						if (buf.IsNull)
+							goto Err2;
+
+						if (f.Hio_Read(buf, 1, (size_t)len) != (size_t)len)
+							goto Err3;
+
+						// The unpack function may read slightly beyond the end
+						buf[len] = buf[len + 1] = buf[len + 2] = buf[len + 3] = 0;
+
+						if (Unpack_Sample8(smpBuf, buf, len, xxs.Len) < 0)
+							goto Err3;
+
+						CMemory.free(buf);
+						left -= len + 4;
+						break;
+					}
+
+					case 2:
+					{
+						len = (c_int)f.Hio_Read32L();
+
+						// Sanity check
+						if ((~xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
+							goto Err2;
+
+						if ((len <= 0) || (len > Constants.Max_Sample_Size))
+							goto Err2;
+
+						buf = CMemory.malloc<uint8>((size_t)len + 4);
+						if (buf.IsNull)
+							goto Err2;
+
+						if (f.Hio_Read(buf, 1, (size_t)len) != (size_t)len)
+							goto Err3;
+
+						// The unpack function may read slightly beyond the end
+						buf[len] = buf[len + 1] = buf[len + 2] = buf[len + 3] = 0;
+
+						if (Unpack_Sample16(smpBuf, buf, len, xxs.Len) < 0)
+							goto Err3;
+
+						CMemory.free(buf);
+						left -= len + 4;
+						break;
+					}
 				}
 
 				if (Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad, xxs, smpBuf) < 0)

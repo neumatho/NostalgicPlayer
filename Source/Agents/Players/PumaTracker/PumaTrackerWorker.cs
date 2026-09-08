@@ -688,16 +688,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 					int length = (sampleLengths[i] - 1) * 2;
 
 					// Read the samples as unsigned, even when they are signed.
-					// This is because the waveforms in Tables as unsigned as
+					// This is because the waveforms in Tables is unsigned as
 					// this format is more read friendly
-					using (ModuleStream sampleStream = moduleStream.GetSampleDataStream(i, length))
-					{
-						samples[i] = new byte[length];
+					samples[i] = new byte[length];
 
-						int readBytes = sampleStream.Read(samples[i], 0, length);
-						if (readBytes < (length - 48))
-							return false;
-					}
+					int readBytes = moduleStream.Read(samples[i], 0, length);
+					if (readBytes < (length - 48))
+						return false;
 				}
 			}
 

@@ -672,7 +672,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusiclineEditor
 				// Just load the sample as it
 				sample.SampleData = new sbyte[sampleLength + extraToAllocate];
 
-				int readBytes = moduleStream.ReadSampleData(numberOfSamples, sample.SampleData, (int)sampleLength);
+				int readBytes = moduleStream.ReadSampleData(sample.SampleData, (int)sampleLength);
 				if (readBytes != sampleLength)
 					return false;
 			}

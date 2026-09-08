@@ -927,7 +927,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 					moduleStream.Seek(sampleDataOffsets[i], SeekOrigin.Begin);
 
 					int length = sample.Length * 2;
-					sample.SampleData = moduleStream.ReadSampleData(i, length, out int readBytes);
+					sample.SampleData = moduleStream.ReadSampleData(length, out int readBytes);
 
 					if (readBytes != length)
 						return false;

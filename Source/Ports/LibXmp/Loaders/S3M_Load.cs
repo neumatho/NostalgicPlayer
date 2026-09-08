@@ -660,7 +660,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					lib.period.LibXmp_C2Spd_To_Note(sah.C2Spd, out sub.Xpo, out sub.Fin);
 					sub.Xpo += 12;
 
-					ret = Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Adlib, xxs, sah.Reg, i);
+					ret = Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Adlib, xxs, sah.Reg);
 					if (ret < 0)
 						goto Err3;
 
@@ -720,7 +720,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (f.Hio_Seek((c_long)(start + 16 * sample_Segment), SeekOrigin.Begin) < 0)
 					goto Err3;
 
-				ret = Sample.LibXmp_Load_Sample(m, f, load_Sample_Flag, xxs, null, i);
+				ret = Sample.LibXmp_Load_Sample(m, f, load_Sample_Flag, xxs, null);
 				if (ret < 0)
 					goto Err3;
 			}

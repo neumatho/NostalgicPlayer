@@ -629,7 +629,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if (xxs.Len > 1)
 				{
-					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, xxs, null, data.SNum) < 0)
+					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, xxs, null) < 0)
 						return -1;
 				}
 			}

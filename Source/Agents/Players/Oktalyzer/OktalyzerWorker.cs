@@ -176,6 +176,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 								// Ignore the chunk
 								moduleStream.Seek(chunkSize, SeekOrigin.Current);
 							}
+
 							break;
 						}
 
@@ -192,6 +193,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 								// Ignore the chunk
 								moduleStream.Seek(chunkSize, SeekOrigin.Current);
 							}
+
 							break;
 						}
 
@@ -207,6 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 								// has some extra data appended, we ignore it
 								moduleStream.Seek(0, SeekOrigin.End);
 							}
+
 							break;
 						}
 					}
@@ -805,7 +808,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			uint allocLen = Math.Max(chunkSize, sample.Length);
 			sample.SampleData = new sbyte[allocLen];
 
-			int readBytes = moduleStream.ReadSampleData((int)readSamp, sample.SampleData, (int)chunkSize);
+			int readBytes = moduleStream.ReadSampleData(sample.SampleData, (int)chunkSize);
 
 			if (moduleStream.EndOfStream)
 			{
@@ -1204,6 +1207,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 						if (newPos < songLength)
 							playingInfo.NewSongPos = (short)newPos;
 					}
+
 					break;
 				}
 
@@ -1225,6 +1229,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 						ShowSpeed();
 					}
+
 					break;
 				}
 
@@ -1281,6 +1286,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 							if (playingInfo.ChanVol[volIndex] < 0)
 								playingInfo.ChanVol[volIndex] = 0;
 						}
+
 						break;
 					}
 
@@ -1294,8 +1300,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 							if (playingInfo.ChanVol[volIndex] > 64)
 								playingInfo.ChanVol[volIndex] = 64;
 						}
-						break;
 					}
+
 					break;
 				}
 			}

@@ -1060,7 +1060,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 					uint length = moduleStream.Read_B_UINT32();
 					sample.Type = (SampleType)moduleStream.Read_B_UINT16();
 
-					sample.SampleData = moduleStream.ReadSampleData(i, (int)length, out int readBytes);
+					sample.SampleData = moduleStream.ReadSampleData((int)length, out int readBytes);
 
 					if (readBytes != length)
 					{
@@ -1115,7 +1115,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				if (moduleStream != null)
 				{
 					moduleStream.Seek(0, SeekOrigin.Begin);
-					sample.SampleData = moduleStream.ReadSampleData(sampleNumber, (int)moduleStream.Length, out _);
+					sample.SampleData = moduleStream.ReadSampleData((int)moduleStream.Length, out _);
 
 					sample.SampleData = FixIfIff(sample.SampleData);
 					if (sample.SampleData == null)

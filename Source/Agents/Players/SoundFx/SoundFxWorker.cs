@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					int length = (int)sampleSizes[i];
 					if (length != 0)
 					{
-						samples[i].SampleAddr = moduleStream.ReadSampleData(i, length, out int readBytes);
+						samples[i].SampleAddr = moduleStream.ReadSampleData(length, out int readBytes);
 
 						// Check to see if we miss too much from the last sample
 						if (readBytes < (length - 512))

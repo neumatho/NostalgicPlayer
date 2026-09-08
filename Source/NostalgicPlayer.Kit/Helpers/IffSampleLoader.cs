@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Helpers
 		/// Load an IFF sample and return the data
 		/// </summary>
 		/********************************************************************/
-		public static LoadResult Load(ModuleStream moduleStream, int sampleNumber, out IffSample iffSample)
+		public static LoadResult Load(ModuleStream moduleStream, out IffSample iffSample)
 		{
 			iffSample = null;
 
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Kit.Helpers
 						if (((chunkLength * 2) + moduleStream.Position - 8) == originalFormLength)
 							chunkLength *= 2;
 
-						info.SampleData = moduleStream.ReadSampleData(sampleNumber, (int)chunkLength, out int readBytes);
+						info.SampleData = moduleStream.ReadSampleData((int)chunkLength, out int readBytes);
 						if (readBytes != chunkLength)
 							return LoadResult.Error;
 

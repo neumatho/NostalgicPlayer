@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 
 			instrumentStream.Seek(0, SeekOrigin.Begin);
 
-			LoadResult result = IffSampleLoader.Load(instrumentStream, instruments.Count, out formatData);
+			LoadResult result = IffSampleLoader.Load(instrumentStream, out formatData);
 
 			if (result != LoadResult.Ok)
 			{

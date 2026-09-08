@@ -370,7 +370,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				// As the first wave, read the sample if hybrid
 				if ((cnt2 == 0) && isHybrid)
 				{
-					MmdSampleHdr hybHdr = new MmdSampleHdr(worker, moduleStream, iNum, out errorString);
+					MmdSampleHdr hybHdr = new MmdSampleHdr(worker, moduleStream, out errorString);
 					if (!string.IsNullOrEmpty(errorString))
 						return false;
 

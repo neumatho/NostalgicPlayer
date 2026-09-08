@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Library.Test.Agents
 		/// Store the sample data in the converter stream
 		/// </summary>
 		/********************************************************************/
-		protected override void WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream, int sampleNumber, int length)
+		protected override void WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream, int length)
 		{
 			byte[] sampleData = new byte[length];
 			moduleStream.ReadInto(sampleData, 0, length);

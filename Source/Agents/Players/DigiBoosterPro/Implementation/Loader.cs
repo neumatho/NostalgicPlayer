@@ -682,6 +682,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 									state = PatternDecoderState.BitField;
 								}
+
 								break;
 							}
 
@@ -843,9 +844,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static Error Read_Sample_Data_8Bit(int sampleNumber, DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
+		private static Error Read_Sample_Data_8Bit(DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
 		{
-			ms.Data8 = moduleStream.ReadSampleData(sampleNumber, ms.Frames, out int readBytes);
+			ms.Data8 = moduleStream.ReadSampleData(ms.Frames, out int readBytes);
 			if (readBytes < (ms.Frames - 512))
 				return Error.Reading_Data;
 
@@ -861,9 +862,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static Error Read_Sample_Data_16Bit(int sampleNumber, DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
+		private static Error Read_Sample_Data_16Bit(DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
 		{
-			ms.Data16 = moduleStream.Read_B_16BitSampleData(sampleNumber, ms.Frames, out int readSamples);
+			ms.Data16 = moduleStream.Read_B_16BitSampleData(ms.Frames, out int readSamples);
 			if (readSamples < (ms.Frames - 256))
 				return Error.Reading_Data;
 
@@ -879,7 +880,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static Error Read_Sample_Data_32Bit(int sampleNumber, DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
+		private static Error Read_Sample_Data_32Bit(DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
 		{
 			return Error.Sample_Size_Not_Supported;
 		}
@@ -891,7 +892,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static Error Read_Sample(int sampleNumber, DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
+		private static Error Read_Sample(DataChunk dc, DB3ModuleSample ms, ModuleStream moduleStream)
 		{
 			uint8_t[] b = new uint8_t[8];
 
@@ -909,19 +910,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						{
 							case 1:
 							{
-								error = Read_Sample_Data_8Bit(sampleNumber, dc, ms, moduleStream);
+								error = Read_Sample_Data_8Bit(dc, ms, moduleStream);
 								break;
 							}
 
 							case 2:
 							{
-								error = Read_Sample_Data_16Bit(sampleNumber, dc, ms, moduleStream);
+								error = Read_Sample_Data_16Bit(dc, ms, moduleStream);
 								break;
 							}
 
 							case 4:
 							{
-								error = Read_Sample_Data_32Bit(sampleNumber, dc, ms, moduleStream);
+								error = Read_Sample_Data_32Bit(dc, ms, moduleStream);
 								break;
 							}
 
@@ -955,7 +956,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			{
 				DB3ModuleSample ms = new DB3ModuleSample();
 
-				error = Read_Sample(i, dc, ms, moduleStream);
+				error = Read_Sample(dc, ms, moduleStream);
 				if (error == Error.None)
 					m.Samples[i] = ms;
 				else

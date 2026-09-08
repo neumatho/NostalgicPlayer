@@ -39,9 +39,10 @@ namespace Polycode.NostalgicPlayer.Library.Test
 
 		/********************************************************************/
 		/// <summary>
-		/// The converter changes the music data into another format and marks
-		/// the sample data in the converter stream. The player has to end up
-		/// with exactly the same data as when the sample data is copied
+		/// The converter changes the music data into another format and
+		/// marks the sample data in the converter stream. The player has to
+		/// end up with exactly the same data as when the sample data is
+		/// copied
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
@@ -54,17 +55,13 @@ namespace Polycode.NostalgicPlayer.Library.Test
 
 		/********************************************************************/
 		/// <summary>
-		/// The converter changes the music data into another format and marks
-		/// the sample data. The result is then taken through a second
+		/// The converter changes the music data into another format and
+		/// marks the sample data. The result is then taken through a second
 		/// converter, which changes the music data into a third format and
-		/// marks the sample data as well.
-		///
-		/// This is not supported yet, since the loader only handles a single
-		/// level of sample data markings
+		/// marks the sample data as well
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		[Ignore("Chaining two converters that both mark the sample data is not supported yet")]
 		public void Test_Converter_Marks_SampleData_Chained()
 		{
 			LoadModuleAndCheckPlayerData(GetChainedMarkConverters(), CreateForwardPlayer(), ForwardReadOrder, TestConverterMarkWorker.TypeName, TestModuleData.SecondConvertedMark, 2);
@@ -95,7 +92,6 @@ namespace Polycode.NostalgicPlayer.Library.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		[Ignore("Seeking in a module where the sample data has been marked is not supported yet")]
 		public void Test_SeekingPlayer_Converter_Marks_SampleData()
 		{
 			LoadModuleAndCheckPlayerData(GetMarkConverter(), CreateSeekingPlayer(), SeekingReadOrder, TestConverterMarkWorker.TypeName, TestModuleData.FirstConvertedMark, 1);
@@ -111,7 +107,6 @@ namespace Polycode.NostalgicPlayer.Library.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		[Ignore("Seeking in a module where the sample data has been marked is not supported yet")]
 		public void Test_SeekingPlayer_Converter_Marks_SampleData_Chained()
 		{
 			LoadModuleAndCheckPlayerData(GetChainedMarkConverters(), CreateSeekingPlayer(), SeekingReadOrder, TestConverterMarkWorker.TypeName, TestModuleData.SecondConvertedMark, 2);
@@ -139,7 +134,8 @@ namespace Polycode.NostalgicPlayer.Library.Test
 
 		/********************************************************************/
 		/// <summary>
-		/// The order a player seeking around in the module will read the data
+		/// The order a player seeking around in the module will read the
+		/// data
 		/// </summary>
 		/********************************************************************/
 		private static string[] SeekingReadOrder =>
@@ -243,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Library.Test
 				Assert.IsTrue(loader.FindPlayer(testLoader, out string errorMessage), errorMessage);
 				Assert.AreEqual(string.Empty, errorMessage);
 
-				Assert.IsTrue(loader.Load(testLoader, out errorMessage), errorMessage);
+				Assert.IsTrue(loader.LoadModule(testLoader, out errorMessage), errorMessage);
 				Assert.AreEqual(string.Empty, errorMessage);
 
 				// The module has been converted, so the loader has to tell which

@@ -394,9 +394,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				converterStream.Write_B_UINT16(pair.Value.SampleLength);
 
 				moduleStream.Seek(pair.Value.SampleOffset, SeekOrigin.Begin);
-				moduleStream.SetSampleDataInfo(pair.Key, pair.Value.SampleLength);
-
-				converterStream.WriteSampleDataMarker(pair.Key, pair.Value.SampleLength);
+				converterStream.SetSampleDataMarker(moduleStream, pair.Value.SampleLength);
 
 				if (moduleStream.EndOfStream)
 				{

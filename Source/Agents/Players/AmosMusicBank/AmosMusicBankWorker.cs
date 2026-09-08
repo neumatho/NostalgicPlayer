@@ -490,7 +490,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 				long currentPosition = moduleStream.Position;
 
 				moduleStream.Seek(sampleInfoOffset + startPosition, SeekOrigin.Begin);
-				sample.SampleData = moduleStream.ReadSampleData(i, length, out int readBytes);
+				sample.SampleData = moduleStream.ReadSampleData(length, out int readBytes);
 
 				if (readBytes != length)
 					return false;

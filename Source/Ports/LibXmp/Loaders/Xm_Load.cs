@@ -423,7 +423,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					{
 						c_int sid = mod.Xxi[i].Sub[j].Sid;
 
-						if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Diff, mod.Xxs[sid], null, sid) < 0)
+						if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Diff, mod.Xxs[sid], null) < 0)
 							return -1;
 					}
 				}
@@ -1214,7 +1214,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							continue;
 						}
 
-						if (Sample.LibXmp_Load_Sample(m, f, flags, xxs, null, sub.Sid) < 0)
+						if (Sample.LibXmp_Load_Sample(m, f, flags, xxs, null) < 0)
 							return -1;
 
 						if ((flags & Sample_Flag.Adpcm) != 0)
@@ -1226,7 +1226,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				// Reposition correctly in case of 16-bit sample having odd in-file length.
 				// See "Lead Lined for '99", reported by Dennis Mulleneers
-				if (f.Hio_Seek((c_long)(instr_Pos + xih.Size + 40 * xih.Samples + total_Sample_Size), SeekOrigin.Begin) < 0)
+				if (f.Hio_Seek((c_long)(instr_Pos + xih.Size + (40 * xih.Samples) + total_Sample_Size), SeekOrigin.Begin) < 0)
 					return -1;
 			}
 

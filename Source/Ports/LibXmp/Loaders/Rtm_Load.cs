@@ -650,7 +650,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (rs.Loop == Rtsm_Loop_Bidir)
 						xxs.Flg |= Xmp_Sample_Flag.Loop_BiDir;
 
-					if (Sample.LibXmp_Load_Sample(m, f, flags, xxs, null, smpNum) < 0)
+					if (Sample.LibXmp_Load_Sample(m, f, flags, xxs, null) < 0)
 						return -1;
 				}
 			}

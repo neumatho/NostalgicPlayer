@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					lib.period.LibXmp_C2Spd_To_Note(s.C2Spd, out mod.Xxi[curSmp].Sub[0].Xpo, out mod.Xxi[curSmp].Sub[0].Fin);
 
-					if (Sample.LibXmp_Load_Sample(m, f, (s.Flags & 2) == 0 ? Sample_Flag.Uns : Sample_Flag.None, mod.Xxs[curSmp], null, curSmp) < 0)
+					if (Sample.LibXmp_Load_Sample(m, f, (s.Flags & 2) == 0 ? Sample_Flag.Uns : Sample_Flag.None, mod.Xxs[curSmp], null) < 0)
 						goto Err;
 
 					curSmp++;

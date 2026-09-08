@@ -1144,7 +1144,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 				{
 					moduleStream.Seek(sample.SampleNumber, SeekOrigin.Begin);
 
-					sbyte[] sampData = moduleStream.ReadSampleData(i, sample.LengthInWords * 2, out int readBytes);
+					sbyte[] sampData = moduleStream.ReadSampleData(sample.LengthInWords * 2, out int readBytes);
 					if (readBytes != (sample.LengthInWords * 2))
 						return false;
 

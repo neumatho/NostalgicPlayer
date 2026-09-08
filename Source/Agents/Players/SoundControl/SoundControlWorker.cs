@@ -661,7 +661,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundControl
 
 				moduleStream.Seek(startOffset + offset, SeekOrigin.Begin);
 
-				Sample sample = LoadSingleSample(moduleStream, encoder, i, out errorMessage);
+				Sample sample = LoadSingleSample(moduleStream, encoder, out errorMessage);
 				if (sample == null)
 					return false;
 
@@ -685,7 +685,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundControl
 		/// Load a single sample
 		/// </summary>
 		/********************************************************************/
-		private Sample LoadSingleSample(ModuleStream moduleStream, Encoding encoder, int sampleNumber, out string errorMessage)
+		private Sample LoadSingleSample(ModuleStream moduleStream, Encoding encoder, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -710,7 +710,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundControl
 			uint realSampleLength = moduleStream.Read_B_UINT32();
 			realSampleLength -= 64;
 
-			sample.SampleData = moduleStream.ReadSampleData(sampleNumber, (int)realSampleLength, out int readBytes);
+			sample.SampleData = moduleStream.ReadSampleData((int)realSampleLength, out int readBytes);
 			if (readBytes != realSampleLength)
 			{
 				errorMessage = Resources.IDS_SC_ERR_LOADING_SAMPLES;

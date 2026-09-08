@@ -16,7 +16,8 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	/// </summary>
 	public class WriterStream : Stream
 	{
-		private readonly Stream wrapperStream;
+		/// <summary></summary>
+		protected readonly Stream wrapperStream;
 		private readonly bool leaveStreamOpen;
 
 		private readonly byte[] saveBuffer;

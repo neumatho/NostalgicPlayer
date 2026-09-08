@@ -1529,16 +1529,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				{
 					Sample sample = samples[i];
 
-					using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, (int)sample.Length))
-					{
-						sampleDataStream.Seek(sampleDataStartPosition + sampleOffsets[i], SeekOrigin.Begin);
+					moduleStream.Seek(sampleDataStartPosition + sampleOffsets[i], SeekOrigin.Begin);
 
-						sample.SampleData = new sbyte[sample.Length];
-						sampleDataStream.ReadSigned(sample.SampleData, 0, (int)sample.Length);
+					sample.SampleData = new sbyte[sample.Length];
+					moduleStream.ReadSampleData(sample.SampleData, (int)sample.Length);
 
-						if (sampleDataStream.EndOfStream)
-							return false;
-					}
+					if (moduleStream.EndOfStream)
+						return false;
 				}
 			}
 			finally

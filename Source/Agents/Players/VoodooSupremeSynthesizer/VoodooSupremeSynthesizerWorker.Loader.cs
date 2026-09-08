@@ -584,7 +584,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.VoodooSupremeSynthesizer
 
 			Waveform result = new Waveform();
 
-			result.Data = moduleStream.ReadSampleData(waveformOffset, 32, out _);
+			result.Data = moduleStream.ReadSampleData(32, out _);
 			result.Offset = waveformOffset;
 
 			if (moduleStream.EndOfStream)
@@ -626,7 +626,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.VoodooSupremeSynthesizer
 			Sample result = new Sample();
 
 			result.Length = moduleStream.Read_B_UINT16();
-			result.Data = moduleStream.ReadSampleData(sampleOffset, result.Length, out _);
+			result.Data = moduleStream.ReadSampleData(result.Length, out _);
 			result.Offset = sampleOffset;
 
 			if (moduleStream.EndOfStream)

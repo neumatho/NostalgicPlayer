@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 							return AgentResult.Error;
 						}
 
-						inst.SampleData = moduleStream.ReadSampleData(i, (int)length - (inst.IsSample ? 30 : 78), out _);
+						inst.SampleData = moduleStream.ReadSampleData((int)length - (inst.IsSample ? 30 : 78), out _);
 
 						if (moduleStream.EndOfStream)
 						{

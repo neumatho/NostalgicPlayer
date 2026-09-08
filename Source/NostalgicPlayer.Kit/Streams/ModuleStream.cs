@@ -4,9 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit.Containers;
 
@@ -17,10 +15,12 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	/// </summary>
 	public class ModuleStream : ReaderStream
 	{
-		private readonly Dictionary<int, ConvertSampleInfo> sampleInfo;
+		private readonly bool leaveSampleStreamOpen;
+		private readonly ConvertSamplePosition[] samplePositions;
 		private readonly Stream sampleStream;
 		private readonly long convertedLength;
-		private readonly bool hasSampleMarkers;
+		private int currentSampleNumber;
+		private long virtualPosition;
 
 		/********************************************************************/
 		/// <summary>
@@ -29,7 +29,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public ModuleStream(Stream wrapperStream, bool leaveOpen) : base(wrapperStream, leaveOpen)
 		{
-			sampleInfo = null;
+			leaveSampleStreamOpen = true;
+			samplePositions = null;
+
+			virtualPosition = wrapperStream.Position;
 		}
 
 
@@ -39,23 +42,29 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor - used by module converters
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream(Stream wrapperStream, Dictionary<int, ConvertSampleInfo> sampleInfo) : base(wrapperStream, true)
+		public ModuleStream(Stream wrapperStream, Stream sampleStream, ConvertSamplePosition[] samplePositions, long totalLength, bool leaveSampleStreamOpen) : base(wrapperStream, false)
 		{
-			this.sampleInfo = sampleInfo;
+			this.sampleStream = sampleStream;
+			this.samplePositions = samplePositions;
+			convertedLength = totalLength;
+			this.leaveSampleStreamOpen = leaveSampleStreamOpen;
+
+			virtualPosition = 0;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor - used by player loader
+		/// Dispose our self
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream(Stream wrapperStream, Stream sampleDataStream, long totalLength, bool hasSampleMarkers) : base(wrapperStream, true)
+		protected override void Dispose(bool disposing)
 		{
-			sampleStream = sampleDataStream;
-			convertedLength = totalLength;
-			this.hasSampleMarkers = hasSampleMarkers;
+			base.Dispose(disposing);
+
+			if (!leaveSampleStreamOpen)
+				sampleStream.Dispose();
 		}
 
 		#region Overrides
@@ -73,6 +82,147 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 				return base.Length;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current position
+		/// </summary>
+		/********************************************************************/
+		public override long Position
+		{
+			get => virtualPosition;
+
+			set => Seek(value, SeekOrigin.Begin);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Seek to a new position
+		/// </summary>
+		/********************************************************************/
+		public override long Seek(long offset, SeekOrigin origin)
+		{
+			long length = Length;
+
+			switch (origin)
+			{
+				case SeekOrigin.Begin:
+				{
+					virtualPosition = offset;
+					break;
+				}
+
+				case SeekOrigin.Current:
+				{
+					virtualPosition += offset;
+					break;
+				}
+
+				case SeekOrigin.End:
+				{
+					virtualPosition = length + offset;
+					break;
+				}
+			}
+
+			if (virtualPosition < 0)
+				virtualPosition = 0;
+
+			EndOfStream = virtualPosition > length;
+
+			if (virtualPosition > length)
+				virtualPosition = length;
+
+			SeekToPosition();
+
+			return virtualPosition;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read data from the stream
+		/// </summary>
+		/********************************************************************/
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			int sampleCount = samplePositions?.Length ?? 0;
+
+			if (sampleCount == 0)
+			{
+				int read = wrapperStream.Read(buffer, offset, count);
+				virtualPosition += read;
+
+				EndOfStream = read < count;
+
+				return read;
+			}
+
+			int totalRead = 0;
+
+			while (count > 0)
+			{
+				ConvertSamplePosition convertSamplePos = currentSampleNumber < sampleCount ? samplePositions![currentSampleNumber] : null;
+
+				Stream streamToReadFrom;
+				int toRead = count;
+
+				if (convertSamplePos == null)
+				{
+					// No more samples, so the rest of the data is module data
+					streamToReadFrom = wrapperStream;
+				}
+				else if (virtualPosition < convertSamplePos.StartPosition)
+				{
+					// We are in module data, so read at most up to the start of the next sample
+					toRead = (int)Math.Min(toRead, convertSamplePos.StartPosition - virtualPosition);
+					streamToReadFrom = wrapperStream;
+				}
+				else
+				{
+					// We are inside a sample, so read at most the rest of the sample
+					toRead = (int)Math.Min(toRead, convertSamplePos.EndPosition - virtualPosition);
+
+					if (toRead == 0)
+					{
+						// Empty sample, so just skip it
+						currentSampleNumber++;
+						continue;
+					}
+
+					// Make sure the sample stream is at the right position. It may not
+					// be, if the samples are not stored in the sample stream in the same
+					// order as they appear in the module
+					long wantedPosition = convertSamplePos.SampleStreamStartPosition + (virtualPosition - convertSamplePos.StartPosition);
+
+					if (sampleStream.Position != wantedPosition)
+						sampleStream.Seek(wantedPosition, SeekOrigin.Begin);
+
+					streamToReadFrom = sampleStream;
+				}
+
+				int read = streamToReadFrom.Read(buffer, offset, toRead);
+				if (read == 0)
+					break;
+
+				offset += read;
+				count -= read;
+				totalRead += read;
+				virtualPosition += read;
+
+				if ((convertSamplePos != null) && (virtualPosition == convertSamplePos.EndPosition))
+					currentSampleNumber++;
+			}
+
+			EndOfStream = count > 0;
+
+			return totalRead;
 		}
 		#endregion
 
@@ -154,110 +304,15 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Will read a comment
-		/// </summary>
-		/********************************************************************/
-		public string ReadComment(int len, Encoding encoder)
-		{
-			if (len == 0)
-				return string.Empty;
-
-			byte[] buffer = new byte[len + 1];
-			ReadString(buffer, len);
-
-			string comment = encoder.GetString(buffer);
-
-			// Translate linefeeds
-			comment = comment.Replace('\u266a', '\n');
-
-			return comment;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will read a comment field which is stored as a block of lines
-		/// and return them
-		/// </summary>
-		/********************************************************************/
-		public string[] ReadCommentBlock(int blockSize, int lineLength, Encoding encoder)
-		{
-			if (blockSize == 0)
-				return new string[0];
-
-			int numberOfLines = (blockSize + lineLength - 1) / lineLength;
-			string[] lines = new string[numberOfLines];
-
-			byte[] lineBuffer = new byte[lineLength + 1];
-
-			// Store the lines in reverse order in the array.
-			// This helps to skip empty lines in the Linq expression later on
-			for (int i = numberOfLines - 1; blockSize > 0; i--)
-			{
-				int todo = Math.Min(lineLength, blockSize);
-				int read = Read(lineBuffer, 0, todo);
-				lineBuffer[read] = 0x00;			// Null terminator, just in case
-
-				string singleLine = encoder.GetString(lineBuffer, 0, lineLength);
-				singleLine = singleLine.Replace('\r', ' ').Replace('\n', ' ').TrimEnd();
-
-				lines[i] = singleLine;
-
-				blockSize -= todo;
-			}
-
-			return lines.SkipWhile(string.IsNullOrWhiteSpace).Reverse().ToArray();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Remember the sample position and size. Only used in module
-		/// converters
-		/// </summary>
-		/********************************************************************/
-		public void SetSampleDataInfo(int sampleNumber, int length)
-		{
-			if (sampleInfo == null)
-				throw new Exception("SetSampleDataInfo() may only be called from module converter");
-
-			// Called from a module converter
-			if (sampleInfo.ContainsKey(sampleNumber))
-			{
-				// If the sample number already is in the list, it is
-				// probably because the converter is called from a second
-				// or more round and therefore the sample data information
-				// is already stored
-				return;
-			}
-
-			sampleInfo[sampleNumber] = new ConvertSampleInfo { Position = (uint)Position, Length = length };
-
-			// Set "end of stream" if all the data isn't there
-			EndOfStream = (Length - Position) < length;
-
-			// Skip the sample data
-			if (EndOfStream)
-				Seek(0, SeekOrigin.End);
-			else
-				Seek(length, SeekOrigin.Current);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Read sample data
 		/// </summary>
 		/********************************************************************/
-		public sbyte[] ReadSampleData(int sampleNumber, int length, out int readBytes)
+		public sbyte[] ReadSampleData(int length, out int readBytes)
 		{
 			// Allocate buffer to hold the sample data
 			sbyte[] sampleData = new sbyte[length];
 
-			readBytes = ReadSampleData(sampleNumber, sampleData, length);
+			readBytes = ReadSampleData(sampleData, length);
 
 			return sampleData;
 		}
@@ -269,15 +324,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Read sample data into the given buffer
 		/// </summary>
 		/********************************************************************/
-		public int ReadSampleData(int sampleNumber, sbyte[] sampleData, int length)
+		public int ReadSampleData(sbyte[] sampleData, int length)
 		{
-			if (sampleInfo != null)
-				throw new Exception("ReadSampleData() may not be called from module converter");
-
-			using (ModuleStream moduleStream = GetSampleDataStream(sampleNumber, length))
-			{
-				return moduleStream.ReadSigned(sampleData, 0, length);
-			}
+			return ReadSigned(sampleData, 0, length);
 		}
 
 
@@ -288,12 +337,12 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// samples, not bytes
 		/// </summary>
 		/********************************************************************/
-		public short[] Read_B_16BitSampleData(int sampleNumber, int length, out int readSamples)
+		public short[] Read_B_16BitSampleData(int length, out int readSamples)
 		{
 			// Allocate buffer to hold the sample data
 			short[] sampleData = new short[length];
 
-			readSamples = Read_B_16BitSampleData(sampleNumber, sampleData, length);
+			readSamples = Read_B_16BitSampleData(sampleData, length);
 
 			return sampleData;
 		}
@@ -306,19 +355,13 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// is the number of samples, not bytes
 		/// </summary>
 		/********************************************************************/
-		public int Read_B_16BitSampleData(int sampleNumber, short[] sampleData, int length)
+		public int Read_B_16BitSampleData(short[] sampleData, int length)
 		{
-			if (sampleInfo != null)
-				throw new Exception("Read_B_SampleData() may not be called from module converter");
+			long position = Position;
 
-			using (ModuleStream moduleStream = GetSampleDataStream(sampleNumber, length))
-			{
-				long position = moduleStream.Position;
+			ReadArray_B_INT16s(sampleData, 0, length);
 
-				moduleStream.ReadArray_B_INT16s(sampleData, 0, length);
-
-				return (int)((moduleStream.Position - position) / 2);
-			}
+			return (int)((Position - position) / 2);
 		}
 
 
@@ -329,12 +372,12 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// samples, not bytes
 		/// </summary>
 		/********************************************************************/
-		public short[] Read_L_16BitSampleData(int sampleNumber, int length, out int readSamples)
+		public short[] Read_L_16BitSampleData(int length, out int readSamples)
 		{
 			// Allocate buffer to hold the sample data
 			short[] sampleData = new short[length];
 
-			readSamples = Read_L_16BitSampleData(sampleNumber, sampleData, length);
+			readSamples = Read_L_16BitSampleData(sampleData, length);
 
 			return sampleData;
 		}
@@ -347,54 +390,13 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// is the number of samples, not bytes
 		/// </summary>
 		/********************************************************************/
-		public int Read_L_16BitSampleData(int sampleNumber, short[] sampleData, int length)
+		public int Read_L_16BitSampleData(short[] sampleData, int length)
 		{
-			if (sampleInfo != null)
-				throw new Exception("Read_L_SampleData() may not be called from module converter");
+			long position = Position;
 
-			using (ModuleStream moduleStream = GetSampleDataStream(sampleNumber, length))
-			{
-				long position = moduleStream.Position;
+			ReadArray_L_INT16s(sampleData, 0, length);
 
-				moduleStream.ReadArray_L_INT16s(sampleData, 0, length);
-
-				return (int)((moduleStream.Position - position) / 2);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return a stream to the sample data. May only be called from
-		/// players
-		/// </summary>
-		/********************************************************************/
-		public ModuleStream GetSampleDataStream(int sampleNumber, int length)
-		{
-			if (sampleInfo != null)
-				throw new Exception("GetSampleDataStream() may not be called from a module converter");
-
-			if ((sampleStream != null) && hasSampleMarkers)
-			{
-				// Converted module
-				//
-				// Read position and length from the converted stream
-				uint pos = Read_B_UINT32();
-				int len = (int)Read_B_UINT32();
-
-				if (len != length)
-					throw new Exception($"Something is wrong when reading sample data. The given sample length {length} does not match the one stored in the converted data {len} for sample number {sampleNumber}");
-
-				// Seek to the right position in the original file
-				sampleStream.Seek(pos, SeekOrigin.Begin);
-
-				// Return new stream
-				return new ModuleStream(sampleStream, true);
-			}
-
-			// Not converted, so just return current stream wrapped
-			return new ModuleStream(wrapperStream, true);
+			return (int)((Position - position) / 2);
 		}
 
 
@@ -447,5 +449,74 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 			return newStream;
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will seek the module data or sample stream to the right position
+		/// </summary>
+		/********************************************************************/
+		private void SeekToPosition()
+		{
+			int sampleCount = samplePositions?.Length ?? 0;
+
+			if (sampleCount == 0)
+			{
+				wrapperStream.Seek(virtualPosition, SeekOrigin.Begin);
+				return;
+			}
+
+			long positionCounter = 0;
+			long wrapperNewPosition = 0;
+			long sampleNewPosition = samplePositions![0].SampleStreamStartPosition;
+
+			currentSampleNumber = 0;
+
+			while (positionCounter < virtualPosition)
+			{
+				ConvertSamplePosition convertSamplePos = currentSampleNumber < sampleCount ? samplePositions[currentSampleNumber] : null;
+
+				if (convertSamplePos == null)
+				{
+					// No more samples, so the rest of the data is module data
+					wrapperNewPosition += virtualPosition - positionCounter;
+					positionCounter = virtualPosition;
+				}
+				else if (positionCounter < convertSamplePos.StartPosition)
+				{
+					// We are in module data, so move either to the wanted position
+					// or to the start of the next sample
+					long toMove = Math.Min(virtualPosition - positionCounter, convertSamplePos.StartPosition - positionCounter);
+					wrapperNewPosition += toMove;
+					positionCounter += toMove;
+
+					// If reading continues past this block of module data, the next
+					// sample data to be read is the beginning of this sample
+					sampleNewPosition = convertSamplePos.SampleStreamStartPosition;
+				}
+				else
+				{
+					// We are inside a sample, so move either to the wanted position
+					// or to the end of the sample
+					long toMove = Math.Min(virtualPosition - positionCounter, convertSamplePos.EndPosition - positionCounter);
+					sampleNewPosition = convertSamplePos.SampleStreamStartPosition + toMove;
+					positionCounter += toMove;
+
+					if (positionCounter == convertSamplePos.EndPosition)
+					{
+						// The whole sample has been skipped, so the next sample data
+						// to be read is the beginning of the following sample
+						currentSampleNumber++;
+
+						if (currentSampleNumber < sampleCount)
+							sampleNewPosition = samplePositions[currentSampleNumber].SampleStreamStartPosition;
+					}
+				}
+			}
+
+			wrapperStream.Seek(wrapperNewPosition, SeekOrigin.Begin);
+			sampleStream.Seek(sampleNewPosition, SeekOrigin.Begin);
+		}
+		#endregion
 	}
 }

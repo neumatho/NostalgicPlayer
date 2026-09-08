@@ -771,7 +771,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 			{
 				Sample sample = samples[i];
 
-				sample.SampleData = moduleStream.ReadSampleData(i, (int)sample.Length, out int readBytes);
+				sample.SampleData = moduleStream.ReadSampleData((int)sample.Length, out int readBytes);
 				if (readBytes < sample.Length)
 					return false;
 			}
@@ -1216,6 +1216,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 						voiceInfo.SampleVolume = instrument.AttackMax;
 						voiceInfo.EnvelopeState = EnvelopeState.Decay;
 					}
+
 					break;
 				}
 
@@ -1233,6 +1234,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 							voiceInfo.EnvelopeState = EnvelopeState.Sustain;
 						}
 					}
+
 					break;
 				}
 
@@ -1260,6 +1262,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 							voiceInfo.EnvelopeState = EnvelopeState.Done;
 						}
 					}
+
 					break;
 				}
 			}
@@ -1506,6 +1509,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 
 								voiceInfo.SampleVolume = volume;
 							}
+
 							break;
 						}
 
@@ -1523,6 +1527,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 
 								voiceInfo.SampleVolume = volume;
 							}
+
 							break;
 						}
 
@@ -1568,6 +1573,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 								playingInfo.Speed = speed;
 								ShowSpeed();
 							}
+
 							break;
 						}
 					}

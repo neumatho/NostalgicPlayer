@@ -854,7 +854,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 
 					if (sampleLen > 0)
 					{
-						sampleData[i] = moduleStream.ReadSampleData(i, (int)sampleLen, out int readBytes);
+						sampleData[i] = moduleStream.ReadSampleData((int)sampleLen, out int readBytes);
 						if (readBytes < sampleLen)
 							return false;
 					}
@@ -1793,6 +1793,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 						playingInfo.CurrentSpeed = voiceInfo.EffectArg;
 						ShowSpeed();
 					}
+
 					break;
 				}
 			}

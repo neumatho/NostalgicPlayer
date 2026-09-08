@@ -429,7 +429,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			f.Hio_Seek(16, SeekOrigin.Current);
 
-			if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag._8BDiff, xxs, null, i) < 0)
+			if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag._8BDiff, xxs, null) < 0)
 				return -1;
 
 			data.Cur_Ins++;

@@ -1047,7 +1047,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						uint where = smpArray[cnt];
 						moduleStream.Seek(where, SeekOrigin.Begin);
 
-						MmdSampleHdr sHdr = new MmdSampleHdr(this, moduleStream, cnt, out errorMessage);
+						MmdSampleHdr sHdr = new MmdSampleHdr(this, moduleStream, out errorMessage);
 						if (!string.IsNullOrEmpty(errorMessage))
 						{
 							Cleanup();

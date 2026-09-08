@@ -365,8 +365,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 						return AgentResult.Error;
 					}
 
-					moduleStream.SetSampleDataInfo(i, length);
-					converterStream.WriteSampleDataMarker(i, length);
+					converterStream.SetSampleDataMarker(moduleStream, length);
 				}
 
 				// Write pad bytes

@@ -845,20 +845,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						sbyte[] sampleBuffer = new sbyte[length];
 						samples[i].Data = sampleBuffer;
 
-						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, length))
+						// Check to see if we miss too much from the last sample
+						if (moduleStream.Length - moduleStream.Position < (length - 512))
 						{
-							// Check to see if we miss too much from the last sample
-							if (sampleDataStream.Length - sampleDataStream.Position < (length - 512))
-							{
-								errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
-								Cleanup();
+							errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
+							Cleanup();
 
-								return AgentResult.Error;
-							}
-
-							// Read the sample
-							sampleDataStream.ReadSigned(sampleBuffer, 0, length);
+							return AgentResult.Error;
 						}
+
+						// Read the sample
+						moduleStream.ReadSampleData(sampleBuffer, length);
 					}
 				}
 
@@ -1061,20 +1058,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						sbyte[] sampleBuffer = new sbyte[length];
 						samples[i].Data = sampleBuffer;
 
-						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, length))
+						// Check to see if we miss too much from the last sample
+						if (moduleStream.Length - moduleStream.Position < (length - 512))
 						{
-							// Check to see if we miss too much from the last sample
-							if (sampleDataStream.Length - sampleDataStream.Position < (length - 512))
-							{
-								errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
-								Cleanup();
+							errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
+							Cleanup();
 
-								return AgentResult.Error;
-							}
-
-							// Read the sample
-							sampleDataStream.ReadSigned(sampleBuffer, 0, length);
+							return AgentResult.Error;
 						}
+
+						// Read the sample
+						moduleStream.ReadSampleData(sampleBuffer, length);
 					}
 				}
 

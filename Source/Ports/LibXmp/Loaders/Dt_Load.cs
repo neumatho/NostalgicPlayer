@@ -990,7 +990,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (data.InsNum >= mod.Ins)
 					return -1;
 
-				c_int ret = Sample.LibXmp_Load_Sample(m, f, Sample_Flag.BigEnd | Sample_Flag.Interleaved, mod.Xxs[mod.Xxi[data.InsNum].Sub[0].Sid], null, data.InsNum);
+				c_int ret = Sample.LibXmp_Load_Sample(m, f, Sample_Flag.BigEnd | Sample_Flag.Interleaved, mod.Xxs[mod.Xxi[data.InsNum].Sub[0].Sid], null);
 
 				if (ret < 0)
 					return -1;

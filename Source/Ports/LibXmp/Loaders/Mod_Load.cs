@@ -910,7 +910,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				else
 					f.Hio_Seek(pos, SeekOrigin.Begin);
 
-				if (Sample.LibXmp_Load_Sample(m, f, flags, mod.Xxs[i], null, i) < 0)
+				if (Sample.LibXmp_Load_Sample(m, f, flags, mod.Xxs[i], null) < 0)
 					return -1;
 			}
 
@@ -1150,20 +1150,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (smp_Len[i] == 0)
 					continue;
 
-				Hio s = f.GetSampleHio(i, smp_Len[i]);
+				if (f.Hio_Read(buf, 1, 5) < 5)
+					break;
 
-				try
-				{
-					if (s.Hio_Read(buf, 1, 5) < 5)
-						break;
-
-					if (CMemory.memcmp(buf, "ADPCM", 5) == 0)
-						return true;
-				}
-				finally
-				{
-					s.Hio_Close();
-				}
+				if (CMemory.memcmp(buf, "ADPCM", 5) == 0)
+					return true;
 
 				f.Hio_Seek(smp_Len[i] - 5, SeekOrigin.Current);
 			}

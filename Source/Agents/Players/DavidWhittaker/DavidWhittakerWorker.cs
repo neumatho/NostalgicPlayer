@@ -756,6 +756,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 						offset = (searchBuffer[index - 4] << 8) | searchBuffer[index - 3];
 						useExtraCounter = searchBuffer[offset + startOffset] != 0;
 					}
+
 					break;
 				}
 			}
@@ -1604,7 +1605,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				ushort frequency = moduleStream.Read_B_UINT16();
 				sample.FineTunePeriod = (ushort)(3579545 / frequency);
 
-				sample.SampleData = moduleStream.ReadSampleData(i + 1, (int)sample.Length, out int readBytes);
+				sample.SampleData = moduleStream.ReadSampleData((int)sample.Length, out int readBytes);
 				if (readBytes != sample.Length)
 					return false;
 			}
@@ -1862,6 +1863,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 						uint period = (uint)((periods[trackByte] * sample.FineTunePeriod) >> 10);
 						channel.SetAmigaPeriod(period);
 					}
+
 					break;
 				}
 			}
@@ -1991,6 +1993,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 							channelInfo.VibratoMaxValue = channelInfo.TrackData[channelInfo.TrackDataPosition++];
 							channelInfo.VibratoValue = 0;
 						}
+
 						break;
 					}
 
@@ -2023,6 +2026,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 							// Position restart is handled in the loader
 							channelInfo.TrackDataPosition += 2;
 						}
+
 						break;
 					}
 
@@ -2035,6 +2039,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 							playingInfo.Speed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
 							ShowSpeed();
 						}
+
 						break;
 					}
 
@@ -2055,6 +2060,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 							// but we do not support it
 							channelInfo.TrackDataPosition++;
 						}
+
 						break;
 					}
 

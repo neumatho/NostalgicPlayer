@@ -699,9 +699,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 					if ((sampleMask & 0x8000000000000000) != 0)
 					{
-						modulePointersToFix[(uint)(sampleDataArrayOffset + i * 4)] = (uint)converterStream.Position;
+						modulePointersToFix[(uint)(sampleDataArrayOffset + (i * 4))] = (uint)converterStream.Position;
 
-						if (!WriteSingleSample(moduleStream, converterStream, i))
+						if (!WriteSingleSample(moduleStream, converterStream))
 						{
 							errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
 							return false;
@@ -715,7 +715,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				{
 					if (!string.IsNullOrEmpty(sampleNames[i]))
 					{
-						modulePointersToFix[(uint)(sampleDataArrayOffset + i * 4)] = (uint)converterStream.Position;
+						modulePointersToFix[(uint)(sampleDataArrayOffset + (i * 4))] = (uint)converterStream.Position;
 
 						if (!WriteSingleExternalSample(fileInfo, converterStream, i))
 						{
@@ -736,7 +736,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/// Write a single sample data
 		/// </summary>
 		/********************************************************************/
-		private bool WriteSingleSample(ModuleStream moduleStream, ConverterStream converterStream, int sampleNumber)
+		private bool WriteSingleSample(ModuleStream moduleStream, ConverterStream converterStream)
 		{
 			uint length = moduleStream.Read_B_UINT32();
 			ushort type = moduleStream.Read_B_UINT16();
@@ -746,7 +746,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				// Synth and Hybrid
 				case 0xffff:
 				case 0xfffe:
-					return WriteSynthInformation(moduleStream, converterStream, sampleNumber, type, false);
+					return WriteSynthInformation(moduleStream, converterStream, type, false);
 
 				// Normal sample or multiple octave sample
 				default:
@@ -754,8 +754,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 					converterStream.Write_B_UINT32(length);
 					converterStream.Write_B_UINT16(0);
 
-					moduleStream.SetSampleDataInfo(sampleNumber, (int)length);
-					converterStream.WriteSampleDataMarker(sampleNumber, (int)length);
+					converterStream.SetSampleDataMarker(moduleStream, (int)length);
 					break;
 				}
 			}
@@ -786,7 +785,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 					{
 						case 0xfffe:
 						case 0xffff:
-							return WriteSynthInformation(moduleStream, converterStream, sampleNumber, pair.Value, true);
+							return WriteSynthInformation(moduleStream, converterStream, pair.Value, true);
 
 						default:
 						{
@@ -815,7 +814,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/// Write synth information
 		/// </summary>
 		/********************************************************************/
-		private bool WriteSynthInformation(ModuleStream moduleStream, ConverterStream converterStream, int sampleNumber, ushort type, bool copy)
+		private bool WriteSynthInformation(ModuleStream moduleStream, ConverterStream converterStream, ushort type, bool copy)
 		{
 			// Write header
 			moduleStream.Seek(6, SeekOrigin.Current);
@@ -893,10 +892,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 					if (copy)
 						StreamHelper.CopyData(moduleStream, converterStream, (int)length);
 					else
-					{
-						moduleStream.SetSampleDataInfo(sampleNumber, (int)length);
-						converterStream.WriteSampleDataMarker(sampleNumber, (int)length);
-					}
+						converterStream.SetSampleDataMarker(moduleStream, (int)length);
 				}
 				else
 				{
@@ -924,7 +920,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		{
 			// First write the length of the module
 			converterStream.Seek(4, SeekOrigin.Begin);
-			converterStream.Write_B_UINT32((uint)converterStream.Length);		// I know that this will not include the sample data itself, only the markers
+			converterStream.Write_B_UINT32((uint)converterStream.Length);
 
 			// Now fix all the offset pointers
 			foreach (KeyValuePair<uint, uint> pair in modulePointersToFix)

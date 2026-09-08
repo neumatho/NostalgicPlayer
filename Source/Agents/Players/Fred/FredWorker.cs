@@ -271,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					int sampSize = moduleStream.Read_B_UINT16();
 
 					// Read the sample data
-					inst.SampleAddr = moduleStream.ReadSampleData(instIndex, sampSize, out _);
+					inst.SampleAddr = moduleStream.ReadSampleData(sampSize, out _);
 
 					if (moduleStream.EndOfStream)
 					{
@@ -863,6 +863,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 							else
 								instChange = true;
 						}
+
 						break;
 					}
 
@@ -1115,6 +1116,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						chanInfo.TrackVolume = inst.AttackVolume;
 						chanInfo.EnvState = EnvelopeState.Decay;
 					}
+
 					break;
 				}
 
@@ -1127,6 +1129,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						chanInfo.TrackVolume = inst.DecayVolume;
 						chanInfo.EnvState = EnvelopeState.Sustain;
 					}
+
 					break;
 				}
 
@@ -1149,6 +1152,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						chanInfo.TrackVolume = inst.ReleaseVolume;
 						chanInfo.EnvState = EnvelopeState.Done;
 					}
+
 					break;
 				}
 			}

@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/********************************************************************/
 		protected override Span<byte> GetPositionList(ModuleStream moduleStream)
 		{
-			return this.positionList;
+			return positionList;
 		}
 
 
@@ -251,8 +251,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					if (moduleStream.Length - moduleStream.Position < (length - MaxNumberOfMissingBytes))
 						return false;
 
-					moduleStream.SetSampleDataInfo(i, length);
-					converterStream.WriteSampleDataMarker(i, length);
+					converterStream.SetSampleDataMarker(moduleStream, length);
 				}
 			}
 

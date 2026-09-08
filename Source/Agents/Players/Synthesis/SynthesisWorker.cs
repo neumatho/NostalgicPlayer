@@ -352,7 +352,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 				// Read sample data
 				for (int i = 0; i < numberOfSamples; i++)
 				{
-					samples[i].SampleAddr = moduleStream.ReadSampleData(i, (int)samples[i].Length, out int readBytes);
+					samples[i].SampleAddr = moduleStream.ReadSampleData((int)samples[i].Length, out int readBytes);
 
 					if (readBytes != samples[i].Length)
 					{
@@ -521,7 +521,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 							sampleInfo.Sample = null;
 							sampleInfo.Length = 0;
 						}
-					};
+					}
 
 					yield return sampleInfo;
 				}
@@ -967,6 +967,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 							playingInfo.CurrentSpeed = voiceInfo.EffectArg;
 							ShowSpeed();
 						}
+
 						break;
 					}
 

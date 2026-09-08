@@ -87,12 +87,12 @@ namespace Polycode.NostalgicPlayer.Library.Test.Agents
 			// the sample data is stored between the music data
 			ConvertSongData(moduleStream, converterStream, TestModuleData.SongDataLength);
 
-			WriteSampleData(moduleStream, converterStream, 0, sampleLengths[0]);
-			WriteSampleData(moduleStream, converterStream, 1, sampleLengths[1]);
+			WriteSampleData(moduleStream, converterStream, sampleLengths[0]);
+			WriteSampleData(moduleStream, converterStream, sampleLengths[1]);
 
 			ConvertSongData(moduleStream, converterStream, TestModuleData.MoreSongDataLength);
 
-			WriteSampleData(moduleStream, converterStream, 2, sampleLengths[2]);
+			WriteSampleData(moduleStream, converterStream, sampleLengths[2]);
 
 			return AgentResult.Ok;
 		}
@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Library.Test.Agents
 		/// Store the sample data in the converter stream
 		/// </summary>
 		/********************************************************************/
-		protected abstract void WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream, int sampleNumber, int length);
+		protected abstract void WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream, int length);
 
 		#region Private methods
 		/********************************************************************/

@@ -368,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 								{
 									// Read the sample data
 									moduleStream.Seek(sampStartOffset + multiOffsets[j], SeekOrigin.Begin);
-									multiSample.Sample[j].Address = moduleStream.ReadSampleData(10 + j, multiSample.Sample[j].Length, out _);
+									multiSample.Sample[j].Address = moduleStream.ReadSampleData(multiSample.Sample[j].Length, out _);
 
 									// Skip pad bytes
 									moduleStream.Read_B_UINT16();
@@ -397,7 +397,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							moduleStream.Seek(-4, SeekOrigin.Current);
 
 							// Read the sample data
-							sampInfo[i].Address = moduleStream.ReadSampleData(i, sampInfo[i].Length, out _);
+							sampInfo[i].Address = moduleStream.ReadSampleData(sampInfo[i].Length, out _);
 						}
 					}
 
@@ -1066,6 +1066,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 								voiData.FrequencySeqPos += 2;
 							}
+
 							break;
 						}
 

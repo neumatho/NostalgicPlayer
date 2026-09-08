@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					int sampleSlot = inst.SampleNumber & 0x7;
 					moduleStream.Seek(startOffset + sampleOffsets[sampleSlot], SeekOrigin.Begin);
 
-					inst.SampleData = moduleStream.ReadSampleData(sampleSlot, inst.SampleLength, out int readBytes);
+					inst.SampleData = moduleStream.ReadSampleData(inst.SampleLength, out int readBytes);
 
 					if (readBytes < (inst.SampleLength - 256))
 					{

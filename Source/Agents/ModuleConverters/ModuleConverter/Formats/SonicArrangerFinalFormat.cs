@@ -441,8 +441,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 				if (sampleLen > 0)
 				{
-					moduleStream.SetSampleDataInfo(i, (int)sampleLen);
-					converterStream.WriteSampleDataMarker(i, (int)sampleLen);
+					converterStream.SetSampleDataMarker(moduleStream, (int)sampleLen);
 
 					if (moduleStream.EndOfStream)
 						return false;

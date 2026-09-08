@@ -298,7 +298,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				f.Hio_Seek((c_long)(start + p_Smp[i]), SeekOrigin.Begin);
 
-				if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Diff, xxs, null, i) < 0)
+				if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Diff, xxs, null) < 0)
 					return -1;
 			}
 

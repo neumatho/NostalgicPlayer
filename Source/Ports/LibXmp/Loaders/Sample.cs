@@ -55,29 +55,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int LibXmp_Load_Sample(Module_Data m, Hio f, Sample_Flag flags, Xmp_Sample xxs, CPointer<uint8> buffer, int sampleNumber)
-		{
-			Hio s = f.GetSampleHio(sampleNumber, xxs.Len);
-
-			try
-			{
-				c_int r = LibXmp_Load_Sample(m, s, flags, xxs, buffer);
-
-				return r;
-			}
-			finally
-			{
-				s.Hio_Close();
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
 		public static c_int LibXmp_Load_Sample(Module_Data m, Hio f, Sample_Flag flags, Xmp_Sample xxs, CPointer<uint8> buffer)
 		{
 			CPointer<byte> tmp = null;

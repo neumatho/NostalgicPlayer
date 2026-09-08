@@ -285,7 +285,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 					if (sample.Length > 0)
 					{
-						sample.Data = moduleStream.ReadSampleData(i, sample.Length, out _);
+						sample.Data = moduleStream.ReadSampleData(sample.Length, out _);
 
 						if (moduleStream.EndOfStream)
 						{

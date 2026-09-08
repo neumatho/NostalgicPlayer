@@ -38,8 +38,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		private readonly OctaMedWorker worker;
 
-		private readonly InstNum sampleNumber;
-
 		private readonly uint numBytes;
 		private readonly uint numFrames;
 		private readonly bool sixtBit;
@@ -53,12 +51,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public MmdSampleHdr(OctaMedWorker worker, ModuleStream moduleStream, InstNum sampNum, out string errorMessage)
+		public MmdSampleHdr(OctaMedWorker worker, ModuleStream moduleStream, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
 			this.worker = worker;
-			sampleNumber = sampNum;
 
 			numBytes = moduleStream.Read_B_UINT32();
 			numFrames = numBytes;
@@ -135,62 +132,59 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				// No packing
 				case 0:
 				{
-					using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream((int)sampleNumber, (int)numBytes))
+					int channels = (stereo ? 2 : 1);
+
+					for (ushort chCnt = 0; chCnt < channels; chCnt++)
 					{
-						int channels = (stereo ? 2 : 1);
-
-						for (ushort chCnt = 0; chCnt < channels; chCnt++)
+						for (int oct = 0; ; oct++)
 						{
-							for (int oct = 0; ; oct++)
+							sbyte[] buf = dest.GetSampleBuffer(oct);
+							if (buf == null)
+								break;
+
+							int length = buf.Length;
+							if (dest.IsStereo())
+								length /= 2;
+
+							if (sixtBit)
 							{
-								sbyte[] buf = dest.GetSampleBuffer(oct);
-								if (buf == null)
-									break;
+								Span<short> buf16 = MemoryMarshal.Cast<sbyte, short>(buf.AsSpan());
+								length /= 2;
 
-								int length = buf.Length;
-								if (dest.IsStereo())
-									length /= 2;
-
-								if (sixtBit)
+								if ((type & InstrDeltaCode) != 0)
 								{
-									Span<short> buf16 = MemoryMarshal.Cast<sbyte, short>(buf.AsSpan());
-									length /= 2;
+									short prev = moduleStream.Read_B_INT16();
+									buf16[chCnt] = prev;
 
-									if ((type & InstrDeltaCode) != 0)
+									for (int cnt2 = 1; cnt2 < length; cnt2++)
 									{
-										short prev = sampleDataStream.Read_B_INT16();
-										buf16[chCnt] = prev;
-
-										for (int cnt2 = 1; cnt2 < length; cnt2++)
-										{
-											prev += sampleDataStream.Read_B_INT16();
-											buf16[(cnt2 * channels) + chCnt] = prev;
-										}
-									}
-									else
-									{
-										for (int cnt2 = 0; cnt2 < length; cnt2++)
-											buf16[(cnt2 * channels) + chCnt] = sampleDataStream.Read_B_INT16();
+										prev += moduleStream.Read_B_INT16();
+										buf16[(cnt2 * channels) + chCnt] = prev;
 									}
 								}
 								else
 								{
-									if ((type & InstrDeltaCode) != 0)
-									{
-										sbyte prev = sampleDataStream.Read_INT8();
-										buf[chCnt] = prev;
+									for (int cnt2 = 0; cnt2 < length; cnt2++)
+										buf16[(cnt2 * channels) + chCnt] = moduleStream.Read_B_INT16();
+								}
+							}
+							else
+							{
+								if ((type & InstrDeltaCode) != 0)
+								{
+									sbyte prev = moduleStream.Read_INT8();
+									buf[chCnt] = prev;
 
-										for (int cnt2 = 1; cnt2 < length; cnt2++)
-										{
-											prev += sampleDataStream.Read_INT8();
-											buf[(cnt2 * channels) + chCnt] = prev;
-										}
-									}
-									else
+									for (int cnt2 = 1; cnt2 < length; cnt2++)
 									{
-										for (int cnt2 = 0; cnt2 < length; cnt2++)
-											buf[(cnt2 * channels) + chCnt] = sampleDataStream.Read_INT8();
+										prev += moduleStream.Read_INT8();
+										buf[(cnt2 * channels) + chCnt] = prev;
 									}
+								}
+								else
+								{
+									for (int cnt2 = 0; cnt2 < length; cnt2++)
+										buf[(cnt2 * channels) + chCnt] = moduleStream.Read_INT8();
 								}
 							}
 						}

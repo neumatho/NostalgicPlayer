@@ -322,6 +322,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 										useFilter = true;
 									}
 								}
+
 								break;
 							}
 
@@ -340,6 +341,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 									// This doesn't look like an arpeggio
 									minimumVersion = GetMinimumVersion(minimumVersion, ModuleType.SoundTrackerII);
 								}
+
 								break;
 							}
 
@@ -422,6 +424,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 										}
 									}
 								}
+
 								break;
 							}
 
@@ -433,6 +436,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 									effectEChannel = j % 4;
 									effectEChannelCount = 0;
 								}
+
 								break;
 							}
 
@@ -710,6 +714,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 										retVal = ModuleType.ProTracker;
 										goto stopLoop;
 									}
+
 									break;
 								}
 
@@ -734,6 +739,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							}
 						}
 					}
+
 stopLoop:
 					;
 
@@ -763,13 +769,10 @@ stopLoop:
 						if (realSampleLengths[i] == 0)
 							continue;
 
-						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, (int)realSampleLengths[i]))
-						{
-							sampleDataStream.ReadInto(buf, 0, 5);
+						moduleStream.ReadInto(buf, 0, 5);
 
-							if ((buf[0] == 'A') && (buf[1] == 'D') && (buf[2] == 'P') && (buf[3] == 'C') && (buf[4] == 'M'))
-								return ModuleType.Unknown;	// The sample is packed
-						}
+						if ((buf[0] == 'A') && (buf[1] == 'D') && (buf[2] == 'P') && (buf[3] == 'C') && (buf[4] == 'M'))
+							return ModuleType.Unknown;	// The sample is packed
 
 						moduleStream.Seek(realSampleLengths[i] - 5, SeekOrigin.Current);
 					}

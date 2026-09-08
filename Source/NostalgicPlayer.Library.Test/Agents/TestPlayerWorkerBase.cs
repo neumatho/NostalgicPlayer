@@ -250,10 +250,7 @@ namespace Polycode.NostalgicPlayer.Library.Test.Agents
 			int length = SampleLengths[sampleNumber];
 			sbyte[] sampleData = new sbyte[length];
 
-			using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(sampleNumber, length))
-			{
-				SampleReadCount[sampleNumber] = sampleDataStream.ReadSigned(sampleData, 0, length);
-			}
+			SampleReadCount[sampleNumber] = moduleStream.ReadSampleData(sampleData, length);
 
 			SampleData[sampleNumber] = sampleData;
 			ReadOrder.Add(GetSampleReadName(sampleNumber));

@@ -675,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 						sample.LoopStart = sample.OneshotLength * 2U;
 						sample.TotalLength = (uint)(sample.OneshotLength + sample.LoopLength) * 2U;
 
-						sample.SampleData = moduleStream.ReadSampleData(i, (int)sample.TotalLength, out int readBytes);
+						sample.SampleData = moduleStream.ReadSampleData((int)sample.TotalLength, out int readBytes);
 						if (readBytes != sample.TotalLength)
 						{
 							errorMessage = Resources.IDS_FTM_ERR_LOADING_SAMPLES;
@@ -713,7 +713,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 							return;
 						}
 
-						if (!LoadExternalSampleData(instrumentStream, i, sample))
+						if (!LoadExternalSampleData(instrumentStream, sample))
 						{
 							errorMessage = string.Format(Resources.IDS_FTM_ERR_LOADING_READ_EXTERNAL_FILE, sample.Name);
 							return;
@@ -730,17 +730,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 		/// Parse and read external sample file
 		/// </summary>
 		/********************************************************************/
-		private bool LoadExternalSampleData(ModuleStream instrumentStream, int sampleNumber, Sample sample)
+		private bool LoadExternalSampleData(ModuleStream instrumentStream, Sample sample)
 		{
 			instrumentStream.Seek(0, SeekOrigin.Begin);
 
-			LoadResult result = IffSampleLoader.Load(instrumentStream, sampleNumber, out IffSample iffSample);
+			LoadResult result = IffSampleLoader.Load(instrumentStream, out IffSample iffSample);
 
 			if (result == LoadResult.UnknownFormat)
 			{
 				// Seems to be raw sample data, so load it as such
 				int length = (int)instrumentStream.Length;
-				sample.SampleData = instrumentStream.ReadSampleData(sampleNumber, length, out int readBytes);
+				sample.SampleData = instrumentStream.ReadSampleData(length, out int readBytes);
 				if (readBytes != length)
 					return false;
 

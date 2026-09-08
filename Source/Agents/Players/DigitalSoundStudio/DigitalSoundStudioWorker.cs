@@ -536,7 +536,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalSoundStudio
 					length *= 2;
 					length += sample.StartOffset;
 
-					sample.Data = moduleStream.ReadSampleData(i, (int)length, out int readBytes);
+					sample.Data = moduleStream.ReadSampleData((int)length, out int readBytes);
 
 					if (readBytes != length)
 						return false;

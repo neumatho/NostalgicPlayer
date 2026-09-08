@@ -960,7 +960,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 				{
 					int length = w.Length;
 
-					moduleStream.ReadSampleData(i, w, length);
+					moduleStream.ReadSampleData(w, length);
 
 					if (moduleStream.EndOfStream)
 					{
@@ -2703,6 +2703,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 								vol = 127;
 								voiceInfo.SynthEnv = EnvelopeState.Sub;
 							}
+
 							break;
 						}
 
@@ -2714,6 +2715,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 								vol = voiceInfo.SynthEnd;
 								voiceInfo.SynthEnv = EnvelopeState.Done;
 							}
+
 							break;
 						}
 					}

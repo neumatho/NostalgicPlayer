@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Library.Test.Loaders;
 
@@ -42,10 +43,9 @@ namespace Polycode.NostalgicPlayer.Library.Test.Agents
 		/// Store the sample data in the converter stream
 		/// </summary>
 		/********************************************************************/
-		protected override void WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream, int sampleNumber, int length)
+		protected override void WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream, int length)
 		{
-			moduleStream.SetSampleDataInfo(sampleNumber, length);
-			converterStream.WriteSampleDataMarker(sampleNumber, length);
+			converterStream.SetSampleDataMarker(moduleStream, length);
 		}
 	}
 }

@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.C;
-using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
@@ -731,41 +730,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		public c_long Hio_Size()
 		{
 			return h.Size;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Hio GetSampleHio(int sampleNumber, int length)
-		{
-			if (h.Type == Hio_Type.File)
-			{
-				if (h.Handle.File is ModuleStream moduleStream)
-					return Hio_Open_File(moduleStream.GetSampleDataStream(sampleNumber, length));
-
-				return Hio_Open_File(h.Handle.File);
-			}
-
-			Hio_Handle newHandle = new Hio_Handle
-			{
-				Type = h.Type,
-				Size = h.Size,
-				Error = h.Error,
-				NoClose = true
-			};
-
-			if (h.Type == Hio_Type.Memory)
-				newHandle.Handle.Mem = MemIo.MOpen(h.Handle.Mem);
-			else if (h.Type == Hio_Type.CbFile)
-				newHandle.Handle.CbFile = CallbackIo.CbOpen(h.Handle.CbFile);
-			else
-				return null;
-
-			return new Hio(newHandle);
 		}
 
 

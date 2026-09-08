@@ -678,7 +678,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 
 				sample.Data = new sbyte[sample.Length];
 
-				moduleStream.ReadSampleData(i, sample.Data, (int)sample.Length);
+				moduleStream.ReadSampleData(sample.Data, (int)sample.Length);
 
 				if (moduleStream.EndOfStream)
 				{

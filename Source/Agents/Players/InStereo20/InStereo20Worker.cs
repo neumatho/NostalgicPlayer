@@ -628,7 +628,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 				{
 					uint sampleLen = sampleLengths[i];
 
-					sampleData[i] = moduleStream.ReadSampleData(i, (int)sampleLen, out int readBytes);
+					sampleData[i] = moduleStream.ReadSampleData((int)sampleLen, out int readBytes);
 					if (readBytes < sampleLen)
 						return false;
 				}
@@ -1097,6 +1097,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 						playingInfo.CurrentSpeed = voiceInfo.EffectArg;
 						ShowSpeed();
 					}
+
 					break;
 				}
 

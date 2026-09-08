@@ -1334,7 +1334,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro
 						length -= 6;
 					}
 
-					sample.SampleData = moduleStream.ReadSampleData(i, (int)length, out int readBytes);
+					sample.SampleData = moduleStream.ReadSampleData((int)length, out int readBytes);
 					if (readBytes != length)
 						return false;
 				}
@@ -1889,6 +1889,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro
 								trackByte = track[voiceInfo.TrackPosition];
 								voiceInfo.TrackPosition++;
 							}
+
 							break;
 						}
 
@@ -1964,6 +1965,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ActivisionPro
 								trackByte = track[voiceInfo.TrackPosition];
 								voiceInfo.TrackPosition++;
 							}
+
 							break;
 						}
 					}

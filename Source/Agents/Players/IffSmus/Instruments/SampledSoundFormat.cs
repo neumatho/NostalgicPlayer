@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 
 				// Read sample data
 				int sampleLength = (int)(sampleStream.Length - 0x3e);
-				formatData.SampleData.SampleData = sampleStream.ReadSampleData(instruments.Count, sampleLength, out int readBytes);
+				formatData.SampleData.SampleData = sampleStream.ReadSampleData(sampleLength, out int readBytes);
 				if (readBytes != sampleLength)
 				{
 					errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, sampleFileName);

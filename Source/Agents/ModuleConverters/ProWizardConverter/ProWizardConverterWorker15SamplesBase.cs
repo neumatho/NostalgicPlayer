@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 			if (numberOfPatterns == 0)
 				return 0;
 
-			return 600 + numberOfPatterns * 1024;
+			return 600 + (numberOfPatterns * 1024);
 		}
 
 

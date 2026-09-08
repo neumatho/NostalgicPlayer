@@ -27,10 +27,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		{
 			public AgentInfo Agent { get; set; }
 			public string OriginalFormat { get; set; }
-			public Stream SampleDataStream { get; set; }
-			public MemoryStream ConvertedStream { get; set; }
-			public long TotalLength { get; set; }
-			public bool HasSampleMarkings { get; set; }
+			public ModuleStream ConvertedStream { get; set; }
 		}
 
 		private readonly IAgentManager agentManager;
@@ -270,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// sample data from the original stream
 		/// </summary>
 		/********************************************************************/
-		internal bool Load(ILoader loader, out string errorMessage)
+		private bool Load(ILoader loader, out string errorMessage)
 		{
 			bool result = FindPlayer(loader, out errorMessage);
 			if (result)
@@ -291,7 +288,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/********************************************************************/
 		private ModuleStream OpenModuleStream(ConvertInfo convertInfo, Stream stream)
 		{
-			return convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream, convertInfo.TotalLength, convertInfo.HasSampleMarkings) : new ModuleStream(stream, true);
+			return convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, true) : new ModuleStream(stream, true);
 		}
 
 
@@ -347,8 +344,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 					}
 					else
 					{
-						// Try all the players to see if we can find one
-						// that understand the file format
+						// Try all the players to see if we can find one that understand the file format
 						using (ModuleStream moduleStream = OpenModuleStream(convertInfo, loadStream))
 						{
 							PlayerFileInfo fileInfo = new PlayerFileInfo(loader.FullPath, moduleStream, loader);
@@ -376,9 +372,8 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 
 			if (!result)
 			{
-				// If a module has been converted, we don't need to converted stream anymore
+				// If a module has been converted, we don't need the converted stream anymore
 				convertInfo?.ConvertedStream?.Dispose();
-				convertInfo?.SampleDataStream?.Dispose();
 				convertInfo = null;
 
 				loadStream?.Dispose();
@@ -585,99 +580,98 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 			ConvertInfo result = null;
 			bool takeAnotherRound;
 
-			// This list is used to hold sample information needed
-			Dictionary<int, ConvertSampleInfo> sampleInfo = new Dictionary<int, ConvertSampleInfo>();
-
-			do
+			try
 			{
-				takeAnotherRound = false;
-
-				using (ModuleStream moduleStream = new ModuleStream(stream, sampleInfo))
+				do
 				{
-					PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
+					takeAnotherRound = false;
 
-					foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.ModuleConverters))
+					using (ModuleStream moduleStream = new ModuleStream(stream, true))
 					{
-						// Is the converter enabled?
-						if (agentInfo.Enabled)
+						PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
+
+						foreach (AgentInfo agentInfo in agentManager.GetAllAgents(AgentType.ModuleConverters))
 						{
-							// Create an instance of the converter
-							if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IModuleConverterAgent converter)
+							// Is the converter enabled?
+							if (agentInfo.Enabled)
 							{
-								// Check the file
-								AgentResult agentResult = converter.Identify(fileInfo);
-								if (agentResult == AgentResult.Ok)
+								// Create an instance of the converter
+								if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IModuleConverterAgent converter)
 								{
-									// We found the right converter, so now convert it
-									moduleStream.Seek(0, SeekOrigin.Begin);
-
-									// Create new memory stream to store the converted module in.
-									//
-									// First we call the converter to see if it know the size of
-									// the converted module. If not, we initialize it with an ok
-									// buffer size, but not bigger than the original file, so it
-									// won't be reallocated a lot
-									int convertedLength = converter.ConvertedModuleLength(fileInfo);
-									if (convertedLength > 0)
-										convertedLength += 512;	// Add extra space for sample meta data
-									else
-										convertedLength = Math.Min(64 * 1024, (int)moduleStream.Length);
-
-									MemoryStream ms = new MemoryStream(convertedLength);
-
-									using (ConverterStream converterStream = new ConverterStream(ms, true, sampleInfo))
+									// Check the file
+									AgentResult agentResult = converter.Identify(fileInfo);
+									if (agentResult == AgentResult.Ok)
 									{
-										agentResult = converter.Convert(fileInfo, converterStream, out errorMessage);
-										if (agentResult == AgentResult.Ok)
+										// We found the right converter, so now convert it
+										moduleStream.Seek(0, SeekOrigin.Begin);
+
+										// Create new memory stream to store the converted module in.
+										//
+										// First we call the converter to see if it know the size of
+										// the converted module. If not, we initialize it with an ok
+										// buffer size, but not bigger than the original file, so it
+										// won't be reallocated a lot
+										int convertedLength = converter.ConvertedModuleLength(fileInfo);
+										if (convertedLength == 0)
+											convertedLength = Math.Min(64 * 1024, (int)moduleStream.Length);
+
+										MemoryStream ms = new MemoryStream(convertedLength);
+
+										try
 										{
-											// Replace the module stream with the converted stream
-											stream = ms;
-
-											if (result == null)
-												result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat, HasSampleMarkings = converterStream.HasSampleDataMarkers };
-
-											if (!converterStream.HasSampleDataMarkers && (result.SampleDataStream == null))		// If we need to support multiple markings, it could be implemented by using a stack
+											using (ConverterStream converterStream = new ConverterStream(ms))
 											{
-												byte[] buffer = ms.GetBuffer();
-												result.SampleDataStream = new MemoryStream(buffer, 0, buffer.Length, false, true);
+												agentResult = converter.Convert(fileInfo, converterStream, out errorMessage);
+												if (agentResult == AgentResult.Ok)
+												{
+													if (result == null)
+														result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat };
+
+													ConvertSamplePosition[] samplePositions = converterStream.GetSampleDataMarkings();
+
+													result.ConvertedStream = new ModuleStream(ms, stream, samplePositions, converterStream.Length, result.ConvertedStream == null);
+
+													// Replace the module stream with the converted stream
+													stream = result.ConvertedStream;
+
+													// The module may need to be converted multiple times, so
+													// we make a new check with the converted module
+													takeAnotherRound = true;
+													break;
+												}
+
+												// An error occurred, so return immediately. The error
+												// is stored in the errorMessage out argument
+												ms.Dispose();
+												result?.ConvertedStream?.Dispose();
+
+												return new ConvertInfo { Agent = agentInfo };
 											}
-
-											if (converterStream.HasSampleDataMarkers && (result.SampleDataStream is MemoryStream oldSampleDataStream))
-											{
-												result.SampleDataStream = new MemoryStream(oldSampleDataStream.GetBuffer());
-												oldSampleDataStream.Dispose();
-												result.HasSampleMarkings = true;
-											}
-
-											if (result.ConvertedStream != null)
-												result.ConvertedStream.Dispose();
-
-											result.ConvertedStream = ms;
-											result.TotalLength = converterStream.ConvertedLength;
-
-											// The module may need to be converted multiple times, so
-											// we make a new check with the converted module
-											takeAnotherRound = true;
-											break;
 										}
-
-										// An error occurred, so return immediately. The error
-										// is stored in the errorMessage out argument
-										return new ConvertInfo { Agent = agentInfo };
+										catch (Exception)
+										{
+											ms.Dispose();
+											throw;
+										}
 									}
-								}
 
-								if (agentResult != AgentResult.Unknown)
-								{
-									// Some error occurred
-									throw new Exception($"Identify() on module converter {agentInfo.TypeName} returned an error");
+									if (agentResult != AgentResult.Unknown)
+									{
+										// Some error occurred
+										throw new Exception($"Identify() on module converter {agentInfo.TypeName} returned an error");
+									}
 								}
 							}
 						}
 					}
 				}
+				while (takeAnotherRound);
 			}
-			while (takeAnotherRound);
+			catch (Exception)
+			{
+				result?.ConvertedStream?.Dispose();
+				throw;
+			}
 
 			errorMessage = string.Empty;
 
@@ -691,7 +685,7 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 		/// Load the module into memory
 		/// </summary>
 		/********************************************************************/
-		private bool LoadModule(ILoader loader, out string errorMessage)
+		internal bool LoadModule(ILoader loader, out string errorMessage)
 		{
 			bool result = true;
 			errorMessage = string.Empty;
@@ -757,9 +751,8 @@ namespace Polycode.NostalgicPlayer.Library.Loaders
 				result = false;
 			}
 
-			// If a module has been converted, we don't need to converted stream anymore
+			// If a module has been converted, we don't need the converted stream anymore
 			convertInfo?.ConvertedStream?.Dispose();
-			convertInfo?.SampleDataStream?.Dispose();
 
 			// Close the files again if needed
 			if (!result || playerAgent is IModulePlayerAgent)

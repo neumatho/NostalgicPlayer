@@ -385,7 +385,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			for (c_int i = 0; i < mod.Ins; i++)
 			{
-				if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Uns, mod.Xxs[i], null, i) < 0)
+				if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.Uns, mod.Xxs[i], null) < 0)
 					return -1;
 			}
 

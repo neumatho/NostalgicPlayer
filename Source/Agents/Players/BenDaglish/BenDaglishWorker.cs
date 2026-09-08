@@ -1239,7 +1239,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish
 				int sampleEnd2 = (int)(sample.LoopOffset + (sample.LoopLength * 2));
 				int length = Math.Max(sampleEnd1, sampleEnd2);
 
-				sample.SampleData = moduleStream.ReadSampleData(i, length, out int readBytes);
+				sample.SampleData = moduleStream.ReadSampleData(length, out int readBytes);
 
 				if (readBytes != length)
 					return false;
@@ -1733,6 +1733,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish
 							voiceInfo.ChannelVolumeSlideSpeed = voiceInfo.Track[position++];
 							voiceInfo.ChannelVolumeSlideAddValue = (sbyte)voiceInfo.Track[position++];
 						}
+
 						break;
 					}
 

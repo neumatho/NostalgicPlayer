@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 
 				for (int i = 0; i < numberOfWaveforms; i++)
 				{
-					waveforms[i] = moduleStream.ReadSampleData(i, 128, out int readBytes);
+					waveforms[i] = moduleStream.ReadSampleData(128, out int readBytes);
 					if (readBytes != 128)
 					{
 						errorMessage = Resources.IDS_DMU_ERR_LOADING_WAVEFORMS;
@@ -332,20 +332,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 
 					int length = (int)(sample.EndOffset - sample.StartOffset);
 
-					using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(32 + i, length))
+					moduleStream.Seek(sampleStartOffset + sample.StartOffset, SeekOrigin.Begin);
+
+					sample.SampleData = new sbyte[length];
+					moduleStream.ReadSampleData(sample.SampleData, length);
+
+					if (moduleStream.EndOfStream)
 					{
-						sampleDataStream.Seek(sampleStartOffset + sample.StartOffset, SeekOrigin.Begin);
+						errorMessage = Resources.IDS_DMU_ERR_LOADING_SAMPLES;
+						Cleanup();
 
-						sample.SampleData = new sbyte[length];
-						sampleDataStream.ReadSigned(sample.SampleData, 0, length);
-
-						if (sampleDataStream.EndOfStream)
-						{
-							errorMessage = Resources.IDS_DMU_ERR_LOADING_SAMPLES;
-							Cleanup();
-
-							return AgentResult.Error;
-						}
+						return AgentResult.Error;
 					}
 
 					if (sample.LoopStart != 0)

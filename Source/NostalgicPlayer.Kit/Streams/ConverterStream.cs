@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -15,76 +14,164 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	/// </summary>
 	public class ConverterStream : WriterStream
 	{
-		private readonly Dictionary<int, ConvertSampleInfo> sampleInfo;
+		private readonly List<ConvertSamplePosition> samplePositions;
+		private long markedSampleLength;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ConverterStream(Stream wrapperStream, bool leaveOpen, Dictionary<int, ConvertSampleInfo> sampleInfo) : base(wrapperStream, leaveOpen)
+		public ConverterStream(Stream wrapperStream) : base(wrapperStream, true)
 		{
-			this.sampleInfo = sampleInfo;
-			HasSampleDataMarkers = false;
-			ConvertedLength = 0;
+			samplePositions = new List<ConvertSamplePosition>();
+			markedSampleLength = 0;
 		}
 
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Write data to the stream
+		/// Return the length of the converted module including the sample
+		/// data which has only been marked
 		/// </summary>
 		/********************************************************************/
-		public override void Write(byte[] buffer, int offset, int count)
-		{
-			ConvertedLength += count;
+		public override long Length => wrapperStream.Length + markedSampleLength;
 
-			base.Write(buffer, offset, count);
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current position in the converted module. The marked
+		/// sample data is included, even though it has not been written to
+		/// the wrapper stream
+		/// </summary>
+		/********************************************************************/
+		public override long Position
+		{
+			get => WrapperToConvertedPosition(wrapperStream.Position);
+
+			set => Seek(value, SeekOrigin.Begin);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Seek to a new position in the converted module
+		/// </summary>
+		/********************************************************************/
+		public override long Seek(long offset, SeekOrigin origin)
+		{
+			long newPosition;
+
+			switch (origin)
+			{
+				case SeekOrigin.Current:
+				{
+					newPosition = Position + offset;
+					break;
+				}
+
+				case SeekOrigin.End:
+				{
+					newPosition = Length + offset;
+					break;
+				}
+
+				default:
+				{
+					newPosition = offset;
+					break;
+				}
+			}
+
+			if (newPosition < 0)
+				newPosition = 0;
+
+			wrapperStream.Seek(ConvertedToWrapperPosition(newPosition), SeekOrigin.Begin);
+
+			return newPosition;
 		}
 		#endregion
 
 		/********************************************************************/
 		/// <summary>
-		/// Write a marker about the sample, but not the data itself
+		/// Tell the convert to mark a sample at the given position
 		/// </summary>
 		/********************************************************************/
-		public void WriteSampleDataMarker(int sampleNumber, int length)
+		public void SetSampleDataMarker(ModuleStream moduleStream, int length)
 		{
-			if (!sampleInfo.TryGetValue(sampleNumber, out ConvertSampleInfo convertInfo))
-				throw new Exception($"Sample number {sampleNumber} has not been read before write");
+			samplePositions.Add(new ConvertSamplePosition
+			{
+				StartPosition = Position,
+				SampleStreamStartPosition = moduleStream.Position,
+				Length = length
+			});
 
-			if (convertInfo.Length != length)
-				throw new Exception($"Something is wrong when writing sample data. The given sample length {length} does not match the one stored in the converted data {convertInfo.Length} for sample number {sampleNumber}");
+			markedSampleLength += length;
 
-			Write_B_UINT32(convertInfo.Position);
-			Write_B_UINT32((uint)convertInfo.Length);
-
-			HasSampleDataMarkers = true;
-			ConvertedLength += convertInfo.Length - 8;
+			moduleStream.Seek(length, SeekOrigin.Current);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Tells whether any sample markings has been written
+		/// Return the sample markings
 		/// </summary>
 		/********************************************************************/
-		public bool HasSampleDataMarkers
+		public ConvertSamplePosition[] GetSampleDataMarkings()
 		{
-			get; private set;
+			return samplePositions.ToArray();
+		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Translate a position in the wrapper stream to the position in the
+		/// converted module
+		/// </summary>
+		/********************************************************************/
+		private long WrapperToConvertedPosition(long wrapperPosition)
+		{
+			long addedSampleLength = 0;
+
+			foreach (ConvertSamplePosition convertSamplePos in samplePositions)
+			{
+				// The sample data itself is not stored in the wrapper stream, so
+				// all the samples marked at or before this position have to be
+				// added to get the position in the converted module
+				if ((convertSamplePos.StartPosition - addedSampleLength) > wrapperPosition)
+					break;
+
+				addedSampleLength += convertSamplePos.Length;
+			}
+
+			return wrapperPosition + addedSampleLength;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the converted length including sample data
+		/// Translate a position in the converted module to the position in
+		/// the wrapper stream
 		/// </summary>
 		/********************************************************************/
-		public long ConvertedLength
+		private long ConvertedToWrapperPosition(long convertedPosition)
 		{
-			get; private set;
+			long skippedSampleLength = 0;
+
+			foreach (ConvertSamplePosition convertSamplePos in samplePositions)
+			{
+				if (convertedPosition < convertSamplePos.EndPosition)
+					break;
+
+				skippedSampleLength += convertSamplePos.Length;
+			}
+
+			return convertedPosition - skippedSampleLength;
 		}
+		#endregion
 	}
 }

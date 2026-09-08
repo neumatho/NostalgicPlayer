@@ -536,7 +536,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					c_int sid = sub.Sid;
 
-					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, mod.Xxs[sid], null, smp_Num) < 0)
+					if (Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, mod.Xxs[sid], null) < 0)
 						return -1;
 				}
 			}

@@ -552,7 +552,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if (xxs.Len > 1)
 			{
-				if (Sample.LibXmp_Load_Sample(m, f, has_Unsigned_Sample ? Sample_Flag.Uns : Sample_Flag.None, mod.Xxs[i], null, i) < 0)
+				if (Sample.LibXmp_Load_Sample(m, f, has_Unsigned_Sample ? Sample_Flag.Uns : Sample_Flag.None, mod.Xxs[i], null) < 0)
 					return -1;
 			}
 

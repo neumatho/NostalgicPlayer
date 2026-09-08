@@ -1206,7 +1206,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 					};
 
 					moduleStream.Seek(specialSampleInfo.SampleOffset, SeekOrigin.Begin);
-					sample.SampleData = moduleStream.ReadSampleData(i, specialSampleInfo.Length, out int readBytes);
+					sample.SampleData = moduleStream.ReadSampleData(specialSampleInfo.Length, out int readBytes);
 
 					if (readBytes < (specialSampleInfo.Length - 32))
 						return false;
@@ -1262,7 +1262,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 							firstSamplePosition = Math.Min(firstSamplePosition, samplePosition);
 
 							moduleStream.Seek(samplePosition, SeekOrigin.Begin);
-							sample.SampleData = moduleStream.ReadSampleData((int)orderedWaveforms[orderedIndex], length, out int readBytes);
+							sample.SampleData = moduleStream.ReadSampleData(length, out int readBytes);
 
 							if (readBytes < (length - 32))
 								return false;
@@ -1504,6 +1504,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 
 										voiceInfo.WaveSpeed = 0;
 									}
+
 									break;
 								}
 

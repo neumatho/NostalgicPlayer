@@ -150,7 +150,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					{
 						// Read the samples
 						sampleLen = (int)sampleStream.Length;
-						sampleData = sampleStream.ReadSampleData(0, sampleLen, out int readBytes);
+						sampleData = sampleStream.ReadSampleData(sampleLen, out int readBytes);
 
 						if (readBytes != sampleLen)
 						{
