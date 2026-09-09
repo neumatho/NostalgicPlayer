@@ -546,6 +546,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				bool hasConvertedSample = false;
 				bool hasEmptySampleWithLoop1 = false;
 				bool hasStIns = false;
+				bool hasSpaceNames = false;
 				uint[] realSampleLengths = new uint[31];
 
 				byte[] sampleName = new byte[22];
@@ -592,6 +593,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 					if (IsSoundTrackerSampleName(sampleName))
 						hasStIns = true;
+					else if (sampleName[^2] == ' ')
+						hasSpaceNames = true;
 				}
 
 				// Mod's Grave .WOW files have an M.K. signature, but they're actually 8 channel.
@@ -610,6 +613,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					if ((moduleStream.Length & ~1) == wowLength)
 						return ModuleType.Unknown;
 				}
+
+				if (!hasStIns && hasSpaceNames)
+					return ModuleType.Unknown;		// Probably an Octalyser module
 
 				// Modules made by OpenMPT are played by the OpenMPT player
 				// agent, so reject them here

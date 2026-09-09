@@ -1292,10 +1292,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						return InternalFormat.Converted;
 				}
 
+				bool hasSpaceNames = false;
+
 				for (i = 0; i < 31; i++)
 				{
 					if (Is_St_Ins(sample_Names[i]))
 						break;
+
+					if ((sample_Names[i].Length > 0) && (sample_Names[i][^1] == ' '))		// Added by TNE
+						hasSpaceNames = true;
 				}
 
 				if (i == 31)	// No st- instruments
@@ -1310,7 +1315,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							case 4:
 							{
 								if (has_Vol_In_Empty_Ins)
-									id = InternalFormat.OpenMpt;
+									id = hasSpaceNames ? InternalFormat.Octalyser : InternalFormat.OpenMpt;
 								else
 								{
 									id = InternalFormat.NoiseTracker;

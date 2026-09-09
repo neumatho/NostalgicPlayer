@@ -888,6 +888,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			bool hasConvertedSample = false;
 			bool hasEmptySampleWithLoop1 = false;
 			bool hasStIns = false;
+			bool hasSpaceNames = false;
 			size_t totalSampleBytes = 0;
 			SmpLength[] sampleLengths = new SmpLength[31];
 
@@ -914,12 +915,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				else if ((sampleHeader.Length == 1) && (sampleHeader.Volume == 0))
 					hasConvertedSample = true;
 
-				if (IsSoundTrackerSampleName(sampleHeader.Name.ToString()))
+				string sampleName = sampleHeader.Name.ToString();
+
+				if (IsSoundTrackerSampleName(sampleName))
 					hasStIns = true;
+				else if ((sampleName.Length > 0) && (sampleName[^1] == ' '))
+					hasSpaceNames = true;
 
 				sampleLengths[smp - 1] = sampleHeader.Length * 2U;
 				totalSampleBytes += sampleLengths[smp - 1];
 			}
+
+			if (!hasStIns && hasSpaceNames)
+				return ProbeResult.Failure;		// Probably an Octalyser module
 
 			// A sample bigger than 64 KB cannot have been written by
 			// ProTracker, so the module has to be made by OpenMPT
