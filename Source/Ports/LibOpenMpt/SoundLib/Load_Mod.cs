@@ -222,6 +222,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// </summary>
 		private const int Minimum_Mod_Panning_Effects = 4;
 
+		/// <summary>
+		/// Minimum number of sample names that all have to fill out the
+		/// whole name field, before it is taken as a sign of a fixed width
+		/// editor field and thus an Octalyser module
+		/// </summary>
+		private const int Minimum_Filled_Sample_Names = 8;
+
 		private enum InternalFormat
 		{
 			Unknown,
@@ -1013,6 +1020,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			bool hasEmptySampleWithLoop1 = false;
 			bool hasStIns = false;
 			bool hasSpaceNames = false;
+			bool hasNonDefaultEmptyIns = false;
+			int namedSamples = 0;
+			int filledSampleNames = 0;
 			size_t totalSampleBytes = 0;
 			SmpLength[] sampleLengths = new SmpLength[31];
 
@@ -1035,6 +1045,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 					if (sampleHeader.LoopLength == 1)
 						hasEmptySampleWithLoop1 = true;
+
+					// Octalyser initializes every unused sample slot in the same
+					// way, so a slot holding anything else rules it out
+					if ((sampleHeader.Volume != 0x40) || (sampleHeader.LoopStart != 0) || (sampleHeader.LoopLength != 1))
+						hasNonDefaultEmptyIns = true;
 				}
 				else if ((sampleHeader.Length == 1) && (sampleHeader.Volume == 0))
 					hasConvertedSample = true;
@@ -1043,15 +1058,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 				if (IsSoundTrackerSampleName(sampleName))
 					hasStIns = true;
-				else if ((sampleName.Length > 0) && (sampleName[^1] == ' '))
+				else if (sampleHeader.Name[20] == ' ')
 					hasSpaceNames = true;
+
+				if (HasSampleName(sampleName))
+				{
+					namedSamples++;
+
+					// The last byte of the field is always left as a zero
+					// terminator, so a name of 21 characters fills it out
+					if (sampleName.Length >= 21)
+						filledSampleNames++;
+				}
 
 				sampleLengths[smp - 1] = sampleHeader.Length * 2U;
 				totalSampleBytes += sampleLengths[smp - 1];
 			}
-
-			if (!hasStIns && hasSpaceNames)
-				return ProbeResult.Failure;		// Probably an Octalyser module
 
 			// A sample bigger than 64 KB cannot have been written by
 			// ProTracker, so the module has to be made by OpenMPT
@@ -1060,6 +1082,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			// The sample headers are followed by the order list
 			ModFileHeader fileHeader = ModTools.ReadAndSwap<ModFileHeader>.From(file, modMagicResult.SwapBytes);
+
+			// Octalyser (Atari) writes the sample names into a fixed width field,
+			// padding them with spaces, and initializes every unused sample slot
+			// with a volume of 64 and an empty loop. ProTracker leaves the unused
+			// slots all zero, so that is what tells the two apart. A restart
+			// position of 0x7f is written by ProTracker itself and is never seen
+			// in an Octalyser module. Without these, any module using the sample
+			// names as a scroll text would be taken for an Octalyser module
+			if (!hasStIns && hasVolInEmptyIns && !hasNonDefaultEmptyIns && (fileHeader.RestartPos != 0x7f) && (hasSpaceNames || ((namedSamples >= Minimum_Filled_Sample_Names) && (filledSampleNames == namedSamples))))
+				return ProbeResult.Failure;		// Probably an Octalyser module
 
 			// Find the number of patterns stored in the file
 			array<uint8> orderList = fileHeader.OrderList.ToArray();
@@ -1083,6 +1115,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				return ProbeResult.Success;
 
 			return ProbeResult.Failure;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks if the sample name holds any real text at all
+		/// </summary>
+		/********************************************************************/
+		private static bool HasSampleName(string name)
+		{
+			foreach (char chr in name)
+			{
+				if (chr > ' ')
+					return true;
+			}
+
+			return false;
 		}
 
 

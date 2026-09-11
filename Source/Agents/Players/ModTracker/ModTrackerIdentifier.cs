@@ -29,6 +29,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// </summary>
 		private const int Minimum_Mod_Panning_Effects = 4;
 
+		/// <summary>
+		/// Minimum number of sample names that all have to fill out the whole
+		/// name field, before it is taken as a sign of a fixed width editor
+		/// field and thus an Octalyser module
+		/// </summary>
+		private const int Minimum_Filled_Sample_Names = 8;
+
 		/// <summary></summary>
 		public static readonly byte[] StSynthId1 = [ 0x53, 0x54, 0x31, 0x2e, 0x33, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f ];		// ST1.3 ModuleINFO
 		/// <summary></summary>
@@ -547,6 +554,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				bool hasEmptySampleWithLoop1 = false;
 				bool hasStIns = false;
 				bool hasSpaceNames = false;
+				bool hasNonDefaultEmptyIns = false;
+				int namedSamples = 0;
+				int filledSampleNames = 0;
 				uint[] realSampleLengths = new uint[31];
 
 				byte[] sampleName = new byte[22];
@@ -561,7 +571,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					ushort sampleLength = moduleStream.Read_B_UINT16();
 					byte fineTune = moduleStream.Read_UINT8();
 					byte volume = moduleStream.Read_UINT8();
-					moduleStream.Read_B_UINT16();		// Loop start
+					ushort loopStart = moduleStream.Read_B_UINT16();
 					ushort loopLength = moduleStream.Read_B_UINT16();
 
 					if (maybeOpenMpt && (sampleLength >= 0x8000))
@@ -587,6 +597,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 						if (loopLength == 1)
 							hasEmptySampleWithLoop1 = true;
+
+						// Octalyser initializes every unused sample slot in the
+						// same way, so a slot holding anything else rules it out
+						if ((volume != 0x40) || (loopStart != 0) || (loopLength != 1))
+							hasNonDefaultEmptyIns = true;
 					}
 					else if ((sampleLength == 1) && (volume == 0))
 						hasConvertedSample = true;
@@ -595,6 +610,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						hasStIns = true;
 					else if (sampleName[^2] == ' ')
 						hasSpaceNames = true;
+
+					if (HasSampleName(sampleName))
+					{
+						namedSamples++;
+
+						if (IsSampleNameFilledOut(sampleName))
+							filledSampleNames++;
+					}
 				}
 
 				// Mod's Grave .WOW files have an M.K. signature, but they're actually 8 channel.
@@ -614,7 +637,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						return ModuleType.Unknown;
 				}
 
-				if (!hasStIns && hasSpaceNames)
+				// Octalyser (Atari) writes the sample names into a fixed width field,
+				// padding them with spaces, and initializes every unused sample slot
+				// with a volume of 64 and an empty loop. ProTracker leaves the unused
+				// slots all zero, so that is what tells the two apart. A restart
+				// position of 0x7f is written by ProTracker itself and is never seen
+				// in an Octalyser module. Without these, any module using the sample
+				// names as a scroll text would be taken for an Octalyser module
+				if (!hasStIns && hasVolInEmptyIns && !hasNonDefaultEmptyIns && (restartByte != 0x7f) && (hasSpaceNames || ((namedSamples >= Minimum_Filled_Sample_Names) && (filledSampleNames == namedSamples))))
 					return ModuleType.Unknown;		// Probably an Octalyser module
 
 				// Modules made by OpenMPT are played by the OpenMPT player
@@ -912,6 +942,50 @@ stopLoop:
 				return false;
 
 			return char.IsAsciiDigit((char)name[3]) && char.IsAsciiDigit((char)name[4]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks if the sample name holds any real text at all
+		/// </summary>
+		/********************************************************************/
+		private static bool HasSampleName(byte[] name)
+		{
+			for (int i = 0; i < name.Length; i++)
+			{
+				if (name[i] == 0x00)
+					break;
+
+				if (name[i] > 32)
+					return true;
+			}
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks if the sample name fills out the whole name field, which
+		/// means it has not been terminated early with a zero. Trackers
+		/// using a fixed width editor field, like Octalyser, always do this,
+		/// while ProTracker and its clones terminate shorter names
+		/// </summary>
+		/********************************************************************/
+		private static bool IsSampleNameFilledOut(byte[] name)
+		{
+			// The last byte of the field is always left as a zero terminator,
+			// so only the first 21 bytes are used for the name itself
+			for (int i = 0; i < name.Length - 1; i++)
+			{
+				if (name[i] == 0x00)
+					return false;
+			}
+
+			return true;
 		}
 
 

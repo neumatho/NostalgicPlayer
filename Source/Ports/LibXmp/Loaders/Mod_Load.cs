@@ -140,6 +140,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		private const c_int Minimum_Mod_Panning_Effects = 4;
 
+		/// <summary>
+		/// Minimum number of sample names that all have to fill out the whole
+		/// name field, before it is taken as a sign of a fixed width editor
+		/// field and thus an Octalyser module
+		/// </summary>
+		private const c_int Minimum_Filled_Sample_Names = 8;
+
 		private readonly ExternalFormat format;
 		private readonly LibXmp lib;
 
@@ -1166,6 +1173,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		/********************************************************************/
 		/// <summary>
+		/// Checks if the sample name holds any real text at all
+		/// </summary>
+		/********************************************************************/
+		private bool Has_Sample_Name(string s)
+		{
+			foreach (char chr in s)
+			{
+				if (chr > ' ')
+					return true;
+			}
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -1200,11 +1225,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			bool has_Loop_0 = false;
 			bool has_Vol_In_Empty_Ins = false;
+			bool has_Non_Default_Empty_Ins = false;		// Added by TNE
 
 			uint8[] buffer = new uint8[22];
 
 			Encoding encoding = EncoderCollection.Amiga;
 			string[] sample_Names = new string[31];
+			uint8[][] sample_Name_Bytes = new uint8[31][];
 			uint16[] sample_Sizes = new uint16[31];
 			uint16[] sample_Loop_Sizes = new uint16[31];
 			uint8[] sample_Volumes = new uint8[31];
@@ -1215,10 +1242,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				f.Hio_Read(buffer, 22, 1);
 				sample_Names[i] = encoding.GetString(buffer);
+				sample_Name_Bytes[i] = (uint8[])buffer.Clone();
 
 				uint16 size = f.Hio_Read16B();
 				uint8 volume = (uint8)(f.Hio_Read16B() & 0x00ff);
-				f.Hio_Read16B();
+				uint16 loop_Start = f.Hio_Read16B();
 				uint16 loop_Size = f.Hio_Read16B();
 
 				// Check if has instruments with loop size 0
@@ -1228,6 +1256,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				// Check if has instruments with size 0 and volume > 0
 				if ((size == 0) && volume > 0)
 					has_Vol_In_Empty_Ins = true;
+
+				// Added by TNE: Octalyser initializes every unused sample slot in
+				// the same way, so a slot holding anything else rules it out
+				if ((size == 0) && ((volume != 0x40) || (loop_Start != 0) || (loop_Size != 1)))
+					has_Non_Default_Empty_Ins = true;
 
 				sample_Sizes[i] = size;
 				sample_Loop_Sizes[i] = loop_Size;
@@ -1292,16 +1325,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						return InternalFormat.Converted;
 				}
 
+				// Added by TNE: Octalyser (Atari) writes the sample names into a
+				// fixed width field, padding them with spaces. Some modules do not
+				// have any trailing spaces at all, but then every single name
+				// fills out the whole field instead
 				bool hasSpaceNames = false;
+				c_int namedSamples = 0;
+				c_int filledSampleNames = 0;
 
 				for (i = 0; i < 31; i++)
 				{
 					if (Is_St_Ins(sample_Names[i]))
 						break;
 
-					if ((sample_Names[i].Length > 0) && (sample_Names[i][^1] == ' '))		// Added by TNE
+					if (sample_Name_Bytes[i][20] == ' ')
 						hasSpaceNames = true;
+
+					if (Has_Sample_Name(sample_Names[i]))
+					{
+						namedSamples++;
+
+						// The last byte of the field is always left as a zero
+						// terminator, so a name of 21 characters fills it out
+						if (sample_Names[i].Length >= 21)
+							filledSampleNames++;
+					}
 				}
+
+				bool looksLikeOctalyser = !has_Non_Default_Empty_Ins && (hasSpaceNames || ((namedSamples >= Minimum_Filled_Sample_Names) && (filledSampleNames == namedSamples)));
 
 				if (i == 31)	// No st- instruments
 				{
@@ -1315,7 +1366,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							case 4:
 							{
 								if (has_Vol_In_Empty_Ins)
-									id = hasSpaceNames ? InternalFormat.Octalyser : InternalFormat.OpenMpt;
+									id = looksLikeOctalyser ? InternalFormat.Octalyser : InternalFormat.OpenMpt;
 								else
 								{
 									id = InternalFormat.NoiseTracker;
