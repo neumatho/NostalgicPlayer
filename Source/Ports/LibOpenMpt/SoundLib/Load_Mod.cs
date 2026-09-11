@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal partial class CSoundFile
 	{
-		#region Loader class
+		#region OpenMPT loader class
 		public class ModLoader : IFormatLoader
 		{
 			public static readonly FileFormatLoader Format = new FileFormatLoader
@@ -70,6 +70,130 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			public static IFormatLoader Create(CSoundFile soundFile)
 			{
 				return new ModLoader(soundFile);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public bool Read(FileReader file, ModLoadingFlags loadFlags)
+			{
+				return sndFile.ReadMod(file, loadFlags);
+			}
+		}
+		#endregion
+
+		#region Inconexia loader class
+		public class InconexiaLoader : IFormatLoader
+		{
+			public static readonly FileFormatLoader Format = new FileFormatLoader
+			{
+				Id = Guid.Parse("004632FA-B919-4D38-B548-9AD47B21DEA2"),
+				Name = Resources.IDS_MPT_INCONEXIA_NAME,
+				Description = Resources.IDS_MPT_INCONEXIA_DESCRIPTION,
+				Prober = Probe_Inconexia,
+				Create = Create
+			};
+
+			private readonly CSoundFile sndFile;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			private InconexiaLoader(CSoundFile soundFile)
+			{
+				sndFile = soundFile;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static ProbeResult Probe_Inconexia(FileReader file, uint64? pFileSize)
+			{
+				return ProbeFileHeaderMod(file, InternalFormat.Inconexia);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static IFormatLoader Create(CSoundFile soundFile)
+			{
+				return new InconexiaLoader(soundFile);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public bool Read(FileReader file, ModLoadingFlags loadFlags)
+			{
+				return sndFile.ReadMod(file, loadFlags);
+			}
+		}
+		#endregion
+
+		#region Aleshar loader class
+		public class AlesharLoader : IFormatLoader
+		{
+			public static readonly FileFormatLoader Format = new FileFormatLoader
+			{
+				Id = Guid.Parse("AD67F62B-C879-4AB0-AAE3-0411BF3A99BB"),
+				Name = Resources.IDS_MPT_ALESHAR_NAME,
+				Description = Resources.IDS_MPT_ALESHAR_DESCRIPTION,
+				Prober = Probe_Aleshar,
+				Create = Create
+			};
+
+			private readonly CSoundFile sndFile;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			private AlesharLoader(CSoundFile soundFile)
+			{
+				sndFile = soundFile;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static ProbeResult Probe_Aleshar(FileReader file, uint64? pFileSize)
+			{
+				return ProbeFileHeaderMod(file, InternalFormat.Aleshar);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static IFormatLoader Create(CSoundFile soundFile)
+			{
+				return new AlesharLoader(soundFile);
 			}
 
 

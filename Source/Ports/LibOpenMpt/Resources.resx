@@ -126,4 +126,20 @@
   <data name="IDS_MPT_MOD_NAME" xml:space="preserve">
     <value>OpenMPT MOD</value>
   </data>
+  <data name="IDS_MPT_INCONEXIA_NAME" xml:space="preserve">
+    <value>Inconexia</value>
+  </data>
+  <data name="IDS_MPT_INCONEXIA_DESCRIPTION" xml:space="preserve">
+    <value>This format is the same as the standard MOD format used by e.g. ProTracker, but with it's own mark and samples are stored as delta values.
+
+The modules are from the Inconexia demo by Iguana.</value>
+  </data>
+  <data name="IDS_MPT_ALESHAR_NAME" xml:space="preserve">
+    <value>Aleshar</value>
+  </data>
+  <data name="IDS_MPT_ALESHAR_DESCRIPTION" xml:space="preserve">
+    <value>This format is the same as the standard MOD format used by e.g. ProTracker, but with it's own mark and samples are stored as delta values.
+
+The modules are from the game Aleshar - The World Of Ice.</value>
+  </data>
 </root>

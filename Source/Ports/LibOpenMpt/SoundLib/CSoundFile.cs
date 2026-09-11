@@ -185,7 +185,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		private static readonly FileFormatLoader[] moduleFormatLoaders =
 		[
-			ModLoader.Format
+			ModLoader.Format,
+			InconexiaLoader.Format,
+			AlesharLoader.Format
 		];
 
 		/********************************************************************/

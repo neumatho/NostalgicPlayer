@@ -51,6 +51,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Activision Pro | .avp | | Activision Pro |
 | AHX 1.x | .ahx / .thx | | HivelyTracker |
 | AHX 2.x | .ahx / .thx | | HivelyTracker |
+| Aleshar | .mod | | OpenMPT |
 | AMOS Music Bank | .abk | | AMOS Music Bank |
 | Archimedes Tracker | .musx | | Xmp |
 | Art Of Noise | .aon | | Art Of Noise |
@@ -130,6 +131,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Images Music System | .ims | ProWizard | ModTracker |
 | Imago Orpheus | .imf | | Xmp |
 | Impulse Tracker | .it | | Xmp |
+| Inconexia | .mod | | OpenMPT |
 | InStereo! 1.0 | .is / .is10 | | InStereo! 1.0 |
 | InStereo! 2.0 | .is / .is20 | | InStereo! 2.0 |
 | JamCracker | .jam | | JamCracker |

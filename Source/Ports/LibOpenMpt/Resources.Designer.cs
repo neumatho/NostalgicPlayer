@@ -61,6 +61,46 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This format is the same as the standard MOD format used by e.g. ProTracker, but with it&apos;s own mark and samples are stored as delta values.
+        ///
+        ///The modules are from the game Aleshar - The World Of Ice..
+        /// </summary>
+        internal static string IDS_MPT_ALESHAR_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ALESHAR_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aleshar.
+        /// </summary>
+        internal static string IDS_MPT_ALESHAR_NAME {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ALESHAR_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This format is the same as the standard MOD format used by e.g. ProTracker, but with it&apos;s own mark and samples are stored as delta values.
+        ///
+        ///The modules are from the Inconexia demo by Iguana..
+        /// </summary>
+        internal static string IDS_MPT_INCONEXIA_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_INCONEXIA_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inconexia.
+        /// </summary>
+        internal static string IDS_MPT_INCONEXIA_NAME {
+            get {
+                return ResourceManager.GetString("IDS_MPT_INCONEXIA_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ADPCM packed.
         /// </summary>
         internal static string IDS_MPT_MOD_ADPCM {
