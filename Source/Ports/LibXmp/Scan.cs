@@ -86,7 +86,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				Compare_VBlank_Scan();
 
 			if (p.Scan[0].Time < 0.0)
-				return -1;
+			{
+			}
 
 			while (true)
 			{
@@ -151,6 +152,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				if (p.Sequence_Control[i] >= m.Num_Sequences)
 					p.Sequence_Control[i] = (byte)((i > 0) ? p.Sequence_Control[i - 1] : 0);
+			}
+
+			// If the module is currently playing, rescanning the sequences may
+			// invalidate the current sequence
+			if (ctx.State >= Xmp_State.Playing)
+			{
+				seq = LibXmp_Get_Sequence(p.Pos);
+				p.Sequence = (seq != Constants.No_Sequence) ? seq : 0;
 			}
 
 			return 0;
@@ -812,6 +821,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				ctx.M.Xxo_Info[i].Time = -1.0;
 
 			Array.Fill(ctx.P.Sequence_Control, (uint8)Constants.No_Sequence, 0, Constants.Xmp_Max_Mod_Length);
+			ctx.P.Scan[0].Clear();
 		}
 
 

@@ -11,6 +11,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 	internal enum Playback_Action
 	{
 		Play_End,
-		Play_Frames
+		Play_Frames,
+		Play_Set_Position,
+		Play_Set_Player_Mode
 	}
 }

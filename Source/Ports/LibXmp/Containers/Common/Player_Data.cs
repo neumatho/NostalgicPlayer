@@ -32,6 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 
 		public c_int Loop_Count;
 		public c_int Sequence;
+		public c_int Bad_Sequence;				// 1 = can't find next order, need reposition
 		public byte[] Sequence_Control = new byte[Constants.Xmp_Max_Mod_Length];
 
 		/// <summary>

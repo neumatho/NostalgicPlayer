@@ -173,6 +173,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Ord = p.Pos;
 			p.Row = row;
 			p.Frame = -1;
+			p.Bad_Sequence = 0;
 			f.Num_Rows = mod.Xxp[mod.Xxo[p.Ord]].Rows;
 
 			return row;

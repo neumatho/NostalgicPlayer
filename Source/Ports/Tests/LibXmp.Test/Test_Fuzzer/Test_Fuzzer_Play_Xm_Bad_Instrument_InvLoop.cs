@@ -16,31 +16,32 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 	{
 		/********************************************************************/
 		/// <summary>
-		/// This input caused crashes in read_event_ft2 due to a missing
-		/// check on subinstrument sample IDs greater than the module sample
-		/// count
+		/// This test relies on several fringe behaviors that might not be
+		/// permanent:
+		/// - Loading XMs does not filter out unsupported extended (Exx)
+		///   effects, in this case, EFx (invert loop).
+		/// - Loading XMs does not filter bad loop parameters when there is
+		///   no sample data, as these samples will never be mixed.
+		/// - When the player is set to Protracker 2 mode, EFx effects are
+		///   interpreted as invert loop and can be used on junk samples
+		///   attached to valid instruments via Protracker 2 instrument
+		///   changes.
+		///
+		/// The invert loop handler correctly filtered NULL samples, but did
+		/// not avoid signed integer overflow from bad loop parameters
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Fuzzer_Play_Mdl_Zero_Samples()
+		public void Test_Fuzzer_Play_Xm_Bad_Instrument_InvLoop()
 		{
 			Playback_Sequence[] sequence = new Playback_Sequence[]
 			{
-				new Playback_Sequence(Playback_Action.Play_Frames, 8, 0),
-				new Playback_Sequence(Playback_Action.Play_Set_Player_Mode, (c_int)Xmp_Mode.Ft2, 0),
-				new Playback_Sequence(Playback_Action.Play_Frames, 8, 0),
 				new Playback_Sequence(Playback_Action.Play_Set_Player_Mode, (c_int)Xmp_Mode.ProTracker, 0),
-				new Playback_Sequence(Playback_Action.Play_Frames, 8, 0),
-				new Playback_Sequence(Playback_Action.Play_Set_Player_Mode, (c_int)Xmp_Mode.St3, 0),
-				new Playback_Sequence(Playback_Action.Play_Frames, 8, 0),
-				new Playback_Sequence(Playback_Action.Play_Set_Player_Mode, (c_int)Xmp_Mode.It, 0),
-				new Playback_Sequence(Playback_Action.Play_Frames, 8, 0),
-				new Playback_Sequence(Playback_Action.Play_Set_Player_Mode, (c_int)Xmp_Mode.ItSmp, 0),
-				new Playback_Sequence(Playback_Action.Play_Frames, 8, 0),
+				new Playback_Sequence(Playback_Action.Play_Frames, 4, 0),
 				new Playback_Sequence(Playback_Action.Play_End, 0, 0)
 			};
 
-			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_Mdl_Zero_Samples.mdl", sequence, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_Xm_Bad_Instrument_InvLoop.xm", sequence, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
 		}
 	}
 }

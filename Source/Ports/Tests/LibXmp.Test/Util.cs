@@ -422,6 +422,20 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 						Assert.AreEqual(sequence[seqIndex].Result, ret, "Play frames");
 						break;
 					}
+
+					case Playback_Action.Play_Set_Position:
+					{
+						ret = opaque.Xmp_Set_Position(sequence[seqIndex].Value);
+						Assert.AreEqual(sequence[seqIndex].Result, ret, "Set position");
+						break;
+					}
+
+					case Playback_Action.Play_Set_Player_Mode:
+					{
+						ret = opaque.Xmp_Set_Player(Xmp_Player.Mode, sequence[seqIndex].Value);
+						Assert.AreEqual(sequence[seqIndex].Result, ret, "Set player mode");
+						break;
+					}
 				}
 
 				seqIndex++;

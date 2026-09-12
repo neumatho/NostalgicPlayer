@@ -223,6 +223,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Current_Time = 0;
 			p.Loop_Count = 0;
 			p.Sequence = 0;
+			p.Bad_Sequence = 0;
 
 			// Set default volume and mute status
 			for (c_int i = 0; i < Constants.Xmp_Max_Channels; i++)
@@ -235,22 +236,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				p.Channel_Vol[i] = 100;
 			}
 
-			// Skip invalid patterns at start (the seventh laboratory.it)
-			while ((p.Ord < mod.Len) && (mod.Xxo[p.Ord] >= mod.Pat))
-				p.Ord++;
-
-			// Check if all positions skipped
-			if (p.Ord >= mod.Len)
-				mod.Len = 0;
-
-			if (mod.Len == 0)
+			// Handle markers/invalid patterns at start (the seventh laboratory.it).
+			// If there are no valid orders or if an end marker is found, set some
+			// safe default values (note: this previously zeroed mod->len)
+			if (Skip_Invalid_Orders() < 0)
 			{
-				// Set variables to sane state
 				// Note: previously did this for mod->chn == 0, which caused
 				// crashes on invalid order 0s. 0 channel modules are technically
 				// valid (if useless) so just let them play normally
 				p.Ord = p.Scan[0].Ord = 0;
 				p.Row = p.Scan[0].Row = 0;
+				p.Bad_Sequence = 1;
 				f.End_Point = 0;
 				f.Num_Rows = 0;
 			}
@@ -333,9 +329,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (mod.Len <= 0)
 				return -(c_int)Xmp_Error.End;
 
-			if (Common.Has_Quirk(m, Quirk_Flag.Marker) && (mod.Xxo[p.Ord] == Constants.Xmp_Mark_End))
-				return -(c_int)Xmp_Error.End;
-
 			lib.mixer.LibXmp_Mixer_Prepare_Frame();
 
 			// Check reposition
@@ -368,7 +361,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (p.Ord < start)
 					p.Ord = start - 1;
 
-				Next_Order(-1);
+				if (Next_Order(-1) < 0)
+				{
+					// Current sequence contains no valid orders;
+					// playback can't continue
+					return -(c_int)Xmp_Error.End;
+				}
 
 				Update_From_Ord_Info();
 
@@ -377,6 +375,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			}
 			else
 			{
+				// Sequences with no valid orders can't continue playing from
+				// here and require manual repositioning to another sequence
+				if (p.Bad_Sequence != 0)
+					return -(c_int)Xmp_Error.End;
+
 				p.Frame++;
 
 				if (p.Frame >= (p.Speed * (1 + f.Delay)))
@@ -387,11 +390,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					// by The Welder <welder@majesty.net>, Jan 14 2012
 					if (Common.Has_Quirk(m, Quirk_Flag.ProTrack) && (f.Delay != 0) && f.PBreak)
 					{
-						Next_Row();
+						if (Next_Row() < 0)
+							return -(c_int)Xmp_Error.End;
+
 						Check_End_Of_Module();
 					}
 
-					Next_Row();
+					if (Next_Row() < 0)
+						return -(c_int)Xmp_Error.End;
 				}
 			}
 
@@ -1255,7 +1261,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Xmp_Sample xxs = lib.sMix.LibXmp_Get_Sample(xc.Smp);
 			Module_Data m = ctx.M;
-			c_int lps = 0, len = -1;
+			c_int lps = -1, lpe = -1, len = -1;
 
 			// If an instrument number is present, reset the position
 			if ((ctx.P.Frame == 0) && Test(xc, Channel_Flag.New_Ins))
@@ -1265,28 +1271,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (xxs != null)
 			{
+				len = xxs.Len;
+
 				if ((xxs.Flg & Xmp_Sample_Flag.Loop) != 0)
 				{
 					lps = xxs.Lps;
-					len = xxs.Lpe - lps;
+					lpe = xxs.Lpe;
 				}
 				else if ((xxs.Flg & Xmp_Sample_Flag.SLoop) != 0)
 				{
 					// Some formats that support invert loop use sustain
 					// loops instead (Digital Symphony)
 					lps = m.Xtra[xc.Smp].Sus;
-					len = m.Xtra[xc.Smp].Sue - lps;
+					lpe = m.Xtra[xc.Smp].Sue;
 				}
 			}
 
-			if ((len >= 0) && (xc.InvLoop.Count >= 128))
+			if ((lps >= 0) && (lps <= lpe) && (xc.InvLoop.Count >= 128))
 			{
 				xc.InvLoop.Count = 0;
 
-				if (++xc.InvLoop.Pos > len)
+				if (++xc.InvLoop.Pos > (lpe - lps))
 					xc.InvLoop.Pos = 0;
 
-				if (xxs.Data.IsNull)
+				if (xxs.Data.IsNull || (lps >= len) || (lpe > len))
 					return;
 
 				if ((~xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
@@ -2508,45 +2516,74 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Next_Order(c_int last_Ord)
+		private c_int Skip_Invalid_Orders()
+		{
+			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+			Xmp_Module mod = m.Mod;
+
+			if (p.Ord < 0)
+				p.Ord = 0;
+
+			for (;;)
+			{
+				if ((p.Ord >= mod.Len) || (Common.Has_Quirk(m, Quirk_Flag.Marker) && (mod.Xxo[p.Ord] == Constants.Xmp_Mark_End)))
+					return -1;
+
+				if (mod.Xxo[p.Ord] < mod.Pat)
+					break;
+
+				p.Ord++;
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private c_int Next_Order(c_int last_Ord)
 		{
 			Player_Data p = ctx.P;
 			Flow_Control f = p.Flow;
 			Module_Data m = ctx.M;
 			Xmp_Module mod = m.Mod;
-			bool reset_GVol = false;
 
-			do
+			p.Ord++;
+
+			if (Skip_Invalid_Orders() < 0)
 			{
-				p.Ord++;
-
 				// Restart module
-				bool mark = Common.Has_Quirk(m, Quirk_Flag.Marker) && (p.Ord < mod.Len) && (mod.Xxo[p.Ord] == Constants.Xmp_Mark_End);
-
-				if ((p.Ord >= mod.Len) || mark)
+				if ((mod.Rst > mod.Len) || (mod.Xxo[mod.Rst] >= mod.Pat) || (p.Ord < m.Seq_Data[p.Sequence].Entry_Point))
+					p.Ord = m.Seq_Data[p.Sequence].Entry_Point;
+				else
 				{
-					if ((mod.Rst > mod.Len) || (mod.Xxo[mod.Rst] >= mod.Pat) || (p.Ord < m.Seq_Data[p.Sequence].Entry_Point))
-						p.Ord = m.Seq_Data[p.Sequence].Entry_Point;
+					if (lib.scan.LibXmp_Get_Sequence(mod.Rst) == p.Sequence)
+						p.Ord = mod.Rst;
 					else
-					{
-						if (lib.scan.LibXmp_Get_Sequence(mod.Rst) == p.Sequence)
-							p.Ord = mod.Rst;
-						else
-							p.Ord = m.Seq_Data[p.Sequence].Entry_Point;
-					}
-
-					// This might be a marker, so delay updating global
-					// volume until an actual pattern is found
-					reset_GVol = true;
-
-					// Module restart should always reset the play time
-					last_Ord = -1;
+						p.Ord = m.Seq_Data[p.Sequence].Entry_Point;
 				}
-			}
-			while (mod.Xxo[p.Ord] >= mod.Pat);
 
-			if (reset_GVol)
+				// Nothing valid, even from the entry point? Fail.
+				// This should be prevented by the scan, but check anyway
+				if (Skip_Invalid_Orders() < 0)
+				{
+					p.Bad_Sequence = 1;
+					return -1;
+				}
+
 				p.GVol = m.Xxo_Info[p.Ord].Gvl;
+
+				// Module restart should always reset the play time
+				last_Ord = -1;
+			}
+
+			// Playback now has a valid position
+			p.Bad_Sequence = 0;
 
 			// Bxx+Dxx within same position, Archimedes line jump,
 			// etc. should not reset time tracking
@@ -2584,6 +2621,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				for (c_int chn = 0; chn < mod.Chn; chn++)
 					p.Xc_Data[chn].Per_Flags = 0;
 			}
+
+			return 0;
 		}
 
 
@@ -2593,7 +2632,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Next_Row()
+		private c_int Next_Row()
 		{
 			Player_Data p = ctx.P;
 			Flow_Control f = p.Flow;
@@ -2614,7 +2653,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					f.Jump = -1;
 				}
 
-				Next_Order(last_Ord);
+				return Next_Order(last_Ord);
 			}
 			else
 			{
@@ -2634,8 +2673,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				// Check end of pattern
 				if (p.Row >= f.Num_Rows)
-					Next_Order(last_Ord);
+					return Next_Order(last_Ord);
 			}
+
+			return 0;
 		}
 
 

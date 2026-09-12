@@ -489,7 +489,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			// of its loop (see above)
 			if (new_Swap_Ins && (sub != null) && Common.Has_Quirk(m, Quirk_Flag.ProTrack) && Test_Note(xc, Note_Flag.Set))
 			{
-				lib.virt.LibXmp_Virt_QueuePatch(chn, e.Ins - 1, sub.Sid, xc.Note);
+				c_int smp = Is_Valid_Sample(mod, sub.Sid) ? sub.Sid : -1;
+				lib.virt.LibXmp_Virt_QueuePatch(chn, e.Ins - 1, smp, xc.Note);
 				xc.Smp = sub.Sid;
 			}
 

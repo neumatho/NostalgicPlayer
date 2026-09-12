@@ -16,13 +16,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 	{
 		/********************************************************************/
 		/// <summary>
-		/// This input caused crashes in read_event_ft2 due to a missing
-		/// check on subinstrument sample IDs greater than the module sample
-		/// count
+		/// IT modules without samples but with instruments can exist and are
+		/// valid. Modules like this have found bugs in the FT2 and MOD
+		/// player routines, so try playing a few frames with different
+		/// players
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Fuzzer_Play_Mdl_Zero_Samples()
+		public void Test_Fuzzer_Play_It_Zero_Samples()
 		{
 			Playback_Sequence[] sequence = new Playback_Sequence[]
 			{
@@ -40,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 				new Playback_Sequence(Playback_Action.Play_End, 0, 0)
 			};
 
-			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_Mdl_Zero_Samples.mdl", sequence, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Zero_Samples.it", sequence, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
 		}
 	}
 }
