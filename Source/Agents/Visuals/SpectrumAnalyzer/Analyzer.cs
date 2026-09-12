@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 
 						double value = mixedValue / 2147483648f;
 
-						fftBuffer[fftPos].X = (float)(value * FastFourierTransform.BlackmannHarrisWindow(fftPos, fftLength));
+						fftBuffer[fftPos].X = (float)(value * FastFourierTransform.BlackmanHarrisWindow(fftPos, fftLength));
 						fftBuffer[fftPos].Y = 0;
 
 						fftPos++;
@@ -99,7 +99,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 							FftCalculated(this, fftArgs);
 						}
 					}
-
 				}
 				else
 				{

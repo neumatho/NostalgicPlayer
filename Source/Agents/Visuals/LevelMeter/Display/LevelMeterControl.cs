@@ -89,30 +89,33 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 		{
 			lock (this)
 			{
-				// Find the max level of each speaker
-				long[] maxLevels = new long[sampleData.ChannelMapping.Count];
-
-				int[] sample = sampleData.SampleData;
-				int increment = sampleData.ChannelCount;
-
-				int controlIndex = 0;
-
-				foreach ((SpeakerFlag speaker, _) in speakerOrder)
+				if (levelsPanel.Controls.Count == sampleData.ChannelMapping.Count)
 				{
-					if (speakers.HasFlag(speaker))
+					// Find the max level of each speaker
+					long[] maxLevels = new long[sampleData.ChannelMapping.Count];
+
+					int[] sample = sampleData.SampleData;
+					int increment = sampleData.ChannelCount;
+
+					int controlIndex = 0;
+
+					foreach ((SpeakerFlag speaker, _) in speakerOrder)
 					{
-						int channelIndex = sampleData.ChannelMapping[speaker];
-						long max = 0;
+						if (speakers.HasFlag(speaker))
+						{
+							int channelIndex = sampleData.ChannelMapping[speaker];
+							long max = 0;
 
-						for (int i = channelIndex; i < sampleData.SampleData.Length; i += increment)
-							max = Math.Max(max, Math.Abs((long)sample[i]));
+							for (int i = channelIndex; i < sampleData.SampleData.Length; i += increment)
+								max = Math.Max(max, Math.Abs((long)sample[i]));
 
-						maxLevels[controlIndex++] = max;
+							maxLevels[controlIndex++] = max;
+						}
 					}
-				}
 
-				for (int i = 0; i < levelsPanel.Controls.Count; i++)
-					((SpeakerLevelMeterControl)levelsPanel.Controls[i]).UpdateLevel(maxLevels[i]);
+					for (int i = 0; i < levelsPanel.Controls.Count; i++)
+						((SpeakerLevelMeterControl)levelsPanel.Controls[i]).UpdateLevel(maxLevels[i]);
+				}
 			}
 		}
 

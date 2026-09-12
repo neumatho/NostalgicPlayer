@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		{
 			lock (this)
 			{
-				if (oscilloscopesPanel.Controls.Count > 0)
+				if (oscilloscopesPanel.Controls.Count == sampleData.ChannelMapping.Count)
 				{
 					int controlIndex = 0;
 

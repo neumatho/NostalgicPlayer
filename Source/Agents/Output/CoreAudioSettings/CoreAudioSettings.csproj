@@ -11,16 +11,12 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Settings for the CoreAudio agent</Description>
-    <Version>3.1.1</Version>
+    <Version>3.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NAudio.Wasapi" Version="22.0.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayer.Kit.Gui\NostalgicPlayer.Kit.Gui.csproj" />
