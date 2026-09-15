@@ -3,11 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
+using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian;
 using Utility = Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base.Utility;
@@ -112,6 +112,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 
 		/********************************************************************/
 		/// <summary>
+		/// Read destSize elements of binary-safe T into a vector.
+		/// If successful, the file cursor is advanced by the size of the
+		/// vector. Otherwise, the vector is resized to destSize, but
+		/// possibly existing contents are not cleared
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool ReadVector<T>(FileCursor f, vector<T> destVector, size_t destSize) where T : unmanaged//XX 281
+		{
+			destVector.resize(destSize);
+
+			if (!f.CanRead((size_t)Marshal.SizeOf<T>() * destSize))
+				return false;
+
+			f.ReadRaw(Memory.As_Raw_Memory(destVector));
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -143,6 +166,67 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 				return 0;
 
 			return target;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read unsigned 16-Bit integer in little-endian format.
+		/// If successful, the file cursor is advanced by the size of the
+		/// integer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint16 ReadUInt16LE(FileCursor f)//XX 418
+		{
+			uint16le target = new uint16le();
+
+			if (!Read(f, ref target))
+				return 0;
+
+			return target;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read unsigned 8-Bit integer.
+		/// If successful, the file cursor is advanced by the size of the
+		/// integer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint8 ReadUInt8(FileCursor f)//XX 456
+		{
+			uint8 target = 0;
+
+			if (!Read(f, ref target))
+				return 0;
+
+			return target;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read a struct.
+		/// If successful, the file cursor is advanced by the size of the
+		/// struct. Otherwise, the target is zeroed
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool ReadStruct<T>(FileCursor f, ref T target) where T : unmanaged, IClearable//XX 522
+		{
+			if (!Read(f, ref target))
+			{
+				target.Clear();
+				return false;
+			}
+
+			return true;
 		}
 
 

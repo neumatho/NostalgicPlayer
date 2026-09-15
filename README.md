@@ -177,6 +177,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | OggMod | .oxm | | Xmp |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
 | OpenMPT MOD | .mod | | OpenMPT |
+| OpenMPT S3M | .s3m | | OpenMPT |
 | Opus | .opus | | Opus |
 | Perfect Song 1 | .pf1 | ProWizard | ModTracker |
 | Perfect Song 2 | .pf2 | ProWizard | ModTracker |

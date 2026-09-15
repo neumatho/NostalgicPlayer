@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_MPT_MOD_ADPCM" xml:space="preserve">
+  <data name="IDS_MPT_ADPCM" xml:space="preserve">
     <value>ADPCM packed</value>
   </data>
   <data name="IDS_MPT_MOD_DESCRIPTION" xml:space="preserve">
@@ -141,5 +141,11 @@ The modules are from the Inconexia demo by Iguana.</value>
     <value>This format is the same as the standard MOD format used by e.g. ProTracker, but with it's own mark and samples are stored as delta values.
 
 The modules are from the game Aleshar - The World Of Ice.</value>
+  </data>
+  <data name="IDS_MPT_S3M_NAME" xml:space="preserve">
+    <value>OpenMPT S3M</value>
+  </data>
+  <data name="IDS_MPT_S3M_DESCRIPTION" xml:space="preserve">
+    <value>This format is the same as the standard Scream Tracker 3 format, but created with OpenMPT.</value>
   </data>
 </root>

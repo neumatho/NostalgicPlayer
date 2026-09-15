@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Tests
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Test MOD file loading
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]

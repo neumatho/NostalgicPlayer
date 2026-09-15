@@ -61,6 +61,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ADPCM packed.
+        /// </summary>
+        internal static string IDS_MPT_ADPCM {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ADPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This format is the same as the standard MOD format used by e.g. ProTracker, but with it&apos;s own mark and samples are stored as delta values.
         ///
         ///The modules are from the game Aleshar - The World Of Ice..
@@ -101,15 +110,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ADPCM packed.
-        /// </summary>
-        internal static string IDS_MPT_MOD_ADPCM {
-            get {
-                return ResourceManager.GetString("IDS_MPT_MOD_ADPCM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by OpenMPT when saving in this format..
         /// </summary>
         internal static string IDS_MPT_MOD_DESCRIPTION {
@@ -124,6 +124,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         internal static string IDS_MPT_MOD_NAME {
             get {
                 return ResourceManager.GetString("IDS_MPT_MOD_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This format is the same as the standard Scream Tracker 3 format, but created with OpenMPT..
+        /// </summary>
+        internal static string IDS_MPT_S3M_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_S3M_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenMPT S3M.
+        /// </summary>
+        internal static string IDS_MPT_S3M_NAME {
+            get {
+                return ResourceManager.GetString("IDS_MPT_S3M_NAME", resourceCulture);
             }
         }
     }

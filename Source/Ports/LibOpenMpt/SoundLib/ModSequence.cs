@@ -139,6 +139,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void SetDefaultTempoInt(uint32 tempo)
+		{
+			SetDefaultTempo(new Tempo(uint16.CreateSaturating(tempo), 0));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Tempo GetDefaultTempo()
 		{
 			return m_DefaultTempo;

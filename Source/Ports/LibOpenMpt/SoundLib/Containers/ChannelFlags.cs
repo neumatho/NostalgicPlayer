@@ -15,6 +15,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 	[Flags]
 	internal enum ChannelFlags : uint32
 	{
+		None = 0,
+
 		// Sample flags
 
 		/// <summary>

@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			/********************************************************************/
 			/// <summary>
-			/// Make a deep copy of the current object
+			/// 
 			/// </summary>
 			/********************************************************************/
 			public void Invoke(CPointer<ModCommand> arr)

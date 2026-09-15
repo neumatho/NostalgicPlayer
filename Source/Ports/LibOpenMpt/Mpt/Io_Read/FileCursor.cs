@@ -247,6 +247,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 
 		/********************************************************************/
 		/// <summary>
+		/// Reset cursor to first byte in file
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Rewind()//XX 125
+		{
+			streamPos = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Seek to a position in the mapped file.
 		/// Returns false if position is invalid
 		/// </summary>

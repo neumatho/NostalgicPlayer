@@ -175,6 +175,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public bool IsPatternEmpty(PatternIndex nPat)//XX 107
+		{
+			if (!IsValidPat(nPat))
+				return false;
+
+			foreach (ModCommand m in m_Patterns[nPat].m_ModCommands)
+			{
+				if (!m.IsEmpty())
+					return false;
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public void ResizeArray(PatternIndex newSize)//XX 121
 		{
 			m_Patterns.resize(newSize, new CPattern(this));

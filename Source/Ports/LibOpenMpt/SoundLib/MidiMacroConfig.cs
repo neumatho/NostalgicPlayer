@@ -35,9 +35,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/********************************************************************/
 		public void Reset()
 		{
-			Algorithm.fill(Global.data(), Global.data() + Global.size(), new Macro());
-			Algorithm.fill(SFx.data(), SFx.data() + SFx.size(), new Macro());
-			Algorithm.fill(Zxx.data(), Zxx.data() + Zxx.size(), new Macro());
+			Algorithm.fill(Global.data(), Global.end(), new Macro());
+			Algorithm.fill(SFx.data(), SFx.end(), new Macro());
+			Algorithm.fill(Zxx.data(), Zxx.end(), new Macro());
 
 			Global[GlobalMacro.MidiOut_Start] = "FF";
 			Global[GlobalMacro.MidiOut_Stop] = "FC";
@@ -50,6 +50,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			// Z80-Z8F controls resonance
 			CreateFixedMacro(FixedMacro.ZxxReso4Bit);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear all Zxx macros so that they do nothing
+		/// </summary>
+		/********************************************************************/
+		public void ClearZxxMacros()
+		{
+			Algorithm.fill(SFx.data(), SFx.end(), new Macro());
+			Algorithm.fill(Zxx.data(), Zxx.end(), new Macro());
 		}
 
 

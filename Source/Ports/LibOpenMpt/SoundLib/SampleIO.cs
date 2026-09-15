@@ -4,12 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.IO;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
-using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundBase.SampleConversion;
 using FileReader = Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.FileReader;
 
@@ -378,22 +376,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				return GetEncodedHeaderSize() + (((length + 1) / 2) * GetNumChannels());	// Round up
 
 			return GetEncodedHeaderSize() + (length * (bps / 8U) * GetNumChannels());
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Read sample from memory
-		/// </summary>
-		/********************************************************************/
-		public size_t ReadSample(ModSample sample, FileReader file, SampleIndex smp, SmpLength sampleLength)
-		{
-//XX			using (Stream sampleStream = file.DataContainer().GetSampleStream(smp, sampleLength))
-//			{
-//				FileReader sampleFile = new FileReader(FileCursor_StdStream.Make_FileCursor<PathString>(sampleStream));
-				return ReadSample(sample, file);
-//			}
 		}
 
 

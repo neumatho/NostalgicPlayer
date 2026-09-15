@@ -85,6 +85,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static byte_span As_Raw_Memory<T>(vector<T> v) where T : unmanaged
+		{
+			return new byte_span(v.data().Cast<T, c_byte>());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static byte_span As_Raw_Memory<T>(CPointer<T> v) where T : unmanaged
 		{
 			return new byte_span(v.Cast<T, c_byte>());

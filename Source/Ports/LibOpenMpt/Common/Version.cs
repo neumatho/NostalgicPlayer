@@ -111,6 +111,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		#region MPT_V versions
 		public static class MPT_V
 		{
+			public static readonly Version _1_00_00_A0 = LiteralParser.Parse("1.00.00.A0");
+			public static readonly Version _1_16 = LiteralParser.Parse("1.16");
 			public static readonly Version _1_17_00_00 = LiteralParser.Parse("1.17.00.00");
 			public static readonly Version _1_17_02_46 = LiteralParser.Parse("1.17.02.46");
 			public static readonly Version _1_17_02_49 = LiteralParser.Parse("1.17.02.49");

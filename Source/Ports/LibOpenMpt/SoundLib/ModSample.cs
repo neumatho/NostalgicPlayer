@@ -277,6 +277,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public CPointer<int16> Sample16()
+		{
+			return pData.Cast<int16>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the size of one (elementary) sample in bytes
 		/// </summary>
 		/********************************************************************/
@@ -365,6 +378,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			}
 			else
 				RemoveAllCuePoints();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns sample rate of the sample
+		/// </summary>
+		/********************************************************************/
+		public uint32 GetSampleRate(ModType type)//XX 172
+		{
+			uint32 rate;
+
+			if (CSoundFile.UseFineTuneAndTranspose(type))
+				rate = TransposeToFrequency(RelativeTone, nFineTune);
+			else
+				rate = nC5Speed;
+
+			// TransposeToFrequency assumes NTSC middle-C frequency like FT2, but we play MODs with PAL middle-C!
+			if (type == ModType.Mod)
+				rate = Util.MulDivR_Unsigned(rate, 8287, 8363);
+
+			return rate > 0 ? rate : 8363;
 		}
 
 
@@ -614,6 +650,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				nLoopStart = nLoopEnd = 0;
 				uFlags.Reset(ChannelFlags.Chn_Loop | ChannelFlags.Chn_PingPongLoop);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static uint32 TransposeToFrequency(c_int transpose, c_int fineTune = 0)//XX 560
+		{
+			return SaturateRound.Saturate_Round<uint32, c_double>(CMath.pow(2.0, ((transpose * 128.0) + fineTune) * (1.0 / (12.0 * 128.0))) * 8363.0);
 		}
 
 

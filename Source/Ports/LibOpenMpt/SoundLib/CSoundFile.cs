@@ -185,6 +185,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		private static readonly FileFormatLoader[] moduleFormatLoaders =
 		[
+			S3MLoader.Format,
 			ModLoader.Format,
 			InconexiaLoader.Format,
 			AlesharLoader.Format
@@ -220,6 +221,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			m_pTuningsTuneSpecific = new CTuningCollection();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds a value telling if LibOpenMpt is running in unit test mode.
+		/// Should not be set in normal use
+		/// </summary>
+		/********************************************************************/
+		internal static bool UnitTestMode
+		{
+			get; set;
+		} = false;
 
 
 
@@ -688,6 +702,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static ProbeResult ProbeAdditionalSize(FileReader file, uint64? pFileSize, uint64 minimumAdditionalSize)//XX 326
+		{
+			uint64 availableFileSize = file.GetLength();
+			uint64 fileSize = pFileSize.HasValue ? pFileSize.Value : file.GetLength();
+			uint64 goalSize = file.GetPosition() + minimumAdditionalSize;
+
+			if (pFileSize.HasValue)
+			{
+				if (availableFileSize < Math.Min(fileSize, ProbeRecommendedSize))
+				{
+					if (availableFileSize < goalSize)
+						return ProbeResult.WantMoreData;
+				}
+				else
+				{
+					if (fileSize < goalSize)
+						return ProbeResult.Failure;
+				}
+
+				return ProbeResult.Success;
+			}
+
+			return ProbeResult.Success;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static ProbeResult Probe(ProbeFlags flags, Stream stream, uint64? pFileSize, out Probe_File_Header_Info info)//XX 366
 		{
 			info = null;
@@ -827,7 +873,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					loaderSuccess = format.Create(this).Read(file, loadFlags);
 
 					if (loaderSuccess)
+					{
+						if (UnitTestMode)
+						{
+							// Verify that the probing function is consistent with our API contract
+							file.Rewind();
+
+							if (format.Prober(file, null) != ProbeResult.Success)
+								throw new InvalidOperationException($"Prober does not match the load for format {format.Name}");
+						}
+
 						break;
+					}
 				}
 
 				if (!loaderSuccess)

@@ -239,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Seek(start, SeekOrigin.Begin);
 			lib.common.LibXmp_Read_Title(f, out t, 28, encoder);
 
-			return 0;
+			return Test_Extended(f, start);
 		}
 
 
@@ -877,6 +877,93 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					break;
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private c_int Test_Extended(Hio f, c_int start)
+		{
+			if (LibXmp.UnitTestMode)
+				return 0;
+
+			f.Hio_Seek(start + 0x20, SeekOrigin.Begin);
+			uint16 ordNum = f.Hio_Read16L();
+			uint16 insNum = f.Hio_Read16L();
+			uint16 patNum = f.Hio_Read16L();
+			uint16 flags = f.Hio_Read16L();
+			uint16 cwtv = f.Hio_Read16L();
+
+			if (insNum == 0)
+				return -1;
+
+			f.Hio_Seek(start + 0x34, SeekOrigin.Begin);
+			uint8 ultraClicks = f.Hio_Read8();
+			uint8 usePanningTable = f.Hio_Read8();
+			uint16 reserved2 = f.Hio_Read16L();
+			uint32 reserved3 = f.Hio_Read32L();
+			uint16 reserved4 = f.Hio_Read16L();
+			uint16 special = f.Hio_Read16L();
+
+			f.Hio_Seek(start + 0x41, SeekOrigin.Begin);
+			uint8 channel1 = f.Hio_Read8();
+
+			f.Hio_Seek(start + 0x60 + ordNum, SeekOrigin.Begin);
+
+			uint16[] sampleOffsets = new uint16[insNum];
+
+			for (c_int i = 0; i < insNum; i++)
+				sampleOffsets[i] = f.Hio_Read16L();
+
+			uint16 firstPatternOffset = f.Hio_Read16L();
+
+			if (f.Hio_Error() != 0)
+				return 0;
+
+			if (((cwtv & 0xf000) == 0x1000) && (reserved2 == 0x4353) && (reserved3 == 0x3242554c) && (reserved4 == 0x302e))	// SCLUB2.0 (in little endian)
+				return 0;
+
+			if ((cwtv == 0x1320) && (special == 0) && ((ordNum & 0x0f) == 0) && (ultraClicks == 0) && ((flags & ~0x50) == 0) && (usePanningTable == 0xfc) && (patNum > 0) && (insNum > 0) && (firstPatternOffset > sampleOffsets[0]))
+				return -1;
+
+			if (((cwtv & 0xf000) == 0x5000) && ((cwtv & 0xff00) != 0x5700) && ((reserved2 != 0) || (ultraClicks != 16) || (channel1 == 1)) && (cwtv != 0x5447))
+				return -1;
+
+			// Check if any of the samples is in ADPCM format
+			c_long fileSize = f.Hio_Size();
+
+			for (c_int i = 0; i < insNum; i++)
+			{
+				c_long offset = start + (sampleOffsets[i] * 16);
+				if (offset > fileSize)
+					return -1;
+
+				f.Hio_Seek(offset, SeekOrigin.Begin);
+
+				uint8 type = f.Hio_Read8();
+				if (type < 2)	// Not an Adlib instrument
+				{
+					f.Hio_Seek(15, SeekOrigin.Current);
+
+					uint32 length = f.Hio_Read32L();
+					if (length == 0)
+						continue;
+
+					f.Hio_Seek(10, SeekOrigin.Current);
+
+					uint8 pack = f.Hio_Read8();
+					uint8 sampleFlags = f.Hio_Read8();
+
+					if ((pack == 0x04) && ((sampleFlags & 0x04) == 0) && ((sampleFlags & 0x02) == 0))	// ADPCM packed, 8-bit mono
+						return -1;
+				}
+			}
+
+			return 0;
 		}
 		#endregion
 	}

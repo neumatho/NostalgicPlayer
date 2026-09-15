@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/********************************************************************/
 			public static ProbeResult Probe_OpenMpt(FileReader file, uint64? pFileSize)
 			{
-				return ProbeFileHeaderMod(file, InternalFormat.OpenMpt);
+				return ProbeFileHeaderMod(file, InternalModFormat.OpenMpt);
 			}
 
 
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/********************************************************************/
 			public static ProbeResult Probe_Inconexia(FileReader file, uint64? pFileSize)
 			{
-				return ProbeFileHeaderMod(file, InternalFormat.Inconexia);
+				return ProbeFileHeaderMod(file, InternalModFormat.Inconexia);
 			}
 
 
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/********************************************************************/
 			public static ProbeResult Probe_Aleshar(FileReader file, uint64? pFileSize)
 			{
-				return ProbeFileHeaderMod(file, InternalFormat.Aleshar);
+				return ProbeFileHeaderMod(file, InternalModFormat.Aleshar);
 			}
 
 
@@ -229,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// </summary>
 		private const int Minimum_Filled_Sample_Names = 8;
 
-		private enum InternalFormat
+		private enum InternalModFormat
 		{
 			Unknown,
 			OpenMpt,
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			// TNE: Added extra probe flags
 			public bool MaybeOpenMpt = false;
-			public InternalFormat Format = InternalFormat.Unknown;
+			public InternalModFormat Format = InternalModFormat.Unknown;
 		}
 
 		/********************************************************************/
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static ProbeResult ProbeFileHeaderMod(FileReader file, InternalFormat format)//XX 247
+		private static ProbeResult ProbeFileHeaderMod(FileReader file, InternalModFormat format)
 		{
 			if (!file.LengthIsAtLeast(1080 + 4))
 				return ProbeResult.WantMoreData;
@@ -292,9 +292,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if (!modMagicResult.MaybeOpenMpt)
 				return ProbeResult.Failure;
 
-			ProbeResult result = ExtendedProbe(file, magic, modMagicResult);
+			ProbeResult result = ExtendedProbeMod(file, magic, modMagicResult);
 
-			if ((result == ProbeResult.Success) && (format == InternalFormat.OpenMpt))
+			if ((result == ProbeResult.Success) && (format == InternalModFormat.OpenMpt))
 				return ProbeResult.Success;
 
 			return result;
@@ -724,7 +724,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						if (isMdKd && onlyAmigaNotes && !hasEmptySampleWithVolume)
 							sample.nLength = Math.Max(sample.nLength, sample.nLoopEnd);
 
-						sampleIO.ReadSample(sample, file, smp, sample.nLength);
+						sampleIO.ReadSample(sample, file);
 						file.Seek(nextSample);
 					}
 				}
@@ -806,7 +806,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						mptSmp.nVolume = Samples[smp].nVolume;
 						mptSmp.uFlags.Set(ChannelFlags.Chn_Loop);
 
-						sampleIO.ReadSample(mptSmp, file, muppSmp, mptSmp.nLength);
+						sampleIO.ReadSample(mptSmp, file);
 					}
 
 					InstrumentSynthEvents events = instr_.Synth.m_Scripts.emplace_back(new InstrumentSynthEvents());
@@ -884,7 +884,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if (anyAdpcm)
 			{
 				m_ModFormat.MadeWithTracker += " (ADPCM packed)";
-				m_ModFormat.ExtraInformation = Resources.IDS_MPT_MOD_ADPCM;
+				m_ModFormat.ExtraInformation = Resources.IDS_MPT_ADPCM;
 			}
 
 			return true;
@@ -896,10 +896,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool CheckModMagic(CPointer<byte> magic, ModMagicResult result)//XX 160
+		private static bool CheckModMagic(CPointer<byte> magic, ModMagicResult result)
 		{
 			result.MaybeOpenMpt = false;
-			result.Format = InternalFormat.Unknown;
+			result.Format = InternalModFormat.Unknown;
 
 			if (ModTools.IsMagic(magic, "M.K.")			// ProTracker and compatible
 			    || ModTools.IsMagic(magic, "M!K!")		// ProTracker (> 64 patterns)
@@ -939,7 +939,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				result.MadeWithTracker = "Inconexia demo (delta samples)";
 				result.InvalidByteThreshold = ModSampleHeader.Invalid_Byte_Fragile_Threshold;
 				result.NumChannels = (ushort)((magic[0] == '8') ? 8 : 4);
-				result.Format = InternalFormat.Inconexia;
+				result.Format = InternalModFormat.Inconexia;
 			}
 			else if ((CMemory.memcmp(magic, "FA0", 3) == 0) && (magic[3] >= '4') && (magic[3] <= '8'))
 			{
@@ -992,7 +992,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				result.MadeWithTracker = "Generic MOD-compatible Tracker";
 				result.IsGenericMultiChannel = true;
 				result.NumChannels = 8;
-				result.Format = InternalFormat.Aleshar;
+				result.Format = InternalModFormat.Aleshar;
 			}
 			else
 				return false;
@@ -1011,7 +1011,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// ModPlug Tracker / OpenMPT and look for ADPCM packed samples
 		/// </summary>
 		/********************************************************************/
-		private static ProbeResult ExtendedProbe(FileReader file, CPointer<byte> magic, ModMagicResult modMagicResult)
+		private static ProbeResult ExtendedProbeMod(FileReader file, CPointer<byte> magic, ModMagicResult modMagicResult)
 		{
 			bool hasBigSample = false;
 			bool hasLoop0 = false;

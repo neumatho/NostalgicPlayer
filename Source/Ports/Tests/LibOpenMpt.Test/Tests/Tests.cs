@@ -34,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Tests
 		{
 			string solutionDirectory = GetSolutionDirectory();
 			dataDirectory = Path.Combine(solutionDirectory, "Data");
+
+			CSoundFile.UnitTestMode = true;
 		}
 
 

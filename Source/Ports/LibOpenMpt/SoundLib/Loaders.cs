@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
 
@@ -42,6 +43,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					pat = Snd_Def.PatternIndex_Skip;
 
 				order.at(i) = pat;
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read 'howMany' order items as integers with defined endianness
+		/// from a file.
+		/// 'stopIndex' is treated as '---', 'ignoreIndex' is treated as
+		/// '+++'. If the format doesn't support such indices, just pass
+		/// uint16_max
+		/// </summary>
+		/********************************************************************/
+		public static bool ReadOrderFromFile<T>(ModSequence order, FileReader file, size_t howMany, uint16 stopIndex = uint16.MaxValue, uint16 ignoreIndex = uint16.MaxValue) where T : unmanaged, INumberBase<T>
+		{
+			if (!file.CanRead(howMany * (size_t)Marshal.SizeOf<T>()))
+				return false;
+
+			OpenMpt.LimitMax(ref howMany, (size_t)Snd_Def.Max_Orders);
+			OrderIndex readEntries = (OrderIndex)howMany;
+
+			order.resize(readEntries);
+
+			T patF = default;
+
+			for (size_t i = 0; i < order.size(); i++)
+			{
+				file.Read(ref patF);
+				PatternIndex pat = PatternIndex.CreateTruncating(patF);
+
+				if (pat == stopIndex)
+					pat = Snd_Def.PatternIndex_Invalid;
+				else if (pat == ignoreIndex)
+					pat = Snd_Def.PatternIndex_Skip;
+
+				order[i] = pat;
 			}
 
 			return true;

@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Should not be set in normal use
 		/// </summary>
 		/********************************************************************/
-		public static bool UnitTestMode
+		internal static bool UnitTestMode
 		{
 			get; set;
 		} = false;

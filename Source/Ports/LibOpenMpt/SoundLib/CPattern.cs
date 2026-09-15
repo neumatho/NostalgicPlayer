@@ -8,7 +8,10 @@ using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers;
+using Algorithm = Polycode.NostalgicPlayer.Kit.C.Std.Algorithm;
+using Utility = Polycode.NostalgicPlayer.Kit.C.Std.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 {
@@ -152,6 +155,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public bool IsValid()
 		{
 			return !m_ModCommands.empty();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public MptSpan<ModCommand> GetRow(RowIndex row)
+		{
+			return new MptSpan<ModCommand>(GetpModCommand(row, 0), GetNumChannels());
 		}
 
 
