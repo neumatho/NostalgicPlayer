@@ -129,6 +129,47 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// Removes every element in the range [first, last) that equals the
+		/// given value, by moving the elements that are kept to the front
+		/// of the range, and returns an iterator to the new end of it
+		/// (C++ remove(ForwardIt first, ForwardIt last, const T＆ value)).
+		///
+		/// The range itself does not become any shorter: the elements
+		/// between the returned iterator and last are left in a valid but
+		/// unspecified state, just as in C++, so it is up to the caller to
+		/// erase them.
+		///
+		/// Elements are compared with EqualityComparer‹T›.Default (which
+		/// uses IEquatable‹T› or Object.Equals), the C# equivalent of the
+		/// C++ operator== that remove uses. Every element that is kept is
+		/// handed over with Utility.move, which leaves an element
+		/// implementing IMoveable‹T› in a moved-from state, matching the
+		/// move assignment that C++ remove performs on each element
+		/// </summary>
+		/********************************************************************/
+		public static TIt remove<TIt, T>(TIt first, TIt last, T value) where TIt : IIterator<TIt, T>
+		{
+			first = find(first, last, value);
+
+			if (!first.Equals(last))
+			{
+				for (TIt it = first.Next(); !it.Equals(last); it = it.Next())
+				{
+					if (!EqualityComparer<T>.Default.Equals(it.Value, value))
+					{
+						first.Value = Utility.move(it.Value);
+						first = first.Next();
+					}
+				}
+			}
+
+			return first;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Copies the elements in the range (first, last) to another range
 		/// beginning at d_first, and returns the destination iterator one
 		/// past the last element copied

@@ -1041,6 +1041,163 @@ namespace Polycode.NostalgicPlayer.Kit.C.Test.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// remove must move the elements that are kept to the front of the
+		/// range and return an iterator to the new end of it
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Remove_Removes_All_Matches()
+		{
+			CPointer<int> data = new int[] { 1, 2, 3, 2, 4 };
+			forward_iterator<int> begin = new forward_iterator<int>(data);
+			forward_iterator<int> end = new forward_iterator<int>(data.End());
+
+			forward_iterator<int> result = Algorithm.remove(begin, end, 2);
+
+			Assert.AreEqual(3, result - begin);
+
+			Assert.AreEqual(1, data[0]);
+			Assert.AreEqual(3, data[1]);
+			Assert.AreEqual(4, data[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// remove must return last and leave the range untouched when no
+		/// element equals the given value
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Remove_No_Match_Returns_Last()
+		{
+			CPointer<int> data = new int[] { 1, 3, 5 };
+			forward_iterator<int> begin = new forward_iterator<int>(data);
+			forward_iterator<int> end = new forward_iterator<int>(data.End());
+
+			forward_iterator<int> result = Algorithm.remove(begin, end, 4);
+
+			Assert.IsTrue(result == end);
+
+			Assert.AreEqual(1, data[0]);
+			Assert.AreEqual(3, data[1]);
+			Assert.AreEqual(5, data[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// remove must return first when every element equals the given
+		/// value
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Remove_All_Matches_Returns_First()
+		{
+			CPointer<int> data = new int[] { 7, 7, 7 };
+			forward_iterator<int> begin = new forward_iterator<int>(data);
+			forward_iterator<int> end = new forward_iterator<int>(data.End());
+
+			forward_iterator<int> result = Algorithm.remove(begin, end, 7);
+
+			Assert.IsTrue(result == begin);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// remove on an empty range must return last
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Remove_Empty_Range_Returns_Last()
+		{
+			CPointer<int> data = new int[] { 2, 4, 6 };
+			forward_iterator<int> first = new forward_iterator<int>(data.Begin());
+
+			forward_iterator<int> result = Algorithm.remove(first, first, 2);
+
+			Assert.IsTrue(result == first);
+
+			Assert.AreEqual(2, data[0]);
+			Assert.AreEqual(4, data[1]);
+			Assert.AreEqual(6, data[2]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// remove must leave the elements outside of the range untouched
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Remove_Leaves_Elements_Outside_Range_Untouched()
+		{
+			CPointer<int> data = new int[] { 9, 1, 2, 1, 9 };
+
+			CPointer<int> result = Algorithm.remove(data + 1, data + 4, 1);
+
+			Assert.AreEqual(2, result - data);
+
+			Assert.AreEqual(9, data[0]);
+			Assert.AreEqual(2, data[1]);
+			Assert.AreEqual(9, data[4]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// remove must work on the [begin(), end()) range of a vector
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Remove_On_Vector()
+		{
+			vector<int> v = new vector<int>([ 10, 20, 10, 30 ]);
+
+			forward_iterator<int> result = Algorithm.remove(v.begin(), v.end(), 10);
+
+			Assert.AreEqual(2, result - v.begin());
+
+			Assert.AreEqual(20, v[0]);
+			Assert.AreEqual(30, v[1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// remove must hand the data of each kept element over to its new
+		/// place when the element type implements IMoveable, leaving the
+		/// old elements in a moved-from state
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_Remove_Moves_The_Kept_Elements()
+		{
+			CPointer<Moveable> data = new Moveable[] { new Moveable(1), new Moveable(2), new Moveable(3) };
+			Moveable removed = data[0];
+
+			CPointer<Moveable> result = Algorithm.remove(data, data + 3, removed);
+
+			Assert.AreEqual(2, result - data);
+
+			Assert.AreEqual(2, data[0].Value);
+			Assert.AreEqual(3, data[1].Value);
+
+			Assert.AreEqual(0, data[2].Value);
+			Assert.IsFalse(ReferenceEquals(data[0], data[1]));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// A simple reference type that supports deep cloning, used to verify
 		/// the cloning behavior of fill and copy
 		/// </summary>
