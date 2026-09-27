@@ -30,56 +30,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
-		/// Reset MIDI macro config to default values
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Reset()
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void CreateParameteredMacro(uint32 macroIndex, ParameteredMacro macroType, c_int subType = 0)
 		{
-			Algorithm.fill(Global.data(), Global.end(), new Macro());
-			Algorithm.fill(SFx.data(), SFx.end(), new Macro());
-			Algorithm.fill(Zxx.data(), Zxx.end(), new Macro());
-
-			Global[GlobalMacro.MidiOut_Start] = "FF";
-			Global[GlobalMacro.MidiOut_Stop] = "FC";
-			Global[GlobalMacro.MidiOut_NoteOn] = "9c n v";
-			Global[GlobalMacro.MidiOut_NoteOff] = "9c n 0";
-			Global[GlobalMacro.MidiOut_Program] = "Cc p";
-
-			// SF0: Z00-Z7F controls cutoff
-			CreateParameteredMacro(0, ParameteredMacro.SFxCutOff);
-
-			// Z80-Z8F controls resonance
-			CreateFixedMacro(FixedMacro.ZxxReso4Bit);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Clear all Zxx macros so that they do nothing
-		/// </summary>
-		/********************************************************************/
-		public void ClearZxxMacros()
-		{
-			Algorithm.fill(SFx.data(), SFx.end(), new Macro());
-			Algorithm.fill(Zxx.data(), Zxx.end(), new Macro());
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Fix old-format (not conforming to IT's MIDI macro definitions)
-		/// MIDI config strings
-		/// </summary>
-		/********************************************************************/
-		public void UpgradeMacros()
-		{
-			foreach (Macro macro in SFx)
-				macro.UpgradeLegacyMacro();
-
-			foreach (Macro macro in Zxx)
-				macro.UpgradeLegacyMacro();
+			if (macroIndex < Iterator.size(SFx))
+				CreateParameteredMacro(out SFx[macroIndex], macroType, subType);
 		}
 
 
@@ -90,10 +48,69 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void CreateParameteredMacro(uint32 macroIndex, ParameteredMacro macroType, c_int subType = 0)
+		public void CreateFixedMacro(FixedMacro macroType)
 		{
-			if (macroIndex < Iterator.size(SFx))
-				CreateParameteredMacro(out SFx[macroIndex], macroType, subType);
+			CreateFixedMacro(Zxx, macroType);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public ParameteredMacro GetParameteredMacroType(uint32 macroIndex)
+		{
+			StdString macro = SFx[macroIndex].NormalizedString();
+
+			for (uint32 i = 0; i < (uint32)ParameteredMacro.SFxMax; i++)
+			{
+				ParameteredMacro sfx = (ParameteredMacro)i;
+
+				if (sfx != ParameteredMacro.SFxCustom)
+				{
+					if (macro == CreateParameteredMacro(sfx))
+						return sfx;
+				}
+			}
+
+			// Special macros with additional "parameter"
+			if ((macro.size() == 5) && (macro.compare(CreateParameteredMacro(ParameteredMacro.SFxCC, (c_int)MidiCC.Start)) >= 0) && (macro.compare(CreateParameteredMacro(ParameteredMacro.SFxCC, (c_int)MidiCC.End)) <= 0))
+				return ParameteredMacro.SFxCC;
+
+			if ((macro.size() == 7) && (macro.compare(CreateParameteredMacro(ParameteredMacro.SFxPlugParam, 0)) >= 0) && (macro.compare(CreateParameteredMacro(ParameteredMacro.SFxPlugParam, 0x17f)) <= 0))
+				return ParameteredMacro.SFxPlugParam;
+
+			return ParameteredMacro.SFxCustom;	// Custom / unknown
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve Zxx (Z80-ZFF) type from current macro configuration
+		/// </summary>
+		/********************************************************************/
+		public FixedMacro GetFixedMacroType()
+		{
+			// Compare with all possible preset patterns
+			for (uint32 i = 0; i < (uint32)FixedMacro.ZxxMax; i++)
+			{
+				FixedMacro zxx = (FixedMacro)i;
+
+				if (zxx != FixedMacro.ZxxCustom)
+				{
+					// Prepare macro pattern to compare
+					array<Macro> fixedMacros = new array<Macro>(Zxx.size());
+					CreateFixedMacro(fixedMacros, zxx);
+
+					if (fixedMacros == Zxx)
+						return zxx;
+				}
+			}
+
+			return FixedMacro.ZxxCustom;	// Custom setup
 		}
 
 
@@ -189,10 +206,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void CreateFixedMacro(FixedMacro macroType)
+		public StdString CreateParameteredMacro(ParameteredMacro macroType, c_int subType = 0)
 		{
-			CreateFixedMacro(Zxx, macroType);
+			CreateParameteredMacro(out Macro parameteredMacro, macroType, subType);
+
+			return parameteredMacro;
 		}
 
 
@@ -289,6 +307,81 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						break;
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reset MIDI macro config to default values
+		/// </summary>
+		/********************************************************************/
+		public void Reset()
+		{
+			Algorithm.fill(Global.data(), Global.end(), new Macro());
+			Algorithm.fill(SFx.data(), SFx.end(), new Macro());
+			Algorithm.fill(Zxx.data(), Zxx.end(), new Macro());
+
+			Global[GlobalMacro.MidiOut_Start] = "FF";
+			Global[GlobalMacro.MidiOut_Stop] = "FC";
+			Global[GlobalMacro.MidiOut_NoteOn] = "9c n v";
+			Global[GlobalMacro.MidiOut_NoteOff] = "9c n 0";
+			Global[GlobalMacro.MidiOut_Program] = "Cc p";
+
+			// SF0: Z00-Z7F controls cutoff
+			CreateParameteredMacro(0, ParameteredMacro.SFxCutOff);
+
+			// Z80-Z8F controls resonance
+			CreateFixedMacro(FixedMacro.ZxxReso4Bit);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear all Zxx macros so that they do nothing
+		/// </summary>
+		/********************************************************************/
+		public void ClearZxxMacros()
+		{
+			Algorithm.fill(SFx.data(), SFx.end(), new Macro());
+			Algorithm.fill(Zxx.data(), Zxx.end(), new Macro());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Sanitize all macro config strings
+		/// </summary>
+		/********************************************************************/
+		public void Sanitize()
+		{
+			foreach (Macro macro in Global)
+				macro.Sanitize();
+
+			foreach (Macro macro in SFx)
+				macro.Sanitize();
+
+			foreach (Macro macro in Zxx)
+				macro.Sanitize();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Fix old-format (not conforming to IT's MIDI macro definitions)
+		/// MIDI config strings
+		/// </summary>
+		/********************************************************************/
+		public void UpgradeMacros()
+		{
+			foreach (Macro macro in SFx)
+				macro.UpgradeLegacyMacro();
+
+			foreach (Macro macro in Zxx)
+				macro.UpgradeLegacyMacro();
 		}
 
 

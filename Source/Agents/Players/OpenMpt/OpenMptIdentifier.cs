@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 		/********************************************************************/
 		public static readonly string[] FileExtensions =
 		[
-			"mod", "s3m"
+			"mod", "s3m", "xm"
 		];
 
 

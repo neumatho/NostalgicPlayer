@@ -221,6 +221,51 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
+		/// Remove all references to a given pattern index from the order
+		/// list. Jump commands are updated accordingly
+		/// </summary>
+		/********************************************************************/
+		public void RemovePattern(PatternIndex pat)//XX 177
+		{
+			// First, calculate the offset that needs to be applied to jump commands
+			OrderIndex orderLength = GetLengthTailTrimmed();
+			vector<OrderIndex> newPosition = new vector<OrderIndex>(orderLength);
+			OrderIndex maxJump = 0;
+
+			for (OrderIndex i = 0; i < orderLength; i++)
+			{
+				newPosition[i] = (OrderIndex)(i - maxJump);
+
+				if (this[i] == pat)
+					maxJump++;
+			}
+
+			if (maxJump == 0)
+				return;
+
+			erase(Algorithm.remove(begin(), end(), pat), end());
+
+			// Only apply to patterns actually found in this sequence
+			foreach (PatternIndex p in this)
+			{
+				if (!m_SndFile.Patterns.IsValidPat(p))
+					continue;
+
+				foreach (ModCommand m in m_SndFile.Patterns[p])
+				{
+					if ((m.Command == EffectCommand.PositionJump) && (m.Param < newPosition.size()))
+						m.Param = (ModCommandParam)newPosition[m.Param];
+				}
+			}
+
+			if (m_RestartPos < newPosition.size())
+				m_RestartPos = newPosition[m_RestartPos];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		///
 		/// </summary>
 		/********************************************************************/

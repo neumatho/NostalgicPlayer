@@ -12,11 +12,12 @@
     <Compile Include="..\..\..\NostalgicPlayer.Kit.C\CTypes.cs" Link="CTypes.cs" />
     <Compile Include="..\..\LibOpenMpt\Common\MptPathTypes.cs" Link="MptPathTypes.cs" />
     <Compile Include="..\..\LibOpenMpt\Common\MptRandomTypes.cs" Link="MptRandomTypes.cs" />
-    <Compile Include="..\..\LibOpenMpt\LibOpenMptTypes.cs" Link="LibXmpTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\LibOpenMptTypes.cs" Link="LibOpenMptTypes.cs" />
     <Compile Include="..\..\LibOpenMpt\Mpt\Crc\CrcTypes.cs" Link="CrcTypes.cs" />
     <Compile Include="..\..\LibOpenMpt\Mpt\Endian\EndianTypes.cs" Link="EndianTypes.cs" />
     <Compile Include="..\..\LibOpenMpt\Mpt\Random\Default_Engines.cs" Link="Default_Engines.cs" />
     <Compile Include="..\..\LibOpenMpt\SoundBase\MixTypes.cs" Link="MixTypes.cs" />
+    <Compile Include="..\..\LibOpenMpt\SoundLib\Snd_Defs_Types.cs" Link="Snd_Defs_Types.cs" />
   </ItemGroup>
 
   <ItemGroup>

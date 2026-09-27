@@ -15,6 +15,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Extensions
 	public interface INostalgicPlayer : IExtension
 	{
 		/// <summary>
+		/// Return instrument information for the given instrument
+		/// </summary>
+		InstrumentInformation GetInstrumentInformation(int32_t instrumentNumber);
+
+		/// <summary>
 		/// Return sample information for the given sample
 		/// </summary>
 		SampleInformation GetSampleInformation(int32_t sampleNumber);
@@ -23,6 +28,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Extensions
 		/// Return any extra information from the loader or null
 		/// </summary>
 		string GetExtraInformation();
+
+		/// <summary>
+		/// Return a list of all the plug-ins not supported yet
+		/// </summary>
+		string[] GetUnsupportedPlugins();
 
 		/// <summary>
 		/// Return true if the module uses surround

@@ -415,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			m_ModFormat.FormatName = "Scream Tracker 3";
 			m_ModFormat.Type = "s3m";
 			m_ModFormat.MadeWithTracker = Utility.move(madeWithTracker);
-			m_ModFormat.CharSet = m_dwLastSavedWithVersion ? EncoderCollection.Win1252 : EncoderCollection.Dos;
+			m_ModFormat.CharSet = FindCharSet();
 
 			if (nonCompatTracker)
 			{
@@ -634,10 +634,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				m_PlayBehaviour.set(PlayBehaviour.S3MIgnoreCombinedFineSlides);
 
 			if (anyAdpcm)
-			{
-				m_ModFormat.MadeWithTracker += " (ADPCM packed)";
-				m_ModFormat.ExtraInformation = Resources.IDS_MPT_ADPCM;
-			}
+				m_ModFormat.MadeWithTracker += Resources.IDS_MPT_ADPCM;
 
 			// Try to find out if Zxx commands are supposed to be panning commands (PixPlay).
 			// Actually I am only aware of one module that uses this panning style, namely "Crawling Despair" by $volkraq
@@ -775,6 +772,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				// There are enough Zxx commands, so let's assume this was made to be played with PixPlay
 				Patterns.ForEachModCommand(new PixPlayPanning());
 			}
+
+			m_ModFormat.ExtraInformation = m_ModFormat.MadeWithTracker;
 
 			return true;
 		}

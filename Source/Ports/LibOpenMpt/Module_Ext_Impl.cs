@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -133,6 +134,58 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 
 			/********************************************************************/
 			/// <summary>
+			/// Return instrument information for the given instrument
+			/// </summary>
+			/********************************************************************/
+			public InstrumentInformation GetInstrumentInformation(int32_t instrumentNumber)
+			{
+				if ((instrumentNumber < 0) || (instrumentNumber >= impl.Get_Num_Instruments()))
+					return null;
+
+				ModInstrument instr = impl.m_SndFile.Instruments[instrumentNumber + 1];
+				if (instr == null)
+				{
+					// Empty instrument slot
+					return new InstrumentInformation
+					{
+						Name = string.Empty,
+						NumberOfSamples = 0,
+						Map = []
+					};
+				}
+
+				// Build the note to sample map. Each entry holds the sample
+				// number as used by the module itself, where zero means that
+				// the note will not play any sample at all
+				SampleIndex numberOfSamples = impl.m_SndFile.GetNumSamples();
+				HashSet<SampleIndex> usedSamples = new HashSet<SampleIndex>();
+
+				int numberOfNotes = (int)instr.Keyboard.size();
+				ushort[] map = new ushort[numberOfNotes];
+
+				for (int i = 0; i < numberOfNotes; i++)
+				{
+					SampleIndex sample = instr.Keyboard[i];
+
+					if ((sample == 0) || (sample > numberOfSamples))
+						continue;
+
+					map[i] = sample;
+					usedSamples.Add(sample);
+				}
+
+				return new InstrumentInformation
+				{
+					Name = impl.m_SndFile.m_ModFormat.CharSet.GetString(instr.Name.Buf),
+					NumberOfSamples = (uint)usedSamples.Count,
+					Map = map
+				};
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
 			/// Return sample information for the given sample
 			/// </summary>
 			/********************************************************************/
@@ -195,6 +248,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 			public string GetExtraInformation()
 			{
 				return impl.m_SndFile.m_ModFormat.ExtraInformation;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Return a list of all the plug-ins not supported yet
+			/// </summary>
+			/********************************************************************/
+			public string[] GetUnsupportedPlugins()
+			{
+				return impl.m_SndFile.unsupportedPlugins.Distinct().ToArray();
 			}
 
 

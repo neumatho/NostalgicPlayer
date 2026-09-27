@@ -3,9 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.IO;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 {
@@ -67,6 +69,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 			}
 
 			at(0) += (uint32)remain;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static void Deserialize(Stream iStrm, ref TempoSwing swing, size_t size)
+		{
+			Io_.ReadIntLE(iStrm, out uint16 numEntries);
+			swing.resize(numEntries);
+
+			for (uint16 i = 0; i < numEntries; i++)
+			{
+				Io_.ReadIntLE(iStrm, out uint32 value);
+				swing[i] = value;
+			}
+
+			swing.Normalize();
 		}
 
 

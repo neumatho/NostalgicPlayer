@@ -7,6 +7,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
+using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers;
@@ -217,6 +218,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool SetName(CPointer<uint8> buffer)
+		{
+			return SetName(buffer, buffer.Size());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public StdString GetName()
 		{
 			return m_PatternName;
@@ -302,6 +316,62 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			m_PatternName = Utility.move(newName);
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public bool SetName(CPointer<uint8> newName, size_t maxChars)//XX 285
+		{
+			if (newName.IsNull || (maxChars == 0))
+				return false;
+
+			CPointer<uint8> nameEnd = Algorithm.find(newName, newName + maxChars, (uint8)'\0');
+			m_PatternName.assign(newName, nameEnd);
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public forward_iterator<ModCommand> Begin()
+		{
+			return m_ModCommands.begin();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public forward_iterator<ModCommand> End()
+		{
+			return m_ModCommands.end();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns an enumerator over the commands of the pattern, so that
+		/// it can be used in a C# foreach loop (C++ begin()/end())
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Buffer_Enumerator<ModCommand> GetEnumerator()
+		{
+			return m_ModCommands.GetEnumerator();
 		}
 
 

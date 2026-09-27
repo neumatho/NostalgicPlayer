@@ -9,8 +9,10 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
+using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.String;
@@ -115,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// <summary>
 		/// Row swing factors for modern tempo mode
 		/// </summary>
-		public readonly TempoSwing m_TempoSwing = new TempoSwing();//XX 510
+		public TempoSwing m_TempoSwing = new TempoSwing();//XX 510
 
 		/// <summary>
 		/// Min Period = highest possible frequency, Max Period = lowest possible frequency for current format
@@ -171,6 +173,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		public const uint32 FadeSongDelay = 100;//XX 1309
 
+		public readonly List<string> unsupportedPlugins = new List<string>();
+
 		public class FileFormatLoader
 		{
 			public delegate ProbeResult Prober_Delegate(FileReader file, uint64? pFileSize);
@@ -185,6 +189,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		private static readonly FileFormatLoader[] moduleFormatLoaders =
 		[
+			XmLoader.Format,
 			S3MLoader.Format,
 			ModLoader.Format,
 			InconexiaLoader.Format,
@@ -493,6 +498,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public bool IsFirstTick()
 		{
 			return m_PlayState.m_lTotalSampleCount == 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool LoadExtendedInstrumentProperties(FileReader file)
+		{
+			return LoadExtendedInstrumentProperties(new MptSpan<ModInstrument>(Instruments).SubSpan(1, GetNumInstruments()), file);
 		}
 
 
@@ -1633,6 +1651,154 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
+		/// Detect samples that are referenced by an instrument, but actually
+		/// not used in a song. Only works in instrument mode. Unused samples
+		/// are marked as false in the vector
+		/// </summary>
+		/********************************************************************/
+		public SampleIndex DetectUnusedSamples(vector<bool> sampleUsed)//XX 1502
+		{
+			sampleUsed.assign(GetNumSamples() + 1U, false);
+
+			if (GetNumInstruments() == 0)
+				return 0;
+
+			SampleIndex unused = 0;
+			vector<ModCommandInstr> lastIns = new vector<ModCommandInstr>();
+
+			foreach (CPattern pat in Patterns)
+			{
+				if (pat.IsValid())
+				{
+					lastIns.assign(GetNumChannels(), 0);
+					forward_iterator<ModCommand> pp = pat.Begin();
+
+					for (RowIndex row = 0; row < pat.GetNumRows(); row++)
+					{
+						for (ChannelIndex c = 0; c < GetNumChannels(); c++, pp++)
+						{
+							ModCommand p = pp[0];
+
+							if (p.IsNote())
+							{
+								ModCommandInstr instr = p.Instr;
+
+								if (p.Instr == 0)
+									instr = lastIns[c];
+
+								InstrumentIndex minInstr = 1, maxInstr = GetNumInstruments();
+
+								if (instr > 0)
+								{
+									if (instr <= GetNumInstruments())
+										minInstr = maxInstr = instr;
+
+									lastIns[c] = instr;
+								}
+								else
+								{
+									// No idea which instrument this note belongs to, so mark it used in any instruments
+								}
+
+								for (InstrumentIndex i = minInstr; i <= maxInstr; i++)
+								{
+									ModInstrument pIns = Instruments[i];
+
+									if (pIns != null)
+									{
+										SampleIndex n = pIns.Keyboard[p.Note - ModCommand.Note_Min];
+
+										if (n <= GetNumSamples())
+											sampleUsed[n] = true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			for (SampleIndex ichk = GetNumSamples(); ichk >= 1; ichk--)
+			{
+				if (!sampleUsed[ichk] && Samples[ichk].HasSampleData())
+					unused++;
+			}
+
+			return unused;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Destroy samples where keepSamples index is false. First sample is
+		/// keepSamples[1]
+		/// </summary>
+		/********************************************************************/
+		public SampleIndex RemoveSelectedSamples(vector<bool> keepSamples)//XX 1561
+		{
+			if (keepSamples.empty())
+				return 0;
+
+			SampleIndex nRemoved = 0;
+
+			for (SampleIndex nSmp = Math.Min(GetNumSamples(), (SampleIndex)(keepSamples.size() - 1)); nSmp >= 1; nSmp--)
+			{
+				if (!keepSamples[nSmp])
+				{
+					if (DestroySample(nSmp))
+					{
+						m_szNames[nSmp].Assign(string.Empty);
+						nRemoved++;
+					}
+
+					if ((nSmp == GetNumSamples()) && (nSmp > 1))
+						m_nSamples--;
+				}
+			}
+
+			return nRemoved;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public bool DestroySample(SampleIndex nSample)//XX 1594
+		{
+			if ((nSample == 0) || (nSample >= Snd_Def.Max_Samples))
+				return false;
+
+			if (!Samples[nSample].HasSampleData())
+				return true;
+
+			ModSample sample = Samples[nSample];
+
+			foreach (ModChannel chn in m_PlayState.Chn)
+			{
+				if (chn.pModSample == sample)
+				{
+					chn.Position.Set(0);
+					chn.nLength = 0;
+					chn.pCurrentSample.SetToNull();
+				}
+			}
+
+			sample.FreeSample();
+			sample.nLength = 0;
+			sample.uFlags.Reset(ChannelFlags.Chn_16Bit | ChannelFlags.Chn_Stereo);
+//XX			sample.SetAdlib(false);
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -1879,7 +2045,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ModInstrument AllocateInstrument(InstrumentIndex instr, SampleIndex assignedSample)//XX 2053
+		public ModInstrument AllocateInstrument(InstrumentIndex instr, SampleIndex assignedSample = 0)//XX 2053
 		{
 			if ((instr == 0) || (instr >= Snd_Def.Max_Instruments))
 				return null;
@@ -1927,6 +2093,125 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				else
 					ChnSettings[chn].nPan = (uint16)(((chn & 3) == 1) || ((chn & 3) == 2) ? 0xc0 : 0x40);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// TNE: Try to find the right charset to use
+		/// </summary>
+		/********************************************************************/
+		private Encoding FindCharSet()
+		{
+			if (m_dwLastSavedWithVersion)
+			{
+				// The module has been saved by ModPlug Tracker or OpenMPT,
+				// which both run on Windows. Such a module may hold text
+				// typed in Windows-1252, but it may just as well hold text
+				// taken over from the original DOS tracker. Therefore, score
+				// all the text stored in the module and see which of the two
+				// encodings gives the most plausible result
+				int dosScore = 0, winScore = 0;
+
+				ScoreCharSet(m_SongMessage.Span(), ref dosScore, ref winScore);
+
+				for (SampleIndex smp = 1; smp <= GetNumSamples(); smp++)
+					ScoreCharSet(m_szNames[smp].Buf, ref dosScore, ref winScore);
+
+				for (InstrumentIndex ins = 1; ins <= GetNumInstruments(); ins++)
+				{
+					ModInstrument instr = Instruments[ins];
+
+					if (instr != null)
+						ScoreCharSet(instr.Name.Buf, ref dosScore, ref winScore);
+				}
+
+				if (winScore >= dosScore)
+					return EncoderCollection.Win1252;
+			}
+
+			return EncoderCollection.Dos;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add the characters of the given text to the scores telling how
+		/// likely it is, that the text has been written using the DOS code
+		/// page or Windows-1252. Only the characters from 0x80 and up can
+		/// tell the two encodings apart, so all the others are skipped
+		/// </summary>
+		/********************************************************************/
+		private static void ScoreCharSet(ReadOnlySpan<uint8> text, ref int dosScore, ref int winScore)
+		{
+			for (int i = 0; i < text.Length; i++)
+			{
+				uint8 chr = text[i];
+
+				if (chr < 0x80)
+					continue;
+
+				// Does the character have an ordinary letter right next to
+				// it? If so, it is part of a word and therefore most likely
+				// a letter itself and not a piece of graphics or a symbol
+				bool inWord = ((i > 0) && IsLetter(text[i - 1])) || (((i + 1) < text.Length) && IsLetter(text[i + 1]));
+
+				if ((chr == 0x81) || (chr == 0x8d) || (chr == 0x8f) || (chr == 0x90) || (chr == 0x9d))
+				{
+					// These characters are not defined in Windows-1252 at
+					// all, so the text can hardly have been written in it
+					dosScore += 4;
+				}
+				else if ((chr >= 0xb0) && (chr <= 0xdf))
+				{
+					// Line drawing and block graphics in the DOS code page,
+					// uppercase accented letters and different symbols in
+					// Windows-1252
+					if (inWord)
+						winScore += 2;
+					else
+					{
+						// Graphics are normally drawn as runs of characters
+						// taken from the same part of the code page
+						bool run = (i > 0) && (text[i - 1] >= 0xb0) && (text[i - 1] <= 0xdf);
+
+						dosScore += run ? 4 : 2;
+					}
+				}
+				else if (chr >= 0xe0)
+				{
+					// Greek letters and math symbols in the DOS code page,
+					// lowercase accented letters in Windows-1252
+					if (inWord)
+						winScore += 3;
+					else
+						dosScore++;
+				}
+				else
+				{
+					// Accented letters in the DOS code page, typographic
+					// punctuation and symbols in Windows-1252
+					if (inWord)
+						dosScore += 3;
+					else
+						winScore++;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell if the given character is an ordinary letter, which means
+		/// one of the letters in the ASCII part of the two code pages
+		/// </summary>
+		/********************************************************************/
+		private static bool IsLetter(uint8 chr)
+		{
+			return ((chr >= 'a') && (chr <= 'z')) || ((chr >= 'A') && (chr <= 'Z'));
 		}
 	}
 }

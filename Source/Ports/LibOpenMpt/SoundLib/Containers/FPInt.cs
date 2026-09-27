@@ -114,9 +114,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		/// Retrieve the integer part of the stored value
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public T GetInt()
 		{
 			return v / T.CreateTruncating(_fractFact);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrieve the fractional part of the stored value
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public T GetFract()
+		{
+			return v % T.CreateTruncating(_fractFact);
 		}
 
 

@@ -14,6 +14,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 	internal enum EnvelopeFlags : uint8
 	{
 		/// <summary>
+		/// 
+		/// </summary>
+		None = 0x00,
+
+		/// <summary>
 		/// Env is enabled
 		/// </summary>
 		Enabled = 0x01,

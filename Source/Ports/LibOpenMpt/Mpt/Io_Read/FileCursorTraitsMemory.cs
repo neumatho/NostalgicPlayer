@@ -17,6 +17,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public IFileData Get_Shared(IFileData data)
+		{
+			return data;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public IFileData Get_Ref(IFileData data)
 		{
 			return data;
@@ -44,6 +56,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		public IFileData Make_Data(byte_span data)
 		{
 			return new FileDataMemory(data);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public IFileData Make_Chunk(IFileData data, size_t position, size_t size)
+		{
+			return new FileDataMemory(new byte_span(data.GetRawData() + position, size));
 		}
 	}
 }

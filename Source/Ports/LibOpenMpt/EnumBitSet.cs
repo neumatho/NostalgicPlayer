@@ -63,6 +63,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public size_t size()
+		{
+			return _set.size();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool any()
 		{
 			return _set.any();
@@ -130,7 +143,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static size_t ToSize(TEnum value)
 		{
-			return (size_t)Unsafe.As<TEnum, int>(ref value);
+			switch (Unsafe.SizeOf<TEnum>())
+			{
+				case 1:
+					return Unsafe.As<TEnum, uint8>(ref value);
+
+				case 2:
+					return Unsafe.As<TEnum, uint16>(ref value);
+
+				case 4:
+					return Unsafe.As<TEnum, uint32>(ref value);
+
+				default:
+					return Unsafe.As<TEnum, uint64>(ref value);
+			}
 		}
 
 

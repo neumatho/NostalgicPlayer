@@ -146,6 +146,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			return length <= (cacheSize - pos);
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override size_t GetReadableLength(size_t pos, size_t length)
+		{
+			CacheStreamUpTo(pos, length);
+
+			if (pos >= cacheSize)
+				return 0;
+
+			return Math.Min(cacheSize - pos, length);
+		}
+
 		#region Overrides
 		/********************************************************************/
 		/// <summary>

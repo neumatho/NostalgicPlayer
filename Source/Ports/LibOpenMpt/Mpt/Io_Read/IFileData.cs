@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.C;
 
@@ -92,6 +93,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 				return false;
 
 			return length <= (dataLength - pos);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public virtual size_t GetReadableLength(size_t pos, size_t length)
+		{
+			size_t dataLength = GetLength();
+
+			if (pos >= dataLength)
+				return 0;
+
+			return Math.Min(length, dataLength - pos);
 		}
 	}
 }

@@ -61,11 +61,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ADPCM packed.
+        ///   Looks up a localized string similar to  (ADPCM packed).
         /// </summary>
         internal static string IDS_MPT_ADPCM {
             get {
                 return ResourceManager.GetString("IDS_MPT_ADPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ADPCM packed.
+        /// </summary>
+        internal static string IDS_MPT_ADPCM1 {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ADPCM1", resourceCulture);
             }
         }
         
@@ -86,6 +95,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         internal static string IDS_MPT_ALESHAR_NAME {
             get {
                 return ResourceManager.GetString("IDS_MPT_ALESHAR_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some compressed samples could not be loaded because they use an unsupported codec.
+        /// </summary>
+        internal static string IDS_MPT_ERR_UNSUPPORTED_SAMPLE {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ERR_UNSUPPORTED_SAMPLE", resourceCulture);
             }
         }
         
@@ -142,6 +160,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         internal static string IDS_MPT_S3M_NAME {
             get {
                 return ResourceManager.GetString("IDS_MPT_S3M_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This format is the same as the standard FastTracker II format, but created with OpenMPT. It may have extra extensions included which was added by either ModPlug Tracker or OpenMPT..
+        /// </summary>
+        internal static string IDS_MPT_XM_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_XM_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenMPT XM.
+        /// </summary>
+        internal static string IDS_MPT_XM_NAME {
+            get {
+                return ResourceManager.GetString("IDS_MPT_XM_NAME", resourceCulture);
             }
         }
     }

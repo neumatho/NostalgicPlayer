@@ -157,5 +157,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 
 			return length <= (streamLength - pos);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override size_t GetReadableLength(size_t pos, size_t length)
+		{
+			if (pos >= streamLength)
+				return 0;
+
+			return Math.Min(length, streamLength - pos);
+		}
 	}
 }

@@ -12,8 +12,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 	/// </summary>
 	internal interface ITraits
 	{
+		IFileData Get_Shared(IFileData data);
 		IFileData Get_Ref(IFileData data);
 		IFileData Make_Data();
 		IFileData Make_Data(byte_span data);
+		IFileData Make_Chunk(IFileData data, size_t position, size_t size);
 	}
 }

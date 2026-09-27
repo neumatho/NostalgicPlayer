@@ -14,6 +14,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 	internal enum InstrumentFlags : uint8
 	{
 		/// <summary>
+		/// 
+		/// </summary>
+		None = 0,
+
+		/// <summary>
 		/// Panning enabled
 		/// </summary>
 		SetPanning = 0x01,

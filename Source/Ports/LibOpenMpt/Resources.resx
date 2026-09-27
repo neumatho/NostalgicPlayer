@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_MPT_ADPCM" xml:space="preserve">
-    <value>ADPCM packed</value>
+    <value> (ADPCM packed)</value>
   </data>
   <data name="IDS_MPT_MOD_DESCRIPTION" xml:space="preserve">
     <value>This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by OpenMPT when saving in this format.</value>
@@ -147,5 +147,17 @@ The modules are from the game Aleshar - The World Of Ice.</value>
   </data>
   <data name="IDS_MPT_S3M_DESCRIPTION" xml:space="preserve">
     <value>This format is the same as the standard Scream Tracker 3 format, but created with OpenMPT.</value>
+  </data>
+  <data name="IDS_MPT_XM_NAME" xml:space="preserve">
+    <value>OpenMPT XM</value>
+  </data>
+  <data name="IDS_MPT_XM_DESCRIPTION" xml:space="preserve">
+    <value>This format is the same as the standard FastTracker II format, but created with OpenMPT. It may have extra extensions included which was added by either ModPlug Tracker or OpenMPT.</value>
+  </data>
+  <data name="IDS_MPT_ERR_UNSUPPORTED_SAMPLE" xml:space="preserve">
+    <value>Some compressed samples could not be loaded because they use an unsupported codec</value>
+  </data>
+  <data name="IDS_MPT_ADPCM1" xml:space="preserve">
+    <value>ADPCM packed</value>
   </data>
 </root>

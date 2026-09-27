@@ -754,7 +754,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 			else if (key == "artist")
 				return m_SndFile.m_SongArtist;
 			else if (key == "title")
-				return m_SndFile.m_ModFormat.CharSet.GetString(m_SndFile.GetTitle().data().AsSpan());
+				return m_SndFile.m_ModFormat.CharSet.GetString(m_SndFile.GetTitle().Span());
 			else if (key == "date")
 			{
 				if (m_SndFile.GetFileHistory().empty() || !m_SndFile.GetFileHistory().back().HasValidDate())
@@ -764,7 +764,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 			}
 			else if (key == "message")
 			{
-				StdString retVal = m_SndFile.m_SongMessage.GetFormatted(SongMessage.LineEnding.leLf);
+				StdString retVal = m_SndFile.m_SongMessage.GetFormatted(SongMessage.LineEnding.Lf);
 
 				if (retVal.empty())
 				{
@@ -834,13 +834,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 					}
 				}
 
-				return m_SndFile.m_ModFormat.CharSet.GetString(retVal.data().AsSpan());
+				return m_SndFile.m_ModFormat.CharSet.GetString(retVal.Span());
 			}
 			else if (key == "message_raw")
 			{
-				StdString retVal = m_SndFile.m_SongMessage.GetFormatted(SongMessage.LineEnding.leLf);
+				StdString retVal = m_SndFile.m_SongMessage.GetFormatted(SongMessage.LineEnding.Lf);
 
-				return m_SndFile.m_ModFormat.CharSet.GetString(retVal.data().AsSpan());
+				return m_SndFile.m_ModFormat.CharSet.GetString(retVal.Span()).Replace('\u25d9', '\n');
 			}
 			else if (key == "warnings")
 				throw new NotImplementedException("warnings");
@@ -1017,7 +1017,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 				{
 					// Use first pattern name instead
 					if (order.IsValidPat((OrderIndex)subSong.Start_Order))
-						retVal.back() = m_SndFile.GetCharsetInternal().GetString(m_SndFile.Patterns[order[subSong.Start_Order]].GetName().data().AsSpan());
+						retVal.back() = m_SndFile.GetCharsetInternal().GetString(m_SndFile.Patterns[order[subSong.Start_Order]].GetName().Span());
 				}
 			}
 

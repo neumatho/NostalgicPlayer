@@ -128,6 +128,63 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		}
 		#endregion
 
+		#region XM tracker versions
+		/// <summary>
+		/// TNE: Trackers which could have written an XM file. Ported from
+		/// the OpenMPT loader and only used to tell ModPlug Tracker and
+		/// OpenMPT apart from everything else
+		/// </summary>
+		[Flags]
+		private enum Xm_Tracker_Version
+		{
+			/// <summary>
+			/// Probably not made with MPT
+			/// </summary>
+			Unknown = 0x00,
+
+			/// <summary>
+			/// Made with MPT alpha / beta
+			/// </summary>
+			OldModPlug = 0x01,
+
+			/// <summary>
+			/// Made with MPT (not alpha / beta)
+			/// </summary>
+			NewModPlug = 0x02,
+
+			/// <summary>
+			/// Made with OpenMPT
+			/// </summary>
+			OpenMpt = 0x08,
+
+			/// <summary>
+			/// We are very sure that we found the correct tracker version
+			/// </summary>
+			Confirmed = 0x10,
+
+			/// <summary>
+			/// "FastTracker v2.00", but FastTracker has not been ruled out
+			/// </summary>
+			Ft2Generic = 0x20,
+
+			/// <summary>
+			/// Not FastTracker 2: The instrument type changed between two
+			/// instruments, or a null character was found in the song title
+			/// </summary>
+			Ft2Clone = 0x80,
+
+			/// <summary>
+			/// Could be PlayerPRO
+			/// </summary>
+			PlayerPro = 0x100,
+
+			/// <summary>
+			/// Probably DigiTrakker
+			/// </summary>
+			DigiTrakker = 0x200
+		}
+		#endregion
+
 		#region Xm_Sample_Header
 		private class Xm_Sample_Header
 		{
@@ -174,6 +231,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		// Ogg
 		private const uint Magic_Oggs = 0x4f676753;
+
+		// TNE: Chunks written by ModPlug Tracker / OpenMPT
+		private const uint Magic_Text = 0x74657874;
+		private const uint Magic_Midi = 0x4d494449;
+		private const uint Magic_Pnam = 0x504e414d;
+		private const uint Magic_Cnam = 0x434e414d;
+		private const uint Magic_Chfx = 0x43484658;
+		private const uint Magic_Xtpm = 0x5854504d;
+		private const uint Magic_Stpm = 0x5354504d;
+		private const uint Magic_Impi = 0x494d5049;
+		private const uint Magic_Imps = 0x494d5053;
+
+		// TNE: Sizes and flags used by the ModPlug Tracker / OpenMPT test
+		private const uint32 Xm_Instrument_Header_Size = 263;
+		private const uint32 Xm_Sample_Header_Size = 40;
+		private const uint8 Xm_Envelope_Loop = 0x04;
+		private const uint8 Xm_Sample_Adpcm = 0xad;
+		private const uint16 Xm_Extended_Filter_Range = 0x1000;
 
 		private readonly Format format;
 		private readonly LibXmp lib;
@@ -254,7 +329,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			lib.common.LibXmp_Read_Title(f, out t, 20, encoder);
 
-			return FindFormat(f) == format ? 0 : -1;
+			if (FindFormat(f) != format)
+				return -1;
+
+			// TNE: OggMod modules are never taken by the OpenMPT player,
+			// so those are always kept here
+			if (format == Format.OggMod)
+				return 0;
+
+			return Test_Extended(f, start);
 		}
 
 
@@ -1210,7 +1293,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (OggDec(m, f, xxs, (c_int)xsh[j].Length) < 0)
 								return -1;
 
-							total_Sample_Size += (c_long)xsh[j].Length;
+							total_Sample_Size += xsh[j].Length;
 							continue;
 						}
 
@@ -1218,15 +1301,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							return -1;
 
 						if ((flags & Sample_Flag.Adpcm) != 0)
-							total_Sample_Size += (c_long)(16 + ((xsh[j].Length + 1) >> 1));
+							total_Sample_Size += 16 + ((xsh[j].Length + 1) >> 1);
 						else
-							total_Sample_Size += (c_long)xsh[j].Length;
+							total_Sample_Size += xsh[j].Length;
 					}
 				}
 
 				// Reposition correctly in case of 16-bit sample having odd in-file length.
 				// See "Lead Lined for '99", reported by Dennis Mulleneers
-				if (f.Hio_Seek((c_long)(instr_Pos + xih.Size + (40 * xih.Samples) + total_Sample_Size), SeekOrigin.Begin) < 0)
+				if (f.Hio_Seek(instr_Pos + xih.Size + (40 * xih.Samples) + total_Sample_Size, SeekOrigin.Begin) < 0)
 					return -1;
 			}
 
@@ -1421,6 +1504,604 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			vorbisFile.Ov_Clear();
 
 			return total;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// TNE: Tell if the module was made with ModPlug Tracker or OpenMPT.
+		/// Those are played by the OpenMPT player instead, so -1 is returned
+		/// for them. This is the mirror image of ExtendedProbeXm() in the
+		/// LibOpenMpt port and the two have to agree, or a module ends up
+		/// being rejected by both players
+		/// </summary>
+		/********************************************************************/
+		private c_int Test_Extended(Hio f, c_int start)
+		{
+			if (LibXmp.UnitTestMode)
+				return 0;
+
+			CPointer<uint8> songName = new CPointer<uint8>(20);
+			CPointer<uint8> trackerName = new CPointer<uint8>(20);
+
+			if (f.Hio_Seek(start + 17, SeekOrigin.Begin) < 0)
+				return 0;
+
+			if (f.Hio_Read(songName, 1, 20) < 20)
+				return 0;
+
+			if (f.Hio_Seek(start + 38, SeekOrigin.Begin) < 0)
+				return 0;
+
+			if (f.Hio_Read(trackerName, 1, 20) < 20)
+				return 0;
+
+			uint16 version = f.Hio_Read16L();
+			uint32 headerSize = f.Hio_Read32L();
+			uint16 orders = f.Hio_Read16L();
+			uint16 restartPos = f.Hio_Read16L();
+			uint16 channels = f.Hio_Read16L();
+			uint16 patterns = f.Hio_Read16L();
+			uint16 instruments = f.Hio_Read16L();
+			uint16 flags = f.Hio_Read16L();
+
+			if (f.Hio_Error() != 0)
+				return 0;
+
+			// The OpenMPT player runs these checks before anything else and
+			// leaves the module alone when they do not hold
+			if ((channels == 0) || (channels > 192))
+				return 0;
+
+			if (f.Hio_Size() < (start + 80 + orders + (4 * (patterns + instruments))))
+				return 0;
+
+			bool isOpenMptName = CMemory.memcmp(trackerName, "OpenMPT ", 8) == 0;
+
+			// ModPlugin is the web browser plugin which later became
+			// ModPlug Tracker, and it is the only thing ever writing this
+			// name. Only some of the modules hold ADPCM packed samples, so
+			// the name has to be taken as a signature on its own
+			bool isModPlugName = isOpenMptName || (CMemory.memcmp(trackerName, "MOD Plugin packed", 17) == 0);
+
+			// FastTracker 2 pads the song title with spaces, while some
+			// other trackers terminate it with a null character
+			c_int firstNull = FindNullCharacter(songName, 20);
+
+			Xm_Tracker_Version madeWith;
+
+			if ((CMemory.memcmp(trackerName, "FastTracker v2.00   ", 20) == 0) && (headerSize == 276))
+			{
+				if (version < 0x0104)
+					madeWith = Xm_Tracker_Version.Ft2Generic | Xm_Tracker_Version.Confirmed;
+				else if (firstNull >= 0)
+				{
+					// PlayerPRO fills the rest of the buffer after the null
+					// terminator with spaces and does not support a song
+					// restart position
+					if (restartPos != 0)
+						madeWith = Xm_Tracker_Version.Ft2Clone | Xm_Tracker_Version.NewModPlug;
+					else if (firstNull == 19)
+						madeWith = Xm_Tracker_Version.Ft2Clone | Xm_Tracker_Version.NewModPlug | Xm_Tracker_Version.PlayerPro;
+					else if (IsOnlySpaces(songName + (firstNull + 1), 20 - (firstNull + 1)))
+						madeWith = Xm_Tracker_Version.PlayerPro | Xm_Tracker_Version.Confirmed;
+					else
+						madeWith = Xm_Tracker_Version.Ft2Clone | Xm_Tracker_Version.NewModPlug;
+				}
+				else
+				{
+					if (restartPos != 0)
+						madeWith = Xm_Tracker_Version.Ft2Generic | Xm_Tracker_Version.NewModPlug;
+					else
+						madeWith = Xm_Tracker_Version.Ft2Generic | Xm_Tracker_Version.NewModPlug | Xm_Tracker_Version.PlayerPro;
+				}
+			}
+			else if (CMemory.memcmp(trackerName, "FastTracker v 2.00  ", 20) == 0)
+			{
+				// ModPlug Tracker 1.0, the exact version is found below
+				madeWith = Xm_Tracker_Version.OldModPlug;
+			}
+			else
+			{
+				// Something else. Only the trackers telling something about
+				// ModPlug Tracker / OpenMPT are checked here
+				madeWith = Xm_Tracker_Version.Unknown | Xm_Tracker_Version.Confirmed;
+
+				if (isOpenMptName)
+					madeWith = Xm_Tracker_Version.OpenMpt | Xm_Tracker_Version.Confirmed;
+				else if (CMemory.memcmp(trackerName, "Fasttracker II clone", 20) == 0)
+				{
+					// 8bitbubsy's FastTracker 2 clone
+					madeWith = Xm_Tracker_Version.Ft2Generic | Xm_Tracker_Version.Confirmed;
+				}
+				else if ((CMemory.memcmp(trackerName, "*Converted ", 11) == 0) && (CMemory.memcmp(trackerName + 14, "-File*", 6) == 0))
+					madeWith = Xm_Tracker_Version.DigiTrakker | Xm_Tracker_Version.Confirmed;
+			}
+
+			// The extended filter range is only ever written by ModPlug
+			// Tracker / OpenMPT, and this loader does not support it at all
+			if ((flags & Xm_Extended_Filter_Range) != 0)
+				return -1;
+
+			// Skip the order list and jump to the pattern data. A file
+			// which is cut short is not left alone right away, because the
+			// tracker name may already have told enough
+			bool truncated = f.Hio_Seek(start + headerSize + 60, SeekOrigin.Begin) < 0;
+
+			if (!truncated && (version >= 0x0104))
+				SkipPatterns(f, version, patterns);
+
+			bool anyAdpcm = false;
+			bool oggResolved = false;
+			uint8 sampleReserved = 0;
+			c_int lastInstrType = -1;
+			c_int lastSampleReserved = -1;
+			int64 lastSampleHeaderSize = -1;
+			bool instrumentWithSamplesEncountered = false;
+			c_long totalSampleBytes = 0;
+			c_long fileSize = f.Hio_Size();
+
+			c_int numInstruments = Math.Min((c_int)instruments, 255);
+
+			for (c_int instr = 1; !truncated && (instr <= numInstruments); instr++)
+			{
+				c_long curPos = f.Hio_Tell();
+
+				if ((fileSize - curPos) < 4)
+					break;
+
+				// The stored size tells how much of the instrument header
+				// is really present in the file. Everything behind it is
+				// taken as zero, just like the partial structure read done
+				// by the OpenMPT loader
+				uint32 storedSize = f.Hio_Read32L();
+				uint32 instrHeaderSize = storedSize == 0 ? Xm_Instrument_Header_Size : storedSize;
+				uint32 presentSize = Math.Min(instrHeaderSize, Xm_Instrument_Header_Size);
+
+				uint8 instrType = 0;
+				uint16 numSamples = 0;
+				uint32 sampleHeaderSize = 0;
+
+				if ((presentSize >= 33) && (f.Hio_Seek(curPos + 26, SeekOrigin.Begin) >= 0))
+				{
+					instrType = f.Hio_Read8();
+					numSamples = f.Hio_Read16L();
+					sampleHeaderSize = f.Hio_Read32L();
+				}
+
+				uint8 volLoopStart = 0, volLoopEnd = 0, volFlags = 0;
+				uint8 panLoopStart = 0, panLoopEnd = 0, panFlags = 0;
+				uint8 midiEnabled = 0, midiChannel = 0, muteComputer = 0;
+				uint16 midiProgram = 0;
+
+				if ((presentSize >= 248) && (f.Hio_Seek(curPos + 228, SeekOrigin.Begin) >= 0))
+				{
+					volLoopStart = f.Hio_Read8();
+					volLoopEnd = f.Hio_Read8();
+					f.Hio_Seek(1, SeekOrigin.Current);		// Panning sustain point
+					panLoopStart = f.Hio_Read8();
+					panLoopEnd = f.Hio_Read8();
+					volFlags = f.Hio_Read8();
+					panFlags = f.Hio_Read8();
+					f.Hio_Seek(6, SeekOrigin.Current);		// Auto vibrato and fade out
+					midiEnabled = f.Hio_Read8();
+					midiChannel = f.Hio_Read8();
+					midiProgram = f.Hio_Read16L();
+					f.Hio_Seek(2, SeekOrigin.Current);		// Pitch wheel range
+					muteComputer = f.Hio_Read8();
+				}
+
+				if ((curPos + instrHeaderSize) > fileSize)
+				{
+					truncated = true;
+					break;
+				}
+
+				f.Hio_Seek(curPos + instrHeaderSize, SeekOrigin.Begin);
+
+				// Time for some version detection stuff
+				if (madeWith == Xm_Tracker_Version.OldModPlug)
+				{
+					// ModPlug Tracker 1.0 alpha stores 245 and beta 263
+					if ((storedSize == 245) || (storedSize == 263))
+						madeWith |= Xm_Tracker_Version.Confirmed;
+					else
+						madeWith = Xm_Tracker_Version.Unknown | Xm_Tracker_Version.Confirmed;
+				}
+				else if (numSamples == 0)
+				{
+					// Empty instruments make tracker identification pretty easy
+					if ((storedSize == 263) && (sampleHeaderSize == 0) && ((madeWith & Xm_Tracker_Version.NewModPlug) != 0))
+						madeWith |= Xm_Tracker_Version.Confirmed;
+					else if ((storedSize != 29) && ((madeWith & Xm_Tracker_Version.DigiTrakker) != 0))
+						madeWith &= ~Xm_Tracker_Version.DigiTrakker;
+					else if (((madeWith & (Xm_Tracker_Version.Ft2Clone | Xm_Tracker_Version.Ft2Generic)) != 0) && (storedSize != 33))
+					{
+						// Sure is not FastTracker 2
+						madeWith = Xm_Tracker_Version.Unknown;
+					}
+
+					if (storedSize != 33)
+						madeWith &= ~Xm_Tracker_Version.PlayerPro;
+					else if ((sampleHeaderSize > Xm_Sample_Header_Size) && ((madeWith & Xm_Tracker_Version.PlayerPro) != 0))
+					{
+						// Older PlayerPRO versions write garbage into the
+						// sample header size field, and it is different
+						// for each sample
+						if (instrumentWithSamplesEncountered || ((lastSampleHeaderSize != -1) && (sampleHeaderSize != lastSampleHeaderSize)))
+							madeWith = Xm_Tracker_Version.PlayerPro | Xm_Tracker_Version.Confirmed;
+
+						lastSampleHeaderSize = sampleHeaderSize;
+					}
+				}
+
+				if (lastInstrType == -1)
+					lastInstrType = instrType;
+				else if ((lastInstrType != instrType) && ((madeWith & Xm_Tracker_Version.Ft2Generic) != 0))
+				{
+					// FastTracker 2 writes some random junk into the
+					// instrument type field, but it is always the same
+					// junk for every instrument saved
+					madeWith &= ~Xm_Tracker_Version.Ft2Generic;
+					madeWith |= Xm_Tracker_Version.Ft2Clone;
+				}
+
+				if (numSamples > 0)
+				{
+					instrumentWithSamplesEncountered = true;
+
+					// If MIDI settings are present, this is definitely not
+					// an old ModPlug Tracker or PlayerPRO
+					if ((midiEnabled | midiChannel | midiProgram | muteComputer) != 0)
+						madeWith &= ~(Xm_Tracker_Version.OldModPlug | Xm_Tracker_Version.NewModPlug | Xm_Tracker_Version.PlayerPro);
+
+					if ((storedSize != 263) || (instrType != 0))
+						madeWith &= ~Xm_Tracker_Version.PlayerPro;
+
+					if (((madeWith & Xm_Tracker_Version.Confirmed) == 0) && ((madeWith & Xm_Tracker_Version.PlayerPro) != 0))
+					{
+						// Earlier PlayerPRO versions do not seem to set the loop points to 0xff
+						if ((((volFlags & Xm_Envelope_Loop) == 0) && (volLoopStart == 0xff) && (volLoopEnd == 0xff)) ||
+						    (((panFlags & Xm_Envelope_Loop) == 0) && (panLoopStart == 0xff) && (panLoopEnd == 0xff)))
+						{
+							madeWith |= Xm_Tracker_Version.Confirmed;
+							madeWith &= ~Xm_Tracker_Version.NewModPlug;
+						}
+					}
+
+					// Read the sample headers
+					uint32[] sampleSizes = new uint32[numSamples];
+					bool[] adpcmSamples = new bool[numSamples];
+
+					CPointer<uint8> sampleName = new CPointer<uint8>(22);
+
+					for (c_int smp = 0; smp < numSamples; smp++)
+					{
+						if ((fileSize - f.Hio_Tell()) < Xm_Sample_Header_Size)
+						{
+							truncated = true;
+							break;
+						}
+
+						uint32 length = f.Hio_Read32L();
+						f.Hio_Seek(9, SeekOrigin.Current);		// Loop points and volume
+						int8 fineTune = (int8)f.Hio_Read8();
+						uint8 sampleFlags = f.Hio_Read8();
+						uint8 pan = f.Hio_Read8();
+						f.Hio_Seek(1, SeekOrigin.Current);		// Relative tone
+						uint8 reserved = f.Hio_Read8();
+						f.Hio_Read(sampleName, 1, 22);
+
+						sampleReserved |= reserved;
+
+						if ((reserved != 0) && (reserved != Xm_Sample_Adpcm))
+							madeWith &= ~(Xm_Tracker_Version.OldModPlug | Xm_Tracker_Version.NewModPlug | Xm_Tracker_Version.OpenMpt);
+
+						if (lastSampleReserved == -1)
+							lastSampleReserved = reserved;
+						else if (lastSampleReserved != reserved)
+							madeWith &= ~Xm_Tracker_Version.PlayerPro;
+
+						if (pan != 128)
+							madeWith &= ~Xm_Tracker_Version.PlayerPro;
+
+						if (((fineTune & 0x0f) != 0) && (fineTune != 127))
+							madeWith &= ~Xm_Tracker_Version.PlayerPro;
+
+						// FastTracker 2 stores the sample name length here.
+						// It just copies the whole Pascal string, and that
+						// string might have ended with spaces even before
+						// being space padded in the file, so an exact
+						// length comparison cannot be made
+						if (((madeWith & (Xm_Tracker_Version.Ft2Generic | Xm_Tracker_Version.Ft2Clone)) != 0) &&
+						    ((madeWith & (Xm_Tracker_Version.NewModPlug | Xm_Tracker_Version.PlayerPro)) != 0) &&
+						    ((madeWith & Xm_Tracker_Version.Confirmed) == 0) &&
+						    ((reserved > 22) || !IsOnlySpaces(sampleName + reserved, 22 - reserved)))
+						{
+							madeWith &= ~Xm_Tracker_Version.Ft2Generic;
+							madeWith |= Xm_Tracker_Version.Ft2Clone | Xm_Tracker_Version.Confirmed;
+						}
+
+						bool isAdpcm = (reserved == Xm_Sample_Adpcm) && ((sampleFlags & 0x30) == 0);
+						if (isAdpcm)
+							anyAdpcm = true;
+
+						sampleSizes[smp] = length;
+						adpcmSamples[smp] = isAdpcm;
+					}
+
+					if (truncated)
+						break;
+
+					// Read the sample data
+					for (c_int smp = 0; smp < numSamples; smp++)
+					{
+						c_long chunkSize = adpcmSamples[smp] ? 16 + ((sampleSizes[smp] + 1) / 2) : sampleSizes[smp];
+
+						if (version < 0x0104)
+						{
+							// Version 1.02 and 1.03 store the sample data after the patterns instead
+							totalSampleBytes += chunkSize;
+							continue;
+						}
+
+						c_long chunkPos = f.Hio_Tell();
+
+						// Only the first sample holding any data is checked
+						// for Ogg Vorbis. OggMod encodes every single
+						// sample, so one look is enough to tell an .oxm
+						// apart. OggMod stores the length of the decoded
+						// sample in front of the stream, so the magic sits
+						// 4 bytes in
+						if (!oggResolved && (chunkSize >= 8))
+						{
+							oggResolved = true;
+
+							f.Hio_Seek(4, SeekOrigin.Current);
+
+							if (f.Hio_Read32B() == Magic_Oggs)
+								return 0;
+						}
+
+						if ((chunkPos + chunkSize) > fileSize)
+						{
+							truncated = true;
+							break;
+						}
+
+						f.Hio_Seek(chunkPos + chunkSize, SeekOrigin.Begin);
+					}
+
+					if (truncated)
+						break;
+				}
+
+				// Only when it is known that OggMod has not been at work,
+				// the module may be left to the OpenMPT player
+				if (oggResolved && IsMadeWithModPlug(isModPlugName, madeWith, anyAdpcm))
+					return -1;
+			}
+
+			if (!truncated && (version < 0x0104))
+			{
+				// Patterns and sample data are stored after the
+				// instruments in version 1.02 and 1.03
+				SkipPatterns(f, version, patterns);
+
+				f.Hio_Seek(totalSampleBytes, SeekOrigin.Current);
+			}
+
+			// A null terminated song name is quite possibly ModPlug
+			// Tracker. It could really be a ModPlug made file which has
+			// been resaved in FastTracker 2, though
+			if ((sampleReserved == 0) && ((madeWith & Xm_Tracker_Version.NewModPlug) != 0) && (firstNull >= 0))
+				madeWith |= Xm_Tracker_Version.Confirmed;
+
+			// All the sample data has been passed by now, so it is known
+			// whether OggMod has been at work or not
+			if (IsMadeWithModPlug(isModPlugName, madeWith, anyAdpcm))
+				return -1;
+
+			// The song extensions holding the song comments, the MIDI
+			// configuration, the pattern names and the channel names are
+			// only ever written by ModPlug Tracker / OpenMPT, so a single
+			// one of them settles it no matter what the tracker detection
+			// above has come up with
+			if (ReadMagic(f, Magic_Text) ||		// Song comments
+			    ReadMagic(f, Magic_Midi) ||		// MIDI configuration
+			    ReadMagic(f, Magic_Pnam) ||		// Pattern names
+			    ReadMagic(f, Magic_Cnam))		// Channel names
+			{
+				return -1;
+			}
+
+			// Mix plugins. This loader has no support for those at all, so
+			// it does not matter which tracker wrote them
+			if (((fileSize - f.Hio_Tell()) >= 8) && SkipMixPlugins(f, fileSize))
+				return -1;
+
+			// Extended instrument and song properties are only written by
+			// OpenMPT 1.17 and later, so finding either of them is enough
+			if ((numInstruments > 0) && ReadMagic(f, Magic_Xtpm))
+				return -1;
+
+			if (ReadMagic(f, Magic_Stpm))
+				return -1;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell if the collected flags point at a module made with ModPlug
+		/// Tracker or OpenMPT
+		/// </summary>
+		/********************************************************************/
+		private bool IsMadeWithModPlug(bool isModPlugName, Xm_Tracker_Version madeWith, bool anyAdpcm)
+		{
+			// OpenMPT 1.17 and later and ModPlugin both write their own
+			// name into the header, and only ModPlug ever packed samples
+			// with its own ADPCM compression
+			if (isModPlugName || anyAdpcm)
+				return true;
+
+			if ((madeWith & Xm_Tracker_Version.Confirmed) == 0)
+				return false;
+
+			// ModPlug Tracker 1.0 alpha / beta
+			if ((madeWith & Xm_Tracker_Version.OldModPlug) != 0)
+				return true;
+
+			// ModPlug Tracker 1.0 - 1.16. PlayerPRO writes files which
+			// look almost the same, so those are left alone
+			return ((madeWith & Xm_Tracker_Version.NewModPlug) != 0) && ((madeWith & Xm_Tracker_Version.PlayerPro) == 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Skip over all the patterns without unpacking them
+		/// </summary>
+		/********************************************************************/
+		private void SkipPatterns(Hio f, uint16 version, uint16 patterns)
+		{
+			for (c_int pat = 0; pat < patterns; pat++)
+			{
+				c_long curPos = f.Hio_Tell();
+
+				uint32 patHeaderSize = f.Hio_Read32L();
+				if ((patHeaderSize < 8) || ((curPos + patHeaderSize) > f.Hio_Size()))
+					break;
+
+				f.Hio_Seek(1, SeekOrigin.Current);		// Pack method (= 0)
+
+				// Number of rows
+				f.Hio_Seek(version == 0x0102 ? 1 : 2, SeekOrigin.Current);
+
+				// A packed size of 0 indicates a completely empty pattern
+				uint16 packedSize = f.Hio_Read16L();
+
+				if (f.Hio_Seek(curPos + (c_long)patHeaderSize + packedSize, SeekOrigin.Begin) < 0)
+					break;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Skip over all the mix plugin chunks without parsing them. Tells
+		/// whether any real mix plugin chunk was found
+		/// </summary>
+		/********************************************************************/
+		private bool SkipMixPlugins(Hio f, c_long fileSize)
+		{
+			bool hasPluginChunks = false;
+
+			while ((fileSize - f.Hio_Tell()) >= 9)
+			{
+				c_long curPos = f.Hio_Tell();
+
+				uint32 code = f.Hio_Read32B();
+				uint32 chunkSize = f.Hio_Read32L();
+
+				if ((code == Magic_Impi) ||		// IT instrument, we definitely read too far
+				    (code == Magic_Imps) ||		// IT sample, ditto
+				    (code == Magic_Xtpm) ||		// Instrument extensions, ditto
+				    (code == Magic_Stpm) ||		// Song extensions, ditto
+				    ((f.Hio_Tell() + chunkSize) > fileSize))
+				{
+					f.Hio_Seek(curPos, SeekOrigin.Begin);
+					break;
+				}
+
+				if ((code == Magic_Chfx) || IsPluginChunk(code))
+					hasPluginChunks = true;
+
+				f.Hio_Seek(chunkSize, SeekOrigin.Current);
+			}
+
+			return hasPluginChunks;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell if the given chunk identifier is one of the FXnn chunks
+		/// holding the settings of a single mix plugin
+		/// </summary>
+		/********************************************************************/
+		private bool IsPluginChunk(uint32 code)
+		{
+			uint8 c2 = (uint8)(code >> 8);
+			uint8 c3 = (uint8)code;
+
+			return ((code >> 16) == 0x4658) && (c2 >= 0x30) && (c2 <= 0x39) && (c3 >= 0x30) && (c3 <= 0x39);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read the given magic. The file position is only moved when the
+		/// magic matches
+		/// </summary>
+		/********************************************************************/
+		private bool ReadMagic(Hio f, uint32 magic)
+		{
+			c_long curPos = f.Hio_Tell();
+
+			uint32 id = f.Hio_Read32B();
+
+			if ((f.Hio_Error() != 0) || (id != magic))
+			{
+				f.Hio_Seek(curPos, SeekOrigin.Begin);
+				return false;
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the index of the first null character or -1 if the string
+		/// does not hold any
+		/// </summary>
+		/********************************************************************/
+		private c_int FindNullCharacter(CPointer<uint8> str, c_int length)
+		{
+			for (c_int i = 0; i < length; i++)
+			{
+				if (str[i] == 0x00)
+					return i;
+			}
+
+			return -1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell if the given string only holds space characters
+		/// </summary>
+		/********************************************************************/
+		private bool IsOnlySpaces(CPointer<uint8> str, c_int length)
+		{
+			for (c_int i = 0; i < length; i++)
+			{
+				if (str[i] != 0x20)
+					return false;
+			}
+
+			return true;
 		}
 		#endregion
 	}

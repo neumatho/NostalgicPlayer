@@ -29,6 +29,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.String
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static StringModeBufRefImpl ReadBuf(ReadWriteMode mode, CPointer<uint8> buf, size_t size)
+		{
+			return new StringModeBufRefImpl(buf, size, mode);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		///
 		/// </summary>
 		/********************************************************************/

@@ -879,12 +879,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if (!string.IsNullOrEmpty(modMagicResult.MadeWithTracker))
 				m_ModFormat.MadeWithTracker = modMagicResult.MadeWithTracker;
 
-			m_ModFormat.CharSet = EncoderCollection.Dos;	// TNE: Changed charset from Amiga to DOS, since this player won't play Amiga modules
+			m_ModFormat.CharSet = FindCharSet();
 
 			if (anyAdpcm)
 			{
-				m_ModFormat.MadeWithTracker += " (ADPCM packed)";
-				m_ModFormat.ExtraInformation = Resources.IDS_MPT_ADPCM;
+				m_ModFormat.MadeWithTracker += Resources.IDS_MPT_ADPCM;
+				m_ModFormat.ExtraInformation = Resources.IDS_MPT_ADPCM1;
 			}
 
 			return true;

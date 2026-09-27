@@ -24,7 +24,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsReadSeekable(this Stream f)
 		{
-			return new FileOperationsStdIstream(f).IsReadSeekable();
+			return new FileOperationsStdStream(f).IsReadSeekable();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static byte_span2 ReadRawImpl(this Stream f, byte_span2 data)
+		{
+			return new FileOperationsStdStream(f).ReadRawImpl(data);
 		}
 	}
 }

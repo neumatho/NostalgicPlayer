@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Olivier Lapicque and mainly maintained at the moment by Johannes &quot;Saga Musix&quot; Schultz.
+        ///   Looks up a localized string similar to Original player by Olivier Lapicque and mainly maintained at the moment by Johannes &quot;Saga Musix&quot; Schultz and Jörn Heusipp.
         ///Ported to NostalgicPlayer by Thomas Neumann.
         ///
         ///This player uses the LibOpenMpt. It is a continuation of ModPlug Tracker. This player will be used for OpenMPT specific formats or modules using features not supported by LibXmp..
@@ -69,6 +69,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt {
         internal static string IDS_MPT_DESCRIPTION {
             get {
                 return ResourceManager.GetString("IDS_MPT_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The module uses the following DSP effects/VST-plugins. These are not supported.
+        ///
+        ///{0}.
+        /// </summary>
+        internal static string IDS_MPT_ERR_HAVE_PLUGINS {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ERR_HAVE_PLUGINS", resourceCulture);
             }
         }
         

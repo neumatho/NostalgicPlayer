@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_MPT_DESCRIPTION" xml:space="preserve">
-    <value>Original player by Olivier Lapicque and mainly maintained at the moment by Johannes "Saga Musix" Schultz.
+    <value>Original player by Olivier Lapicque and mainly maintained at the moment by Johannes "Saga Musix" Schultz and Jörn Heusipp.
 Ported to NostalgicPlayer by Thomas Neumann.
 
 This player uses the LibOpenMpt. It is a continuation of ModPlug Tracker. This player will be used for OpenMPT specific formats or modules using features not supported by LibXmp.</value>
@@ -153,5 +153,10 @@ This player uses the LibOpenMpt. It is a continuation of ModPlug Tracker. This p
   </data>
   <data name="IDS_MPT_INFODESCLINE7" xml:space="preserve">
     <value>Current tempo (BPM):</value>
+  </data>
+  <data name="IDS_MPT_ERR_HAVE_PLUGINS" xml:space="preserve">
+    <value>The module uses the following DSP effects/VST-plugins. These are not supported.
+
+{0}</value>
   </data>
 </root>

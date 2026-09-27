@@ -18,10 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 	{
 		#region LiteralParser class
 		/// <summary>
-		/// TNE: This is the port of the _LiteralVersionImpl literal operator
-		/// that MPT_V expands to. It is internal rather than private, so the
-		/// unit test can check the parsing itself the same way the original
-		/// test does
+		/// 
 		/// </summary>
 		internal static class LiteralParser
 		{
@@ -112,7 +109,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		public static class MPT_V
 		{
 			public static readonly Version _1_00_00_A0 = LiteralParser.Parse("1.00.00.A0");
+			public static readonly Version _1_00_00_A5 = LiteralParser.Parse("1.00.00.A5");
+			public static readonly Version _1_00_00_B3 = LiteralParser.Parse("1.00.00.B3");
+			public static readonly Version _1_11 = LiteralParser.Parse("1.11");
 			public static readonly Version _1_16 = LiteralParser.Parse("1.16");
+			public static readonly Version _1_17 = LiteralParser.Parse("1.17");
 			public static readonly Version _1_17_00_00 = LiteralParser.Parse("1.17.00.00");
 			public static readonly Version _1_17_02_46 = LiteralParser.Parse("1.17.02.46");
 			public static readonly Version _1_17_02_49 = LiteralParser.Parse("1.17.02.49");
@@ -152,6 +153,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 			public static readonly Version _1_21_01_25 = LiteralParser.Parse("1.21.01.25");
 			public static readonly Version _1_22_00_00 = LiteralParser.Parse("1.22.00.00");
 			public static readonly Version _1_22_01_04 = LiteralParser.Parse("1.22.01.04");
+			public static readonly Version _1_22_02_02 = LiteralParser.Parse("1.22.02.02");
 			public static readonly Version _1_22_03_01 = LiteralParser.Parse("1.22.03.01");
 			public static readonly Version _1_22_03_02 = LiteralParser.Parse("1.22.03.02");
 			public static readonly Version _1_22_03_12 = LiteralParser.Parse("1.22.03.12");

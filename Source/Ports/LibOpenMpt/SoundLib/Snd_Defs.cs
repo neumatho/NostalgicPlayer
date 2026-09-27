@@ -3,20 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-global using RowIndex = System.UInt32;
-global using ChannelIndex = System.UInt16;
-global using OrderIndex = System.UInt16;
-global using PatternIndex = System.UInt16;
-global using PlugIndex = System.Byte;
-global using SampleIndex = System.UInt16;
-global using InstrumentIndex = System.UInt16;
-global using SequenceIndex = System.Byte;
-global using SmpLength = System.UInt32;
-global using samplecount_t = System.UInt32;		// Number of rendered samples
-global using PlugParamIndex = System.UInt32;
-global using PlugParamValue = System.Single;
-
-using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
@@ -46,6 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		public const RowIndex Max_Pattern_Rows = 4096;
 		public const OrderIndex Max_Orders = OrderIndex_Max + 1;
+		public const PatternIndex Max_Patterns = 4000;
 		public const SampleIndex Max_Samples = 4000;
 		public const InstrumentIndex Max_Instruments = 256;
 		public const PlugIndex Max_MixPlugins = 250;
@@ -87,6 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public const c_int Max_SampleFileName = 22;
 		public const c_int Max_InstrumentName = 32;
 		public const c_int Max_InstrumentFileName = 32;
+		public const c_int Max_PatternName = 32;
 		public const c_int Max_ChannelName = 20;
 
 		public const ChannelFlags Chn_SampleFlags = ChannelFlags.Chn_16Bit | ChannelFlags.Chn_Loop | ChannelFlags.Chn_PingPongLoop | ChannelFlags.Chn_SustainLoop | ChannelFlags.Chn_PingPongSustain | ChannelFlags.Chn_Panning | ChannelFlags.Chn_Stereo | ChannelFlags.Chn_PingPongFlag | ChannelFlags.Chn_Reverse | ChannelFlags.Chn_Surround | ChannelFlags.Chn_Adlib;

@@ -135,14 +135,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 		// warning, an empty string is returned
 		// </summary>
 		/********************************************************************/
-/*		public override string GetWarning()
+		public override string GetWarning()
 		{
-			string[] dspEffectNames = libXmp.Xmp_Get_Used_Dsp_Effects();
-			if (dspEffectNames != null)
-				return string.Format(Resources.IDS_XMP_ERR_HAVE_DSP, string.Join("\n", dspEffectNames));
+			INostalgicPlayer nostalgicPlayer = (INostalgicPlayer)module.Get_Interface("nostalgicplayer");
+			string[] pluginNames = nostalgicPlayer.GetUnsupportedPlugins();
+
+			if (pluginNames.Length != 0)
+				return string.Format(Resources.IDS_MPT_ERR_HAVE_PLUGINS, string.Join("\n", pluginNames));
 
 			return string.Empty;
-		}*///XX
+		}
 		#endregion
 
 		#region Initialization and cleanup
@@ -360,15 +362,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 		// null is returned
 		// </summary>
 		/********************************************************************/
-/*		public override IEnumerable<InstrumentInfo> Instruments
+		public override IEnumerable<InstrumentInfo> Instruments
 		{
 			get
 			{
 				if (hasInstruments)
 				{
-					for (int i = 0; i < moduleInfo.Mod.Ins; i++)
+					INostalgicPlayer nostalgicPlayer = (INostalgicPlayer)module.Get_Interface("nostalgicplayer");
+
+					for (int i = 0; i < module.Get_Num_Instruments(); i++)
 					{
-						Xmp_Instrument inst = moduleInfo.Mod.Xxi[i];
+						InstrumentInformation inst = nostalgicPlayer.GetInstrumentInformation(i);
 
 						InstrumentInfo instInfo = new InstrumentInfo
 						{
@@ -377,14 +381,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 						};
 
 						// Fill out the note samples
-						if (inst.Nsm > 0)
+						if (inst.NumberOfSamples > 0)
 						{
 							for (int j = 0; j < InstrumentInfo.Octaves; j++)
 							{
 								for (int k = 0; k < InstrumentInfo.NotesPerOctave; k++)
 								{
-									byte ins = inst.Map[j * InstrumentInfo.NotesPerOctave + k].Ins;
-									instInfo.Notes[j, k] = (ins != 0xff) && (ins < inst.Nsm) ? inst.Sub[ins].Sid : -1;
+									ushort sample = inst.Map[(j * InstrumentInfo.NotesPerOctave) + k];
+									instInfo.Notes[j, k] = sample == 0 ? -1 : sample - 1;
 								}
 							}
 						}
@@ -393,7 +397,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 					}
 				}
 			}
-		}*///XX
+		}
 
 
 

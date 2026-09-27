@@ -16,6 +16,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 	{
 		/********************************************************************/
 		/// <summary>
+		/// Reinterpret the raw bytes in "src" as a value of type "TDst".
+		/// The source is a byte span, since the C++ counterpart is called
+		/// with a plain "uint8 buf[sizeof(TDst)]" array
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static TDst Bit_Cast<TDst>(byte_span2 src)//XX 47
+		{
+			return Unsafe.ReadUnaligned<TDst>(ref MemoryMarshal.GetReference(src));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/

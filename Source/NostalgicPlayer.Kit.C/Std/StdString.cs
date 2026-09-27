@@ -2633,6 +2633,19 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns the characters of the container as a span
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ReadOnlySpan<uint8_t> Span()
+		{
+			return buffer.AsSpan(0, count);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the characters of the container as a C# string, decoded
 		/// as Latin1, so that every one of the size() characters becomes the
 		/// character with the same value. Null characters are kept, as they
@@ -2645,19 +2658,6 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std
 		}
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Returns the characters of the container as a span
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private ReadOnlySpan<uint8_t> Span()
-		{
-			return buffer.AsSpan(0, count);
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Returns the characters of the given null terminated character

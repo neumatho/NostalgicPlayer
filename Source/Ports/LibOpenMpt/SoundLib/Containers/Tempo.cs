@@ -114,6 +114,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Retrieve the fractional part of the stored value
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public uint32 GetFract()
+		{
+			return value.GetFract();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Retrieve the raw internal representation of the stored value
 		/// </summary>
 		/********************************************************************/

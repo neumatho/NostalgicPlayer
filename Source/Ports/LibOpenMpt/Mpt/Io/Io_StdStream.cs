@@ -5,13 +5,14 @@
 /******************************************************************************/
 using System.IO;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class FileOperationsStdIstream
+	internal class FileOperationsStdStream
 	{
 		private readonly Stream f;
 
@@ -21,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public FileOperationsStdIstream(Stream f_)
+		public FileOperationsStdStream(Stream f_)
 		{
 			f = f_;
 		}
@@ -37,6 +38,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		public bool IsReadSeekable()
 		{
 			return f.CanSeek;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public byte_span2 ReadRawImpl(byte_span2 data)
+		{
+			size_t bytesToRead = data.Size();
+			size_t bytesRead = 0;
+
+			while (bytesToRead > 0)
+			{
+				c_int bytesChunkRead = f.Read(data.Slice((c_int)bytesRead, (c_int)bytesToRead));
+				if (bytesChunkRead == 0)
+					break;
+
+				bytesRead += (size_t)bytesChunkRead;
+				bytesToRead -= (size_t)bytesChunkRead;
+			}
+
+			return data.First(bytesRead);
 		}
 	}
 }

@@ -1835,7 +1835,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						if ((memory.ChnSettings_[n].Vol != 0xff) && !adjustSamplePos)
 							chn.nVolume = Math.Min(memory.ChnSettings_[n].Vol, (uint8)64) * 4;
 
-/*						if (chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(SampleFlags.Chn_Adlib) && (m_Opl != 0))
+/*						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(SampleFlags.Chn_Adlib) && (m_Opl != null))
 						{
 							m_Opl.Patch(n, chn.pModSample.Adlib);
 							m_Opl.NoteCut(n);
@@ -4220,7 +4220,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							if (!m_PlayState.m_Flags.Test(PlayFlags.Song_FirstTick))
 								break;
 
-							if ((GetType_() & (GlobalVol_7Bit_Formats)) != 0)
+							if ((GetType_() & (GlobalVol_7Bit_Formats)) == 0)
 								param *= 2;
 
 							// IT compatibility 16. ST3 and IT ignore out-of-range values.
@@ -4956,7 +4956,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public void PortamentoDown(ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)//XX 4226
 		{
 			PortamentoDown(m_PlayState, nChn, param, doFinePortamentoAsRegular);
-			MidiPortamento(nChn, -m_PlayState.Chn[nChn].nOldPortaUp , !doFinePortamentoAsRegular && UseCombinedPortamentoCommands());
+			MidiPortamento(nChn, -m_PlayState.Chn[nChn].nOldPortaDown, !doFinePortamentoAsRegular && UseCombinedPortamentoCommands());
 		}
 
 
@@ -5870,7 +5870,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					if ((param & 0xf0) != 0)
 						nPanSlide = (c_int)((param & 0xf0) / 4U);
 					else
-						nPanSlide = (c_int)((param & 0x0f) * 4U);
+						nPanSlide = -(c_int)((param & 0x0f) * 4U);
 
 					// FT2 compatibility: FT2's panning slide is like IT's fine panning slide (not as deep)
 					if (m_PlayBehaviour[PlayBehaviour.Ft2PanSlide])
@@ -6738,7 +6738,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					if (!isSmooth)
 						chn.nCutOff = param;
 					else
-						chn.nCutOff = uint8.CreateSaturating(CalculateSmoothParamChange(playState, chn.nCutOff, param));
+						chn.nCutOff = SaturateRound.Saturate_Round<uint8, c_float>(CalculateSmoothParamChange(playState, chn.nCutOff, param));
 
 					chn.nRestoreCutOffOnNewNote = 0;
 					c_int cutOff = SetupChannelFilter(chn, !chn.dwFlags.Test(ChannelFlags.Chn_Filter));
@@ -6755,7 +6755,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					if (!isSmooth)
 						chn.nResonance = param;
 					else
-						chn.nResonance = uint8.CreateSaturating(CalculateSmoothParamChange(playState, chn.nResonance, param));
+						chn.nResonance = SaturateRound.Saturate_Round<uint8, c_float>(CalculateSmoothParamChange(playState, chn.nResonance, param));
 
 					chn.nRestoreResonanceOnNewNote = 0;
 					SetupChannelFilter(chn, !chn.dwFlags.Test(ChannelFlags.Chn_Filter));
@@ -7104,7 +7104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 					if (retrigCount >= realSpeed)
 					{
-						if ((m_PlayState.m_nTickCount != 0) || ((param & 0x100) != 0) || (chn.RowCommand.Note == 0))
+						if ((m_PlayState.m_nTickCount != 0) || (((param & 0x100) != 0) && (chn.RowCommand.Note == 0)))
 							doRetrig = true;
 					}
 
@@ -7211,7 +7211,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				if (((GetType_() & (ModType.It | ModType.Mpt)) != 0) && (chn.RowCommand.Note == ModCommand.Note_None) && (oldPeriod != 0))
 					chn.nPeriod = oldPeriod;
 
-				if ((GetType_() & (ModType.S3M | ModType.It | ModType.Mpt)) != 0)
+				if ((GetType_() & (ModType.S3M | ModType.It | ModType.Mpt)) == 0)
 					retrigCount = 0;
 
 				// IT compatibility: see previous IT compatibility comment =)
@@ -7510,7 +7510,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			// This underflows at tempo 06...0F, and the resulting tick lengths depend on the mixing rate.
 			// Note: ST2.3 uses the constant 50 below, earlier versions use 49, but they also play samples at a different speed
-			int32 samplesPerTick = (int32)(st2MixingRate / (50 - ((st2TempoFactor[tempo >> 4] * (tempo & 0x0f)) >> 4)));
+			int32 samplesPerTick = (int32)(st2MixingRate / (uint32)(50 - ((st2TempoFactor[tempo >> 4] * (tempo & 0x0f)) >> 4)));
 
 			if (samplesPerTick <= 0)
 				samplesPerTick += 65536;

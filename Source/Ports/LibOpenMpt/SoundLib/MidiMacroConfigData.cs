@@ -10,6 +10,7 @@ using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers;
 using Algorithm = Polycode.NostalgicPlayer.Kit.C.Std.Algorithm;
@@ -21,8 +22,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal class MidiMacroConfigData
 	{
+		/// <summary>
+		/// Size of the structure as it is stored in the module files
+		/// </summary>
+		private const size_t StructSize = (MidiMacros.GlobalMacros + MidiMacros.SFxMacros + MidiMacros.ZxxMacros) * MidiMacros.MacroLength;
+
 		#region Macro class
-		public class Macro : IEquatable<Macro>, IDeepCloneable<Macro>//XX TODO: Når XM/IT loader laves, bliver disse loadet ind direkte som een stor blok. Dette kan ikke lade sig gøre her, men vi kan have vores egen Load metode (både i Macro og i MidiMacroConfigData), som loader een Macro af gangen ind i array
+		public class Macro : IEquatable<Macro>, IDeepCloneable<Macro>
 		{
 			private readonly array<uint8> m_Data;
 
@@ -52,12 +58,48 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			/********************************************************************/
 			/// <summary>
-			/// 
+			/// Read a single macro from the file. Only the first "size" bytes
+			/// are taken from the file, the rest of the macro is cleared. The
+			/// file position is always advanced by "size" bytes
+			/// </summary>
+			/********************************************************************/
+			public void Load(FileReader file, size_t size)
+			{
+				m_Data.fill(0);
+
+				file.GetRaw(m_Data.data().AsSpan(size));
+				file.Skip(size);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
 			/// </summary>
 			/********************************************************************/
 			public size_t Length()
 			{
 				return (size_t)Iterator.distance(m_Data.begin(), Algorithm.find(m_Data.begin(), m_Data.end(), (uint8)'\0'));
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public StdString NormalizedString()
+			{
+				StdString sanitizedMacro = this;
+
+				size_t pos = 0;
+
+				while ((pos = sanitizedMacro.find_first_not_of("0123456789ABCDEFabchmnopsuvxyz", pos)) != StdString.npos)
+					sanitizedMacro.erase(pos, 1);
+
+				return sanitizedMacro;
 			}
 
 
@@ -234,6 +276,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			///
 			/// </summary>
 			/********************************************************************/
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public static implicit operator StdString(Macro macro)
+			{
+				return new StdString(macro?.ToString() ?? string.Empty);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
 			public override string ToString()
 			{
 				return Encoding.Latin1.GetString(m_Data.data().AsSpan(0, Length()));
@@ -267,5 +322,49 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Fixed macros Z80...ZFF
 		/// </summary>
 		public readonly array<Macro> Zxx = new array<Macro>(MidiMacros.ZxxMacros);
+
+		/********************************************************************/
+		/// <summary>
+		/// Read the macros from the file. In the original code, the whole
+		/// structure is read as one big block of memory, which is not
+		/// possible here, so the macros are read one at a time instead.
+		///
+		/// At most "StructSize" bytes are used, any macro not covered by
+		/// them is cleared. The file position is always advanced by
+		/// "size" bytes, unless the end of the file is reached.
+		///
+		/// Returns the number of bytes actually read
+		/// </summary>
+		/********************************************************************/
+		public size_t Load(FileReader file, uint32 size)
+		{
+			size_t copyBytes = Math.Min(size, StructSize);
+
+			if (!file.CanRead(copyBytes))
+				copyBytes = size_t.CreateSaturating(file.BytesLeft());
+
+			size_t bytesLeft = copyBytes;
+			array<Macro>[] allMacros = [ Global, SFx, Zxx ];
+
+			foreach (array<Macro> macros in allMacros)
+			{
+				for (size_t i = 0; i < macros.size(); i++)
+				{
+					size_t macroBytes = Math.Min(bytesLeft, (size_t)MidiMacros.MacroLength);
+
+					// Do not reuse the existing macro object, since the
+					// same instance may be shared between several entries
+					Macro macro = new Macro();
+					macro.Load(file, macroBytes);
+
+					macros[i] = macro;
+					bytesLeft -= macroBytes;
+				}
+			}
+
+			file.Skip(size - copyBytes);
+
+			return copyBytes;
+		}
 	}
 }
