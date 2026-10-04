@@ -1077,7 +1077,7 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		/// pointer is itself an iterator in C++
 		/// </summary>
 		/********************************************************************/
-		ref T IIterator<CPointer<T>, T>.Value
+		public ref T Value
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => ref this[0];

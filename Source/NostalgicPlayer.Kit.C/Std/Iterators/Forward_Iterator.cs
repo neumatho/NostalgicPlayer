@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Kit.C.Std.Iterators
 		/// The element the iterator currently refers to (C++ *it)
 		/// </summary>
 		/********************************************************************/
-		ref T IIterator<forward_iterator<T>, T>.Value
+		public ref T Value
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get => ref current[0];
