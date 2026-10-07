@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.C.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.C
 {
@@ -139,6 +140,20 @@ namespace Polycode.NostalgicPlayer.Kit.C
 		public static c_double cosh(c_double x)
 		{
 			return Math.Cosh(x);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Computes both the quotient and the remainder of the division of
+		/// x by y. The quotient is truncated towards zero
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static div_t div(c_int x, c_int y)
+		{
+			return new div_t { quot = x / y, rem = x % y };
 		}
 
 
