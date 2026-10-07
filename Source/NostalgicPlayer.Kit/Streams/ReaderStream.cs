@@ -171,7 +171,25 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		public void ReadInto(byte[] buffer, int offset, int count)
 		{
 			// Need to call Read() and not the wrapper, since it could be overridden
-			int read = Read(buffer, offset, count);
+			int _ = Read(buffer, offset, count);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Does the same as the Read() method, but does not return how many
+		/// bytes that actually has been read.
+		///
+		/// This method has been implemented to overrule the new .NET 9
+		/// compile error, which occur when calling Read() and not using its
+		/// return value
+		/// </summary>
+		/********************************************************************/
+		public void ReadInto(Span<byte> buffer)
+		{
+			// Need to call Read() and not the wrapper, since it could be overridden
+			int _ = Read(buffer);
 		}
 
 
