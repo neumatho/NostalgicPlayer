@@ -197,6 +197,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		{
 			System.Array.Clear(sample, 0, sample.Length);
 			sampleOffset = 0;
+			outputValue = 0;
 		}
 		#endregion
 

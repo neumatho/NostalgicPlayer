@@ -13,19 +13,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// <summary>
 		/// Last sample
 		/// </summary>
-		internal int32_t cachedSample;
+		internal int32_t cachedSample = 0;
 
 		/// <summary>
 		/// Number of cycles per sample
 		/// </summary>
 		private readonly int cyclesPerSample;
 
-		internal int sampleOffset;
+		internal int sampleOffset = 0;
 
 		/// <summary>
 		/// Calculated sample
 		/// </summary>
-		internal int32_t outputValue;
+		internal int32_t outputValue = 0;
 
 		/********************************************************************/
 		/// <summary>
@@ -34,10 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/********************************************************************/
 		public ZeroOrderResampler(double clockFrequency, double samplingFrequency)
 		{
-			cachedSample = 0;
 			cyclesPerSample = (int)(clockFrequency / samplingFrequency * 1024.0);
-			sampleOffset = 0;
-			outputValue = 0;
 		}
 
 		#region Overrides

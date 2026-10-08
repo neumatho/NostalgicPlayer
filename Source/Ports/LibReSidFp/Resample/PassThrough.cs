@@ -11,17 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 	internal sealed class PassThrough : Resampler
 	{
 		// Last sample
-		internal int outputValue;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public PassThrough()
-		{
-			outputValue = 0;
-		}
+		internal int32_t outputValue = 0;
 
 		#region Overrides
 		/********************************************************************/
@@ -29,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override bool Input(int sample)
+		public override bool Input(int32_t sample)
 		{
 			outputValue = sample;
 
@@ -43,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override int Output()
+		public override int32_t Output()
 		{
 			return outputValue;
 		}
