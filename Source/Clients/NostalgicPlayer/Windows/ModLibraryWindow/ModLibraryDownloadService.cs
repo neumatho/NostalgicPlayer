@@ -4,11 +4,12 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
@@ -17,8 +18,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 	/// </summary>
 	internal class ModLibraryDownloadService
 	{
-		private const string ModlandModulesUrl = "https://modland.com/pub/modules/";
-
 		private readonly ModLibraryData data;
 		private readonly string modulesBasePath;
 
@@ -54,18 +53,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		public async Task<string> DownloadModuleAsync(TreeNode entry, CancellationToken cancellationToken)
 		{
-			var service = data.GetService(entry.ServiceId);
-			if (service == null)
-			{
-				throw new InvalidOperationException("Service not found");
-			}
+			IModLibrarySource source = data.GetSource(entry.SourceId);
+			if (source == null)
+				throw new InvalidOperationException("Source not found");
 
-			// Get relative path without service prefix
-			string relativePath = data.GetRelativePathFromService(entry.FullPath, service);
+			// Get relative path without source prefix
+			string relativePath = data.GetRelativePathFromSource(entry.FullPath, source);
 
 			// Build local file path
-			string localPath = Path.Combine(modulesBasePath, service.FolderName,
-				relativePath.Replace('/', Path.DirectorySeparatorChar));
+			string localPath = Path.Combine(modulesBasePath, source.FolderName, relativePath.Replace('/', Path.DirectorySeparatorChar));
 			string localDirectory = Path.GetDirectoryName(localPath);
 
 			// Check if already downloaded
@@ -76,28 +72,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 				{
 					Directory.CreateDirectory(localDirectory);
 
-					// Download from service (currently only ModLand supported)
-					if (service.Id == "modland")
-					{
-						using HttpClient client = new();
+					var extraDownloaded = await source.DownloadAsync(entry, relativePath, FindExtraFiles(entry).ToArray(), localPath, localDirectory, cancellationToken);
 
-						// URL-encode the path to handle special characters
-						string encodedPath = string.Join("/", relativePath.Split('/').Select(Uri.EscapeDataString));
-						string downloadUrl = ModlandModulesUrl + encodedPath;
-						byte[] fileBytes = await client.GetByteArrayAsync(downloadUrl, cancellationToken);
-						await File.WriteAllBytesAsync(localPath, fileBytes, cancellationToken);
-
-						// Check if this is an mdat.* file - download matching smpl.* file
-						if (entry.Name.StartsWith("mdat.", StringComparison.OrdinalIgnoreCase))
-						{
-							await DownloadSampleFileAsync(client, entry, service, relativePath, localDirectory,
-								cancellationToken);
-						}
-					}
+					foreach (var extra in extraDownloaded)
+						AddFileToLocalCache(source, extra.ExtraPath, extra.ExtraSize);
 				}
 
 				// Add downloaded file to LocalFilesCache
-				AddFileToLocalCache(service, relativePath, entry.Size);
+				AddFileToLocalCache(source, relativePath, entry.Size);
 			}
 
 			return localPath;
@@ -107,30 +89,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Download matching sample file for mdat.* files
+		/// Find extra files which needs to be downloaded
 		/// </summary>
 		/********************************************************************/
-		private async Task DownloadSampleFileAsync(HttpClient client, TreeNode entry, ModuleService service, string relativePath, string localDirectory, CancellationToken cancellationToken)
+		private IEnumerable<string> FindExtraFiles(TreeNode entry)
 		{
-			string smplFileName = "smpl" + entry.Name.Substring(4);
-			string smplRelativePath = relativePath.Substring(0, relativePath.LastIndexOf('/') + 1) + smplFileName;
-			string smplLocalPath = Path.Combine(localDirectory, smplFileName);
-
-			string smplEncodedPath = string.Join("/", smplRelativePath.Split('/').Select(Uri.EscapeDataString));
-			string smplDownloadUrl = ModlandModulesUrl + smplEncodedPath;
-
-			try
-			{
-				byte[] smplBytes = await client.GetByteArrayAsync(smplDownloadUrl, cancellationToken);
-				await File.WriteAllBytesAsync(smplLocalPath, smplBytes, cancellationToken);
-
-				// Add smpl file to LocalFilesCache
-				AddFileToLocalCache(service, smplRelativePath, smplBytes.Length);
-			}
-			catch
-			{
-				// Sample file might not exist - that's ok
-			}
+			// Check if this is an mdat.* file - download matching smpl.* file
+			if (entry.Name.StartsWith("mdat.", StringComparison.OrdinalIgnoreCase))
+				yield return "smpl" + entry.Name.Substring(4);
 		}
 
 
@@ -140,10 +106,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// Add file to local cache
 		/// </summary>
 		/********************************************************************/
-		private void AddFileToLocalCache(ModuleService service, string relativePath, long size)
+		private void AddFileToLocalCache(IModLibrarySource source, string relativePath, long size)
 		{
 			// Build full path including service folder name
-			string fullPath = $"{service.FolderName}/{relativePath}";
+			string fullPath = $"{source.FolderName}/{relativePath}";
 
 			// Add to local files list if not already present
 			data.AddLocalFileIfNotExists(fullPath, size);

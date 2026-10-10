@@ -78,10 +78,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Service identifier this node belongs to
+		/// Source identifier this node belongs to
 		/// </summary>
 		/********************************************************************/
-		public string ServiceId
+		public string SourceId
 		{
 			get;
 			set;

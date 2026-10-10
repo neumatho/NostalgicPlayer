@@ -2584,6 +2584,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} ({1:yyyy-MM-dd}, {2:N0} files).
+        /// </summary>
+        internal static string IDS_MODLIBRARY_ROOT_DOWNLOADED {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_ROOT_DOWNLOADED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (not downloaded).
+        /// </summary>
+        internal static string IDS_MODLIBRARY_ROOT_NOTDOWNLOADED {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_ROOT_NOTDOWNLOADED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} folders, {1} files, {2} total files found.
         /// </summary>
         internal static string IDS_MODLIBRARY_SEARCH_COUNT {
@@ -2625,6 +2643,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_SEARCHMODE_PATH_ONLY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ModLand.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_SOURCE_MODLAND {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_SOURCE_MODLAND", resourceCulture);
             }
         }
         

@@ -1825,4 +1825,13 @@ This will delete the local database file and clear all data from memory.</value>
 
 Do you want to continue?</value>
   </data>
+  <data name="IDS_MODLIBRARY_ROOT_DOWNLOADED" xml:space="preserve">
+    <value>{0} ({1:yyyy-MM-dd}, {2:N0} files)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_ROOT_NOTDOWNLOADED" xml:space="preserve">
+    <value>{0} (not downloaded)</value>
+  </data>
+  <data name="IDS_MODLIBRARY_SOURCE_MODLAND" xml:space="preserve">
+    <value>ModLand</value>
+  </data>
 </root>

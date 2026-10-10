@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
@@ -28,7 +29,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 	internal class FilteredTreeBuilder
 	{
 		private readonly string filter;
-		private readonly bool isFlatView;
 
 		private readonly bool isOfflineMode;
 		private readonly List<ModEntry> localFiles;
@@ -36,25 +36,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		// Cache for fast node lookup during tree building
 		private readonly Dictionary<string, TreeNode> nodeCache = new();
 		private readonly SearchMode searchMode;
-		private readonly List<ModuleService> services;
+		private readonly List<IModLibrarySource> sources;
 		private readonly SynchronizationContext syncContext;
 		private bool cancelled;
-
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FilteredTreeBuilder(List<ModuleService> services, List<ModEntry> localFiles, string filter,
-			bool isOfflineMode, SearchMode searchMode, bool isFlatView)
+		public FilteredTreeBuilder(List<IModLibrarySource> sources, List<ModEntry> localFiles, string filter, bool isOfflineMode, SearchMode searchMode)
 		{
-			this.services = services;
+			this.sources = sources;
 			this.localFiles = localFiles;  // Already a snapshot from ModLibraryData
 			this.filter = filter;
 			this.isOfflineMode = isOfflineMode;
 			this.searchMode = searchMode;
-			this.isFlatView = isFlatView;
 			syncContext = SynchronizationContext.Current;
 		}
 
@@ -75,25 +72,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// PathParts
 		/// </summary>
 		/********************************************************************/
-		private void AddFileToFilteredTree(TreeNode serviceNode, ModuleService service, ModEntry entry)
+		private void AddFileToFilteredTree(TreeNode serviceNode, IModLibrarySource source, ModEntry entry)
 		{
 			var currentNode = serviceNode;
 			string currentPath = string.Empty;
 
 			// Use the pre-parsed PathParts from ModEntry!
-			for (int i = 0; i < entry.PathParts.Count; i++)
+			foreach (string part in entry.PathParts)
 			{
 				if (cancelled)
-				{
 					return;
-				}
 
-				string part = entry.PathParts[i];
 				currentPath = string.IsNullOrEmpty(currentPath) ? part : currentPath + "/" + part;
-				string fullPath = service.RootPath + currentPath;
+				string fullPath = source.RootPath + currentPath;
 
 				// Use cache for O(1) lookup instead of O(n) search
-				if (!nodeCache.TryGetValue(fullPath, out var childNode))
+				if (!nodeCache.TryGetValue(fullPath, out TreeNode childNode))
 				{
 					childNode = new TreeNode
 					{
@@ -101,8 +95,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 						FullPath = fullPath,
 						IsDirectory = true,
 						Size = 0,
-						ServiceId = service.Id
+						SourceId = source.Id
 					};
+
 					currentNode.Children.Add(childNode);
 					nodeCache[fullPath] = childNode;
 				}
@@ -112,19 +107,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 			// Add the file itself
 			string fileName = entry.Name;
-			string fileFullPath = service.RootPath + entry.FullName;
+			string fileFullPath = source.RootPath + entry.FullName;
 
 			// Check cache first
 			if (!nodeCache.ContainsKey(fileFullPath))
 			{
-				TreeNode fileNode = new()
+				TreeNode fileNode = new TreeNode
 				{
 					Name = fileName,
 					FullPath = fileFullPath,
 					IsDirectory = false,
 					Size = entry.Size,
-					ServiceId = service.Id
+					SourceId = source.Id
 				};
+
 				currentNode.Children.Add(fileNode);
 				nodeCache[fileFullPath] = fileNode;
 			}
@@ -143,14 +139,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			string currentPath = string.Empty;
 
 			// Use the pre-parsed PathParts from ModEntry!
-			for (int i = 0; i < entry.PathParts.Count; i++)
+			foreach (string part in entry.PathParts)
 			{
 				if (cancelled)
-				{
 					return;
-				}
 
-				string part = entry.PathParts[i];
 				currentPath = string.IsNullOrEmpty(currentPath) ? part : currentPath + "/" + part;
 
 				// Use cache for O(1) lookup instead of O(n) search
@@ -162,8 +155,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 						FullPath = currentPath,
 						IsDirectory = true,
 						Size = 0,
-						ServiceId = string.Empty
+						SourceId = string.Empty
 					};
+
 					currentNode.Children.Add(childNode);
 					nodeCache[currentPath] = childNode;
 				}
@@ -184,8 +178,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 					FullPath = fileFullPath,
 					IsDirectory = false,
 					Size = entry.Size,
-					ServiceId = string.Empty
+					SourceId = string.Empty
 				};
+
 				currentNode.Children.Add(fileNode);
 				nodeCache[fileFullPath] = fileNode;
 			}
@@ -205,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 				// Clear cache from previous builds
 				nodeCache.Clear();
 
-				TreeNode root = new() {Name = "Root", FullPath = string.Empty, IsDirectory = true};
+				TreeNode root = new TreeNode { Name = "Root", FullPath = string.Empty, IsDirectory = true };
 
 				bool showAll = string.IsNullOrEmpty(filter);
 				var filterRegex = showAll ? null : ConvertWildcardToRegex(filter);
@@ -223,9 +218,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			{
 				// Silently ignore errors if cancelled
 				if (!cancelled)
-				{
 					throw;
-				}
 			}
 		}
 
@@ -239,18 +232,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private void BuildTreeOfflineMode(TreeNode root, bool showAll, Regex filterRegex)
 		{
 			// Local mode: Use unified local files list (service-independent)
-			foreach (var entry in localFiles)
+			foreach (ModEntry entry in localFiles)
 			{
 				if (cancelled)
-				{
 					return;
-				}
 
 				bool matchesFilter = showAll;
 
 				if (!showAll)
-					// Use regex for wildcard matching
 				{
+					// Use regex for wildcard matching
 					matchesFilter = searchMode switch
 					{
 						SearchMode.FilenameAndPath => filterRegex.IsMatch(entry.FullName),
@@ -261,13 +252,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 				}
 
 				if (!matchesFilter)
-				{
 					continue;
-				}
 
 				// Always build tree structure (needed for flat view navigation too)
 				AddFileToLocalTree(root, entry);
-
 			}
 		}
 
@@ -281,39 +269,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private void BuildTreeOnlineMode(TreeNode root, bool showAll, Regex filterRegex)
 		{
 			// Online mode: Use service-specific online files
-			foreach (var service in services)
+			foreach (IModLibrarySource source in sources)
 			{
 				if (cancelled)
-				{
 					return;
-				}
 
 				// Build display name with status info
-				var files = service.OnlineFiles;
+				IReadOnlyList<ModEntry> files = source.OnlineFiles;
 				string displayName;
 
-				if (service.IsLoaded && files.Count > 0)
+				if (source.IsLoaded && (files.Count > 0))
 				{
 					// Online mode: Database loaded
 					int fileCount = files.Count;
-					displayName = $"{service.DisplayName} ({service.LastUpdate:yyyy-MM-dd}, {fileCount:N0} files)";
+					displayName = string.Format(Resources.IDS_MODLIBRARY_ROOT_DOWNLOADED, source.DisplayName, source.LastUpdate, fileCount);
 				}
 				else
-					// Online mode: Not downloaded
 				{
-					displayName = $"{service.DisplayName} (not downloaded)";
+					// Online mode: Not downloaded
+					displayName = string.Format(Resources.IDS_MODLIBRARY_ROOT_NOTDOWNLOADED, source.DisplayName);
 				}
 
-				TreeNode serviceNode = new() {Name = displayName, FullPath = service.RootPath, IsDirectory = true, ServiceId = service.Id};
+				TreeNode serviceNode = new TreeNode { Name = displayName, FullPath = source.RootPath, IsDirectory = true, SourceId = source.Id };
 
 				// Always add service node (needed for flat view navigation too)
 				root.Children.Add(serviceNode);
 
 				// If service is loaded, add filtered files
-				if (service.IsLoaded)
-				{
-					 ProcessServiceFiles(serviceNode, service, showAll, filterRegex);
-				}
+				if (source.IsLoaded)
+					 ProcessServiceFiles(serviceNode, source, showAll, filterRegex);
 			}
 		}
 
@@ -331,9 +315,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 			// If no wildcards, auto-add * around the pattern
 			if (!hasWildcards)
-			{
 				pattern = "*" + pattern + "*";
-			}
 
 			// Escape regex special characters except * and ?
 			string regexPattern = Regex.Escape(pattern);
@@ -359,15 +341,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		{
 			if (!cancelled && Completed != null)
 			{
-				TreeBuildCompletedEventArgs args = new(root);
+				TreeBuildCompletedEventArgs args = new TreeBuildCompletedEventArgs(root);
+
 				if (syncContext != null)
-				{
 					syncContext.Post(_ => Completed?.Invoke(this, args), null);
-				}
 				else
-				{
 					Completed?.Invoke(this, args);
-				}
 			}
 		}
 
@@ -378,42 +357,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// Process files for a specific service
 		/// </summary>
 		/********************************************************************/
-		private void ProcessServiceFiles(TreeNode serviceNode, ModuleService service, bool showAll, Regex filterRegex)
+		private void ProcessServiceFiles(TreeNode serviceNode, IModLibrarySource source, bool showAll, Regex filterRegex)
 		{
-			foreach (var entry in service.OnlineFiles)
+			foreach (var entry in source.OnlineFiles)
 			{
 				if (cancelled)
-				{
 					return;
-				}
 
 				// ModEntry only contains files, no directories!
 				bool matchesFilter = showAll;
 
 				if (!showAll)
-					// Use regex for wildcard matching
 				{
+					// Use regex for wildcard matching
 					switch (searchMode)
 					{
 						case SearchMode.FilenameAndPath:
+						{
 							matchesFilter = filterRegex.IsMatch(entry.Name) || filterRegex.IsMatch(entry.FullName);
 							break;
+						}
+
 						case SearchMode.FilenameOnly:
+						{
 							matchesFilter = filterRegex.IsMatch(entry.Name);
 							break;
+						}
+
 						case SearchMode.PathOnly:
+						{
 							matchesFilter = filterRegex.IsMatch(entry.FullPath);
 							break;
+						}
 					}
 				}
 
 				if (matchesFilter)
 				{
 					// Always build tree structure (needed for flat view navigation too)
-					AddFileToFilteredTree(serviceNode, service, entry);
+					AddFileToFilteredTree(serviceNode, source, entry);
 				}
 			}
-
 		}
 
 
