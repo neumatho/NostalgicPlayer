@@ -546,10 +546,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 						// And start playing again
 						if (!player.StartPlaying(loadedFiles[0].Loader, out string errorMessage, mixerConfiguration))
 						{
+							CloseOutputAgent();
+
 							if (!string.IsNullOrEmpty(errorMessage))
 								ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, playerName, errorMessage), listItem);
-
-							outputAgent = null;
 
 							return false;
 						}
@@ -941,7 +941,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 					if (!modulePlayer.SelectSong(subSong, out string errorMessage))
 					{
 						if (showError)
-							mainWindowApi.ShowErrorMessage(errorMessage, listItem);
+							ShowErrorMessage(errorMessage, listItem);
 
 						return false;
 					}
@@ -969,8 +969,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 						// Start playing the song
 						if (!player.StartPlaying(loadedFiles[0].Loader, out string errorMessage, mixerConfiguration))
 						{
+							CloseOutputAgent();
+
 							if (showError && !string.IsNullOrEmpty(errorMessage))
-								mainWindowApi.ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
+								ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
 
 							return false;
 						}
