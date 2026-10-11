@@ -163,24 +163,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Check if update warning is ignored for a specific service
+		/// Check if update warning is ignored for a specific source
 		/// </summary>
 		/********************************************************************/
-		public bool IsUpdateIgnored(string serviceId)
+		public bool IsUpdateIgnored(string sourceId)
 		{
-			return settings.GetBoolEntry("ModLibrary", $"IgnoreUpdate_{serviceId}", false);
+			return settings.GetBoolEntry("ModLibrary", $"IgnoreUpdate_{sourceId}", false);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Set ignore state for update warning of a specific service
+		/// Set ignore state for update warning of a specific source
 		/// </summary>
 		/********************************************************************/
-		public void SetUpdateIgnored(string serviceId, bool ignored)
+		public void SetUpdateIgnored(string sourceId, bool ignored)
 		{
-			settings.SetBoolEntry("ModLibrary", $"IgnoreUpdate_{serviceId}", ignored);
+			settings.SetBoolEntry("ModLibrary", $"IgnoreUpdate_{sourceId}", ignored);
 		}
 
 

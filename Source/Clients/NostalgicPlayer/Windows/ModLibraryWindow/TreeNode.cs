@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 	/// <summary>
 	/// Represents a node in the module library tree structure
 	/// </summary>
-	internal class TreeNode
+	public class TreeNode
 	{
 		/********************************************************************/
 		/// <summary>

@@ -5,15 +5,13 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources
 {
 	/// <summary>
 	/// Hold the interface to a source, e.g. ModLand
 	/// </summary>
-	internal interface IModLibrarySource
+	public interface IModLibrarySource
 	{
 		/// <summary>
 		/// Service identifier
@@ -46,23 +44,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sou
 		DateTime LastUpdate { get; set; }
 
 		/// <summary>
-		/// Get readonly access to online files
+		/// Get readonly access to files
 		/// </summary>
-		IReadOnlyList<ModEntry> OnlineFiles { get; }
+		IReadOnlyList<ModEntry> Files { get; }
 
 		/// <summary>
-		/// Add online file - creates ModEntry from already sorted data
+		/// Add file - creates ModEntry from already sorted data
 		/// </summary>
-		void AddOnlineFile(string nameWithPath, long size);
+		void AddFile(string nameWithPath, long size);
 
 		/// <summary>
-		/// Clear online files
+		/// Clear file collection
 		/// </summary>
-		void ClearOnlineFiles();
+		void ClearFiles();
 
 		/// <summary>
-		/// Download a single module
+		/// Return a new instance of a downloader
 		/// </summary>
-		Task<(string ExtraPath, int ExtraSize)[]> DownloadAsync(TreeNode entry, string relativePath, string[] extraFiles, string localPath, string localDirectory, CancellationToken cancellationToken);
+		IModLibraryDownloader GetDownloader();
 	}
 }

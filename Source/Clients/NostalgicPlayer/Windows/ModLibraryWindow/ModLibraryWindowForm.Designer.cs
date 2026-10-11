@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			favoritesOnlyCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			playImmediatelyCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			checkboxPanel = new System.Windows.Forms.Panel();
-			serviceContextMenu = new Krypton.Toolkit.KryptonContextMenu();
+			sourceContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			updateDatabaseMenuItem = new Krypton.Toolkit.KryptonContextMenuItems();
 			updateDatabaseItem = new Krypton.Toolkit.KryptonContextMenuItem();
 			clearDatabaseItem = new Krypton.Toolkit.KryptonContextMenuItem();
@@ -188,9 +188,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			checkboxPanel.Size = new System.Drawing.Size(884, 20);
 			checkboxPanel.TabIndex = 4;
 			// 
-			// serviceContextMenu
+			// sourceContextMenu
 			// 
-			serviceContextMenu.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { updateDatabaseMenuItem });
+			sourceContextMenu.Items.AddRange(new Krypton.Toolkit.KryptonContextMenuItemBase[] { updateDatabaseMenuItem });
 			// 
 			// updateDatabaseMenuItem
 			// 
@@ -468,7 +468,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		private Kit.Gui.Components.FontPalette fontPalette;
 		private Kit.Gui.Designer.ControlResource controlResource;
-		private Krypton.Toolkit.KryptonContextMenu serviceContextMenu;
+		private Krypton.Toolkit.KryptonContextMenu sourceContextMenu;
 		private Krypton.Toolkit.KryptonContextMenuItems updateDatabaseMenuItem;
 		private Krypton.Toolkit.KryptonContextMenuItem updateDatabaseItem;
 		private Krypton.Toolkit.KryptonContextMenuItem clearDatabaseItem;

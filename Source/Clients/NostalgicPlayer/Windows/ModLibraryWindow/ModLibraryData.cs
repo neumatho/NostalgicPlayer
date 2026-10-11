@@ -262,31 +262,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Get display path for breadcrumb
-		/// </summary>
-		/********************************************************************/
-		public string GetDisplayPath(string path)
-		{
-			if (string.IsNullOrEmpty(path))
-				return "Root";
-
-			IModLibrarySource source = GetSourceFromPath(path);
-			if (source != null)
-			{
-				string relativePath = GetRelativePathFromSource(path, source);
-				if (string.IsNullOrEmpty(relativePath))
-					return source.DisplayName;
-
-				return $"{source.DisplayName}/{relativePath}";
-			}
-
-			return path;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Get entries for a specific path with optional flat view sort
 		/// order
 		/// </summary>

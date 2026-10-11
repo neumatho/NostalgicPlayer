@@ -10,11 +10,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
+using Polycode.NostalgicPlayer.External.ModLibrary.Models;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
-	/// Handles downloading of module files from ModLand
+	/// Handles downloading of module files from different sources
 	/// </summary>
 	internal class ModLibraryDownloadService
 	{
@@ -51,35 +52,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// Download a single module file
 		/// </summary>
 		/********************************************************************/
-		public async Task<string> DownloadModuleAsync(TreeNode entry, CancellationToken cancellationToken)
+		private async Task<string> DownloadModuleAsync(TreeNode entry, CancellationToken cancellationToken)
 		{
 			IModLibrarySource source = data.GetSource(entry.SourceId);
 			if (source == null)
 				throw new InvalidOperationException("Source not found");
 
 			// Get relative path without source prefix
-			string relativePath = data.GetRelativePathFromSource(entry.FullPath, source);
+			string moduleName = data.GetRelativePathFromSource(entry.FullPath, source);
+			string relativePath = string.Empty;
+
+			int lastSlashIndex = moduleName.LastIndexOf('/');
+			if (lastSlashIndex != -1)
+			{
+				relativePath = moduleName.Substring(0, lastSlashIndex);
+				moduleName = moduleName.Substring(lastSlashIndex + 1);
+			}
 
 			// Build local file path
-			string localPath = Path.Combine(modulesBasePath, source.FolderName, relativePath.Replace('/', Path.DirectorySeparatorChar));
+			string localPath = Path.Combine(modulesBasePath, source.FolderName, relativePath.Replace('/', Path.DirectorySeparatorChar), moduleName);
 			string localDirectory = Path.GetDirectoryName(localPath);
 
 			// Check if already downloaded
 			if (!File.Exists(localPath))
 			{
-				// Create directory if needed
 				if (localDirectory != null)
 				{
 					Directory.CreateDirectory(localDirectory);
 
-					var extraDownloaded = await source.DownloadAsync(entry, relativePath, FindExtraFiles(entry).ToArray(), localPath, localDirectory, cancellationToken);
+					DownloadedFileModel[] downloadedFiles = await source.GetDownloader().DownloadFileAsync(relativePath, moduleName, FindExtraFiles(entry).ToArray(), cancellationToken);
 
-					foreach (var extra in extraDownloaded)
-						AddFileToLocalCache(source, extra.ExtraPath, extra.ExtraSize);
+					foreach (DownloadedFileModel file in downloadedFiles)
+					{
+						await File.WriteAllBytesAsync(Path.Combine(localDirectory, file.FileName), file.Content, cancellationToken);
+						AddFileToLocalCache(source, file.RelativeFileName, file.Content.Length);
+					}
 				}
-
-				// Add downloaded file to LocalFilesCache
-				AddFileToLocalCache(source, relativePath, entry.Size);
 			}
 
 			return localPath;

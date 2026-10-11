@@ -275,7 +275,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 					return;
 
 				// Build display name with status info
-				IReadOnlyList<ModEntry> files = source.OnlineFiles;
+				IReadOnlyList<ModEntry> files = source.Files;
 				string displayName;
 
 				if (source.IsLoaded && (files.Count > 0))
@@ -359,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		private void ProcessServiceFiles(TreeNode serviceNode, IModLibrarySource source, bool showAll, Regex filterRegex)
 		{
-			foreach (var entry in source.OnlineFiles)
+			foreach (ModEntry entry in source.Files)
 			{
 				if (cancelled)
 					return;

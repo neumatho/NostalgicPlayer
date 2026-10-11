@@ -10,6 +10,8 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources.ModLand;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Kit.Gui.Composition;
 using Polycode.NostalgicPlayer.Library.Application;
@@ -41,6 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			RegisterServices(container);
 			RegisterAdapters(container);
 			RegisterAudius(container);
+			RegisterModLibrary(container);
 
 			container.RegisterSingleton<ListItemMapper>();
 			container.Register<RememberListSettings>();
@@ -77,6 +80,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			container.RegisterSingleton<IProgressCallbackFactory, ProgressCallbackFactory>();
 			container.RegisterSingleton<IMixerConfigurationFactory, MixerConfigurationFactory>();
 			container.RegisterSingleton<IAudiusLoaderFactory, AudiusLoaderFactory>();
+			container.RegisterSingleton<ISourceFactory, SourceFactory>();
 		}
 
 
@@ -120,6 +124,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		private static void RegisterAudius(Container container)
 		{
 			container.RegisterSingleton<IAudiusHelper, AudiusHelper>();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register all ModLibrary classes into the container
+		/// </summary>
+		/********************************************************************/
+		private static void RegisterModLibrary(Container container)
+		{
+			container.Register<ModLandDownloader>();
 		}
 	}
 }

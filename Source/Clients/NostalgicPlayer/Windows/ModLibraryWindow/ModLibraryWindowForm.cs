@@ -29,13 +29,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 	public partial class ModLibraryWindowForm : WindowFormBase, IModLibraryWindowApi
 	{
 		private const string AllmodsZipUrl = "https://modland.com/allmods.zip";
-		private readonly Dictionary<string, InfoBarControl> activeInfoBars = new();
 
 		private IMainWindowApi mainWindow;
 		private IPlatformPath platformPath;
 		private PathSettings pathSettings;
+		private ISourceFactory sourceFactory;
 
-		private readonly ModLibraryData data = new();
+		private readonly Dictionary<string, InfoBarControl> activeInfoBars = new Dictionary<string, InfoBarControl>();
+		private readonly ModLibraryData data = new ModLibraryData();
 
 		// Download queue
 		private DownloadQueueManager downloadQueueManager;
@@ -46,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private bool addDownloadsToPlaylist = true;
 
 		private string cacheDirectory;
-		private List<TreeNode> currentEntries = new();
+		private List<TreeNode> currentEntries = new List<TreeNode>();
 		private string currentPath = string.Empty;
 		private ModLibraryDownloadService downloadService;
 		private ModLibraryFavorites favorites;
@@ -75,11 +76,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// Called from FormCreatorService
 		/// </summary>
 		/********************************************************************/
-		public void InitializeForm(IMainWindowApi mainWindow, IPlatformPath platformPath, PathSettings pathSettings)
+		public void InitializeForm(IMainWindowApi mainWindow, IPlatformPath platformPath, PathSettings pathSettings, ISourceFactory sourceFactory)
 		{
 			this.mainWindow = mainWindow;
 			this.platformPath = platformPath;
 			this.pathSettings = pathSettings;
+			this.sourceFactory = sourceFactory;
 
 			Disposed += ModLibraryWindowForm_Disposed;
 
@@ -516,7 +518,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 						if (entry.IsDirectory && entry.FullPath.EndsWith("://"))
 						{
 							// Show source context menu only for source nodes at root
-							serviceContextMenu.Show(moduleListView.PointToScreen(e.Location));
+							sourceContextMenu.Show(moduleListView.PointToScreen(e.Location));
 						}
 						else
 						{
@@ -707,7 +709,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 				try
 				{
 					// Clear data in RAM
-					modland.ClearOnlineFiles();
+					modland.ClearFiles();
 					modland.IsLoaded = false;
 					modland.LastUpdate = DateTime.MinValue;
 
@@ -1193,7 +1195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 					if (modland.IsLoaded)
 					{
 						data.CountTotalFilesInFilteredCache();
-						statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_DATABASE_LOADED, modland.LastUpdate.ToString("yyyy-MM-dd"), modland.OnlineFiles.Count);
+						statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_DATABASE_LOADED, modland.LastUpdate.ToString("yyyy-MM-dd"), modland.Files.Count);
 					}
 					else
 						statusLabel.Text = Resources.IDS_MODLIBRARY_STATUS_RIGHT_CLICK_SERVICE;
@@ -1690,7 +1692,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			if (source == null)
 				return null;
 
-			// Get relative path without service prefix
+			// Get relative path without source prefix
 			string relativePath = data.GetRelativePathFromSource(entry.FullPath, source);
 
 			// Build local file path
@@ -1720,11 +1722,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		private void InitializeSources()
 		{
-			// ModLand service
+			// ModLand source
 			string modlandCacheDir = Path.Combine(cacheDirectory, "ModLand");
 			Directory.CreateDirectory(modlandCacheDir);
 
-			data.AddSource(new ModLandSource());
+			data.AddSource(sourceFactory.GetModLandSource());
 
 			// Initialize helper services
 			downloadService = new ModLibraryDownloadService(data, GetModLibraryModulesPath());
@@ -1783,7 +1785,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			}
 			else
 			{
-				// Build tree to show services (even though database is not loaded)
+				// Build tree to show sources (even though database is not loaded)
 				// This will fire OnDataLoaded which will set proper status
 				RebuildTree();
 			}
@@ -1861,7 +1863,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 				statusLabel.Text = string.Format(Resources.IDS_MODLIBRARY_STATUS_ERROR_PREFIX, ex.Message);
 				MessageBox.Show(string.Format(Resources.IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD, ex.Message), Resources.IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-				// Restore tree view to show services (remove "Updating database..." status)
+				// Restore tree view to show sources (remove "Updating database..." status)
 				RebuildTree();
 			}
 			finally
@@ -1885,7 +1887,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			if (!File.Exists(allmodsTxtPath))
 				return;
 
-			source.ClearOnlineFiles();
+			source.ClearFiles();
 
 			// Step 1: Parse all lines into (nameWithPath, size) tuples
 			List<(string nameWithPath, long size)> entries = new();
@@ -1914,7 +1916,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 			// Step 3: Create ModEntry objects from sorted data
 			foreach (var entry in entries)
-				source.AddOnlineFile(entry.nameWithPath, entry.size);
+				source.AddFile(entry.nameWithPath, entry.size);
 		}
 
 
@@ -2103,15 +2105,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			AddBreadcrumbLink(Resources.IDS_MODLIBRARY_HOME, string.Empty);
 			AddBreadcrumbSeparator();
 
-			// Check if path is a service root (ends with "://")
+			// Check if path is a source root (ends with "://")
 			if (currentPath.EndsWith("://"))
 			{
-				// Service root like "modland://" - use DisplayName from service
+				// Source root like "modland://" - use DisplayName from source
 				IModLibrarySource source = data.GetSourceFromPath(currentPath);
-				string serviceName = source?.DisplayName ?? currentPath.Substring(0, currentPath.Length - 3);
+				string sourceName = source?.DisplayName ?? currentPath.Substring(0, currentPath.Length - 3);
 
-				// Make service root clickable (allows reload/refresh)
-				AddBreadcrumbLink(serviceName, currentPath);
+				// Make source root clickable (allows reload/refresh)
+				AddBreadcrumbLink(sourceName, currentPath);
 
 				// Add counts in gray
 				AddBreadcrumbSeparator("•");
@@ -2126,16 +2128,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 			for (int i = 0; i < parts.Length; i++)
 			{
-				// Handle service protocol parts (like "modland:")
+				// Handle source protocol parts (like "modland:")
 				if (parts[i].EndsWith(":"))
 				{
 					pathSoFar = parts[i] + "//";
 
-					// Get service DisplayName instead of using path part
-					IModLibrarySource service = data.GetSourceFromPath(pathSoFar);
-					string serviceName = service?.DisplayName ?? parts[i].TrimEnd(':');
+					// Get source DisplayName instead of using path part
+					IModLibrarySource source = data.GetSourceFromPath(pathSoFar);
+					string sourceName = source?.DisplayName ?? parts[i].TrimEnd(':');
 
-					AddBreadcrumbLink(serviceName, pathSoFar);
+					AddBreadcrumbLink(sourceName, pathSoFar);
 					AddBreadcrumbSeparator();
 					continue;
 				}
@@ -2198,7 +2200,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		private void BuildClickablePath(string path)
 		{
-			// Check if path is a service root (ends with "://")
+			// Check if path is a source root (ends with "://")
 			if (path.EndsWith("://"))
 			{
 				IModLibrarySource source = data.GetSourceFromPath(path);
@@ -2213,7 +2215,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 			for (int i = 0; i < parts.Length; i++)
 			{
-				// Handle service protocol parts (like "modland:")
+				// Handle source protocol parts (like "modland:")
 				if (parts[i].EndsWith(":"))
 				{
 					pathSoFar = parts[i] + "//";
@@ -2310,7 +2312,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 					}
 				}
 
-				// Always allow navigation, even if currentPath == path (e.g., when clicking service root from subdirectory in search mode)
+				// Always allow navigation, even if currentPath == path (e.g., when clicking source root from subdirectory in search mode)
 				currentPath = path;
 				LoadCurrentDirectory(folderToSelect);
 			}
@@ -2486,7 +2488,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Scan local files for a service
+		/// Scan local files for a source
 		/// </summary>
 		/********************************************************************/
 		private void ScanLocalFiles()
@@ -2497,9 +2499,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			string modulesDir = GetModLibraryModulesPath();
 
 			if (!Directory.Exists(modulesDir))
-			{
 				return;
-			}
 
 			// Recursively scan all files in the unified Modules folder
 			string[] allFiles = Directory.GetFiles(modulesDir, "*", SearchOption.AllDirectories);
@@ -2509,15 +2509,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 			foreach (string filePath in allFiles)
 			{
-				// Get relative path from Modules directory (includes full path with service folder)
-				string fullRelativePath =
-					filePath.Substring(modulesDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
+				// Get relative path from Modules directory (includes full path with source folder)
+				string fullRelativePath = filePath.Substring(modulesDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
 
 				// Skip files that should not be included (e.g., smpl.*)
 				if (!ShouldIncludeFile(fullRelativePath))
-				{
 					continue;
-				}
 
 				// Get file size
 				FileInfo fileInfo = new(filePath);
@@ -2531,9 +2528,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 			// Step 3: Add all files to local files list
 			foreach (var entry in entries)
-			{
 				data.AddLocalFile(entry.nameWithPath, entry.size);
-			}
 		}
 
 
@@ -2602,26 +2597,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		{
 			// Check if the directory itself is a favorite
 			if (favorites.IsFavorite(directory.FullPath))
-			{
 				return true;
-			}
 
 			// Check children recursively
-			foreach (var child in directory.Children)
+			foreach (TreeNode child in directory.Children)
 			{
 				if (child.IsDirectory)
 				{
 					if (DirectoryContainsFavorites(child))
-					{
 						return true;
-					}
 				}
 				else
 				{
 					if (favorites.IsFavorite(child.FullPath))
-					{
 						return true;
-					}
 				}
 			}
 
@@ -2635,18 +2624,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// Show an info bar warning that the database is old
 		/// </summary>
 		/********************************************************************/
-		private void ShowDatabaseOldInfoBar(string serviceId, string serviceName, int daysOld)
+		private void ShowDatabaseOldInfoBar(string sourceId, string sourceName, int daysOld)
 		{
 			// Don't show if already visible
-			if (activeInfoBars.ContainsKey(serviceId))
-			{
+			if (activeInfoBars.ContainsKey(sourceId))
 				return;
-			}
 
-			InfoBarControl infoBar = new();
+			InfoBarControl infoBar = new InfoBarControl();
 			infoBar.Configure(
-				serviceId,
-				string.Format(Resources.IDS_MODLIBRARY_INFOBAR_DATABASE_OLD, serviceName, daysOld),
+				sourceId,
+				string.Format(Resources.IDS_MODLIBRARY_INFOBAR_DATABASE_OLD, sourceName, daysOld),
 				Resources.IDS_MODLIBRARY_INFOBAR_UPDATE_NOW,
 				Resources.IDS_MODLIBRARY_INFOBAR_IGNORE,
 				Resources.IDS_MODLIBRARY_INFOBAR_DISMISS
@@ -2656,7 +2643,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 			infoBar.IgnoreClicked += InfoBar_IgnoreClicked;
 			infoBar.CloseClicked += InfoBar_CloseClicked;
 
-			activeInfoBars[serviceId] = infoBar;
+			activeInfoBars[sourceId] = infoBar;
 			infoBarPanel.Controls.Add(infoBar);
 			infoBarPanel.Visible = true;
 		}
@@ -2665,22 +2652,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Hide info bar for a specific service
+		/// Hide info bar for a specific source
 		/// </summary>
 		/********************************************************************/
-		private void HideInfoBar(string serviceId)
+		private void HideInfoBar(string sourceId)
 		{
-			if (activeInfoBars.TryGetValue(serviceId, out var infoBar))
+			if (activeInfoBars.TryGetValue(sourceId, out var infoBar))
 			{
 				infoBarPanel.Controls.Remove(infoBar);
-				activeInfoBars.Remove(serviceId);
+				activeInfoBars.Remove(sourceId);
 				infoBar.Dispose();
 
 				// Hide panel if no more info bars
 				if (infoBarPanel.Controls.Count == 0)
-				{
 					infoBarPanel.Visible = false;
-				}
 			}
 		}
 
@@ -2694,16 +2679,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private async void InfoBar_ActionClicked(object sender, InfoBarActionEventArgs e)
 		{
 			// Hide the info bar
-			HideInfoBar(e.ServiceId);
+			HideInfoBar(e.SourceId);
 
 			// Reset ignore flag
-			settings.SetUpdateIgnored(e.ServiceId, false);
+			settings.SetUpdateIgnored(e.SourceId, false);
 
 			// Trigger update
-			if (e.ServiceId == "modland")
-			{
+			if (e.SourceId == "modland")
 				await DownloadModLandDatabase();
-			}
 		}
 
 
@@ -2716,10 +2699,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private void InfoBar_IgnoreClicked(object sender, InfoBarActionEventArgs e)
 		{
 			// Set ignore flag
-			settings.SetUpdateIgnored(e.ServiceId, true);
+			settings.SetUpdateIgnored(e.SourceId, true);
 
 			// Hide the info bar
-			HideInfoBar(e.ServiceId);
+			HideInfoBar(e.SourceId);
 		}
 
 
@@ -2732,7 +2715,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private void InfoBar_CloseClicked(object sender, InfoBarActionEventArgs e)
 		{
 			// Just hide without setting ignore flag
-			HideInfoBar(e.ServiceId);
+			HideInfoBar(e.SourceId);
 		}
 		#endregion
 	}

@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 	/// <summary>
 	/// Represents a module file entry (not directories - only files!)
 	/// </summary>
-	internal class ModEntry
+	public class ModEntry
 	{
 		private readonly List<string> pathParts;
 

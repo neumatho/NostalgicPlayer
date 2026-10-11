@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private readonly Button ignoreButton;
 		private readonly Label messageLabel;
 
-		private string serviceId;
+		private string sourceId;
 
 		/********************************************************************/
 		/// <summary>
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		private void ActionButton_Click(object sender, EventArgs e)
 		{
-			ActionClicked?.Invoke(this, new InfoBarActionEventArgs(serviceId));
+			ActionClicked?.Invoke(this, new InfoBarActionEventArgs(sourceId));
 		}
 
 
@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		private void IgnoreButton_Click(object sender, EventArgs e)
 		{
-			IgnoreClicked?.Invoke(this, new InfoBarActionEventArgs(serviceId));
+			IgnoreClicked?.Invoke(this, new InfoBarActionEventArgs(sourceId));
 		}
 
 
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		private void CloseButton_Click(object sender, EventArgs e)
 		{
-			CloseClicked?.Invoke(this, new InfoBarActionEventArgs(serviceId));
+			CloseClicked?.Invoke(this, new InfoBarActionEventArgs(sourceId));
 		}
 
 
@@ -171,9 +171,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/// Configure the info bar with message and button texts
 		/// </summary>
 		/********************************************************************/
-		public void Configure(string newServiceId, string message, string actionText, string ignoreText, string dismissText)
+		public void Configure(string newSourceId, string message, string actionText, string ignoreText, string dismissText)
 		{
-			serviceId = newServiceId;
+			sourceId = newSourceId;
 			messageLabel.Text = message;
 			actionButton.Text = actionText;
 			ignoreButton.Text = ignoreText;
@@ -188,11 +188,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 	/// Event args for InfoBar button clicks
 	/// </summary>
 	/********************************************************************/
-	internal class InfoBarActionEventArgs(string serviceId) : EventArgs
+	internal class InfoBarActionEventArgs(string sourceId) : EventArgs
 	{
-		public string ServiceId
+		public string SourceId
 		{
 			get;
-		} = serviceId;
+		} = sourceId;
 	}
 }

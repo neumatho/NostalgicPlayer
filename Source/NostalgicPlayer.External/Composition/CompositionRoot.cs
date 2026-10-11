@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.External.Audius;
 using Polycode.NostalgicPlayer.External.Homepage;
+using Polycode.NostalgicPlayer.External.ModLibrary.ModLand;
 using SimpleInjector;
 
 namespace Polycode.NostalgicPlayer.External.Composition
@@ -23,6 +24,7 @@ namespace Polycode.NostalgicPlayer.External.Composition
 		{
 			container.RegisterSingleton<IAudiusClientFactory, AudiusClientFactory>();
 			container.RegisterSingleton<IHomepageClientFactory, HomepageClientFactory>();
+			container.RegisterSingleton<IModLandClientFactory, ModLandClientFactory>();
 		}
 	}
 }
