@@ -879,8 +879,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 		}
 
-
-
+		#region Extended test
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -965,6 +964,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			return 0;
 		}
+		#endregion
+
 		#endregion
 	}
 }

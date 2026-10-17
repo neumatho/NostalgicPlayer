@@ -4,11 +4,18 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
+using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers;
+using Version = Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Version;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 {
@@ -17,6 +24,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal class ModSequence : vector<PatternIndex>, IEquatable<ModSequence>, IDeepCloneable<ModSequence>
 	{
+		public const string FileIdSequences = "mptSeqC";
+		private const string FileIdSequence = "mptSeq";
+
 		/// <summary>
 		/// Sequence name
 		/// </summary>
@@ -90,6 +100,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public void Shrink()
 		{
 			resize(GetLengthTailTrimmed());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void SetName(string newName)
+		{
+			m_Name = Utility.move(newName);
 		}
 
 
@@ -401,6 +424,120 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			}
 
 			return Snd_Def.OrderIndex_Invalid;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public static void ReadModSequenceOld(Stream iStrm, ref ModSequenceSet seq, size_t _)//XX 637
+		{
+			Io_.ReadIntLE(iStrm, out uint16 size);
+
+			if (size > ModSpecs.Mptm.OrdersMax)
+				size = ModSpecs.Mptm.OrdersMax;
+
+			seq[0].resize(size);
+
+			for (size_t i = 0; i < seq[0].size(); i++)
+			{
+				Io_.ReadIntLE(iStrm, out uint16 temp);
+				seq[0][i] = temp;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public static void ReadModSequence(ReaderStream iStrm, ModSequence seq, size_t _, Encoding defaultCharset)//XX 689
+		{
+			SsbRead ssb = new SsbRead(iStrm);
+			ssb.BeginRead(FileIdSequence, Version.Current().GetRawVersion());
+
+			if (ssb.HasFailed())
+				return;
+
+			int8 useUtf8 = 0;
+			ssb.ReadItem(ref useUtf8, "u");
+
+			StdString str = new StdString();
+			ssb.ReadItem(ref str, "n");
+			seq.SetName((useUtf8 != 0 ? Encoding.UTF8 : defaultCharset).GetString(str.Span()));
+
+			OrderIndex nSize = 0;
+			ssb.ReadItem(ref nSize, "l");
+			OpenMpt.LimitMax(ref nSize, ModSpecs.Mptm.OrdersMax);
+
+			ssb.ReadItem(ref seq, "a", (strm, ref data, size) => new VectorReader<uint16>(nSize).Read(strm, data));
+
+			OrderIndex restartPos = Snd_Def.OrderIndex_Invalid;
+			if (ssb.ReadItem(ref restartPos, "r") && (restartPos < nSize))
+				seq.SetRestartPos(restartPos);
+
+			uint32 defaultTempo = 0;
+			if (ssb.ReadItem(ref defaultTempo, "t") && (defaultTempo > 0))
+			{
+				Tempo tempo = new Tempo();
+				tempo.SetRaw(defaultTempo);
+				seq.SetDefaultTempo(tempo);
+			}
+
+			uint32 defaultSpeed = 0;
+			if (ssb.ReadItem(ref defaultSpeed, "s") && (defaultSpeed > 0))
+				seq.SetDefaultSpeed(defaultSpeed);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public static void ReadModSequences(ReaderStream iStrm, ModSequenceSet seq, size_t _, Encoding defaultCharset)//XX 745
+		{
+			SsbRead ssb = new SsbRead(iStrm);
+			ssb.BeginRead(FileIdSequences, Version.Current().GetRawVersion());
+
+			if (ssb.HasFailed())
+				return;
+
+			SequenceIndex seqs = 0;
+			uint8 currentSeq = 0;
+			ssb.ReadItem(ref seqs, "n");
+
+			if (seqs == 0)
+				return;
+
+			OpenMpt.LimitMax(ref seqs, Snd_Def.Max_Sequences);
+
+			ssb.ReadItem(ref currentSeq, "c");
+
+			if (seq.GetNumSequences() < seqs)
+				seq.m_Sequences.resize(seqs, new ModSequence(seq.m_SndFile));
+
+			// There used to be only one restart position / tempo / speed for all sequences
+			OrderIndex legacyRestartPos = seq[0].GetRestartPos();
+			Tempo legacyTempo = seq[0].GetDefaultTempo();
+			uint32 legacySpeed = seq[0].GetDefaultSpeed();
+
+			for (SequenceIndex i = 0; i < seqs; i++)
+			{
+				seq[i].SetRestartPos(legacyRestartPos);
+				seq[i].SetDefaultTempo(legacyTempo);
+				seq[i].SetDefaultSpeed(legacySpeed);
+
+				ssb.ReadItem(ref seq[i], Id.FromInt(i), (strm, ref seq_, dummy) => ReadModSequence(strm, seq_, dummy, defaultCharset));
+			}
+
+			seq.m_CurrentSeq = (SequenceIndex)((currentSeq < seq.GetNumSequences()) ? currentSeq : 0);
 		}
 
 

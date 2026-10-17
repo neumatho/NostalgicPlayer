@@ -237,11 +237,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private const uint Magic_Midi = 0x4d494449;
 		private const uint Magic_Pnam = 0x504e414d;
 		private const uint Magic_Cnam = 0x434e414d;
-		private const uint Magic_Chfx = 0x43484658;
 		private const uint Magic_Xtpm = 0x5854504d;
 		private const uint Magic_Stpm = 0x5354504d;
-		private const uint Magic_Impi = 0x494d5049;
-		private const uint Magic_Imps = 0x494d5053;
 
 		// TNE: Sizes and flags used by the ModPlug Tracker / OpenMPT test
 		private const uint32 Xm_Instrument_Header_Size = 263;
@@ -1506,8 +1503,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return total;
 		}
 
-
-
+		#region Extended test
 		/********************************************************************/
 		/// <summary>
 		/// TNE: Tell if the module was made with ModPlug Tracker or OpenMPT.
@@ -1908,25 +1904,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// only ever written by ModPlug Tracker / OpenMPT, so a single
 			// one of them settles it no matter what the tracker detection
 			// above has come up with
-			if (ReadMagic(f, Magic_Text) ||		// Song comments
-			    ReadMagic(f, Magic_Midi) ||		// MIDI configuration
-			    ReadMagic(f, Magic_Pnam) ||		// Pattern names
-			    ReadMagic(f, Magic_Cnam))		// Channel names
+			if (It_Load.ReadMagic(f, Magic_Text) ||		// Song comments
+			    It_Load.ReadMagic(f, Magic_Midi) ||		// MIDI configuration
+			    It_Load.ReadMagic(f, Magic_Pnam) ||		// Pattern names
+			    It_Load.ReadMagic(f, Magic_Cnam))		// Channel names
 			{
 				return -1;
 			}
 
 			// Mix plugins. This loader has no support for those at all, so
 			// it does not matter which tracker wrote them
-			if (((fileSize - f.Hio_Tell()) >= 8) && SkipMixPlugins(f, fileSize))
+			if (((fileSize - f.Hio_Tell()) >= 8) && It_Load.SkipMixPlugins(f, fileSize, out _))
 				return -1;
 
 			// Extended instrument and song properties are only written by
 			// OpenMPT 1.17 and later, so finding either of them is enough
-			if ((numInstruments > 0) && ReadMagic(f, Magic_Xtpm))
+			if ((numInstruments > 0) && It_Load.ReadMagic(f, Magic_Xtpm))
 				return -1;
 
-			if (ReadMagic(f, Magic_Stpm))
+			if (It_Load.ReadMagic(f, Magic_Stpm))
 				return -1;
 
 			return 0;
@@ -1994,83 +1990,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		/********************************************************************/
 		/// <summary>
-		/// Skip over all the mix plugin chunks without parsing them. Tells
-		/// whether any real mix plugin chunk was found
-		/// </summary>
-		/********************************************************************/
-		private bool SkipMixPlugins(Hio f, c_long fileSize)
-		{
-			bool hasPluginChunks = false;
-
-			while ((fileSize - f.Hio_Tell()) >= 9)
-			{
-				c_long curPos = f.Hio_Tell();
-
-				uint32 code = f.Hio_Read32B();
-				uint32 chunkSize = f.Hio_Read32L();
-
-				if ((code == Magic_Impi) ||		// IT instrument, we definitely read too far
-				    (code == Magic_Imps) ||		// IT sample, ditto
-				    (code == Magic_Xtpm) ||		// Instrument extensions, ditto
-				    (code == Magic_Stpm) ||		// Song extensions, ditto
-				    ((f.Hio_Tell() + chunkSize) > fileSize))
-				{
-					f.Hio_Seek(curPos, SeekOrigin.Begin);
-					break;
-				}
-
-				if ((code == Magic_Chfx) || IsPluginChunk(code))
-					hasPluginChunks = true;
-
-				f.Hio_Seek(chunkSize, SeekOrigin.Current);
-			}
-
-			return hasPluginChunks;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tell if the given chunk identifier is one of the FXnn chunks
-		/// holding the settings of a single mix plugin
-		/// </summary>
-		/********************************************************************/
-		private bool IsPluginChunk(uint32 code)
-		{
-			uint8 c2 = (uint8)(code >> 8);
-			uint8 c3 = (uint8)code;
-
-			return ((code >> 16) == 0x4658) && (c2 >= 0x30) && (c2 <= 0x39) && (c3 >= 0x30) && (c3 <= 0x39);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Read the given magic. The file position is only moved when the
-		/// magic matches
-		/// </summary>
-		/********************************************************************/
-		private bool ReadMagic(Hio f, uint32 magic)
-		{
-			c_long curPos = f.Hio_Tell();
-
-			uint32 id = f.Hio_Read32B();
-
-			if ((f.Hio_Error() != 0) || (id != magic))
-			{
-				f.Hio_Seek(curPos, SeekOrigin.Begin);
-				return false;
-			}
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return the index of the first null character or -1 if the string
 		/// does not hold any
 		/// </summary>
@@ -2103,6 +2022,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			return true;
 		}
+		#endregion
+
 		#endregion
 	}
 }

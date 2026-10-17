@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// <summary>
 		/// Size of the structure as it is stored in the module files
 		/// </summary>
-		private const size_t StructSize = (MidiMacros.GlobalMacros + MidiMacros.SFxMacros + MidiMacros.ZxxMacros) * MidiMacros.MacroLength;
+		public const size_t StructSize = (MidiMacros.GlobalMacros + MidiMacros.SFxMacros + MidiMacros.ZxxMacros) * MidiMacros.MacroLength;
 
 		#region Macro class
 		public class Macro : IEquatable<Macro>, IDeepCloneable<Macro>
@@ -325,9 +325,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
-		/// Read the macros from the file. In the original code, the whole
-		/// structure is read as one big block of memory, which is not
-		/// possible here, so the macros are read one at a time instead.
+		/// Read the macros from the file, the same way as ReadStruct() does
+		/// it. In the original code, the whole structure is read as one big
+		/// block of memory, which is not possible here, so the macros are
+		/// read one at a time instead.
+		///
+		/// If there is not enough data left in the file, all macros are
+		/// cleared, the file position is not changed and false is returned
+		/// </summary>
+		/********************************************************************/
+		public bool Load(FileReader file)
+		{
+			if (!file.CanRead(StructSize))
+			{
+				ReadMacros(file, 0);
+				return false;
+			}
+
+			ReadMacros(file, StructSize);
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read the macros from the file, the same way as
+		/// ReadStructPartial() does it.
 		///
 		/// At most "StructSize" bytes are used, any macro not covered by
 		/// them is cleared. The file position is always advanced by
@@ -336,13 +361,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Returns the number of bytes actually read
 		/// </summary>
 		/********************************************************************/
-		public size_t Load(FileReader file, uint32 size)
+		public size_t LoadPartial(FileReader file, uint32 size)
 		{
 			size_t copyBytes = Math.Min(size, StructSize);
 
 			if (!file.CanRead(copyBytes))
 				copyBytes = size_t.CreateSaturating(file.BytesLeft());
 
+			ReadMacros(file, copyBytes);
+
+			file.Skip(size - copyBytes);
+
+			return copyBytes;
+		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Read the macros from the file using the first "copyBytes" bytes.
+		/// Any macro not covered by them is cleared. The file position is
+		/// advanced by "copyBytes" bytes
+		/// </summary>
+		/********************************************************************/
+		private void ReadMacros(FileReader file, size_t copyBytes)
+		{
 			size_t bytesLeft = copyBytes;
 			array<Macro>[] allMacros = [ Global, SFx, Zxx ];
 
@@ -361,10 +403,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					bytesLeft -= macroBytes;
 				}
 			}
-
-			file.Skip(size - copyBytes);
-
-			return copyBytes;
 		}
+		#endregion
 	}
 }

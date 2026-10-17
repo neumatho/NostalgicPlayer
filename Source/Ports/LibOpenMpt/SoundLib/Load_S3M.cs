@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
@@ -22,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal partial class CSoundFile
 	{
-		#region OpenMPT loader class
+		#region OpenMPT S3M loader class
 		public class S3MLoader : IFormatLoader
 		{
 			public static readonly FileFormatLoader Format = new FileFormatLoader
@@ -502,7 +501,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if (isSchism && (schismDateVersion < new SchismVersionFromDate(2018, 11, 12).Date))
 				m_nVstiVolume = 64;
 
-			bool isStereo = ((fileHeader.MasterVolume & 0x80) != 0) || (m_dwLastSavedWithVersion.GetRawVersion() != 0);
+			bool isStereo = ((fileHeader.MasterVolume & 0x80) != 0) || m_dwLastSavedWithVersion;
 
 			if (!isStereo)
 			{
@@ -1040,8 +1039,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			return (uint64)(fileHeader.OrdNum + ((fileHeader.SmpNum + fileHeader.PatNum) * 2));
 		}
 
-
-
+		#region Extended test
 		/********************************************************************/
 		/// <summary>
 		/// TNE: Added extra checks so only OpenMPT modules are recognized
@@ -1097,6 +1095,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			return ProbeResult.Failure;
 		}
+		#endregion
+
 		#endregion
 	}
 }

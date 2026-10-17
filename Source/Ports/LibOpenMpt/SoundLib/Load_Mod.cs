@@ -6,7 +6,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
@@ -24,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal partial class CSoundFile
 	{
-		#region OpenMPT loader class
+		#region OpenMPT MOD loader class
 		public class ModLoader : IFormatLoader
 		{
 			public static readonly FileFormatLoader Format = new FileFormatLoader
@@ -297,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if ((result == ProbeResult.Success) && (format == InternalModFormat.OpenMpt))
 				return ProbeResult.Success;
 
-			return result;
+			return ProbeResult.Failure;
 		}
 
 
@@ -1000,8 +999,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			return true;
 		}
 
-
-
+		#region Extended test
 		/********************************************************************/
 		/// <summary>
 		/// TNE: Added extra checks so only OpenMPT modules are recognized.
@@ -1315,6 +1313,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			return false;
 		}
+		#endregion
+
 		#endregion
 	}
 }

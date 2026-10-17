@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.FileFormat_Base
 		/********************************************************************/
 		/// <summary>
 		/// Converts a little-endian magic back into its 4 character string
-		/// representation. Use this when you need to switch on a magic
+		/// representation
 		/// </summary>
 		/********************************************************************/
 		public static string MagicToStringLE(uint32 magic)
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.FileFormat_Base
 		/********************************************************************/
 		/// <summary>
 		/// Converts a big-endian magic back into its 4 character string
-		/// representation. Use this when you need to switch on a magic
+		/// representation
 		/// </summary>
 		/********************************************************************/
 		public static string MagicToStringBE(uint32 magic)

@@ -3,10 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 {
@@ -61,6 +63,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/********************************************************************/
 		public static bool ReadOrderFromFile<T>(ModSequence order, FileReader file, size_t howMany, uint16 stopIndex = uint16.MaxValue, uint16 ignoreIndex = uint16.MaxValue) where T : unmanaged, INumberBase<T>
 		{
+			return ReadOrderFromFile<T>(order, file, howMany, stopIndex, ignoreIndex, PatternIndex.CreateTruncating);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read 'howMany' order items as integers with defined endianness
+		/// from a file.
+		/// 'stopIndex' is treated as '---', 'ignoreIndex' is treated as
+		/// '+++'. If the format doesn't support such indices, just pass
+		/// uint16_max
+		/// </summary>
+		/********************************************************************/
+		public static bool ReadOrderFromFile<T, TValue>(ModSequence order, FileReader file, size_t howMany, uint16 stopIndex = uint16.MaxValue, uint16 ignoreIndex = uint16.MaxValue) where T : unmanaged, IEndianNumber<TValue> where TValue : unmanaged, INumberBase<TValue>
+		{
+			return ReadOrderFromFile<T>(order, file, howMany, stopIndex, ignoreIndex, x => PatternIndex.CreateTruncating(x.Value));
+		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Read 'howMany' order items from a file and convert each of them
+		/// to a pattern index using the given converter
+		/// </summary>
+		/********************************************************************/
+		private static bool ReadOrderFromFile<T>(ModSequence order, FileReader file, size_t howMany, uint16 stopIndex, uint16 ignoreIndex, Func<T, PatternIndex> convert) where T : unmanaged
+		{
 			if (!file.CanRead(howMany * (size_t)Marshal.SizeOf<T>()))
 				return false;
 
@@ -74,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			for (size_t i = 0; i < order.size(); i++)
 			{
 				file.Read(ref patF);
-				PatternIndex pat = PatternIndex.CreateTruncating(patF);
+				PatternIndex pat = convert(patF);
 
 				if (pat == stopIndex)
 					pat = Snd_Def.PatternIndex_Invalid;
@@ -86,5 +116,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			return true;
 		}
+		#endregion
 	}
 }

@@ -4,15 +4,20 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
+using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers;
 using Algorithm = Polycode.NostalgicPlayer.Kit.C.Std.Algorithm;
 using Utility = Polycode.NostalgicPlayer.Kit.C.Std.Utility;
+using Version = Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Version;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 {
@@ -21,6 +26,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal class CPattern : IEquatable<CPattern>, IDeepCloneable<CPattern>
 	{
+		private const string FileIdPattern = "mptP";
+
+		#region MaskBits
+		[Flags]
+		private enum MaskBits
+		{
+			NoteBit = 1 << 0,
+			InstrBit = 1 << 1,
+			VolCmdBit = 1 << 2,
+			VolBit = 1 << 3,
+			CommandBit = 1 << 4,
+			EffectParamBit = 1 << 5,
+			ExtraData = 1 << 6
+		}
+		#endregion
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -218,6 +239,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void SetTempoSwing(TempoSwing swing)
+		{
+			m_TempoSwing = swing;
+			m_TempoSwing.Normalize();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool SetName(CPointer<uint8> buffer)
 		{
 			return SetName(buffer, buffer.Size());
@@ -258,6 +293,36 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public ChannelIndex GetNumChannels()//XX 30
 		{
 			return GetSoundFile().GetNumChannels();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public bool SetSignature(RowIndex rowsPerBeat, RowIndex rowsPerMeasure)//XX 66
+		{
+			if (!IsValidSignature(rowsPerBeat, rowsPerMeasure))
+				return false;
+
+			m_RowsPerBeat = rowsPerBeat;
+			m_RowsPerMeasure = rowsPerMeasure;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public bool IsValidSignature(RowIndex rowsPerBeat, RowIndex rowsPerMeasure)//XX 76
+		{
+			return (rowsPerBeat > 0) && (rowsPerBeat <= Snd_Def.Max_Rows_Per_Beat) && (rowsPerBeat <= rowsPerMeasure) && (rowsPerMeasure <= Snd_Def.Max_Rows_Per_Measure);
 		}
 
 
@@ -334,6 +399,161 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			m_PatternName.assign(newName, nameEnd);
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public static void ReadModPattern(ReaderStream iStrm, ref CPattern pat, size_t _)//XX 517
+		{
+			SsbRead ssb = new SsbRead(iStrm);
+			ssb.BeginRead(FileIdPattern, Version.Current().GetRawVersion());
+
+			if (ssb.HasFailed())
+				return;
+
+			ssb.ReadItem(ref pat, "data", ReadData);
+
+			// Pattern time signature
+			uint32 rpb = 0, rpm = 0;
+
+			ssb.ReadItem(ref rpb, "RPB.");
+			ssb.ReadItem(ref rpm, "RPM.");
+			pat.SetSignature(rpb, rpm);
+
+			TempoSwing swing = new TempoSwing();
+			ssb.ReadItem(ref swing, "SWNG", TempoSwing.Deserialize);
+
+			if (!swing.empty())
+				swing.resize(pat.GetRowsPerBeat());
+
+			pat.SetTempoSwing(swing);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static void ReadData(ReaderStream iStrm, ref CPattern pat, size_t _)//XX 612
+		{
+			if (!pat.IsValid())	// Expecting patterns to be allocated and resized properly
+				return;
+
+			ChannelIndex chns = pat.GetNumChannels();
+			RowIndex rows = pat.GetNumRows();
+
+			vector<ModCommand> lastChnMc = new vector<ModCommand>(chns);
+
+			RowIndex row = 0;
+
+			while ((row < rows) && !iStrm.EndOfStream)
+			{
+				Io_.ReadIntLE(iStrm, out uint8 t);
+
+				if (t == 0)
+				{
+					row++;
+					continue;
+				}
+
+				ChannelIndex ch = (ChannelIndex)(t & ItTools.It_BitMask_PatternChanField);
+
+				if (ch > 0)
+					ch--;
+
+				uint8 diffMask = 0;
+
+				if ((t & ItTools.It_BitMask_PatternChanEnabled) != 0)
+					Io_.ReadIntLE(iStrm, out diffMask);
+
+				uint8 temp = 0;
+
+				ModCommand dummy = new ModCommand();
+				ModCommand m = ch < chns ? pat.GetpModCommand(row, ch)[0] : dummy;
+
+				if ((diffMask & (uint8)MaskBits.NoteBit) != 0)
+				{
+					Io_.ReadIntLE(iStrm, out temp);
+
+					if (ch < chns)
+						lastChnMc[ch].Note = (ModCommandNote)temp;
+				}
+
+				if (ch < chns)
+					m.Note = lastChnMc[ch].Note;
+
+				if ((diffMask & (uint8)MaskBits.InstrBit) != 0)
+				{
+					Io_.ReadIntLE(iStrm, out temp);
+
+					if (ch < chns)
+						lastChnMc[ch].Instr = (ModCommandInstr)temp;
+				}
+
+				if (ch < chns)
+					m.Instr = lastChnMc[ch].Instr;
+
+				if ((diffMask & (uint8)MaskBits.VolCmdBit) != 0)
+				{
+					Io_.ReadIntLE(iStrm, out temp);
+
+					if (ch < chns)
+						lastChnMc[ch].VolCmd = (ModCommandVolCmd)temp;
+				}
+
+				if (ch < chns)
+					m.VolCmd = lastChnMc[ch].VolCmd;
+
+				if ((diffMask & (uint8)MaskBits.VolBit) != 0)
+				{
+					Io_.ReadIntLE(iStrm, out temp);
+
+					if (ch < chns)
+						lastChnMc[ch].Vol = (ModCommandVol)temp;
+				}
+
+				if (ch < chns)
+					m.Vol = lastChnMc[ch].Vol;
+
+				if ((diffMask & (uint8)MaskBits.CommandBit) != 0)
+				{
+					Io_.ReadIntLE(iStrm, out temp);
+
+					if (ch < chns)
+						lastChnMc[ch].Command = (ModCommandCommand)temp;
+				}
+
+				if (ch < chns)
+					m.Command = lastChnMc[ch].Command;
+
+				if ((diffMask & (uint8)MaskBits.EffectParamBit) != 0)
+				{
+					Io_.ReadIntLE(iStrm, out temp);
+
+					if (ch < chns)
+						lastChnMc[ch].Param = (ModCommandParam)temp;
+				}
+
+				if (ch < chns)
+					m.Param = lastChnMc[ch].Param;
+
+				if ((diffMask & (uint8)MaskBits.ExtraData) != 0)
+				{
+					// Ignore additional data
+					Io_.ReadIntLE(iStrm, out uint8 size);
+					iStrm.Seek(size, SeekOrigin.Current);
+				}
+
+				if (!m.IsPcNote())
+					m.Clear();
+			}
 		}
 
 

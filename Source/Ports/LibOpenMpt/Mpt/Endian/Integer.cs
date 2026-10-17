@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 2)]
-	internal struct int16le
+	internal struct int16le : IEndianNumber<int16>
 	{
 		private byte _b0, _b1;
 
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 2)]
-	internal struct uint16le
+	internal struct uint16le : IEndianNumber<uint16>
 	{
 		private byte _b0, _b1;
 
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 4)]
-	internal struct int32le
+	internal struct int32le : IEndianNumber<int32>
 	{
 		private byte _b0, _b1, _b2, _b3;
 
@@ -280,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 4)]
-	internal struct uint32le
+	internal struct uint32le : IEndianNumber<uint32>
 	{
 		private byte _b0, _b1, _b2, _b3;
 
@@ -368,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
-	internal struct int64le
+	internal struct int64le : IEndianNumber<int64>
 	{
 		private byte _b0, _b1, _b2, _b3, _b4, _b5, _b6, _b7;
 
@@ -456,7 +456,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
-	internal struct uint64le
+	internal struct uint64le : IEndianNumber<uint64>
 	{
 		private byte _b0, _b1, _b2, _b3, _b4, _b5, _b6, _b7;
 
@@ -548,7 +548,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 2)]
-	internal struct int16be
+	internal struct int16be : IEndianNumber<int16>
 	{
 		private byte _b0, _b1;
 
@@ -636,7 +636,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 2)]
-	internal struct uint16be
+	internal struct uint16be : IEndianNumber<uint16>
 	{
 		private byte _b0, _b1;
 
@@ -724,7 +724,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 4)]
-	internal struct int32be
+	internal struct int32be : IEndianNumber<int32>
 	{
 		private byte _b0, _b1, _b2, _b3;
 
@@ -812,7 +812,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 4)]
-	internal struct uint32be
+	internal struct uint32be : IEndianNumber<uint32>
 	{
 		private byte _b0, _b1, _b2, _b3;
 
@@ -900,7 +900,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
-	internal struct int64be
+	internal struct int64be : IEndianNumber<int64>
 	{
 		private byte _b0, _b1, _b2, _b3, _b4, _b5, _b6, _b7;
 
@@ -988,7 +988,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Endian
 	/// 
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
-	internal struct uint64be
+	internal struct uint64be : IEndianNumber<uint64>
 	{
 		private byte _b0, _b1, _b2, _b3, _b4, _b5, _b6, _b7;
 

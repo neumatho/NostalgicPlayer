@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -69,17 +69,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp {
         internal static string IDS_XMP_DESCRIPTION {
             get {
                 return ResourceManager.GetString("IDS_XMP_DESCRIPTION", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The module uses the following DSP effects/VST-plugins. These are not supported.
-        ///
-        ///{0}.
-        /// </summary>
-        internal static string IDS_XMP_ERR_HAVE_DSP {
-            get {
-                return ResourceManager.GetString("IDS_XMP_ERR_HAVE_DSP", resourceCulture);
             }
         }
         

@@ -13,6 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 	/// </summary>
 	internal static class Base
 	{
+		public const size_t BufferSize_Tiny = 1 * 1024;
 		public const size_t BufferSize_Small = 4 * 1024;
 		public const size_t BufferSize_Normal = 64 * 1024;
 

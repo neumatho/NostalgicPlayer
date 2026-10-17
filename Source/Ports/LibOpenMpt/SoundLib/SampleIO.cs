@@ -526,7 +526,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			}
 			else if ((GetEncoding() == Encoding.It214) || (GetEncoding() == Encoding.It215))
 			{
-				throw new NotImplementedException("IT");
+				ItDecompression _ = new ItDecompression(file, sample, GetEncoding() == Encoding.It215);
+				bytesRead = file.GetPosition() - filePosition;
 			}
 			else if ((GetEncoding() == Encoding.Ams) && (GetChannelFormat() == Channels.Mono))
 			{
@@ -996,6 +997,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public static bool operator != (SampleIO me, SampleIO other)
 		{
 			return !(me == other);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void operator |= (Channels channels)
+		{
+			m_Channels = channels;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void operator |= (Endianness endianness)
+		{
+			m_Endianness = endianness;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void operator |= (Encoding encoding)
+		{
+			m_Encoding = encoding;
 		}
 
 

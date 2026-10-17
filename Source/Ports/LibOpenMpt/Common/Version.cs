@@ -110,11 +110,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		{
 			public static readonly Version _1_00_00_A0 = LiteralParser.Parse("1.00.00.A0");
 			public static readonly Version _1_00_00_A5 = LiteralParser.Parse("1.00.00.A5");
+			public static readonly Version _1_00_00_A6 = LiteralParser.Parse("1.00.00.A6");
+			public static readonly Version _1_00_00_B1 = LiteralParser.Parse("1.00.00.B1");
+			public static readonly Version _1_00_00_B2 = LiteralParser.Parse("1.00.00.B2");
 			public static readonly Version _1_00_00_B3 = LiteralParser.Parse("1.00.00.B3");
+			public static readonly Version _1_09_00_00 = LiteralParser.Parse("1.09.00.00");
 			public static readonly Version _1_11 = LiteralParser.Parse("1.11");
 			public static readonly Version _1_16 = LiteralParser.Parse("1.16");
 			public static readonly Version _1_17 = LiteralParser.Parse("1.17");
 			public static readonly Version _1_17_00_00 = LiteralParser.Parse("1.17.00.00");
+			public static readonly Version _1_17_02_20 = LiteralParser.Parse("1.17.02.20");
 			public static readonly Version _1_17_02_46 = LiteralParser.Parse("1.17.02.46");
 			public static readonly Version _1_17_02_49 = LiteralParser.Parse("1.17.02.49");
 			public static readonly Version _1_17_02_50 = LiteralParser.Parse("1.17.02.50");
@@ -165,6 +170,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 			public static readonly Version _1_24_00_00 = LiteralParser.Parse("1.24.00.00");
 			public static readonly Version _1_24_01_06 = LiteralParser.Parse("1.24.01.06");
 			public static readonly Version _1_24_02_02 = LiteralParser.Parse("1.24.02.02");
+			public static readonly Version _1_24_02_06 = LiteralParser.Parse("1.24.02.06");
 			public static readonly Version _1_25_00_00 = LiteralParser.Parse("1.25.00.00");
 			public static readonly Version _1_25_00_07 = LiteralParser.Parse("1.25.00.07");
 			public static readonly Version _1_25_00_19 = LiteralParser.Parse("1.25.00.19");
@@ -387,7 +393,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		///
 		/// </summary>
 		/********************************************************************/
-		public static bool operator true(Version v)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static implicit operator bool(Version v)
 		{
 			return v.m_Version != 0;
 		}
@@ -399,18 +406,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		///
 		/// </summary>
 		/********************************************************************/
-		public static bool operator false(Version v)
-		{
-			return v.m_Version == 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		///
-		/// </summary>
-		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool operator == (Version me, Version other)
 		{
 			if (ReferenceEquals(me, other))
@@ -442,6 +438,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		///
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool operator >= (Version me, Version other)
 		{
 			if (ReferenceEquals(me, other))
@@ -460,6 +457,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		///
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool operator <= (Version me, Version other)
 		{
 			if (ReferenceEquals(me, other))
@@ -478,6 +476,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		///
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool operator > (Version me, Version other)
 		{
 			if ((me is null) || (other is null))
@@ -493,6 +492,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		///
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool operator < (Version me, Version other)
 		{
 			if ((me is null) || (other is null))

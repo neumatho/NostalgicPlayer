@@ -14,9 +14,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal class ModSequenceSet
 	{
-		protected readonly vector<ModSequence> m_Sequences = new vector<ModSequence>();
-		protected readonly CSoundFile m_SndFile;
-		protected SequenceIndex m_CurrentSeq = 0;		// Index of current sequence
+		public readonly vector<ModSequence> m_Sequences = new vector<ModSequence>();
+		public readonly CSoundFile m_SndFile;
+		public SequenceIndex m_CurrentSeq = 0;		// Index of current sequence
 
 		/********************************************************************/
 		/// <summary>
@@ -50,10 +50,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ModSequence this[SequenceIndex seq]
+		public ref ModSequence this[SequenceIndex seq]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => m_Sequences[seq];
+			get => ref m_Sequences[seq];
 		}
 
 

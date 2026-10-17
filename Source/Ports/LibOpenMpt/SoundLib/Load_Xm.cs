@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			VolumeCommand.PanSlideRight, VolumeCommand.TonePortamento
 		];
 
-		#region OpenMPT loader class
+		#region OpenMPT XM loader class
 		public class XmLoader : IFormatLoader
 		{
 			public static readonly FileFormatLoader Format = new FileFormatLoader
@@ -316,7 +316,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				Order.Current.SetDefaultSpeed(fileHeader.Speed);
 
 			if (fileHeader.Tempo != 0)
-				Order.Current.SetDefaultTempo(OpenMpt.Clamp(new Tempo(fileHeader.Tempo, 0), ModSpecs.xmEx.GetTempoMin(), ModSpecs.xmEx.GetTempoMax()));
+				Order.Current.SetDefaultTempo(OpenMpt.Clamp(new Tempo(fileHeader.Tempo, 0), ModSpecs.XmEx.GetTempoMin(), ModSpecs.XmEx.GetTempoMax()));
 
 			m_SongFlags.Reset();
 			m_SongFlags.Set(SongFlags.LinearSlides, (fileHeader.Flags & XmFileHeader.LinearSlides) != 0);
@@ -581,7 +581,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			if (file.ReadMagic("MIDI"))
 			{
-				m_MidiCfg.Load(file, file.ReadUInt32LE());
+				m_MidiCfg.LoadPartial(file, file.ReadUInt32LE());
 				m_MidiCfg.Sanitize();
 
 				hasMidiConfig = true;
@@ -666,7 +666,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					m_nMixLevels = MixLevels.CompatibleFT2;
 			}
 
-			if ((m_dwLastSavedWithVersion.GetRawVersion() != 0) && !madeWith.Test(TrackerVersions.OpenMpt))
+			if (m_dwLastSavedWithVersion && !madeWith.Test(TrackerVersions.OpenMpt))
 			{
 				m_nMixLevels = MixLevels.Original;
 				m_PlayBehaviour.reset();
@@ -718,7 +718,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				madeWithTracker = "OpenMPT " + m_dwLastSavedWithVersion;
 
 			// We no longer allow any --- or +++ items in the order list now
-			if ((m_dwLastSavedWithVersion.GetRawVersion() != 0) && (m_dwLastSavedWithVersion < Version.MPT_V._1_22_02_02))
+			if (m_dwLastSavedWithVersion && (m_dwLastSavedWithVersion < Version.MPT_V._1_22_02_02))
 			{
 				if (!Patterns.IsValidPat(0xfe))
 					Order.Current.RemovePattern(0xfe);
@@ -1014,8 +1014,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			return !unsupportedSample;
 		}
 
-
-
+		#region Extended test
 		/********************************************************************/
 		/// <summary>
 		/// TNE: Added extra checks so only OpenMPT modules are recognized.
@@ -1392,7 +1391,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			// Mix plugins. LibXmp has no support for those at all, so it
 			// does not matter which tracker wrote them
-			if (file.CanRead(8) && SkipXmMixPlugins(file))
+			if (file.CanRead(8) && SkipMixPlugins(file, out _))
 				return ProbeResult.Success;
 
 			// Extended instrument and song properties are only written by
@@ -1470,55 +1469,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
-		/// Skip over all the mix plugin chunks without parsing them. Tells
-		/// whether any real mix plugin chunk was found
-		/// </summary>
-		/********************************************************************/
-		private static bool SkipXmMixPlugins(FileReader file)
-		{
-			bool hasPluginChunks = false;
-
-			while (file.CanRead(9))
-			{
-				CPointer<uint8> code = file.ReadArray<uint8>(4).begin();
-				uint32 chunkSize = file.ReadUInt32LE();
-
-				if ((CMemory.memcmp(code, "IMPI", 4) == 0) ||	// IT instrument, we definitely read too far
-				    (CMemory.memcmp(code, "IMPS", 4) == 0) ||	// IT sample, ditto
-				    (CMemory.memcmp(code, "XTPM", 4) == 0) ||	// Instrument extensions, ditto
-				    (CMemory.memcmp(code, "STPM", 4) == 0) ||	// Song extensions, ditto
-				    !file.CanRead(chunkSize))
-				{
-					file.SkipBack(8);
-					break;
-				}
-
-				if ((CMemory.memcmp(code, "CHFX", 4) == 0) || IsXmPluginChunk(code))
-					hasPluginChunks = true;
-
-				file.Skip(chunkSize);
-			}
-
-			return hasPluginChunks;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tell if the given chunk identifier is one of the FXnn chunks
-		/// holding the settings of a single mix plugin
-		/// </summary>
-		/********************************************************************/
-		private static bool IsXmPluginChunk(CPointer<uint8> code)
-		{
-			return (code[0] == 'F') && (code[1] == 'X') && (code[2] >= '0') && (code[2] <= '9') && (code[3] >= '0') && (code[3] <= '9');
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return the index of the first null character or -1 if the string
 		/// does not hold any
 		/// </summary>
@@ -1551,6 +1501,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			return true;
 		}
+		#endregion
+
 		#endregion
 	}
 }

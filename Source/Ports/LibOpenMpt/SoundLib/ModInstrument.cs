@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -284,6 +285,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public uint8 GetResonance()
 		{
 			return (uint8)(nIfr & 0x7f);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void SetCutOff(uint8 cutOff, bool enable)
+		{
+			nIfc = (uint8)(Math.Min(cutOff, (uint8)0x7f) | (enable ? 0x80 : 0x00));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void SetResonance(uint8 resonance, bool enable)
+		{
+			nIfr = (uint8)(Math.Min(resonance, (uint8)0x7f) | (enable ? 0x80 : 0x00));
 		}
 
 

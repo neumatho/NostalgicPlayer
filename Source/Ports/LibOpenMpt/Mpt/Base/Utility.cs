@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
@@ -12,6 +13,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 {
 	internal static class Utility
 	{
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool In_Range<TDst, TSrc>(TSrc val) where TSrc : INumber<TSrc> where TDst : INumber<TDst>
+		{
+			return TSrc.CreateTruncating(TDst.CreateSaturating(val)) == val;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 

@@ -59,24 +59,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Dithers
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetMode(size_t mode, size_t channels)
-		{
-			if ((mode == GetMode()) && (channels == GetChannels()))
-			{
-				m_Dithers.visit(dither => dither.Reset(), dither => dither.Reset(), dither => dither.Reset(), dither => dither.Reset());
-				return;
-			}
-
-			Set_Mode(mode, channels);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
 		public void SetMode(size_t mode)
 		{
 			if (mode == GetMode())

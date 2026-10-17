@@ -41,6 +41,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
+			public PinnedView(FileCursor file)
+			{
+				Init(file, file.BytesLeft());
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
 			public PinnedView(FileCursor file, size_t size)
 			{
 				Init(file, size);
@@ -131,6 +143,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			public size_t Size()//XX 319
 			{
 				return size_;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public CPointer<byte> Begin()//XX 322
+			{
+				return Span().Data();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public CPointer<byte> End()//XX 325
+			{
+				return Span().Data() + Span().Size();
 			}
 
 
@@ -432,6 +470,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public bool NoBytesLeft()//XX 196
+		{
+			return !CanRead(1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Check if "amount" bytes can be read from the current position in
 		/// the stream
 		/// </summary>
@@ -491,6 +542,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			Skip(length);
 
 			return CreateChunk(position, length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a pinned view into the remaining raw data from cursor
+		/// position
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public PinnedView GetPinnedView()//XX 337
+		{
+			return new PinnedView(this);
 		}
 
 
@@ -588,11 +653,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public vector<uint8> GetRawDataAsByteVector()//XX 373
+		{
+			PinnedView view = GetPinnedView();
+
+			return new vector<byte>(view.Begin(), view.End());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public vector<byte> ReadRawDataAsByteVector()//XX 377
 		{
 			PinnedView view = ReadPinnedView();
 
-			return new vector<byte>(view.Span().Begin(), view.Span().End());
+			return new vector<byte>(view.Begin(), view.End());
 		}
 
 

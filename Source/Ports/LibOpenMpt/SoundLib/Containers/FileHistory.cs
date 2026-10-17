@@ -18,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		public const c_double History_Timer_Precision = 18.2;
 
 		/// <summary>
-		/// Date when the file was loaded in the tracker or created.
+		/// Date when the file was loaded in the tracker or created
 		/// </summary>
-		public DateTime? LoadDate;
+		public DateTime LoadDate = DateTime.MinValue;
 
 		/// <summary>
 		/// Time the file was open in the editor, in 1/18.2th seconds (frequency of a standard DOS timer, to keep compatibility with Impulse Tracker easy)
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		/********************************************************************/
 		public bool HasValidDate()
 		{
-			return LoadDate.HasValue;
+			return LoadDate != DateTime.MinValue;
 		}
 
 
@@ -48,10 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		/********************************************************************/
 		public string AsIso8601(LogicalTimezone internalTimezone)
 		{
-			if (!LoadDate.HasValue)
-				return string.Empty;
-
-			DateTime date = LoadDate.Value;
+			DateTime date = LoadDate;
 
 			if (OpenTime > 0)
 			{

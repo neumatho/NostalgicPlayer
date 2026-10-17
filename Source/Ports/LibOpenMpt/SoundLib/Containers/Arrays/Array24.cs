@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers.Arrays
 	/// Inline storage for the 24-items array
 	/// </summary>
 	[InlineArray(24)]
-	internal struct Array24<T>
+	internal struct Array24<T> where T : struct
 	{
 		private T _element0;
 

@@ -45,6 +45,58 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public uint16 GetValueVolCol()
+		{
+			return GetValueVolCol((uint8)VolCmd, Vol);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public uint16 GetValueVolCol(uint8 volCmd, uint8 vol)
+		{
+			return (uint16)((volCmd << 8) + vol);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public uint16 GetValueEffectCol()
+		{
+			return GetValueEffectCol((uint8)Command, Param);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public uint16 GetValueEffectCol(uint8 command, uint8 param)
+		{
+			return (uint16)((command << 8) + param);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Clears ModCommand
 		/// </summary>
 		/********************************************************************/

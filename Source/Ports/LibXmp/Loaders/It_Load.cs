@@ -4,9 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit;
@@ -248,6 +246,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static readonly uint32 Magic_IMPI = Common.Magic4('I', 'M', 'P', 'I');
 		private static readonly uint32 Magic_IMPS = Common.Magic4('I', 'M', 'P', 'S');
 
+		// TNE: Chunks written by ModPlug Tracker / OpenMPT
+		private static readonly uint32 Magic_PNAM = Common.Magic4('P', 'N', 'A', 'M');
+		private static readonly uint32 Magic_CNAM = Common.Magic4('C', 'N', 'A', 'M');
+		private static readonly uint32 Magic_CHFX = Common.Magic4('C', 'H', 'F', 'X');
+		private static readonly uint32 Magic_XTPM = Common.Magic4('X', 'T', 'P', 'M');
+		private static readonly uint32 Magic_STPM = Common.Magic4('S', 'T', 'P', 'M');
+		private static readonly uint32 Magic_MODU = Common.Magic4('M', 'O', 'D', 'U');
+
+		// TNE: Sizes used by the ModPlug Tracker / OpenMPT test
+		private const c_int It_File_Header_Size = 192;
+		private const c_int It_Sample_Header_Size = 80;
+		private const c_int It_History_Size = 8;
+		private const c_int It_Midi_Config_Size = 4896;
+		private const c_int It_Max_Samples = 4000;
+		private const c_int It_Max_Patterns = 240;
+		private const c_int It_Max_Pattern_Rows = 4096;
+		private const uint16 It_Extended_Filter_Range = 0x1000;
+		private const uint8 It_Cvt_Opl_Instrument = 0x40;
+		private const uint8 It_Cvt_External_Sample = 0x80;
+
 		// Bits 0, 1, 2 add 1 byte each. Bit 3 adds 2 bytes
 		private static readonly	c_int[] bytes_In_Packed_Event =
 		[
@@ -348,12 +366,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			lib.common.LibXmp_Read_Title(f, out t, 26, encoder);
 
-			// OpenMPT modules has a lot of extra extensions, which is not supported.
-			// So if we can detect it is such a module, we won't play it
-			if (IsOpenMpt(f))
-				return -1;
-
-			return 0;
+			// TNE: Modules made with ModPlug Tracker / OpenMPT are played by
+			// the OpenMPT player instead
+			return Test_Extended(f, start);
 		}
 
 
@@ -373,6 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			CPointer<uint8> patBuf = null;
 			bool pat_Before_Smp = false;
 			bool is_Mpt_116 = false;
+			bool anyItCompressed = false;
 
 			// Load and convert header
 			ifh.Magic = f.Hio_Read32B();
@@ -506,8 +522,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					goto Err4;
 			}
 
-			m.DspEffects = CheckForDspEffects(pp_Ins, pp_Smp, pp_Pat, ifh, f);
-
 			if ((mod.Smp != 0) && (mod.Pat != 0) && (pp_Pat[0] != 0) && (pp_Pat[0] < pp_Smp[0]))
 				pat_Before_Smp = true;
 
@@ -560,7 +574,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (f.Hio_Seek((c_long)(start + pp_Smp[i]), SeekOrigin.Begin) < 0)
 					goto Err4;
 
-				if (Load_It_Sample(m, i, start, sample_Mode, patBuf, f) < 0)
+				if (Load_It_Sample(m, i, start, sample_Mode, patBuf, f, ref anyItCompressed) < 0)
 					goto Err4;
 			}
 
@@ -723,6 +737,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if (is_Mpt_116)
 				lib.common.LibXmp_Apply_Mpt_PreAmp(m);
+
+			if (anyItCompressed)
+				m.Mod.Type += " (IT compressed)";
 
 			return 0;
 
@@ -1631,7 +1648,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Load_It_Sample(Module_Data m, c_int i, c_int start, bool sample_Mode, CPointer<uint8> tmpBuf, Hio f)
+		private c_int Load_It_Sample(Module_Data m, c_int i, c_int start, bool sample_Mode, CPointer<uint8> tmpBuf, Hio f, ref bool anyItCompressed)
 		{
 			It_Sample_Header ish = new It_Sample_Header();
 			Xmp_Module mod = m.Mod;
@@ -1802,6 +1819,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					c_int ret = Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad | cvt, mod.Xxs[i], decBuf);
 					if (ret < 0)
 						return -1;
+
+					anyItCompressed = true;
 				}
 				else
 				{
@@ -1988,108 +2007,501 @@ Skip_Packed_Event:
 			return 0;
 		}
 
-
-
+		#region Extended test
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// TNE: Tell if the module was made with ModPlug Tracker or OpenMPT.
+		/// Those are played by the OpenMPT player instead, so -1 is returned
+		/// for them. This is the mirror image of ExtendedProbeIt() in the
+		/// LibOpenMpt port and the two have to agree, or a module ends up
+		/// being rejected by both players
 		/// </summary>
 		/********************************************************************/
-		private bool IsOpenMpt(Hio f)
+		private c_int Test_Extended(Hio f, c_int start)
 		{
-			// Start to check the version
-			if (f.Hio_Seek(40, SeekOrigin.Begin) < 0)
-				return false;
+			if (LibXmp.UnitTestMode)
+				return 0;
 
-			uint16 cwt = f.Hio_Read16L();
-			if ((cwt < 0x0889) || (cwt > 0x0fff))
-				return false;
+			c_long fileSize = f.Hio_Size();
 
-			// Check for the "228" mark
-			if (f.Hio_Seek(-4, SeekOrigin.End) < 0)
-				return false;
+			CPointer<uint8> header = new CPointer<uint8>(It_File_Header_Size);
 
-			uint32 offset = f.Hio_Read32L();
-			if (offset >= f.Hio_Size())
-				return false;
+			if (f.Hio_Seek(start, SeekOrigin.Begin) < 0)
+				return 0;
 
-			if (f.Hio_Seek((c_long)offset, SeekOrigin.Begin) < 0)
-				return false;
+			if (f.Hio_Read(header, 1, It_File_Header_Size) < It_File_Header_Size)
+				return 0;
 
-			if ((f.Hio_Read32B() & 0xffffff00) == 0x32323800)
-				return true;
+			uint8 highlightMinor = header[30];
+			uint8 highlightMajor = header[31];
+			uint16 ordNum = DataIo.ReadMem16L(header + 32);
+			uint16 insNum = DataIo.ReadMem16L(header + 34);
+			uint16 smpNum = DataIo.ReadMem16L(header + 36);
+			uint16 patNum = DataIo.ReadMem16L(header + 38);
+			uint16 cwtv = DataIo.ReadMem16L(header + 40);
+			uint16 cmwt = DataIo.ReadMem16L(header + 42);
+			uint16 flags = DataIo.ReadMem16L(header + 44);
+			It_Special special = (It_Special)DataIo.ReadMem16L(header + 46);
+			uint8 globalVol = header[48];
+			uint8 mv = header[49];
+			uint8 speed = header[50];
+			uint8 sep = header[52];
+			uint8 pwd = header[53];
+			uint16 msgLength = DataIo.ReadMem16L(header + 54);
+			uint32 msgOffset = DataIo.ReadMem32L(header + 56);
+			uint32 reserved = DataIo.ReadMem32L(header + 60);
 
-			return false;
-		}
+			// The OpenMPT player runs these checks before anything else and
+			// leaves the module alone when they do not hold
+			if ((insNum > 0xff) || (smpNum >= It_Max_Samples))
+				return 0;
 
+			if (fileSize < (start + It_File_Header_Size + ordNum + ((insNum + smpNum + patNum) * 4)))
+				return 0;
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Check if the module contains any DSP effects/VST plugins
-		/// </summary>
-		/********************************************************************/
-		private string[] CheckForDspEffects(CPointer<uint32> pp_Ins, CPointer<uint32> pp_Smp, CPointer<uint32> pp_Pat, It_File_Header ifh, Hio f)
-		{
-			List<string> effects = new List<string>();
-
-			uint8[] buf = new uint8[64];
-			uint32 minPointer = uint32.MaxValue;
-
-			minPointer = Math.Min(minPointer, MinValue(pp_Ins));
-			minPointer = Math.Min(minPointer, MinValue(pp_Smp));
-			minPointer = Math.Min(minPointer, MinValue(pp_Pat));
-
-			if (ifh.Special.HasFlag(It_Special.Has_Msg))
-				minPointer = Math.Min(minPointer, ifh.MsgOfs);
-
-			while (f.Hio_Tell() < minPointer)
+			// Newer MPTM files are marked by the "228" block which the
+			// last 4 bytes of the file point at. MPTM is OpenMPT's own
+			// format. The legacy "tpm." signature never gets this far
+			if ((cwtv > 0x888) && (cwtv <= 0xfff))
 			{
-				uint32 code = f.Hio_Read32B();
+				f.Hio_Seek(fileSize - 4, SeekOrigin.Begin);
+				uint32 mptStartPos = f.Hio_Read32L();
+
+				if ((mptStartPos >= 0x100) && (mptStartPos < (fileSize - start)) && SeekTo(f, start + mptStartPos, fileSize) && CanRead(f, 3, fileSize))
+				{
+					if ((f.Hio_Read8() == '2') && (f.Hio_Read8() == '2') && (f.Hio_Read8() == '8'))
+						return -1;
+				}
+			}
+
+			// OpenMPT 1.17 and later, both normal files and compatibility exports
+			if ((cwtv & 0xf000) == 0x5000)
+				return -1;
+
+			// OpenMPT 1.17.02.26 (r122) to 1.18
+			if ((cmwt == 0x888) || (cwtv == 0x888))
+				return -1;
+
+			// ModPlug Tracker b3.2 - 1.09, instruments 557 bytes apart
+			if ((cwtv == 0x0214) && (cmwt == 0x0202) && (reserved == 0))
+				return -1;
+
+			// A rare variant used from OpenMPT 1.17.02.20 (r113) to 1.17.02.25 (r121)
+			if ((cwtv == 0x0300) && (cmwt == 0x0300) && (reserved == 0) && (ordNum == 256) && (sep == 128) && (pwd == 0))
+				return -1;
+
+			// The extended filter range is only ever written by ModPlug Tracker / OpenMPT
+			if ((flags & It_Extended_Filter_Range) != 0)
+				return -1;
+
+			// Skip the order list and read the instrument, sample and
+			// pattern offsets. The file size has been checked above
+			f.Hio_Seek(start + It_File_Header_Size + ordNum, SeekOrigin.Begin);
+
+			uint32[] insPos = ReadPointers(f, insNum);
+			uint32[] smpPos = ReadPointers(f, smpNum);
+			uint32[] patPos = ReadPointers(f, patNum);
+
+			// Find the first parapointer. The edit history and the
+			// extensions in front of the instruments may not pass it
+			uint32 minPtr = uint32.MaxValue;
+			minPtr = GetMinimumPointer(insPos, minPtr);
+			minPtr = GetMinimumPointer(smpPos, minPtr);
+			minPtr = GetMinimumPointer(patPos, minPtr);
+
+			if ((special & It_Special.Has_Msg) != 0)
+				minPtr = Math.Min(minPtr, msgOffset);
+
+			// The next steps only move the file position the same way as
+			// the OpenMPT loader, so the extensions are found at the same place
+			bool possiblyUnmo3 = (cmwt == 0x0214) && ((cwtv == 0x0214) || (cwtv == 0)) &&
+			                     (highlightMajor == 0) && (highlightMinor == 0) &&
+			                     (pwd == 0) && (reserved == 0) &&
+			                     ((flags & (uint16)(It_Flag.Midi_Wheel | It_Flag.Midi_Config)) == 0);
+
+			if (possiblyUnmo3 && (insNum == 0) && (smpNum > 0) && (((f.Hio_Tell() - start) + (4 * smpNum) + 2) <= minPtr))
+			{
+				// UNMO3 < v2.4.0.1 reserves some space for instrument
+				// parapointers even in sample mode
+				for (c_int i = 0; i < smpNum; i++)
+				{
+					if (Read32L(f, fileSize) != 0)
+					{
+						f.Hio_Seek(-(4 + (i * 4)), SeekOrigin.Current);
+						break;
+					}
+				}
+			}
+
+			if ((special & It_Special.Edit_History) != 0)
+			{
+				// Some trackers set the flag without writing the history,
+				// so it is only taken if it ends before the first parapointer
+				uint16 nflt = Read16L(f, fileSize);
+				c_long historySize = nflt * It_History_Size;
+
+				if (CanRead(f, historySize, fileSize) && (((f.Hio_Tell() - start) + historySize) <= minPtr))
+					f.Hio_Seek(historySize, SeekOrigin.Current);
+				else
+					f.Hio_Seek(-2, SeekOrigin.Current);
+			}
+			else if (possiblyUnmo3 && ((uint16)special <= 1))
+			{
+				// UNMO3 < v2.4.0.1 always writes the edit history length
+				if (Read16L(f, fileSize) != 0)
+					f.Hio_Seek(-2, SeekOrigin.Current);
+			}
+
+			if ((((flags & (uint16)It_Flag.Midi_Config) != 0) || ((special & It_Special.Spec_MidiCfg) != 0)) && CanRead(f, It_Midi_Config_Size, fileSize))
+				f.Hio_Seek(It_Midi_Config_Size, SeekOrigin.Current);
+
+			// Pattern and channel names are only ever written by ModPlug Tracker / OpenMPT
+			if (ReadMagic(f, Magic_PNAM) || ReadMagic(f, Magic_CNAM))
+				return -1;
+
+			// Mix plugins. This loader has no support for those at all, so
+			// it does not matter which tracker wrote them
+			c_long pluginEnd = (minPtr >= (f.Hio_Tell() - start)) ? Math.Min(start + (c_long)minPtr, fileSize) : fileSize;
+
+			if (SkipMixPlugins(f, pluginEnd, out bool isBeRoTracker))
+				return -1;
+
+			// ModPlug Tracker 1.09 - 1.16 and OpenMPT 1.17 in compatible
+			// mode both identify as this
+			if ((cwtv == 0x0217) && (cmwt == 0x0200) && (reserved == 0) && !isBeRoTracker)
+				return -1;
+
+			if (!isBeRoTracker && (highlightMajor == 0) && (highlightMinor == 0) && (reserved == 0))
+			{
+				// ModPlug Tracker 1.0 pre-alpha up to alpha 4, patterns
+				// located before instruments / samples
+				if ((cwtv == 0x0202) && (cmwt == 0x0200) && (patNum > 0) && (smpNum > 0) && (patPos[0] != 0) && (patPos[0] < smpPos[0]))
+					return -1;
+
+				// ModPlug Tracker 1.0a5 - 1.0b2, but not an OpenSPC
+				// conversion which looks almost the same
+				bool isOpenSpcConversion = (flags == 9) && (special == It_Special.None) &&
+				                           (insNum == 0) && ((patNum + 1) == ordNum) &&
+				                           (globalVol == 128) && (mv == 100) && (speed == 1) && (sep == 128) && (pwd == 0) &&
+				                           (msgLength == 0) && (msgOffset == 0);
+
+				if ((cwtv == 0x0214) && (cmwt == 0x0200) && !isOpenSpcConversion)
+					return -1;
+			}
+
+			// Walk through the samples to find the end of the sample data,
+			// where the extended instrument and song properties are stored
+			bool muteBuggySamples = (cwtv >= 0x0100) && (cwtv <= 0x0217) && ((cwtv < 0x0207) || (reserved != 0));
+
+			c_long lastSampleOffset = 0;
+			bool lastSampleCompressed = false;
+
+			if (smpNum > 0)
+				lastSampleOffset = start + (c_long)smpPos[smpNum - 1] + It_Sample_Header_Size;
+
+			for (c_int smp = 0; smp < smpNum; smp++)
+			{
+				if ((smpPos[smp] == 0) || !SeekTo(f, start + smpPos[smp], fileSize) || !CanRead(f, It_Sample_Header_Size, fileSize))
+					continue;
+
+				c_long headerPos = f.Hio_Tell();
+
+				f.Hio_Seek(headerPos + 18, SeekOrigin.Begin);
+				It_Smp_Flag smpFlags = (It_Smp_Flag)f.Hio_Read8();
+
+				f.Hio_Seek(headerPos + 46, SeekOrigin.Begin);
+				uint8 cvt = f.Hio_Read8();
+				f.Hio_Seek(1, SeekOrigin.Current);		// Default pan
 				uint32 length = f.Hio_Read32L();
 
-				if (code == 0x5854504d)		// XTPM
-					break;
+				f.Hio_Seek(headerPos + 72, SeekOrigin.Begin);
+				uint32 samplePointer = f.Hio_Read32L();
 
-				if ((code >= 0x46583030) && (code <= 0x46583939))	// FX00-FX99
+				// OPL instruments and external samples are OpenMPT features
+				if ((cvt == It_Cvt_Opl_Instrument) || (cvt == It_Cvt_External_Sample))
+					return -1;
+
+				// Only ModPlug ever packed samples with its own ADPCM compression
+				if (((smpFlags & It_Smp_Flag.Comp) == 0) && ((smpFlags & It_Smp_Flag._16Bit) == 0) && (cvt == (uint8)It_Cvt_Flag.Adpcm))
+					return -1;
+
+				if (muteBuggySamples && ((smpFlags & It_Smp_Flag.Sample) == 0))
+					length = 0;
+
+				if (!SeekTo(f, start + samplePointer, fileSize))
+					continue;
+
+				// The end of a compressed sample is not known without
+				// unpacking it, so it is searched for later on
+				lastSampleCompressed = (smpFlags & It_Smp_Flag.Comp) != 0;
+
+				if (!lastSampleCompressed)
 				{
-					// VST plugin. Find the name
-					f.Hio_Seek(64, SeekOrigin.Current);
+					c_long sampleBytes = length;
 
-					f.Hio_Read(buf, 64, 1);
-					effects.Add(encoder.GetString(buf));
+					if ((smpFlags & It_Smp_Flag._16Bit) != 0)
+						sampleBytes *= 2;
 
-					length -= 128;
+					// Some old versions of Impulse Tracker did not clear the stereo flag
+					if (((smpFlags & It_Smp_Flag.Stereo) != 0) && (cwtv >= 0x214))
+						sampleBytes *= 2;
+
+					SkipBytes(f, sampleBytes, fileSize);
 				}
 
-				f.Hio_Seek((c_long)length, SeekOrigin.Current);
+				lastSampleOffset = Math.Max(lastSampleOffset, f.Hio_Tell());
 			}
 
-			return effects.Count == 0 ? null : effects.Distinct().OrderBy(x => x).ToArray();
+			// Patterns may be stored after the sample data
+			c_int numPatterns = Math.Min((c_int)patNum, It_Max_Patterns);
+
+			for (c_int pat = 0; pat < numPatterns; pat++)
+			{
+				if ((patPos[pat] == 0) || !SeekTo(f, start + patPos[pat], fileSize))
+					continue;
+
+				uint16 len = Read16L(f, fileSize);
+				uint16 numRows = Read16L(f, fileSize);
+
+				if ((numRows < 1) || (numRows > It_Max_Pattern_Rows) || !SkipBytes(f, 4, fileSize))
+					continue;
+
+				SkipBytes(f, len, fileSize);
+
+				lastSampleOffset = Math.Max(lastSampleOffset, f.Hio_Tell());
+			}
+
+			if (lastSampleOffset > 0)
+			{
+				f.Hio_Seek(lastSampleOffset, SeekOrigin.Begin);
+
+				if (lastSampleCompressed)
+				{
+					// Emulate the OpenMPT loader, which jumps from block to
+					// block until some instrument / song properties or the
+					// end of the file is reached
+					while (CanRead(f, 4, fileSize))
+					{
+						if (ReadMagic(f, Magic_XTPM) || ReadMagic(f, Magic_STPM))
+						{
+							uint32 id = Read32L(f, fileSize);
+							f.Hio_Seek(-8, SeekOrigin.Current);
+
+							// Chunk IDs only contain ASCII characters
+							if (((id & 0x80808080) == 0) && ((id & 0x60606060) != 0))
+								break;
+						}
+
+						SkipBytes(f, Read16L(f, fileSize), fileSize);
+					}
+				}
+			}
+
+			// Extended instrument and song properties are only written by
+			// OpenMPT 1.17 and later, so finding either of them is enough
+			if (ReadMagic(f, Magic_XTPM) || ReadMagic(f, Magic_STPM))
+				return -1;
+
+			return 0;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Read a list of parapointers
 		/// </summary>
 		/********************************************************************/
-		private uint32 MinValue(CPointer<uint32> pp)
+		private static uint32[] ReadPointers(Hio f, c_int count)
 		{
-			uint32 minValue = uint32.MaxValue;
+			uint32[] pointers = new uint32[count];
 
-			if (pp.IsNotNull)
+			for (c_int i = 0; i < count; i++)
+				pointers[i] = f.Hio_Read32L();
+
+			return pointers;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the lowest non-zero offset in the given list or the
+		/// current minimum if it is lower
+		/// </summary>
+		/********************************************************************/
+		private static uint32 GetMinimumPointer(uint32[] positions, uint32 minPtr)
+		{
+			foreach (uint32 pos in positions)
 			{
-				for (int i = pp.Length - 1; i >= 0; i--)
-				{
-					if (pp[i] < minValue)
-						minValue = pp[i];
-				}
+				if ((pos > 0) && (pos < minPtr))
+					minPtr = pos;
 			}
 
-			return minValue;
+			return minPtr;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell if the given number of bytes can be read from the current
+		/// position
+		/// </summary>
+		/********************************************************************/
+		private static bool CanRead(Hio f, c_long amount, c_long fileSize)
+		{
+			return (fileSize - f.Hio_Tell()) >= amount;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Seek to the given position, but only if it is inside the file,
+		/// just like the OpenMPT file reader does
+		/// </summary>
+		/********************************************************************/
+		private static bool SeekTo(Hio f, c_long position, c_long fileSize)
+		{
+			if ((position < 0) || (position > fileSize))
+				return false;
+
+			return f.Hio_Seek(position, SeekOrigin.Begin) >= 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Skip the given number of bytes. If the file is too short, the
+		/// position is left at the end of the file and false is returned,
+		/// just like the OpenMPT file reader does
+		/// </summary>
+		/********************************************************************/
+		private static bool SkipBytes(Hio f, c_long amount, c_long fileSize)
+		{
+			if (!CanRead(f, amount, fileSize))
+			{
+				f.Hio_Seek(fileSize, SeekOrigin.Begin);
+
+				return false;
+			}
+
+			f.Hio_Seek(amount, SeekOrigin.Current);
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read a 16-bit value. If the file is too short, 0 is returned and
+		/// the position is not moved, just like the OpenMPT file reader does
+		/// </summary>
+		/********************************************************************/
+		private static uint16 Read16L(Hio f, c_long fileSize)
+		{
+			return CanRead(f, 2, fileSize) ? f.Hio_Read16L() : (uint16)0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read a 32-bit value. If the file is too short, 0 is returned and
+		/// the position is not moved, just like the OpenMPT file reader does
+		/// </summary>
+		/********************************************************************/
+		private static uint32 Read32L(Hio f, c_long fileSize)
+		{
+			return CanRead(f, 4, fileSize) ? f.Hio_Read32L() : 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Skip over all the mix plugin chunks without parsing them. Tells
+		/// whether any real mix plugin chunk was found and whether a
+		/// BeRoTracker chunk was seen. Only the chunks ending before the
+		/// given end position are taken
+		/// </summary>
+		/********************************************************************/
+		internal static bool SkipMixPlugins(Hio f, c_long endPos, out bool isBeRoTracker)
+		{
+			bool hasPluginChunks = false;
+			isBeRoTracker = false;
+
+			while ((endPos - f.Hio_Tell()) >= 9)
+			{
+				c_long curPos = f.Hio_Tell();
+
+				uint32 code = f.Hio_Read32B();
+				uint32 chunkSize = f.Hio_Read32L();
+
+				if ((code == Magic_IMPI) ||		// IT instrument, we definitely read too far
+				    (code == Magic_IMPS) ||		// IT sample, ditto
+				    (code == Magic_XTPM) ||		// Instrument extensions, ditto
+				    (code == Magic_STPM) ||		// Song extensions, ditto
+				    ((f.Hio_Tell() + chunkSize) > endPos))
+				{
+					f.Hio_Seek(curPos, SeekOrigin.Begin);
+					break;
+				}
+
+				if ((code == Magic_CHFX) || IsPluginChunk(code))
+					hasPluginChunks = true;
+				else if (code == Magic_MODU)
+					isBeRoTracker = true;
+
+				f.Hio_Seek(chunkSize, SeekOrigin.Current);
+			}
+
+			return hasPluginChunks;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell if the given chunk identifier is one of the FXnn chunks
+		/// holding the settings of a single mix plugin
+		/// </summary>
+		/********************************************************************/
+		private static bool IsPluginChunk(uint32 code)
+		{
+			uint8 c2 = (uint8)(code >> 8);
+			uint8 c3 = (uint8)code;
+
+			return ((code >> 16) == 0x4658) && (c2 >= 0x30) && (c2 <= 0x39) && (c3 >= 0x30) && (c3 <= 0x39);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read the given magic. The file position is only moved when the
+		/// magic matches
+		/// </summary>
+		/********************************************************************/
+		internal static bool ReadMagic(Hio f, uint32 magic)
+		{
+			c_long curPos = f.Hio_Tell();
+
+			uint32 id = f.Hio_Read32B();
+
+			if ((f.Hio_Error() != 0) || (id != magic))
+			{
+				f.Hio_Seek(curPos, SeekOrigin.Begin);
+				return false;
+			}
+
+			return true;
+		}
+		#endregion
+
 		#endregion
 	}
 }

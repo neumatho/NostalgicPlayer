@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Numerics;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
@@ -120,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public size_t ReadStructPartial<T>(ref T target, size_t partialSize) where T : unmanaged//XX 326
+		public size_t ReadStructPartial<T>(ref T target, size_t? partialSize = null) where T : unmanaged//XX 326
 		{
 			return Mpt.Io_Read.FileReader.ReadStructPartial(this, ref target, partialSize);
 		}
@@ -171,6 +172,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		public bool ReadVector<T>(vector<T> destVector, size_t destSize) where T : unmanaged//XX 360
 		{
 			return Mpt.Io_Read.FileReader.ReadVector(this, destVector, destSize);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public bool ReadVarInt<T>(out T target) where T : INumber<T>, IShiftOperators<T, int, T>, IBitwiseOperators<T, T, T>, IMinMaxValue<T>//XX 373
+		{
+			return Mpt.Io_Read.FileReader.ReadVarInt(this, out target);
 		}
 
 

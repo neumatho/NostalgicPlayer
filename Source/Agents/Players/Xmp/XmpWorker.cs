@@ -131,23 +131,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			return AgentResult.Ok;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return a string containing a warning string. If there is no
-		/// warning, an empty string is returned
-		/// </summary>
-		/********************************************************************/
-		public override string GetWarning()
-		{
-			string[] dspEffectNames = libXmp.Xmp_Get_Used_Dsp_Effects();
-			if (dspEffectNames != null)
-				return string.Format(Resources.IDS_XMP_ERR_HAVE_DSP, string.Join("\n", dspEffectNames));
-
-			return string.Empty;
-		}
 		#endregion
 
 		#region Initialization and cleanup

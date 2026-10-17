@@ -19,12 +19,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal partial class CSoundFile
 	{
+		public const c_double Ln2 = 0.693147180559945309417;
+
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_float CutOffToFrequency(uint32 nCutOff, c_int envModifier)//XX 40
+		public uint8 FrequencyToCutOff(c_double frequency)//XX 27
+		{
+			// IT Cutoff is computed as cutoff = 110 * 2 ^ (0.25 + x/y), where x is the cutoff and y defines the filter range.
+			// Reversed, this gives us x = (log2(cutoff / 110) - 0.25) * y.
+			// <==========> Rewrite as x = (log2(cutoff) - log2(110) - 0.25) * y.
+			// <==========> Rewrite as x = (ln(cutoff) - ln(110) - 0.25*ln(2)) * y/ln(2).
+			//                                           <4.8737671609324025>
+			c_double cutOff = (CMath.log(frequency) - 4.8737671609324025) * (m_SongFlags.Test(SongFlags.ExFilterRange) ? (20.0 / Ln2) : (24.0 / Ln2));
+			OpenMpt.Limit(ref cutOff, 0.0, 127.0);
+
+			return SaturateRound.Saturate_Round<uint8, c_double>(cutOff);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_float CutOffToFrequency(uint32 nCutOff, c_int envModifier = 256)//XX 40
 		{
 			c_float computedCutOff = nCutOff * (uint32)(envModifier + 256);	// 0...127*512
 			c_float frequency;

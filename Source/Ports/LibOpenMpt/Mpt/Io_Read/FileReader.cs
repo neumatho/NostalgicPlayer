@@ -24,20 +24,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Returns a pinned view into the remeining raw data from cursor
-		/// position, clamped at size.
-		/// File cursor is advaned by the size of the returned pinned view
-		/// </summary>
-		/********************************************************************/
-		public static FileCursor.PinnedView ReadPinnedView(FileCursor f, size_t size)//XX 191
-		{
-			return f.ReadPinnedView(size);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Read a "T" object from the stream.
 		/// If not enough bytes can be read, false is returned.
 		/// If successful, the file cursor is advanced by the size of "T"
@@ -364,9 +350,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static size_t ReadStructPartial<T>(FileCursor f, ref T target, size_t partialSize) where T : unmanaged//XX 534
+		public static size_t ReadStructPartial<T>(FileCursor f, ref T target, size_t? partialSize = null) where T : unmanaged//XX 534
 		{
-			size_t copyBytes = Math.Min(partialSize, (size_t)Marshal.SizeOf<T>());
+			if (partialSize == null)
+				partialSize = (size_t)Marshal.SizeOf<T>();
+
+			size_t copyBytes = Math.Min(partialSize!.Value, (size_t)Marshal.SizeOf<T>());
 
 			if (!f.CanRead(copyBytes))
 				copyBytes = size_t.CreateSaturating(f.BytesLeft());
@@ -374,7 +363,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			f.GetRaw(Memory.As_Raw_Memory(ref target).Slice(0, (int)copyBytes));
 			Memory.As_Raw_Memory(ref target).Slice((int)copyBytes).Clear();
 
-			f.Skip(partialSize);
+			f.Skip(partialSize!.Value);
 
 			return copyBytes;
 		}
@@ -403,6 +392,69 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 				return false;
 
 			f.Skip(magicLength);
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read variable-length unsigned integer (as found in MIDI files).
+		/// If successful, the file cursor is advanced by the size of the
+		/// integer and true is returned.
+		/// False is returned if not enough bytes were left to finish reading
+		/// of the integer or if an overflow happened (source doesn't fit
+		/// into target integer).
+		/// In case of an overflow, the target is also set to the maximum
+		/// value supported by its data type
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool ReadVarInt<T>(FileCursor f, out T target) where T : INumber<T>, IShiftOperators<T, c_int, T>, IBitwiseOperators<T, T, T>, IMinMaxValue<T> //XX 623
+		{
+			if (f.NoBytesLeft())
+			{
+				target = default;
+				return false;
+			}
+
+			byte[] bytes = new byte[16];	// More than enough for any valid VarInt
+			size_t avail = f.GetRaw(bytes).Size();
+			size_t readPos = 1;
+
+			uint8 b = bytes[0];
+			target = T.CreateTruncating(b & 0x7f);
+			size_t writtenBits = (size_t)Bit.Bit_Width(target);	// Bits used in the most significant byte
+
+			while ((readPos < avail) && ((b & 0x80) != 0))
+			{
+				b = bytes[readPos++];
+				target <<= 7;
+				target |= T.CreateTruncating(b & 0x7f);
+				writtenBits += 7;
+
+				if (readPos == avail)
+				{
+					f.Skip(readPos);
+					avail = f.GetRaw(bytes).Size();
+					readPos = 0;
+				}
+			}
+
+			f.Skip(readPos);
+
+			if (writtenBits > ((size_t)Marshal.SizeOf<T>() * 8U))
+			{
+				// Overflow
+				target = T.MaxValue;
+				return false;
+			}
+			else if ((b & 0x80) != 0)
+			{
+				// Reached EOF
+				return false;
+			}
 
 			return true;
 		}

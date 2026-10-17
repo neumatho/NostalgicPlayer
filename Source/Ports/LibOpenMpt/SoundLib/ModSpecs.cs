@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications mptm = new CModSpecifications
+		public static readonly CModSpecifications Mptm = new CModSpecifications
 		{
 			InternalType = ModType.Mpt,
 			FileExtension = "mptm".ToCharPointer(),
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications mod = new CModSpecifications
+		public static readonly CModSpecifications Mod = new CModSpecifications
 		{
 			InternalType = ModType.Mod,
 			FileExtension = "mod".ToCharPointer(),
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications xm = new CModSpecifications
+		public static readonly CModSpecifications Xm = new CModSpecifications
 		{
 			InternalType = ModType.Xm,
 			FileExtension = "xm".ToCharPointer(),
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// XM with MPT extensions
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications xmEx = new CModSpecifications
+		public static readonly CModSpecifications XmEx = new CModSpecifications
 		{
 			InternalType = ModType.Xm,
 			FileExtension = "xm".ToCharPointer(),
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications s3m = new CModSpecifications
+		public static readonly CModSpecifications S3M = new CModSpecifications
 		{
 			InternalType = ModType.S3M,
 			FileExtension = "s3m".ToCharPointer(),
@@ -289,7 +289,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// S3M with MPT extensions
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications s3mEx = new CModSpecifications
+		public static readonly CModSpecifications S3MEx = new CModSpecifications
 		{
 			InternalType = ModType.S3M,
 			FileExtension = "s3m".ToCharPointer(),
@@ -343,7 +343,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications it = new CModSpecifications
+		public static readonly CModSpecifications It = new CModSpecifications
 		{
 			InternalType = ModType.It,
 			FileExtension = "it".ToCharPointer(),
@@ -397,7 +397,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly CModSpecifications itEx = new CModSpecifications
+		public static readonly CModSpecifications ItEx = new CModSpecifications
 		{
 			InternalType = ModType.It,
 			FileExtension = "it".ToCharPointer(),
@@ -453,7 +453,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/********************************************************************/
 		public static readonly array<CModSpecifications> Collection = new array<CModSpecifications>(
 		[
-			mptm, mod, s3m, s3mEx, xm, xmEx, it, itEx
+			Mptm, Mod, S3M, S3MEx, Xm, XmEx, It, ItEx
 		]);
 	}
 }

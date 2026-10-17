@@ -160,4 +160,16 @@ The modules are from the game Aleshar - The World Of Ice.</value>
   <data name="IDS_MPT_ADPCM1" xml:space="preserve">
     <value>ADPCM packed</value>
   </data>
+  <data name="IDS_MPT_IT_DESCRIPTION" xml:space="preserve">
+    <value>This format is the same as the standard ImpulseTracker format, but created with OpenMPT. It may have extra extensions included which was added by either ModPlug Tracker or OpenMPT.</value>
+  </data>
+  <data name="IDS_MPT_IT_NAME" xml:space="preserve">
+    <value>OpenMPT IT</value>
+  </data>
+  <data name="IDS_MPT_ERR_INCOMPATIBLE_VERSION" xml:space="preserve">
+    <value>The file informed that it is incompatible with this version of OpenMPT. Loading was terminated.</value>
+  </data>
+  <data name="IDS_MPT_ITCOMPRESSED" xml:space="preserve">
+    <value> (IT compressed)</value>
+  </data>
 </root>

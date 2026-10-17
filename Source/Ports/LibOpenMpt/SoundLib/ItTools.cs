@@ -12,6 +12,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 	/// </summary>
 	internal static class ItTools
 	{
+		// Pattern row parsing, the channel data is read to obtain
+		// number of channels active in the pattern. These bit masks are
+		// to blank out sections of the byte of data being read
+		public const ChannelIndex It_BitMask_PatternChanField = 0x7f;
+		public const ChannelIndex It_BitMask_PatternChanMask = 0x3f;
+		public const ChannelIndex It_BitMask_PatternChanEnabled = 0x80;
+		public const ChannelIndex It_BitMask_PatternChanUsed = 0x0f;
+
 		public static readonly int32 SchismTrackerEpoch = new SchismVersionFromDate(2009, 10, 31).Date;
 
 		/********************************************************************/

@@ -8,7 +8,11 @@ using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Kit.C.Std.Iterators;
+using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn;
+using Version = Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Version;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 {
@@ -21,6 +25,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		{
 			void Invoke(CPointer<T> o);
 		}
+
+		public const string FileIdPatterns = "mptPc";
 
 		private readonly vector<CPattern> m_Patterns = new vector<CPattern>();
 		private readonly CSoundFile m_rSndFile;
@@ -42,10 +48,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CPattern this[c_int pat]
+		public ref CPattern this[c_int pat]
 		{
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			get => m_Patterns[pat];
+			get => ref m_Patterns[pat];
 		}
 
 
@@ -218,6 +224,36 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			}
 
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public static void ReadModPatterns(ReaderStream iStrm, ref CPatternContainer patC, size_t _)//XX 204
+		{
+			SsbRead ssb = new SsbRead(iStrm);
+			ssb.BeginRead(FileIdPatterns, Version.Current().GetRawVersion());
+
+			if (ssb.HasFailed())
+				return;
+
+			PatternIndex nPatterns = patC.Size();
+			uint16 nCount = uint16.MaxValue;
+
+			if (ssb.ReadItem(ref nCount, "num"))
+				nPatterns = nCount;
+
+			OpenMpt.LimitMax(ref nPatterns, ModSpecs.Mptm.PatternsMax);
+
+			if (nPatterns > patC.Size())
+				patC.ResizeArray(nPatterns);
+
+			for (uint16 i = 0; i < nPatterns; i++)
+				ssb.ReadItem(ref patC[i], Id.FromInt(i), CPattern.ReadModPattern);
 		}
 
 

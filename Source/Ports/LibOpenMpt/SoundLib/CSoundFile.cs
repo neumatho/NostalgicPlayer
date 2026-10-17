@@ -135,8 +135,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public OrderIndex m_RestartOverridePos = 0;//XX 519
 		public OrderIndex m_MaxOrderPosition = 0;
 		public readonly vector<ModChannelSettings> ChnSettings = new vector<ModChannelSettings>();	// Initial channels settings//XX 520
-		public readonly CPatternContainer Patterns;//XX 521
-		public readonly ModSequenceSet Order;	// Pattern sequences (order list)//XX 522
+		public CPatternContainer Patterns;//XX 521
+		public ModSequenceSet Order;	// Pattern sequences (order list)//XX 522
 		protected readonly ModSample[] Samples = ArrayHelper.InitializeArray<ModSample>(Snd_Def.Max_Samples);//XX 524
 
 		public readonly ModInstrument[] Instruments = new ModInstrument[Snd_Def.Max_Instruments];	// Instrument headers//XX 526
@@ -190,6 +190,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		private static readonly FileFormatLoader[] moduleFormatLoaders =
 		[
 			XmLoader.Format,
+			ItLoader.Format,
 			S3MLoader.Format,
 			ModLoader.Format,
 			InconexiaLoader.Format,
@@ -204,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public CSoundFile()//XX 113
 		{
 			m_NoteNames = Tables.NoteNamesSharp;
-			m_pModSpecs = ModSpecs.itEx;
+			m_pModSpecs = ModSpecs.ItEx;
 			m_nType = ModType.None;
 
 			Patterns = new CPatternContainer(this);
@@ -251,6 +252,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public static IEnumerable<FileFormatLoader> GetFormats()
 		{
 			return moduleFormatLoaders;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public CTuningCollection GetTuneSpecificTunings()
+		{
+			return m_pTuningsTuneSpecific;
 		}
 
 
@@ -1677,7 +1691,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					{
 						for (ChannelIndex c = 0; c < GetNumChannels(); c++, pp++)
 						{
-							ModCommand p = pp[0];
+							ModCommand p = pp.Value;
 
 							if (p.IsNote())
 							{
@@ -1802,25 +1816,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public CTuning CreateTuning12Tet(string name)//XX 1636
+		{
+			CTuning pT = CTuning.CreateGeometric(name, 12, 2, 15);
+
+			for (ModCommandNote note = 0; note < 12; ++note)
+				pT.SetNoteName(note, Tables.NoteNamesSharp[note]);
+
+			return pT;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public CModSpecifications GetModSpecifications(ModType type)//XX 1705
 		{
 			switch (type)
 			{
 				case ModType.Mpt:
-					return ModSpecs.mptm;
+					return ModSpecs.Mptm;
 
 				case ModType.It:
-					return ModSpecs.itEx;
+					return ModSpecs.ItEx;
 
 				case ModType.Xm:
-					return ModSpecs.xmEx;
+					return ModSpecs.XmEx;
 
 				case ModType.S3M:
-					return ModSpecs.s3mEx;
+					return ModSpecs.S3MEx;
 
 				case ModType.Mod:
 				default:
-					return ModSpecs.mod;
+					return ModSpecs.Mod;
 			}
 		}
 

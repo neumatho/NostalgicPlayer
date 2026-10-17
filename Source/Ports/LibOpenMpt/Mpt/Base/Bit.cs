@@ -35,6 +35,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int Bit_Width<T>(T x) where T : INumber<T>, IShiftOperators<T, c_int, T>, IComparisonOperators<T, T, bool> //XX 254
+		{
+			c_int result = 0;
+
+			while (x > T.Zero)
+			{
+				x >>= 1;
+				result += 1;
+			}
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T Rotl_Impl<T>(T x, c_int r) where T : IBinaryInteger<T>, IUnsignedNumber<T>//XX 326
 		{
 			c_int n = Marshal.SizeOf<T>() * 8;

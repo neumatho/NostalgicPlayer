@@ -176,6 +176,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
 | OggMod | .oxm | | Xmp |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
+| OpenMPT IT | .it | | OpenMPT |
 | OpenMPT MOD | .mod | | OpenMPT |
 | OpenMPT S3M | .s3m | | OpenMPT |
 | OpenMPT XM | .xm | | OpenMPT |

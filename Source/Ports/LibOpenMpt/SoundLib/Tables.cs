@@ -394,6 +394,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		];
 
 		/// <summary>
+		/// IT Vibrato -› OpenMPT/XM VibratoType
+		/// </summary>
+		public static VibratoType[] AutoVibratoIt2Xm =
+		[
+			VibratoType.Sine, VibratoType.Ramp_Down, VibratoType.Square, VibratoType.Random, VibratoType.Ramp_Up, 0, 0, 0
+		];
+
+		/// <summary>
 		/// Reversed sinc coefficients for 4x256 taps polyphase FIR resampling filter (SchismTracker's lutgen.c should generate a very similar table, but it's more precise)
 		/// </summary>
 		public static readonly int16[] FastSincTable =

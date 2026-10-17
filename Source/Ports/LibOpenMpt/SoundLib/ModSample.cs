@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Kit.C.Containers;
 using Polycode.NostalgicPlayer.Kit.C.Std;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.String;
@@ -662,6 +663,78 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public static uint32 TransposeToFrequency(c_int transpose, c_int fineTune = 0)//XX 560
 		{
 			return SaturateRound.Saturate_Round<uint32, c_double>(CMath.pow(2.0, ((transpose * 128.0) + fineTune) * (1.0 / (12.0 * 128.0))) * 8363.0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void TransposeToFrequency()//XX 566
+		{
+			nC5Speed = TransposeToFrequency(RelativeTone, nFineTune);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a pair of (transpose, finetune)
+		/// </summary>
+		/********************************************************************/
+		public static (int8 Transpose, int8 FineTune) FrequencyToTranspose(uint32 freq)//XX 573
+		{
+			if (freq == 0)
+				return (0, 0);
+
+			int32 ft2 = SaturateRound.Saturate_Round<int32, c_double>(CMath.log(freq * (1.0 / 8363.0)) * (12.0 * 128.0 * (1.0 / CSoundFile.Ln2)));
+			div_t fine = CMath.div(OpenMpt.Clamp(ft2, -16384, 16383), 128);
+
+			return ((int8)fine.quot, (int8)fine.rem);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void FrequencyToTranspose()//XX 584
+		{
+			var pair = FrequencyToTranspose(nC5Speed);
+
+			RelativeTone = pair.Transpose;
+			nFineTune = pair.FineTune;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Transpose the sample by amount specified in octaves (i.e.
+		/// amount=1 transposes one octave up)
+		/// </summary>
+		/********************************************************************/
+		public void Transpose(c_double amount)//XX 591
+		{
+			nC5Speed = SaturateRound.Saturate_Round<uint32, c_double>(nC5Speed * CMath.pow(2.0, amount));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void SetDefaultCuePoints()//XX 626
+		{
+			// Default cues compatible with old-style volume column offset
+			for (c_int i = 0; i < 9; i++)
+				Cues[i] = (uint32)((i + 1) << 11);
 		}
 
 

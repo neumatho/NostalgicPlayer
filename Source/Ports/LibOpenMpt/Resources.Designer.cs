@@ -99,6 +99,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file informed that it is incompatible with this version of OpenMPT. Loading was terminated..
+        /// </summary>
+        internal static string IDS_MPT_ERR_INCOMPATIBLE_VERSION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ERR_INCOMPATIBLE_VERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Some compressed samples could not be loaded because they use an unsupported codec.
         /// </summary>
         internal static string IDS_MPT_ERR_UNSUPPORTED_SAMPLE {
@@ -124,6 +133,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         internal static string IDS_MPT_INCONEXIA_NAME {
             get {
                 return ResourceManager.GetString("IDS_MPT_INCONEXIA_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This format is the same as the standard ImpulseTracker format, but created with OpenMPT. It may have extra extensions included which was added by either ModPlug Tracker or OpenMPT..
+        /// </summary>
+        internal static string IDS_MPT_IT_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_IT_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenMPT IT.
+        /// </summary>
+        internal static string IDS_MPT_IT_NAME {
+            get {
+                return ResourceManager.GetString("IDS_MPT_IT_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  (IT compressed).
+        /// </summary>
+        internal static string IDS_MPT_ITCOMPRESSED {
+            get {
+                return ResourceManager.GetString("IDS_MPT_ITCOMPRESSED", resourceCulture);
             }
         }
         
