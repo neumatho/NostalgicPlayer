@@ -405,7 +405,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 		/********************************************************************/
 		public static string FixFileName(string fileName)
 		{
-			return fileName.Replace('?', '!').Replace('<', '!').Replace('>', '!');
+			return fileName.Replace('?', '!').Replace('<', '!').Replace('>', '!').Replace('*', '+');
 		}
 
 		#region Private methods
