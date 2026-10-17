@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 	{
 		public const c_int MajorMajor = 0x1;
 		public const c_int Major = 0x32;
-		public const c_int Minor = 0x10;
+		public const c_int Minor = 0x11;
 		public const c_int MinorMinor = 0x00;
 	}
 }

@@ -697,6 +697,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		ItStoppedFilterEnvAtStart,
 
 		/// <summary>
+		/// Envelope Carry quirk in Compatible Gxx mode with portamento and instrument number
+		/// </summary>
+		ItCompatGxxCarryPortaWithIns,
+
+		/// <summary>
 		/// 
 		/// </summary>
 		MaxPlayBehaviours

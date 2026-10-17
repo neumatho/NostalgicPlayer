@@ -132,7 +132,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			new pair<int32, PlayBehaviour>(new SchismVersionFromDate(2024,  5, 12).Date, PlayBehaviour.ItEmptyNoteMapSlotIgnoreCell),	// https://github.com/schismtracker/schismtracker/commit/aa84148e019a65f3d52ecd33fd84bfecfdb87bf4
 			new pair<int32, PlayBehaviour>(new SchismVersionFromDate(2024,  5, 27).Date, PlayBehaviour.ItOffsetWithInstrNumber),			// https://github.com/schismtracker/schismtracker/commit/9237960d45079a54ad73f87bacfe5dd8ae82e273
 			new pair<int32, PlayBehaviour>(new SchismVersionFromDate(2024, 10, 13).Date, PlayBehaviour.ItDoublePortamentoSlides),		// https://github.com/schismtracker/schismtracker/commit/223e327d9448561931b8cac8a55180286b17276c
-			new pair<int32, PlayBehaviour>(new SchismVersionFromDate(2025,  1,  8).Date, PlayBehaviour.ItCarryAfterNoteOff)				// https://github.com/schismtracker/schismtracker/commit/ff7a817df327c8f13d97b8c6546a9329f59edff8
+			new pair<int32, PlayBehaviour>(new SchismVersionFromDate(2025,  1,  8).Date, PlayBehaviour.ItCarryAfterNoteOff),				// https://github.com/schismtracker/schismtracker/commit/ff7a817df327c8f13d97b8c6546a9329f59edff8
+			new pair<int32, PlayBehaviour>(new SchismVersionFromDate(2026,  7, 13).Date, PlayBehaviour.ItCompatGxxCarryPortaWithIns)		// https://github.com/schismtracker/schismtracker/commit/21bbd9a74df8266efe10c1c7c8aaccfc7512ede5
 		];
 
 		/********************************************************************/
@@ -1167,6 +1168,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						else
 							madeWithTracker = "Unknown";
 
+						break;
+					}
+
+					case 0xe:
+					{
+						if (fileHeader.Cwtv == 0xefff)
+							madeWithTracker = "rosetracker";
+						else
+							madeWithTracker = "Unknown";
+
+						break;
+					}
+
+					default:
+					{
+						madeWithTracker = "Unknown";
 						break;
 					}
 				}

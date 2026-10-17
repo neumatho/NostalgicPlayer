@@ -2232,15 +2232,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			{
 				ModChannel chn = m_PlayState.Chn[nChn];
 
-				// FT2 Compatibility: Prevent notes to be stopped after a fadeout. This way, a portamento effect can pick up a faded instrument which is long enough.
-				// This occurs for example in the bassline (channel 11) of jt_burn.xm. I hope this won't break anything else...
-				// I also suppose this could decrease mixing performance a bit, but hey, which CPU can't handle 32 muted channels these days... :-)
-				if (chn.dwFlags.Test(ChannelFlags.Chn_NoteFade) && ((chn.nFadeOutVol | chn.LeftVol | chn.RightVol) == 0) && !m_PlayBehaviour[PlayBehaviour.Ft2ProcessSilentChannels])
-				{
-					chn.nLength = 0;
-					chn.nROfs = chn.nLOfs = 0;
-				}
-
 				// Increment age of NNA channels
 				if ((chn.nMasterChn != 0) && (nChn < GetNumChannels()) && (chn.NnaChannelAge < uint16.MaxValue))
 					chn.NnaChannelAge++;
@@ -2508,6 +2499,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					IncrementEnvelopePositions(chn);
 				}
 
+				// FT2 Compatibility: Prevent notes to be stopped after a fadeout. This way, a portamento effect can pick up a faded instrument which is long enough.
+				// This occurs for example in the bassline (channel 11) of jt_burn.xm.
+				// Test case: FadeoutPickup.xm
+				// NB: This check used to be right at the top of the loop, but was moved down here to match the channel stop behaviour
+				// of Impulse Tracker for the kITCompatGxxCarryPortaWithIns play behaviour.
+				// Test case: CarryCompatGxxPortaWithIns.it
+				if (chn.dwFlags.Test(ChannelFlags.Chn_NoteFade) && ((chn.nFadeOutVol | chn.LeftVol | chn.RightVol) == 0) && !m_PlayBehaviour[PlayBehaviour.Ft2ProcessSilentChannels])
+				{
+					chn.nLength = 0;
+					chn.nROfs = chn.nLOfs = 0;
+				}
+
 				// Volume ramping
 				chn.dwFlags.Set(ChannelFlags.Chn_VolumeRamp, ((chn.nRealVolume | chn.RightVol | chn.LeftVol) != 0) && !chn.dwFlags.Test(ChannelFlags.Chn_Adlib));
 
@@ -2608,6 +2611,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					// Adding the channel in the channel list
 					if (!chn.dwFlags.Test(ChannelFlags.Chn_Adlib))
 						m_PlayState.ChnMix[m_nMixChannels++] = nChn;
+
+					// Stop NNA channel processing if the channel is effectively muted.
+					// Required for Carry Envelope quirk to stop processing envelopes of affected channels.
+					// Test case: CarryCompatGxxPortaWithIns.it
+					if ((nChn >= GetNumChannels()) && !((chn.nVolume != 0) && (chn.nGlobalVol != 0) && (chn.nInsVol != 0)))
+						chn.nLength = 0;
 				}
 				else
 				{

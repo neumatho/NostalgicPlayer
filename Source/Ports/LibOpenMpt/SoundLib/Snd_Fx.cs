@@ -107,6 +107,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				State.m_ppqPosFract = 0.0;
 				State.m_ppqPosBeat = 0;
 				State.m_nGlobalVolume = (int32)SndFile.m_nDefaultGlobalVolume;
+				State.m_LastMovedChannel = Snd_Def.ChannelIndex_Invalid;
 				State.m_GlobalScriptState.Initialize(SndFile);
 
 				ChnSettings_.assign(SndFile.GetNumChannels(), new ChnSettings());
@@ -1487,7 +1488,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							int32 setPan = chn.nPan;
 
 							if (chn.nNewIns != 0)
-								InstrumentChange(chn, chn.nNewIns, porta);
+								InstrumentChange(playState, nChn, chn.nNewIns, porta);
 
 							NoteChange(chn, m.Note, porta);
 							HandleNoteChangeFilter(chn);
@@ -1871,8 +1872,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Change sample or instrument number
 		/// </summary>
 		/********************************************************************/
-		public void InstrumentChange(ModChannel chn, uint32 instr, bool bPorta = false, bool bUpdVol = true, bool bResetEnv = true)//XX 1462
+		public void InstrumentChange(PlayState playState, ChannelIndex channel, uint32 instr, bool bPorta = false, bool bUpdVol = true, bool bResetEnv = true)//XX 1462
 		{
+			ModChannel chn = playState.Chn[channel];
 			ModInstrument pIns = instr <= GetNumInstruments() ? Instruments[instr] : null;
 			ModSample pSmp = Samples[instr <= GetNumSamples() ? instr : 0];
 			uint8 oldInsVol = chn.nInsVol;
@@ -2080,14 +2082,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							chn.ResetEnvelopes();
 						else
 						{
+							// IT Compatibility: In Compatible Gxx mode, Envelope Carry mode has a
+							// really terrible quirk where, if a note has both an instrument number
+							// and tone portamento, it does not resume envelopes where the previously
+							// playing note left off:
+							// Internally, IT keeps track of the last allocated NNA channel in a
+							// global variable, which is then used to get the old envelope information
+							// from.
+							// However in this particular case (porta + instrument number), the last
+							// NNA channel memory is not updated. Due to this, the 'last' channel may
+							// actually be some earlier, already stopped note from the same channel, or
+							// it might be a completely different pattern channel altogether. Nasty!
+							// Test case: CarryCompatGxxPortaWithIns.it
+							bool compatGxxCarryReset = m_PlayBehaviour[PlayBehaviour.ItCompatGxxCarryPortaWithIns] && bPorta && m_SongFlags.Test(SongFlags.ItCompatGxx);
+							ModChannel lastChn = playState.m_LastMovedChannel < playState.Chn.size() ? playState.Chn[playState.m_LastMovedChannel] : null;
+
 							if (!pIns.VolEnv.dwFlags.Test(EnvelopeFlags.Carry))
 								chn.VolEnv.Reset();
+							else if (compatGxxCarryReset)
+								chn.VolEnv.nEnvPosition = lastChn != null ? lastChn.VolEnv.nEnvPosition : 0;
 
 							if (!pIns.PanEnv.dwFlags.Test(EnvelopeFlags.Carry))
 								chn.PanEnv.Reset();
+							else if (compatGxxCarryReset)
+								chn.PanEnv.nEnvPosition = lastChn != null ? lastChn.PanEnv.nEnvPosition : 0;
 
 							if (!pIns.PitchEnv.dwFlags.Test(EnvelopeFlags.Carry))
 								chn.PitchEnv.Reset();
+							else if (compatGxxCarryReset)
+								chn.PitchEnv.nEnvPosition = lastChn != null ? lastChn.PitchEnv.nEnvPosition : 0;
 						}
 					}
 
@@ -2452,7 +2475,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 				if (pIns != null)
 				{
-					// IT Compatiblity: NNA is reset on every note change, not every instrument change (fixes spx-farspacedance.it)
+					// IT Compatibility: NNA is reset on every note change, not every instrument change (fixes spx-farspacedance.it)
 					if (m_PlayBehaviour[PlayBehaviour.ItNnaReset])
 						chn.nNna = pIns.nNna;
 
@@ -2820,6 +2843,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 				ChannelIndex nnaChn_ = GetNnaChannel(nChn);
 
+				if (m_PlayState.m_LastMovedChannel == nChn)
+					m_PlayState.m_LastMovedChannel = nnaChn_;
+
 				if (nnaChn_ == Snd_Def.ChannelIndex_Invalid)
 					return Snd_Def.ChannelIndex_Invalid;
 
@@ -3001,11 +3027,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				}
 			}
 
+			m_PlayState.m_LastMovedChannel = Snd_Def.ChannelIndex_Invalid;
+
 			// New Note Action
 			if (!srcChn.IsSamplePlaying() && !applyNnaToPlug)
 				return Snd_Def.ChannelIndex_Invalid;
 
 			ChannelIndex nnaChn = GetNnaChannel(nChn);
+
+			if (srcChn.pModInstrument == pIns)
+				m_PlayState.m_LastMovedChannel = nnaChn;
 
 			if (nnaChn == Snd_Def.ChannelIndex_Invalid)
 				return Snd_Def.ChannelIndex_Invalid;
@@ -3574,7 +3605,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 						ModSample oldSample = chn.pModSample;
 
-						InstrumentChange(chn, instr, bPorta, true);
+						InstrumentChange(m_PlayState, nChn, instr, bPorta, true);
 
 //XX						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
 //							m_Opl.Patch(nChn, chn.pModSample.Addlib);
@@ -3644,7 +3675,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							if (m_PlayBehaviour[PlayBehaviour.ItEmptyNoteMapSlotIgnoreCell] && ModCommand.IsNote(previousNewNote))
 								chn.nNewNote = previousNewNote;
 
-							InstrumentChange(chn, chn.nNewIns, bPorta, (chn.pModSample == null) && (chn.pModInstrument == null), (GetType_() & (ModType.Xm | ModType.Mt2)) == 0);
+							InstrumentChange(m_PlayState, nChn, chn.nNewIns, bPorta, (chn.pModSample == null) && (chn.pModInstrument == null), (GetType_() & (ModType.Xm | ModType.Mt2)) == 0);
 
 							chn.nNewNote = note;
 							chn.SwapSampleIndex = chn.nNewIns = 0;
@@ -7163,7 +7194,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				{
 					if ((chn.RowCommand.Instr != 0) && (param < 0x100))
 					{
-						InstrumentChange(chn, chn.RowCommand.Instr, false, false);
+						InstrumentChange(m_PlayState, nChn, chn.RowCommand.Instr, false, false);
 						resetEnv = true;
 					}
 
@@ -7176,7 +7207,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				if (m_PlayBehaviour[PlayBehaviour.ModSampleSwap] && (chn.RowCommand.Instr != 0))
 				{
 					int16 oldFineTune = chn.nFineTune;
-					InstrumentChange(chn, chn.RowCommand.Instr, false, false);
+					InstrumentChange(m_PlayState, nChn, chn.RowCommand.Instr, false, false);
 					chn.nFineTune = oldFineTune;
 				}
 

@@ -217,6 +217,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 			public static readonly Version _1_32_01_02 = LiteralParser.Parse("1.32.01.02");
 			public static readonly Version _1_32_02_03 = LiteralParser.Parse("1.32.02.03");
 			public static readonly Version _1_32_03_04 = LiteralParser.Parse("1.32.03.04");
+			public static readonly Version _1_32_10_02 = LiteralParser.Parse("1.32.10.02");
 		}
 		#endregion
 

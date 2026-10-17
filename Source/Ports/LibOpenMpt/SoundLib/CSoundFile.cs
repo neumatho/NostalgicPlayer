@@ -1144,6 +1144,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			m_PlayState.m_lTotalSampleCount = 0;
 			m_PlayState.m_ppqPosFract = 0.0;
 			m_PlayState.m_ppqPosBeat = 0;
+			m_PlayState.m_LastMovedChannel = Snd_Def.ChannelIndex_Invalid;
 			m_PlayState.m_GlobalScriptState.Initialize(this);
 		}
 
@@ -1344,6 +1345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					playBehaviour.set(PlayBehaviour.ItNoteCutWithPorta);
 					playBehaviour.set(PlayBehaviour.ItVolColNoSlidePropagation);
 					playBehaviour.set(PlayBehaviour.ItStoppedFilterEnvAtStart);
+					playBehaviour.set(PlayBehaviour.ItCompatGxxCarryPortaWithIns);
 					break;
 				}
 

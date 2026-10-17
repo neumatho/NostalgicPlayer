@@ -159,6 +159,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public OrderTransitionMode m_SeqOverrideMode = OrderTransitionMode.AtPatternEnd;
 
 		/// <summary>
+		/// IT compat Gxx + carry + porta bug emulation
+		/// </summary>
+		public ChannelIndex m_LastMovedChannel = Snd_Def.ChannelIndex_Invalid;
+
+		/// <summary>
 		/// Current global volume (0...MAX_GLOBAL_VOLUME)
 		/// </summary>
 		public int32 m_nGlobalVolume = (int32)Snd_Def.Max_Global_Volume;

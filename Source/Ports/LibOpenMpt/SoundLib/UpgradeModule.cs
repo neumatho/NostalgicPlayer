@@ -359,7 +359,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			new PlayBehaviourVersion(PlayBehaviour.ItCarryAfterNoteOff, Version.MPT_V._1_32_00_40),
 			new PlayBehaviourVersion(PlayBehaviour.ItNoteCutWithPorta, Version.MPT_V._1_32_01_02),
 			new PlayBehaviourVersion(PlayBehaviour.ItVolColNoSlidePropagation, Version.MPT_V._1_32_02_03),
-			new PlayBehaviourVersion(PlayBehaviour.ItStoppedFilterEnvAtStart, Version.MPT_V._1_32_03_04)
+			new PlayBehaviourVersion(PlayBehaviour.ItStoppedFilterEnvAtStart, Version.MPT_V._1_32_03_04),
+			new PlayBehaviourVersion(PlayBehaviour.ItCompatGxxCarryPortaWithIns, Version.MPT_V._1_32_10_02)
 		];
 
 		private static readonly PlayBehaviourVersion[] behaviours4 =

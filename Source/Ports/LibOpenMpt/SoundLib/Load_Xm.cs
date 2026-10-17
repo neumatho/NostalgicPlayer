@@ -855,6 +855,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/********************************************************************/
 		private static void ReadXmPatterns(FileReader file, ref XmFileHeader fileHeader, CSoundFile sndFile)
 		{
+			bool isNitroTracker = CMemory.memcmp(fileHeader.TrackerName.ToArray().data(), "NitroTracker", 13) == 0;
+
 			// Reading patterns
 			sndFile.Patterns.ResizeArray(fileHeader.Patterns);
 
@@ -947,6 +949,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 					if (m.Instr == 0xff)
 						m.Instr = 0;
+					else if (isNitroTracker && (m.Instr != 0) && !m.IsNote())
+					{
+						// NitroTracker ignores instrument numbers unless there's a note next to them
+						m.Instr = 0;
+					}
 
 					if ((vol >= 0x10) && (vol <= 0x50))
 					{
