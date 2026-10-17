@@ -9,7 +9,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the libopenmpt library created by Olivier Lapicque, but maintained at the moment by Johannes "Saga Musix" Schultz.</Description>
-    <Version>0.8.8</Version>
+    <Version>0.8.9</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

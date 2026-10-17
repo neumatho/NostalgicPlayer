@@ -1006,14 +1006,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			{
 				// Convert old geometric to new groupgeometric because old geometric tunings
 				// can have ratio(0) != 1.0, which would get lost when saving nowadays
-				if (TuningNoteIndexType.CreateSaturating(m_RatioTable.size()) >= (m_GroupSize - m_NoteMin))
+				TuningNoteIndexType baseNote = 0;
+				baseNote = Math.Clamp(baseNote, GetNoteRange().First, GetNoteRange().Last);
+
+				if (IsValidNote(baseNote) && IsValidNote(TuningNoteIndexType.CreateSaturating(baseNote + (TuningNoteIndexType)(GetGroupSize()) - 1)))
 				{
 					vector<TuningRatioType> ratios = new vector<TuningRatioType>();
 
-					for (TuningNoteIndexType n = 0; n < m_GroupSize; ++n)
-						ratios.push_back(m_RatioTable[n - m_NoteMin]);
+					for (TuningNoteIndexType note = baseNote; note < (m_GroupSize + baseNote); ++note)
+						ratios.push_back(GetRatio(note));
 
-					CreateGroupGeometric(ratios, m_GroupRatio, GetNoteRange(), 0);
+					// Ignore return value, keep as geometric if conversion fails
+					CreateGroupGeometric(ratios, m_GroupRatio, GetNoteRange(), baseNote);
 				}
 			}
 
