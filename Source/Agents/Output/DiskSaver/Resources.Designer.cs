@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -224,6 +224,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver {
         internal static string IDS_SETTINGS_FREQUENCY {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_FREQUENCY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remember to switch output agent on the Mixer tab in the settings window..
+        /// </summary>
+        internal static string IDS_SETTINGS_INFO {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_INFO", resourceCulture);
             }
         }
         
