@@ -77,8 +77,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Ult = new Format_Loader
 		{
 			Id = Guid.Parse("368009A5-E68F-4C33-8ACA-ED6B8448A2A6"),
-			Name = "UltraTracker",
-			Description = "This loader recognizes “UltraTracker” modules. They are mostly similar to Protracker modules, but support two effects per channel.\n\n“UltraTracker” was written by MAS of Prophecy, a.k.a. Marc Andre Schallehn, and released in 1993.",
+			Name = Resources.IDS_XMP_ULT_NAME,
+			Description = Resources.IDS_XMP_ULT_DESCRIPTION,
 			Create = Create
 		};
 

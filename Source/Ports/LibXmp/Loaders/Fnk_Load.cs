@@ -62,8 +62,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Funk = new Format_Loader
 		{
 			Id = Guid.Parse("946F7C0E-164E-4BBE-9A66-7306082130B5"),
-			Name = "Funktracker",
-			Description = "This is a text based UNIX tracker created by Jason Nunn.",
+			Name = Resources.IDS_XMP_FNK_NAME,
+			Description = Resources.IDS_XMP_FNK_DESCRIPTION,
 			Create = Create
 		};
 

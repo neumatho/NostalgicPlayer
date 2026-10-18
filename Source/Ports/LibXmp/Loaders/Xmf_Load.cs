@@ -30,8 +30,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Xmf = new Format_Loader
 		{
 			Id = Guid.Parse("D89EE906-0815-4C82-9102-7BE3B9405EDC"),
-			Name = "Astroidea XMF",
-			Description = "Loader for Astroidea XMF, used by Imperium Galactica and some other modules. This format is completely unrelated to the MIDI XMF format.",
+			Name = Resources.IDS_XMP_XMF_NAME,
+			Description = Resources.IDS_XMP_XMF_DESCRIPTION,
 			Create = Create
 		};
 

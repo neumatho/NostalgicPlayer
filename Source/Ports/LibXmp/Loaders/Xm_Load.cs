@@ -255,8 +255,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Xm = new Format_Loader
 		{
 			Id = Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD"),
-			Name = "FastTracker II",
-			Description = "This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.\nFastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994.",
+			Name = Resources.IDS_XMP_XM_FAST_NAME,
+			Description = Resources.IDS_XMP_XM_FAST_DESCRIPTION,
 			Create = Create_Xm
 		};
 
@@ -264,8 +264,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_OggMod = new Format_Loader
 		{
 			Id = Guid.Parse("F1878ED9-37B8-4D5F-9AFE-46B6A9C195DF"),
-			Name = "OggMod",
-			Description = "This format is the same as FastTracker 2, except that the samples are packed with Ogg-Vorbis. This make the modules smaller. The tool was created by Neil Graham.",
+			Name = Resources.IDS_XMP_XM_OGG_NAME,
+			Description = Resources.IDS_XMP_XM_OGG_DESCRIPTION,
 			Create = Create_OggMod
 		};
 

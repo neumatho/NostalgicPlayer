@@ -80,8 +80,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Far = new Format_Loader
 		{
 			Id = Guid.Parse("E2C8619A-6957-43C9-A518-71002E37408B"),
-			Name = "Farandole Composer",
-			Description = "This loader recognizes “Farandole” modules. These modules can be up to 16 channels and have Protracker comparable effects.\n\nThe Farandole composer was written by Megan Potter and released in 1994.",
+			Name = Resources.IDS_XMP_FAR_NAME,
+			Description = Resources.IDS_XMP_FAR_DESCRIPTION,
 			Create = Create
 		};
 

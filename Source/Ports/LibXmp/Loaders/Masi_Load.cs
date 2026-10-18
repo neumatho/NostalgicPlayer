@@ -82,8 +82,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Masi = new Format_Loader
 		{
 			Id = Guid.Parse("1DA5B401-5A25-43C3-A5CF-F1C1BDDFB8D3"),
-			Name = "Epic MegaGames MASI",
-			Description = "MASI also known as PSM (ProTracker Studio Module) is a proprietary file format used by Epic in all their new games.",
+			Name = Resources.IDS_XMP_MASI_NAME,
+			Description = Resources.IDS_XMP_MASI_DESCRIPTION,
 			Create = Create
 		};
 

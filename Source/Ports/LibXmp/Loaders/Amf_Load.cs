@@ -28,8 +28,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Amf = new Format_Loader
 		{
 			Id = Guid.Parse("D1499BF4-82D2-4B9C-9CDA-7D2ADE977E63"),
-			Name = "Digital Sound and Music Interface",
-			Description = "This loader recognizes the “Advanced Module Format”, which is the internal module format of the “Digital Sound and Music Interface” (DSMI) library.\n\nThis format has the same limitations as the S3M format. The most famous DSMI application was DMP, the Dual Module Player.\n\nDMP and the DSMI library were written by Otto Chrons. DSMI was first released in 1993.",
+			Name = Resources.IDS_XMP_AMF_NAME,
+			Description = Resources.IDS_XMP_AMF_DESCRIPTION,
 			Create = Create
 		};
 

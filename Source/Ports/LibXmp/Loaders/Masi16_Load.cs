@@ -21,9 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	/// </summary>
 	internal class Masi16_Load : IFormatLoader
 	{
-		// ReSharper disable InconsistentNaming
-		private static readonly uint32 Magic_PSM_ = Common.Magic4('P', 'S', 'M', (char)0xfe);
-		// ReSharper restore InconsistentNaming
+		private static readonly uint32 Magic_Psm_ = Common.Magic4('P', 'S', 'M', (char)0xfe);
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;
@@ -32,8 +30,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Masi16 = new Format_Loader
 		{
 			Id = Guid.Parse("C3D4C58B-E9C5-4F99-9DFB-FB1588FCE2C8"),
-			Name = "Epic MegaGames MASI 16",
-			Description = "MASI also known as PSM (ProTracker Studio Module) is a proprietary file format used by Epic in all their new games. This is an earlier version of the format.",
+			Name = Resources.IDS_XMP_MASI16_NAME,
+			Description = Resources.IDS_XMP_MASI16_DESCRIPTION,
 			Create = Create
 		};
 
@@ -71,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			if (f.Hio_Read32B() != Magic_PSM_)
+			if (f.Hio_Read32B() != Magic_Psm_)
 				return -1;
 
 			lib.common.LibXmp_Read_Title(f, out t, 60, encoder);

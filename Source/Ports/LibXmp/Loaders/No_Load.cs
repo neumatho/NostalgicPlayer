@@ -77,8 +77,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_No = new Format_Loader
 		{
 			Id = Guid.Parse("4EB23902-4597-443B-B621-9D660BBDA074"),
-			Name = "Liquid Tracker NO",
-			Description = "DOS tracker created by Nir Oren. This loader can load the old format.",
+			Name = Resources.IDS_XMP_NO_NAME,
+			Description = Resources.IDS_XMP_NO_DESCRIPTION,
 			Create = Create
 		};
 

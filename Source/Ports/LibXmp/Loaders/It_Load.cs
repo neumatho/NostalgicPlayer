@@ -285,8 +285,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_It = new Format_Loader
 		{
 			Id = Guid.Parse("6D40CCCF-45AE-4F5C-BF6B-2ABCD31B80AC"),
-			Name = "Impulse Tracker",
-			Description = "This loader recognizes “Impulse Tracker” modules, currently the most powerful format. These modules support up to 64 real channels, and up to 256 virtual channels with the “New Note Action” feature. Besides, it has the widest range of effects, and supports 16 bit samples as well as surround sound.\n\n“Impulse Tracker” was written by Jeffrey Lim and released in 1996.",
+			Name = Resources.IDS_XMP_IT_NAME,
+			Description = Resources.IDS_XMP_IT_DESCRIPTION,
 			Create = Create
 		};
 

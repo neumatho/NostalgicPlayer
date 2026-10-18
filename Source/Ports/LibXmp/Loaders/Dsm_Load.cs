@@ -88,8 +88,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Dsm = new Format_Loader
 		{
 			Id = Guid.Parse("ED6F6B4C-3218-4B80-86C5-A2C62B9E3070"),
-			Name = "Digital Sound Interface Kit RIFF",
-			Description = "This loader recognizes the DSIK format, which is the internal module format of the “Digital Sound Interface Kit” (DSIK) library, the ancester of the SEAL library. This format has the same limitations as the S3M format.\n\nThe DSIK library was written by Carlos Hasan and released in 1994.",
+			Name = Resources.IDS_XMP_DSM_NAME,
+			Description = Resources.IDS_XMP_DSM_DESCRIPTION,
 			Create = Create
 		};
 

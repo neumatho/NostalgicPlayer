@@ -134,8 +134,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Imf = new Format_Loader
 		{
 			Id = Guid.Parse("F0906D97-B9B3-451E-870D-A97529D38480"),
-			Name = "Imago Orpheus",
-			Description = "This loader recognizes “Imago Orpheus” modules. This format is roughly equivalent to the XM format, but with two effects columns instead of a volume column and an effect column.\n\nImago Orpheus was written by Lutz Roeder and released in 1994.",
+			Name = Resources.IDS_XMP_IMF_NAME,
+			Description = Resources.IDS_XMP_IMF_DESCRIPTION,
 			Create = Create
 		};
 

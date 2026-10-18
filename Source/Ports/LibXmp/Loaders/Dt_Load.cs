@@ -98,8 +98,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Dt = new Format_Loader
 		{
 			Id = Guid.Parse("D3DE30A5-4786-43C5-824F-8AA216174008"),
-			Name = "Digital Tracker",
-			Description = "This editor was written for the Atari by Softjee. It is the little brother to Digital Home Studio. This player can load Digital Trackers own format.",
+			Name = Resources.IDS_XMP_DT_NAME,
+			Description = Resources.IDS_XMP_DT_DESCRIPTION,
 			Create = Create
 		};
 

@@ -29,8 +29,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Sym = new Format_Loader
 		{
 			Id = Guid.Parse("D09B8566-D2FD-4314-82B9-55EF7A7CD82E"),
-			Name = "Digital Symphony",
-			Description = "Tracker created by Oregan Developments for the Acorn computer.",
+			Name = Resources.IDS_XMP_SYM_NAME,
+			Description = Resources.IDS_XMP_SYM_DESCRIPTION,
 			Create = Create
 		};
 

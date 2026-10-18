@@ -28,8 +28,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Asylum = new Format_Loader
 		{
 			Id = Guid.Parse("29FCE360-BD89-4A32-A068-BFF0D84F1C57"),
-			Name = "Asylum Music Format",
-			Description = "This loader recognize the “ASYLUM Music Format”, which was used in Crusader series of games by Origin. This format uses the .amf extension, but is very similar to a 8 Channel Mod file.",
+			Name = Resources.IDS_XMP_ASYLUM_NAME,
+			Description = Resources.IDS_XMP_ASYLUM_DESCRIPTION,
 			Create = Create
 		};
 

@@ -145,44 +145,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		#endregion
 
-		private const uint16 Rtmm_Flag_Linear_Table = 1 << 0;
-		private const uint16 Rtmm_Flag_Track_Names = 1 << 1;
-
-		private const uint16 RtEnv_Flag_Enable = 1 << 0;
-		private const uint16 RtEnv_Flag_Sustain = 1 << 1;
-		private const uint16 RtEnv_Flag_Loop = 1 << 2;
-
-		private const uint16 Rtin_Flag_Default_Pan = 1 << 0;
-		private const uint16 Rtin_Flag_Mute_Samples = 1 << 1;
-
-		private const uint16 Rtsm_Flag_16_Bit = 1 << 1;
-		private const uint16 Rtsm_Flag_Delta_Coding = 1 << 2;
-
-		private const uint8 Rtsm_Loop_On = 1;
-		private const uint8 Rtsm_Loop_Bidir = 2;
-
-		private const int Max_Samp = 1024;
-
-		private const uint8 Fx_None = 0xff;
-		private const uint8 Fx_Extended_It = 0xfe;
-		private const uint8 Fx_Porta_Up_Mod = 0xf1;
-		private const uint8 Fx_Porta_Dn_Mod = 0xf2;
-		private const uint8 Fx_Tone_VSlide_Mod = 0xf5;
-		private const uint8 Fx_Vibra_VSlide_Mod = 0xf6;
-		private const uint8 Fx_VolSlide_Mod = 0xfa;
-
-		private readonly LibXmp lib;
-		private readonly Encoding encoder;
-
-		/// <summary></summary>
-		public static readonly Format_Loader LibXmp_Loader_Rtm = new Format_Loader
-		{
-			Id = Guid.Parse("A948CA75-BF68-48B3-99DF-1D95281D53B8"),
-			Name = "Real Tracker",
-			Description = "Tracker created by Arnaud Hasenfratz.",
-			Create = Create
-		};
-
 		/// <summary>
 		/// MOD effects and S3M effects have separate effects memory.
 		///
@@ -240,6 +202,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Effects.Fx_Vibra_VSlide,	// k Vibrato + volume slide (S3M)
 			Effects.Fx_S3M_Speed,		// a Set speed (S3M)
 		];
+
+		private const uint16 Rtmm_Flag_Linear_Table = 1 << 0;
+		private const uint16 Rtmm_Flag_Track_Names = 1 << 1;
+
+		private const uint16 RtEnv_Flag_Enable = 1 << 0;
+		private const uint16 RtEnv_Flag_Sustain = 1 << 1;
+		private const uint16 RtEnv_Flag_Loop = 1 << 2;
+
+		private const uint16 Rtin_Flag_Default_Pan = 1 << 0;
+		private const uint16 Rtin_Flag_Mute_Samples = 1 << 1;
+
+		private const uint16 Rtsm_Flag_16_Bit = 1 << 1;
+		private const uint16 Rtsm_Flag_Delta_Coding = 1 << 2;
+
+		private const uint8 Rtsm_Loop_On = 1;
+		private const uint8 Rtsm_Loop_Bidir = 2;
+
+		private const int Max_Samp = 1024;
+
+		private const uint8 Fx_None = 0xff;
+		private const uint8 Fx_Extended_It = 0xfe;
+		private const uint8 Fx_Porta_Up_Mod = 0xf1;
+		private const uint8 Fx_Porta_Dn_Mod = 0xf2;
+		private const uint8 Fx_Tone_VSlide_Mod = 0xf5;
+		private const uint8 Fx_Vibra_VSlide_Mod = 0xf6;
+		private const uint8 Fx_VolSlide_Mod = 0xfa;
+
+		private readonly LibXmp lib;
+		private readonly Encoding encoder;
+
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Rtm = new Format_Loader
+		{
+			Id = Guid.Parse("A948CA75-BF68-48B3-99DF-1D95281D53B8"),
+			Name = Resources.IDS_XMP_RTM_NAME,
+			Description = Resources.IDS_XMP_RTM_DESCRIPTION,
+			Create = Create
+		};
 
 		/********************************************************************/
 		/// <summary>

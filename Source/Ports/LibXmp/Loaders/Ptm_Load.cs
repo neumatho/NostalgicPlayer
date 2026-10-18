@@ -103,8 +103,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Ptm = new Format_Loader
 		{
 			Id = Guid.Parse("270E60B6-9504-4DE2-9703-5A1D68CEC800"),
-			Name = "Poly Tracker",
-			Description = "Poly Tracker was written by Lone Ranger of AcmE. It is based on the Scream Tracker 3 format with some changes where needed to fit Poly Tracker needs.",
+			Name = Resources.IDS_XMP_PTM_NAME,
+			Description = Resources.IDS_XMP_PTM_DESCRIPTION,
 			Create = Create
 		};
 

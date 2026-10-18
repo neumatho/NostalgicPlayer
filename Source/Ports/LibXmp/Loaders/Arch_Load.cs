@@ -80,8 +80,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Arch = new Format_Loader
 		{
 			Id = Guid.Parse("0861053D-5A57-437F-9116-049BD1CCBB97"),
-			Name = "Archimedes Tracker",
-			Description = "Protracker like tracker for the Ahorn Archemedes computer.",
+			Name = Resources.IDS_XMP_ARCH_NAME,
+			Description = Resources.IDS_XMP_ARCH_DESCRIPTION,
 			Create = Create
 		};
 

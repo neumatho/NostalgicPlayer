@@ -162,8 +162,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Liq = new Format_Loader
 		{
 			Id = Guid.Parse("1FCC5321-BFBD-48B8-9FA4-693F28696E4B"),
-			Name = "Liquid Tracker",
-			Description = "DOS tracker created by Nir Oren.",
+			Name = Resources.IDS_XMP_LIQ_NAME,
+			Description = Resources.IDS_XMP_LIQ_DESCRIPTION,
 			Create = Create
 		};
 

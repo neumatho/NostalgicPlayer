@@ -46,8 +46,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Gal5 = new Format_Loader
 		{
 			Id = Guid.Parse("525AFC28-8D6D-42D2-8F00-295164664868"),
-			Name = "Galaxy Music System 5.0",
-			Description = "This format is a conversion and packer format used in the game Jazz Jackrabbit 2.\n\nEarlier versions of the game did not have a specific music format, but used Scream Tracker 3 or Impulse Tracker formats directly. Later on, this format was invented and used.\n\nThis loader can load the newest version of the format.",
+			Name = Resources.IDS_XMP_GAL5_NAME,
+			Description = Resources.IDS_XMP_GAL5_DESCRIPTION,
 			Create = Create
 		};
 

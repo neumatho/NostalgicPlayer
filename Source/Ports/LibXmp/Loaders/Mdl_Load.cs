@@ -70,8 +70,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		#endregion
 
-		// ReSharper disable InconsistentNaming
-		private static readonly uint32 Magic_DMDL = Common.Magic4('D', 'M', 'D', 'L');
+		private static readonly uint32 Magic_Dmdl = Common.Magic4('D', 'M', 'D', 'L');
 
 		private const c_int Mdl_Note_Follows = 0x04;
 		private const c_int Mdl_Instrument_Follows = 0x08;
@@ -79,7 +78,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private const c_int Mdl_Effect_Follows = 0x20;
 		private const c_int Mdl_Parameter1_Follows = 0x40;
 		private const c_int Mdl_Parameter2_Follows = 0x80;
-		// ReSharper restore InconsistentNaming
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;
@@ -88,8 +86,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Mdl = new Format_Loader
 		{
 			Id = Guid.Parse("8225281F-F5ED-4DEF-B301-C5C6ED8B8E3B"),
-			Name = "Digitrakker",
-			Description = "Digitrakker is inspired by the Amiga Protracker by let the music consists of pattern and instruments. One pattern contains up to 32 channels and up to 256 note lines. The songlist lays down, which pattern will be played at which position. The instruments, which can be used in the patterns, consist of samples, volume-, panning- and frequency-envelopes and some more parameters.",
+			Name = Resources.IDS_XMP_MDL_NAME,
+			Description = Resources.IDS_XMP_MDL_DESCRIPTION,
 			Create = Create
 		};
 
@@ -127,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			if (f.Hio_Read32B() != Magic_DMDL)
+			if (f.Hio_Read32B() != Magic_Dmdl)
 				return -1;
 
 			f.Hio_Read8();		// Version

@@ -63,8 +63,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Mtm = new Format_Loader
 		{
 			Id = Guid.Parse("2C7EEE56-803D-49E5-936D-6AD8FC14B013"),
-			Name = "MultiTracker",
-			Description = "This loader recognizes the “MultiTracker” modules. This tracker from the PC, was the first one to have 32 channels and supports GUS soundcards. It introduced the mtm file format, which I will say is the successor to the mod format. In this format, a pattern contains individual tracks, which can be combined as will. Tracker was written by Daniel Goldstein.",
+			Name = Resources.IDS_XMP_MTM_NAME,
+			Description = Resources.IDS_XMP_MTM_DESCRIPTION,
 			Create = Create
 		};
 

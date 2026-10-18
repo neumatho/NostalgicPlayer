@@ -162,8 +162,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Fast = new Format_Loader
 		{
 			Id = Guid.Parse("622FC871-244D-4E46-9423-35609EDFCF48"),
-			Name = "FastTracker",
-			Description = "This tracker is from the PC, but uses the same file format as the other mod trackers. It supports up to 8 channels, but MOD files saved with FastTracker 2 can have up to 32 channels.\n\nThe tracker was written by Fredrik Muss.",
+			Name = Resources.IDS_XMP_MOD_FAST_NAME,
+			Description = Resources.IDS_XMP_MOD_FAST_DESCRIPTION,
 			Create = Create_FastTracker
 		};
 
@@ -171,8 +171,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Take = new Format_Loader
 		{
 			Id = Guid.Parse("73128541-1DF2-46DE-93FF-614C2D1ECB18"),
-			Name = "TakeTracker",
-			Description = "This tracker is from the PC, but uses the same file format as FastTracker MOD files. It has extended the number of channels up to 16 and it also supports an odd number of channels.\n\nThe tracker was written by Anders B. Ervik.",
+			Name = Resources.IDS_XMP_MOD_TAKE_NAME,
+			Description = Resources.IDS_XMP_MOD_TAKE_DESCRIPTION,
 			Create = Create_TakeTracker
 		};
 
@@ -180,8 +180,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Scream3 = new Format_Loader
 		{
 			Id = Guid.Parse("3A557D47-E229-4944-AF1E-47C0571D3C7F"),
-			Name = "Scream Tracker 3 MOD",
-			Description = "This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by Scream Tracker 3 when saving in this format.\n\n“Scream Tracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994.",
+			Name = Resources.IDS_XMP_MOD_SCREAM_NAME,
+			Description = Resources.IDS_XMP_MOD_SCREAM_DESCRIPTION,
 			Create = Create_ScreamTracker3
 		};
 
@@ -189,8 +189,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_ModsGrave = new Format_Loader
 		{
 			Id = Guid.Parse("4B17DA31-92E4-49AF-89F1-0D6CC627E78E"),
-			Name = "Mod's Grave",
-			Description = "This format is very rare. The format is created by the Mod's Grave tool, which convert 669 modules to a 8 channel mod file with the M.K. signature. This make it very hard to detect properly.\n\nThe converter is not that good and some modules simply sounds bad, because some effects are not converted properly. Even some modules stop too early, because of added position jump and pattern break effects.",
+			Name = Resources.IDS_XMP_MOD_GRAVE_NAME,
+			Description = Resources.IDS_XMP_MOD_GRAVE_DESCRIPTION,
 			Create = Create_ModsGrave
 		};
 
@@ -198,8 +198,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Dt = new Format_Loader
 		{
 			Id = Guid.Parse("A9B16B49-1472-4208-A300-3A73EED474AB"),
-			Name = "Digital Tracker MOD",
-			Description = "This editor was written for the Atari by Softjee. It is the little brother to Digital Home Studio.\n\nNormally, modules saved with this tracker have their own format, but it is possible to save the modules in MOD format. This player can play the MOD format modules.",
+			Name = Resources.IDS_XMP_MOD_DIGITAL_NAME,
+			Description = Resources.IDS_XMP_MOD_DIGITAL_DESCRIPTION,
 			Create = Create_Dt
 		};
 
@@ -207,8 +207,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Octalyser = new Format_Loader
 		{
 			Id = Guid.Parse("E9C85D93-AA77-4A86-8B8C-3C62B79C5FBE"),
-			Name = "Octalyser",
-			Description = "Original player by Christian Dahl, Davor Slutej and Tord Jansson.\n\nThis player plays module from Octalyser, which is an editor to the Atari. It is a 6 and 8 channels ProTracker clone and using the same file format.",
+			Name = Resources.IDS_XMP_MOD_OCTA_NAME,
+			Description = Resources.IDS_XMP_MOD_OCTA_DESCRIPTION,
 			Create = Create_Octalyser
 		};
 
@@ -216,8 +216,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_FlexTrax = new Format_Loader
 		{
 			Id = Guid.Parse("44FBD144-40DA-450C-B0E9-7006B68E4113"),
-			Name = "FlexTrax",
-			Description = "This player is from the Atari Falcon and uses the standard MOD file format. However, it has added some extra information at the end of the file which contains DSP parameters, such as reverb and delay. The editor was written by Thomas Bergström.\n\nThis player does not support the extra features at the moment.",
+			Name = Resources.IDS_XMP_MOD_FLEX_NAME,
+			Description = Resources.IDS_XMP_MOD_FLEX_DESCRIPTION,
 			Create = Create_FlexTrax
 		};
 
@@ -225,8 +225,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_SoftwaveVisions = new Format_Loader
 		{
 			Id = Guid.Parse("D1574958-459E-4A13-8318-2FF8F4F8F3F2"),
-			Name = "Software Visions",
-			Description = "This format is used by Software Visions in the game Apocalypse Abyss and for their 1995 Catalog.",
+			Name = Resources.IDS_XMP_MOD_VISIONS_NAME,
+			Description = Resources.IDS_XMP_MOD_VISIONS_DESCRIPTION,
 			Create = Create_SoftwaveVisions
 		};
 

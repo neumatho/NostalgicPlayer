@@ -88,27 +88,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		#endregion
 
-		// STM tempo is calculated based on the mix buffer size, which requires knowing
-		// the mix rate of ST2. This is the highest mix rate in released versions
-		private const c_int Stm_Mix_Rate = 23863;
-
-		private const c_int Stm_Type_Song = 0x01;
-		private const c_int Stm_Type_Module = 0x02;
-
-		private readonly LibXmp lib;
-		private readonly Encoding encoder;
-
-		/// <summary></summary>
-		public static readonly Format_Loader LibXmp_Loader_Stm = new Format_Loader
-		{
-			Id = Guid.Parse("557C8681-93CF-4BB8-A3DD-632C55DD840A"),
-			Name = "Scream Tracker 2",
-			Description = "This loader recognizes “Scream Tracker” modules. “Scream Tracker” was the first PC tracker, as well as the first PC module format. Loosely inspired by the “SoundTracker” format, it does not have as many effects as Protracker, although it supports 31 instruments and 4 channels.\n\n“Scream Tracker” was written by PSI of Future Crew, a.k.a. Sami Tammilehto.",
-			Create = Create
-		};
-
-		private const uint8 Fx_None = 0xff;
-
 		// Skaven's note from http://www.futurecrew.com/skaven/oldies_music.html
 		//
 		// FYI for the tech-heads: In the old Scream Tracker 2 the Arpeggio command
@@ -140,6 +119,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		[
 			140, 50, 25, 15, 10, 7, 6, 4, 3, 3, 2, 2, 2, 2, 1, 1
 		];
+
+		// STM tempo is calculated based on the mix buffer size, which requires knowing
+		// the mix rate of ST2. This is the highest mix rate in released versions
+		private const c_int Stm_Mix_Rate = 23863;
+
+		private const c_int Stm_Type_Song = 0x01;
+		private const c_int Stm_Type_Module = 0x02;
+
+		private const uint8 Fx_None = 0xff;
+
+		private readonly LibXmp lib;
+		private readonly Encoding encoder;
+
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Stm = new Format_Loader
+		{
+			Id = Guid.Parse("557C8681-93CF-4BB8-A3DD-632C55DD840A"),
+			Name = Resources.IDS_XMP_STM_NAME,
+			Description = Resources.IDS_XMP_STM_DESCRIPTION,
+			Create = Create
+		};
 
 		/********************************************************************/
 		/// <summary>

@@ -20,10 +20,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	/// </summary>
 	internal class Gdm_Load : IFormatLoader
 	{
-		// ReSharper disable InconsistentNaming
-		private static readonly uint32 Magic_GDM = Common.Magic4('G', 'D', 'M', '\xfe');
-		private static readonly uint32 Magic_GMFS = Common.Magic4('G', 'M', 'F', 'S');
-		// ReSharper restore InconsistentNaming
+		private static readonly uint32 Magic_Gdm = Common.Magic4('G', 'D', 'M', '\xfe');
+		private static readonly uint32 Magic_Gmfs = Common.Magic4('G', 'M', 'F', 'S');
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;
@@ -32,8 +30,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Gdm = new Format_Loader
 		{
 			Id = Guid.Parse("6118D229-7AEC-4FF6-8A0C-F4F5BCCE2564"),
-			Name = "General Digital Music",
-			Description = "This loader recognizes the “General Digital Music” format, which is the internal format of the “Bells, Whistles and Sound Boards” library. This format has the same limitations as the S3M format.\n\nThe BWSB library was written by Edward Schlunder and first released in 1993.",
+			Name = Resources.IDS_XMP_GDM_NAME,
+			Description = Resources.IDS_XMP_GDM_DESCRIPTION,
 			Create = Create
 		};
 
@@ -72,11 +70,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			if (f.Hio_Read32B() != Magic_GDM)
+			if (f.Hio_Read32B() != Magic_Gdm)
 				return -1;
 
 			f.Hio_Seek(start + 0x47, SeekOrigin.Begin);
-			if (f.Hio_Read32B() != Magic_GMFS)
+			if (f.Hio_Read32B() != Magic_Gmfs)
 				return -1;
 
 			f.Hio_Seek(start + 4, SeekOrigin.Begin);

@@ -121,6 +121,37 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 		#endregion
 
+		private static readonly uint8[] fx =
+		[
+			None,
+			Effects.Fx_S3M_Speed,		// Axx: Set speed to xx (the default is 06)
+			Effects.Fx_Jump,			// Bxx: Jump to order xx (hexadecimal)
+			Effects.Fx_Break,			// Cxx: Break pattern to row xx (decimal)
+			Effects.Fx_VolSlide,		// Dxy: Volume slide down by y/up by x
+			Effects.Fx_Porta_Dn,		// Exx: Slide down by xx
+			Effects.Fx_Porta_Up,		// Fxx: Slide up by xx
+			Effects.Fx_TonePorta,		// Gxx: Tone portamento with speed xx
+			Effects.Fx_Vibrato,			// Hxy: Vibrato with speed x and depth y
+			Effects.Fx_Tremor,			// Ixy: Tremor with ontime x and offtime y
+			Effects.Fx_S3M_Arpeggio,	// Jxy: Arpeggio with halftone additions
+			Effects.Fx_Vibra_VSlide,	// Kxy: Dual command: H00 and Dxy
+			Effects.Fx_Tone_VSlide,		// Lxy: Dual command: G00 and Dxy
+			None,
+			None,
+			Effects.Fx_Offset,			// Oxy: Set sample offset
+			None,
+			Effects.Fx_Multi_Retrig,	// Qxy: Retrig (+volumeslide) note
+			Effects.Fx_Tremolo,			// Rxy: Tremolo with speed x and depth y
+			Fx_S3M_Extended,			// Sxx: (misc effects)
+			Effects.Fx_S3M_Bpm,			// Txx: Tempo = xx (hex)
+			Effects.Fx_Fine_Vibrato,	// Uxx: Fine vibrato
+			Effects.Fx_GlobalVol,		// Vxx: Set global volume
+			None,
+			Effects.Fx_SetPan,			// Xxx: Set pan
+			None,
+			None
+		];
+
 		private static readonly uint32 Magic_SCRM = Common.Magic4('S', 'C', 'R', 'M');
 		private static readonly uint32 Magic_SCRI = Common.Magic4('S', 'C', 'R', 'I');
 		private static readonly uint32 Magic_SCRS = Common.Magic4('S', 'C', 'R', 'S');
@@ -157,41 +188,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_S3M = new Format_Loader
 		{
 			Id = Guid.Parse("EB0B4765-CA32-43A3-AC3A-93ED4907498B"),
-			Name = "Scream Tracker 3",
-			Description = "This loader recognizes “Scream Tracker 3” modules. This version was a huge improvement over the original “Scream Tracker”. It supported 32 channels, up to 99 instruments, and a large choice of effects.\n\n“Scream Tracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994.",
+			Name = Resources.IDS_XMP_S3M_NAME,
+			Description = Resources.IDS_XMP_S3M_DESCRIPTION,
 			Create = Create
 		};
-
-		private static readonly uint8[] fx =
-		[
-			None,
-			Effects.Fx_S3M_Speed,		// Axx: Set speed to xx (the default is 06)
-			Effects.Fx_Jump,			// Bxx: Jump to order xx (hexadecimal)
-			Effects.Fx_Break,			// Cxx: Break pattern to row xx (decimal)
-			Effects.Fx_VolSlide,		// Dxy: Volume slide down by y/up by x
-			Effects.Fx_Porta_Dn,		// Exx: Slide down by xx
-			Effects.Fx_Porta_Up,		// Fxx: Slide up by xx
-			Effects.Fx_TonePorta,		// Gxx: Tone portamento with speed xx
-			Effects.Fx_Vibrato,			// Hxy: Vibrato with speed x and depth y
-			Effects.Fx_Tremor,			// Ixy: Tremor with ontime x and offtime y
-			Effects.Fx_S3M_Arpeggio,	// Jxy: Arpeggio with halftone additions
-			Effects.Fx_Vibra_VSlide,	// Kxy: Dual command: H00 and Dxy
-			Effects.Fx_Tone_VSlide,		// Lxy: Dual command: G00 and Dxy
-			None,
-			None,
-			Effects.Fx_Offset,			// Oxy: Set sample offset
-			None,
-			Effects.Fx_Multi_Retrig,	// Qxy: Retrig (+volumeslide) note
-			Effects.Fx_Tremolo,			// Rxy: Tremolo with speed x and depth y
-			Fx_S3M_Extended,			// Sxx: (misc effects)
-			Effects.Fx_S3M_Bpm,			// Txx: Tempo = xx (hex)
-			Effects.Fx_Fine_Vibrato,	// Uxx: Fine vibrato
-			Effects.Fx_GlobalVol,		// Vxx: Set global volume
-			None,
-			Effects.Fx_SetPan,			// Xxx: Set pan
-			None,
-			None
-		];
 
 		/********************************************************************/
 		/// <summary>

@@ -63,8 +63,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Composer669 = new Format_Loader
 		{
 			Id = Guid.Parse("DA884858-983E-45DB-B4FF-470DBB927239"),
-			Name = "Composer 669",
-			Description = "This loader recognizes “Composer 669” modules. The 669 format were among the first PC module formats. They do not have a wide range of effects and support 8 channels.\n\n“Composer 669” was written by Tran of Renaissance, a.k.a. Tomasz Pytel and released in 1992.",
+			Name = Resources.IDS_XMP_669_COMPOSER_NAME,
+			Description = Resources.IDS_XMP_669_COMPOSER_DESCRIPTION,
 			Create = Create_Composer
 		};
 
@@ -72,8 +72,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Unis669 = new Format_Loader
 		{
 			Id = Guid.Parse("216FCDE9-3E12-474A-A27D-28914C8C894D"),
-			Name = "Unis 669",
-			Description = "This loader recognizes “Unis 669” modules. This format is the successor of the “Composer 669” and introduces some new effects like the super fast tempo and stereo balance. Support 8 channels.\n\n“Unis 669 Composer” was written by Jason Nunn and released in 1994.",
+			Name = Resources.IDS_XMP_669_UNIS_NAME,
+			Description = Resources.IDS_XMP_669_UNIS_DESCRIPTION,
 			Create = Create_Unis
 		};
 

@@ -75,20 +75,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		#endregion
 
-		private readonly LibXmp lib;
-		private readonly Encoding encoder;
-
-		/// <summary></summary>
-		public static readonly Format_Loader LibXmp_Loader_Stx = new Format_Loader
-		{
-			Id = Guid.Parse("BFFB2A7C-52D5-4492-9241-3AC2FD705D80"),
-			Name = "Scream Tracker Music Interface Kit",
-			Description = "This loader recognizes “STMIK 0.2” modules. “STMIK” (the Scream Tracker Music Interface Kit) was a module playing library distributed by Future Crew to play Scream Tracker module in games and demos. It uses an intermediate format between STM and S3M and comes with a tool converting STM modules to STX.\n\n“STMIK” was written by PSI of Future Crew, a.k.a. Sami Tammilehto.",
-			Create = Create
-		};
-
-		private const uint8 Fx_None = 0xff;
-
 		private static readonly uint8[] fx =
 		[
 			Fx_None,
@@ -103,6 +89,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Effects.Fx_Tremor,
 			Effects.Fx_Arpeggio
 		];
+
+		private readonly LibXmp lib;
+		private readonly Encoding encoder;
+
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Stx = new Format_Loader
+		{
+			Id = Guid.Parse("BFFB2A7C-52D5-4492-9241-3AC2FD705D80"),
+			Name = Resources.IDS_XMP_STX_NAME,
+			Description = Resources.IDS_XMP_STX_DESCRIPTION,
+			Create = Create
+		};
+
+		private const uint8 Fx_None = 0xff;
 
 		/********************************************************************/
 		/// <summary>

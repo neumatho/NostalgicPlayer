@@ -21,10 +21,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	/// </summary>
 	internal class Mgt_Load : IFormatLoader
 	{
-		// ReSharper disable InconsistentNaming
-		private static readonly uint32 Magic_MGT = Common.Magic4('\0', 'M', 'G', 'T');
-		private static readonly uint32 Magic_MCS = Common.Magic4((char)0xbd, 'M', 'C', 'S');
-		// ReSharper restore InconsistentNaming
+		private static readonly uint32 Magic_Mgt = Common.Magic4('\0', 'M', 'G', 'T');
+		private static readonly uint32 Magic_Mcs = Common.Magic4((char)0xbd, 'M', 'C', 'S');
 
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;
@@ -33,8 +31,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Mgt = new Format_Loader
 		{
 			Id = Guid.Parse("372E56E7-1D62-4558-B337-FE33939945DC"),
-			Name = "Megatracker",
-			Description = "One of the first Falcon-only trackers to be released. It supports up to 32 voices with 8-bit samples (interpolated to 16-bits). The tracker has a somewhat messy GUI, but still original with screen scrolling (downwards) to see all 32 tracks at once. Tracker was written by Simplet/Abstract and Axel Follet/MCS.",
+			Name = Resources.IDS_XMP_MGT_NAME,
+			Description = Resources.IDS_XMP_MGT_DESCRIPTION,
 			Create = Create
 		};
 
@@ -72,12 +70,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			if (f.Hio_Read24B() != Magic_MGT)
+			if (f.Hio_Read24B() != Magic_Mgt)
 				return -1;
 
 			f.Hio_Read8();
 
-			if (f.Hio_Read32B() != Magic_MCS)
+			if (f.Hio_Read32B() != Magic_Mcs)
 				return -1;
 
 			f.Hio_Seek(18, SeekOrigin.Current);
