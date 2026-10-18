@@ -15,6 +15,21 @@ jobs:
         uses: actions/checkout@v7
         with:
           lfs: 'false'
+      - name: Collect LFS file list
+        shell: bash
+        run: |
+          {
+            git lfs ls-files --long --exclude="Documentation,Source/Ports/Tests"
+            git lfs ls-files --long --include="Source/Ports/Tests/LibOpenMpt.Test"
+          } | cut -d ' ' -f1 | sort > lfs-files.txt
+      - name: Cache LFS files
+        uses: actions/cache@v6
+        with:
+          path: .git/lfs/objects
+          key: lfs-LibOpenMpt-${{ hashFiles('lfs-files.txt') }}
+          restore-keys: |
+            lfs-LibOpenMpt-
+            lfs-build-
       - name: Fetch LFS files needed to build
         run: git lfs pull --exclude="Documentation,Source/Ports/Tests"
       - name: Fetch LFS test data

@@ -17,6 +17,16 @@ jobs:
         uses: actions/checkout@v7
         with:
           lfs: 'false'
+      - name: Collect LFS file list
+        shell: bash
+        run: git lfs ls-files --long --exclude="Documentation,Source/Ports/Tests" | cut -d ' ' -f1 | sort > lfs-files.txt
+      - name: Cache LFS files
+        uses: actions/cache@v6
+        with:
+          path: .git/lfs/objects
+          key: lfs-build-${{ hashFiles('lfs-files.txt') }}
+          restore-keys: |
+            lfs-build-
       - name: Fetch LFS files needed to build
         run: git lfs pull --exclude="Documentation,Source/Ports/Tests"
       - name: Checkout VICE-testprogs
