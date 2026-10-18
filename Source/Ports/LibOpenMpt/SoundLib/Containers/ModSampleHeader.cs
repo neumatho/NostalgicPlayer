@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		/// Convert an MOD sample header to OpenMPT's internal sample header
 		/// </summary>
 		/********************************************************************/
-		public void ConvertToMpt(ModSample mptSmp, bool is4Chn)//XX 196
+		public void ConvertToMpt(ModSample mptSmp, bool is4Chn)
 		{
 			mptSmp.Initialize(ModType.Mod);
 
@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 		/// header data to ultimately reject garbage files
 		/// </summary>
 		/********************************************************************/
-		public uint32 GetInvalidByteScore()//XX 288
+		public uint32 GetInvalidByteScore()
 		{
 			return (uint32)(((Volume > 64) ? 1 : 0) + ((FineTune > 15) ? 1 : 0) + ((LoopStart > (Length * 2)) ? 1 : 0));
 		}

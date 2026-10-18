@@ -264,7 +264,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public bool IsAnyPitchSlide()//XX 954
+		public bool IsAnyPitchSlide()
 		{
 			switch (Command)
 			{

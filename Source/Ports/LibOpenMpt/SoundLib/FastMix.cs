@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/// Calculate offset of loop wrap-around buffer for this sample
 			/// </summary>
 			/********************************************************************/
-			public void UpdateLookaheadPointers(ModChannel chn)//XX 62
+			public void UpdateLookaheadPointers(ModChannel chn)
 			{
 				SamplePointer = chn.pCurrentSample != null ? chn.pCurrentSample.Cast<int8>() : null;
 				LookaheadPointer.SetToNull();
@@ -128,7 +128,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public static uint32 DistanceToBufferLength(SamplePosition from, SamplePosition to, SamplePosition inc)//XX 92
+			public static uint32 DistanceToBufferLength(SamplePosition from, SamplePosition to, SamplePosition inc)
 			{
 				if (from < to)
 					return (uint32)((to - from - new SamplePosition(1)) / inc) + 1;
@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public uint32 GetSampleCount(ModChannel chn, uint32 nSamples)//XX 101
+			public uint32 GetSampleCount(ModChannel chn, uint32 nSamples)
 			{
 				int32 nLoopStart = chn.dwFlags.Test(ChannelFlags.Chn_Loop) ? (int32)chn.nLoopStart : 0;
 				SamplePosition nInc = chn.Increment;
@@ -353,7 +353,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Render count * number of channels samples
 		/// </summary>
 		/********************************************************************/
-		public void CreateStereoMix(c_int count)//XX 302
+		public void CreateStereoMix(c_int count)
 		{
 			if (count == 0)
 				return;
@@ -383,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ChannelOffsets GetChannelOffsets(ModChannel chn, ChannelIndex channel)//XX 324
+		public ChannelOffsets GetChannelOffsets(ModChannel chn, ChannelIndex channel)
 		{
 			ref mixsample_t pOfsR = ref m_DryROfsVol;
 			ref mixsample_t pOfsL = ref m_DryLOfsVol;
@@ -410,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool MixChannel(c_int count, ModChannel chn, ChannelIndex channel, bool doMix)//XX 360
+		public bool MixChannel(c_int count, ModChannel chn, ChannelIndex channel, bool doMix)
 		{
 			if ((chn.pCurrentSample != null) || (chn.nLOfs != 0) || (chn.nROfs != 0))
 			{

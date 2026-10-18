@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		/// characters were requested
 		/// </summary>
 		/********************************************************************/
-		public static bool ReadString(ReadWriteMode mode, FileCursor f, uint8[] destBuffer, size_t srcSize)//XX 49
+		public static bool ReadString(ReadWriteMode mode, FileCursor f, uint8[] destBuffer, size_t srcSize)
 		{
 			FileCursor.PinnedView source = f.ReadPinnedView(srcSize);	// Make sure the string is cached properly
 			size_t realSrcSize = source.Size();		// In case fewer bytes are available
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		/// characters were requested
 		/// </summary>
 		/********************************************************************/
-		public static bool ReadString(ReadWriteMode mode, FileCursor f, StdString dest, size_t srcSize)//XX 61
+		public static bool ReadString(ReadWriteMode mode, FileCursor f, StdString dest, size_t srcSize)
 		{
 			dest.clear();
 
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		/// characters were requested
 		/// </summary>
 		/********************************************************************/
-		public static bool ReadString(ReadWriteMode mode, FileCursor f, CharBuf dest, size_t srcSize)//XX 74
+		public static bool ReadString(ReadWriteMode mode, FileCursor f, CharBuf dest, size_t srcSize)
 		{
 			FileCursor.PinnedView source = f.ReadPinnedView(srcSize);	// Make sure the string is cached properly
 			size_t realSrcSize = source.Size();		// In case fewer bytes are available

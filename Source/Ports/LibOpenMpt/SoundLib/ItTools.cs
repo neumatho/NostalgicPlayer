@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 DecodeItEditTimer(uint16 cwtv, uint32 editTime)//XX 671
+		public static uint32 DecodeItEditTimer(uint16 cwtv, uint32 editTime)
 		{
 			if ((cwtv & 0xfff) >= 0x0208)
 			{

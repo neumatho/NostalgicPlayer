@@ -62,14 +62,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		private uint32 gnReverbDecaySamples = 0;
 
 		// Internal reverb state
-//XX		private bool g_bLastInPresent = false;
-//XX		private bool g_bLastOutPresent = false;
-//XX		private c_int g_nLastRvbIn_xl = 0;
-//XX		private c_int g_nLastRvbIn_xr = 0;
 		private c_int g_nLastRvbIn_yl = 0;
 		private c_int g_nLastRvbIn_yr = 0;
-//XX		private c_int g_nLastRvbOut_xl = 0;
-//XX		private c_int g_nLastRvbOut_xr = 0;
 		private readonly int32[] gnDCRRvb_Y1 = new int32[2];
 		private readonly int32[] gnDCRRvb_X1 = new int32[2];
 
@@ -173,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(bool bReset, ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol, uint32 mixingFreq)//XX 279
+		public void Initialize(bool bReset, ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol, uint32 mixingFreq)
 		{
 			if (m_Settings.m_nReverbType >= Num_ReverbTypes)
 				m_Settings.m_nReverbType = 0;
@@ -287,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void TouchReverbSendBuffer(CPointer<MixSampleInt> mixReverbBuffer, ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol, uint32 nSamples)//XX 387
+		public void TouchReverbSendBuffer(CPointer<MixSampleInt> mixReverbBuffer, ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol, uint32 nSamples)
 		{
 			if (!gnReverbSend)
 			{	// And we did not clear the buffer yet, do it now because we will get new data
@@ -304,7 +298,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Process(CPointer<MixSampleInt> mixSoundBuffer, CPointer<MixSampleInt> mixReverbBuffer, ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol, uint32 nSamples)//XX 398
+		public void Process(CPointer<MixSampleInt> mixSoundBuffer, CPointer<MixSampleInt> mixReverbBuffer, ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol, uint32 nSamples)
 		{
 			if (!gnReverbSend && (gnReverbSamples == 0))
 			{
@@ -423,7 +417,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private int32 OnePoleLowPassCoef(int32 scale, c_double g, c_double f_c, c_double f_s)//XX 57
+		private int32 OnePoleLowPassCoef(int32 scale, c_double g, c_double f_c, c_double f_s)
 		{
 			if (g > 0.999999)
 				return 0;
@@ -442,7 +436,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_double mBToLinear(int32 value_mB)//XX 67
+		private c_double mBToLinear(int32 value_mB)
 		{
 			if (value_mB == 0)
 				return 1;
@@ -462,7 +456,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private int32 mBToLinear(int32 scale, int32 value_mB)//XX 76
+		private int32 mBToLinear(int32 scale, int32 value_mB)
 		{
 			return SaturateRound.Saturate_Round<int32, c_double>(mBToLinear(value_mB) * scale);
 		}
@@ -475,7 +469,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int32 ftol(c_float f)//XX 162
+		private int32 ftol(c_float f)
 		{
 			return (int32)f;
 		}
@@ -487,7 +481,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void I3dl2_To_Generic(SndMixReverbProperties pReverb, out EnvironmentReverb pRvb, c_float flOutputFreq, int32 lMinRefDelay, int32 lMaxRefDelay, int32 lMinRvbDelay, int32 lMaxRvbDelay, int32 lTankLength)//XX 164
+		private void I3dl2_To_Generic(SndMixReverbProperties pReverb, out EnvironmentReverb pRvb, c_float flOutputFreq, int32 lMinRefDelay, int32 lMaxRefDelay, int32 lMinRvbDelay, int32 lMaxRvbDelay, int32 lTankLength)
 		{
 			pRvb = new EnvironmentReverb();
 
@@ -588,7 +582,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Shutdown(ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol)//XX 252
+		private void Shutdown(ref MixSampleInt gnRvbROfsVol, ref MixSampleInt gnRvbLOfsVol)
 		{
 			gnReverbSend = false;
 
@@ -596,11 +590,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 			gnRvbROfsVol = 0;
 
 			// Clear out all reverb state
-//XX			g_bLastInPresent = false;
-//XX			g_bLastOutPresent = false;
-//XX			g_nLastRvbIn_xl = g_nLastRvbIn_xr = 0;
 			g_nLastRvbIn_yl = g_nLastRvbIn_yr = 0;
-//XX			g_nLastRvbOut_xl = g_nLastRvbOut_xr = 0;
 			OpenMpt.MemsetZero(gnDCRRvb_X1);
 			OpenMpt.MemsetZero(gnDCRRvb_Y1);
 
@@ -621,7 +611,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void ReverbDryMix(CPointer<int32> pDry, CPointer<int32> pWet, c_int lDryVol, uint32 nSamples)//XX 475
+		private void ReverbDryMix(CPointer<int32> pDry, CPointer<int32> pWet, c_int lDryVol, uint32 nSamples)
 		{
 			for (uint32 i = 0; i < nSamples; i++)
 			{
@@ -637,7 +627,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32 ReverbProcessPreFiltering1x(CPointer<int32> pWet, uint32 nSamples)//XX 534
+		private uint32 ReverbProcessPreFiltering1x(CPointer<int32> pWet, uint32 nSamples)
 		{
 			c_int lowpass = g_RefDelay.nCoeffs.C.L;
 			c_int y1_l = g_nLastRvbIn_yl, y1_r = g_nLastRvbIn_yr;
@@ -667,7 +657,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void ReverbProcessPostFiltering1x(CPointer<int32> pRvb, CPointer<int32> pDry, uint32 nSamples)//XX 595
+		private void ReverbProcessPostFiltering1x(CPointer<int32> pRvb, CPointer<int32> pDry, uint32 nSamples)
 		{
 			int32 x1L = gnDCRRvb_X1[0], x1R = gnDCRRvb_X1[1];
 			int32 y1L = gnDCRRvb_Y1[0], y1R = gnDCRRvb_Y1[1];
@@ -715,7 +705,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int32 Clamp16(int32 x)//XX 720
+		private int32 Clamp16(int32 x)
 		{
 			return OpenMpt.Clamp<int32, int32>(x, int16.MinValue, int16.MaxValue);
 		}
@@ -731,7 +721,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// 3. Insert the result in the reflections delay buffer
 		/// </summary>
 		/********************************************************************/
-		private void ProcessPreDelay(SwRvbRefDelay pPreDelay, CPointer<int32> pIn, uint32 nSamples)//XX 722
+		private void ProcessPreDelay(SwRvbRefDelay pPreDelay, CPointer<int32> pIn, uint32 nSamples)
 		{
 			uint32 preDifPos = pPreDelay.nPreDifPos;
 			uint32 delayPos = pPreDelay.nDelayPos - 1;
@@ -784,7 +774,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		///    output
 		/// </summary>
 		/********************************************************************/
-		private void ProcessReflections(SwRvbRefDelay pPreDelay, CPointer<LR16> pRefOut, CPointer<int32> pOut, uint32 nSamples)//XX 797
+		private void ProcessReflections(SwRvbRefDelay pPreDelay, CPointer<LR16> pRefOut, CPointer<int32> pOut, uint32 nSamples)
 		{
 			c_int[] pos = new c_int[7];
 
@@ -836,7 +826,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundDsp
 		/// Late reverberation (with SW reflections)
 		/// </summary>
 		/********************************************************************/
-		private void ProcessLateReverb(SwLateReverb pReverb, CPointer<LR16> pRefOut, CPointer<int32> pMixOut, uint32 nSamples)//XX 890
+		private void ProcessLateReverb(SwLateReverb pReverb, CPointer<LR16> pRefOut, CPointer<int32> pMixOut, uint32 nSamples)
 		{
 			c_int delayPos;
 

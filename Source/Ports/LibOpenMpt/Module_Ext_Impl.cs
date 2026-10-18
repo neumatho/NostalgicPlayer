@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 			/// 
 			/// </summary>
 			/********************************************************************/
-			public void Set_Channel_Mute_Status(int32_t channel, bool mute)//XX 196
+			public void Set_Channel_Mute_Status(int32_t channel, bool mute)
 			{
 				if ((channel < 0) || (channel >= impl.Get_Num_Channels()))
 					throw new OpenMptException("Invalid channel");

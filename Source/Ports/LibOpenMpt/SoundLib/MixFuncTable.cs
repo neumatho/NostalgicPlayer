@@ -60,7 +60,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			AddResampling<FastSincInterpolation>(ResamplingIndex.FastSinc);
 			AddResampling<PolyphaseInterpolation>(ResamplingIndex.Kaiser);
 			AddResampling<FirFilterInterpolation>(ResamplingIndex.FirFilter);
-//XX			AddResampling<AmigaBlepInterpolation>(ResamplingIndex.AmigaBlep);
 		}
 
 

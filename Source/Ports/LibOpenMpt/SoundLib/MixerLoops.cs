@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void InitMixBuffer(CPointer<mixsample_t> pBuffer, uint32 nSamples)//XX 43
+		public static void InitMixBuffer(CPointer<mixsample_t> pBuffer, uint32 nSamples)
 		{
 			CMemory.memset(pBuffer, 0, nSamples);
 		}
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void InterleaveFrontRear(CPointer<mixsample_t> pFrontBuf, CPointer<mixsample_t> pRearBuf, uint32 nFrames)//XX 50
+		public static void InterleaveFrontRear(CPointer<mixsample_t> pFrontBuf, CPointer<mixsample_t> pRearBuf, uint32 nFrames)
 		{
 			// Copy backwards as we are writing back into FrontBuf
 			for (c_int i = (c_int)nFrames - 1; i >= 0; i--)
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void MonoFromStereo(CPointer<mixsample_t> pMixBuf, uint32 nSamples)//XX 64
+		public static void MonoFromStereo(CPointer<mixsample_t> pMixBuf, uint32 nSamples)
 		{
 			for (uint32 i = 0; i < nSamples; ++i)
 				pMixBuf[i] = (pMixBuf[i * 2] + pMixBuf[(i * 2) + 1]) / 2;
@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void StereoFill(CPointer<mixsample_t> pBuffer, uint32 nSamples, ref mixsample_t rofs, ref mixsample_t lofs)//XX 79
+		public static void StereoFill(CPointer<mixsample_t> pBuffer, uint32 nSamples, ref mixsample_t rofs, ref mixsample_t lofs)
 		{
 			if ((rofs == 0) && (lofs == 0))
 			{
@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void EndChannelOfs(ModChannel chn, CPointer<mixsample_t> pBuffer, uint32 nSamples)//XX 109
+		public static void EndChannelOfs(ModChannel chn, CPointer<mixsample_t> pBuffer, uint32 nSamples)
 		{
 			mixsample_t rofs = chn.nROfs;
 			mixsample_t lofs = chn.nLOfs;

@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static byte_span2 ReadRaw(Stream f, CPointer<byte> data, size_t size)//XX 38
+		public static byte_span2 ReadRaw(Stream f, CPointer<byte> data, size_t size)
 		{
 			return f.ReadRawImpl(data.AsSpan(size));
 		}
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static byte_span2 ReadRaw(Stream f, byte_span2 data)//XX 42
+		public static byte_span2 ReadRaw(Stream f, byte_span2 data)
 		{
 			return f.ReadRawImpl(data);
 		}
@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadBinaryTruncatedLE<T>(Stream f, out T v, size_t size)//XX 90
+		public static bool ReadBinaryTruncatedLE<T>(Stream f, out T v, size_t size)
 		{
 			array<uint8> bytes = new array<uint8>((size_t)Marshal.SizeOf<T>());
 
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadIntLE<T>(Stream f, out T v)//XX 101
+		public static bool ReadIntLE<T>(Stream f, out T v)
 		{
 			array<uint8> bytes = new array<uint8>((size_t)Marshal.SizeOf<T>());
 
@@ -128,7 +128,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadAdaptiveInt16LE(Stream f, out uint16 v)//XX 123
+		public static bool ReadAdaptiveInt16LE(Stream f, out uint16 v)
 		{
 			bool result = true;
 			v = 0;
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadAdaptiveInt32LE(Stream f, out uint32 v)//XX 145
+		public static bool ReadAdaptiveInt32LE(Stream f, out uint32 v)
 		{
 			bool result = true;
 			v = 0;
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadAdaptiveInt64LE(Stream f, out uint64 v)//XX 167
+		public static bool ReadAdaptiveInt64LE(Stream f, out uint64 v)
 		{
 			bool result = true;
 			v = 0;
@@ -223,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadSizedStringLE<TSize>(Stream f, out StdString str) where TSize : IBinaryInteger<TSize>, IMinMaxValue<TSize>//XX 188
+		public static bool ReadSizedStringLE<TSize>(Stream f, out StdString str) where TSize : IBinaryInteger<TSize>, IMinMaxValue<TSize>
 		{
 			return ReadSizedStringLE(f, out str, TSize.MaxValue);
 		}
@@ -237,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadSizedStringLE<TSize>(Stream f, out StdString str, TSize maxSize) where TSize : IBinaryInteger<TSize>//XX 188
+		public static bool ReadSizedStringLE<TSize>(Stream f, out StdString str, TSize maxSize) where TSize : IBinaryInteger<TSize>
 		{
 			str = new StdString();
 

@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModSequenceSet(CSoundFile sndFile)//XX 330
+		public ModSequenceSet(CSoundFile sndFile)
 		{
 			m_SndFile = sndFile;
 
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Initialize()//XX 350
+		public void Initialize()
 		{
 			m_CurrentSeq = 0;
 			m_Sequences.assign(1, new ModSequence(m_SndFile));
@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetSequence(SequenceIndex n)//XX 357
+		public void SetSequence(SequenceIndex n)
 		{
 			if (n < m_Sequences.size())
 				m_CurrentSeq = n;

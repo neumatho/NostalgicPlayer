@@ -366,7 +366,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override string ToString()//XX 66
+		public override string ToString()
 		{
 			uint32 v = m_Version;
 

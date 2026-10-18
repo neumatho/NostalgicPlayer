@@ -24,9 +24,6 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Tests
 			Assert.IsFalse(ModCommand.IsPcNote(ModCommand.Note_Max));
 			Assert.IsTrue(ModCommand.IsPcNote(ModCommand.Note_Pc));
 			Assert.IsTrue(ModCommand.IsPcNote(ModCommand.Note_Pcs));
-
-			//XX CModSpecifications::ExtensionToType
-			//XX SampleFormat::FromInt
 		}
 	}
 }

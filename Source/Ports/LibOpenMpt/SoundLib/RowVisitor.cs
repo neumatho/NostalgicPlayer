@@ -184,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public RowVisitor(CSoundFile sndFile, SequenceIndex sequence = Snd_Def.SequenceIndex_Invalid)//XX 57
+		public RowVisitor(CSoundFile sndFile, SequenceIndex sequence = Snd_Def.SequenceIndex_Invalid)
 		{
 			m_SndFile = sndFile;
 			m_Sequence = sequence;
@@ -228,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void MoveVisitedRowsFrom(RowVisitor other)//XX 65
+		public void MoveVisitedRowsFrom(RowVisitor other)
 		{
 			m_VisitedRows = Utility.move(other.m_VisitedRows);
 			m_VisitedLoopStates = Utility.move(other.m_VisitedLoopStates);
@@ -241,7 +241,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected ModSequence Order()//XX 72
+		protected ModSequence Order()
 		{
 			if (m_Sequence >= m_SndFile.Order.GetNumSequences())
 				return m_SndFile.Order.Current;
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// are reset)
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(bool reset)//XX 83
+		public void Initialize(bool reset)
 		{
 			ModSequence order = Order();
 			OrderIndex endOrder = order.GetLengthTailTrimmed();
@@ -377,7 +377,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// was visited before
 		/// </summary>
 		/********************************************************************/
-		public bool Visit(OrderIndex ord, RowIndex row, ChannelStates chnState, bool ignoreRow)//XX 168
+		public bool Visit(OrderIndex ord, RowIndex row, ChannelStates chnState, bool ignoreRow)
 		{
 			ModSequence order = Order();
 
@@ -439,7 +439,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Function returns true on success
 		/// </summary>
 		/********************************************************************/
-		public bool GetFirstUnvisitedRow(out OrderIndex ord, out RowIndex row, bool onlyUnplayedPatterns)//XX 225
+		public bool GetFirstUnvisitedRow(out OrderIndex ord, out RowIndex row, bool onlyUnplayedPatterns)
 		{
 			ModSequence order = Order();
 			OrderIndex endOrder = order.GetLengthTailTrimmed();
@@ -511,7 +511,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Get the needed vector size for a given pattern
 		/// </summary>
 		/********************************************************************/
-		protected RowIndex VisitedRowsVectorSize(PatternIndex pattern)//XX 212
+		protected RowIndex VisitedRowsVectorSize(PatternIndex pattern)
 		{
 			if (m_SndFile.Patterns.IsValidPat(pattern))
 				return m_SndFile.Patterns[pattern].GetNumRows();

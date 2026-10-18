@@ -446,7 +446,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 GetLinearSlideDownTable(CSoundFile sndFile, uint32 i)//XX 43
+		public static uint32 GetLinearSlideDownTable(CSoundFile sndFile, uint32 i)
 		{
 			return sndFile.m_PlayBehaviour[PlayBehaviour.PeriodsAreHertz] ? Tables.LinearSlideDownTable[i] : Tables.LinearSlideUpTable[i];
 		}
@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 GetLinearSlideUpTable(CSoundFile sndFile, uint32 i)//XX 44
+		public static uint32 GetLinearSlideUpTable(CSoundFile sndFile, uint32 i)
 		{
 			return sndFile.m_PlayBehaviour[PlayBehaviour.PeriodsAreHertz] ? Tables.LinearSlideUpTable[i] : Tables.LinearSlideDownTable[i];
 		}
@@ -470,7 +470,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 GetFineLinearSlideDownTable(CSoundFile sndFile, uint32 i)//XX 45
+		public static uint32 GetFineLinearSlideDownTable(CSoundFile sndFile, uint32 i)
 		{
 			return sndFile.m_PlayBehaviour[PlayBehaviour.PeriodsAreHertz] ? Tables.FineLinearSlideDownTable[i] : Tables.FineLinearSlideUpTable[i];
 		}
@@ -482,7 +482,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 GetFineLinearSlideUpTable(CSoundFile sndFile, uint32 i)//XX 46
+		public static uint32 GetFineLinearSlideUpTable(CSoundFile sndFile, uint32 i)
 		{
 			return sndFile.m_PlayBehaviour[PlayBehaviour.PeriodsAreHertz] ? Tables.FineLinearSlideUpTable[i] : Tables.FineLinearSlideDownTable[i];
 		}
@@ -495,12 +495,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// BPM rather than a tempo slide
 		/// </summary>
 		/********************************************************************/
-		private static Tempo GetMinimumTempoParam(ModType modType)//XX 49
+		private static Tempo GetMinimumTempoParam(ModType modType)
 		{
 			return (modType & (ModType.Mdl | ModType.Med | ModType.Xm | ModType.Mod)) != 0 ? new Tempo(1, 0) : new Tempo(32, 0);
 		}
 
-		//XX 55
 		#region Length
 		/********************************************************************/
 		/// <summary>
@@ -511,7 +510,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///       values.
 		/// </summary>
 		/********************************************************************/
-		public vector<GetLengthType> GetLength(EnmGetLengthResetMode adjustMode)//XX 348
+		public vector<GetLengthType> GetLength(EnmGetLengthResetMode adjustMode)
 		{
 			return GetLength(adjustMode, new GetLengthTarget());
 		}
@@ -531,7 +530,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///       values.
 		/// </summary>
 		/********************************************************************/
-		public vector<GetLengthType> GetLength(EnmGetLengthResetMode adjustMode, GetLengthTarget target)//XX 348
+		public vector<GetLengthType> GetLength(EnmGetLengthResetMode adjustMode, GetLengthTarget target)
 		{
 			vector<GetLengthType> results = new vector<GetLengthType>();
 			GetLengthType retVal = new GetLengthType();
@@ -1865,14 +1864,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		}
 		#endregion
 
-		//XX 1458
 		#region Effects
 		/********************************************************************/
 		/// <summary>
 		/// Change sample or instrument number
 		/// </summary>
 		/********************************************************************/
-		public void InstrumentChange(PlayState playState, ChannelIndex channel, uint32 instr, bool bPorta = false, bool bUpdVol = true, bool bResetEnv = true)//XX 1462
+		public void InstrumentChange(PlayState playState, ChannelIndex channel, uint32 instr, bool bPorta = false, bool bUpdVol = true, bool bResetEnv = true)
 		{
 			ModChannel chn = playState.Chn[channel];
 			ModInstrument pIns = instr <= GetNumInstruments() ? Instruments[instr] : null;
@@ -2300,7 +2298,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void NoteChange(ModChannel chn, c_int note, bool bPorta = false, bool bResetEnv = true, bool bManual = false, ChannelIndex channelHint = Snd_Def.ChannelIndex_Invalid)//XX 1842
+		public void NoteChange(ModChannel chn, c_int note, bool bPorta = false, bool bResetEnv = true, bool bManual = false, ChannelIndex channelHint = Snd_Def.ChannelIndex_Invalid)
 		{
 			if (note < ModCommand.Note_Min)
 				return;
@@ -2707,7 +2705,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Apply sample or instrument panning
 		/// </summary>
 		/********************************************************************/
-		public void ApplyInstrumentPanning(ModChannel chn, ModInstrument instr, ModSample smp)//XX 2211
+		public void ApplyInstrumentPanning(ModChannel chn, ModInstrument instr, ModSample smp)
 		{
 			int32 newPan = int32.MinValue;
 
@@ -2737,7 +2735,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public ChannelIndex GetNnaChannel(ChannelIndex nChn)//XX 2234
+		public ChannelIndex GetNnaChannel(ChannelIndex nChn)
 		{
 			// Check for empty channel
 			for (ChannelIndex i = GetNumChannels(); i < m_PlayState.Chn.size(); i++)
@@ -2815,7 +2813,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public ChannelIndex CheckNna(ChannelIndex nChn, uint32 instr, c_int note, bool forceCut)//XX 2292
+		public ChannelIndex CheckNna(ChannelIndex nChn, uint32 instr, c_int note, bool forceCut)
 		{
 			ModChannel srcChn = m_PlayState.Chn[nChn];
 			ModInstrument pIns = null;
@@ -3131,7 +3129,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void StopOldNna(ModChannel chn, ChannelIndex channel)//XX 2585
+		public void StopOldNna(ModChannel chn, ChannelIndex channel)
 		{
 //XX			if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
 //				m_Opl.NoteCut(channel);
@@ -3144,7 +3142,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public bool ProcessEffects()//XX 2610
+		public bool ProcessEffects()
 		{
 			m_PlayState.m_BreakRow = Snd_Def.RowIndex_Invalid;		// Is changed if a break to row command is encountered
 			m_PlayState.m_PatLoopRow = Snd_Def.RowIndex_Invalid;	// Is changed if a pattern loop jump-back is executed
@@ -4569,7 +4567,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public bool HandleNextRow(PlayState state, ModSequence order, bool honorPatternLoop)//XX 3883
+		public bool HandleNextRow(PlayState state, ModSequence order, bool honorPatternLoop)
 		{
 			bool doPatternLoop = state.m_PatLoopRow != Snd_Def.RowIndex_Invalid;
 			bool doBreakRow = state.m_BreakRow != Snd_Def.RowIndex_Invalid;
@@ -4632,14 +4630,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		}
 		#endregion
 
-		//XX 3953
 		#region Channel effects
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void ResetAutoSlides(ModChannel chn)//XX 3956
+		public void ResetAutoSlides(ModChannel chn)
 		{
 			EffectCommand cmd = chn.RowCommand.Command;
 			VolumeCommand volCmd = chn.RowCommand.VolCmd;
@@ -4686,7 +4683,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ProcessAutoSlides(PlayState playState, ChannelIndex channel)//XX 3995
+		public void ProcessAutoSlides(PlayState playState, ChannelIndex channel)
 		{
 			ModChannel chn = playState.Chn[channel];
 
@@ -4742,7 +4739,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Test case: ParamMemory.s3m
 		/// </summary>
 		/********************************************************************/
-		public void UpdateS3MEffectMemory(ModChannel chn, ModCommandParam param)//XX 4033
+		public void UpdateS3MEffectMemory(ModChannel chn, ModCommandParam param)
 		{
 			chn.nOldVolumeSlide = param;	// Dxy / Kxy / Lxy
 			chn.nOldPortaUp = param;		// Exx / Fxx
@@ -4767,7 +4764,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// value of 0 means the command is not extended)
 		/// </summary>
 		/********************************************************************/
-		public uint32 CalculateXParam(PatternIndex pat, RowIndex row, ChannelIndex chn, out uint32 extendedRows)//XX 4050
+		public uint32 CalculateXParam(PatternIndex pat, RowIndex row, ChannelIndex chn, out uint32 extendedRows)
 		{
 			extendedRows = 0;
 
@@ -4843,7 +4840,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PositionJump(PlayState state, ChannelIndex chn)//XX 4116
+		public void PositionJump(PlayState state, ChannelIndex chn)
 		{
 			state.m_NextPatStartRow = 0;	// FT2 E60 bug
 			state.m_PosJump = (OrderIndex)CalculateXParam(state.m_nPattern, state.m_nRow, chn, out _);
@@ -4861,7 +4858,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public RowIndex PatternBreak(PlayState state, ChannelIndex chn, uint8 param)//XX 4130
+		public RowIndex PatternBreak(PlayState state, ChannelIndex chn, uint8 param)
 		{
 			if ((param >= 64) && ((GetType_() & ModType.S3M) != 0))
 			{
@@ -4881,7 +4878,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoFc(ModChannel chn)//XX 4144
+		public void PortamentoFc(ModChannel chn)
 		{
 			chn.FcPortaTick = !chn.FcPortaTick;
 
@@ -4898,7 +4895,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoUp(ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)//XX 4153
+		public void PortamentoUp(ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)
 		{
 			PortamentoUp(m_PlayState, nChn, param, doFinePortamentoAsRegular);
 			MidiPortamento(nChn, m_PlayState.Chn[nChn].nOldPortaUp , !doFinePortamentoAsRegular && UseCombinedPortamentoCommands());
@@ -4911,7 +4908,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoUp(PlayState playState, ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)//XX 4160
+		public void PortamentoUp(PlayState playState, ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)
 		{
 			ModChannel chn = playState.Chn[nChn];
 
@@ -4984,7 +4981,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoDown(ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)//XX 4226
+		public void PortamentoDown(ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)
 		{
 			PortamentoDown(m_PlayState, nChn, param, doFinePortamentoAsRegular);
 			MidiPortamento(nChn, -m_PlayState.Chn[nChn].nOldPortaDown, !doFinePortamentoAsRegular && UseCombinedPortamentoCommands());
@@ -4997,7 +4994,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoDown(PlayState playState, ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)//XX 4233
+		public void PortamentoDown(PlayState playState, ChannelIndex nChn, ModCommandParam param, bool doFinePortamentoAsRegular)
 		{
 			ModChannel chn = playState.Chn[nChn];
 
@@ -5069,7 +5066,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Send portamento commands to plugins
 		/// </summary>
 		/********************************************************************/
-		public void MidiPortamento(ChannelIndex nChn, c_int param, bool doFineSlides)//XX 4300
+		public void MidiPortamento(ChannelIndex nChn, c_int param, bool doFineSlides)
 		{
 			c_int actualParam = CMath.abs(param);
 			c_int pitchBend = 0;
@@ -5111,7 +5108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void FinePortamentoUp(ModChannel chn, ModCommandParam param)//XX 4347
+		public void FinePortamentoUp(ModChannel chn, ModCommandParam param)
 		{
 			if (GetType_() == ModType.Xm)
 			{
@@ -5141,7 +5138,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void FinePortamentoDown(ModChannel chn, ModCommandParam param)//XX 4365
+		public void FinePortamentoDown(ModChannel chn, ModCommandParam param)
 		{
 			if (GetType_() == ModType.Xm)
 			{
@@ -5176,7 +5173,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ExtraFinePortamentoUp(ModChannel chn, ModCommandParam param)//XX 4387
+		public void ExtraFinePortamentoUp(ModChannel chn, ModCommandParam param)
 		{
 			if (GetType_() == ModType.Xm)
 			{
@@ -5206,7 +5203,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ExtraFinePortamentoDown(ModChannel chn, ModCommandParam param)//XX 4405
+		public void ExtraFinePortamentoDown(ModChannel chn, ModCommandParam param)
 		{
 			if (GetType_() == ModType.Xm)
 			{
@@ -5241,7 +5238,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void SetFineTune(PatternIndex pattern, RowIndex row, ChannelIndex channel, PlayState playState, bool isSmooth)//XX 4440
+		public void SetFineTune(PatternIndex pattern, RowIndex row, ChannelIndex channel, PlayState playState, bool isSmooth)
 		{
 			ModChannel chn = playState.Chn[channel];
 			int16 newTuning = CalculateFineTuneTarget(pattern, row, channel);
@@ -5267,7 +5264,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public int16 CalculateFineTuneTarget(PatternIndex pattern, RowIndex row, ChannelIndex channel)//XX 4463
+		public int16 CalculateFineTuneTarget(PatternIndex pattern, RowIndex row, ChannelIndex channel)
 		{
 			return int16.CreateSaturating((int32)CalculateXParam(pattern, row, channel, out _) - 0x8000);
 		}
@@ -5282,7 +5279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Oktalyzer: Slide down on first tick only, or on every tick
 		/// </summary>
 		/********************************************************************/
-		public void NoteSlide(ModChannel chn, uint32 param, bool slideUp, bool retrig)//XX 4472
+		public void NoteSlide(ModChannel chn, uint32 param, bool slideUp, bool retrig)
 		{
 			if (chn.IsFirstTick)
 			{
@@ -5327,7 +5324,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public (uint16 first, bool second) GetVolCmdTonePorta(ModCommand m, uint32 startTick)//XX 4506
+		public (uint16 first, bool second) GetVolCmdTonePorta(ModCommand m, uint32 startTick)
 		{
 			if ((GetType_() & (ModType.It | ModType.Mpt | ModType.Ams | ModType.Dmf | ModType.Dbm | ModType.Imf | ModType.Psm | ModType.J2B | ModType.Ult | ModType.Okt | ModType.Mt2 | ModType.Mdl)) != 0)
 				return (Tables.ImpulseTrackerPortaVolCmd[m.Vol & 0x0f], false);
@@ -5362,7 +5359,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public bool TonePortamentoSharesEffectMemory()//XX 4535
+		public bool TonePortamentoSharesEffectMemory()
 		{
 			return (!m_SongFlags.Test(SongFlags.ItCompatGxx) && m_PlayBehaviour[PlayBehaviour.ItPortaMemoryShare]) || (GetType_() == ModType.Plm);
 		}
@@ -5374,7 +5371,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void InitTonePortamento(ModChannel chn, uint16 param)//XX 4541
+		public void InitTonePortamento(ModChannel chn, uint16 param)
 		{
 			// IT compatibility 03: Share effect memory with portamento up/down
 			if (TonePortamentoSharesEffectMemory())
@@ -5396,7 +5393,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void TonePortamento(ChannelIndex nChn, uint16 param)//XX 4556
+		public void TonePortamento(ChannelIndex nChn, uint16 param)
 		{
 			int32 delta = TonePortamento(m_PlayState, nChn, param);
 
@@ -5411,7 +5408,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Portamento slide
 		/// </summary>
 		/********************************************************************/
-		public int32 TonePortamento(PlayState playState, ChannelIndex nChn, uint16 param)//XX 4577
+		public int32 TonePortamento(PlayState playState, ChannelIndex nChn, uint16 param)
 		{
 			ModChannel chn = playState.Chn[nChn];
 			chn.dwFlags.Set(ChannelFlags.Chn_Portamento);
@@ -5534,7 +5531,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void TonePortamentoWithDuration(ModChannel chn, uint16 param = uint16.MaxValue)//XX 4685
+		public void TonePortamentoWithDuration(ModChannel chn, uint16 param = uint16.MaxValue)
 		{
 			if (param != uint16.MaxValue)
 			{
@@ -5590,7 +5587,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void Vibrato(ModChannel chn, uint32 param)//XX 4726
+		public void Vibrato(ModChannel chn, uint32 param)
 		{
 			if ((param & 0x0f) != 0)
 				chn.nVibratoDepth = (uint8)((param & 0x0f) * 4);
@@ -5611,7 +5608,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void FineVibrato(ModChannel chn, uint32 param)//XX 4737
+		public void FineVibrato(ModChannel chn, uint32 param)
 		{
 			if ((param & 0x0f) != 0)
 				chn.nVibratoDepth = (uint8)(param & 0x0f);
@@ -5637,7 +5634,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void Panbrello(ModChannel chn, uint32 param)//XX 4754
+		public void Panbrello(ModChannel chn, uint32 param)
 		{
 			if ((param & 0x0f) != 0)
 				chn.nPanbrelloDepth = (uint8)(param & 0x0f);
@@ -5653,7 +5650,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void Panning(ModChannel chn, uint32 param, PanningType panBits)//XX 4761
+		public void Panning(ModChannel chn, uint32 param, PanningType panBits)
 		{
 			// No panning in ProTracker mode
 			if (m_PlayBehaviour[PlayBehaviour.ModIgnorePanning])
@@ -5715,7 +5712,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void AutoVolumeSlide(ModChannel chn, ModCommandParam param)//XX 4813
+		public void AutoVolumeSlide(ModChannel chn, ModCommandParam param)
 		{
 			if (m_SongFlags.Test(SongFlags.Auto_VolSlide_Stk))
 			{
@@ -5744,7 +5741,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void VolumeDownEtx(PlayState playState, ModChannel chn, ModCommandParam param)//XX 4834
+		public void VolumeDownEtx(PlayState playState, ModChannel chn, ModCommandParam param)
 		{
 			chn.AutoSlide.SetActive(AutoSlideCommand.VolumeDownEtx, param != 0);
 
@@ -5763,7 +5760,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void VolumeSlide(ModChannel chn, ModCommandParam param, bool volCol = false)//XX 4845
+		public void VolumeSlide(ModChannel chn, ModCommandParam param, bool volCol = false)
 		{
 			if (!volCol)
 			{
@@ -5844,7 +5841,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PanningSlide(ModChannel chn, ModCommandParam param, bool memory = true)//XX 4919
+		public void PanningSlide(ModChannel chn, ModCommandParam param, bool memory = true)
 		{
 			if (memory)
 			{
@@ -5925,7 +5922,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void FineVolumeUp(ModChannel chn, ModCommandParam param, bool volCol)//XX 4998
+		public void FineVolumeUp(ModChannel chn, ModCommandParam param, bool volCol)
 		{
 			if (GetType_() == ModType.Xm)
 			{
@@ -5970,7 +5967,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void FineVolumeDown(ModChannel chn, ModCommandParam param, bool volCol)//XX 5022
+		public void FineVolumeDown(ModChannel chn, ModCommandParam param, bool volCol)
 		{
 			if (GetType_() == ModType.Xm)
 			{
@@ -6015,7 +6012,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void Tremolo(ModChannel chn, uint32 param)//XX 5046
+		public void Tremolo(ModChannel chn, uint32 param)
 		{
 			if ((param & 0x0f) != 0)
 				chn.nTremoloDepth = (uint8)((param & 0x0f) << 2);
@@ -6036,7 +6033,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ChannelVolSlide(ModChannel chn, ModCommandParam param)//XX 5057
+		public void ChannelVolSlide(ModChannel chn, ModCommandParam param)
 		{
 			int32 nChnSlide = 0;
 
@@ -6084,7 +6081,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ChannelVolumeDownWithDuration(ModChannel chn, uint16 param = uint16.MaxValue)//XX 5091
+		public void ChannelVolumeDownWithDuration(ModChannel chn, uint16 param = uint16.MaxValue)
 		{
 			if (param != uint16.MaxValue)
 			{
@@ -6117,7 +6114,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ExtendedModCommands(ChannelIndex nChn, ModCommandParam param)//XX 5115
+		public void ExtendedModCommands(ChannelIndex nChn, ModCommandParam param)
 		{
 			ModChannel chn = m_PlayState.Chn[nChn];
 			uint8 command = (uint8)(param & 0xf0);
@@ -6297,7 +6294,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ExtendedS3MCommands(ChannelIndex nChn, ModCommandParam param)//XX 5211
+		public void ExtendedS3MCommands(ChannelIndex nChn, ModCommandParam param)
 		{
 			ModChannel chn = m_PlayState.Chn[nChn];
 			uint8 command = (uint8)(param & 0xf0);
@@ -6547,7 +6544,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ExtendedChannelEffect(ModChannel chn, uint32 param, PlayState playState)//XX 5396
+		public void ExtendedChannelEffect(ModChannel chn, uint32 param, PlayState playState)
 		{
 			// S9x and X9x commands (S3M/XM/IT only)
 			switch (param & 0x0f)
@@ -6639,7 +6636,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void InvertLoop(ModChannel chn)//XX 5450
+		public void InvertLoop(ModChannel chn)
 		{
 			// EFx implementation for MOD files (PT 1.1A and up: Invert Loop)
 			// This effect trashes samples. Thanks to 8bitbubsy for making this work. :)
@@ -6690,7 +6687,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// needed, it is autodetected)
 		/// </summary>
 		/********************************************************************/
-		public void ProcessMidiMacro(PlayState playState, ChannelIndex nChn, bool isSmooth, MidiMacroConfigData.Macro macro, uint8 param = 0, PlugIndex plugin = 0)//XX 5491
+		public void ProcessMidiMacro(PlayState playState, ChannelIndex nChn, bool isSmooth, MidiMacroConfigData.Macro macro, uint8 param = 0, PlugIndex plugin = 0)
 		{
 			playState.m_MidiMacroScratchSpace.resize(macro.Length() + 1);
 
@@ -6710,7 +6707,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Calculate smooth MIDI macro slide parameter for current tick
 		/// </summary>
 		/********************************************************************/
-		public static c_float CalculateSmoothParamChange(PlayState playState, c_float currentValue, c_float param)//XX 5504
+		public static c_float CalculateSmoothParamChange(PlayState playState, c_float currentValue, c_float param)
 		{
 			uint32 ticksLeft = playState.TicksOnRow() - playState.m_nTickCount;
 
@@ -6736,7 +6733,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Returns bytes sent on success, 0 on (parse) failure
 		/// </summary>
 		/********************************************************************/
-		public void SendMidiData(PlayState playState, ChannelIndex nChn, bool isSmooth, MptSpan<uint8> macro, PlugIndex plugin)//XX 5522
+		public void SendMidiData(PlayState playState, ChannelIndex nChn, bool isSmooth, MptSpan<uint8> macro, PlugIndex plugin)
 		{
 			if (macro.Size() < 1)
 				return;
@@ -6813,7 +6810,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void SendMidiNote(ChannelIndex chn, uint16 note, uint16 volume, IMixPlugin plugin = null)//XX 5648
+		public void SendMidiNote(ChannelIndex chn, uint16 note, uint16 volume, IMixPlugin plugin = null)
 		{
 		}
 
@@ -6824,7 +6821,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ProcessSampleOffset(ModChannel chn, ChannelIndex nChn, PlayState playState)//XX 5675
+		public void ProcessSampleOffset(ModChannel chn, ChannelIndex nChn, PlayState playState)
 		{
 			ModCommand m = chn.RowCommand;
 			uint32 extendedRows = 0;
@@ -6867,7 +6864,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void SampleOffset(ModChannel chn, SmpLength param)//XX 5707
+		public void SampleOffset(ModChannel chn, SmpLength param)
 		{
 			OpenMpt.LimitMax(ref param, Snd_Def.Max_Sample_Length);
 
@@ -6965,7 +6962,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ReverseSampleOffset(ModChannel chn, ModCommandParam param)//XX 5797
+		public void ReverseSampleOffset(ModChannel chn, ModCommandParam param)
 		{
 			if ((chn.pModSample != null) && (chn.pModSample.nLength > 0))
 			{
@@ -6989,7 +6986,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void DigiBoosterSampleReverse(ModChannel chn, ModCommandParam param)//XX 5812
+		public void DigiBoosterSampleReverse(ModChannel chn, ModCommandParam param)
 		{
 			if (chn.IsFirstTick && (chn.pModSample != null) && (chn.pModSample.nLength > 0))
 			{
@@ -7015,7 +7012,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void HandleDigiSamplePlayDirection(PlayState state, ChannelIndex chn)//XX 5830
+		public void HandleDigiSamplePlayDirection(PlayState state, ChannelIndex chn)
 		{
 			// Digi Booster mixes two channels into one Paula channel, and when a note is triggered on one of them it resets the reverse play flag on the other
 			if (GetType_() == ModType.Digi)
@@ -7035,7 +7032,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void RetrigNote(ChannelIndex nChn, c_int param, c_int offset = 0)//XX 5843
+		public void RetrigNote(ChannelIndex nChn, c_int param, c_int offset = 0)
 		{
 			// Retrig: bit 8 is set if it's the new XM retrig
 			ModChannel chn = m_PlayState.Chn[nChn];
@@ -7285,7 +7282,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// variable, chn.nPeriod is not touched
 		/// </summary>
 		/********************************************************************/
-		public void DoFreqSlide(ModChannel chn, ref int32 period, int32 amount, bool isTonePorta = false)//XX 6049
+		public void DoFreqSlide(ModChannel chn, ref int32 period, int32 amount, bool isTonePorta = false)
 		{
 			if ((period == 0) || (amount == 0))
 				return;
@@ -7397,7 +7394,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void NoteCut(ChannelIndex nChn, uint32 nTick, bool cutSample)//XX 6144
+		public void NoteCut(ChannelIndex nChn, uint32 nTick, bool cutSample)
 		{
 			ModChannel chn = m_PlayState.Chn[nChn];
 			uint32 tickCount = m_PlayState.m_nTickCount;
@@ -7450,7 +7447,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void KeyOff(ModChannel chn)//XX 6190
+		public void KeyOff(ModChannel chn)
 		{
 			bool keyIsOn = !chn.dwFlags.Test(ChannelFlags.Chn_KeyOff);
 			chn.dwFlags.Set(ChannelFlags.Chn_KeyOff);
@@ -7509,14 +7506,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		}
 		#endregion
 
-		//XX 6242
 		#region Global effects
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetSpeed(PlayState playState, uint32 param)//XX 6246
+		public void SetSpeed(PlayState playState, uint32 param)
 		{
 			if (param > 0)
 				playState.m_nMusicSpeed = param;
@@ -7535,7 +7531,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Convert a ST2 tempo byte to classic tempo and speed combination
 		/// </summary>
 		/********************************************************************/
-		public Tempo ConvertSt2Tempo(uint8 tempo)//XX 6266
+		public Tempo ConvertSt2Tempo(uint8 tempo)
 		{
 			const uint32 st2MixingRate = 23863;		// Highest possible setting in ST2
 
@@ -7559,7 +7555,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetTempo(PlayState playState, Tempo param, bool setFromUi = false)//XX 6280
+		public void SetTempo(PlayState playState, Tempo param, bool setFromUi = false)
 		{
 			CModSpecifications specs = GetModSpecifications();
 
@@ -7612,7 +7608,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void PatternLoop(PlayState state, ChannelIndex nChn, ModCommandParam param)//XX 6322
+		public void PatternLoop(PlayState state, ChannelIndex nChn, ModCommandParam param)
 		{
 			if (m_PlayBehaviour[PlayBehaviour.St3NoMutedChannels] && ((state.Chn[nChn].dwFlags & (ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute)) != 0))
 				return;		// Not even effects are processed on muted S3M channels
@@ -7688,7 +7684,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void GlobalVolSlide(PlayState playState, ModCommandParam param, ChannelIndex chn)//XX 6386
+		public void GlobalVolSlide(PlayState playState, ModCommandParam param, ChannelIndex chn)
 		{
 			if (m_SongFlags.Test(SongFlags.Auto_GlobalVol))
 				playState.Chn[chn].AutoSlide.SetActive(AutoSlideCommand.GlobalVolumeSlide, param != 0);
@@ -7750,7 +7746,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		}
 		#endregion
 
-		//XX 6442
 		#region Note/Period/Frequency functions
 		/********************************************************************/
 		/// <summary>
@@ -7758,7 +7753,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// (i.e. the note has the same or higher frequency)
 		/// </summary>
 		/********************************************************************/
-		public uint32 GetNoteFromPeriod(uint32 period, int32 nFineTune, uint32 nC5Speed)//XX 6445
+		public uint32 GetNoteFromPeriod(uint32 period, int32 nFineTune, uint32 nC5Speed)
 		{
 			if (period == 0)
 				return 0;
@@ -7797,7 +7792,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint32 GetPeriodFromNote(uint32 note, int32 nFineTune, uint32 nC5Speed)//XX 6473
+		public uint32 GetPeriodFromNote(uint32 note, int32 nFineTune, uint32 nC5Speed)
 		{
 			if ((note == ModCommand.Note_None) || (note >= ModCommand.Note_Min_Special))
 				return 0;
@@ -7920,7 +7915,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// point, with FREQ_FRACBITS fractional bits
 		/// </summary>
 		/********************************************************************/
-		public uint32 GetFreqFromPeriod(uint32 period, uint32 c5Speed, int32 nPeriodFrac)//XX 6563
+		public uint32 GetFreqFromPeriod(uint32 period, uint32 c5Speed, int32 nPeriodFrac)
 		{
 			if (period == 0)
 				return 0;
@@ -8012,7 +8007,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoMpt(ModChannel chn, c_int param)//XX 6811
+		public void PortamentoMpt(ModChannel chn, c_int param)
 		{
 			// Behavior: Modifies portamento by param-steps on every tick.
 			// Note that step meaning depends on tuning
@@ -8027,7 +8022,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoFineMpt(PlayState playState, ChannelIndex nChn, c_int param)//XX 6821
+		public void PortamentoFineMpt(PlayState playState, ChannelIndex nChn, c_int param)
 		{
 			ModChannel chn = playState.Chn[nChn];
 
@@ -8055,7 +8050,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void PortamentoExtraFineMpt(ModChannel chn, c_int param)//XX 6842
+		public void PortamentoExtraFineMpt(ModChannel chn, c_int param)
 		{
 			// This kinda behaves like regular fine portamento.
 			// It changes the pitch by n finetune steps on the first tick

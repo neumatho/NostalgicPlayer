@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(CSoundFile sndFile)//XX 1022
+		public void Initialize(CSoundFile sndFile)
 		{
 			if (!sndFile.m_GlobalScript.empty())
 				states.assign(sndFile.GetNumChannels(), new State());
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void NextTick(PlayState playState, CSoundFile sndFile)//XX 1029
+		public void NextTick(PlayState playState, CSoundFile sndFile)
 		{
 			if (sndFile.m_GlobalScript.empty())
 				return;
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void ApplyChannelState(PlayState playState, ChannelIndex chn, ref int32 period, CSoundFile sndFile)//XX 1045
+		public void ApplyChannelState(PlayState playState, ChannelIndex chn, ref int32 period, CSoundFile sndFile)
 		{
 			if (sndFile.m_GlobalScript.empty())
 				return;

@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private Module_Impl(map<string, string> ctls)//XX 466
+		private Module_Impl(map<string, string> ctls)
 		{
 			m_SndFile = new CSoundFile();
 			m_Loaded = false;
@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Module_Impl(Stream stream, Guid? formatId, map<string, string> ctls) : this(ctls)//XX 893
+		public Module_Impl(Stream stream, Guid? formatId, map<string, string> ctls) : this(ctls)
 		{
 			Load(FileCursor_StdStream.Make_FileCursor<PathString>(stream), formatId, ctls);
 			Apply_LibOpenMpt_Defaults();
@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected void Apply_Mixer_Settings(int32_t sampleRate, c_int channels)//XX 422
+		protected void Apply_Mixer_Settings(int32_t sampleRate, c_int channels)
 		{
 			bool sampleRate_Changed = (int32_t)m_SndFile.m_MixerSettings.gdwMixingFreq != sampleRate;
 			bool channels_Changed = (c_int)m_SndFile.m_MixerSettings.gnChannels != channels;
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected void Apply_LibOpenMpt_Defaults()//XX 443
+		protected void Apply_LibOpenMpt_Defaults()
 		{
 			Set_Render_Param(Render_Param.StereoSeparation_Percent, 100);
 			m_SndFile.Order.SetSequence(0);
@@ -219,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected SubSongs_Type Get_SubSongs()//XX 447
+		protected SubSongs_Type Get_SubSongs()
 		{
 			vector<SubSong_Data> subSongs = new vector<SubSong_Data>();
 
@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected void Init_SubSongs(out SubSongs_Type subSongs)//XX 460
+		protected void Init_SubSongs(out SubSongs_Type subSongs)
 		{
 			subSongs = Get_SubSongs();
 		}
@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected bool Has_SubSongs_Inited()//XX 463
+		protected bool Has_SubSongs_Inited()
 		{
 			return !m_SubSongs.empty();
 		}
@@ -268,7 +268,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected void Load(FileCursor file, Guid? formatId, map<string, string> ctls)//XX 487
+		protected void Load(FileCursor file, Guid? formatId, map<string, string> ctls)
 		{
 			{
 				ModLoadingFlags load_Flags = ModLoadingFlags.LoadCompleteModule;
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected bool Is_Loaded()//XX 520
+		protected bool Is_Loaded()
 		{
 			return m_Loaded;
 		}
@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected size_t Read_Wrapper(size_t count, CPointer<int16_t> left, CPointer<int16_t> right, CPointer<int16_t> rear_Left, CPointer<int16_t> rear_Right)//XX 523
+		protected size_t Read_Wrapper(size_t count, CPointer<int16_t> left, CPointer<int16_t> right, CPointer<int16_t> rear_Left, CPointer<int16_t> rear_Right)
 		{
 			m_SndFile.ResetMixStat();
 			m_SndFile.m_bIsRendering = m_Ctl_Play_At_End != Song_End_Action.Fadeout_Song;
@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Probe_File_Header_Result Probe_File_Header(Probe_File_Header_Flags flags, Stream stream, out Probe_File_Header_Info info)//XX 801
+		public static Probe_File_Header_Result Probe_File_Header(Probe_File_Header_Flags flags, Stream stream, out Probe_File_Header_Info info)
 		{
 			Probe_File_Header_Result result = Probe_File_Header_Result.Failure;
 
@@ -393,7 +393,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Set_Render_Param(Render_Param @param, int32_t value)//XX 958
+		public void Set_Render_Param(Render_Param @param, int32_t value)
 		{
 			switch (param)
 			{
@@ -451,7 +451,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public size_t Read(int32_t sampleRate, size_t count, CPointer<int16_t> left, CPointer<int16_t> right)//XX 998
+		public size_t Read(int32_t sampleRate, size_t count, CPointer<int16_t> left, CPointer<int16_t> right)
 		{
 			if (left.IsNull || right.IsNull)
 				throw new OpenMptException("null pointer");
@@ -471,7 +471,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public size_t Read(int32_t sampleRate, size_t count, CPointer<int16_t> left, CPointer<int16_t> right, CPointer<int16_t> rear_Left, CPointer<int16_t> rear_Right)//XX 1007
+		public size_t Read(int32_t sampleRate, size_t count, CPointer<int16_t> left, CPointer<int16_t> right, CPointer<int16_t> rear_Left, CPointer<int16_t> rear_Right)
 		{
 			if (left.IsNull || right.IsNull || rear_Left.IsNull || rear_Right.IsNull)
 				throw new OpenMptException("null pointer");
@@ -491,7 +491,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double Get_Duration_Seconds()//XX 1081
+		public c_double Get_Duration_Seconds()
 		{
 			SubSongs_Type subSongs_Temp = Has_SubSongs_Inited() ? new SubSongs_Type() : Get_SubSongs();
 			SubSongs_Type subSongs = Has_SubSongs_Inited() ? m_SubSongs : subSongs_Temp;
@@ -517,7 +517,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double Get_Time_At_Position(int32_t order, int32_t row)//XX 1095
+		public c_double Get_Time_At_Position(int32_t order, int32_t row)
 		{
 			GetLengthType t = m_SndFile.GetLength(EnmGetLengthResetMode.eNoAdjust, new GetLengthTarget((OrderIndex)order, (RowIndex)row)).back();
 
@@ -534,7 +534,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Select_SubSong(int32_t subSong)//XX 1103
+		public void Select_SubSong(int32_t subSong)
 		{
 			SubSongs_Type subSongs_Temp = Has_SubSongs_Inited() ? new SubSongs_Type() : Get_SubSongs();
 			SubSongs_Type subSongs = Has_SubSongs_Inited() ? m_SubSongs : subSongs_Temp;
@@ -561,7 +561,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Restart_Order(int32_t subSong)//XX 1122
+		public int32_t Get_Restart_Order(int32_t subSong)
 		{
 			SubSongs_Type subSongs_Temp = Has_SubSongs_Inited() ? new SubSongs_Type() : Get_SubSongs();
 			SubSongs_Type subSongs = Has_SubSongs_Inited() ? m_SubSongs : subSongs_Temp;
@@ -579,7 +579,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Restart_Row(int32_t subSong)//XX 1130
+		public int32_t Get_Restart_Row(int32_t subSong)
 		{
 			SubSongs_Type subSongs_Temp = Has_SubSongs_Inited() ? new SubSongs_Type() : Get_SubSongs();
 			SubSongs_Type subSongs = Has_SubSongs_Inited() ? m_SubSongs : subSongs_Temp;
@@ -597,7 +597,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double Set_Position_Seconds(c_double seconds)//XX 1148
+		public c_double Set_Position_Seconds(c_double seconds)
 		{
 			SubSongs_Type subSongs_Temp = Has_SubSongs_Inited() ? new SubSongs_Type() : Get_SubSongs();
 			SubSongs_Type subSongs = Has_SubSongs_Inited() ? m_SubSongs : subSongs_Temp;
@@ -643,7 +643,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double Set_Position_Order_Row(int32_t order, int32_t row)//XX 1175
+		public c_double Set_Position_Order_Row(int32_t order, int32_t row)
 		{
 			if ((order < 0) || (order >= m_SndFile.Order.Current.GetLengthTailTrimmed()))
 				return m_CurrentPositionSeconds;
@@ -675,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public StdString Get_Message_Instruments()//XX 1212
+		public StdString Get_Message_Instruments()
 		{
 			StdString retVal = new StdString();
 			StdString tmp = new StdString();
@@ -705,7 +705,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public StdString Get_Message_Samples()//XX 1229
+		public StdString Get_Message_Samples()
 		{
 			StdString retVal = new StdString();
 			StdString tmp = new StdString();
@@ -735,7 +735,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public string Get_Metadata(string key)//XX 1246
+		public string Get_Metadata(string key)
 		{
 			if (key == "type")
 				return m_SndFile.m_ModFormat.Type;
@@ -855,19 +855,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double Get_Current_Estimated_Bpm()//XX 1342
-		{
-			return m_SndFile.GetCurrentBpm();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public int32_t Get_Current_Speed()//XX 1345
+		public int32_t Get_Current_Speed()
 		{
 			return (int32_t)m_SndFile.m_PlayState.m_nMusicSpeed;
 		}
@@ -879,7 +867,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double Get_Current_Tempo2()//XX 1351
+		public c_double Get_Current_Tempo2()
 		{
 			return m_SndFile.m_PlayState.m_nMusicTempo.ToDouble();
 		}
@@ -891,7 +879,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Current_Order()//XX 1354
+		public int32_t Get_Current_Order()
 		{
 			return m_SndFile.GetCurrentOrder();
 		}
@@ -903,7 +891,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Current_Pattern()//XX 1357
+		public int32_t Get_Current_Pattern()
 		{
 			int32_t order = m_SndFile.GetCurrentOrder();
 
@@ -925,7 +913,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Num_SubSongs()//XX 1408
+		public int32_t Get_Num_SubSongs()
 		{
 			SubSongs_Type subSongs_Temp = Has_SubSongs_Inited() ? new SubSongs_Type() : Get_SubSongs();
 			SubSongs_Type subSongs = Has_SubSongs_Inited() ? m_SubSongs : subSongs_Temp;
@@ -940,7 +928,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Num_Channels()//XX 1413
+		public int32_t Get_Num_Channels()
 		{
 			return m_SndFile.GetNumChannels();
 		}
@@ -952,7 +940,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Num_Orders()//XX 1416
+		public int32_t Get_Num_Orders()
 		{
 			return m_SndFile.Order.Current.GetLengthTailTrimmed();
 		}
@@ -964,7 +952,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Num_Patterns()//XX 1419
+		public int32_t Get_Num_Patterns()
 		{
 			return m_SndFile.Patterns.GetNumPatterns();
 		}
@@ -976,7 +964,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Num_Instruments()//XX 1422
+		public int32_t Get_Num_Instruments()
 		{
 			return m_SndFile.GetNumInstruments();
 		}
@@ -988,7 +976,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int32_t Get_Num_Samples()//XX 1425
+		public int32_t Get_Num_Samples()
 		{
 			return m_SndFile.GetNumSamples();
 		}
@@ -1000,7 +988,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public vector<string> Get_SubSong_Names()//XX 1429
+		public vector<string> Get_SubSong_Names()
 		{
 			vector<string> retVal = new vector<string>();
 
@@ -1031,7 +1019,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public pair<CPointer<Ctl_Info>, CPointer<Ctl_Info>> Get_Ctl_Infos()//XX 1720
+		public pair<CPointer<Ctl_Info>, CPointer<Ctl_Info>> Get_Ctl_Infos()
 		{
 			return pair.make_pair(Iterator.begin(ctl_Infos), Iterator.end(ctl_Infos));
 		}
@@ -1043,7 +1031,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Ctl_Set(string ctl, string value, bool throw_If_Unknown = true)//XX 1977
+		public void Ctl_Set(string ctl, string value, bool throw_If_Unknown = true)
 		{
 			if (!string.IsNullOrEmpty(ctl))
 			{
@@ -1107,7 +1095,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Ctl_Set_Boolean(string ctl, bool value, bool throw_If_Unknown = true)//XX 2016
+		public void Ctl_Set_Boolean(string ctl, bool value, bool throw_If_Unknown = true)
 		{
 			if (!string.IsNullOrEmpty(ctl))
 			{
@@ -1170,7 +1158,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Ctl_Set_Integer(string ctl, int64_t value, bool throw_If_Unknown = true)//XX 2066
+		public void Ctl_Set_Integer(string ctl, int64_t value, bool throw_If_Unknown = true)
 		{
 			if (!string.IsNullOrEmpty(ctl))
 			{
@@ -1221,7 +1209,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Ctl_Set_FloatingPoint(string ctl, c_double value, bool throw_If_Unknown = true)//XX 2105
+		public void Ctl_Set_FloatingPoint(string ctl, c_double value, bool throw_If_Unknown = true)
 		{
 			if (!string.IsNullOrEmpty(ctl))
 			{
@@ -1289,7 +1277,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Ctl_Set_Text(string ctl, string value, bool throw_If_Unknown = true)//XX 2158
+		public void Ctl_Set_Text(string ctl, string value, bool throw_If_Unknown = true)
 		{
 			if (!string.IsNullOrEmpty(ctl))
 			{
@@ -1361,7 +1349,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private ResamplingMode FilterLength_To_ResamplingMode(int32_t length)//XX 334
+		private ResamplingMode FilterLength_To_ResamplingMode(int32_t length)
 		{
 			ResamplingMode result = ResamplingMode.Sinc8Lp;
 
@@ -1389,7 +1377,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private size_t Valid_Channels<TSampleType>(CPointer<TSampleType>[] buffers, size_t max_Channels)//XX 373
+		private size_t Valid_Channels<TSampleType>(CPointer<TSampleType>[] buffers, size_t max_Channels)
 		{
 			size_t channel;
 
@@ -1409,7 +1397,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Resampling.AmigaFilter Translate_Amiga_Filter_Type(Amiga_Filter_Type amiga_Type)//XX 383
+		private Resampling.AmigaFilter Translate_Amiga_Filter_Type(Amiga_Filter_Type amiga_Type)
 		{
 			switch (amiga_Type)
 			{
@@ -1433,7 +1421,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Ramping_To_MixerSettings(ref MixerSettings settings, c_int ramping)//XX 396
+		private void Ramping_To_MixerSettings(ref MixerSettings settings, c_int ramping)
 		{
 			if (ramping == -1)
 			{

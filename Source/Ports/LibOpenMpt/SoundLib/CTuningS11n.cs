@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void ReadNoteMap(Stream iStrm, map<TuningNoteIndexType, string> m, size_t dummy, Encoding charset)//XX 952
+		public static void ReadNoteMap(Stream iStrm, map<TuningNoteIndexType, string> m, size_t dummy, Encoding charset)
 		{
 			Io_.ReadAdaptiveInt64LE(iStrm, out uint64 val);
 			OpenMpt.LimitMax(ref val, (uint64)256);	// Read 256 at max
@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void ReadRatioTable(Stream iStrm, ref vector<TuningRatioType> v, size_t _)//XX 969
+		public static void ReadRatioTable(Stream iStrm, ref vector<TuningRatioType> v, size_t _)
 		{
 			Io_.ReadAdaptiveInt64LE(iStrm, out uint64 val);
 			v.resize(Math.Min(size_t.CreateSaturating(val), 256));	// Read 256 vals at max
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void ReadStr(Stream iStrm, ref string ustr, size_t dummy, Encoding charset)//XX 983
+		public static void ReadStr(Stream iStrm, ref string ustr, size_t dummy, Encoding charset)
 		{
 			StdString str = new StdString();
 

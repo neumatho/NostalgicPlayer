@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// longest possible macro translation
 		/// </summary>
 		/********************************************************************/
-		public MidiMacroParser(CSoundFile sndFile, PlayState playState, ChannelIndex nChn, bool isSmooth, MptSpan<uint8> macro, MptSpan<uint8> @out, uint8 param, PlugIndex plugin)//XX 95
+		public MidiMacroParser(CSoundFile sndFile, PlayState playState, ChannelIndex nChn, bool isSmooth, MptSpan<uint8> macro, MptSpan<uint8> @out, uint8 param, PlugIndex plugin)
 		{
 			ModChannel chn = (playState != null) && (nChn < playState.Chn.size()) ? playState.Chn[nChn] : null;
 			ModInstrument pIns = chn != null ? chn.pModInstrument : null;
@@ -271,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public bool NextMessage(out MptSpan<uint8> message, bool outputRunningStatus = true)//XX 20
+		public bool NextMessage(out MptSpan<uint8> message, bool outputRunningStatus = true)
 		{
 			if (m_RunningStatusPos < m_Data.Size())
 			{

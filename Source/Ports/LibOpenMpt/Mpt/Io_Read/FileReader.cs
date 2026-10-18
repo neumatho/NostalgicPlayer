@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool Read<T>(FileCursor f, ref T target) where T : unmanaged//XX 238
+		public static bool Read<T>(FileCursor f, ref T target) where T : unmanaged
 		{
 			byte_span2 dst = Memory.As_Raw_Memory(ref target);
 
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadArray<T>(FileCursor f, T[] destArray) where T : unmanaged//XX 253
+		public static bool ReadArray<T>(FileCursor f, T[] destArray) where T : unmanaged
 		{
 			if (!f.CanRead((size_t)(Marshal.SizeOf<T>() * destArray.Length)))
 			{
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadArray<T>(FileCursor f, array<T> destArray) where T : unmanaged//XX 267
+		public static bool ReadArray<T>(FileCursor f, array<T> destArray) where T : unmanaged
 		{
 			if (!f.CanRead((size_t)Marshal.SizeOf<T>() * destArray.size()))
 			{
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadVector<T>(FileCursor f, vector<T> destVector, size_t destSize) where T : unmanaged//XX 281
+		public static bool ReadVector<T>(FileCursor f, vector<T> destVector, size_t destSize) where T : unmanaged
 		{
 			destVector.resize(destSize);
 
@@ -142,7 +142,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static array<T> ReadArray<T>(FileCursor f, size_t destSize) where T : unmanaged//XX 291
+		public static array<T> ReadArray<T>(FileCursor f, size_t destSize) where T : unmanaged
 		{
 			array<T> destArray = new array<T>(destSize);
 
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T ReadIntLE<T>(FileCursor f)//XX 300
+		public static T ReadIntLE<T>(FileCursor f)
 		{
 			byte_span2 target = stackalloc uint8[Unsafe.SizeOf<T>()];
 
@@ -185,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// If successful, the file cursor is advanced by the given size
 		/// </summary>
 		/********************************************************************/
-		public static T ReadTruncatedIntLE<T>(FileCursor f, size_t size)//XX 325
+		public static T ReadTruncatedIntLE<T>(FileCursor f, size_t size)
 		{
 			if (size == 0)
 				return default;
@@ -242,7 +242,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// If successful, the file cursor is advanced by the given size
 		/// </summary>
 		/********************************************************************/
-		public static T ReadSizedIntLE<T>(FileCursor f, size_t size)//XX 355
+		public static T ReadSizedIntLE<T>(FileCursor f, size_t size)
 		{
 			if (size == 0)
 				return default;
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint32 ReadUInt32LE(FileCursor f)//XX 374
+		public static uint32 ReadUInt32LE(FileCursor f)
 		{
 			uint32le target = new uint32le();
 
@@ -289,7 +289,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint16 ReadUInt16LE(FileCursor f)//XX 418
+		public static uint16 ReadUInt16LE(FileCursor f)
 		{
 			uint16le target = new uint16le();
 
@@ -309,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static uint8 ReadUInt8(FileCursor f)//XX 456
+		public static uint8 ReadUInt8(FileCursor f)
 		{
 			uint8 target = 0;
 
@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadStruct<T>(FileCursor f, ref T target) where T : unmanaged, IClearable//XX 522
+		public static bool ReadStruct<T>(FileCursor f, ref T target) where T : unmanaged, IClearable
 		{
 			if (!Read(f, ref target))
 			{
@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static size_t ReadStructPartial<T>(FileCursor f, ref T target, size_t? partialSize = null) where T : unmanaged//XX 534
+		public static size_t ReadStructPartial<T>(FileCursor f, ref T target, size_t? partialSize = null) where T : unmanaged
 		{
 			if (partialSize == null)
 				partialSize = (size_t)Marshal.SizeOf<T>();
@@ -380,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadMagic(FileCursor f, string magic)//XX 601
+		public static bool ReadMagic(FileCursor f, string magic)
 		{
 			size_t magicLength = (size_t)magic.Length;
 			byte[] buffer = new byte[magicLength];
@@ -411,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool ReadVarInt<T>(FileCursor f, out T target) where T : INumber<T>, IShiftOperators<T, c_int, T>, IBitwiseOperators<T, T, T>, IMinMaxValue<T> //XX 623
+		public static bool ReadVarInt<T>(FileCursor f, out T target) where T : INumber<T>, IShiftOperators<T, c_int, T>, IBitwiseOperators<T, T, T>, IMinMaxValue<T>
 		{
 			if (f.NoBytesLeft())
 			{

@@ -347,7 +347,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Initialize sample slot with default values
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(ModType type)//XX 134
+		public void Initialize(ModType type)
 		{
 			FreeSample();
 
@@ -388,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Returns sample rate of the sample
 		/// </summary>
 		/********************************************************************/
-		public uint32 GetSampleRate(ModType type)//XX 172
+		public uint32 GetSampleRate(ModType type)
 		{
 			uint32 rate;
 
@@ -412,7 +412,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Returns number of bytes allocated, 0 on failure
 		/// </summary>
 		/********************************************************************/
-		public size_t AllocateSample()//XX 229
+		public size_t AllocateSample()
 		{
 			FreeSample();
 
@@ -433,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// of a sampling point multiplied with the number of channels
 		/// </summary>
 		/********************************************************************/
-		public static IPointer AllocateSample(SmpLength numFrames, size_t bytesPerSample)//XX 245
+		public static IPointer AllocateSample(SmpLength numFrames, size_t bytesPerSample)
 		{
 			size_t allocSize = GetRealSampleBufferSize(numFrames, bytesPerSample);
 
@@ -461,7 +461,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// is too big
 		/// </summary>
 		/********************************************************************/
-		public static size_t GetRealSampleBufferSize(SmpLength numSamples, size_t bytesPerSample)//XX 263
+		public static size_t GetRealSampleBufferSize(SmpLength numSamples, size_t bytesPerSample)
 		{
 			// Number of required lookahead samples:
 			// * 1x InterpolationMaxLookahead samples before the actual sample start. This is set to MaxSamplingPointSize due to the way AllocateSample/FreeSample currently work.
@@ -491,7 +491,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void FreeSample()//XX 290
+		public void FreeSample()
 		{
 			FreeSample(pData);
 			pData = null;
@@ -504,7 +504,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void FreeSample(IPointer samplePtr)//XX 297
+		public static void FreeSample(IPointer samplePtr)
 		{
 		}
 
@@ -515,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void PrecomputeLoopsImpl<T>(ModSample smp, CSoundFile sndFile) where T : unmanaged//XX 421
+		public static void PrecomputeLoopsImpl<T>(ModSample smp, CSoundFile sndFile) where T : unmanaged
 		{
 			c_int numChannels = smp.GetNumChannels();
 			c_int copySamples = numChannels * Mixer.InterpolationLookaheadBufferSize;
@@ -550,7 +550,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void PrecomputeLoops(CSoundFile sndFile, bool updateChannels)//XX 465
+		public void PrecomputeLoops(CSoundFile sndFile, bool updateChannels)
 		{
 			if (!HasSampleData())
 				return;
@@ -574,7 +574,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Propagate loop point changes to player
 		/// </summary>
 		/********************************************************************/
-		public bool UpdateLoopPointsInActiveChannels(CSoundFile sndFile)//XX 486
+		public bool UpdateLoopPointsInActiveChannels(CSoundFile sndFile)
 		{
 			if (!HasSampleData())
 				return false;
@@ -635,7 +635,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Remove loop points if they're invalid
 		/// </summary>
 		/********************************************************************/
-		public void SanitizeLoops()//XX 540
+		public void SanitizeLoops()
 		{
 			OpenMpt.LimitMax(ref nSustainEnd, nLength);
 			OpenMpt.LimitMax(ref nLoopEnd, nLength);
@@ -660,7 +660,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 TransposeToFrequency(c_int transpose, c_int fineTune = 0)//XX 560
+		public static uint32 TransposeToFrequency(c_int transpose, c_int fineTune = 0)
 		{
 			return SaturateRound.Saturate_Round<uint32, c_double>(CMath.pow(2.0, ((transpose * 128.0) + fineTune) * (1.0 / (12.0 * 128.0))) * 8363.0);
 		}
@@ -672,7 +672,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void TransposeToFrequency()//XX 566
+		public void TransposeToFrequency()
 		{
 			nC5Speed = TransposeToFrequency(RelativeTone, nFineTune);
 		}
@@ -684,7 +684,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Return a pair of (transpose, finetune)
 		/// </summary>
 		/********************************************************************/
-		public static (int8 Transpose, int8 FineTune) FrequencyToTranspose(uint32 freq)//XX 573
+		public static (int8 Transpose, int8 FineTune) FrequencyToTranspose(uint32 freq)
 		{
 			if (freq == 0)
 				return (0, 0);
@@ -702,7 +702,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void FrequencyToTranspose()//XX 584
+		public void FrequencyToTranspose()
 		{
 			var pair = FrequencyToTranspose(nC5Speed);
 
@@ -718,7 +718,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// amount=1 transposes one octave up)
 		/// </summary>
 		/********************************************************************/
-		public void Transpose(c_double amount)//XX 591
+		public void Transpose(c_double amount)
 		{
 			nC5Speed = SaturateRound.Saturate_Round<uint32, c_double>(nC5Speed * CMath.pow(2.0, amount));
 		}
@@ -730,7 +730,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetDefaultCuePoints()//XX 626
+		public void SetDefaultCuePoints()
 		{
 			// Default cues compatible with old-style volume column offset
 			for (c_int i = 0; i < 9; i++)
@@ -744,7 +744,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void RemoveAllCuePoints()//XX 646
+		public void RemoveAllCuePoints()
 		{
 			if (!uFlags.Test(ChannelFlags.Chn_Adlib))
 				Cues.fill(Snd_Def.Max_Sample_Length);

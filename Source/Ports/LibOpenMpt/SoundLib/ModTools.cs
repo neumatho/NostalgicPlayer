@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void ConvertModCommand(ModCommand m, uint8 command, uint8 param)//XX 18
+		public static void ConvertModCommand(ModCommand m, uint8 command, uint8 param)
 		{
 			m.Command = EffectCommand.None;
 			m.Param = param;
@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Convert MOD sample header and validate
 		/// </summary>
 		/********************************************************************/
-		public static uint32 ReadModSample(ModSampleHeader sampleHeader, ModSample sample, CharBuf sampleName, bool is4Chn)//XX 302
+		public static uint32 ReadModSample(ModSampleHeader sampleHeader, ModSample sample, CharBuf sampleName, bool is4Chn)
 		{
 			sampleHeader.ConvertToMpt(sample, is4Chn);
 			sampleName.Assign(MptString.ReadBuf(ReadWriteMode.SpacePadded, sampleHeader.Name.ToArray()));
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Count malformed bytes in MOD pattern data
 		/// </summary>
 		/********************************************************************/
-		public static uint32 CountMalformedModPatternData(ModPatternData patternData, bool extendedFormat)//XX 355
+		public static uint32 CountMalformedModPatternData(ModPatternData patternData, bool extendedFormat)
 		{
 			uint8 mask = (uint8)(extendedFormat ? 0xe0 : 0xf0);
 			uint32 malformedBytes = 0;
@@ -203,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// the file
 		/// </summary>
 		/********************************************************************/
-		public static PatternIndex GetNumPatterns(FileReader file, CSoundFile sndFile, OrderIndex numOrders, SmpLength totalSampleLen, SmpLength wowSampleLen, bool validateHiddenPatterns)//XX 384
+		public static PatternIndex GetNumPatterns(FileReader file, CSoundFile sndFile, OrderIndex numOrders, SmpLength totalSampleLen, SmpLength wowSampleLen, bool validateHiddenPatterns)
 		{
 			ModSequence order = sndFile.Order.Current;
 			PatternIndex numPatterns = 0;			// Total number of patterns in file (determined by going through the whole order list) with pattern number < 128
@@ -305,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static (uint8, uint8) ReadModPatternEntry(FileReader file, ModCommand m)//XX 474
+		public static (uint8, uint8) ReadModPatternEntry(FileReader file, ModCommand m)
 		{
 			return ReadModPatternEntry(file.ReadArray<uint8>(4), m);
 		}
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static (uint8, uint8) ReadModPatternEntry(array<uint8> data, ModCommand m)//XX 480
+		public static (uint8, uint8) ReadModPatternEntry(array<uint8> data, ModCommand m)
 		{
 			// Read Period
 			uint16 period = (uint16)(((data[0] & 0x0f) << 8) | data[1]);

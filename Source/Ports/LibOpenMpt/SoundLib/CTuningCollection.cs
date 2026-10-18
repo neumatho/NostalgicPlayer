@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CTuning GetTuning(string name)//XX 61
+		public CTuning GetTuning(string name)
 		{
 			for (size_t i = 0; i < m_Tunings.size(); i++)
 			{
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public SerializationResult Deserialize(ReaderStream iStrm, ref string name, Encoding defaultCharset)//XX 127
+		public SerializationResult Deserialize(ReaderStream iStrm, ref string name, Encoding defaultCharset)
 		{
 			long startPos = iStrm.Position;
 
@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CTuning AddTuning(CTuning pT)//XX 259
+		public CTuning AddTuning(CTuning pT)
 		{
 			if (m_Tunings.size() >= s_nMaxTuningCount)
 				return null;
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CTuning AddTuning(ReaderStream inStrm, Encoding defaultCharset)//XX 275
+		public CTuning AddTuning(ReaderStream inStrm, Encoding defaultCharset)
 		{
 			if (m_Tunings.size() >= s_nMaxTuningCount)
 				return null;
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReadTuning(ReaderStream iStrm, CTuningCollection tc, size_t dummy, Encoding defaultCharset)//XX 49
+		private static void ReadTuning(ReaderStream iStrm, CTuningCollection tc, size_t dummy, Encoding defaultCharset)
 		{
 			tc.AddTuning(iStrm, defaultCharset);
 		}
@@ -171,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private SerializationResult DeserializeOld(ReaderStream inStrm, ref string uName, Encoding defaultCharset)//XX 168
+		private SerializationResult DeserializeOld(ReaderStream inStrm, ref string uName, Encoding defaultCharset)
 		{
 			// 1. Begin marker:
 			Io_.ReadIntLE(inStrm, out uint32 beginMarker);

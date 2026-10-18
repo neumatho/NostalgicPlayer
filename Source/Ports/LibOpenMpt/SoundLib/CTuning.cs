@@ -314,7 +314,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static TuningRatioType SanitizeGroupRatio(TuningRatioType ratio)//XX 27
+		public static TuningRatioType SanitizeGroupRatio(TuningRatioType ratio)
 		{
 			return Math.Clamp(CMath.abs(ratio), 1e-15f, 1e+07f);
 		}
@@ -326,7 +326,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetNoteName(TuningNoteIndexType n, string str)//XX 256
+		public void SetNoteName(TuningNoteIndexType n, string str)
 		{
 			TuningNoteIndexType pos = GetGroupSize() < 1 ? n : Wrapping_Divide.Wrapping_Modulo(n, m_GroupSize);
 
@@ -348,7 +348,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Without finetune
 		/// </summary>
 		/********************************************************************/
-		public TuningRatioType GetRatio(TuningNoteIndexType note)//XX 274
+		public TuningRatioType GetRatio(TuningNoteIndexType note)
 		{
 			if (!IsValidNote(note))
 				return s_DefaultFallbackRatio;
@@ -368,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// With finetune
 		/// </summary>
 		/********************************************************************/
-		public TuningRatioType GetRatio(TuningNoteIndexType baseNote, TuningStepIndexType baseFineSteps)//XX 290
+		public TuningRatioType GetRatio(TuningNoteIndexType baseNote, TuningStepIndexType baseFineSteps)
 		{
 			TuningStepIndexType fineStepCount = (TuningStepIndexType)GetFineStepCount();
 
@@ -412,7 +412,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// note distances
 		/// </summary>
 		/********************************************************************/
-		public void SetFineStepCount(TuningUStepIndexType fs)//XX 364
+		public void SetFineStepCount(TuningUStepIndexType fs)
 		{
 			m_FineStepCount = (TuningUStepIndexType)Math.Clamp(TuningStepIndexType.CreateSaturating(fs), 0, TuningBase.FineStepCount_Max);
 			UpdateFineStepTable();
@@ -506,7 +506,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private bool CreateGroupGeometric(vector<TuningRatioType> v, TuningRatioType r, NoteRange range, TuningNoteIndexType ratioStartPos)//XX 116
+		private bool CreateGroupGeometric(vector<TuningRatioType> v, TuningRatioType r, NoteRange range, TuningNoteIndexType ratioStartPos)
 		{
 			if ((range.First > range.Last) || (v.size() == 0))
 				return false;
@@ -551,7 +551,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private bool CreateGeometric(TuningUNoteIndexType p, TuningRatioType r)//XX 160
+		private bool CreateGeometric(TuningUNoteIndexType p, TuningRatioType r)
 		{
 			return CreateGeometric(p, r, GetNoteRange());
 		}
@@ -563,7 +563,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private bool CreateGeometric(TuningUNoteIndexType s, TuningRatioType r, NoteRange range)//XX 166
+		private bool CreateGeometric(TuningUNoteIndexType s, TuningRatioType r, NoteRange range)
 		{
 			if (range.First > range.Last)
 				return false;
@@ -602,7 +602,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private void UpdateFineStepTable()//XX 371
+		private void UpdateFineStepTable()
 		{
 			if (m_FineStepCount <= 0)
 			{
@@ -677,7 +677,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private SerializationResult InitDeserialize(ReaderStream iStrm, Encoding defaultCharset)//XX 477
+		private SerializationResult InitDeserialize(ReaderStream iStrm, Encoding defaultCharset)
 		{
 			// Note: OpenMPT since at least r323 writes version number (4<<24)+4 while it
 			// reads version number (5<<24)+4 or earlier.
@@ -770,7 +770,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private static bool VectorFromBinaryStream<T, TValue, TSizeType>(ReaderStream inStrm, vector<TuningRatioType> v) where T : unmanaged, IEndianNumber<TValue> where TValue : unmanaged, INumberBase<TValue> where TSizeType : INumber<TSizeType>, IMinMaxValue<TSizeType>//XX 567
+		private static bool VectorFromBinaryStream<T, TValue, TSizeType>(ReaderStream inStrm, vector<TuningRatioType> v) where T : unmanaged, IEndianNumber<TValue> where TValue : unmanaged, INumberBase<TValue> where TSizeType : INumber<TSizeType>, IMinMaxValue<TSizeType>
 		{
 			return VectorFromBinaryStream<T, TValue, TSizeType>(inStrm, v, TSizeType.MaxValue);
 		}
@@ -782,7 +782,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private static bool VectorFromBinaryStream<T, TValue, TSizeType>(ReaderStream inStrm, vector<TuningRatioType> v, TSizeType maxSize) where T : unmanaged, IEndianNumber<TValue> where TValue : unmanaged, INumberBase<TValue> where TSizeType : INumber<TSizeType>//XX 567
+		private static bool VectorFromBinaryStream<T, TValue, TSizeType>(ReaderStream inStrm, vector<TuningRatioType> v, TSizeType maxSize) where T : unmanaged, IEndianNumber<TValue> where TValue : unmanaged, INumberBase<TValue> where TSizeType : INumber<TSizeType>
 		{
 			if (inStrm.EndOfStream)
 				return false;
@@ -811,7 +811,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		private SerializationResult InitDeserializeOld(ReaderStream inStrm, Encoding defaultCharset)//XX 590
+		private SerializationResult InitDeserializeOld(ReaderStream inStrm, Encoding defaultCharset)
 		{
 			if (inStrm.EndOfStream)
 				return SerializationResult.Failure;

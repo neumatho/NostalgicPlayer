@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void ResetGlobalVolumeRamping()//XX 28
+		public void ResetGlobalVolumeRamping()
 		{
 			m_lHighResRampingGlobalVolume = m_nGlobalVolume << Mixer.VolumeRampPrecision;
 			m_nGlobalVolumeDestination = m_nGlobalVolume;
@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void UpdateTimeSignature(CSoundFile sndFile)//XX 37
+		public void UpdateTimeSignature(CSoundFile sndFile)
 		{
 			if (!sndFile.Patterns.IsValidIndex(m_nPattern) || !sndFile.Patterns[m_nPattern].GetOverrideSignature())
 			{
@@ -295,7 +295,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void UpdatePpq(bool patternTransition)//XX 51
+		public void UpdatePpq(bool patternTransition)
 		{
 			RowIndex rpm = m_nCurrentRowsPerMeasure != 0 ? m_nCurrentRowsPerMeasure : Snd_Def.Default_Rows_Per_Measure;
 			RowIndex rpb = m_nCurrentRowsPerBeat != 0 ? m_nCurrentRowsPerBeat : Snd_Def.Default_Rows_Per_Beat;
@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public MptSpan<ModChannel> PatternChannels(CSoundFile sndFile)//XX 71
+		public MptSpan<ModChannel> PatternChannels(CSoundFile sndFile)
 		{
 			return new MptSpan<ModChannel>(Chn).SubSpan(0, Math.Min(Chn.size(), sndFile.GetNumChannels()));
 		}

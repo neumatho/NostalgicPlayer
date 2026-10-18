@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.C;
+using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers;
 
@@ -108,8 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Tests
 			Assert.AreEqual(new SamplePosition(3, 0), new SamplePosition(1, 0) * 3);
 			Assert.AreEqual(3, new SamplePosition(6, 0) / new SamplePosition(2, 0));
 
-			//XX srlztn::ID::FromInt
-			//XX mpt::date
+			Assert.AreEqual(new Id("\x21\x43\x65\x87".ToPointer()), Id.FromInt(0x87654321));
 		}
 	}
 }

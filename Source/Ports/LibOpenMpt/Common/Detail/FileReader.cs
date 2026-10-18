@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileReader(ITraits traits, IFileNameTraits fileNameTraits) : base(traits, fileNameTraits)//XX 181
+		public FileReader(ITraits traits, IFileNameTraits fileNameTraits) : base(traits, fileNameTraits)
 		{
 		}
 
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// length
 		/// </summary>
 		/********************************************************************/
-		public FileReader(ITraits traits, IFileNameTraits fileNameTraits, MptSpan<TByte> byteData, ISharedFileNameType fileName = null) : base(traits, fileNameTraits, Memory.Byte_Cast<TByte, c_byte>(byteData), fileName)//XX 189
+		public FileReader(ITraits traits, IFileNameTraits fileNameTraits, MptSpan<TByte> byteData, ISharedFileNameType fileName = null) : base(traits, fileNameTraits, Memory.Byte_Cast<TByte, c_byte>(byteData), fileName)
 		{
 		}
 
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool Read<T>(ref T target) where T : unmanaged//XX 205
+		public bool Read<T>(ref T target) where T : unmanaged
 		{
 			return Mpt.Io_Read.FileReader.Read(this, ref target);
 		}
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public T ReadSizedIntLE<T>(size_t size)//XX 229
+		public T ReadSizedIntLE<T>(size_t size)
 		{
 			return Mpt.Io_Read.FileReader.ReadSizedIntLE<T>(this, size);
 		}
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint32 ReadUInt32LE()//XX 234
+		public uint32 ReadUInt32LE()
 		{
 			return Mpt.Io_Read.FileReader.ReadUInt32LE(this);
 		}
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint16 ReadUInt16LE()//XX 264
+		public uint16 ReadUInt16LE()
 		{
 			return Mpt.Io_Read.FileReader.ReadUInt16LE(this);
 		}
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint8 ReadUInt8()//XX 289
+		public uint8 ReadUInt8()
 		{
 			return Mpt.Io_Read.FileReader.ReadUInt8(this);
 		}
@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool ReadStruct<T>(ref T target) where T : unmanaged, IClearable//XX 320
+		public bool ReadStruct<T>(ref T target) where T : unmanaged, IClearable
 		{
 			return Mpt.Io_Read.FileReader.ReadStruct(this, ref target);
 		}
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public size_t ReadStructPartial<T>(ref T target, size_t? partialSize = null) where T : unmanaged//XX 326
+		public size_t ReadStructPartial<T>(ref T target, size_t? partialSize = null) where T : unmanaged
 		{
 			return Mpt.Io_Read.FileReader.ReadStructPartial(this, ref target, partialSize);
 		}
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool ReadArray<T>(T[] destArray) where T : unmanaged//XX 342
+		public bool ReadArray<T>(T[] destArray) where T : unmanaged
 		{
 			return Mpt.Io_Read.FileReader.ReadArray(this, destArray);
 		}
@@ -157,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public array<T> ReadArray<T>(size_t destSize) where T : unmanaged//XX 353
+		public array<T> ReadArray<T>(size_t destSize) where T : unmanaged
 		{
 			return Mpt.Io_Read.FileReader.ReadArray<T>(this, destSize);
 		}
@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool ReadVector<T>(vector<T> destVector, size_t destSize) where T : unmanaged//XX 360
+		public bool ReadVector<T>(vector<T> destVector, size_t destSize) where T : unmanaged
 		{
 			return Mpt.Io_Read.FileReader.ReadVector(this, destVector, destSize);
 		}
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool ReadVarInt<T>(out T target) where T : INumber<T>, IShiftOperators<T, int, T>, IBitwiseOperators<T, T, T>, IMinMaxValue<T>//XX 373
+		public bool ReadVarInt<T>(out T target) where T : INumber<T>, IShiftOperators<T, int, T>, IBitwiseOperators<T, T, T>, IMinMaxValue<T>
 		{
 			return Mpt.Io_Read.FileReader.ReadVarInt(this, out target);
 		}
@@ -193,7 +193,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool ReadString(ReadWriteMode mode, uint8[] dest, size_t srcSize)//XX 401
+		public bool ReadString(ReadWriteMode mode, uint8[] dest, size_t srcSize)
 		{
 			return FileReaderExt.ReadString(mode, this, dest, srcSize);
 		}
@@ -205,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool ReadString(ReadWriteMode mode, StdString dest, size_t srcSize)//XX 408
+		public bool ReadString(ReadWriteMode mode, StdString dest, size_t srcSize)
 		{
 			return FileReaderExt.ReadString(mode, this, dest, srcSize);
 		}
@@ -217,7 +217,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Detail
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool ReadString(ReadWriteMode mode, CharBuf dest, size_t srcSize)//XX 414
+		public bool ReadString(ReadWriteMode mode, CharBuf dest, size_t srcSize)
 		{
 			return FileReaderExt.ReadString(mode, this, dest, srcSize);
 		}

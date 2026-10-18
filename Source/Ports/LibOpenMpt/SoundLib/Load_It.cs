@@ -1228,7 +1228,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReadTuningCollection(ReaderStream iStrm, CTuningCollection tc, size_t dummy, Encoding defaultCharset)//XX 142
+		private static void ReadTuningCollection(ReaderStream iStrm, CTuningCollection tc, size_t dummy, Encoding defaultCharset)
 		{
 			string name = null;
 			tc.Deserialize(iStrm, ref name, defaultCharset);
@@ -1241,7 +1241,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool ReadTuningMapTemplate<TTunNumType, TStrSizeType>(ReaderStream iStrm, map<uint16, string> shortToTNameMap, Encoding charset, size_t maxNum = 500) where TTunNumType : IUnsignedNumber<TTunNumType>, IComparisonOperators<TTunNumType, TTunNumType, bool> where TStrSizeType : IUnsignedNumber<TStrSizeType>, IBinaryInteger<TStrSizeType> //XX 151
+		private static bool ReadTuningMapTemplate<TTunNumType, TStrSizeType>(ReaderStream iStrm, map<uint16, string> shortToTNameMap, Encoding charset, size_t maxNum = 500) where TTunNumType : IUnsignedNumber<TTunNumType>, IComparisonOperators<TTunNumType, TTunNumType, bool> where TStrSizeType : IUnsignedNumber<TStrSizeType>, IBinaryInteger<TStrSizeType>
 		{
 			Io_.ReadIntLE(iStrm, out TTunNumType numTuning);
 
@@ -1267,7 +1267,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReadTuningMapImpl(ReaderStream iStrm, CSoundFile csf, Encoding charset, size_t _ = 0, bool old = false)//XX 175
+		private static void ReadTuningMapImpl(ReaderStream iStrm, CSoundFile csf, Encoding charset, size_t _ = 0, bool old = false)
 		{
 			map<uint16, string> shortToTNameMap = new map<uint16, string>();
 
@@ -1330,7 +1330,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReadTuningMap(ReaderStream iStrm, CSoundFile csf, size_t dummy, Encoding charset)//XX 279
+		private static void ReadTuningMap(ReaderStream iStrm, CSoundFile csf, size_t dummy, Encoding charset)
 		{
 			ReadTuningMapImpl(iStrm, csf, charset, dummy, false);
 		}
@@ -1342,7 +1342,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private size_t ItInstrToMpt(FileReader file, ModInstrument ins, uint16 trkVers)//XX 289
+		private size_t ItInstrToMpt(FileReader file, ModInstrument ins, uint16 trkVers)
 		{
 			if (trkVers < 0x0200)
 			{
@@ -1401,7 +1401,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void CopyPatternName(CPattern pattern, FileReader file)//XX 336
+		private static void CopyPatternName(CPattern pattern, FileReader file)
 		{
 			uint8[] name = new uint8[Snd_Def.Max_PatternName];
 
@@ -1417,7 +1417,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// file
 		/// </summary>
 		/********************************************************************/
-		private string GetImpulseTrackerVersion(uint16 cwtv, uint16 cmwt)//XX 345
+		private string GetImpulseTrackerVersion(uint16 cwtv, uint16 cmwt)
 		{
 			string version;
 
@@ -1445,7 +1445,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// file
 		/// </summary>
 		/********************************************************************/
-		private string GetSchismTrackerVersion(uint16 cwtv, uint32 reserved)//XX 365
+		private string GetSchismTrackerVersion(uint16 cwtv, uint32 reserved)
 		{
 			// Schism Tracker version information in a nutshell:
 			// < 0x020: a proper version (files saved by such versions are likely very rare)
@@ -1482,7 +1482,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool ValidateHeader(ref ItFileHeader fileHeader)//XX 397
+		private static bool ValidateHeader(ref ItFileHeader fileHeader)
 		{
 			if (((CMemory.memcmp(fileHeader.Id.ToArray().begin(), "IMPM", 4) != 0) && (CMemory.memcmp(fileHeader.Id.ToArray().begin(), "tpm.", 4) != 0)) ||
 				(fileHeader.InsNum > 0xff) || (fileHeader.SmpNum >= Snd_Def.Max_Samples))
@@ -1500,7 +1500,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static uint64 GetHeaderMinimumAdditionalSize(ref ItFileHeader fileHeader)//XX 410
+		private static uint64 GetHeaderMinimumAdditionalSize(ref ItFileHeader fileHeader)
 		{
 			return (uint64)(fileHeader.OrdNum + ((fileHeader.InsNum + fileHeader.SmpNum + fileHeader.PatNum) * 4));
 		}
@@ -1512,7 +1512,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void LoadMptmProperties(FileReader file, uint16 cwtv)//XX 1402
+		private void LoadMptmProperties(FileReader file, uint16 cwtv)
 		{
 			using (ReaderStream iStrm = new ReaderStream(new MemoryStream(file.GetRawDataAsByteVector().data().ToArray())))
 			{
@@ -1565,7 +1565,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private (bool hasPluginChunks, bool isBeRoTracker) LoadMixPlugins(FileReader file, bool ignoreChannelCount = true)//XX 2199
+		private (bool hasPluginChunks, bool isBeRoTracker) LoadMixPlugins(FileReader file, bool ignoreChannelCount = true)
 		{
 			bool hasPluginChunks = false, isBeRoTracker = false;
 
@@ -1632,7 +1632,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void ReadMixPluginChunk(FileReader file)//XX 2257
+		public void ReadMixPluginChunk(FileReader file)
 		{
 			//XX Not done yet. Just collect the plug-in names
 			file.Skip(64);
@@ -1651,7 +1651,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReadField<T>(FileReader chunk, size_t size, out T field)//XX 2528
+		private static void ReadField<T>(FileReader chunk, size_t size, out T field)
 		{
 			field = chunk.ReadSizedIntLE<T>(size);
 		}
@@ -1663,7 +1663,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReadFieldCast<T>(FileReader chunk, size_t size, out T field) where T : Enum //XX 2535
+		private static void ReadFieldCast<T>(FileReader chunk, size_t size, out T field) where T : Enum
 		{
 			field = (T)Enum.ToObject(typeof(T), chunk.ReadSizedIntLE<int32>(size));
 		}
@@ -1675,7 +1675,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private bool LoadExtendedSongProperties(FileReader file, bool ignoreChannelCount, ref bool pInterpretMptMade)//XX 2542
+		private bool LoadExtendedSongProperties(FileReader file, bool ignoreChannelCount, ref bool pInterpretMptMade)
 		{
 			if (!file.ReadMagic("STPM"))	// 'MPTS'
 				return false;

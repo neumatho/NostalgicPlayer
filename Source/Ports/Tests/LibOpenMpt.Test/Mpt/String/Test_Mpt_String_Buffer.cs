@@ -31,18 +31,6 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Mpt.String
 				Assert.AreEqual(0, buf[3]);
 			}
 
-			//XX WriteTypedBuf
-			{
-			}
-
-			//XX WriteTypedBuf
-			{
-			}
-
-			//XX WriteTypedBuf
-			{
-			}
-
 			{
 				uint8[] buf = [ (uint8)'f', (uint8)'o', (uint8)'o', (uint8)'b' ];
 				StdString foo = MptString.ReadAutoBuf(buf);

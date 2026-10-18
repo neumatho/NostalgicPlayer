@@ -385,7 +385,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Read sample from memory
 		/// </summary>
 		/********************************************************************/
-		public size_t ReadSample(ModSample sample, FileReader file)//XX 35
+		public size_t ReadSample(ModSample sample, FileReader file)
 		{
 			if (!file.IsValid())
 				return 0;

@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Reset<T>(T[] x)//XX 128
+		public static void Reset<T>(T[] x)
 		{
 			Array.Clear(x);
 		}

@@ -51,13 +51,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool TestBit(uint8 val, uint8 bitIndex)//XX 37
+		public static bool TestBit(uint8 val, uint8 bitIndex)
 		{
 			return (val & (1 << bitIndex)) != 0;
 		}
-
-
-
 
 
 
@@ -67,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// strings
 		/// </summary>
 		/********************************************************************/
-		public static void ReadItemString(ReaderStream iStrm, ref StdString str, size_t _)//XX 87
+		public static void ReadItemString(ReaderStream iStrm, ref StdString str, size_t _)
 		{
 			// bits 0,1: Bytes per char type: 1,2,3,4.
 			// bits 2,3: Bytes in size indicator, 1,2,3,4
@@ -113,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void BinaryRead<T>(Stream iStrm, out T data)//XX 188
+		public static void BinaryRead<T>(Stream iStrm, out T data)
 		{
 			Io_.ReadIntLE(iStrm, out data);
 		}
@@ -127,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void BinaryRead<T>(Stream iStrm, out T data, size_t byteCount)//XX 211
+		public static void BinaryRead<T>(Stream iStrm, out T data, size_t byteCount)
 		{
 			Io_.ReadBinaryTruncatedLE(iStrm, out data, byteCount);
 		}
@@ -140,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void ReadItem<T>(Stream iStrm, ref T data, size_t nSize)//XX 238
+		public static void ReadItem<T>(Stream iStrm, ref T data, size_t nSize)
 		{
 			if ((nSize == (size_t)Marshal.SizeOf<T>()) || (nSize == InvalidDataSize))
 				BinaryRead(iStrm, out data);

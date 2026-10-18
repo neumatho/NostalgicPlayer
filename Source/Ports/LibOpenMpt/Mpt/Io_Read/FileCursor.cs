@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public byte_span GetSpan()//XX 298
+			public byte_span GetSpan()
 			{
 				if (pinnedData.IsNotNull)
 					return new byte_span(pinnedData, size_);
@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public byte_span Span()//XX 308
+			public byte_span Span()
 			{
 				return GetSpan();
 			}
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public CPointer<byte> Data()//XX 316
+			public CPointer<byte> Data()
 			{
 				return Span().Data();
 			}
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public size_t Size()//XX 319
+			public size_t Size()
 			{
 				return size_;
 			}
@@ -153,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public CPointer<byte> Begin()//XX 322
+			public CPointer<byte> Begin()
 			{
 				return Span().Data();
 			}
@@ -166,7 +166,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 			/// </summary>
 			/********************************************************************/
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
-			public CPointer<byte> End()//XX 325
+			public CPointer<byte> End()
 			{
 				return Span().Data() + Span().Size();
 			}
@@ -231,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// length
 		/// </summary>
 		/********************************************************************/
-		public FileCursor(ITraits traits, IFileNameTraits fileNameTraits, byte_span byteData, ISharedFileNameType fileName = null)//XX 94
+		public FileCursor(ITraits traits, IFileNameTraits fileNameTraits, byte_span byteData, ISharedFileNameType fileName = null)
 		{
 			Traits_Type = traits;
 			FileName_Traits_Type = fileNameTraits;
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// object window
 		/// </summary>
 		/********************************************************************/
-		public FileCursor(ITraits traits, IFileNameTraits fileNameTraits, IFileData other, ISharedFileNameType fileName = null)//XX 102
+		public FileCursor(ITraits traits, IFileNameTraits fileNameTraits, IFileData other, ISharedFileNameType fileName = null)
 		{
 			Traits_Type = traits;
 			FileName_Traits_Type = fileNameTraits;
@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IFileData SharedDataContainer()//XX 58
+		public IFileData SharedDataContainer()
 		{
 			return Traits_Type.Get_Shared(m_Data);
 		}
@@ -280,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public IFileData DataContainer()//XX 61
+		public IFileData DataContainer()
 		{
 			return Traits_Type.Get_Ref(m_Data);
 		}
@@ -293,7 +293,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected IFileData DataInitializer()//XX 65
+		protected IFileData DataInitializer()
 		{
 			return Traits_Type.Make_Data();
 		}
@@ -306,7 +306,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected IFileData DataInitializer(byte_span data)//XX 68
+		protected IFileData DataInitializer(byte_span data)
 		{
 			return Traits_Type.Make_Data(data);
 		}
@@ -319,7 +319,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected IFileData CreateChunkImpl(IFileData data, size_t position, size_t size)//XX 72
+		protected IFileData CreateChunkImpl(IFileData data, size_t position, size_t size)
 		{
 			return Traits_Type.Make_Chunk(data, position, size);
 		}
@@ -332,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool IsValid()//XX 120
+		public bool IsValid()
 		{
 			return DataContainer().IsValid();
 		}
@@ -345,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void Rewind()//XX 125
+		public void Rewind()
 		{
 			streamPos = 0;
 		}
@@ -359,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool Seek(size_t position)//XX 131
+		public bool Seek(size_t position)
 		{
 			if (position <= streamPos)
 			{
@@ -386,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool Skip(size_t skipBytes)//XX 146
+		public bool Skip(size_t skipBytes)
 		{
 			if (CanRead(skipBytes))
 			{
@@ -410,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool SkipBack(size_t skipBytes)//XX 158
+		public bool SkipBack(size_t skipBytes)
 		{
 			if (streamPos >= skipBytes)
 			{
@@ -432,7 +432,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public size_t GetPosition()//XX 169
+		public size_t GetPosition()
 		{
 			return streamPos;
 		}
@@ -445,7 +445,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public size_t GetLength()//XX 181
+		public size_t GetLength()
 		{
 			// deprecated because in case of an unseekable std::istream, this triggers caching of the whole file
 			return DataContainer().GetLength();
@@ -460,7 +460,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public size_t BytesLeft()//XX 187
+		public size_t BytesLeft()
 		{
 			// deprecated because in case of an unseekable std::istream, this triggers caching of the whole file
 			return DataContainer().GetLength() - streamPos;
@@ -474,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool NoBytesLeft()//XX 196
+		public bool NoBytesLeft()
 		{
 			return !CanRead(1);
 		}
@@ -488,7 +488,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool CanRead(size_t amount)//XX 201
+		public bool CanRead(size_t amount)
 		{
 			return DataContainer().CanRead(streamPos, amount);
 		}
@@ -502,7 +502,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public bool LengthIsAtLeast(size_t size)//XX 206
+		public bool LengthIsAtLeast(size_t size)
 		{
 			return DataContainer().CanRead(0, size);
 		}
@@ -515,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected FileCursor CreateChunk(size_t position, size_t length)//XX 216
+		protected FileCursor CreateChunk(size_t position, size_t length)
 		{
 			size_t readableLength = DataContainer().GetReadableLength(position, length);
 
@@ -535,7 +535,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public FileCursor ReadChunk(size_t length)//XX 238
+		public FileCursor ReadChunk(size_t length)
 		{
 			size_t position = streamPos;
 
@@ -553,7 +553,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public PinnedView GetPinnedView()//XX 337
+		public PinnedView GetPinnedView()
 		{
 			return new PinnedView(this);
 		}
@@ -567,7 +567,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public PinnedView GetPinnedView(size_t size)//XX 341
+		public PinnedView GetPinnedView(size_t size)
 		{
 			return new PinnedView(this, size);
 		}
@@ -583,7 +583,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public PinnedView ReadPinnedView(size_t size)//XX 341
+		public PinnedView ReadPinnedView(size_t size)
 		{
 			return new PinnedView(this, size, true);
 		}
@@ -598,7 +598,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public PinnedView ReadPinnedView()//XX 347
+		public PinnedView ReadPinnedView()
 		{
 			return new PinnedView(this, true);
 		}
@@ -611,7 +611,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public Span<T> GetRaw<T>(Span<T> dst) where T : unmanaged//XX 362
+		public Span<T> GetRaw<T>(Span<T> dst) where T : unmanaged
 		{
 			return Memory.Byte_Cast<c_byte, T>(DataContainer().Read(streamPos, Memory.Byte_Cast<T, c_byte>(dst)));
 		}
@@ -624,7 +624,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public MptSpan<T> GetRaw<T>(MptSpan<T> dst) where T : unmanaged//XX 362
+		public MptSpan<T> GetRaw<T>(MptSpan<T> dst) where T : unmanaged
 		{
 			return Memory.Byte_Cast<c_byte, T>(DataContainer().Read(streamPos, Memory.Byte_Cast<T, c_byte>(dst)));
 		}
@@ -637,7 +637,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public MptSpan<T> ReadRaw<T>(MptSpan<T> dst) where T : unmanaged//XX 366
+		public MptSpan<T> ReadRaw<T>(MptSpan<T> dst) where T : unmanaged
 		{
 			MptSpan<T> result = Memory.Byte_Cast<c_byte, T>(DataContainer().Read(streamPos, Memory.Byte_Cast<T, c_byte>(dst)));
 			streamPos += result.Size();
@@ -653,7 +653,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public vector<uint8> GetRawDataAsByteVector()//XX 373
+		public vector<uint8> GetRawDataAsByteVector()
 		{
 			PinnedView view = GetPinnedView();
 
@@ -668,7 +668,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public vector<byte> ReadRawDataAsByteVector()//XX 377
+		public vector<byte> ReadRawDataAsByteVector()
 		{
 			PinnedView view = ReadPinnedView();
 

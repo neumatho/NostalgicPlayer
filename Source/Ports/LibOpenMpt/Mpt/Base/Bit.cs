@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static TDst Bit_Cast<TDst>(byte_span2 src)//XX 47
+		public static TDst Bit_Cast<TDst>(byte_span2 src)
 		{
 			return Unsafe.ReadUnaligned<TDst>(ref MemoryMarshal.GetReference(src));
 		}
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static c_int Bit_Width<T>(T x) where T : INumber<T>, IShiftOperators<T, c_int, T>, IComparisonOperators<T, T, bool> //XX 254
+		public static c_int Bit_Width<T>(T x) where T : INumber<T>, IShiftOperators<T, c_int, T>, IComparisonOperators<T, T, bool>
 		{
 			c_int result = 0;
 
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Rotl_Impl<T>(T x, c_int r) where T : IBinaryInteger<T>, IUnsignedNumber<T>//XX 326
+		public static T Rotl_Impl<T>(T x, c_int r) where T : IBinaryInteger<T>, IUnsignedNumber<T>
 		{
 			c_int n = Marshal.SizeOf<T>() * 8;
 
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Rotr_Impl<T>(T x, c_int r) where T : IBinaryInteger<T>, IUnsignedNumber<T>//XX 332
+		public static T Rotr_Impl<T>(T x, c_int r) where T : IBinaryInteger<T>, IUnsignedNumber<T>
 		{
 			c_int n = Marshal.SizeOf<T>() * 8;
 
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Rotl<T>(T x, c_int s) where T : IBinaryInteger<T>, IUnsignedNumber<T>//XX 338
+		public static T Rotl<T>(T x, c_int s) where T : IBinaryInteger<T>, IUnsignedNumber<T>
 		{
 			c_int n = Marshal.SizeOf<T>() * 8;
 			c_int r = s % n;
@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Base
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Rotr<T>(T x, c_int s) where T : IBinaryInteger<T>, IUnsignedNumber<T>//XX 347
+		public static T Rotr<T>(T x, c_int s) where T : IBinaryInteger<T>, IUnsignedNumber<T>
 		{
 			c_int n = Marshal.SizeOf<T>() * 8;
 			c_int r = s % n;

@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// proper internal representation
 		/// </summary>
 		/********************************************************************/
-		public static void ConvertInstrumentFlags(ModInstrument ins, uint32 flags)//XX 394
+		public static void ConvertInstrumentFlags(ModInstrument ins, uint32 flags)
 		{
 			ins.VolEnv.dwFlags.Set(EnvelopeFlags.Enabled, (flags & 0x0001) != 0);
 			ins.VolEnv.dwFlags.Set(EnvelopeFlags.Sustain, (flags & 0x0002) != 0);
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Convert VFLG / PFLG / AFLG
 		/// </summary>
 		/********************************************************************/
-		public static void ConvertEnvelopeFlags(ModInstrument instr, uint32 flags, EnvelopeType envType)//XX 418
+		public static void ConvertEnvelopeFlags(ModInstrument instr, uint32 flags, EnvelopeType envType)
 		{
 			InstrumentEnvelope env = instr.GetEnvelope(envType);
 
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void ReadInstrumentHeaderField(ModInstrument ins, uint32 fCode, FileReader file)//XX 429
+		public static void ReadInstrumentHeaderField(ModInstrument ins, uint32 fCode, FileReader file)
 		{
 			size_t size = file.GetLength();
 
@@ -475,7 +475,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// For ITP and internal usage
 		/// </summary>
 		/********************************************************************/
-		public void ReadExtendedInstrumentProperty(MptSpan<ModInstrument> instruments, uint32 code, FileReader file)//XX 569
+		public void ReadExtendedInstrumentProperty(MptSpan<ModInstrument> instruments, uint32 code, FileReader file)
 		{
 			uint16 size = file.ReadUInt16LE();
 
@@ -495,7 +495,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// For IT / XM / MO3 / ITI / XI
 		/// </summary>
 		/********************************************************************/
-		public bool LoadExtendedInstrumentProperties(MptSpan<ModInstrument> instruments, FileReader file)//XX 582
+		public bool LoadExtendedInstrumentProperties(MptSpan<ModInstrument> instruments, FileReader file)
 		{
 			if (!file.ReadMagic("XTPM"))	// 'MPTX'
 				return false;

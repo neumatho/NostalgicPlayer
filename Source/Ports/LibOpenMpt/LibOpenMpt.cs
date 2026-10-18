@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 		/// might be able to open it
 		/// </summary>
 		/********************************************************************/
-		public static Probe_File_Header_Result Probe_File_Header(Probe_File_Header_Flags flags, Stream stream, out Probe_File_Header_Info info)//XX 157
+		public static Probe_File_Header_Result Probe_File_Header(Probe_File_Header_Flags flags, Stream stream, out Probe_File_Header_Info info)
 		{
 			return Module_Impl.Probe_File_Header(flags, stream, out info);
 		}

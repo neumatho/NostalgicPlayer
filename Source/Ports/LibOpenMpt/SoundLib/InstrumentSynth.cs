@@ -627,7 +627,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public ChannelIndex FtmRealChannel(ChannelIndex channel, CSoundFile sndFile)//XX 103
+				public ChannelIndex FtmRealChannel(ChannelIndex channel, CSoundFile sndFile)
 				{
 					if (m_FtmWorkTrack != 0)
 						return (ChannelIndex)((m_FtmWorkTrack - 1) % sndFile.GetNumChannels());
@@ -642,7 +642,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				///
 				/// </summary>
 				/********************************************************************/
-				public static int32 ApplyLinearPitchSlide(int32 target, int32 totalAmount, bool periodsAreFrequencies)//XX 113
+				public static int32 ApplyLinearPitchSlide(int32 target, int32 totalAmount, bool periodsAreFrequencies)
 				{
 					uint32[] table = (periodsAreFrequencies ^ (totalAmount < 0)) ? Tables.LinearSlideUpTable : Tables.LinearSlideDownTable;
 					size_t value = (size_t)CMath.abs(totalAmount);
@@ -664,7 +664,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				///
 				/// </summary>
 				/********************************************************************/
-				public static int16 TranslateGt2Pitch(uint16 pitch)//XX 127
+				public static int16 TranslateGt2Pitch(uint16 pitch)
 				{
 					// 4096 = normal, 8192 = one octave up
 					return SaturateRound.Saturate_Round<int16, c_double>((CMath.log2(8192.0 / Math.Max(pitch, (uint16)1)) - 1.0) * (16 * 12));
@@ -677,7 +677,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				///
 				/// </summary>
 				/********************************************************************/
-				public static int32 TranslateFtmPitch(uint16 pitch, ModChannel chn, CSoundFile sndFile)//XX 134
+				public static int32 TranslateFtmPitch(uint16 pitch, ModChannel chn, CSoundFile sndFile)
 				{
 					int32 period = (int32)sndFile.GetPeriodFromNote((uint32)(ModCommand.Note_MiddleC - 12 + (pitch / 16)), chn.nFineTune, (uint32)chn.nC5Speed);
 					sndFile.DoFreqSlide(chn, ref period, (pitch % 16) * 4);
@@ -692,7 +692,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				///
 				/// </summary>
 				/********************************************************************/
-				public void JumpToPosition(InstrumentSynthEvents events, uint16 position)//XX 241
+				public void JumpToPosition(InstrumentSynthEvents events, uint16 position)
 				{
 					for (size_t pos = 0; pos < events.size(); pos++)
 					{
@@ -712,7 +712,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				///
 				/// </summary>
 				/********************************************************************/
-				public void NextTick(InstrumentSynthEvents events, PlayState playState, ChannelIndex channel, CSoundFile sndFile, States states)//XX 255
+				public void NextTick(InstrumentSynthEvents events, PlayState playState, ChannelIndex channel, CSoundFile sndFile, States states)
 				{
 					if (events.empty())
 						return;
@@ -1040,7 +1040,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public void ApplyChannelState(ModChannel chn, ref int32 period, CSoundFile sndFile)//XX 474
+				public void ApplyChannelState(ModChannel chn, ref int32 period, CSoundFile sndFile)
 				{
 					if (m_VolumeFactor != 16384)
 						chn.nRealVolume = Util.MulDivR(chn.nRealVolume, m_VolumeFactor, 16384);
@@ -1121,7 +1121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public bool EvaluateEvent(Event @event, PlayState playState, ChannelIndex channel, CSoundFile sndFile, States states)//XX 539
+				public bool EvaluateEvent(Event @event, PlayState playState, ChannelIndex channel, CSoundFile sndFile, States states)
 				{
 					// Return true to indicate end of processing for this tick
 					ModChannel chn = playState.Chn[channel];
@@ -1821,7 +1821,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public void EvaluateRunningEvent(Event @event)//XX 975
+				public void EvaluateRunningEvent(Event @event)
 				{
 					switch (@event.type)
 					{
@@ -1850,7 +1850,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public void HandleFtmInterrupt(ref uint16 target, bool condition)//XX 993
+				public void HandleFtmInterrupt(ref uint16 target, bool condition)
 				{
 					if ((target == Stop_Row) || !condition)
 						return;
@@ -1868,7 +1868,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				/// 
 				/// </summary>
 				/********************************************************************/
-				public bool HandleFcVolumeBend(bool forceRun = false)//XX 1004
+				public bool HandleFcVolumeBend(bool forceRun = false)
 				{
 					if ((m_FcVolumeBendRemain == 0) && !forceRun)
 						return false;
@@ -1915,7 +1915,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			///
 			/// </summary>
 			/********************************************************************/
-			public void NextTick(PlayState playState, ChannelIndex channel, CSoundFile sndFile)//XX 198
+			public void NextTick(PlayState playState, ChannelIndex channel, CSoundFile sndFile)
 			{
 				ModChannel chn = playState.Chn[channel];
 
@@ -1956,7 +1956,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/// 
 			/// </summary>
 			/********************************************************************/
-			public void ApplyChannelState(ModChannel chn, ref int32 period, CSoundFile sndFile)//XX 229
+			public void ApplyChannelState(ModChannel chn, ref int32 period, CSoundFile sndFile)
 			{
 				if ((chn.pModInstrument == null) || !chn.pModInstrument.Synth.HasScripts())
 					return;
@@ -2015,7 +2015,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Sanitize()//XX 1059
+		public void Sanitize()
 		{
 			foreach (InstrumentSynthEvents script in m_Scripts)
 			{
@@ -2042,7 +2042,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static int8 MedEnvelopeFromSample(ModInstrument instr, CSoundFile sndFile, uint8 envelope, uint16 envelopePos)//XX 142
+		private static int8 MedEnvelopeFromSample(ModInstrument instr, CSoundFile sndFile, uint8 envelope, uint16 envelopePos)
 		{
 			SampleIndex smp = (SampleIndex)(instr.Keyboard[ModCommand.Note_MiddleC - ModCommand.Note_Min] + envelope);
 
@@ -2064,7 +2064,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ChannelSetSample(ModChannel chn, CSoundFile sndFile, SampleIndex smp, bool swapAtEnd = true)//XX 156
+		private static void ChannelSetSample(ModChannel chn, CSoundFile sndFile, SampleIndex smp, bool swapAtEnd = true)
 		{
 			if ((smp < 1) || (smp > sndFile.GetNumSamples()))
 				return;

@@ -50,44 +50,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		public readonly Lock SndLock = new Lock();
 
-		private readonly string[] m_NoteNames;//XX 429
+		private readonly string[] m_NoteNames;
 
 		private readonly CTuningCollection m_pTuningsTuneSpecific;
 
 		// Misc data
-		private CModSpecifications m_pModSpecs;//XX 436
+		private CModSpecifications m_pModSpecs;
 
 		// Interleaved Front Mix Buffer (Also room for interleaved rear mix)
-		private readonly mixsample_t[] MixSoundBuffer = new mixsample_t[Mixer.MixBufferSize * 4];//XX 440
-		private readonly mixsample_t[] MixRearBuffer = new mixsample_t[Mixer.MixBufferSize * 2];//XX 441
+		private readonly mixsample_t[] MixSoundBuffer = new mixsample_t[Mixer.MixBufferSize * 4];
+		private readonly mixsample_t[] MixRearBuffer = new mixsample_t[Mixer.MixBufferSize * 2];
 
 		// Non-interleaved plugin processing buffer
-		private readonly c_float[][] MixFloatBuffer = ArrayHelper.Initialize2Arrays<c_float>(2, Mixer.MixBufferSize);//XX 443
-		private readonly mixsample_t[][] MixInputBuffer = ArrayHelper.Initialize2Arrays<mixsample_t>(Mixer.NumMixInputBuffers, Mixer.MixBufferSize);//XX 444
+		private readonly c_float[][] MixFloatBuffer = ArrayHelper.Initialize2Arrays<c_float>(2, Mixer.MixBufferSize);
+		private readonly mixsample_t[][] MixInputBuffer = ArrayHelper.Initialize2Arrays<mixsample_t>(Mixer.NumMixInputBuffers, Mixer.MixBufferSize);
 
 		// End-of-sample pop reduction tail level
-		private mixsample_t m_DryLOfsVol = 0;//XX 447
+		private mixsample_t m_DryLOfsVol = 0;
 		private mixsample_t m_DryROfsVol = 0;
 		private mixsample_t m_SurroundLOfsVol = 0;
 		private mixsample_t m_SurroundROfsVol = 0;
 
-		public MixerSettings m_MixerSettings = new MixerSettings();//XX 451
-		public readonly CResampler m_Resampler = new CResampler();//XX 452
+		public MixerSettings m_MixerSettings = new MixerSettings();
+		public readonly CResampler m_Resampler = new CResampler();
 
-		public readonly mixsample_t[] ReverbSendBuffer = new mixsample_t[Mixer.MixBufferSize * 2];//XX 454
-		public mixsample_t m_RvbROfsVol = 0;//XX 455
+		public readonly mixsample_t[] ReverbSendBuffer = new mixsample_t[Mixer.MixBufferSize * 2];
+		public mixsample_t m_RvbROfsVol = 0;
 		public mixsample_t m_RvbLOfsVol = 0;
-		public readonly CReverb m_Reverb = new CReverb();//XX 456
+		public readonly CReverb m_Reverb = new CReverb();
 
-		private ModType m_nType;//XX 478
-		private ModContainerType m_ContainerType = ModContainerType.None;//XX 479
+		private ModType m_nType;
+		private ModContainerType m_ContainerType = ModContainerType.None;
 
-		public SampleIndex m_nSamples = 0;//XX 481
-		public InstrumentIndex m_nInstruments = 0;//XX 482
-		public uint32 m_nDefaultGlobalVolume;//XX 483
-		public SongFlags m_SongFlags;//XX 484
-		public ChannelIndex m_nMixChannels = 0;//XX 485
-		private ChannelIndex m_nMixStat;//XX 487
+		public SampleIndex m_nSamples = 0;
+		public InstrumentIndex m_nInstruments = 0;
+		public uint32 m_nDefaultGlobalVolume;
+		public SongFlags m_SongFlags;
+		public ChannelIndex m_nMixChannels = 0;
+		private ChannelIndex m_nMixStat;
 
 		// Interface to NostalgicPlayer visualizations. Tells which channels
 		// that have been triggered since the last time the visualizer
@@ -95,83 +95,83 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public readonly bool[] m_VisualNoteKicked = new bool[Snd_Def.Max_Channels];
 
 		// Default rows per beat and measure for this module
-		public RowIndex m_nDefaultRowsPerBeat;//XX 489
+		public RowIndex m_nDefaultRowsPerBeat;
 		public RowIndex m_nDefaultRowsPerMeasure;
-		public TempoMode m_nTempoMode = TempoMode.Classic;//XX 490
+		public TempoMode m_nTempoMode = TempoMode.Classic;
 
-		public uint32 m_nSamplePreAmp;//XX 499
+		public uint32 m_nSamplePreAmp;
 		public uint32 m_nVstiVolume;
-		public uint32 m_OplVolumeFactor;	// 16,16//XX 500
-		public const uint32 m_OplVolumeFactorScale = 1 << 16;//XX 501
+		public uint32 m_OplVolumeFactor;	// 16,16
+		public const uint32 m_OplVolumeFactorScale = 1 << 16;
 
 		/// <summary>
 		/// Pitch shift factor (65536 = no pitch shifting)
 		/// </summary>
-		public uint32 m_nFreqFactor = 65536;//XX 505
+		public uint32 m_nFreqFactor = 65536;
 
 		/// <summary>
 		/// Tempo factor (65536 = no tempo adjustment)
 		/// </summary>
-		public uint32 m_nTempoFactor = 65536;//XX 506
+		public uint32 m_nTempoFactor = 65536;
 
 		/// <summary>
 		/// Row swing factors for modern tempo mode
 		/// </summary>
-		public TempoSwing m_TempoSwing = new TempoSwing();//XX 510
+		public TempoSwing m_TempoSwing = new TempoSwing();
 
 		/// <summary>
 		/// Min Period = highest possible frequency, Max Period = lowest possible frequency for current format
 		/// Note: Period is an Amiga metric that is inverse to frequency.
 		/// Periods in MPT are 4 times as fine as Amiga periods because of extra fine frequency slides (introduced in the S3M format)
 		/// </summary>
-		public int32 m_nMinPeriod;//XX 515
+		public int32 m_nMinPeriod;
 		public int32 m_nMaxPeriod;
 
 		/// <summary>
 		/// Resampling mode (if overriding the globally set resampling)
 		/// </summary>
-		public ResamplingMode m_nResampling;//XX 517
-		public int32 m_nRepeatCount = 0;	// -1 means repeat infinitely//XX 518
-		public OrderIndex m_RestartOverridePos = 0;//XX 519
+		public ResamplingMode m_nResampling;
+		public int32 m_nRepeatCount = 0;	// -1 means repeat infinitely
+		public OrderIndex m_RestartOverridePos = 0;
 		public OrderIndex m_MaxOrderPosition = 0;
-		public readonly vector<ModChannelSettings> ChnSettings = new vector<ModChannelSettings>();	// Initial channels settings//XX 520
-		public CPatternContainer Patterns;//XX 521
-		public ModSequenceSet Order;	// Pattern sequences (order list)//XX 522
-		protected readonly ModSample[] Samples = ArrayHelper.InitializeArray<ModSample>(Snd_Def.Max_Samples);//XX 524
+		public readonly vector<ModChannelSettings> ChnSettings = new vector<ModChannelSettings>();	// Initial channels settings
+		public CPatternContainer Patterns;
+		public ModSequenceSet Order;	// Pattern sequences (order list)
+		protected readonly ModSample[] Samples = ArrayHelper.InitializeArray<ModSample>(Snd_Def.Max_Samples);
 
-		public readonly ModInstrument[] Instruments = new ModInstrument[Snd_Def.Max_Instruments];	// Instrument headers//XX 526
-		public readonly InstrumentSynthEvents m_GlobalScript = new InstrumentSynthEvents();//XX 527
-		public readonly MidiMacroConfig m_MidiCfg = new MidiMacroConfig();//XX 528
+		public readonly ModInstrument[] Instruments = new ModInstrument[Snd_Def.Max_Instruments];	// Instrument headers
+		public readonly InstrumentSynthEvents m_GlobalScript = new InstrumentSynthEvents();
+		public readonly MidiMacroConfig m_MidiCfg = new MidiMacroConfig();
 
-		public readonly CharBuf[] m_szNames = ArrayHelper.InitializeArray(Snd_Def.Max_Samples, () => new CharBuf(Snd_Def.Max_SampleName));//XX 533
+		public readonly CharBuf[] m_szNames = ArrayHelper.InitializeArray(Snd_Def.Max_Samples, () => new CharBuf(Snd_Def.Max_SampleName));
 
-		public Version m_dwCreatedWithVersion = new Version();//XX 535
-		public Version m_dwLastSavedWithVersion = new Version();//XX 536
+		public Version m_dwCreatedWithVersion = new Version();
+		public Version m_dwLastSavedWithVersion = new Version();
 
-		public PlayBehaviourSet m_PlayBehaviour = new PlayBehaviourSet();//XX 538
+		public PlayBehaviourSet m_PlayBehaviour = new PlayBehaviourSet();
 
-		protected Fast_Prng m_Prng;//XX 542
+		protected Fast_Prng m_Prng;
 
-		protected CSoundFilePlayConfig m_PlayConfig = new CSoundFilePlayConfig();//XX 548
-		protected MixLevels m_nMixLevels;//XX 549
+		protected CSoundFilePlayConfig m_PlayConfig = new CSoundFilePlayConfig();
+		protected MixLevels m_nMixLevels;
 
-		public PlayState m_PlayState = new PlayState();//XX 552
+		public PlayState m_PlayState = new PlayState();
 
 		/// <summary>
 		/// For handling backwards jumps and stuff to prevent infinite loops when counting the mod length or rendering to wav
 		/// </summary>
-		protected RowVisitor m_VisitedRows;//XX 556
+		protected RowVisitor m_VisitedRows;
 
-		public StdString m_SongName = new StdString();//XX 583
-		public string m_SongArtist;//XX 584
-		public readonly SongMessage m_SongMessage = new SongMessage();//XX 585
-		public ModFormatDetails m_ModFormat = new ModFormatDetails();//XX 586
+		public StdString m_SongName = new StdString();
+		public string m_SongArtist;
+		public readonly SongMessage m_SongMessage = new SongMessage();
+		public ModFormatDetails m_ModFormat = new ModFormatDetails();
 
-		protected readonly vector<FileHistory> m_FileHistory = new vector<FileHistory>();//XX 589
+		protected readonly vector<FileHistory> m_FileHistory = new vector<FileHistory>();
 
-		public bool m_bIsRendering = false;//XX 609
+		public bool m_bIsRendering = false;
 
-		public const uint32 FadeSongDelay = 100;//XX 1309
+		public const uint32 FadeSongDelay = 100;
 
 		public readonly List<string> unsupportedPlugins = new List<string>();
 
@@ -202,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public CSoundFile()//XX 113
+		public CSoundFile()
 		{
 			m_NoteNames = Tables.NoteNamesSharp;
 			m_pModSpecs = ModSpecs.ItEx;
@@ -668,7 +668,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Global variable initializer for loader functions
 		/// </summary>
 		/********************************************************************/
-		public void InitializeGlobals(ModType type, ChannelIndex numChannels)//XX 173
+		public void InitializeGlobals(ModType type, ChannelIndex numChannels)
 		{
 			// Do not add or change any of these values! And if you do, review each and every loader to check if they require these defaults!
 			m_nType = type;
@@ -734,7 +734,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static ProbeResult ProbeAdditionalSize(FileReader file, uint64? pFileSize, uint64 minimumAdditionalSize)//XX 326
+		public static ProbeResult ProbeAdditionalSize(FileReader file, uint64? pFileSize, uint64 minimumAdditionalSize)
 		{
 			uint64 availableFileSize = file.GetLength();
 			uint64 fileSize = pFileSize.HasValue ? pFileSize.Value : file.GetLength();
@@ -766,7 +766,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static ProbeResult Probe(ProbeFlags flags, Stream stream, uint64? pFileSize, out Probe_File_Header_Info info)//XX 366
+		public static ProbeResult Probe(ProbeFlags flags, Stream stream, uint64? pFileSize, out Probe_File_Header_Info info)
 		{
 			info = null;
 
@@ -833,7 +833,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Create(ModType type, ChannelIndex numChannels)//XX 418
+		public void Create(ModType type, ChannelIndex numChannels)
 		{
 			Create(new FileReader(), ModLoadingFlags.LoadCompleteModule);
 			SetType(type);
@@ -847,7 +847,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool Create(FileReader file, ModLoadingFlags loadFlags, Guid? formatId = null)//XX 426
+		public bool Create(FileReader file, ModLoadingFlags loadFlags, Guid? formatId = null)
 		{
 			m_nMixChannels = 0;
 			m_nFreqFactor = m_nTempoFactor = 65536;
@@ -867,7 +867,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private bool CreateInternal(FileReader file, ModLoadingFlags loadFlags, Guid? formatId)//XX 479
+		private bool CreateInternal(FileReader file, ModLoadingFlags loadFlags, Guid? formatId)
 		{
 			if (file.IsValid())
 			{
@@ -1067,7 +1067,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetPreAmp(uint32 nVol)//XX 877
+		public void SetPreAmp(uint32 nVol)
 		{
 			if (nVol < 1)
 				nVol = 1;
@@ -1085,36 +1085,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double GetCurrentBpm()
-		{
-			c_double bpm;
-
-			if (m_nTempoMode == TempoMode.Modern)
-			{
-				// With modern mode, we trust that true bpm is close enough to what user chose.
-				// This avoids oscillation due to tick-to-tick corrections
-				bpm = m_PlayState.m_nMusicTempo.ToDouble();
-			}
-			else
-			{
-				// With other modes, we calculate it:
-				RowIndex rowsPerBeat = m_PlayState.m_nCurrentRowsPerBeat != 0 ? m_PlayState.m_nCurrentRowsPerBeat : Snd_Def.Default_Rows_Per_Beat;
-				c_double ticksPerBeat = m_PlayState.m_nMusicSpeed * rowsPerBeat;		// Ticks/beat = ticks/row * rows/beat
-				c_double samplesPerBeat = m_PlayState.m_nSamplesPerTick * ticksPerBeat;	// Samps/beat = samps/tick * ticks/beat
-				bpm = m_MixerSettings.gdwMixingFreq / samplesPerBeat * 60;				// Beats/sec  = samps/sec  / samps/beat
-			}																			// Beats/min  =  beats/sec * 60
-
-			return bpm;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void ResetPlayPos()//XX 913
+		public void ResetPlayPos()
 		{
 			ChannelFlags muteFlag = GetChannelMuteFlag();
 
@@ -1155,7 +1126,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetCurrentOrder(OrderIndex nOrder)//XX 945
+		public void SetCurrentOrder(OrderIndex nOrder)
 		{
 			while ((nOrder < Order.Current.size()) && !Order.Current.IsValidPat(nOrder))
 				nOrder++;
@@ -1209,7 +1180,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SuspendPlugins()//XX 995
+		public void SuspendPlugins()
 		{
 		}
 
@@ -1220,7 +1191,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void ResumePlugins()//XX 1011
+		public void ResumePlugins()
 		{
 		}
 
@@ -1231,7 +1202,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void StopAllVsti()//XX 1042
+		public void StopAllVsti()
 		{
 		}
 
@@ -1242,7 +1213,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetMixLevels(MixLevels levels)//XX 1057
+		public void SetMixLevels(MixLevels levels)
 		{
 			m_nMixLevels = levels;
 			m_PlayConfig.SetMixLevels(m_nMixLevels);
@@ -1256,7 +1227,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void RecalculateGainForAllPlugs()//XX 1065
+		public void RecalculateGainForAllPlugs()
 		{
 		}
 
@@ -1267,7 +1238,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public PlayBehaviourSet GetSupportedPlaybackBehaviour(ModType type)//XX 1163
+		public PlayBehaviourSet GetSupportedPlaybackBehaviour(ModType type)
 		{
 			PlayBehaviourSet playBehaviour = new PlayBehaviourSet();
 
@@ -1452,7 +1423,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public PlayBehaviourSet GetDefaultPlaybackBehaviour(ModType type)//XX 1325
+		public PlayBehaviourSet GetDefaultPlaybackBehaviour(ModType type)
 		{
 			PlayBehaviourSet playBehaviour;
 
@@ -1543,7 +1514,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ModType GetBestSaveFormat()//XX 1391
+		public ModType GetBestSaveFormat()
 		{
 			switch (GetType_())
 			{
@@ -1627,7 +1598,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CPointer<uint8> GetSampleName(SampleIndex nSample)//XX 1457
+		public CPointer<uint8> GetSampleName(SampleIndex nSample)
 		{
 			if (nSample < Snd_Def.Max_Samples)
 				return m_szNames[nSample].Buf;
@@ -1642,7 +1613,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CPointer<uint8> GetInstrumentName(InstrumentIndex nInstr)//XX 1470
+		public CPointer<uint8> GetInstrumentName(InstrumentIndex nInstr)
 		{
 			if ((nInstr >= Snd_Def.Max_Instruments) || (Instruments[nInstr] == null))
 				return new CPointer<uint8>(0);
@@ -1657,7 +1628,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void InitAmigaResampler()//XX 1480
+		public void InitAmigaResampler()
 		{
 			if (m_SongFlags.Test(SongFlags.IsAmiga) && (m_Resampler.m_Settings.EmulateAmiga != Resampling.AmigaFilter.Off))
 				throw new OpenMptException("Amiga filter not implemented");
@@ -1672,7 +1643,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// are marked as false in the vector
 		/// </summary>
 		/********************************************************************/
-		public SampleIndex DetectUnusedSamples(vector<bool> sampleUsed)//XX 1502
+		public SampleIndex DetectUnusedSamples(vector<bool> sampleUsed)
 		{
 			sampleUsed.assign(GetNumSamples() + 1U, false);
 
@@ -1751,7 +1722,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// keepSamples[1]
 		/// </summary>
 		/********************************************************************/
-		public SampleIndex RemoveSelectedSamples(vector<bool> keepSamples)//XX 1561
+		public SampleIndex RemoveSelectedSamples(vector<bool> keepSamples)
 		{
 			if (keepSamples.empty())
 				return 0;
@@ -1783,7 +1754,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool DestroySample(SampleIndex nSample)//XX 1594
+		public bool DestroySample(SampleIndex nSample)
 		{
 			if ((nSample == 0) || (nSample >= Snd_Def.Max_Samples))
 				return false;
@@ -1818,7 +1789,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CTuning CreateTuning12Tet(string name)//XX 1636
+		public CTuning CreateTuning12Tet(string name)
 		{
 			CTuning pT = CTuning.CreateGeometric(name, 12, 2, 15);
 
@@ -1835,7 +1806,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CModSpecifications GetModSpecifications(ModType type)//XX 1705
+		public CModSpecifications GetModSpecifications(ModType type)
 		{
 			switch (type)
 			{
@@ -1864,7 +1835,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetType(ModType type)//XX 1733
+		public void SetType(ModType type)
 		{
 			m_nType = type;
 			m_PlayBehaviour = GetDefaultPlaybackBehaviour(GetBestSaveFormat());
@@ -1878,7 +1849,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ModMessageHeuristicOrder GetMessageHeuristic()//XX 1778
+		public ModMessageHeuristicOrder GetMessageHeuristic()
 		{
 			ModMessageHeuristicOrder result = ModMessageHeuristicOrder.Default;
 
@@ -1934,7 +1905,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// circumstances. So this should not update error accumulation
 		/// </summary>
 		/********************************************************************/
-		public void RecalculateSamplesPerTick()//XX 1845
+		public void RecalculateSamplesPerTick()
 		{
 			switch (m_nTempoMode)
 			{
@@ -1973,7 +1944,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// once per tick because otherwise the error accumulation goes wrong
 		/// </summary>
 		/********************************************************************/
-		public uint32 GetTickDuration(PlayState playState)//XX 1873
+		public uint32 GetTickDuration(PlayState playState)
 		{
 			uint32 retVal = 0;
 
@@ -2040,7 +2011,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public static ChannelFlags GetChannelMuteFlag()//XX 1946
+		public static ChannelFlags GetChannelMuteFlag()
 		{
 			return ChannelFlags.Chn_SyncMute;
 		}
@@ -2053,7 +2024,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// value is guaranteed to be in [0, GetNumSamples()]
 		/// </summary>
 		/********************************************************************/
-		public SampleIndex GetSampleIndex(ModCommandNote note, uint32 instr)//XX 1957
+		public SampleIndex GetSampleIndex(ModCommandNote note, uint32 instr)
 		{
 			SampleIndex smp = 0;
 
@@ -2078,7 +2049,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ModInstrument AllocateInstrument(InstrumentIndex instr, SampleIndex assignedSample = 0)//XX 2053
+		public ModInstrument AllocateInstrument(InstrumentIndex instr, SampleIndex assignedSample = 0)
 		{
 			if ((instr == 0) || (instr >= Snd_Def.Max_Instruments))
 				return null;
@@ -2111,7 +2082,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// this function to take effect
 		/// </summary>
 		/********************************************************************/
-		public void SetupModPanning(bool forceSetup = false)//XX 2128
+		public void SetupModPanning(bool forceSetup = false)
 		{
 			// Setup LRRL panning, max channel volume
 			if (((GetType_() & ModType.Mod) == 0) && !forceSetup)

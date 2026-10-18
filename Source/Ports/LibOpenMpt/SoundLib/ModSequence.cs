@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModSequence(CSoundFile sndFile)//XX 23
+		public ModSequence(CSoundFile sndFile)
 		{
 			m_SndFile = sndFile;
 		}
@@ -213,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void SetDefaultTempo(Tempo tempo)//XX 52
+		public void SetDefaultTempo(Tempo tempo)
 		{
 			if (tempo.GetInt() == 0)
 				tempo.Set(125);
@@ -230,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Returns length of sequence without counting trailing '---' items
 		/// </summary>
 		/********************************************************************/
-		public OrderIndex GetLengthTailTrimmed()//XX 104
+		public OrderIndex GetLengthTailTrimmed()
 		{
 			if (empty())
 				return 0;
@@ -248,7 +248,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// list. Jump commands are updated accordingly
 		/// </summary>
 		/********************************************************************/
-		public void RemovePattern(PatternIndex pat)//XX 177
+		public void RemovePattern(PatternIndex pat)
 		{
 			// First, calculate the offset that needs to be applied to jump commands
 			OrderIndex orderLength = GetLengthTailTrimmed();
@@ -292,7 +292,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void assign(OrderIndex newSize, PatternIndex pat)//XX 219
+		public void assign(OrderIndex newSize, PatternIndex pat)
 		{
 			throw new NotImplementedException();
 		}
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public OrderIndex insert(OrderIndex pos, OrderIndex count, PatternIndex fill, bool enforeFormatLimits = true)//XX 226
+		public OrderIndex insert(OrderIndex pos, OrderIndex count, PatternIndex fill, bool enforeFormatLimits = true)
 		{
 			throw new NotImplementedException();
 		}
@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Check if pattern at sequence position ord is valid
 		/// </summary>
 		/********************************************************************/
-		public bool IsValidPat(OrderIndex ord)//XX 254
+		public bool IsValidPat(OrderIndex ord)
 		{
 			if (ord < size())
 				return m_SndFile.Patterns.IsValidPat(this[ord]);
@@ -397,7 +397,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Find an order item that contains a given pattern number
 		/// </summary>
 		/********************************************************************/
-		public OrderIndex FindOrder(PatternIndex pat, OrderIndex startSearchAt, bool searchForward = true)//XX 270
+		public OrderIndex FindOrder(PatternIndex pat, OrderIndex startSearchAt, bool searchForward = true)
 		{
 			OrderIndex length = GetLength();
 
@@ -433,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public static void ReadModSequenceOld(Stream iStrm, ref ModSequenceSet seq, size_t _)//XX 637
+		public static void ReadModSequenceOld(Stream iStrm, ref ModSequenceSet seq, size_t _)
 		{
 			Io_.ReadIntLE(iStrm, out uint16 size);
 
@@ -456,7 +456,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public static void ReadModSequence(ReaderStream iStrm, ModSequence seq, size_t _, Encoding defaultCharset)//XX 689
+		public static void ReadModSequence(ReaderStream iStrm, ModSequence seq, size_t _, Encoding defaultCharset)
 		{
 			SsbRead ssb = new SsbRead(iStrm);
 			ssb.BeginRead(FileIdSequence, Version.Current().GetRawVersion());
@@ -501,7 +501,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public static void ReadModSequences(ReaderStream iStrm, ModSequenceSet seq, size_t _, Encoding defaultCharset)//XX 745
+		public static void ReadModSequences(ReaderStream iStrm, ModSequenceSet seq, size_t _, Encoding defaultCharset)
 		{
 			SsbRead ssb = new SsbRead(iStrm);
 			ssb.BeginRead(FileIdSequences, Version.Current().GetRawVersion());

@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint8 FrequencyToCutOff(c_double frequency)//XX 27
+		public uint8 FrequencyToCutOff(c_double frequency)
 		{
 			// IT Cutoff is computed as cutoff = 110 * 2 ^ (0.25 + x/y), where x is the cutoff and y defines the filter range.
 			// Reversed, this gives us x = (log2(cutoff / 110) - 0.25) * y.
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_float CutOffToFrequency(uint32 nCutOff, c_int envModifier = 256)//XX 40
+		public c_float CutOffToFrequency(uint32 nCutOff, c_int envModifier = 256)
 		{
 			c_float computedCutOff = nCutOff * (uint32)(envModifier + 256);	// 0...127*512
 			c_float frequency;
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// [0, 254] or -1 if filter is not applied
 		/// </summary>
 		/********************************************************************/
-		public c_int SetupChannelFilter(ModChannel chn, bool bReset, c_int envModifier = 256)//XX 92
+		public c_int SetupChannelFilter(ModChannel chn, bool bReset, c_int envModifier = 256)
 		{
 			c_int cutOff = chn.nCutOff + chn.nCutSwing;
 			c_int resonance = (chn.nResonance & 0x7f) + chn.nResSwing;

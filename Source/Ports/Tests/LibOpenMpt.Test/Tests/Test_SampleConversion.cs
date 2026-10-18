@@ -109,22 +109,6 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Tests
 				}
 			}
 
-			//XX Signed 24-Bit integer PCM
-			{
-			}
-
-			//XX Float 32-Bit
-			{
-			}
-
-			//XX ALaw
-			{
-			}
-
-			//XX uLaw
-			{
-			}
-
 			// Range checks
 			{
 				byte[] oneSample = [ 1 ];

@@ -957,7 +957,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void Reset(ResetFlags resetMask, CSoundFile sndFile, ChannelIndex sourceChannel, ChannelFlags muteFlag)//XX 19
+		public void Reset(ResetFlags resetMask, CSoundFile sndFile, ChannelIndex sourceChannel, ChannelFlags muteFlag)
 		{
 			// For "the ultimate beeper.mod"
 			ModSample defaultSample = (sndFile.GetType_() == ModType.Mod) && sndFile.GetSample(0).HasSampleData() ? sndFile.GetSample(0) : null;
@@ -1069,7 +1069,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void Stop()//XX 120
+		public void Stop()
 		{
 			nPeriod = 0;
 			Increment.Set(0);
@@ -1085,7 +1085,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void UpdateInstrumentVolume(ModSample smp, ModInstrument ins)//XX 131
+		public void UpdateInstrumentVolume(ModSample smp, ModInstrument ins)
 		{
 			nInsVol = 64;
 
@@ -1103,7 +1103,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public uint32 GetVstVolume()//XX 141
+		public uint32 GetVstVolume()
 		{
 			return pModInstrument != null ? pModInstrument.nGlobalVol * 4 : (uint32)nVolume;
 		}
@@ -1115,7 +1115,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Check if the channel has a valid MIDI output
 		/// </summary>
 		/********************************************************************/
-		public bool HasMidiOutput()//XX 163
+		public bool HasMidiOutput()
 		{
 			return (pModInstrument != null) && pModInstrument.HasValidMidiChannel();
 		}
@@ -1127,7 +1127,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Check if the channel uses custom tuning
 		/// </summary>
 		/********************************************************************/
-		public bool HasCustomTuning()//XX 169
+		public bool HasCustomTuning()
 		{
 			return (pModInstrument != null) && (pModInstrument.pTuning != null);
 		}
@@ -1139,7 +1139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public bool InSustainLoop()//XX 175
+		public bool InSustainLoop()
 		{
 			return ((dwFlags & (ChannelFlags.Chn_Loop | ChannelFlags.Chn_KeyOff)) == ChannelFlags.Chn_Loop) && pModSample.uFlags.Test(ChannelFlags.Chn_SustainLoop);
 		}
@@ -1151,7 +1151,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void SetInstrumentPan(int32 pan, CSoundFile sndFile)//XX 181
+		public void SetInstrumentPan(int32 pan, CSoundFile sndFile)
 		{
 			// IT compatibility: Instrument and sample panning does not override channel panning
 			// Test case: PanResetInstr.it
@@ -1173,7 +1173,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void RestorePanAndFilter()//XX 195
+		public void RestorePanAndFilter()
 		{
 			if (nRestorePanOnNewNote > 0)
 			{
@@ -1205,7 +1205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public void RecalcTuningFreq(TuningRatioType vibratoFactor, TuningNoteIndexType arpeggioSteps, CSoundFile sndFile)//XX 217
+		public void RecalcTuningFreq(TuningRatioType vibratoFactor, TuningNoteIndexType arpeggioSteps, CSoundFile sndFile)
 		{
 			if (!HasCustomTuning())
 				return;
@@ -1225,7 +1225,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// IT command S73-S7E
 		/// </summary>
 		/********************************************************************/
-		public void InstrumentControl(uint8 param, CSoundFile sndFile)//XX 232
+		public void InstrumentControl(uint8 param, CSoundFile sndFile)
 		{
 			param &= 0x0f;
 
@@ -1312,7 +1312,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Volume command: xx
 		/// </summary>
 		/********************************************************************/
-		public void PlayControl(uint8 param)//XX 260
+		public void PlayControl(uint8 param)
 		{
 			switch (param)
 			{

@@ -554,7 +554,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static string ModContainerTypeToString(ModContainerType containerType)//XX 241
+		public static string ModContainerTypeToString(ModContainerType containerType)
 		{
 			foreach (ModContainerInfo containerInfo in modContainerInfo)
 			{
@@ -572,7 +572,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static string ModContainerTypeToTracker(ModContainerType containerType)//XX 254
+		public static string ModContainerTypeToTracker(ModContainerType containerType)
 		{
 			set<string> retVals = new set<string>();
 			string retVal = string.Empty;
@@ -603,7 +603,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Compute Bessel function Izero(y) using a series approximation
 		/// </summary>
 		/********************************************************************/
-		public static c_double IZero(c_double y)//XX 432
+		public static c_double IZero(c_double y)
 		{
 			c_double s = 1, ds = 1, d = 0;
 
@@ -625,7 +625,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void GetSinc(CPointer<Sinc_Type> pSinc, c_double beta, c_double cutOff)//XX 445
+		public static void GetSinc(CPointer<Sinc_Type> pSinc, c_double beta, c_double cutOff)
 		{
 			if (cutOff >= 0.999)
 			{

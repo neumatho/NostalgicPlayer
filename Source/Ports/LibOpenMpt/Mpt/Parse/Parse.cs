@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Parse
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Parse<T>(string str)//XX 113
+		public static T Parse<T>(string str)
 		{
 			return Parse_Or<T>(str, default);
 		}

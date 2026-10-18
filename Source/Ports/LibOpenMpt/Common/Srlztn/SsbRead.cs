@@ -240,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// functions
 		/// </summary>
 		/********************************************************************/
-		public void BeginRead(Id id, uint64 nVersion)//XX 399
+		public void BeginRead(Id id, uint64 nVersion)
 		{
 			ResetReadStatus();
 
@@ -398,7 +398,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void AddReadNote(Status s)//XX 181
+		private void AddReadNote(Status s)
 		{
 			m_Status.Level |= s.Level;
 			m_Status.Messages |= s.Messages;
@@ -411,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void ResetReadStatus()//XX 209
+		private void ResetReadStatus()
 		{
 			m_Status = new Status();
 			m_IdArray.reserve(32);
@@ -425,7 +425,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// Called after reading an object
 		/// </summary>
 		/********************************************************************/
-		private void OnReadEntry(ReadEntry pE, Id id, long posReadBegin)//XX 328
+		private void OnReadEntry(ReadEntry pE, Id id, long posReadBegin)
 		{
 			bool entryFound = (pE != null) || !m_Flags[Rwf.RMapHasId];
 
@@ -440,7 +440,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// Reads map to cache
 		/// </summary>
 		/********************************************************************/
-		private void CacheMap()//XX 556
+		private void CacheMap()
 		{
 			if (m_Flags[Rwf.RwHasMap] || (m_nFixedEntrySize > 0))
 			{
@@ -554,7 +554,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.Srlztn
 		/// corresponding entry, else returns null
 		/// </summary>
 		/********************************************************************/
-		private ReadEntry Find(Id id)//XX 646
+		private ReadEntry Find(Id id)
 		{
 			if (!m_Flags[Rwf.RMapCached])
 				CacheMap();

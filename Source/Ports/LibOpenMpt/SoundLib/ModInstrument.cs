@@ -357,7 +357,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Sanitize(ModType modType)//XX 266
+		public void Sanitize(ModType modType)
 		{
 			OpenMpt.LimitMax(ref nFadeOut, 65536U);
 			OpenMpt.LimitMax(ref nGlobalVol, 64U);
@@ -411,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint8 GetMidiChannel(ModChannel channel, ChannelIndex chn)//XX 351
+		public uint8 GetMidiChannel(ModChannel channel, ChannelIndex chn)
 		{
 			// For mapped channels, return their pattern channel, modulo 16 (because there are only 16 MIDI channels)
 			if (nMidiChannel == Snd_Def.MidiMappedChannel)

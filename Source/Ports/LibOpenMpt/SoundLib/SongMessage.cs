@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Read song message from mapped file
 		/// </summary>
 		/********************************************************************/
-		public bool Read(CPointer<byte> data, size_t length, LineEnding lineEnding)//XX 28
+		public bool Read(CPointer<byte> data, size_t length, LineEnding lineEnding)
 		{
 			CPointer<uint8> str = data;
 
@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Read song message from mapped file
 		/// </summary>
 		/********************************************************************/
-		public bool Read(FileReader file, size_t length, LineEnding lineEnding)//XX 110
+		public bool Read(FileReader file, size_t length, LineEnding lineEnding)
 		{
 			size_t readLength = Math.Min(length, file.BytesLeft());
 			FileCursor.PinnedView fileView = file.ReadPinnedView(readLength);
@@ -184,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Retrieve song message
 		/// </summary>
 		/********************************************************************/
-		public StdString GetFormatted(LineEnding lineEnding)//XX 172
+		public StdString GetFormatted(LineEnding lineEnding)
 		{
 			StdString comments = new StdString();
 			comments.reserve(length());

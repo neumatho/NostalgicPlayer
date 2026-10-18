@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override bool IsValid()//XX 47
+		public override bool IsValid()
 		{
 			return streamData.IsNotNull;
 		}
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override bool HasPinnedView()//XX 55
+		public override bool HasPinnedView()
 		{
 			return true;
 		}
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override CPointer<byte> GetRawData()// 59
+		public override CPointer<byte> GetRawData()
 		{
 			return streamData;
 		}
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override size_t GetLength()//XX 63
+		public override size_t GetLength()
 		{
 			return streamLength;
 		}
@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override byte_span Read(size_t pos, byte_span dst)//XX 67
+		public override byte_span Read(size_t pos, byte_span dst)
 		{
 			if (pos >= streamLength)
 				return dst.First(0);
@@ -147,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Io_Read
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override bool CanRead(size_t pos, size_t length)//XX 84
+		public override bool CanRead(size_t pos, size_t length)
 		{
 			if ((pos == streamLength) && (length == 0))
 				return true;

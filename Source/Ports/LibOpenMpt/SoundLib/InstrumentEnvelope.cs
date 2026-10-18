@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Convert envelope data between various formats
 		/// </summary>
 		/********************************************************************/
-		public void Convert(ModType fromType, ModType toType)//XX 20
+		public void Convert(ModType fromType, ModType toType)
 		{
 			if (((fromType & ModType.Xm) == 0) && ((toType & ModType.Xm) != 0))
 			{
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// data is in rage [0, rangeIn], returns value in range [0, rangeOut]
 		/// </summary>
 		/********************************************************************/
-		public int32 GetValueFromPosition(c_int position, int32 rangeOut, int32 rangeIn = Snd_Def.Envelope_Max)//XX 77
+		public int32 GetValueFromPosition(c_int position, int32 rangeOut, int32 rangeIn = Snd_Def.Envelope_Max)
 		{
 			if (empty())
 				return 0;
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// within allowed range
 		/// </summary>
 		/********************************************************************/
-		public void Sanitize(uint8 maxValue = Snd_Def.Envelope_Max)//XX 127
+		public void Sanitize(uint8 maxValue = Snd_Def.Envelope_Max)
 		{
 			if (!empty())
 			{

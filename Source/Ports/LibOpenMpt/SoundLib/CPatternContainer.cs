@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void DestroyPatterns()//XX 40
+		public void DestroyPatterns()
 		{
 			m_Patterns.clear();
 		}
@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool Insert(PatternIndex index, RowIndex rows)//XX 76
+		public bool Insert(PatternIndex index, RowIndex rows)
 		{
 			if ((rows > Snd_Def.Max_Pattern_Rows) || (rows == 0) || (index >= Snd_Def.PatternIndex_Invalid))
 				return false;
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool IsPatternEmpty(PatternIndex nPat)//XX 107
+		public bool IsPatternEmpty(PatternIndex nPat)
 		{
 			if (!IsValidPat(nPat))
 				return false;
@@ -202,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void ResizeArray(PatternIndex newSize)//XX 121
+		public void ResizeArray(PatternIndex newSize)
 		{
 			m_Patterns.resize(newSize, new CPattern(this));
 		}
@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// exists
 		/// </summary>
 		/********************************************************************/
-		public PatternIndex GetNumPatterns()//XX 145
+		public PatternIndex GetNumPatterns()
 		{
 			for (PatternIndex pat = Size(); pat > 0; pat--)
 			{
@@ -233,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public static void ReadModPatterns(ReaderStream iStrm, ref CPatternContainer patC, size_t _)//XX 204
+		public static void ReadModPatterns(ReaderStream iStrm, ref CPatternContainer patC, size_t _)
 		{
 			SsbRead ssb = new SsbRead(iStrm);
 			ssb.BeginRead(FileIdPatterns, Version.Current().GetRawVersion());

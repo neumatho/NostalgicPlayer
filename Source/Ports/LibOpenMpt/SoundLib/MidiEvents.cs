@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// Get the length of a MIDI event in bytes
 		/// </summary>
 		/********************************************************************/
-		public static uint8 GetEventLength(uint8 firstByte)//XX 104
+		public static uint8 GetEventLength(uint8 firstByte)
 		{
 			uint8 msgSize = 3;
 

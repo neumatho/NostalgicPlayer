@@ -278,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public CSoundFile GetSoundFile()//XX 26
+		public CSoundFile GetSoundFile()
 		{
 			return m_rPatternContainer.GetSoundFile();
 		}
@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ChannelIndex GetNumChannels()//XX 30
+		public ChannelIndex GetNumChannels()
 		{
 			return GetSoundFile().GetNumChannels();
 		}
@@ -302,7 +302,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool SetSignature(RowIndex rowsPerBeat, RowIndex rowsPerMeasure)//XX 66
+		public bool SetSignature(RowIndex rowsPerBeat, RowIndex rowsPerMeasure)
 		{
 			if (!IsValidSignature(rowsPerBeat, rowsPerMeasure))
 				return false;
@@ -320,7 +320,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool IsValidSignature(RowIndex rowsPerBeat, RowIndex rowsPerMeasure)//XX 76
+		public bool IsValidSignature(RowIndex rowsPerBeat, RowIndex rowsPerMeasure)
 		{
 			return (rowsPerBeat > 0) && (rowsPerBeat <= Snd_Def.Max_Rows_Per_Beat) && (rowsPerBeat <= rowsPerMeasure) && (rowsPerMeasure <= Snd_Def.Max_Rows_Per_Measure);
 		}
@@ -332,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void ClearCommands()//XX 119
+		public void ClearCommands()
 		{
 			Algorithm.fill(m_ModCommands.begin(), m_ModCommands.end(), new ModCommand());
 		}
@@ -344,7 +344,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool AllocatePattern(RowIndex rows)//XX 125
+		public bool AllocatePattern(RowIndex rows)
 		{
 			size_t newSize = GetNumChannels() * rows;
 
@@ -376,7 +376,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool SetName(StdString newName)//XX 278
+		public bool SetName(StdString newName)
 		{
 			m_PatternName = Utility.move(newName);
 
@@ -390,7 +390,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool SetName(CPointer<uint8> newName, size_t maxChars)//XX 285
+		public bool SetName(CPointer<uint8> newName, size_t maxChars)
 		{
 			if (newName.IsNull || (maxChars == 0))
 				return false;
@@ -408,7 +408,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		///
 		/// </summary>
 		/********************************************************************/
-		public static void ReadModPattern(ReaderStream iStrm, ref CPattern pat, size_t _)//XX 517
+		public static void ReadModPattern(ReaderStream iStrm, ref CPattern pat, size_t _)
 		{
 			SsbRead ssb = new SsbRead(iStrm);
 			ssb.BeginRead(FileIdPattern, Version.Current().GetRawVersion());
@@ -441,7 +441,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void ReadData(ReaderStream iStrm, ref CPattern pat, size_t _)//XX 612
+		private static void ReadData(ReaderStream iStrm, ref CPattern pat, size_t _)
 		{
 			if (!pat.IsValid())	// Expecting patterns to be allocated and resized properly
 				return;

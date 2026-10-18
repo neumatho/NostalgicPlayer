@@ -100,8 +100,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			{
 				InitFloatMixerTables();
 
-//XX				blepTables.Initialize();
-
 				Tables.GetSinc(gKaiserSinc, 9.6377, 0.97);
 				Tables.GetSinc(gDownSample13x, 8.5, 0.5);
 				Tables.GetSinc(gDownSample2x, 7.0, 0.425);
@@ -144,8 +142,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			CMemory.copy(s_CachedResampler.gDownSample13x, new CPointer<Sinc_Type>(s_CachedResampler.gDownSample13x) + (Sinc_Phases * 8), gDownSample13x);
 			CMemory.copy(s_CachedResampler.gDownSample2x, new CPointer<Sinc_Type>(s_CachedResampler.gDownSample2x) + (Sinc_Phases * 8), gDownSample2x);
 			CMemory.copy(s_CachedResampler.m_WindowedFir.Lut, new CPointer<WFir_Type>(s_CachedResampler.m_WindowedFir.Lut) + (WindowedFir.WFir_LutLen * WindowedFir.WFir_Width), m_WindowedFir.Lut);
-
-//XX			blepTables = s_CachedResampler.blepTables;
 		}
 		#endregion
 	}
