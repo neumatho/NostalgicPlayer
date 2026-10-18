@@ -219,8 +219,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private const uint8 Rtsm_Loop_On = 1;
 		private const uint8 Rtsm_Loop_Bidir = 2;
 
-		private const int Max_Samp = 1024;
-
 		private const uint8 Fx_None = 0xff;
 		private const uint8 Fx_Extended_It = 0xfe;
 		private const uint8 Fx_Porta_Up_Mod = 0xf1;
@@ -454,7 +452,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Seek(start + offset, SeekOrigin.Begin);
 
 			// ESTIMATED value! We don't know the actual value at this point
-			mod.Smp = Max_Samp;
+			mod.Smp = Constants.Max_Samples;
 
 			if (lib.common.LibXmp_Init_Instrument(m) < 0)
 				return -1;

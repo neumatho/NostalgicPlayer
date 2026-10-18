@@ -145,8 +145,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Common.Clamp(ref mod.Len, 0, Constants.Xmp_Max_Mod_Length);
 			Common.Clamp(ref mod.Pat, 0, 257);	// Some formats have an extra pattern
 			Common.Clamp(ref mod.Ins, 0, 255);
-			Common.Clamp(ref mod.Smp, 0, Constants.Max_Samples);
 			Common.Clamp(ref mod.Chn, 0, Constants.Xmp_Max_Channels);
+
+			if (mod.Smp < 0)
+				mod.Smp = 0;
 
 			// Fix cases where the restart value is invalid e.g. kc_fall8.xm
 			// from http://aminet.net/mods/mvp/mvp_0002.lha (reported by

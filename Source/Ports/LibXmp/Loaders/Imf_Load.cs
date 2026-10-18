@@ -259,7 +259,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			ih.Magic = f.Hio_Read32B();
 
 			// Sanity check
-			if ((ih.Len > 256) || (ih.Pat > 256) || (ih.Ins > 255))
+			// Maximum supported instruments by UI is 99, but Orpheus will load
+			// XMs with 128 and resave all 128 to IMF
+			if ((ih.Len > 256) || (ih.Pat > 256) || (ih.Ins > 128))
 				return -1;
 
 			for (i = 0; i < 32; i++)
@@ -281,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			mod.Len = ih.Len;
 			mod.Ins = ih.Ins;
-			mod.Smp = 1024;
+			mod.Smp = Constants.Max_Samples;
 			mod.Pat = ih.Pat;
 
 			if ((ih.Flg & 0x01) != 0)
@@ -440,8 +442,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				ii.Nsm = f.Hio_Read16L();
 				ii.Magic = f.Hio_Read32B();
 
-				// Sanity check
-				if (ii.Nsm > 255)
+				// Orpheus does not support more than 16 samples per instrument and
+				// will ignore any samples past 16 hexedited into a file
+				if (ii.Nsm > 16)
 					return -1;
 
 				// Imago Orpheus may emit blank instruments with a signature
@@ -483,6 +486,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				for (c_int j = 0; j < ii.Nsm; j++, smp_Num++)
 				{
 					Xmp_SubInstrument sub = xxi.Sub[j];
+
+					// Orpheus is limited to 200 samples, but in edge cases will
+					// emit files with more than that. Support growing the sample
+					// list for now just in case...
+					if (smp_Num >= mod.Smp)
+					{
+						if (lib.common.LibXmp_Realloc_Samples(m, mod.Smp * 3 / 2) < 0)
+							return -1;
+					}
+
 					Xmp_Sample xxs = mod.Xxs[smp_Num];
 
 					f.Hio_Read(@is.Name, 13, 1);
@@ -500,7 +513,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					@is.DRam = f.Hio_Read32L();
 					@is.Magic = f.Hio_Read32B();
 
-					if ((@is.Magic != Magic_IS10) && (@is.Magic != Magic_IW10))
+					// The sample magic can also be four nuls (encountered importing
+					// an XM with >=13 instruments x 16 samples and resaving as IMF)
+					if ((@is.Magic != Magic_IS10) && (@is.Magic != Magic_IW10) && (@is.Magic != 0))
 						return -1;
 
 					// Sanity check
@@ -541,8 +556,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			if (lib.common.LibXmp_Realloc_Samples(m, smp_Num) < 0)
-				return -1;
+			if (smp_Num < mod.Smp)
+			{
+				if (lib.common.LibXmp_Realloc_Samples(m, smp_Num) < 0)
+					return -1;
+			}
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
 			m.Quirk |= Quirk_Flag.Filter | Quirk_Flag.Marker | Quirk_Flag.RstChn | Quirk_Flag.ArpMem;
