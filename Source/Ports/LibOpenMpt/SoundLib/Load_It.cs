@@ -2278,13 +2278,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
-		/// Tell if the given chunk identifier is one of the FXnn chunks
-		/// holding the settings of a single mix plugin
+		/// Tell if the given chunk identifier is one of the FXnn or Fnnn
+		/// chunks holding the settings of a single mix plugin
 		/// </summary>
 		/********************************************************************/
 		private static bool IsPluginChunk(CPointer<uint8> code)
 		{
-			return (code[0] == 'F') && (code[1] == 'X') && (code[2] >= '0') && (code[2] <= '9') && (code[3] >= '0') && (code[3] <= '9');
+			return (code[0] == 'F') && ((code[1] == 'X') || char.IsAsciiDigit((char)code[1])) && char.IsAsciiDigit((char)code[2]) && char.IsAsciiDigit((char)code[3]);
 		}
 		#endregion
 

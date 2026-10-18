@@ -2466,16 +2466,18 @@ Skip_Packed_Event:
 
 		/********************************************************************/
 		/// <summary>
-		/// Tell if the given chunk identifier is one of the FXnn chunks
-		/// holding the settings of a single mix plugin
+		/// Tell if the given chunk identifier is one of the FXnn or Fnnn
+		/// chunks holding the settings of a single mix plugin
 		/// </summary>
 		/********************************************************************/
 		private static bool IsPluginChunk(uint32 code)
 		{
+			uint8 c0 = (uint8)(code >> 24);
+			uint8 c1 = (uint8)(code >> 16);
 			uint8 c2 = (uint8)(code >> 8);
 			uint8 c3 = (uint8)code;
 
-			return ((code >> 16) == 0x4658) && (c2 >= 0x30) && (c2 <= 0x39) && (c3 >= 0x30) && (c3 <= 0x39);
+			return (c0 == 'F') && ((c1 == 'X') || char.IsAsciiDigit((char)c1)) && char.IsAsciiDigit((char)c2) && char.IsAsciiDigit((char)c3);
 		}
 
 
