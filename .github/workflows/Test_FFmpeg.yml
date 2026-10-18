@@ -20,6 +20,16 @@ jobs:
         uses: microsoft/setup-msbuild@v3
       - name: Setup NuGet
         uses: nuget/setup-nuget@v4
+      - name: Collect NuGet package references
+        shell: bash
+        run: grep -rh --include=*.csproj "PackageReference" Source | sort -u > nuget-packages.txt
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('nuget-packages.txt') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
       - name: Install dependencies
         run: nuget restore Source\NostalgicPlayer.sln
       - name: Build
