@@ -240,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			{
 				TrackRow trkRow = trk.Rows[i];
 
-				if (trkRow.Note != 0)
+				if ((trkRow.Note != 0) && (trkRow.Note <= 120))
 					trackData[i * 3 + 0] = (byte)((trkRow.Note - 24) << 2);
 				else
 					trackData[i * 3 + 0] = 0x00;

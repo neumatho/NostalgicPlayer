@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers.Chunks;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers.Plugins;
@@ -119,6 +120,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 					errorMessage = Resources.IDS_ERR_LOADING_TRACKS;
 					return AgentResult.Error;
 				}
+
+				FixInvalidTrackReferences(module);
 
 				module.Instruments = LoadInstruments(mo3Stream, module.Header, module.Version);
 				if (module.Instruments == null)
@@ -237,8 +240,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 			mo3Stream.ReadInto(header.ChnPan, 0, 64);
 			mo3Stream.ReadInto(header.SfxMacros, 0, 16);
 
-			mo3Stream.ReadInto(header.FixedMacros[0], 0, 128);
-			mo3Stream.ReadInto(header.FixedMacros[1], 0, 128);
+			// Fixed macros are stored as 128 pairs of bytes
+			byte[] fixedMacros = new byte[256];
+			mo3Stream.ReadInto(fixedMacros, 0, fixedMacros.Length);
+
+			for (int i = 0; i < 128; i++)
+			{
+				header.FixedMacros[0][i] = fixedMacros[i * 2];
+				header.FixedMacros[1][i] = fixedMacros[i * 2 + 1];
+			}
 
 			return mo3Stream.EndOfStream || (header.NumChannels == 0) || (header.NumChannels > 64) || (header.RestartPos > header.NumOrders) ||
 				(header.NumInstruments >= 240) || (header.NumSamples >= 240) ? null : header;
@@ -338,10 +348,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 					{
 						case Effect.Note:
 						{
-							trackRow.Note = effVal;
-
+							// Normal notes are stored as 1-120. Note off (0xff) and
+							// note cut (0xfe) are kept, all other values are note fade
 							if (effVal < 120)
-								trackRow.Note++;
+								trackRow.Note = (byte)(effVal + 1);
+							else if ((effVal == 0xff) || (effVal == 0xfe))
+								trackRow.Note = effVal;
+							else
+								trackRow.Note = 0xfd;
 
 							break;
 						}
@@ -571,12 +585,19 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 		{
 			List<IChunk> loadedChunks = new List<IChunk>();
 
-			while (mo3Stream.Position < (mo3Stream.Length - 8))
+			while ((mo3Stream.Position + 8) <= mo3Stream.Length)
 			{
 				string id = mo3Stream.ReadMark();
 				uint len = mo3Stream.Read_L_UINT32();
 
 				if ((len >= module.MusicSize) || ((module.MusicSize - len) < mo3Stream.Position))
+					return null;
+
+				// Read the whole chunk, so the next one will always be read from the right position
+				byte[] chunkData = new byte[len];
+				mo3Stream.ReadInto(chunkData, 0, chunkData.Length);
+
+				if (mo3Stream.EndOfStream)
 					return null;
 
 				switch (id)
@@ -590,35 +611,62 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 						{
 							case ModuleType.Mtm:
 							{
-								versChunk.Cwtv = (ushort)mo3Stream.Read_L_UINT32();
+								if (len >= 1)
+									versChunk.Cwtv = chunkData[0];
+
 								break;
 							}
 
 							case ModuleType.S3M:
 							{
-								versChunk.Cwtv = (ushort)mo3Stream.Read_L_UINT32();
+								if (len >= 2)
+									versChunk.Cwtv = (ushort)(chunkData[0] | (chunkData[1] << 8));
+
 								break;
 							}
 
 							case ModuleType.Xm:
 							{
-								versChunk.CreatedWithTracker = new byte[len];
-								mo3Stream.ReadInto(versChunk.CreatedWithTracker, 0, versChunk.CreatedWithTracker.Length);
+								versChunk.CreatedWithTracker = chunkData.AsSpan(0, (int)Math.Min(len, 32)).ToArray();
 								break;
 							}
 
 							case ModuleType.It:
 							{
-								versChunk.Cwtv = mo3Stream.Read_L_UINT16();
-								versChunk.Cmwt = mo3Stream.Read_L_UINT16();
+								if (len >= 2)
+									versChunk.Cwtv = (ushort)(chunkData[0] | (chunkData[1] << 8));
+
+								if (len >= 4)
+									versChunk.Cmwt = (ushort)(chunkData[2] | (chunkData[3] << 8));
+
 								break;
 							}
 
 							default:
-								throw new NotImplementedException($"Module type {module.ModuleType} not supported for VERS chunk");
+							{
+								// Not used by the other formats
+								versChunk = null;
+								break;
+							}
 						}
 
-						loadedChunks.Add(versChunk);
+						if (versChunk != null)
+							loadedChunks.Add(versChunk);
+
+						break;
+					}
+
+					case "PRHI":
+					{
+						// Pattern row highlights
+						if (len >= 2)
+						{
+							loadedChunks.Add(new PrhiChunk
+							{
+								RowsPerBeat = chunkData[0],
+								RowsPerMeasure = chunkData[1]
+							});
+						}
 						break;
 					}
 
@@ -626,40 +674,59 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 					{
 						// OpenMpt information chunk. Just load all data as it
 						// and write it back in the saver
-						OmptChunk omptChunk = new OmptChunk
+						loadedChunks.Add(new OmptChunk
 						{
-							Data = new byte[len]
-						};
-
-						mo3Stream.ReadInto(omptChunk.Data, 0, omptChunk.Data.Length);
-
-						loadedChunks.Add(omptChunk);
+							Data = chunkData
+						});
 						break;
 					}
 
 					case "MIDI":
 					{
 						// Fill MIDI config
-						MidiChunk midiChunk = new MidiChunk
+						loadedChunks.Add(new MidiChunk
 						{
-							Data = new byte[len]
-						};
-
-						mo3Stream.ReadInto(midiChunk.Data, 0, midiChunk.Data.Length);
-
-						loadedChunks.Add(midiChunk);
+							Data = chunkData
+						});
 						break;
 					}
 
-					default:
-						throw new NotImplementedException($"Chunk with id {id} not supported");
+					// Unknown chunks are ignored
 				}
-
-				if (mo3Stream.EndOfStream)
-					return null;
 			}
 
 			return loadedChunks.ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make sure all patterns only reference existing tracks. Invalid
+		/// references are changed to point to an empty track
+		/// </summary>
+		/********************************************************************/
+		private void FixInvalidTrackReferences(Mo3Module module)
+		{
+			int numTracks = module.Tracks.Length;
+			bool emptyTrackAdded = false;
+
+			for (int i = 0; i < module.Header.NumPatterns; i++)
+			{
+				for (int j = 0; j < module.Header.NumChannels; j++)
+				{
+					if (module.PatternInfo.Sequences[i, j] >= numTracks)
+					{
+						if (!emptyTrackAdded)
+						{
+							module.Tracks = module.Tracks.Append(new Track { Rows = new List<TrackRow>() }).ToArray();
+							emptyTrackAdded = true;
+						}
+
+						module.PatternInfo.Sequences[i, j] = (ushort)numTracks;
+					}
+				}
+			}
 		}
 
 

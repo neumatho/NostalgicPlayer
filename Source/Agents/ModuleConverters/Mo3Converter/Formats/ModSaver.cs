@@ -225,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 				patternData[offset + 2] = (byte)((trkRow.Instrument & 0x0f) << 4);
 				patternData[offset + 3] = 0x00;
 
-				if (trkRow.Note != 0)
+				if ((trkRow.Note != 0) && (trkRow.Note <= periods.Length))
 				{
 					ushort period = periods[trkRow.Note - 1];
 					patternData[offset] |= (byte)((period & 0x0f00) >> 8);

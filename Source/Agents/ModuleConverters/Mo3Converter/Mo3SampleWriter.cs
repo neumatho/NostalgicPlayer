@@ -55,6 +55,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 					sampleInfo.SampleData = ReadSampleData(moduleStream, (int)length);
 					if (sampleInfo.SampleData == null)
 						return null;
+
+					if (unsigned)
+						ConvertSample(sampleInfo.SampleData, (sample.Flags & SampleInfoFlag._16Bit) != 0);
 				}
 				else if (sample.CompressedSize > 0)
 				{
@@ -75,13 +78,21 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 
 				if ((sample.CompressedSize < 0) && ((i + sample.CompressedSize) > 0))
 				{
-					// Duplicate sample
-					byte[] sourceSample = decodeSampleInfo[i + sample.CompressedSize].SampleData;
+					// Duplicate sample. The compressed size holds the relative
+					// sample number (1-based) of the sample to copy
+					DecodeSampleInfo sourceInfo = decodeSampleInfo[i + sample.CompressedSize - 1];
+					byte[] sourceSample = sourceInfo.SampleData;
 
 					if (sourceSample != null)
 					{
 						sampleInfo.SampleData = new byte[sourceSample.Length];
 						Array.Copy(sourceSample, sampleInfo.SampleData, sourceSample.Length);
+
+						// Take over the waveform properties, as OpenMPT does
+						const SampleInfoFlag FormatFlags = SampleInfoFlag._16Bit | SampleInfoFlag.Stereo;
+
+						sample.Length = sourceInfo.SampleHeader.Length;
+						sample.Flags = (sample.Flags & ~FormatFlags) | (sourceInfo.SampleHeader.Flags & FormatFlags);
 					}
 					else
 					{

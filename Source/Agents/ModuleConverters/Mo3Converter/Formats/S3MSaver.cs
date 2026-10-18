@@ -225,8 +225,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		{
 			List<ushort> paraPointers = new List<ushort>();
 
-			bool frequencyInHertz = (module.Version >= 5) || ((module.Header.Flags & HeaderFlag.LinearSlides) == 0);
-
 			for (int i = 0; i < module.Header.NumSamples; i++)
 			{
 				paraPointers.Add((ushort)(converterStream.Position / 16));
@@ -252,7 +250,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 					converterStream.Write_UINT8(0);
 					converterStream.Write_UINT8(0);
 
-					converterStream.Write_L_UINT32(frequencyInHertz ? sample.FreqFineTune : (uint)(8363.0 * Math.Pow(2.0, ((int)sample.FreqFineTune + 1408) / 1536.0)));
+					converterStream.Write_L_UINT32(FormatHelper.GetC5Speed(module, sample));
 					converterStream.Write(Enumerable.Repeat<byte>(0, 12).ToArray());	// Padding
 
 					converterStream.WriteString(sample.SampleName, 28);
@@ -298,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 					converterStream.Write_UINT8(flags);
 
-					converterStream.Write_L_UINT32(sample.FreqFineTune);
+					converterStream.Write_L_UINT32(FormatHelper.GetC5Speed(module, sample));
 					converterStream.Write_L_UINT32(0);		// Padding
 					converterStream.Write_L_UINT16(0);		// Int:Gp
 					converterStream.Write_L_UINT16(0);		// Int:512
@@ -353,17 +351,19 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 							byte ctrl = 0x00;
 
-							byte note = 0;
+							// 0xff means no note in S3M
+							byte note = 0xff;
 							if (row.Note != 0)
 							{
-								note = row.Note;
 								ctrl |= 0x20;
 
-								if ((note != 0xff) && (note != 0xfe))
+								if (row.Note <= 120)
 								{
-									note--;
+									note = (byte)(row.Note - 1);
 									note = (byte)(((note / 12) << 4) | (note % 12));
 								}
+								else if (row.Note == 0xfe)
+									note = 0xfe;		// Note cut
 							}
 
 							byte instr = row.Instrument;

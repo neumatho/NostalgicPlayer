@@ -28,16 +28,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		{
 			errorMessage = string.Empty;
 
-			if (module.Chunks.Length > 1)
-				throw new NotImplementedException("Chunks in XM");
-
-			if (module.Plugins.Length > 0)
-				throw new NotImplementedException("Plugins in XM");
-
 			WriteHeader(module, converterStream);
 			WritePositionList(module, converterStream);
 			WritePatterns(module, converterStream);
-			return WriteInstrumentAndSampleInfoAndSampleData(module, moduleStream, converterStream);
+
+			if (!WriteInstrumentAndSampleInfoAndSampleData(module, moduleStream, converterStream))
+				return false;
+
+			WriteExtensions(module, converterStream);
+
+			return true;
 		}
 		#endregion
 
@@ -483,53 +483,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			if (decodeSampleInfo == null)
 				return false;
 
-			// Start to find minimum sample number for each instrument.
-			// This is needed, because sometimes in the sample maps,
-			// there are gaps between instruments. E.g, instrument 1
-			// may reference to the first 4 samples in the sample map.
-			// Instrument 2 reference to sample 7. Therefore sample
-			// 5 to 6 are stored in instrument 1
-			int[] firstSampleNumbers = new int[module.Header.NumInstruments];
+			List<int>[] instrumentSamples = FindInstrumentSamples(module);
 
 			for (int i = 0; i < module.Header.NumInstruments; i++)
 			{
-				Instrument instr = module.Instruments[i];
-
-				// Only first 96 values are used in XM. Also skip
-				// note values and only use sample numbers
-				int minSampleNum = int.MaxValue;
-
-				for (int j = 1; j < 96 * 2; j += 2)
-				{
-					if ((instr.SampleMap[j] != 0xffff) && (instr.SampleMap[j] < minSampleNum))
-						minSampleNum = instr.SampleMap[j];
-				}
-
-				firstSampleNumbers[i] = minSampleNum == int.MaxValue ? -1 : minSampleNum;
-			}
-
-			for (int i = 0; i < module.Header.NumInstruments; i++)
-			{
-				int numberOfSamples = 0;
-
-				if (firstSampleNumbers[i] != -1)
-				{
-					int nextInstrumentSampleNumber = -1;
-
-					for (int j = i + 1; j < module.Header.NumInstruments; j++)
-					{
-						if (firstSampleNumbers[j] != -1)
-						{
-							nextInstrumentSampleNumber = firstSampleNumbers[j];
-							break;
-						}
-					}
-
-					if (nextInstrumentSampleNumber == -1)
-						nextInstrumentSampleNumber = module.Header.NumSamples;
-
-					numberOfSamples = nextInstrumentSampleNumber - firstSampleNumbers[i];
-				}
+				List<int> samples = instrumentSamples[i];
+				int numberOfSamples = samples.Count;
 
 				uint headerSize = 29;
 
@@ -549,8 +508,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 					// Write rest of instrument header
 					converterStream.Write_L_UINT32(0x28);		// Sample header size. This number does not make sense at all, but it seems to be a common value. LibXmp ignore this value anyway
 
+					// Only first 96 values are used in XM. The sample map uses global
+					// sample numbers, but XM uses the index into the instrument samples
 					for (int j = 1; j < 96 * 2; j += 2)
-						converterStream.Write_UINT8((byte)(instr.SampleMap[j] - firstSampleNumbers[i]));
+					{
+						// Indexes outside the instrument samples means "no sample"
+						int index = samples.IndexOf(instr.SampleMap[j]);
+						converterStream.Write_UINT8(index < 0 ? (byte)0xff : (byte)index);
+					}
 
 					converterStream.WriteArray_L_INT16s(instr.VolEnv.Points, 24);
 					converterStream.WriteArray_L_INT16s(instr.PanEnv.Points, 24);
@@ -600,18 +565,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 					converterStream.Write(Enumerable.Repeat<byte>(0, 22).ToArray());	// Reserved
 
 					// Now take the sample headers
-					int firstSample = firstSampleNumbers[i];
-
 					for (int j = 0; j < numberOfSamples; j++)
 					{
-						Sample sample = module.Samples[firstSample + j];
+						Sample sample = module.Samples[samples[j]];
 
 						uint multiply = (sample.Flags & SampleInfoFlag._16Bit) != 0 ? 2U : 1;
 						multiply *= (sample.Flags & SampleInfoFlag.Stereo) != 0 ? 2U : 1;
 
 						converterStream.Write_L_UINT32(sample.Length * multiply);
 
-						if ((sample.Flags & SampleInfoFlag.Loop) != 0)
+						// Loop points are kept, even if the loop is not enabled
+						if (sample.LoopEnd > sample.LoopStart)
 						{
 							converterStream.Write_L_UINT32(sample.LoopStart * multiply);
 							converterStream.Write_L_UINT32((sample.LoopEnd - sample.LoopStart) * multiply);
@@ -627,11 +591,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 						flag = 0x00;
 
+						// Loop type is a value, not bits. Setting both would make
+						// OpenMPT think the module is made with an old ModPlug version
 						if ((sample.Flags & SampleInfoFlag.Loop) != 0)
-							flag |= 0x01;
-
-						if ((sample.Flags & SampleInfoFlag.PingPongLoop) != 0)
-							flag |= 0x02;
+							flag |= (sample.Flags & SampleInfoFlag.PingPongLoop) != 0 ? (byte)0x02 : (byte)0x01;
 
 						if ((sample.Flags & SampleInfoFlag._16Bit) != 0)
 							flag |= 0x10;
@@ -641,9 +604,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 						converterStream.Write_UINT8(flag);
 
-						converterStream.Write_UINT8((byte)sample.Panning);
+						converterStream.Write_UINT8(sample.Panning > 256 ? (byte)128 : (byte)Math.Min(sample.Panning, (ushort)255));
 						converterStream.Write_INT8(sample.Transpose);
-						converterStream.Write_UINT8(0);		// Reserved
+
+						// FastTracker 2 stores the length of the sample name here. If
+						// not, OpenMPT thinks the module is made with an old ModPlug version
+						int nameLength = Math.Min(sample.SampleName.Length, 22);
+						while ((nameLength > 0) && ((sample.SampleName[nameLength - 1] == 0x20) || (sample.SampleName[nameLength - 1] == 0x00)))
+							nameLength--;
+
+						converterStream.Write_UINT8((byte)nameLength);
 
 						converterStream.WriteString(sample.SampleName, 22, 0x20);
 					}
@@ -651,7 +621,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 					// Write sample data
 					for (int j = 0; j < numberOfSamples; j++)
 					{
-						DecodeSampleInfo sampleInfo = decodeSampleInfo[firstSample + j];
+						DecodeSampleInfo sampleInfo = decodeSampleInfo[samples[j]];
 
 						if ((sampleInfo.SampleData != null) && (sampleInfo.SampleData.Length > 0))
 						{
@@ -688,6 +658,115 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find out which samples belong to each instrument
+		/// </summary>
+		/********************************************************************/
+		private List<int>[] FindInstrumentSamples(Mo3Module module)
+		{
+			int numInstruments = module.Header.NumInstruments;
+
+			List<int>[] result = new List<int>[numInstruments];
+			for (int i = 0; i < numInstruments; i++)
+				result[i] = new List<int>();
+
+			// In XM modules, the global volume of each sample holds the
+			// instrument number the sample belongs to
+			if (module.Samples.All(x => (x.GlobalVol >= 1) && (x.GlobalVol <= numInstruments)))
+			{
+				for (int i = 0; i < module.Header.NumSamples; i++)
+					result[module.Samples[i].GlobalVol - 1].Add(i);
+
+				return result;
+			}
+
+			// Fallback: Find minimum sample number for each instrument.
+			// This is needed, because sometimes in the sample maps,
+			// there are gaps between instruments. E.g, instrument 1
+			// may reference to the first 4 samples in the sample map.
+			// Instrument 2 reference to sample 7. Therefore sample
+			// 5 to 6 are stored in instrument 1
+			int[] firstSampleNumbers = new int[numInstruments];
+
+			for (int i = 0; i < numInstruments; i++)
+			{
+				Instrument instr = module.Instruments[i];
+
+				// Only first 96 values are used in XM. Also skip
+				// note values and only use sample numbers
+				int minSampleNum = int.MaxValue;
+
+				for (int j = 1; j < 96 * 2; j += 2)
+				{
+					if ((instr.SampleMap[j] != 0xffff) && (instr.SampleMap[j] < minSampleNum))
+						minSampleNum = instr.SampleMap[j];
+				}
+
+				firstSampleNumbers[i] = minSampleNum == int.MaxValue ? -1 : minSampleNum;
+			}
+
+			for (int i = 0; i < numInstruments; i++)
+			{
+				if (firstSampleNumbers[i] != -1)
+				{
+					int nextInstrumentSampleNumber = -1;
+
+					for (int j = i + 1; j < numInstruments; j++)
+					{
+						if (firstSampleNumbers[j] != -1)
+						{
+							nextInstrumentSampleNumber = firstSampleNumbers[j];
+							break;
+						}
+					}
+
+					if (nextInstrumentSampleNumber == -1)
+						nextInstrumentSampleNumber = module.Header.NumSamples;
+
+					for (int j = firstSampleNumbers[i]; j < nextInstrumentSampleNumber; j++)
+						result[i].Add(j);
+				}
+			}
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write all the OpenMPT extensions which are stored after the
+		/// sample data
+		/// </summary>
+		/********************************************************************/
+		private void WriteExtensions(Mo3Module module, ConverterStream converterStream)
+		{
+			// Only write the song message for OpenMPT made modules, since
+			// OpenMPT otherwise thinks the module is made by an old ModPlug version
+			if ((module.FindChunk<OmptChunk>() != null) && (module.Header.SongMessage.Length > 0))
+			{
+				converterStream.WriteMark("text");
+				converterStream.Write_L_UINT32((uint)module.Header.SongMessage.Length);
+				converterStream.Write(module.Header.SongMessage, 0, module.Header.SongMessage.Length);
+			}
+
+			if (module.FindChunk<MidiChunk>() != null)
+			{
+				byte[] midiConfig = OpenMptExtensions.BuildMidiConfig(module);
+
+				converterStream.WriteMark("MIDI");
+				converterStream.Write_L_UINT32((uint)midiConfig.Length);
+				converterStream.Write(midiConfig, 0, midiConfig.Length);
+			}
+
+			OpenMptExtensions.WriteOmptHead(module, converterStream);
+			OpenMptExtensions.WritePlugins(module, converterStream);
+			OpenMptExtensions.WriteOmptTail(module, converterStream);
 		}
 		#endregion
 	}
