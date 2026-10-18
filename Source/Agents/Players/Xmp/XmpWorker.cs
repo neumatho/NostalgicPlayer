@@ -727,12 +727,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			{
 				leftBuffer = new short[bufferSize];
 				rightBuffer = new short[bufferSize];
+			}
 
-				if (realSurroundEnabled)
-				{
-					leftRearBuffer = new short[bufferSize];
-					rightRearBuffer = new short[bufferSize];
-				}
+			// The rear buffers are allocated separately, since the number of
+			// channels can change between duration calculation and playing
+			if (realSurroundEnabled && ((leftRearBuffer == null) || (leftRearBuffer.Length < bufferSize)))
+			{
+				leftRearBuffer = new short[bufferSize];
+				rightRearBuffer = new short[bufferSize];
 			}
 
 			if (realSurroundEnabled)

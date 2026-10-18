@@ -661,12 +661,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 			{
 				leftBuffer = new short[samplesPerTick];
 				rightBuffer = new short[samplesPerTick];
+			}
 
-				if (realSurroundEnabled)
-				{
-					leftRearBuffer = new short[samplesPerTick];
-					rightRearBuffer = new short[samplesPerTick];
-				}
+			// The rear buffers are allocated separately, since the number of
+			// channels can change between duration calculation and playing
+			if (realSurroundEnabled && ((leftRearBuffer == null) || (leftRearBuffer.Length < samplesPerTick)))
+			{
+				leftRearBuffer = new short[samplesPerTick];
+				rightRearBuffer = new short[samplesPerTick];
 			}
 
 			if (realSurroundEnabled)
