@@ -12,13 +12,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources.ModLand;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
@@ -986,7 +985,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 							// Module already in list - play it if this is the first file and playImmediately is set
 							if (playImmediately && !firstFileHandled)
 							{
-								ModuleListItem existingItem = mainWindowForm.FindModuleInList(localPath);
+								ModuleListListItem existingItem = mainWindowForm.FindModuleInList(localPath);
 								if (existingItem != null)
 								{
 									mainWindowForm.SelectAndPlayModule(existingItem);
