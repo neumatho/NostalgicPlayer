@@ -409,6 +409,14 @@ namespace Polycode.NostalgicPlayer.Controls.Forms
 				case WM.SETTEXT:
 				case WM.SETICON:
 				{
+					// The icon has changed, so drop the cached small version
+					// to have it recreated from the new icon on next draw
+					if (((WM)m.Msg == WM.SETICON) && (smallIcon != null))
+					{
+						smallIcon.Dispose();
+						smallIcon = null;
+					}
+
 					// Let default change the value, then redraw our non-client area
 					base.WndProc(ref m);
 
