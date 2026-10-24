@@ -15,6 +15,7 @@ using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
+using Polycode.NostalgicPlayer.Controls.Types;
 using Polycode.NostalgicPlayer.Platform.Native;
 
 namespace Polycode.NostalgicPlayer.Controls.Containers
@@ -383,6 +384,30 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 				if (fontConfiguration != null)
 					fontConfiguration.FontChanged += FontConfiguration_FontChanged;
+
+				Invalidate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Where to place the tab headers. Only top and bottom are
+		/// supported, which is why the inherited Alignment property is
+		/// hidden
+		/// </summary>
+		/********************************************************************/
+		[Category("Behavior")]
+		[Description("Where the tab headers are placed.")]
+		[DefaultValue(TabPlacement.Top)]
+		public TabPlacement TabPlacement
+		{
+			get => Alignment == TabAlignment.Bottom ? TabPlacement.Bottom : TabPlacement.Top;
+
+			set
+			{
+				Alignment = value == TabPlacement.Bottom ? TabAlignment.Bottom : TabAlignment.Top;
 
 				Invalidate();
 			}
@@ -867,8 +892,21 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			// Find the start on the first tab
 			Rectangle rect = Rectangle.Empty;
 
-			int tabTop = 2;
-			int tabHeight = DisplayRectangle.Y - tabTop;
+			Rectangle displayRect = DisplayRectangle;
+
+			int tabTop, tabHeight;
+
+			if (TabPlacement == TabPlacement.Bottom)
+			{
+				tabTop = displayRect.Bottom;
+				tabHeight = ClientSize.Height - 2 - tabTop;
+			}
+			else
+			{
+				tabTop = 2;
+				tabHeight = displayRect.Y - tabTop;
+			}
+
 			int x = 2;
 
 			using (Graphics g = CreateGraphics())
@@ -1051,29 +1089,40 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 			int realIndex = visibleTabIndices[visibleIndex];
 			bool isSelected = (realIndex == SelectedIndex);
+			bool atBottom = TabPlacement == TabPlacement.Bottom;
 
 			// Selected tab is a little bit bigger than the rest
 			if (isSelected)
 			{
 				rect.X -= 2;
 				rect.Width += 4;
-				rect.Height += rect.Y;
-				rect.Y = 0;
+
+				if (atBottom)
+					rect.Height = ClientSize.Height - rect.Y;
+				else
+				{
+					rect.Height += rect.Y;
+					rect.Y = 0;
+				}
 			}
 
 			TabStateColors tabStateColors = GetTabColors(visibleIndex);
 
-			using (GraphicsPath tabPath = CreateTabPath(new Rectangle(rect.X, rect.Y, rect.Width, rect.Height - 1)))
+			using (GraphicsPath tabPath = CreateTabPath(new Rectangle(rect.X, rect.Y, rect.Width, rect.Height - 1), atBottom))
 			{
 				if (isSelected)
 				{
-					using (GraphicsPath fullPath = CreateTabPath(rect))
+					// The full path goes one pixel further into the page area,
+					// so the selected tab covers the border line
+					Rectangle fullRect = atBottom ? new Rectangle(rect.X, rect.Y - 1, rect.Width, rect.Height) : rect;
+
+					using (GraphicsPath fullPath = CreateTabPath(fullRect, atBottom))
 					{
-						DrawTabBackground(g, rect, fullPath, tabStateColors);
+						DrawTabBackground(g, rect, fullPath, tabStateColors, atBottom);
 					}
 				}
 				else
-					DrawTabBackground(g, rect, tabPath, tabStateColors);
+					DrawTabBackground(g, rect, tabPath, tabStateColors, atBottom);
 
 				DrawTabBorder(g, tabPath);
 			}
@@ -1095,14 +1144,19 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Draw a single tab background
+		/// Draw a single tab background. The gradient starts at the outer
+		/// edge of the tab, so it is flipped when the tabs are at the
+		/// bottom
 		/// </summary>
 		/********************************************************************/
-		private void DrawTabBackground(Graphics g, Rectangle rect, GraphicsPath path, TabStateColors tabStateColors)
+		private void DrawTabBackground(Graphics g, Rectangle rect, GraphicsPath path, TabStateColors tabStateColors, bool atBottom)
 		{
 			g.SmoothingMode = SmoothingMode.None;
 
-			using (LinearGradientBrush brush = new LinearGradientBrush(rect, tabStateColors.BackgroundStartColor, tabStateColors.BackgroundStopColor, LinearGradientMode.Vertical))
+			Color topColor = atBottom ? tabStateColors.BackgroundStopColor : tabStateColors.BackgroundStartColor;
+			Color bottomColor = atBottom ? tabStateColors.BackgroundStartColor : tabStateColors.BackgroundStopColor;
+
+			using (LinearGradientBrush brush = new LinearGradientBrush(rect, topColor, bottomColor, LinearGradientMode.Vertical))
 			{
 				g.FillPath(brush, path);
 			}
@@ -1141,11 +1195,11 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Create a GraphicsPath for a tab shape with rounded top corners
-		/// and a flat bottom edge
+		/// Create a GraphicsPath for a tab shape with rounded corners on
+		/// the outer edge and an open edge towards the page area
 		/// </summary>
 		/********************************************************************/
-		private GraphicsPath CreateTabPath(Rectangle rect)
+		private GraphicsPath CreateTabPath(Rectangle rect, bool atBottom)
 		{
 			GraphicsPath path = new GraphicsPath();
 
@@ -1153,19 +1207,38 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 			int right = rect.Right - 1;
 			int bottom = rect.Bottom;
 
-			// Start at bottom-left and draw up the left side
-			path.AddLine(rect.Left, bottom, rect.Left, rect.Top + CornerRadius);
+			if (atBottom)
+			{
+				// Start at top-left and draw down the left side
+				path.AddLine(rect.Left, rect.Top, rect.Left, bottom - CornerRadius);
 
-			// Top-left arc (rounded corner)
-			path.AddArc(rect.Left, rect.Top, diameter, diameter, 180, 90);
+				// Bottom-left arc (rounded corner)
+				path.AddArc(rect.Left, bottom - diameter, diameter, diameter, 180, -90);
 
-			// Top-right arc (rounded corner) - this also creates the top line
-			path.AddArc(right - diameter, rect.Top, diameter, diameter, 270, 90);
+				// Bottom-right arc (rounded corner) - this also creates the bottom line
+				path.AddArc(right - diameter, bottom - diameter, diameter, diameter, 90, -90);
 
-			// Right side down to bottom
-			path.AddLine(right, rect.Top + CornerRadius, right, bottom);
+				// Right side up to top
+				path.AddLine(right, bottom - CornerRadius, right, rect.Top);
 
-			// Path is not closed, so no bottom line is drawn
+				// Path is not closed, so no top line is drawn
+			}
+			else
+			{
+				// Start at bottom-left and draw up the left side
+				path.AddLine(rect.Left, bottom, rect.Left, rect.Top + CornerRadius);
+
+				// Top-left arc (rounded corner)
+				path.AddArc(rect.Left, rect.Top, diameter, diameter, 180, 90);
+
+				// Top-right arc (rounded corner) - this also creates the top line
+				path.AddArc(right - diameter, rect.Top, diameter, diameter, 270, 90);
+
+				// Right side down to bottom
+				path.AddLine(right, rect.Top + CornerRadius, right, bottom);
+
+				// Path is not closed, so no bottom line is drawn
+			}
 
 			return path;
 		}
@@ -1199,6 +1272,7 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 				nameof(RightToLeft),
 				nameof(DrawMode),
 				nameof(Appearance),
+				nameof(Alignment),
 				nameof(HotTrack),
 				nameof(TabPages),
 			];
