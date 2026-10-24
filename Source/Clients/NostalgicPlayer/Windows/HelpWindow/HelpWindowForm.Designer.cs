@@ -29,27 +29,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpWindowForm));
-			this.fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(this.components);
-			this.SuspendLayout();
+			SuspendLayout();
 			// 
 			// HelpWindowForm
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(844, 816);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(860, 855);
-			this.Name = "HelpWindowForm";
-			this.Palette = this.fontPalette;
-			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.ResumeLayout(false);
+			ClientSize = new System.Drawing.Size(844, 816);
+			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+			MinimizeBox = false;
+			MinimumSize = new System.Drawing.Size(860, 855);
+			Name = "HelpWindowForm";
+			ResumeLayout(false);
 
 		}
 
 		#endregion
-
-		private Kit.Gui.Components.FontPalette fontPalette;
 	}
 }

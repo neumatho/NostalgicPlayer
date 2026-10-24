@@ -6,6 +6,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -19,16 +20,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 	/// </summary>
 	public class SidPlayGuiSettings : IAgentGuiSettings
 	{
-		private readonly IControlFactory controlFactory;
+		private readonly IControlCreatorService controlCreatorService;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SidPlayGuiSettings(IControlFactory controlFactory)
+		public SidPlayGuiSettings(IControlCreatorService controlCreatorService)
 		{
-			this.controlFactory = controlFactory;
+			this.controlCreatorService = controlCreatorService;
 		}
 
 		#region IAgentGuiSettings implementation
@@ -58,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		/********************************************************************/
 		public ISettingsControl GetSettingsControl()
 		{
-			return controlFactory.GetInstance<SettingsControl>();
+			return controlCreatorService.GetInstance<SettingsControl>();
 		}
 
 

@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Events;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.External.Download;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListItems
@@ -14,8 +15,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 	/// <summary>
 	/// Render a single play list item
 	/// </summary>
-	public partial class AudiusPlaylistListItemControl : UserControl, IAudiusMusicListItem
+	public partial class AudiusPlaylistListItemControl : UserControl, IDependencyInjectionControl, IAudiusMusicListItem
 	{
+		private IControlCreatorService controlCreatorService;
+
 		private AudiusMusicListItem item;
 
 		/********************************************************************/
@@ -26,6 +29,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 		public AudiusPlaylistListItemControl()
 		{
 			InitializeComponent();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the control
+		///
+		/// Called from FormCreatorService
+		/// </summary>
+		/********************************************************************/
+		public void InitializeControl(IControlCreatorService controlCreatorService)
+		{
+			this.controlCreatorService = controlCreatorService;
 		}
 
 		#region IAudiusListItem implementation
@@ -54,33 +71,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 
 			if (item.Tracks != null)
 			{
-				tracksFlowLayoutPanel.SuspendLayout();
+				tracksFlowLayoutPanel.BeginUpdate();
 
 				try
 				{
 					foreach (AudiusMusicListItem trackItem in item.Tracks.Take(AudiusConstants.MaxTracksPerPlaylist))
 					{
-						IAudiusMusicListItem trackListItem = new AudiusTrackListItemControl();
+						IAudiusMusicListItem trackListItem = controlCreatorService.GetInstance<AudiusTrackListItemControl>();
 
 						trackListItem.Initialize(trackItem);
 
 						trackListItem.PlayTracks += ListItem_PlayTracks;
 						trackListItem.AddTracks += ListItem_AddTracks;
 
-						tracksFlowLayoutPanel.Controls.Add(trackListItem.Control);
+						tracksFlowLayoutPanel.AddControl(trackListItem.Control);
 					}
 
 					// Calculate the height of the first 6 tracks
 					int trackHeight = 0;
 
-					for (int i = Math.Min(6, tracksFlowLayoutPanel.Controls.Count) - 1; i >= 0; i--)
-						trackHeight += tracksFlowLayoutPanel.Controls[i].Height;
+					for (int i = Math.Min(6, tracksFlowLayoutPanel.FlowControls.Count) - 1; i >= 0; i--)
+						trackHeight += tracksFlowLayoutPanel.FlowControls[i].Height;
 
 					Height = audiusMusicListItemControl.Height + 2 + trackHeight;
 				}
 				finally
 				{
-					tracksFlowLayoutPanel.ResumeLayout();
+					tracksFlowLayoutPanel.EndUpdate();
 				}
 
 				// This need to be done after the layout is resumed, otherwise it will not work correctly
@@ -193,16 +210,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.ListIte
 		/********************************************************************/
 		private void SetItemWidths()
 		{
-			tracksFlowLayoutPanel.SuspendLayout();
+			tracksFlowLayoutPanel.BeginUpdate();
 
 			try
 			{
-				foreach (Control ctrl in tracksFlowLayoutPanel.Controls)
-					ctrl.Width = tracksFlowLayoutPanel.ClientSize.Width - ctrl.Margin.Horizontal;
+				foreach (Control ctrl in tracksFlowLayoutPanel.FlowControls)
+					ctrl.Width = tracksFlowLayoutPanel.ViewportSize.Width - ctrl.Margin.Horizontal;
 			}
 			finally
 			{
-				tracksFlowLayoutPanel.ResumeLayout();
+				tracksFlowLayoutPanel.EndUpdate();
 			}
 		}
 		#endregion

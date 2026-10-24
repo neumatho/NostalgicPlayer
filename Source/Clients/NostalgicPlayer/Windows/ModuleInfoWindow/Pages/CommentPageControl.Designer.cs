@@ -28,48 +28,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		/// </summary>
 		private void InitializeComponent()
 		{
-			commentGroup = new Krypton.Toolkit.KryptonGroup();
-			moduleInfoCommentReadOnlyTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.ReadOnlyTextBox();
-			((System.ComponentModel.ISupportInitialize)commentGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)commentGroup.Panel).BeginInit();
-			commentGroup.Panel.SuspendLayout();
+			commentText = new Polycode.NostalgicPlayer.Controls.Lists.NostalgicText();
 			SuspendLayout();
 			// 
-			// commentGroup
+			// commentText
 			// 
-			commentGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			commentGroup.Location = new System.Drawing.Point(8, 8);
-			commentGroup.Name = "commentGroup";
-			// 
-			// 
-			// 
-			commentGroup.Panel.Controls.Add(moduleInfoCommentReadOnlyTextBox);
-			commentGroup.Size = new System.Drawing.Size(266, 142);
-			commentGroup.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			commentGroup.TabIndex = 0;
-			// 
-			// moduleInfoCommentReadOnlyTextBox
-			// 
-			moduleInfoCommentReadOnlyTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			moduleInfoCommentReadOnlyTextBox.Location = new System.Drawing.Point(0, 0);
-			moduleInfoCommentReadOnlyTextBox.Name = "moduleInfoCommentReadOnlyTextBox";
-			moduleInfoCommentReadOnlyTextBox.Size = new System.Drawing.Size(266, 142);
-			moduleInfoCommentReadOnlyTextBox.TabIndex = 0;
+			commentText.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			commentText.Location = new System.Drawing.Point(8, 8);
+			commentText.Name = "commentText";
+			commentText.Size = new System.Drawing.Size(266, 142);
+			commentText.TabIndex = 0;
 			// 
 			// CommentPageControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			Controls.Add(commentGroup);
+			Controls.Add(commentText);
 			Name = "CommentPageControl";
 			Size = new System.Drawing.Size(282, 158);
-			((System.ComponentModel.ISupportInitialize)commentGroup.Panel).EndInit();
-			commentGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)commentGroup).EndInit();
 			ResumeLayout(false);
 		}
 
 		#endregion
-		private Krypton.Toolkit.KryptonGroup commentGroup;
-		private Controls.ReadOnlyTextBox moduleInfoCommentReadOnlyTextBox;
+		private Polycode.NostalgicPlayer.Controls.Lists.NostalgicText commentText;
 	}
 }

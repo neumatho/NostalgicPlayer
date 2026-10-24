@@ -29,11 +29,7 @@
 		private void InitializeComponent()
 		{
 			audiusMusicListItemControl = new AudiusMusicListItemControl();
-			tracksGroup = new Krypton.Toolkit.KryptonGroup();
-			tracksFlowLayoutPanel = new Polycode.NostalgicPlayer.Kit.Gui.Controls.ImprovedFlowLayoutPanel();
-			((System.ComponentModel.ISupportInitialize)tracksGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)tracksGroup.Panel).BeginInit();
-			tracksGroup.Panel.SuspendLayout();
+			tracksFlowLayoutPanel = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicFlowLayoutPanel();
 			SuspendLayout();
 			// 
 			// audiusMusicListItemControl
@@ -46,27 +42,14 @@
 			audiusMusicListItemControl.Size = new System.Drawing.Size(463, 144);
 			audiusMusicListItemControl.TabIndex = 0;
 			// 
-			// tracksGroup
-			// 
-			tracksGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			tracksGroup.Location = new System.Drawing.Point(0, 143);
-			tracksGroup.Name = "tracksGroup";
-			// 
-			// 
-			// 
-			tracksGroup.Panel.Controls.Add(tracksFlowLayoutPanel);
-			tracksGroup.Size = new System.Drawing.Size(463, 114);
-			tracksGroup.TabIndex = 1;
-			// 
 			// tracksFlowLayoutPanel
 			// 
-			tracksFlowLayoutPanel.AutoScroll = true;
-			tracksFlowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			tracksFlowLayoutPanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			tracksFlowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			tracksFlowLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			tracksFlowLayoutPanel.Location = new System.Drawing.Point(0, 143);
 			tracksFlowLayoutPanel.Name = "tracksFlowLayoutPanel";
-			tracksFlowLayoutPanel.Size = new System.Drawing.Size(461, 112);
-			tracksFlowLayoutPanel.TabIndex = 0;
+			tracksFlowLayoutPanel.Size = new System.Drawing.Size(463, 114);
+			tracksFlowLayoutPanel.TabIndex = 1;
 			tracksFlowLayoutPanel.WrapContents = false;
 			tracksFlowLayoutPanel.Resize += TrackFlowLayout_Resize;
 			// 
@@ -74,21 +57,17 @@
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
-			Controls.Add(tracksGroup);
+			Controls.Add(tracksFlowLayoutPanel);
 			Controls.Add(audiusMusicListItemControl);
 			DoubleBuffered = true;
 			Name = "AudiusPlaylistListItemControl";
 			Size = new System.Drawing.Size(463, 257);
-			((System.ComponentModel.ISupportInitialize)tracksGroup.Panel).EndInit();
-			tracksGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)tracksGroup).EndInit();
 			ResumeLayout(false);
 		}
 
 		#endregion
 
 		private AudiusMusicListItemControl audiusMusicListItemControl;
-		private Krypton.Toolkit.KryptonGroup tracksGroup;
-		private Kit.Gui.Controls.ImprovedFlowLayoutPanel tracksFlowLayoutPanel;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicFlowLayoutPanel tracksFlowLayoutPanel;
 	}
 }

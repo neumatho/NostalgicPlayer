@@ -29,41 +29,32 @@
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			controlGroup = new Krypton.Toolkit.KryptonGroup();
-			handleLabel = new Krypton.Toolkit.KryptonLabel();
-			nameLabel = new Krypton.Toolkit.KryptonLabel();
-			bigBoldFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			positionLabel = new Krypton.Toolkit.KryptonLabel();
-			bigFontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
+			controlBox = new Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox();
+			handleLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			nameLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			bigBoldFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
+			positionLabel = new Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel();
+			bigFontConfiguration = new Polycode.NostalgicPlayer.Controls.Components.FontConfiguration(components);
 			itemPictureBox = new System.Windows.Forms.PictureBox();
-			separatorGroup = new Krypton.Toolkit.KryptonGroup();
-			showInfoButton = new Krypton.Toolkit.KryptonButton();
-			fontPalette = new Polycode.NostalgicPlayer.Kit.Gui.Components.FontPalette(components);
-			((System.ComponentModel.ISupportInitialize)controlGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).BeginInit();
-			controlGroup.Panel.SuspendLayout();
+			separator = new Polycode.NostalgicPlayer.Controls.Separators.NostalgicSeparator();
+			showInfoButton = new Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton();
+			controlBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)itemPictureBox).BeginInit();
-			((System.ComponentModel.ISupportInitialize)separatorGroup).BeginInit();
-			((System.ComponentModel.ISupportInitialize)separatorGroup.Panel).BeginInit();
 			SuspendLayout();
 			// 
-			// controlGroup
+			// controlBox
 			// 
-			controlGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-			controlGroup.Location = new System.Drawing.Point(0, 0);
-			controlGroup.Name = "controlGroup";
-			// 
-			// 
-			// 
-			controlGroup.Panel.Controls.Add(handleLabel);
-			controlGroup.Panel.Controls.Add(nameLabel);
-			controlGroup.Panel.Controls.Add(positionLabel);
-			controlGroup.Panel.Controls.Add(itemPictureBox);
-			controlGroup.Panel.Controls.Add(separatorGroup);
-			controlGroup.Panel.Controls.Add(showInfoButton);
-			controlGroup.Size = new System.Drawing.Size(463, 144);
-			controlGroup.StateCommon.Back.Color1 = System.Drawing.Color.White;
-			controlGroup.TabIndex = 0;
+			controlBox.Controls.Add(handleLabel);
+			controlBox.Controls.Add(nameLabel);
+			controlBox.Controls.Add(positionLabel);
+			controlBox.Controls.Add(itemPictureBox);
+			controlBox.Controls.Add(separator);
+			controlBox.Controls.Add(showInfoButton);
+			controlBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			controlBox.Location = new System.Drawing.Point(0, 0);
+			controlBox.Name = "controlBox";
+			controlBox.Size = new System.Drawing.Size(463, 144);
+			controlBox.TabIndex = 0;
 			// 
 			// handleLabel
 			// 
@@ -71,117 +62,88 @@
 			handleLabel.AutoSize = false;
 			handleLabel.Location = new System.Drawing.Point(171, 36);
 			handleLabel.Name = "handleLabel";
-			handleLabel.Palette = fontPalette;
-			handleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			handleLabel.Size = new System.Drawing.Size(247, 20);
 			handleLabel.TabIndex = 2;
-			handleLabel.Values.Text = "";
 			// 
 			// nameLabel
 			// 
 			nameLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			nameLabel.AutoSize = false;
-			nameLabel.LabelStyle = Krypton.Toolkit.LabelStyle.BoldPanel;
 			nameLabel.Location = new System.Drawing.Point(171, 8);
 			nameLabel.Name = "nameLabel";
-			nameLabel.Palette = bigBoldFontPalette;
-			nameLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			nameLabel.Size = new System.Drawing.Size(230, 19);
 			nameLabel.TabIndex = 1;
-			nameLabel.Values.Text = "";
+			nameLabel.UseFont = bigBoldFontConfiguration;
 			// 
-			// bigBoldFontPalette
+			// bigBoldFontConfiguration
 			// 
-			bigBoldFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			bigBoldFontPalette.BaseFontSize = 10F;
-			bigBoldFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			bigBoldFontPalette.FontStyle = System.Drawing.FontStyle.Bold;
-			bigBoldFontPalette.ThemeName = "";
-			bigBoldFontPalette.UseKryptonFileDialogs = true;
+			bigBoldFontConfiguration.FontSize = 2;
+			bigBoldFontConfiguration.FontStyle = System.Drawing.FontStyle.Bold;
 			// 
 			// positionLabel
 			// 
 			positionLabel.Location = new System.Drawing.Point(4, 63);
 			positionLabel.Name = "positionLabel";
-			positionLabel.Palette = bigFontPalette;
-			positionLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			positionLabel.Size = new System.Drawing.Size(6, 2);
+			positionLabel.Size = new System.Drawing.Size(0, 17);
 			positionLabel.TabIndex = 0;
-			positionLabel.Values.Text = "";
+			positionLabel.UseFont = bigFontConfiguration;
 			// 
-			// bigFontPalette
+			// bigFontConfiguration
 			// 
-			bigFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			bigFontPalette.BaseFontSize = 10F;
-			bigFontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
+			bigFontConfiguration.FontSize = 2;
 			// 
 			// itemPictureBox
 			// 
-			itemPictureBox.Image = Resources.IDB_UNKNOWN_PROFILE_SMALL;
 			itemPictureBox.Location = new System.Drawing.Point(39, 8);
 			itemPictureBox.Name = "itemPictureBox";
 			itemPictureBox.Size = new System.Drawing.Size(128, 128);
 			itemPictureBox.TabIndex = 1;
 			itemPictureBox.TabStop = false;
 			// 
-			// separatorGroup
+			// separator
 			// 
-			separatorGroup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			separatorGroup.Location = new System.Drawing.Point(171, 104);
-			separatorGroup.Name = "separatorGroup";
-			separatorGroup.Size = new System.Drawing.Size(284, 2);
-			separatorGroup.TabIndex = 3;
+			separator.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			separator.Location = new System.Drawing.Point(171, 104);
+			separator.Name = "separator";
+			separator.Size = new System.Drawing.Size(284, 2);
+			separator.TabIndex = 3;
 			// 
 			// showInfoButton
 			// 
 			showInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			showInfoButton.ImageArea = NostalgicPlayer.Controls.Types.ImageBankArea.Audius;
+			showInfoButton.ImageName = "ShowProfileInfo";
 			showInfoButton.Location = new System.Drawing.Point(171, 112);
 			showInfoButton.Name = "showInfoButton";
 			showInfoButton.Size = new System.Drawing.Size(24, 24);
 			showInfoButton.TabIndex = 4;
-			showInfoButton.Values.Image = Resources.IDB_SHOW_PROFILE_INFO;
-			showInfoButton.Values.Text = "";
 			showInfoButton.Click += ShowInfo_Click;
-			// 
-			// fontPalette
-			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
-			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// AudiusProfileListItemControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
-			Controls.Add(controlGroup);
+			Controls.Add(controlBox);
 			DoubleBuffered = true;
 			Margin = new System.Windows.Forms.Padding(8);
 			Name = "AudiusProfileListItemControl";
 			Size = new System.Drawing.Size(463, 144);
-			((System.ComponentModel.ISupportInitialize)controlGroup.Panel).EndInit();
-			controlGroup.Panel.ResumeLayout(false);
-			controlGroup.Panel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)controlGroup).EndInit();
+			controlBox.ResumeLayout(false);
+			controlBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)itemPictureBox).EndInit();
-			((System.ComponentModel.ISupportInitialize)separatorGroup.Panel).EndInit();
-			((System.ComponentModel.ISupportInitialize)separatorGroup).EndInit();
 			ResumeLayout(false);
 		}
 
 		#endregion
 
-		private Krypton.Toolkit.KryptonGroup controlGroup;
+		private Polycode.NostalgicPlayer.Controls.Containers.NostalgicBox controlBox;
 		private System.Windows.Forms.PictureBox itemPictureBox;
-		private Krypton.Toolkit.KryptonLabel positionLabel;
-		private Krypton.Toolkit.KryptonLabel nameLabel;
-		private Krypton.Toolkit.KryptonLabel handleLabel;
-		private Kit.Gui.Components.FontPalette bigFontPalette;
-		private Kit.Gui.Components.FontPalette bigBoldFontPalette;
-		private Kit.Gui.Components.FontPalette fontPalette;
-		private Krypton.Toolkit.KryptonButton showInfoButton;
-		private Krypton.Toolkit.KryptonGroup separatorGroup;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel positionLabel;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel nameLabel;
+		private Polycode.NostalgicPlayer.Controls.Texts.NostalgicLabel handleLabel;
+		private Polycode.NostalgicPlayer.Controls.Buttons.NostalgicImageButton showInfoButton;
+		private Polycode.NostalgicPlayer.Controls.Separators.NostalgicSeparator separator;
+		private NostalgicPlayer.Controls.Components.FontConfiguration bigBoldFontConfiguration;
+		private NostalgicPlayer.Controls.Components.FontConfiguration bigFontConfiguration;
 	}
 }
