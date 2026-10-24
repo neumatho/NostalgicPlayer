@@ -111,9 +111,6 @@ namespace Polycode.NostalgicPlayer.Controls.Containers
 		public Bitmap BackgroundBitmap => backgroundImage as Bitmap;
 
 		#region Overrides
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// 

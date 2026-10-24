@@ -13,13 +13,13 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 	/// </summary>
 	internal class PurpleLabelColors : ILabelColors
 	{
-		private static readonly Color textColor = Color.FromArgb(55, 30, 85);
+		private readonly ITextColors textColors = new PurpleTextColors();
 
 		/********************************************************************/
 		/// <summary>
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color TextColor => textColor;
+		public Color TextColor => textColors.NormalTextColor;
 	}
 }
