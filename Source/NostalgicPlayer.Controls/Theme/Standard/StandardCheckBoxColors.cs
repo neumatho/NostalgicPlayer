@@ -17,31 +17,28 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		private static readonly Color normalBackgroundStartColor = Color.FromArgb(225, 237, 250);
 		private static readonly Color normalBackgroundStopColor = Color.FromArgb(208, 223, 238);
 		private static readonly Color normalCheckMarkColor = Color.FromArgb(30, 57, 91);
-		private static readonly Color normalTextColor = Color.FromArgb(30, 57, 91);
 
 		private static readonly Color hoverBorderColor = Color.FromArgb(237, 202, 87);
 		private static readonly Color hoverBackgroundStartColor = Color.FromArgb(249, 227, 136);
 		private static readonly Color hoverBackgroundStopColor = Color.FromArgb(255, 237, 136);
 		private static readonly Color hoverCheckMarkColor = Color.FromArgb(30, 57, 91);
-		private static readonly Color hoverTextColor = Color.FromArgb(30, 57, 91);
 
 		private static readonly Color pressedBorderColor = Color.FromArgb(194, 140, 50);
 		private static readonly Color pressedBackgroundStartColor = Color.FromArgb(229, 207, 116);
 		private static readonly Color pressedBackgroundStopColor = Color.FromArgb(235, 217, 116);
 		private static readonly Color pressedCheckMarkColor = Color.FromArgb(30, 57, 91);
-		private static readonly Color pressedTextColor = Color.FromArgb(30, 57, 91);
 
 		private static readonly Color focusedBorderColor = Color.FromArgb(117, 144, 175);
 		private static readonly Color focusedBackgroundStartColor = Color.FromArgb(255, 255, 255);
 		private static readonly Color focusedBackgroundStopColor = Color.FromArgb(210, 229, 250);
 		private static readonly Color focusedCheckMarkColor = Color.FromArgb(30, 57, 91);
-		private static readonly Color focusedTextColor = Color.FromArgb(30, 57, 91);
 
 		private static readonly Color disabledBorderColor = Color.FromArgb(180, 180, 180);
 		private static readonly Color disabledBackgroundStartColor = Color.FromArgb(235, 235, 235);
 		private static readonly Color disabledBackgroundStopColor = Color.FromArgb(235, 235, 235);
 		private static readonly Color disabledCheckMarkColor = Color.FromArgb(168, 168, 168);
-		private static readonly Color disabledTextColor = Color.FromArgb(168, 168, 168);
+
+		private readonly ITextColors textColors = new StandardTextColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -84,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color NormalTextColor => normalTextColor;
+		public Color NormalTextColor => textColors.NormalTextColor;
 
 
 
@@ -129,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color HoverTextColor => hoverTextColor;
+		public Color HoverTextColor => textColors.HoverTextColor;
 
 
 
@@ -174,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color PressedTextColor => pressedTextColor;
+		public Color PressedTextColor => textColors.PressedTextColor;
 
 
 
@@ -219,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color FocusedTextColor => focusedTextColor;
+		public Color FocusedTextColor => textColors.NormalTextColor;
 
 
 
@@ -264,6 +261,6 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		///
 		/// </summary>
 		/********************************************************************/
-		public Color DisabledTextColor => disabledTextColor;
+		public Color DisabledTextColor => textColors.DisabledTextColor;
 	}
 }
