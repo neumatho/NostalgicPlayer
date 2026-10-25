@@ -297,6 +297,22 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		}
 		#endregion
 
+		#region Public methods
+		/********************************************************************/
+		/// <summary>
+		/// Place the given control on top of the grid itself, e.g. a status
+		/// label. The control becomes a child of the inner grid, so a
+		/// transparent background will show the grid background and the
+		/// location is relative to the grid client area
+		/// </summary>
+		/********************************************************************/
+		public void AddOverlayControl(Control control)
+		{
+			control.Parent = nostalgicDataGridViewInternal;
+			control.BringToFront();
+		}
+		#endregion
+
 		#region Theme
 		/********************************************************************/
 		/// <summary>
