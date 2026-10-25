@@ -17,9 +17,11 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 
 		private static readonly Color normalFillStartColor = Color.FromArgb(140, 210, 110);
 		private static readonly Color normalFillStopColor = Color.FromArgb(70, 150, 50);
+		private static readonly Color normalTextColor = Color.FromArgb(30, 57, 91);
 
 		private static readonly Color disabledFillStartColor = Color.FromArgb(200, 200, 200);
 		private static readonly Color disabledFillStopColor = Color.FromArgb(200, 200, 200);
+		private static readonly Color disabledTextColor = Color.FromArgb(168, 168, 168);
 
 		/********************************************************************/
 		/// <summary>
@@ -71,6 +73,15 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		///
 		/// </summary>
 		/********************************************************************/
+		public Color NormalTextColor => normalTextColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
 		public Color DisabledBorderColor => buttonColors.DisabledBorderColor;
 
 
@@ -108,5 +119,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 		/// </summary>
 		/********************************************************************/
 		public Color DisabledFillStopColor => disabledFillStopColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public Color DisabledTextColor => disabledTextColor;
 	}
 }

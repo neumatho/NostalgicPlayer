@@ -22,6 +22,8 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color NormalFillStartColor { get; }
 		/// <summary></summary>
 		Color NormalFillStopColor { get; }
+		/// <summary></summary>
+		Color NormalTextColor { get; }
 
 		/// <summary></summary>
 		Color DisabledBorderColor { get; }
@@ -33,5 +35,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color DisabledFillStartColor { get; }
 		/// <summary></summary>
 		Color DisabledFillStopColor { get; }
+		/// <summary></summary>
+		Color DisabledTextColor { get; }
 	}
 }
