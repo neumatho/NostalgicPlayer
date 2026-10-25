@@ -157,7 +157,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			UpdateFont();
 
-			AutoResizeRows();
+			if (!VirtualMode)
+				AutoResizeRows();
 
 			UpdateScrollBars();
 
@@ -275,7 +276,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			if ((e.RowIndex >= 0) && (e.ColumnIndex >= 0))
 			{
-				DataGridViewCell cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+				// Use the shared row, so the row is not unshared just by painting it
+				DataGridViewCell cell = Rows.SharedRow(e.RowIndex).Cells[e.ColumnIndex];
 				CellStateColors cellColors = GetCellColors(e.State);
 
 				if (cell is DataGridViewImageCell)
@@ -453,6 +455,24 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		private void UpdateFont()
 		{
 			Font = fontConfiguration?.Font ?? fonts.RegularFont;
+
+			// In virtual mode, AutoResizeRows() would retrieve the values for
+			// all rows, so instead the row height is set on the template,
+			// which is used by all new rows
+			if (VirtualMode)
+				RowTemplate.Height = TextRenderer.MeasureText("Xg", Font).Height + 2;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the given row is visible without unsharing it
+		/// </summary>
+		/********************************************************************/
+		private bool IsRowVisible(int rowIndex)
+		{
+			return (Rows.GetRowState(rowIndex) & DataGridViewElementStates.Visible) != 0;
 		}
 
 
@@ -548,13 +568,9 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		private void UpdateVScrollBar()
 		{
-			int visibleRowCount = 0;
-
-			foreach (DataGridViewRow row in Rows)
-			{
-				if (row.Visible)
-					visibleRowCount++;
-			}
+			// Rows are only accessed via the shared row methods, so they will not
+			// be unshared, which is important when running in virtual mode
+			int visibleRowCount = Rows.GetRowCount(DataGridViewElementStates.Visible);
 
 			int visibleHeight = Height - ColumnHeadersHeight - (hScrollBar.Visible ? hScrollBar.Height : 0);
 			int displayedRows = 0;
@@ -562,9 +578,9 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			for (int i = 0; (i < Rows.Count) && (heightUsed < visibleHeight); i++)
 			{
-				if (Rows[i].Visible)
+				if (IsRowVisible(i))
 				{
-					heightUsed += Rows[i].Height;
+					heightUsed += Rows.SharedRow(i).Height;
 					displayedRows++;
 				}
 			}
@@ -580,12 +596,19 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 				if (FirstDisplayedScrollingRowIndex >= 0)
 				{
-					int visibleRowIndex = 0;
+					int visibleRowIndex;
 
-					for (int i = 0; (i < FirstDisplayedScrollingRowIndex) && (i < Rows.Count); i++)
+					if (visibleRowCount == Rows.Count)
+						visibleRowIndex = FirstDisplayedScrollingRowIndex;
+					else
 					{
-						if (Rows[i].Visible)
-							visibleRowIndex++;
+						visibleRowIndex = 0;
+
+						for (int i = 0; (i < FirstDisplayedScrollingRowIndex) && (i < Rows.Count); i++)
+						{
+							if (IsRowVisible(i))
+								visibleRowIndex++;
+						}
 					}
 
 					int newValue = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum - vScrollBar.LargeChange + 1, visibleRowIndex));
@@ -667,21 +690,27 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			try
 			{
 				int targetVisibleIndex = vScrollBar.Value;
-				int currentVisibleIndex = 0;
 				int targetRowIndex = 0;
 
-				for (int i = 0; i < Rows.Count; i++)
+				if (Rows.GetRowCount(DataGridViewElementStates.Visible) == Rows.Count)
+					targetRowIndex = targetVisibleIndex;
+				else
 				{
-					if (!Rows[i].Visible)
-						continue;
+					int currentVisibleIndex = 0;
 
-					if (currentVisibleIndex == targetVisibleIndex)
+					for (int i = 0; i < Rows.Count; i++)
 					{
-						targetRowIndex = i;
-						break;
-					}
+						if (!IsRowVisible(i))
+							continue;
 
-					currentVisibleIndex++;
+						if (currentVisibleIndex == targetVisibleIndex)
+						{
+							targetRowIndex = i;
+							break;
+						}
+
+						currentVisibleIndex++;
+					}
 				}
 
 				if (targetRowIndex < Rows.Count)

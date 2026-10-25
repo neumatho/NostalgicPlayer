@@ -59,6 +59,7 @@
 			nostalgicDataGridViewInternal.Size = new System.Drawing.Size(148, 148);
 			nostalgicDataGridViewInternal.TabIndex = 0;
 			nostalgicDataGridViewInternal.CellContentClick += CellContentClickHandler;
+			nostalgicDataGridViewInternal.CellValueNeeded += CellValueNeededHandler;
 			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
 			nostalgicDataGridViewInternal.KeyDown += KeyDownHandler;
 			nostalgicDataGridViewInternal.KeyUp += KeyUpHandler;
