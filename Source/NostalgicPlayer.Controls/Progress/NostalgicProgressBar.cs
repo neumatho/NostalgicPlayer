@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Components;
 using Polycode.NostalgicPlayer.Controls.Designer;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
 using Polycode.NostalgicPlayer.Controls.Theme.Standard;
@@ -26,9 +27,13 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 			public Color BackgroundStopColor { get; init; }
 			public Color FillStartColor { get; init; }
 			public Color FillStopColor { get; init; }
+			public Color TextColor { get; init; }
 		}
 
 		private IProgressBarColors colors;
+		private IFonts fonts;
+
+		private FontConfiguration fontConfiguration;
 
 		private int minimum = 0;
 		private int maximum = 100;
@@ -160,6 +165,60 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The text shown centered on top of the bar
+		/// </summary>
+		/********************************************************************/
+		[Category("Appearance")]
+		[Description("The text shown centered on top of the bar.")]
+		[Browsable(true)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue("")]
+		public override string Text
+		{
+			get => base.Text;
+
+			set
+			{
+				base.Text = value;
+
+				Invalidate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the FontConfiguration component to use for this control
+		/// </summary>
+		/********************************************************************/
+		[Category("Appearance")]
+		[Description("Which font configuration to use if you want to change the default font.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[DefaultValue(null)]
+		public FontConfiguration UseFont
+		{
+			get => fontConfiguration;
+
+			set
+			{
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged -= FontConfiguration_FontChanged;
+
+				fontConfiguration = value;
+
+				if (fontConfiguration != null)
+					fontConfiguration.FontChanged += FontConfiguration_FontChanged;
+
+				Invalidate();
+			}
+		}
 		#endregion
 
 		#region Initialize
@@ -186,6 +245,7 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 		public void SetTheme(ITheme theme)
 		{
 			colors = theme.ProgressBarColors;
+			fonts = theme.StandardFonts;
 
 			Invalidate();
 		}
@@ -244,7 +304,32 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 		}
 		#endregion
 
+		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// React when the attached FontConfiguration recalculates its font
+		/// </summary>
+		/********************************************************************/
+		private void FontConfiguration_FontChanged(object sender, EventArgs e)
+		{
+			Invalidate();
+		}
+		#endregion
+
 		#region Drawing
+		/********************************************************************/
+		/// <summary>
+		/// Return the font to use
+		/// </summary>
+		/********************************************************************/
+		private Font GetFont()
+		{
+			return fontConfiguration?.Font ?? fonts.RegularFont;
+		}
+
+
+
+
 		/********************************************************************/
 		/// <summary>
 		///
@@ -260,7 +345,8 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 					BackgroundStartColor = colors.DisabledBackgroundStartColor,
 					BackgroundStopColor = colors.DisabledBackgroundStopColor,
 					FillStartColor = colors.DisabledFillStartColor,
-					FillStopColor = colors.DisabledFillStopColor
+					FillStopColor = colors.DisabledFillStopColor,
+					TextColor = colors.DisabledTextColor
 				};
 			}
 
@@ -270,7 +356,8 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 				BackgroundStartColor = colors.NormalBackgroundStartColor,
 				BackgroundStopColor = colors.NormalBackgroundStopColor,
 				FillStartColor = colors.NormalFillStartColor,
-				FillStopColor = colors.NormalFillStopColor
+				FillStopColor = colors.NormalFillStopColor,
+				TextColor = colors.NormalTextColor
 			};
 		}
 
@@ -278,7 +365,8 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 
 		/********************************************************************/
 		/// <summary>
-		/// Draw the track background, the filled portion and the border
+		/// Draw the track background, the filled portion, the text and the
+		/// border
 		/// </summary>
 		/********************************************************************/
 		private void DrawBar(Graphics g, StateColors stateColors)
@@ -322,6 +410,9 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 					g.FillRectangle(brush, fillRect);
 				}
 			}
+
+			if (!string.IsNullOrEmpty(Text))
+				TextRenderer.DrawText(g, Text, GetFont(), barRect, stateColors.TextColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
 
 			using (Pen pen = new Pen(stateColors.BorderColor))
 			{
@@ -384,8 +475,7 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 				nameof(BackgroundImageLayout),
 				nameof(Font),
 				nameof(ForeColor),
-				nameof(RightToLeft),
-				nameof(Text)
+				nameof(RightToLeft)
 			];
 
 			/********************************************************************/
