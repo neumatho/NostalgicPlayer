@@ -143,9 +143,47 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[DefaultValue(false)]
+		[Category("Behavior")]
+		[Description("Indicates whether you have provided your own data-management operations for the DataGridView control")]
+		public bool VirtualMode
+		{
+			get => nostalgicDataGridViewInternal.VirtualMode;
+
+			set => nostalgicDataGridViewInternal.VirtualMode = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]
-		public int RowCount => nostalgicDataGridViewInternal.RowCount;
+		public int RowCount
+		{
+			get => nostalgicDataGridViewInternal.RowCount;
+
+			set => nostalgicDataGridViewInternal.RowCount = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public int FirstDisplayedScrollingRowIndex
+		{
+			get => nostalgicDataGridViewInternal.FirstDisplayedScrollingRowIndex;
+
+			set => nostalgicDataGridViewInternal.FirstDisplayedScrollingRowIndex = value;
+		}
 
 
 
@@ -228,6 +266,28 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			if (CellContentClick != null)
 				CellContentClick(this, e);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public event DataGridViewCellValueEventHandler CellValueNeeded;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected virtual void OnCellValueNeeded(DataGridViewCellValueEventArgs e)
+		{
+			if (CellValueNeeded != null)
+				CellValueNeeded(this, e);
+		}
 		#endregion
 
 		#region Designer properties
@@ -257,6 +317,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		public void AutoResizeRows()
 		{
 			nostalgicDataGridViewInternal.AutoResizeRows();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public void ClearSelection()
+		{
+			nostalgicDataGridViewInternal.ClearSelection();
 		}
 
 
@@ -382,6 +454,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		private void CellContentClickHandler(object sender, DataGridViewCellEventArgs e)
 		{
 			OnCellContentClick(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		private void CellValueNeededHandler(object sender, DataGridViewCellValueEventArgs e)
+		{
+			OnCellValueNeeded(e);
 		}
 		#endregion
 
