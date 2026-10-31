@@ -5,14 +5,14 @@
 /******************************************************************************/
 using System.IO;
 using System.Linq;
-using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Controls.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.OpenUrlWindow
 {
 	/// <summary>
 	/// This shows the open URL window
 	/// </summary>
-	public partial class OpenUrlWindowForm : KryptonForm
+	public partial class OpenUrlWindowForm : NostalgicForm
 	{
 		/********************************************************************/
 		/// <summary>

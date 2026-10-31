@@ -1,0 +1,108 @@
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
+using System;
+
+namespace Polycode.NostalgicPlayer.Logic.Containers
+{
+	/// <summary>
+	/// This is the class used for each item in the module list
+	/// </summary>
+	public class ModuleListListItem : IComparable<ModuleListListItem>
+	{
+		private TimeSpan duration;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ModuleListListItem(IModuleListItem listItem)
+		{
+			ListItem = listItem;
+
+			duration = new TimeSpan(0);
+			HaveTime = false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the list item information
+		/// </summary>
+		/********************************************************************/
+		public IModuleListItem ListItem
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the duration of the module this item has
+		/// </summary>
+		/********************************************************************/
+		public TimeSpan Duration
+		{
+			get => duration;
+
+			set
+			{
+				duration = value;
+				HaveTime = value.Ticks != 0;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if the time has been set
+		/// </summary>
+		/********************************************************************/
+		public bool HaveTime
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if this item is marked as the playing one
+		/// </summary>
+		/********************************************************************/
+		public bool IsPlaying
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the default sub-song if set
+		/// </summary>
+		/********************************************************************/
+		public int? DefaultSubSong
+		{
+			get; set;
+		}
+
+		#region IComparable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Compare two module list items
+		/// </summary>
+		/********************************************************************/
+		public int CompareTo(ModuleListListItem other)
+		{
+			return ListItem.DisplayName.CompareTo(other.ListItem.DisplayName);
+		}
+		#endregion
+	}
+}

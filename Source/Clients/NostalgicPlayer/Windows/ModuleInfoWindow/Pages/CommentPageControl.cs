@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 		{
 			bool visible = false;
 
-			moduleInfoCommentReadOnlyTextBox.Lines = null;
+			commentText.Lines = null;
 
 			// Check to see if there are any module loaded at the moment
 			if (isPlaying)
@@ -46,10 +46,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModuleInfoWindow.Pag
 					visible = true;
 
 					// Switch font
-					moduleInfoCommentReadOnlyTextBox.Font = staticInfo.CommentFont ?? FontPalette.GetMonospaceFont();
+					commentText.Font = staticInfo.CommentFont ?? FontPalette.GetMonospaceFont();
 
 					// Set text
-					moduleInfoCommentReadOnlyTextBox.Lines = staticInfo.Comment;
+					commentText.Lines = staticInfo.Comment;
 				}
 			}
 

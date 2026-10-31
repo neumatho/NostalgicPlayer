@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Gui.Interfaces;
@@ -17,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 	/// </summary>
 	internal class ChannelLevelMeterWorker : IChannelChangeVisualAgent, IAgentGuiDisplay
 	{
-		private readonly IControlFactory controlFactory;
+		private readonly IControlCreatorService controlCreatorService;
 
 		private ChannelLevelMeterControl userControl;
 
@@ -26,9 +27,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelLevelMeterWorker(IControlFactory controlFactory)
+		public ChannelLevelMeterWorker(IControlCreatorService controlCreatorService)
 		{
-			this.controlFactory = controlFactory;
+			this.controlCreatorService = controlCreatorService;
 		}
 
 		#region IAgentDisplay implementation
@@ -48,7 +49,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			userControl = controlFactory.GetInstance<ChannelLevelMeterControl>();
+			userControl = controlCreatorService.GetInstance<ChannelLevelMeterControl>();
+
 			return userControl;
 		}
 

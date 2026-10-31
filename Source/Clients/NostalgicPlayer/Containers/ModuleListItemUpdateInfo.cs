@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 {
@@ -17,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleListItemUpdateInfo(ModuleListItem moduleListItem)
+		public ModuleListItemUpdateInfo(ModuleListListItem moduleListItem)
 		{
 			ListItem = moduleListItem;
 		}
@@ -29,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 		/// Holds the item to update
 		/// </summary>
 		/********************************************************************/
-		public ModuleListItem ListItem
+		public ModuleListListItem ListItem
 		{
 			get;
 		}
