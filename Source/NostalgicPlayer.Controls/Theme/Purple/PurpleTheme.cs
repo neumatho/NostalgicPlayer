@@ -34,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly PurpleTrackBarColors trackBarColors = new PurpleTrackBarColors();
 		private static readonly PurpleProgressBarColors progressBarColors = new PurpleProgressBarColors();
 		private static readonly PurpleMenuStripColors menuStripColors = new PurpleMenuStripColors();
+		private static readonly PurpleBreadcrumbColors breadcrumbColors = new PurpleBreadcrumbColors();
 
 		/********************************************************************/
 		/// <summary>
@@ -246,5 +247,14 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public IMenuStripColors MenuStripColors => menuStripColors;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of colors used by breadcrumb controls
+		/// </summary>
+		/********************************************************************/
+		public IBreadcrumbColors BreadcrumbColors => breadcrumbColors;
 	}
 }
