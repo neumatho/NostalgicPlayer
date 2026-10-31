@@ -105,6 +105,23 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		}
 		#endregion
 
+		#region Redirected events
+		/********************************************************************/
+		/// <summary>
+		/// UserControl hides TextChanged from the designer, so make it
+		/// visible again
+		/// </summary>
+		/********************************************************************/
+		[Browsable(true)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		public new event EventHandler TextChanged
+		{
+			add => base.TextChanged += value;
+
+			remove => base.TextChanged -= value;
+		}
+		#endregion
+
 		#region Theme
 		/********************************************************************/
 		/// <summary>
@@ -137,9 +154,14 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Forward the text to the inner text box
+		/// Forward the text to the inner text box. UserControl hides Text
+		/// from the designer, so make it visible again
 		/// </summary>
 		/********************************************************************/
+		[Browsable(true)]
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[Bindable(true)]
 		public override string Text
 		{
 			get => nostalgicTextBoxInternal.Text;
@@ -324,7 +346,7 @@ namespace Polycode.NostalgicPlayer.Controls.Inputs
 		/// </summary>
 		private sealed class NostalgicTextBoxTypeDescriptionProvider : TypeDescriptionProvider
 		{
-			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(RichTextBox));
+			private static readonly TypeDescriptionProvider parent = TypeDescriptor.GetProvider(typeof(UserControl));
 
 			private static readonly string[] propertiesToHide =
 			[
