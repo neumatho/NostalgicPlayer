@@ -15,7 +15,25 @@ namespace Polycode.NostalgicPlayer.Platform.Native
 		SETREDRAW = 0x000B,
 
 		/// <summary></summary>
-		MOUSEWHEEL = 0x020A
+		NCMOUSEFIRST = 0x00A0,
+
+		/// <summary></summary>
+		NCMOUSELAST = 0x00AD,
+
+		/// <summary></summary>
+		KEYFIRST = 0x0100,
+
+		/// <summary></summary>
+		KEYLAST = 0x0109,
+
+		/// <summary></summary>
+		MOUSEFIRST = 0x0200,
+
+		/// <summary></summary>
+		MOUSEWHEEL = 0x020A,
+
+		/// <summary></summary>
+		MOUSELAST = 0x020E
 	}
 	// ReSharper restore InconsistentNaming
 }

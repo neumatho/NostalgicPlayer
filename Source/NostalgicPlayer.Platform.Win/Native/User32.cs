@@ -16,5 +16,10 @@ namespace Polycode.NostalgicPlayer.Platform.Native
 		/// <summary></summary>
 		[DllImport("user32.dll")]
 		public static extern IntPtr SendMessageW(IntPtr hWnd, WM msg, IntPtr wParam, IntPtr lParam);
+
+		/// <summary></summary>
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool PeekMessageW(out MSG lpMsg, IntPtr hWnd, WM wMsgFilterMin, WM wMsgFilterMax, PM wRemoveMsg);
 	}
 }

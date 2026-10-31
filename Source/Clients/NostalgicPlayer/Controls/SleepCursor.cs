@@ -3,9 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Platform.Native;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 {
@@ -49,8 +51,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 			{
 				counter--;
 				if (counter == 0)
+				{
+					FlushInputMessages();
 					Cursor.Current = oldCursor;
+				}
 			}
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Remove all mouse and keyboard messages that have been queued
+		/// while the sleep cursor was shown, so they will not be executed
+		/// afterwards
+		/// </summary>
+		/********************************************************************/
+		private static void FlushInputMessages()
+		{
+			while (User32.PeekMessageW(out _, IntPtr.Zero, WM.MOUSEFIRST, WM.MOUSELAST, PM.REMOVE))
+			{
+			}
+
+			while (User32.PeekMessageW(out _, IntPtr.Zero, WM.NCMOUSEFIRST, WM.NCMOUSELAST, PM.REMOVE))
+			{
+			}
+
+			while (User32.PeekMessageW(out _, IntPtr.Zero, WM.KEYFIRST, WM.KEYLAST, PM.REMOVE))
+			{
+			}
+		}
+		#endregion
 	}
 }
