@@ -28,6 +28,7 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 			public Color FillStartColor { get; init; }
 			public Color FillStopColor { get; init; }
 			public Color TextColor { get; init; }
+			public Color FillTextColor { get; init; }
 		}
 
 		private IProgressBarColors colors;
@@ -346,7 +347,8 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 					BackgroundStopColor = colors.DisabledBackgroundStopColor,
 					FillStartColor = colors.DisabledFillStartColor,
 					FillStopColor = colors.DisabledFillStopColor,
-					TextColor = colors.DisabledTextColor
+					TextColor = colors.DisabledTextColor,
+					FillTextColor = colors.DisabledFillTextColor
 				};
 			}
 
@@ -357,7 +359,8 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 				BackgroundStopColor = colors.NormalBackgroundStopColor,
 				FillStartColor = colors.NormalFillStartColor,
 				FillStopColor = colors.NormalFillStopColor,
-				TextColor = colors.NormalTextColor
+				TextColor = colors.NormalTextColor,
+				FillTextColor = colors.NormalFillTextColor
 			};
 		}
 
@@ -384,8 +387,9 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 			}
 
 			Rectangle fillRect = ComputeFillRect(barRect);
+			bool hasFill = (fillRect.Width > 0) && (fillRect.Height > 0);
 
-			if ((fillRect.Width > 0) && (fillRect.Height > 0))
+			if (hasFill)
 			{
 				// Gradient runs along the bar axis from min to max:
 				// horizontal = left-to-right, vertical = bottom-to-top
@@ -412,11 +416,47 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 			}
 
 			if (!string.IsNullOrEmpty(Text))
-				TextRenderer.DrawText(g, Text, GetFont(), barRect, stateColors.TextColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix);
+				DrawText(g, barRect, fillRect, hasFill, stateColors);
 
 			using (Pen pen = new Pen(stateColors.BorderColor))
 			{
 				g.DrawRectangle(pen, borderRect);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Draw the text centered on the bar. The part over the background
+		/// and the part over the filled portion use different colors
+		/// </summary>
+		/********************************************************************/
+		private void DrawText(Graphics g, Rectangle barRect, Rectangle fillRect, bool hasFill, StateColors stateColors)
+		{
+			const TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix;
+
+			Font font = GetFont();
+
+			// Text over the background (everything except the filled portion)
+			GraphicsState state = g.Save();
+
+			if (hasFill)
+				g.SetClip(fillRect, CombineMode.Exclude);
+
+			TextRenderer.DrawText(g, Text, font, barRect, stateColors.TextColor, flags);
+
+			g.Restore(state);
+
+			// Text over the filled portion
+			if (hasFill)
+			{
+				state = g.Save();
+
+				g.SetClip(fillRect, CombineMode.Intersect);
+				TextRenderer.DrawText(g, Text, font, barRect, stateColors.FillTextColor, flags);
+
+				g.Restore(state);
 			}
 		}
 
