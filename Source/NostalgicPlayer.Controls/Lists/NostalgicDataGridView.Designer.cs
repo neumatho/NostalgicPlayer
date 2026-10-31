@@ -60,9 +60,10 @@
 			nostalgicDataGridViewInternal.TabIndex = 0;
 			nostalgicDataGridViewInternal.CellContentClick += CellContentClickHandler;
 			nostalgicDataGridViewInternal.CellValueNeeded += CellValueNeededHandler;
-			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
+			nostalgicDataGridViewInternal.CellToolTipTextNeeded += CellToolTipTextNeededHandler;			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
 			nostalgicDataGridViewInternal.KeyDown += KeyDownHandler;
 			nostalgicDataGridViewInternal.KeyUp += KeyUpHandler;
+			nostalgicDataGridViewInternal.KeyPress += KeyPressHandler;
 			nostalgicDataGridViewInternal.MouseDoubleClick += MouseDoubleClickHandler;
 			// 
 			// nostalgicVScrollBar
