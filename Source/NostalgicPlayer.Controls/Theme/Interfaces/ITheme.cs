@@ -116,5 +116,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		/// Return a collection of colors used by menu strips
 		/// </summary>
 		IMenuStripColors MenuStripColors { get; }
+
+		/// <summary>
+		/// Return a collection of colors used by breadcrumb controls
+		/// </summary>
+		IBreadcrumbColors BreadcrumbColors { get; }
 	}
 }
