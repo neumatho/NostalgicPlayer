@@ -189,6 +189,22 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 		/********************************************************************/
 		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
+		public DataGridViewCell CurrentCell
+		{
+			get => nostalgicDataGridViewInternal.CurrentCell;
+
+			set => nostalgicDataGridViewInternal.CurrentCell = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -288,6 +304,28 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			if (CellValueNeeded != null)
 				CellValueNeeded(this, e);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public event DataGridViewCellToolTipTextNeededEventHandler CellToolTipTextNeeded;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected virtual void OnCellToolTipTextNeeded(DataGridViewCellToolTipTextNeededEventArgs e)
+		{
+			if (CellToolTipTextNeeded != null)
+				CellToolTipTextNeeded(this, e);
+		}
 		#endregion
 
 		#region Designer properties
@@ -335,7 +373,19 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		///
+		/// </summary>
+		/********************************************************************/
+		public void InvalidateColumn(int columnIndex)
+		{
+			nostalgicDataGridViewInternal.InvalidateColumn(columnIndex);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
 		/// </summary>
 		/********************************************************************/
 		public void InvalidateRow(int rowIndex)
@@ -424,6 +474,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 		/********************************************************************/
 		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		private void KeyPressHandler(object sender, KeyPressEventArgs e)
+		{
+			OnKeyPress(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -466,6 +528,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		private void CellValueNeededHandler(object sender, DataGridViewCellValueEventArgs e)
 		{
 			OnCellValueNeeded(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		private void CellToolTipTextNeededHandler(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+		{
+			OnCellToolTipTextNeeded(e);
 		}
 		#endregion
 
