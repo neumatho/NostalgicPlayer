@@ -59,11 +59,13 @@
 			nostalgicDataGridViewInternal.Size = new System.Drawing.Size(148, 148);
 			nostalgicDataGridViewInternal.TabIndex = 0;
 			nostalgicDataGridViewInternal.CellContentClick += CellContentClickHandler;
+			nostalgicDataGridViewInternal.CellToolTipTextNeeded += CellToolTipTextNeededHandler;
 			nostalgicDataGridViewInternal.CellValueNeeded += CellValueNeededHandler;
-			nostalgicDataGridViewInternal.CellToolTipTextNeeded += CellToolTipTextNeededHandler;			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
+			nostalgicDataGridViewInternal.ColumnHeaderMouseClick += ColumnHeaderMouseClickHandler;
+			nostalgicDataGridViewInternal.SelectionChanged += SelectionChangedHandler;
 			nostalgicDataGridViewInternal.KeyDown += KeyDownHandler;
-			nostalgicDataGridViewInternal.KeyUp += KeyUpHandler;
 			nostalgicDataGridViewInternal.KeyPress += KeyPressHandler;
+			nostalgicDataGridViewInternal.KeyUp += KeyUpHandler;
 			nostalgicDataGridViewInternal.MouseDoubleClick += MouseDoubleClickHandler;
 			// 
 			// nostalgicVScrollBar

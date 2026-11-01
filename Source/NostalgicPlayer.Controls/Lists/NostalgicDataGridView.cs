@@ -326,6 +326,28 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			if (CellToolTipTextNeeded != null)
 				CellToolTipTextNeeded(this, e);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		public event DataGridViewCellMouseEventHandler ColumnHeaderMouseClick;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected virtual void OnColumnHeaderMouseClick(DataGridViewCellMouseEventArgs e)
+		{
+			if (ColumnHeaderMouseClick != null)
+				ColumnHeaderMouseClick(this, e);
+		}
 		#endregion
 
 		#region Designer properties
@@ -540,6 +562,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		private void CellToolTipTextNeededHandler(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
 		{
 			OnCellToolTipTextNeeded(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		private void ColumnHeaderMouseClickHandler(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			OnColumnHeaderMouseClick(e);
 		}
 		#endregion
 
