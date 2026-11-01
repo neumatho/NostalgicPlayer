@@ -876,9 +876,14 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		{
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
+			// The sort glyph is taken from the header cell, so it works both
+			// when the grid sorts itself and when the owner sorts the data
+			// (programmatic sort mode) and just tells which glyph to show
+			SortOrder sortOrder = Columns[columnIndex].HeaderCell.SortGlyphDirection;
+
 			DrawColumnHeaderBackground(g, rect, headerStateColors);
-			DrawColumnHeaderText(g, rect, headerStateColors, value);
-			DrawSortGlyph(g, columnIndex, rect, headerStateColors);
+			DrawColumnHeaderText(g, rect, headerStateColors, value, sortOrder != SortOrder.None);
+			DrawSortGlyph(g, sortOrder, rect, headerStateColors);
 		}
 
 
@@ -909,7 +914,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw a single column header text
 		/// </summary>
 		/********************************************************************/
-		private void DrawColumnHeaderText(Graphics g, Rectangle rect, HeaderStateColors headerStateColors, object value)
+		private void DrawColumnHeaderText(Graphics g, Rectangle rect, HeaderStateColors headerStateColors, object value, bool hasSortGlyph)
 		{
 			if (value != null)
 			{
@@ -917,7 +922,9 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 				if (!string.IsNullOrEmpty(text))
 				{
-					Rectangle textRect = new Rectangle(rect.X + 2, rect.Y, rect.Width - 4, rect.Height - 1);
+					// Make room for the sort glyph, so the text is not drawn below it
+					int glyphSpace = hasSortGlyph ? GlyphWidthSize + 4 : 0;
+					Rectangle textRect = new Rectangle(rect.X + 2, rect.Y, rect.Width - 4 - glyphSpace, rect.Height - 1);
 
 					TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix;
 					TextRenderer.DrawText(g, text, fonts.RegularFont, textRect, headerStateColors.TextColor, flags);
@@ -932,14 +939,9 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// Draw the sort icon
 		/// </summary>
 		/********************************************************************/
-		private void DrawSortGlyph(Graphics g, int columnIndex, Rectangle rect, HeaderStateColors headerStateColors)
+		private void DrawSortGlyph(Graphics g, SortOrder sortOrder, Rectangle rect, HeaderStateColors headerStateColors)
 		{
-			DataGridViewColumn column = Columns[columnIndex];
-
-			if ((column.SortMode == DataGridViewColumnSortMode.NotSortable) || (column != SortedColumn))
-				return;
-
-			if (SortOrder == SortOrder.None)
+			if (sortOrder == SortOrder.None)
 				return;
 
 			int glyphX = rect.Right - GlyphWidthSize - 4;
@@ -947,7 +949,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			Point[] triangle;
 
-			if (SortOrder == SortOrder.Ascending)
+			if (sortOrder == SortOrder.Ascending)
 			{
 				triangle =
 				[
