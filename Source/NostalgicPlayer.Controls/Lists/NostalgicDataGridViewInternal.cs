@@ -414,6 +414,21 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 
 			UpdateScrollBars();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
+		protected override void OnColumnStateChanged(DataGridViewColumnStateChangedEventArgs e)
+		{
+			base.OnColumnStateChanged(e);
+
+			if (e.StateChanged == DataGridViewElementStates.Visible)
+				UpdateScrollBars();
+		}
 		#endregion
 
 		#region Handlers
@@ -503,8 +518,10 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			int vScrollBarWidth = vScrollBar.Width;
 			int hScrollBarHeight = hScrollBar.Height;
 
-			int newWidth = parentControl.Width - (vScrollBar.Visible ? vScrollBarWidth : 0);
-			int newHeight = parentControl.Height - (hScrollBar.Visible ? hScrollBarHeight : 0);
+			Size availableSize = GetAvailableSize();
+
+			int newWidth = availableSize.Width - (vScrollBar.Visible ? vScrollBarWidth : 0);
+			int newHeight = availableSize.Height - (hScrollBar.Visible ? hScrollBarHeight : 0);
 
 			SetBounds(0, 0, newWidth, newHeight);
 
@@ -512,6 +529,20 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			hScrollBar.SetBounds(hScrollBar.Left, hScrollBar.Top, newWidth, hScrollBarHeight);
 
 			corner.Visible = vScrollBar.Visible && hScrollBar.Visible;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the area the grid and scrollbars share. This
+		/// is used instead of the grid's own size, because the grid is first
+		/// resized after the scrollbar visibility has been calculated
+		/// </summary>
+		/********************************************************************/
+		private Size GetAvailableSize()
+		{
+			return Parent?.ClientSize ?? parentControl.ClientSize;
 		}
 
 
@@ -572,7 +603,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 			// be unshared, which is important when running in virtual mode
 			int visibleRowCount = Rows.GetRowCount(DataGridViewElementStates.Visible);
 
-			int visibleHeight = Height - ColumnHeadersHeight - (hScrollBar.Visible ? hScrollBar.Height : 0);
+			int visibleHeight = GetAvailableSize().Height - ColumnHeadersHeight - (hScrollBar.Visible ? hScrollBar.Height : 0);
 			int displayedRows = 0;
 			int heightUsed = 0;
 
@@ -632,7 +663,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/********************************************************************/
 		private void UpdateHScrollBar()
 		{
-			int visibleWidth = Width - (vScrollBar.Visible ? vScrollBar.Width : 0);
+			int visibleWidth = GetAvailableSize().Width - (vScrollBar.Visible ? vScrollBar.Width : 0);
 			int totalColumnsWidth = 0;
 
 			foreach (DataGridViewColumn column in Columns)
@@ -741,7 +772,8 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 				int targetPixelPosition = hScrollBar.Value;
 				
 				// Clamp target position to valid range
-				int visibleWidth = ClientSize.Width - (vScrollBar.Visible ? vScrollBar.Width : 0);
+				// The grid has already been resized to exclude the vertical scrollbar
+				int visibleWidth = ClientSize.Width;
 				int totalColumnsWidth = 0;
 
 				foreach (DataGridViewColumn column in Columns)
