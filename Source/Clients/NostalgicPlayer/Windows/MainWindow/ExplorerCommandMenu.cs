@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 				if (command is IObjectWithSite objectWithSite)
 					Marshal.ThrowExceptionForHR(objectWithSite.SetSite(site));
 
-				string text = GetCommandString((out IntPtr value) => command.GetTitle(shellItems, out value));
+				string text = StripShortcut(GetCommandString((out IntPtr value) => command.GetTitle(shellItems, out value)));
 				string toolTipText = GetCommandString((out IntPtr value) => command.GetToolTip(shellItems, out value));
 				image = GetCommandImage(GetCommandString((out IntPtr value) => command.GetIcon(shellItems, out value)));
 
@@ -356,6 +356,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 				if (valuePointer != IntPtr.Zero)
 					Marshal.FreeCoTaskMem(valuePointer);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Remove the shortcut key text (everything from the first tab) from
+		/// a command title, since those shortcuts only work in Explorer
+		/// </summary>
+		/********************************************************************/
+		private static string StripShortcut(string text)
+		{
+			if (text == null)
+				return null;
+
+			int index = text.IndexOf('\t');
+			return index >= 0 ? text.Substring(0, index).TrimEnd() : text;
 		}
 
 
