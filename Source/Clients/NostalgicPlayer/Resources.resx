@@ -677,6 +677,15 @@ Formats supported:
   <data name="IDS_DEFAULT_SUBSONG" xml:space="preserve">
     <value>#{0}</value>
   </data>
+  <data name="IDS_DROP_APPEND" xml:space="preserve">
+    <value>Append to playlist</value>
+  </data>
+  <data name="IDS_DROP_CLEARANDADD" xml:space="preserve">
+    <value>Clear and add to playlist</value>
+  </data>
+  <data name="IDS_DROP_INSERT" xml:space="preserve">
+    <value>Insert in playlist</value>
+  </data>
   <data name="IDS_ERR_ADD_ITEMS" xml:space="preserve">
     <value>Failed to add items into the list:
 {0}</value>

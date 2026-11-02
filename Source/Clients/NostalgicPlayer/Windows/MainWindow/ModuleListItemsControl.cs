@@ -793,6 +793,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		{
 			indexOfItemUnderMouseToDrop = -2;
 
+			// The drop description needs to be set already here, else
+			// the drag image helper is not initialized and the text is
+			// never shown
+			UpdateDropEffect(e);
+
 			// Start the timer
 			scrollTimer.Start();
 
@@ -825,42 +830,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		protected override void OnDragOver(DragEventArgs e)
 		{
-			if (e.Data.GetDataPresent(GetType()))
-			{
-				// Drag started from our own list, so it is ok
-				e.Effect = DragDropEffects.Move;
-				drawLine = true;
-			}
-			else if (e.Data.GetDataPresent(DataFormats.FileDrop))
-			{
-				// Either a file or directory is dropped from File Explorer
-				if ((ModifierKeys & Keys.Control) != 0)
-				{
-					if ((ModifierKeys & Keys.Shift) != 0)
-					{
-						e.Effect = DragDropEffects.Copy;        // Append to list
-						dropType = ModuleListControl.FileDropType.Append;
-						drawLine = false;
-					}
-					else
-					{
-						e.Effect = DragDropEffects.Move;        // Insert into position in list
-						dropType = ModuleListControl.FileDropType.Insert;
-						drawLine = true;
-					}
-				}
-				else
-				{
-					e.Effect = DragDropEffects.Move;            // Clear list and add files
-					dropType = ModuleListControl.FileDropType.ClearAndAdd;
-					drawLine = false;
-				}
-			}
-			else
-			{
-				// Unknown type, so it is not allowed
-				e.Effect = DragDropEffects.None;
-			}
+			UpdateDropEffect(e);
 
 			if (e.Effect != DragDropEffects.None)
 			{
@@ -1150,6 +1120,66 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 			if (item.DefaultSubSong.HasValue)
 				TextRenderer.DrawText(g, defaultSubSong, boldFont, new Point(10 + nameWidth, y + 1), defaultSubSongColor, TextFormatFlags.NoPrefix);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the drop effect, drop type and description based on what is
+		/// dragged, the modifier keys and where the mouse is
+		/// </summary>
+		/********************************************************************/
+		private void UpdateDropEffect(DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(GetType()))
+			{
+				// Drag started from our own list, so it is ok
+				e.Effect = DragDropEffects.Move;
+				drawLine = true;
+			}
+			else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+			{
+				// Either a file or directory is dropped from File Explorer
+				if ((ModifierKeys & Keys.Control) != 0)
+				{
+					e.Effect = DragDropEffects.Copy;
+					e.DropImageType = DropImageType.Copy;
+
+					int index = IndexFromPoint(PointToClient(new Point(e.X, e.Y)));
+
+					if (((ModifierKeys & Keys.Shift) != 0) || (index == -1))
+					{
+						// Append to list
+						dropType = ModuleListControl.FileDropType.Append;
+						drawLine = false;
+						e.Message = Resources.IDS_DROP_APPEND;
+					}
+					else
+					{
+						// Insert into position in list
+						dropType = ModuleListControl.FileDropType.Insert;
+						drawLine = true;
+						e.Message = Resources.IDS_DROP_INSERT;
+					}
+				}
+				else
+				{
+					// Clear list and add files
+					e.Effect = DragDropEffects.Move;
+					e.DropImageType = DropImageType.Move;
+					dropType = ModuleListControl.FileDropType.ClearAndAdd;
+					drawLine = false;
+					e.Message = Resources.IDS_DROP_CLEARANDADD;
+				}
+
+				e.MessageReplacementToken = string.Empty;
+			}
+			else
+			{
+				// Unknown type, so it is not allowed
+				e.Effect = DragDropEffects.None;
+			}
 		}
 
 

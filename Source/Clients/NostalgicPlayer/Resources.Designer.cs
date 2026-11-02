@@ -1514,7 +1514,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
                 return ResourceManager.GetString("IDS_DEFAULT_SUBSONG", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Append to playlist.
+        /// </summary>
+        internal static string IDS_DROP_APPEND {
+            get {
+                return ResourceManager.GetString("IDS_DROP_APPEND", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Clear and add to playlist.
+        /// </summary>
+        internal static string IDS_DROP_CLEARANDADD {
+            get {
+                return ResourceManager.GetString("IDS_DROP_CLEARANDADD", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Insert in playlist.
+        /// </summary>
+        internal static string IDS_DROP_INSERT {
+            get {
+                return ResourceManager.GetString("IDS_DROP_INSERT", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Failed to add items into the list:
         ///{0}.
