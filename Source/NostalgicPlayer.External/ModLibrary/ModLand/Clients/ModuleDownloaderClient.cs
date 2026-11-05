@@ -9,14 +9,14 @@ using Polycode.NostalgicPlayer.External.ModLibrary.Models;
 
 namespace Polycode.NostalgicPlayer.External.ModLibrary.ModLand.Clients
 {
-	internal class FileDownloaderClient : IFileDownloaderClient
+	internal class ModuleDownloaderClient : IModuleDownloaderClient
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Download a single module with extra files
 		/// </summary>
 		/********************************************************************/
-		public async Task<DownloadedFileModel[]> DownloadFileAsync(string relativePath, string moduleFileName, string[] extraFiles, CancellationToken cancellationToken)
+		public async Task<DownloadedFileModel[]> DownloadModuleAsync(string relativePath, string moduleFileName, string[] extraFiles, CancellationToken cancellationToken)
 		{
 			List<DownloadedFileModel> result = new List<DownloadedFileModel>();
 

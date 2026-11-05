@@ -31,8 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		public List<TreeNode> Children
 		{
-			get;
-			set;
+			get; set;
 		}
 
 
@@ -44,8 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		public string FullPath
 		{
-			get;
-			set;
+			get; set;
 		}
 
 
@@ -57,8 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		public bool IsDirectory
 		{
-			get;
-			set;
+			get; set;
 		}
 
 
@@ -70,8 +67,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		public string Name
 		{
-			get;
-			set;
+			get; set;
 		}
 
 
@@ -83,8 +79,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		public string SourceId
 		{
-			get;
-			set;
+			get; set;
 		}
 
 
@@ -96,42 +91,48 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		/********************************************************************/
 		public long Size
 		{
-			get;
-			set;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Find a node by its full path by navigating through the
-		/// tree
+		/// Is this entry a favorite
+		/// </summary>
+		/********************************************************************/
+		public bool IsFavorite
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find a node by its full path by navigating through the tree
 		/// </summary>
 		/********************************************************************/
 		public TreeNode FindByPath(string path)
 		{
 			// If this is the path we're looking for, return this node
 			if (FullPath == path)
-			{
 				return this;
-			}
 
 			// If the path doesn't start with our path, it's not in our subtree
 			// Special case: root has empty FullPath
 			if (!string.IsNullOrEmpty(FullPath) && !path.StartsWith(FullPath))
-			{
 				return null;
-			}
 
 			// Find the child that matches the next part of the path
-			foreach (var child in Children)
+			foreach (TreeNode child in Children)
 				// Check if this child is on the path
 				// For root node (FullPath=""), all paths are valid
 				// For service nodes (ending with "://"), check if path starts with it
 				// For other nodes, check if path matches or is a subpath
 			{
 				if (path == child.FullPath ||
-				    (child.FullPath.EndsWith("://") && path.StartsWith(child.FullPath)) ||
+				    (child.FullPath.EndsWith(":/") && path.StartsWith(child.FullPath)) ||
 				    path.StartsWith(child.FullPath + "/"))
 					// Recursively search in this child
 				{

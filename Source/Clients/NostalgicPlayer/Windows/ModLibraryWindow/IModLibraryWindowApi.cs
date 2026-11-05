@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
@@ -12,14 +12,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 	/// </summary>
 	public interface IModLibraryWindowApi
 	{
-		/********************************************************************/
 		/// <summary>
 		/// Return the form of the Module Library window
 		/// </summary>
-		/********************************************************************/
-		Form Form
-		{
-			get;
-		}
+		NostalgicForm Form { get; }
 	}
 }

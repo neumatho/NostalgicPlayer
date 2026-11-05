@@ -3,13 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Controls.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
@@ -21,6 +15,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// <summary>
 		/// Create the main form with splash screen showing progress
 		/// </summary>
-		Form CreateMainForm();
+		NostalgicForm CreateMainForm();
 	}
 }

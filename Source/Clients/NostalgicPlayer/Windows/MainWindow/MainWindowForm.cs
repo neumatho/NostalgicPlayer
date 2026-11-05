@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Return the form of the main window
 		/// </summary>
 		/********************************************************************/
-		public Form Form => this;
+		public NostalgicForm Form => this;
 
 
 
@@ -866,9 +866,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 				// Reload ModLibrary if open and path changed
 				if (IsModLibraryWindowOpen())
-				{
 					modLibraryWindow.ReloadChanges();
-				}
 			}
 		}
 		#endregion
@@ -5980,7 +5978,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Get all file paths currently in the playlist as a HashSet for fast lookup
+		/// Get all file paths currently in the playlist as a HashSet for
+		/// fast lookup
 		/// </summary>
 		/********************************************************************/
 		public HashSet<string> GetPlaylistPathsAsHashSet()

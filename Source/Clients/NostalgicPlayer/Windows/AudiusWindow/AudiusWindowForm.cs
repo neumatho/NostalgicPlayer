@@ -6,6 +6,7 @@
 using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Pages;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.External.Download;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
@@ -83,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// Return the form of the Audius window
 		/// </summary>
 		/********************************************************************/
-		public Form Form => this;
+		public NostalgicForm Form => this;
 		#endregion
 
 		#region Event handlers

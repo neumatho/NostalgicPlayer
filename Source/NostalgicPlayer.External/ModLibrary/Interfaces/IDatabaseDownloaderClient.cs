@@ -5,18 +5,17 @@
 /******************************************************************************/
 using System.Threading;
 using System.Threading.Tasks;
-using Polycode.NostalgicPlayer.External.ModLibrary.Models;
 
 namespace Polycode.NostalgicPlayer.External.ModLibrary.Interfaces
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface IFileDownloaderClient
+	public interface IDatabaseDownloaderClient
 	{
 		/// <summary>
-		/// Download a single module with extra files
+		/// Download and parse the database
 		/// </summary>
-		Task<DownloadedFileModel[]> DownloadFileAsync(string relativePath, string moduleFileName, string[] extraFiles, CancellationToken cancellationToken);
+		Task DownloadDatabaseAsync(string cacheDir, CancellationToken cancellationToken);
 	}
 }

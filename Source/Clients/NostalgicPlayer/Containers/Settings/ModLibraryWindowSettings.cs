@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
@@ -22,6 +23,54 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public ModLibraryWindowSettings(ISettings windowSettings)
 		{
 			settings = windowSettings;
+
+			// Upgrade settings
+			LastOnlinePath = LastOnlinePath.Replace("://", ":/");
+
+			if (settings.ContainsEntry("ModLibrary", "FlatViewEnabled"))
+			{
+				bool flatView = settings.GetBoolEntry("ModLibrary", "FlatViewEnabled");
+				OnlineFlatViewEnabled = flatView;
+				OfflineFlatViewEnabled = flatView;
+
+				settings.RemoveEntry("ModLibrary", "FlatViewEnabled");
+			}
+
+			if (settings.ContainsEntry("ModLibrary", "FlatViewSortOrder"))
+			{
+				FlatViewSortOrder sortOrder = (FlatViewSortOrder)settings.GetIntEntry("ModLibrary", "FlatViewSortOrder");
+				OnlineFlatViewSortOrder = sortOrder;
+				OfflineFlatViewSortOrder = sortOrder;
+
+				settings.RemoveEntry("ModLibrary", "FlatViewSortOrder");
+			}
+
+			if (settings.ContainsEntry("ModLibrary", "ColumnWidthName"))
+			{
+				int width = settings.GetIntEntry("ModLibrary", "ColumnWidthName");
+				OnlineColumnWidthName = width;
+				OfflineColumnWidthName = width;
+
+				settings.RemoveEntry("ModLibrary", "ColumnWidthName");
+			}
+
+			if (settings.ContainsEntry("ModLibrary", "ColumnWidthPath"))
+			{
+				int width = settings.GetIntEntry("ModLibrary", "ColumnWidthPath");
+				OnlineColumnWidthPath = width;
+				OfflineColumnWidthPath = width;
+
+				settings.RemoveEntry("ModLibrary", "ColumnWidthPath");
+			}
+
+			if (settings.ContainsEntry("ModLibrary", "ColumnWidthSize"))
+			{
+				int width = settings.GetIntEntry("ModLibrary", "ColumnWidthSize");
+				OnlineColumnWidthSize= width;
+				OfflineColumnWidthSize = width;
+
+				settings.RemoveEntry("ModLibrary", "ColumnWidthSize");
+			}
 		}
 
 
@@ -51,14 +100,58 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Flat view checkbox state
+		/// Flat view checkbox state for online mode
 		/// </summary>
 		/********************************************************************/
-		public bool FlatViewEnabled
+		public bool OnlineFlatViewEnabled
 		{
-			get => settings.GetBoolEntry("ModLibrary", "FlatViewEnabled", false);
+			get => settings.GetBoolEntry("ModLibrary", "OnlineFlatViewEnabled", false);
 
-			set => settings.SetBoolEntry("ModLibrary", "FlatViewEnabled", value);
+			set => settings.SetBoolEntry("ModLibrary", "OnlineFlatViewEnabled", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Flat view sort order for online mode
+		/// (0=NameThenPath, 1=PathThenName)
+		/// </summary>
+		/********************************************************************/
+		public FlatViewSortOrder OnlineFlatViewSortOrder
+		{
+			get => (FlatViewSortOrder)settings.GetIntEntry("ModLibrary", "OnlineFlatViewSortOrder", 0);
+
+			set => settings.SetIntEntry("ModLibrary", "OnlineFlatViewSortOrder", (int)value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Flat view checkbox state for offline mode
+		/// </summary>
+		/********************************************************************/
+		public bool OfflineFlatViewEnabled
+		{
+			get => settings.GetBoolEntry("ModLibrary", "OfflineFlatViewEnabled", false);
+
+			set => settings.SetBoolEntry("ModLibrary", "OfflineFlatViewEnabled", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Flat view sort order for offline mode
+		/// (0=NameThenPath, 1=PathThenName)
+		/// </summary>
+		/********************************************************************/
+		public FlatViewSortOrder OfflineFlatViewSortOrder
+		{
+			get => (FlatViewSortOrder)settings.GetIntEntry("ModLibrary", "OfflineFlatViewSortOrder", 0);
+
+			set => settings.SetIntEntry("ModLibrary", "OfflineFlatViewSortOrder", (int)value);
 		}
 
 
@@ -121,20 +214,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Flat view sort order (0=NameThenPath, 1=PathThenName)
-		/// </summary>
-		/********************************************************************/
-		public int FlatViewSortOrder
-		{
-			get => settings.GetIntEntry("ModLibrary", "FlatViewSortOrder", 0);
-
-			set => settings.SetIntEntry("ModLibrary", "FlatViewSortOrder", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Last path in online mode
 		/// </summary>
 		/********************************************************************/
@@ -187,42 +266,86 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Column width for Name column
+		/// Column width for Name column in online mode
 		/// </summary>
 		/********************************************************************/
-		public int ColumnWidthName
+		public int OnlineColumnWidthName
 		{
-			get => settings.GetIntEntry("ModLibrary", "ColumnWidthName", 400);
+			get => settings.GetIntEntry("ModLibrary", "OnlineColumnWidthName", 400);
 
-			set => settings.SetIntEntry("ModLibrary", "ColumnWidthName", value);
+			set => settings.SetIntEntry("ModLibrary", "OnlineColumnWidthName", value);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Column width for Path column (only used in flat view)
+		/// Column width for Path column in online mode (only used in flat
+		/// view)
 		/// </summary>
 		/********************************************************************/
-		public int ColumnWidthPath
+		public int OnlineColumnWidthPath
 		{
-			get => settings.GetIntEntry("ModLibrary", "ColumnWidthPath", 300);
+			get => settings.GetIntEntry("ModLibrary", "OnlineColumnWidthPath", 300);
 
-			set => settings.SetIntEntry("ModLibrary", "ColumnWidthPath", value);
+			set => settings.SetIntEntry("ModLibrary", "OnlineColumnWidthPath", value);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Column width for Size column
+		/// Column width for Size column in online mode
 		/// </summary>
 		/********************************************************************/
-		public int ColumnWidthSize
+		public int OnlineColumnWidthSize
 		{
-			get => settings.GetIntEntry("ModLibrary", "ColumnWidthSize", 100);
+			get => settings.GetIntEntry("ModLibrary", "OnlineColumnWidthSize", 100);
 
-			set => settings.SetIntEntry("ModLibrary", "ColumnWidthSize", value);
+			set => settings.SetIntEntry("ModLibrary", "OnlineColumnWidthSize", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Column width for Name column in offline mode
+		/// </summary>
+		/********************************************************************/
+		public int OfflineColumnWidthName
+		{
+			get => settings.GetIntEntry("ModLibrary", "OfflineColumnWidthName", 400);
+
+			set => settings.SetIntEntry("ModLibrary", "OfflineColumnWidthName", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Column width for Path column in offline mode (only used in flat
+		/// view)
+		/// </summary>
+		/********************************************************************/
+		public int OfflineColumnWidthPath
+		{
+			get => settings.GetIntEntry("ModLibrary", "OfflineColumnWidthPath", 300);
+
+			set => settings.SetIntEntry("ModLibrary", "OfflineColumnWidthPath", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Column width for Size column in offline mode
+		/// </summary>
+		/********************************************************************/
+		public int OfflineColumnWidthSize
+		{
+			get => settings.GetIntEntry("ModLibrary", "OfflineColumnWidthSize", 100);
+
+			set => settings.SetIntEntry("ModLibrary", "OfflineColumnWidthSize", value);
 		}
 	}
 }

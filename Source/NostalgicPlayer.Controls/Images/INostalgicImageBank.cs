@@ -39,5 +39,10 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		/// Holds all the images needed by the Audius window
 		/// </summary>
 		IAudiusImages Audius { get; }
+
+		/// <summary>
+		/// Holds all the images needed by the Module Library window
+		/// </summary>
+		IModuleLibraryImages ModuleLibrary { get; }
 	}
 }

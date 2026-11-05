@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		private ModuleInformationImages moduleInformationImages;
 		private SampleInformationImages sampleInformationImages;
 		private AudiusImages audiusImages;
+		private ModuleLibraryImages moduleLibraryImages;
 
 		private GeneralImages generalImagesCopy;
 		private FormImages formImagesCopy;
@@ -28,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 		private ModuleInformationImages moduleInformationImagesCopy;
 		private SampleInformationImages sampleInformationImagesCopy;
 		private AudiusImages audiusImagesCopy;
+		private ModuleLibraryImages moduleLibraryImagesCopy;
 
 		/********************************************************************/
 		/// <summary>
@@ -62,6 +64,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			moduleInformationImages.Dispose();
 			sampleInformationImages.Dispose();
 			audiusImages.Dispose();
+			moduleLibraryImages.Dispose();
 		}
 
 
@@ -122,6 +125,15 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 		/********************************************************************/
 		/// <summary>
+		/// Holds all the images needed by the Module Library window
+		/// </summary>
+		/********************************************************************/
+		public IModuleLibraryImages ModuleLibrary => moduleLibraryImages;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called right before the theme changes. Make a copy of all
 		/// bitmaps
 		/// </summary>
@@ -134,6 +146,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			moduleInformationImagesCopy = moduleInformationImages;
 			sampleInformationImagesCopy = sampleInformationImages;
 			audiusImagesCopy = audiusImages;
+			moduleLibraryImagesCopy = moduleLibraryImages;
 
 			CreateImageContainers();
 		}
@@ -165,6 +178,9 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 
 			audiusImagesCopy.Dispose();
 			audiusImagesCopy = null;
+
+			moduleLibraryImagesCopy.Dispose();
+			moduleLibraryImagesCopy = null;
 		}
 
 
@@ -182,6 +198,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			moduleInformationImages = new ModuleInformationImages(themeManager);
 			sampleInformationImages = new SampleInformationImages(themeManager);
 			audiusImages = new AudiusImages(themeManager);
+			moduleLibraryImages = new ModuleLibraryImages(themeManager);
 		}
 	}
 }

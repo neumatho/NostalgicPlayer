@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sou
 		/// <summary>
 		/// Whether the service database is loaded
 		/// </summary>
-		bool IsLoaded { get; set; }
+		bool IsLoaded { get; }
 
 		/// <summary>
 		/// Last update timestamp
@@ -47,6 +47,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sou
 		/// Get readonly access to files
 		/// </summary>
 		IReadOnlyList<ModEntry> Files { get; }
+
+		/// <summary>
+		/// Load local database into memory
+		/// </summary>
+		void LoadDatabase();
+
+		/// <summary>
+		/// Will delete the database
+		/// </summary>
+		void DeleteDatabase();
 
 		/// <summary>
 		/// Add file - creates ModEntry from already sorted data

@@ -511,6 +511,18 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void MouseClickHandler(object sender, MouseEventArgs e)
+		{
+			OnMouseClick(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///
+		/// </summary>
+		/********************************************************************/
 		private void MouseDoubleClickHandler(object sender, MouseEventArgs e)
 		{
 			OnMouseDoubleClick(e);

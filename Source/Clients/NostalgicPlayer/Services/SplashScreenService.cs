@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Create the main form with splash screen showing progress
 		/// </summary>
 		/********************************************************************/
-		public Form CreateMainForm()
+		public NostalgicForm CreateMainForm()
 		{
 			SplashScreenForm splash = formCreatorService.GetFormInstance<SplashScreenForm>();
 			splash.Show();

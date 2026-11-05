@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 using Polycode.NostalgicPlayer.Logic.Containers;
@@ -36,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Return the form of the main window
 		/// </summary>
 		/********************************************************************/
-		public Form Form => mainWindowForm;
+		public NostalgicForm Form => mainWindowForm;
 
 
 
@@ -105,6 +106,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		public void AddFilesToModuleList(string[] files, int startIndex = -1, bool checkForList = false)
 		{
 			mainWindowForm.AddFilesToModuleList(files, startIndex, checkForList);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add files to module list from ModLibrary with play
+		/// immediately option
+		/// </summary>
+		/********************************************************************/
+		public void AddFilesToModuleList(string[] files, bool playImmediately)
+		{
+			mainWindowForm.AddFilesToModuleList(files, playImmediately);
 		}
 
 
@@ -261,6 +275,43 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		public void EnableUserInterfaceSettings()
 		{
 			mainWindowForm.EnableUserInterfaceSettings();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find a module in the module list by file path
+		/// </summary>
+		/********************************************************************/
+		public ModuleListListItem FindModuleInList(string filePath)
+		{
+			return mainWindowForm.FindModuleInList(filePath);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get all file paths currently in the playlist as a HashSet for
+		/// fast lookup
+		/// </summary>
+		/********************************************************************/
+		public HashSet<string> GetPlaylistPathsAsHashSet()
+		{
+			return mainWindowForm.GetPlaylistPathsAsHashSet();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Select and play the given module list item
+		/// </summary>
+		/********************************************************************/
+		public void SelectAndPlayModule(ModuleListListItem listItem)
+		{
+			mainWindowForm.SelectAndPlayModule(listItem);
 		}
 		#endregion
 	}

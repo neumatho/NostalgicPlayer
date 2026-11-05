@@ -10,6 +10,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources.ModLand;
 using Polycode.NostalgicPlayer.Controls.Composition;
@@ -136,6 +137,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		private static void RegisterModLibrary(Container container)
 		{
 			container.Register<ModLandDownloader>();
+			container.RegisterSingleton<IModLibraryHelper, ModLibraryHelper>();
+			container.Register<IModLibraryFavorites, ModLibraryFavorites>();
 		}
 	}
 }

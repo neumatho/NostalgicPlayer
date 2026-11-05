@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 		private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
 		{
 			if (!e.IsSuccess)
-				mainWindow.ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_WEBVIEW2_FAILED, e.InitializationException?.Message));
+				mainWindow.ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_WEBVIEW2_FAILED, e.InitializationException?.Message), this);
 		}
 		#endregion
 	}

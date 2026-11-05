@@ -8,21 +8,12 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Data;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Events;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
-	/// <summary>
-	/// Search mode for filtering files
-	/// </summary>
-	internal enum SearchMode
-	{
-		FilenameAndPath = 0,
-		FilenameOnly = 1,
-		PathOnly = 2
-	}
-
 	/// <summary>
 	/// Builds filtered tree in background with cancellation support
 	/// </summary>
@@ -34,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		private readonly List<ModEntry> localFiles;
 
 		// Cache for fast node lookup during tree building
-		private readonly Dictionary<string, TreeNode> nodeCache = new();
+		private readonly Dictionary<string, TreeNode> nodeCache = new Dictionary<string, TreeNode>();
 		private readonly SearchMode searchMode;
 		private readonly List<IModLibrarySource> sources;
 		private readonly SynchronizationContext syncContext;
@@ -203,7 +194,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 				TreeNode root = new TreeNode { Name = "Root", FullPath = string.Empty, IsDirectory = true };
 
 				bool showAll = string.IsNullOrEmpty(filter);
-				var filterRegex = showAll ? null : ConvertWildcardToRegex(filter);
+				Regex filterRegex = showAll ? null : ConvertWildcardToRegex(filter);
 
 				// Build tree differently for local vs online mode
 				if (isOfflineMode)
@@ -263,12 +254,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Build tree for online mode (service files)
+		/// Build tree for online mode (source files)
 		/// </summary>
 		/********************************************************************/
 		private void BuildTreeOnlineMode(TreeNode root, bool showAll, Regex filterRegex)
 		{
-			// Online mode: Use service-specific online files
+			// Online mode: Use source-specific online files
 			foreach (IModLibrarySource source in sources)
 			{
 				if (cancelled)

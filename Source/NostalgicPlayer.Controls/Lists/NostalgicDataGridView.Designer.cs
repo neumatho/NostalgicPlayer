@@ -66,6 +66,7 @@
 			nostalgicDataGridViewInternal.KeyDown += KeyDownHandler;
 			nostalgicDataGridViewInternal.KeyPress += KeyPressHandler;
 			nostalgicDataGridViewInternal.KeyUp += KeyUpHandler;
+			nostalgicDataGridViewInternal.MouseClick += MouseClickHandler;
 			nostalgicDataGridViewInternal.MouseDoubleClick += MouseDoubleClickHandler;
 			// 
 			// nostalgicVScrollBar
