@@ -16,15 +16,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sou
 	internal class ModLandDownloader : IModLibraryDownloader
 	{
 		private readonly IModLandClientFactory clientFactory;
+		private readonly IModLibraryHelper modLibraryHelper;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModLandDownloader(IModLandClientFactory clientFactory)
+		public ModLandDownloader(IModLandClientFactory clientFactory, IModLibraryHelper modLibraryHelper)
 		{
 			this.clientFactory = clientFactory;
+			this.modLibraryHelper = modLibraryHelper;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Download the database
+		/// </summary>
+		/********************************************************************/
+		public async Task DownloadDatabaseAsync(CancellationToken cancellationToken)
+		{
+			await clientFactory.GetDatabaseDownloaderClient().DownloadDatabaseAsync(modLibraryHelper.CacheDirectory, cancellationToken);
 		}
 
 
@@ -34,9 +48,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sou
 		/// Download a single module
 		/// </summary>
 		/********************************************************************/
-		public async Task<DownloadedFileModel[]> DownloadFileAsync(string relativePath, string moduleFileName, string[] extraFiles, CancellationToken cancellationToken)
+		public async Task<DownloadedFileModel[]> DownloadModuleAsync(string relativePath, string moduleFileName, string[] extraFiles, CancellationToken cancellationToken)
 		{
-			return await clientFactory.GetFileDownloaderClient().DownloadFileAsync(relativePath, moduleFileName, extraFiles, cancellationToken);
+			return await clientFactory.GetModuleDownloaderClient().DownloadModuleAsync(relativePath, moduleFileName, extraFiles, cancellationToken);
 		}
 	}
 }

@@ -176,7 +176,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow
 				// Cleanup
 				samplePageControl.CleanupControl();
 
-				// Cleanup
 				moduleHandler = null;
 			}
 		}

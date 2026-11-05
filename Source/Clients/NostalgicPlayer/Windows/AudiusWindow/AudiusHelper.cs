@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 				audiusListControl.SetLoading(false);
 				audiusListControl.SetItems([]);
 
-				mainWindowApi.ShowSimpleErrorMessage(audiusWindowApi.Form, message);
+				mainWindowApi.ShowSimpleErrorMessage(message, audiusWindowApi.Form);
 			});
 		}
 

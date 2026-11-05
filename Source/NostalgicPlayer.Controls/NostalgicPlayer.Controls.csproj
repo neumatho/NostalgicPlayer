@@ -63,6 +63,9 @@
     <None Remove="Images\Resources\Main\Sort.svg" />
     <None Remove="Images\Resources\Main\Swap.svg" />
     <None Remove="Images\Resources\Main\ZA.svg" />
+    <None Remove="Images\Resources\ModuleLibrary\Directory.svg" />
+    <None Remove="Images\Resources\ModuleLibrary\Favorite.svg" />
+    <None Remove="Images\Resources\ModuleLibrary\File.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -117,6 +120,9 @@
     <EmbeddedResource Include="Images\Resources\Main\ZA.svg" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\NextPicture.svg" />
     <EmbeddedResource Include="Images\Resources\ModuleInformation\PreviousPicture.svg" />
+    <EmbeddedResource Include="Images\Resources\ModuleLibrary\Directory.svg" />
+    <EmbeddedResource Include="Images\Resources\ModuleLibrary\Favorite.svg" />
+    <EmbeddedResource Include="Images\Resources\ModuleLibrary\File.svg" />
     <EmbeddedResource Include="Images\Resources\SampleInformation\SampleLoop.svg" />
     <EmbeddedResource Include="Images\Resources\SampleInformation\SampleMultiOctaves.svg" />
     <EmbeddedResource Include="Images\Resources\SampleInformation\SamplePingPong.svg" />

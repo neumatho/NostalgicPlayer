@@ -10,32 +10,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Eve
 	/// <summary>
 	/// Event args for download completion
 	/// </summary>
-	internal class DownloadCompletedEventArgs : EventArgs
+	public class DownloadCompletedEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DownloadCompletedEventArgs(TreeNode entry, string localPath, bool shouldPlayImmediately, bool success, string errorMessage = null)
+		public DownloadCompletedEventArgs(string localPath, PlayFlag playFlag, bool success)
 		{
-			Entry = entry;
 			LocalPath = localPath;
-			ShouldPlayImmediately = shouldPlayImmediately;
+			PlayFlag = playFlag;
 			Success = success;
-			ErrorMessage = errorMessage;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// The tree node entry that was downloaded
-		/// </summary>
-		/********************************************************************/
-		public TreeNode Entry
-		{
-			get;
 		}
 
 
@@ -54,10 +40,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Eve
 
 		/********************************************************************/
 		/// <summary>
-		/// Whether file should be played immediately
+		/// Indicate how to reach on the downloaded module
 		/// </summary>
 		/********************************************************************/
-		public bool ShouldPlayImmediately
+		public PlayFlag PlayFlag
 		{
 			get;
 		}
@@ -70,18 +56,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Eve
 		/// </summary>
 		/********************************************************************/
 		public bool Success
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Error message if download failed
-		/// </summary>
-		/********************************************************************/
-		public string ErrorMessage
 		{
 			get;
 		}

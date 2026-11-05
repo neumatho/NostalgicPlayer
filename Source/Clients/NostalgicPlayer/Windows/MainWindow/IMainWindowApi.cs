@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
 using Polycode.NostalgicPlayer.Logic.Containers;
@@ -21,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// <summary>
 		/// Return the form of the main window
 		/// </summary>
-		Form Form { get; }
+		NostalgicForm Form { get; }
 
 		/// <summary>
 		/// Return the extra channel implementation
@@ -36,17 +37,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// <summary>
 		/// Will show a question to the user
 		/// </summary>
-		bool ShowQuestion(string question);
+		bool ShowQuestion(string question, IWin32Window owner = null);
 
 		/// <summary>
 		/// Will show an error message to the user
 		/// </summary>
-		void ShowSimpleErrorMessage(string message);
-
-		/// <summary>
-		/// Will show an error message to the user
-		/// </summary>
-		void ShowSimpleErrorMessage(IWin32Window owner, string message);
+		void ShowSimpleErrorMessage(string message, IWin32Window owner = null);
 
 		/// <summary>
 		/// Will show an error message to the user with options
@@ -57,6 +53,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will add all the given files to the module list
 		/// </summary>
 		void AddFilesToModuleList(string[] files, int startIndex = -1, bool checkForList = false);
+
+		/// <summary>
+		/// Add files to module list from ModLibrary with play
+		/// immediately option
+		/// </summary>
+		void AddFilesToModuleList(string[] files, bool playImmediately);
 
 		/// <summary>
 		/// Will add the given module list items to the module list
@@ -122,5 +124,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Enable/disable user interface settings
 		/// </summary>
 		void EnableUserInterfaceSettings();
+
+		/// <summary>
+		/// Find a module in the module list by file path
+		/// </summary>
+		ModuleListListItem FindModuleInList(string filePath);
+
+		/// <summary>
+		/// Get all file paths currently in the playlist as a HashSet for
+		/// fast lookup
+		/// </summary>
+		HashSet<string> GetPlaylistPathsAsHashSet();
+
+		/// <summary>
+		/// Select and play the given module list item
+		/// </summary>
+		void SelectAndPlayModule(ModuleListListItem listItem);
 	}
 }

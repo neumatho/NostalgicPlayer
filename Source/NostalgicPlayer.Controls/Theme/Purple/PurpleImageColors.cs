@@ -54,6 +54,9 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		private static readonly Color favoriteColor = Color.FromArgb(237, 105, 255);
 		private static readonly Color showProfileInfoColor = Color.FromArgb(0, 0, 0);
 
+		private static readonly Color directoryColor = Color.FromArgb(0, 0, 0);
+		private static readonly Color fileColor = Color.FromArgb(0, 0, 0);
+
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -384,5 +387,23 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// </summary>
 		/********************************************************************/
 		public Color ShowProfileInfoColor => showProfileInfoColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color DirectoryColor => directoryColor;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Color FileColor => fileColor;
 	}
 }

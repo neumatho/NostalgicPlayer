@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Eve
 	/// <summary>
 	/// Event args for tree build completion
 	/// </summary>
-	internal class TreeBuildCompletedEventArgs : EventArgs
+	public class TreeBuildCompletedEventArgs : EventArgs
 	{
 		/********************************************************************/
 		/// <summary>

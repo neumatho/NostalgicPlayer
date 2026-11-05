@@ -1592,56 +1592,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add to Favorites.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_ADD_TO_FAVORITES {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_ADD_TO_FAVORITES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add to Playlist.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_ADD_TO_PLAYLIST {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_ADD_TO_PLAYLIST", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 📋 Flat View - All Files ({0} files).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_BREADCRUMB_FLAT_VIEW_ALL {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_BREADCRUMB_FLAT_VIEW_ALL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 📋 Flat View - 🔍 &quot;{0}&quot; ({1} files).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_BREADCRUMB_FLAT_VIEW_SEARCH {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_BREADCRUMB_FLAT_VIEW_SEARCH", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string IDS_MODLIBRARY_CANCEL {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_CANCEL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear Database.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_CLEAR_DATABASE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_CLEAR_DATABASE", resourceCulture);
             }
         }
         
@@ -1673,38 +1628,119 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete from Disk.
+        ///   Looks up a localized string similar to Add to favorites.
         /// </summary>
-        internal static string IDS_MODLIBRARY_DELETE {
+        internal static string IDS_MODLIBRARY_CONTEXT_OFFLINE_ADD_TO_FAVORITES {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_DELETE", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_OFFLINE_ADD_TO_FAVORITES", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download and Play.
+        ///   Looks up a localized string similar to Add to playlist.
         /// </summary>
-        internal static string IDS_MODLIBRARY_DOWNLOAD_AND_PLAY {
+        internal static string IDS_MODLIBRARY_CONTEXT_OFFLINE_ADD_TO_PLAYLIST {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_AND_PLAY", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_OFFLINE_ADD_TO_PLAYLIST", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download to Disk.
+        ///   Looks up a localized string similar to Delete from disk.
         /// </summary>
-        internal static string IDS_MODLIBRARY_DOWNLOAD_TO_DISK {
+        internal static string IDS_MODLIBRARY_CONTEXT_OFFLINE_DELETE {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_TO_DISK", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_OFFLINE_DELETE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download to Playlist.
+        ///   Looks up a localized string similar to Play module(s).
         /// </summary>
-        internal static string IDS_MODLIBRARY_DOWNLOAD_TO_PLAYLIST {
+        internal static string IDS_MODLIBRARY_CONTEXT_OFFLINE_PLAY_MODULES {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_DOWNLOAD_TO_PLAYLIST", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_OFFLINE_PLAY_MODULES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from favorites.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_OFFLINE_REMOVE_FROM_FAVORITES {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_OFFLINE_REMOVE_FROM_FAVORITES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rescan local files.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_OFFLINE_RESCAN {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_OFFLINE_RESCAN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download and play.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_ONLINE_DOWNLOAD_AND_PLAY {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_ONLINE_DOWNLOAD_AND_PLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download to disk.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_ONLINE_DOWNLOAD_TO_DISK {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_ONLINE_DOWNLOAD_TO_DISK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download to playlist.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_ONLINE_DOWNLOAD_TO_PLAYLIST {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_ONLINE_DOWNLOAD_TO_PLAYLIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jump to folder.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_ONLINE_JUMP_TO_FOLDER {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_ONLINE_JUMP_TO_FOLDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear database….
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_SOURCE_CLEAR_DATABASE {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_SOURCE_CLEAR_DATABASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update database.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_CONTEXT_SOURCE_UPDATE_DATABASE {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_CONTEXT_SOURCE_UPDATE_DATABASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Got a timeout.
+        /// </summary>
+        internal static string IDS_MODLIBRARY_ERR_TIMEOUT {
+            get {
+                return ResourceManager.GetString("IDS_MODLIBRARY_ERR_TIMEOUT", resourceCulture);
             }
         }
         
@@ -1736,7 +1772,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} folders, {1} files.
+        ///   Looks up a localized string similar to ({0} folders, {1} files).
         /// </summary>
         internal static string IDS_MODLIBRARY_FOLDERS_FILES_COUNT {
             get {
@@ -1754,47 +1790,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {0} database is {1} days old..
+        ///   Looks up a localized string similar to local.
         /// </summary>
-        internal static string IDS_MODLIBRARY_INFOBAR_DATABASE_OLD {
+        internal static string IDS_MODLIBRARY_LOCAL {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_DATABASE_OLD", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_LOCAL", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Dismiss.
         /// </summary>
-        internal static string IDS_MODLIBRARY_INFOBAR_DISMISS {
+        internal static string IDS_MODLIBRARY_MSGBOX_BUTTON_DISMISS {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_DISMISS", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_BUTTON_DISMISS", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Ignore.
         /// </summary>
-        internal static string IDS_MODLIBRARY_INFOBAR_IGNORE {
+        internal static string IDS_MODLIBRARY_MSGBOX_BUTTON_IGNORE {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_IGNORE", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_BUTTON_IGNORE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Update Now.
         /// </summary>
-        internal static string IDS_MODLIBRARY_INFOBAR_UPDATE_NOW {
+        internal static string IDS_MODLIBRARY_MSGBOX_BUTTON_UPDATE_NOW {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_INFOBAR_UPDATE_NOW", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Jump to Folder.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_JUMP_TO_FOLDER {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_JUMP_TO_FOLDER", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_BUTTON_UPDATE_NOW", resourceCulture);
             }
         }
         
@@ -1810,17 +1837,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to clear the database?
-        ///
-        ///This will delete the local database file and clear all data from memory..
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_CONFIRM_CLEAR_DB {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_CONFIRM_CLEAR_DB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The {0} database is not loaded yet.
         ///
         ///Do you want to download it now?.
@@ -1832,14 +1848,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted {0} item(s) successfully.
+        ///   Looks up a localized string similar to The {0} database is {1} days old.
         ///
-        ///{1} error(s) occurred. Last error:
-        ///{2}.
+        ///What do you want to do?.
         /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_DELETE_COMPLETED_ERRORS {
+        internal static string IDS_MODLIBRARY_MSGBOX_DATABASE_OLD {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DELETE_COMPLETED_ERRORS", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DATABASE_OLD", resourceCulture);
             }
         }
         
@@ -1852,17 +1867,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_MSGBOX_DELETE_COMPLETED_WITH_ERRORS {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DELETE_COMPLETED_WITH_ERRORS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the file &apos;{0}&apos;?
-        ///
-        ///This will permanently delete the file from your computer..
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_DELETE_FILE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DELETE_FILE", resourceCulture);
             }
         }
         
@@ -1900,28 +1904,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete {0} file(s) and {1} folder(s)?
-        ///
-        ///This will permanently delete all selected items from your computer..
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_DELETE_FILES_FOLDERS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DELETE_FILES_FOLDERS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the folder &apos;{0}&apos; and all its contents?
-        ///
-        ///This will permanently delete the files from your computer..
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_DELETE_FOLDER {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DELETE_FOLDER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the folder &apos;{0}&apos; and all its contents?
         ///
         ///This will permanently delete the files from your computer..
@@ -1929,17 +1911,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_MSGBOX_DELETE_FOLDER_CONFIRM {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DELETE_FOLDER_CONFIRM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete {0} folder(s) and all their contents?
-        ///
-        ///This will permanently delete all selected items from your computer..
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_DELETE_FOLDERS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_DELETE_FOLDERS", resourceCulture);
             }
         }
         
@@ -1997,28 +1968,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to download allmods.zip:
-        ///
-        ///{0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to download module:
-        ///
-        ///{0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD_MODULE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_FAILED_DOWNLOAD_MODULE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to play module:
         ///
         ///{0}.
@@ -2041,110 +1990,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear Database.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_CLEAR_DB {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_CLEAR_DB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Clear Error.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_CLEAR_ERROR {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_CLEAR_ERROR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Confirmation.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_CONFIRM {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_CONFIRM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Error.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_ERROR {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_ERROR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Completed with Errors.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_ERRORS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_DELETE_ERRORS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Confirm Download.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_CONFIRM {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_CONFIRM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Download Database.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_DB {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_DB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Download Error.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_ERROR {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_DOWNLOAD_ERROR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to File Not Found.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_FILE_NOT_FOUND {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_FILE_NOT_FOUND", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Play Error.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_MSGBOX_TITLE_PLAY_ERROR {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_MSGBOX_TITLE_PLAY_ERROR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ⬆ Parent.
+        ///   Looks up a localized string similar to Parent.
         /// </summary>
         internal static string IDS_MODLIBRARY_PARENT_BUTTON {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_PARENT_BUTTON", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Play Module(s).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_PLAY {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_PLAY", resourceCulture);
             }
         }
         
@@ -2154,33 +2004,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_PLAYIMMEDIATELY_CHECKBOX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reload.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_RELOAD {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_RELOAD", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove from Favorites.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_REMOVE_FROM_FAVORITES {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_REMOVE_FROM_FAVORITES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Rescan Local Files.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_RESCAN_LOCAL_FILES {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_RESCAN_LOCAL_FILES", resourceCulture);
             }
         }
         
@@ -2203,20 +2026,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} folders, {1} files, {2} total files found.
+        ///   Looks up a localized string similar to ({0} folders, {1} files, {2} total files found).
         /// </summary>
         internal static string IDS_MODLIBRARY_SEARCH_COUNT {
             get {
                 return ResourceManager.GetString("IDS_MODLIBRARY_SEARCH_COUNT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search:.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_SEARCH_LABEL {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_SEARCH_LABEL", resourceCulture);
             }
         }
         
@@ -2257,87 +2071,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added {0} file(s) to playlist.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_ADDED_FILES {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ADDED_FILES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Building flat view....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_BUILDING_FLAT_VIEW {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_BUILDING_FLAT_VIEW", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Building tree structure....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_BUILDING_TREE_STRUCTURE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_BUILDING_TREE_STRUCTURE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Building tree view....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_BUILDING_TREE_VIEW {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_BUILDING_TREE_VIEW", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Database loaded: {0:yyyy-MM-dd} ({1:N0} files).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DATABASE_LOADED {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DATABASE_LOADED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Database cleared successfully.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DB_CLEARED_SUCCESS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DB_CLEARED_SUCCESS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Database found ({0}, {1:N0} KB). Loading....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DB_FOUND_LOADING {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DB_FOUND_LOADING", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Right-click on a service to update its database.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DEFAULT {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DEFAULT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Deleted {0} item(s), {1} error(s).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DELETED_WITH_ERRORS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DELETED_WITH_ERRORS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Download cancelled.
         /// </summary>
         internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_CANCELLED {
@@ -2347,16 +2080,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download complete! Database: {0:N0} KB ({1}).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Download completed: {0} successful.
+        ///   Looks up a localized string similar to Download completed successful.
         /// </summary>
         internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_SUCCESS {
             get {
@@ -2365,7 +2089,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download completed: {0} successful, {1} failed.
+        ///   Looks up a localized string similar to Download completed but {0} failed.
         /// </summary>
         internal static string IDS_MODLIBRARY_STATUS_DOWNLOAD_COMPLETED_WITH_ERRORS {
             get {
@@ -2374,133 +2098,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloaded {0} ({1:N0} bytes).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DOWNLOADED_FILE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOADED_FILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Downloading allmods.zip....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DOWNLOADING_ALLMODS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOADING_ALLMODS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ({0} remaining) Downloading: {1}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DOWNLOADING_BATCH {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOADING_BATCH", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Downloading {0}....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DOWNLOADING_FILE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOADING_FILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Downloading sample file {0}....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_DOWNLOADING_SAMPLE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_DOWNLOADING_SAMPLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error clearing database: {0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_ERROR_CLEARING {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ERROR_CLEARING", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error clearing database: {0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_ERROR_CLEARING_DB {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ERROR_CLEARING_DB", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error deleting: {0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_ERROR_DELETING {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ERROR_DELETING", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error: {0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_ERROR_PREFIX {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ERROR_PREFIX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extracting allmods.txt....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_EXTRACTING_ALLMODS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_EXTRACTING_ALLMODS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to File not found: {0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_FILE_NOT_FOUND {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_FILE_NOT_FOUND", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Found {0} file(s) matching &quot;{1}&quot;.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_FOUND_FILES {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_FOUND_FILES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item deleted successfully.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_ITEM_DELETED_SUCCESS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ITEM_DELETED_SUCCESS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} items deleted successfully.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_ITEMS_DELETED_SUCCESS {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_ITEMS_DELETED_SUCCESS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Loading database....
+        ///   Looks up a localized string similar to Loading {0} database….
         /// </summary>
         internal static string IDS_MODLIBRARY_STATUS_LOADING_DATABASE {
             get {
@@ -2509,52 +2107,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parsing database....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_PARSING_DATABASE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_PARSING_DATABASE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Playing {0} (cached).
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_PLAYING_CACHED {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_PLAYING_CACHED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Playing {0}.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_PLAYING_FILE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_PLAYING_FILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Right-click on a service to update its database.
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_RIGHT_CLICK_SERVICE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_RIGHT_CLICK_SERVICE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Scanning local files....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_SCANNING_LOCAL_FILES {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_SCANNING_LOCAL_FILES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Searching....
+        ///   Looks up a localized string similar to Searching….
         /// </summary>
         internal static string IDS_MODLIBRARY_STATUS_SEARCHING {
             get {
@@ -2563,43 +2116,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Switching to local mode....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_SWITCHING_LOCAL {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_SWITCHING_LOCAL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Switching to online mode....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_SWITCHING_ONLINE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_SWITCHING_ONLINE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Switching to local mode....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_SWITCHING_TO_LOCAL {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_SWITCHING_TO_LOCAL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Switching to online mode....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_SWITCHING_TO_ONLINE {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_SWITCHING_TO_ONLINE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Updating database....
+        ///   Looks up a localized string similar to Updating {0} database….
         /// </summary>
         internal static string IDS_MODLIBRARY_STATUS_UPDATING_DATABASE {
             get {
@@ -2608,16 +2125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updating file list....
-        /// </summary>
-        internal static string IDS_MODLIBRARY_STATUS_UPDATING_FILE_LIST {
-            get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_STATUS_UPDATING_FILE_LIST", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 💾 Local.
+        ///   Looks up a localized string similar to Local.
         /// </summary>
         internal static string IDS_MODLIBRARY_TAB_OFFLINE {
             get {
@@ -2626,7 +2134,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 🌐 Online.
+        ///   Looks up a localized string similar to Online.
         /// </summary>
         internal static string IDS_MODLIBRARY_TAB_ONLINE {
             get {
@@ -2644,20 +2152,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} total files found .
+        ///   Looks up a localized string similar to Folder.
         /// </summary>
-        internal static string IDS_MODLIBRARY_TOTAL_FILES_COUNT {
+        internal static string IDS_MODLIBRARY_TOOLTIP_FOLDER {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_TOTAL_FILES_COUNT", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_TOOLTIP_FOLDER", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Database.
+        ///   Looks up a localized string similar to Module.
         /// </summary>
-        internal static string IDS_MODLIBRARY_UPDATE_DATABASE {
+        internal static string IDS_MODLIBRARY_TOOLTIP_MODULE {
             get {
-                return ResourceManager.GetString("IDS_MODLIBRARY_UPDATE_DATABASE", resourceCulture);
+                return ResourceManager.GetString("IDS_MODLIBRARY_TOOLTIP_MODULE", resourceCulture);
             }
         }
         

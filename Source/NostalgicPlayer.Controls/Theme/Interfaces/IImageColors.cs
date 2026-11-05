@@ -90,5 +90,10 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 		Color FavoriteColor { get; }
 		/// <summary></summary>
 		Color ShowProfileInfoColor { get; }
+
+		/// <summary></summary>
+		Color DirectoryColor { get; }
+		/// <summary></summary>
+		Color FileColor { get; }
 	}
 }

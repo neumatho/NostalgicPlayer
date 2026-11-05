@@ -434,7 +434,7 @@ namespace Polycode.NostalgicPlayer.Controls.Progress
 		/********************************************************************/
 		private void DrawText(Graphics g, Rectangle barRect, Rectangle fillRect, bool hasFill, StateColors stateColors)
 		{
-			const TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix;
+			const TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.PreserveGraphicsClipping;
 
 			Font font = GetFont();
 
