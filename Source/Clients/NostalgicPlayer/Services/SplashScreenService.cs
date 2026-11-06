@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SplashScreen;
+using Polycode.NostalgicPlayer.Controls.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 {
@@ -36,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		/// Create the main form with splash screen showing progress
 		/// </summary>
 		/********************************************************************/
-		public Form CreateMainForm()
+		public NostalgicForm CreateMainForm()
 		{
 			SplashScreenForm splash = formCreatorService.GetFormInstance<SplashScreenForm>();
 			splash.Show();

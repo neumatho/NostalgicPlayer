@@ -11,6 +11,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Factories;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
@@ -367,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			AgentInfo agentInfo = (AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag;
 
 			if (!agentInfo.Enabled)
-				mainWindowApi.ShowSimpleErrorMessage(Resources.IDS_ERR_AGENT_DISABLED);
+				mainWindowApi.ShowSimpleErrorMessage(Resources.IDS_ERR_AGENT_DISABLED, FindForm());
 			else
 				mainWindowApi.OpenAgentSettingsWindow(agentInfo);
 		}

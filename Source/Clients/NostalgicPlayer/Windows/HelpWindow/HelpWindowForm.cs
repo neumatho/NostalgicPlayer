@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 	/// <summary>
 	/// This shows the help documentation
 	/// </summary>
-	public partial class HelpWindowForm : WindowFormBase
+	public partial class HelpWindowForm : WindowFormBase2
 	{
 		private IMainWindowApi mainWindow;
 		private WebView2 webView;
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 			// Windows 11 and updated Windows 10 installations)
 			if (string.IsNullOrEmpty(CoreWebView2Environment.GetAvailableBrowserVersionString()))
 			{
-				mainWindow.ShowSimpleErrorMessage(this, Resources.IDS_ERR_WEBVIEW2_MISSING);
+				mainWindow.ShowSimpleErrorMessage(Resources.IDS_ERR_WEBVIEW2_MISSING, this);
 
 				Close();
 				return;
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 		private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
 		{
 			if (!e.IsSuccess)
-				mainWindow.ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_WEBVIEW2_FAILED, e.InitializationException?.Message));
+				mainWindow.ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_WEBVIEW2_FAILED, e.InitializationException?.Message), this);
 		}
 		#endregion
 	}

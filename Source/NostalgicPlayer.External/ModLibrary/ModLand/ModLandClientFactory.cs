@@ -15,12 +15,24 @@ namespace Polycode.NostalgicPlayer.External.ModLibrary.ModLand
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Return a file downloader client
+		/// Return a database downloader client
 		/// </summary>
 		/********************************************************************/
-		public IFileDownloaderClient GetFileDownloaderClient()
+		public IDatabaseDownloaderClient GetDatabaseDownloaderClient()
 		{
-			return new FileDownloaderClient();
+			return new DatabaseDownloaderClient();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a module downloader client
+		/// </summary>
+		/********************************************************************/
+		public IModuleDownloaderClient GetModuleDownloaderClient()
+		{
+			return new ModuleDownloaderClient();
 		}
 	}
 }

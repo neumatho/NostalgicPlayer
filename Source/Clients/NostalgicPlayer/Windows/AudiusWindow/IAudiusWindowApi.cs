@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Controls.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 {
@@ -15,6 +15,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow
 		/// <summary>
 		/// Return the form of the Audius window
 		/// </summary>
-		Form Form { get; }
+		NostalgicForm Form { get; }
 	}
 }

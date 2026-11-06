@@ -15,8 +15,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sou
 	public interface IModLibraryDownloader
 	{
 		/// <summary>
+		/// Download the database
+		/// </summary>
+		Task DownloadDatabaseAsync(CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Download a single module
 		/// </summary>
-		Task<DownloadedFileModel[]> DownloadFileAsync(string relativePath, string moduleFileName, string[] extraFiles, CancellationToken cancellationToken);
+		Task<DownloadedFileModel[]> DownloadModuleAsync(string relativePath, string moduleFileName, string[] extraFiles, CancellationToken cancellationToken);
 	}
 }

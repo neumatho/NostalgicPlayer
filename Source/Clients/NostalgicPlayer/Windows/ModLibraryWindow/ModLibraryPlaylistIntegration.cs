@@ -3,15 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Logic.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 {
 	/// <summary>
 	/// Handles integration with the main window playlist
 	/// </summary>
-	internal class ModLibraryPlaylistIntegration
+	public class ModLibraryPlaylistIntegration
 	{
 		private readonly IMainWindowApi mainWindow;
 
@@ -36,24 +36,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow
 		{
 			if (mainWindow.Form is MainWindowForm mainWindowForm)
 			{
-				mainWindowForm.Invoke((Action)(() =>
+				mainWindowForm.Invoke(() =>
 				{
 					// Check if module already exists in playlist
-					var existingItem = mainWindowForm.FindModuleInList(localPath);
+					ModuleListListItem existingItem = mainWindowForm.FindModuleInList(localPath);
 					if (existingItem != null)
 					{
 						// Module already in list - select and play it if should play immediately
 						if (shouldPlayImmediately)
-						{
 							mainWindowForm.SelectAndPlayModule(existingItem);
-						}
 					}
 					else
 					{
 						// Add the file to the list and optionally play it immediately
-						mainWindowForm.AddFilesToModuleList(new[] {localPath}, shouldPlayImmediately);
+						mainWindowForm.AddFilesToModuleList([ localPath ], shouldPlayImmediately);
 					}
-				}));
+				});
 			}
 		}
 	}

@@ -6,8 +6,10 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Controls.Forms;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Library.Interfaces;
+using Polycode.NostalgicPlayer.Logic.Containers;
 using Polycode.NostalgicPlayer.Logic.Playlists;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
@@ -35,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Return the form of the main window
 		/// </summary>
 		/********************************************************************/
-		public Form Form => mainWindowForm;
+		public NostalgicForm Form => mainWindowForm;
 
 
 
@@ -65,9 +67,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show a question to the user
 		/// </summary>
 		/********************************************************************/
-		public bool ShowQuestion(string question)
+		public bool ShowQuestion(string question, IWin32Window owner)
 		{
-			return mainWindowForm.ShowQuestion(question);
+			return mainWindowForm.ShowQuestion(question, owner);
 		}
 
 
@@ -77,21 +79,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show an error message to the user
 		/// </summary>
 		/********************************************************************/
-		public void ShowSimpleErrorMessage(string message)
+		public void ShowSimpleErrorMessage(string message, IWin32Window owner)
 		{
-			mainWindowForm.ShowSimpleErrorMessage(message);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will show an error message to the user
-		/// </summary>
-		/********************************************************************/
-		public void ShowSimpleErrorMessage(IWin32Window owner, string message)
-		{
-			mainWindowForm.ShowSimpleErrorMessage(owner, message);
+			mainWindowForm.ShowSimpleErrorMessage(message, owner);
 		}
 
 
@@ -101,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show an error message to the user with options
 		/// </summary>
 		/********************************************************************/
-		public void ShowErrorMessage(string message, ModuleListItem listItem)
+		public void ShowErrorMessage(string message, ModuleListListItem listItem)
 		{
 			mainWindowForm.ShowErrorMessage(message, listItem);
 		}
@@ -122,10 +112,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Add files to module list from ModLibrary with play
+		/// immediately option
+		/// </summary>
+		/********************************************************************/
+		public void AddFilesToModuleList(string[] files, bool playImmediately)
+		{
+			mainWindowForm.AddFilesToModuleList(files, playImmediately);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will add the given module list items to the module list
 		/// </summary>
 		/********************************************************************/
-		public void AddItemsToModuleList(ModuleListItem[] items, bool clearAndPlay)
+		public void AddItemsToModuleList(ModuleListListItem[] items, bool clearAndPlay)
 		{
 			mainWindowForm.AddItemsToModuleList(items, clearAndPlay);
 		}
@@ -137,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will replace the given item with the new list of items
 		/// </summary>
 		/********************************************************************/
-		public void ReplaceItemInModuleList(ModuleListItem listItem, List<ModuleListItem> newItems)
+		public void ReplaceItemInModuleList(ModuleListListItem listItem, List<ModuleListListItem> newItems)
 		{
 			mainWindowForm.ReplaceItemInModuleList(listItem, newItems);
 		}
@@ -149,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will remove all the items in the given list from the module list
 		/// </summary>
 		/********************************************************************/
-		public void RemoveItemsFromModuleList(List<ModuleListItem> items)
+		public void RemoveItemsFromModuleList(List<ModuleListListItem> items)
 		{
 			mainWindowForm.RemoveItemsFromModuleList(items);
 		}
@@ -272,6 +275,43 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		public void EnableUserInterfaceSettings()
 		{
 			mainWindowForm.EnableUserInterfaceSettings();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find a module in the module list by file path
+		/// </summary>
+		/********************************************************************/
+		public ModuleListListItem FindModuleInList(string filePath)
+		{
+			return mainWindowForm.FindModuleInList(filePath);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get all file paths currently in the playlist as a HashSet for
+		/// fast lookup
+		/// </summary>
+		/********************************************************************/
+		public HashSet<string> GetPlaylistPathsAsHashSet()
+		{
+			return mainWindowForm.GetPlaylistPathsAsHashSet();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Select and play the given module list item
+		/// </summary>
+		/********************************************************************/
+		public void SelectAndPlayModule(ModuleListListItem listItem)
+		{
+			mainWindowForm.SelectAndPlayModule(listItem);
 		}
 		#endregion
 	}

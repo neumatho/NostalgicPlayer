@@ -10,6 +10,7 @@ namespace Polycode.NostalgicPlayer.External.ModLibrary.ModLand
 	/// </summary>
 	internal static class Constants
 	{
+		public const string AllmodsZipUrl = "https://modland.com/allmods.zip";
 		public const string ModlandModulesUrl = "https://modland.com/pub/modules/";
 	}
 }

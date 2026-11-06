@@ -10,8 +10,10 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Services;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.AudiusWindow.Loader;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Sources.ModLand;
+using Polycode.NostalgicPlayer.Controls.Composition;
 using Polycode.NostalgicPlayer.External.Composition;
 using Polycode.NostalgicPlayer.Kit.Gui.Composition;
 using Polycode.NostalgicPlayer.Library.Application;
@@ -37,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 			container.RegisterExternal();
 			container.RegisterPlatform();
 			container.RegisterGuiKit();
+			container.RegisterControls();
 
 			RegisterSettings(container);
 			RegisterFactories(container);
@@ -94,8 +97,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		{
 			container.RegisterSingleton<ISplashScreenService, SplashScreenService>();
 
-			container.RegisterSingleton<IFormCreatorService, FormCreatorService>();
-			container.RegisterSingleton<IControlInitializerService, ControlInitializerService>();
 			container.RegisterSingleton<IFileScannerService, FileScannerService>();
 			container.RegisterSingleton<IModuleHandlerService, ModuleHandlerService>();
 			container.RegisterSingleton<ISystemMediaTransportControlsService, SystemMediaTransportControlsService>();
@@ -136,6 +137,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Composition
 		private static void RegisterModLibrary(Container container)
 		{
 			container.Register<ModLandDownloader>();
+			container.RegisterSingleton<IModLibraryHelper, ModLibraryHelper>();
+			container.Register<IModLibraryFavorites, ModLibraryFavorites>();
 		}
 	}
 }

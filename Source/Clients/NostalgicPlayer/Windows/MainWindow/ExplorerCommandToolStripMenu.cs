@@ -6,9 +6,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Controls.Menus;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 {
 	/// <summary>
 	/// Defines an Explorer command and how its top-level menu item is shown
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 
 		private ExplorerCommandMenu explorerCommandMenu;
 
-		public KryptonContextMenuItem MenuItem { get; }
+		public NostalgicToolStripMenuItem MenuItem { get; }
 
 		/********************************************************************/
 		/// <summary>
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 			this.definition = definition;
 			this.invocationErrorHandler = invocationErrorHandler;
 
-			MenuItem = new KryptonContextMenuItem
+			MenuItem = new NostalgicToolStripMenuItem
 			{
 				Visible = false
 			};
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 				if (definition.RenderTopLevelIcon)
 					MenuItem.Image = root.TakeImage();
 
-				AddMenuItems(MenuItem, root.Children);
+				AddMenuItems(MenuItem.DropDownItems, root.Children);
 
 				MenuItem.Visible = true;
 			}
@@ -110,10 +110,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		{
 			MenuItem.Visible = false;
 
-			while (MenuItem.Items.Count > 0)
+			while (MenuItem.DropDownItems.Count > 0)
 			{
-				KryptonContextMenuItemBase item = MenuItem.Items[0];
-				MenuItem.Items.RemoveAt(0);
+				ToolStripItem item = MenuItem.DropDownItems[0];
+				MenuItem.DropDownItems.RemoveAt(0);
 				item.Dispose();
 			}
 
@@ -158,23 +158,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Add Explorer command entries to a ToolStrip menu
 		/// </summary>
 		/********************************************************************/
-		private void AddMenuItems(KryptonContextMenuItem menuItems, IReadOnlyList<ExplorerCommandMenu.Entry> commands)
+		private void AddMenuItems(ToolStripItemCollection menuItems, IReadOnlyList<ExplorerCommandMenu.Entry> commands)
 		{
-			KryptonContextMenuItems submenuCollection = new KryptonContextMenuItems();
-
 			foreach (ExplorerCommandMenu.Entry command in commands)
 			{
 				if (!command.Visible)
 					continue;
 
 				if (command.SeparatorBefore)
-					AddSeparator(submenuCollection);
+					AddSeparator(menuItems);
 
 				if (command.IsSeparator)
-					AddSeparator(submenuCollection);
+					AddSeparator(menuItems);
 				else
 				{
-					KryptonContextMenuItem menuItem = new KryptonContextMenuItem(command.Text)
+					NostalgicToolStripMenuItem menuItem = new NostalgicToolStripMenuItem(command.Text)
 					{
 						Image = command.TakeImage(),
 						Enabled = command.Enabled,
@@ -182,15 +180,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 					};
 					menuItem.Click += (sender, e) => Invoke(command);
 
-					submenuCollection.Items.Add(menuItem);
+					menuItems.Add(menuItem);
 				}
 
 				if (command.SeparatorAfter)
-					AddSeparator(submenuCollection);
+					AddSeparator(menuItems);
 			}
-
-			if (submenuCollection.Items.Count > 0)
-				menuItems.Items.Add(submenuCollection);
 		}
 
 
@@ -200,10 +195,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows
 		/// Add a separator unless the menu already ends with one
 		/// </summary>
 		/********************************************************************/
-		private static void AddSeparator(KryptonContextMenuItems menuItems)
+		private static void AddSeparator(ToolStripItemCollection menuItems)
 		{
-			if ((menuItems.Items.Count > 0) && (menuItems.Items[menuItems.Items.Count - 1] is not KryptonContextMenuSeparator))
-				menuItems.Items.Add(new KryptonContextMenuSeparator());
+			if ((menuItems.Count > 0) && (menuItems[menuItems.Count - 1] is not ToolStripSeparator))
+				menuItems.Add(new ToolStripSeparator());
 		}
 
 

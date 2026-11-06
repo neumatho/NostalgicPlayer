@@ -11,8 +11,13 @@ namespace Polycode.NostalgicPlayer.External.ModLibrary.Interfaces
 	public interface IClientFactory
 	{
 		/// <summary>
-		/// Return a file downloader client
+		/// Return a database downloader client
 		/// </summary>
-		IFileDownloaderClient GetFileDownloaderClient();
+		IDatabaseDownloaderClient GetDatabaseDownloaderClient();
+
+		/// <summary>
+		/// Return a module downloader client
+		/// </summary>
+		IModuleDownloaderClient GetModuleDownloaderClient();
 	}
 }
