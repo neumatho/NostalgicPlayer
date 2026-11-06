@@ -123,6 +123,15 @@
   <data name="IDS_DEFAULT_TAB_NAME" xml:space="preserve">
     <value>Tab page</value>
   </data>
+  <data name="IDS_DROP_APPEND" xml:space="preserve">
+    <value>Append to playlist</value>
+  </data>
+  <data name="IDS_DROP_CLEARANDADD" xml:space="preserve">
+    <value>Clear and add to playlist</value>
+  </data>
+  <data name="IDS_DROP_INSERT" xml:space="preserve">
+    <value>Insert in playlist</value>
+  </data>
   <data name="IDS_TIMEFORMAT" xml:space="preserve">
     <value>hh\:mm\:ss</value>
   </data>

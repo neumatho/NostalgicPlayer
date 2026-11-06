@@ -1239,14 +1239,14 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 					if (((ModifierKeys & Keys.Shift) != 0) || (index == -1))
 					{
 						// Append to list
-						dropType = ModuleListControl.FileDropType.Append;
+						dropType = NostalgicModuleList.FileDropType.Append;
 						drawLine = false;
 						e.Message = Resources.IDS_DROP_APPEND;
 					}
 					else
 					{
 						// Insert into position in list
-						dropType = ModuleListControl.FileDropType.Insert;
+						dropType = NostalgicModuleList.FileDropType.Insert;
 						drawLine = true;
 						e.Message = Resources.IDS_DROP_INSERT;
 					}
@@ -1256,7 +1256,7 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 					// Clear list and add files
 					e.Effect = DragDropEffects.Move;
 					e.DropImageType = DropImageType.Move;
-					dropType = ModuleListControl.FileDropType.ClearAndAdd;
+					dropType = NostalgicModuleList.FileDropType.ClearAndAdd;
 					drawLine = false;
 					e.Message = Resources.IDS_DROP_CLEARANDADD;
 				}
@@ -1268,28 +1268,6 @@ namespace Polycode.NostalgicPlayer.Controls.Lists
 				// Unknown type, so it is not allowed
 				e.Effect = DragDropEffects.None;
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will draw a line at the place where the drop will happen
-		/// </summary>
-		/********************************************************************/
-		private Brush GetSelectedItemBackgroundBrush()
-		{
-			LinearGradientBrush selectedItemBackgroundBrush = new LinearGradientBrush(new Point(0, 0), new Point(0, ItemHeight), selectedBackgroundColor1, selectedBackgroundColor3);
-
-			ColorBlend blend = new ColorBlend
-			{
-				Colors = [ selectedBackgroundColor1, selectedBackgroundColor2, selectedBackgroundColor2, selectedBackgroundColor3 ],
-				Positions = [ 0.0f, 0.1f, 0.7f, 1.0f ]
-			};
-
-			selectedItemBackgroundBrush.InterpolationColors = blend;
-
-			return selectedItemBackgroundBrush;
 		}
 
 

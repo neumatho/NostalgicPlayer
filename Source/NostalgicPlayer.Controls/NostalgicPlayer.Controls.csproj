@@ -135,7 +135,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
+    <ProjectReference Include="..\NostalgicPlayer.Platform.Windows\NostalgicPlayer.Platform.Windows.csproj" />
   </ItemGroup>
 
   <ItemGroup>
