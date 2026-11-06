@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Controls;
+using Polycode.NostalgicPlayer.Controls.Menus;
 using Polycode.NostalgicPlayer.Controls.Sliders;
 using Polycode.NostalgicPlayer.Logic.Equalizer;
 
@@ -361,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			{
 				EqualizerPreset preset = allPresets[i];
 
-				ToolStripMenuItem item = new ToolStripMenuItem
+				NostalgicToolStripMenuItem item = new NostalgicToolStripMenuItem
 				{
 					Text = preset.GetDisplayName(),
 					Tag = preset,
@@ -399,7 +400,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 		/********************************************************************/
 		private void PresetMenuItem_Click(object sender, EventArgs e)
 		{
-			if (sender is ToolStripMenuItem menuItem && menuItem.Tag is EqualizerPreset preset)
+			if (sender is NostalgicToolStripMenuItem menuItem && menuItem.Tag is EqualizerPreset preset)
 			{
 				// Skip if Custom is selected (Custom has no predefined values)
 				if (preset == EqualizerPreset.Custom)
@@ -429,7 +430,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.EqualizerWindow
 			// Update context menu checkmarks
 			if (presetContextMenu.Items.Count > 0)
 			{
-				foreach (ToolStripMenuItem menuItem in presetContextMenu.Items)
+				foreach (NostalgicToolStripMenuItem menuItem in presetContextMenu.Items)
 				{
 					EqualizerPreset preset = (EqualizerPreset)menuItem.Tag;
 					menuItem.Checked = preset == matchingPreset;

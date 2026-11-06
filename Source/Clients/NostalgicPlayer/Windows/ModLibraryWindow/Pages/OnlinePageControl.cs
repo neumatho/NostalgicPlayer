@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Pag
 		private NostalgicToolStripMenuItem downloadAndPlayItem;
 		private NostalgicToolStripMenuItem downloadToPlaylistItem;
 		private NostalgicToolStripMenuItem downloadToDiskItem;
-		private ToolStripSeparator separatorItem;
+		private NostalgicToolStripSeparator separatorItem;
 		private NostalgicToolStripMenuItem jumpToFolderItem;
 
 		private readonly OnlineData data = new OnlineData();
@@ -608,7 +608,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Pag
 			downloadToDiskItem.Click += DownloadToDiskItem_Click;
 			contextMenu.Items.Add(downloadToDiskItem);
 
-			separatorItem = new ToolStripSeparator();
+			separatorItem = new NostalgicToolStripSeparator();
 			contextMenu.Items.Add(separatorItem);
 
 			jumpToFolderItem = new NostalgicToolStripMenuItem(Resources.IDS_MODLIBRARY_CONTEXT_ONLINE_JUMP_TO_FOLDER);

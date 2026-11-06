@@ -36,10 +36,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Pag
 
 		private NostalgicToolStripMenuItem playModulesItem;
 		private NostalgicToolStripMenuItem addToPlayListItem;
-		private ToolStripSeparator separator1Item;
+		private NostalgicToolStripSeparator separator1Item;
 		private NostalgicToolStripMenuItem addToFavoritesItem;
 		private NostalgicToolStripMenuItem removeFromFavoritesItem;
-		private ToolStripSeparator separator2Item;
+		private NostalgicToolStripSeparator separator2Item;
 		private NostalgicToolStripMenuItem reloadItem;
 		private NostalgicToolStripMenuItem deleteItem;
 
@@ -564,7 +564,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Pag
 			addToPlayListItem.Click += AddToPlaylistItem_Click;
 			contextMenu.Items.Add(addToPlayListItem);
 
-			separator1Item = new ToolStripSeparator();
+			separator1Item = new NostalgicToolStripSeparator();
 			contextMenu.Items.Add(separator1Item);
 
 			addToFavoritesItem = new NostalgicToolStripMenuItem(Resources.IDS_MODLIBRARY_CONTEXT_OFFLINE_ADD_TO_FAVORITES);
@@ -575,7 +575,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.ModLibraryWindow.Pag
 			removeFromFavoritesItem.Click += RemoveFromFavoritesItem_Click;
 			contextMenu.Items.Add(removeFromFavoritesItem);
 
-			separator2Item = new ToolStripSeparator();
+			separator2Item = new NostalgicToolStripSeparator();
 			contextMenu.Items.Add(separator2Item);
 
 			reloadItem = new NostalgicToolStripMenuItem(Resources.IDS_MODLIBRARY_CONTEXT_OFFLINE_RESCAN);

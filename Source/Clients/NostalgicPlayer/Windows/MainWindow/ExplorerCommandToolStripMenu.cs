@@ -197,8 +197,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private static void AddSeparator(ToolStripItemCollection menuItems)
 		{
-			if ((menuItems.Count > 0) && (menuItems[menuItems.Count - 1] is not ToolStripSeparator))
-				menuItems.Add(new ToolStripSeparator());
+			if ((menuItems.Count > 0) && (menuItems[menuItems.Count - 1] is not NostalgicToolStripSeparator))
+				menuItems.Add(new NostalgicToolStripSeparator());
 		}
 
 

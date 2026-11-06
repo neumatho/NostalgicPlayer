@@ -92,9 +92,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private SaveFileDialog saveListFileDialog;
 
 		// Menus
-		private ToolStripSeparator agentSettingsSeparatorMenuItem;
-		private ToolStripMenuItem agentSettingsMenuItem;
-		private ToolStripMenuItem agentShowMenuItem;
+		private NostalgicToolStripSeparator agentSettingsSeparatorMenuItem;
+		private NostalgicToolStripMenuItem agentSettingsMenuItem;
+		private NostalgicToolStripMenuItem agentShowMenuItem;
 
 		// Context menus
 		private NostalgicToolStripMenuItem setSubSongMenuItem;
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private NostalgicToolStripMenuItem contextMenuOtherMenu = null;
 		private NostalgicToolStripMenuItem contextMenuItemSetSubSong = null;
 		private NostalgicToolStripMenuItem contextMenuItemClearSubSong = null;
-		private ToolStripSeparator contextMenuItemFileSeparator = null;
+		private NostalgicToolStripSeparator contextMenuItemFileSeparator = null;
 		private NostalgicToolStripMenuItem contextMenuItemShowInFileExplorer = null;
 		private NostalgicToolStripMenuItem contextMenuItemProperties = null;
 
@@ -647,14 +647,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			if (agentInfo.HasSettings)
 			{
 				// Create the menu item
-				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				NostalgicToolStripMenuItem newMenuItem = new NostalgicToolStripMenuItem(agentInfo.TypeName);
 				newMenuItem.Tag = agentInfo;
 				newMenuItem.Click += Menu_Window_AgentSettings_Click;
 
 				// Find the right place in the menu to insert the agent
 				int insertPos = 0;
 
-				foreach (ToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
+				foreach (NostalgicToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
 				{
 					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
 						break;
@@ -668,14 +668,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			if (agentInfo.HasDisplay)
 			{
 				// Create the menu item
-				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				NostalgicToolStripMenuItem newMenuItem = new NostalgicToolStripMenuItem(agentInfo.TypeName);
 				newMenuItem.Tag = agentInfo;
 				newMenuItem.Click += Menu_Window_AgentDisplay_Click;
 
 				// Find the right place in the menu to insert the agent
 				int insertPos = 0;
 
-				foreach (ToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
+				foreach (NostalgicToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
 				{
 					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
 						break;
@@ -1705,7 +1705,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void Menu_Window_AgentSettings_Click(object sender, EventArgs e)
 		{
-			AgentInfo agentInfo = (AgentInfo)((ToolStripMenuItem)sender).Tag;
+			AgentInfo agentInfo = (AgentInfo)((NostalgicToolStripMenuItem)sender).Tag;
 			OpenAgentSettingsWindow(agentInfo);
 		}
 
@@ -1718,7 +1718,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/********************************************************************/
 		private void Menu_Window_AgentDisplay_Click(object sender, EventArgs e)
 		{
-			AgentInfo agentInfo = (AgentInfo)((ToolStripMenuItem)sender).Tag;
+			AgentInfo agentInfo = (AgentInfo)((NostalgicToolStripMenuItem)sender).Tag;
 			OpenAgentDisplayWindow(agentInfo);
 		}
 		#endregion
@@ -3338,21 +3338,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private void CreateMainMenu()
 		{
 			// Create the file menu
-			ToolStripMenuItem fileMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE);
+			NostalgicToolStripMenuItem fileMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_FILE);
 
-			ToolStripMenuItem menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_OPEN);
+			NostalgicToolStripMenuItem menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_FILE_OPEN);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.O;
 			menuItem.Click += PlayButton_Click;
 			fileMenuItem.DropDownItems.Add(menuItem);
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_OPEN_URL);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_FILE_OPEN_URL);
 			menuItem.ShortcutKeys = Keys.Shift | Keys.Alt | Keys.O;
 			menuItem.Click += Menu_File_OpenUrl_Click;
 			fileMenuItem.DropDownItems.Add(menuItem);
 
-			fileMenuItem.DropDownItems.Add(new ToolStripSeparator());
+			fileMenuItem.DropDownItems.Add(new NostalgicToolStripSeparator());
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_EXIT);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_FILE_EXIT);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.F4;
 			menuItem.Click += Menu_File_Exit_Click;
 			fileMenuItem.DropDownItems.Add(menuItem);
@@ -3360,51 +3360,51 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			menuBar.Items.Add(fileMenuItem);
 
 			// Create the window menu
-			ToolStripMenuItem windowMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW);
+			NostalgicToolStripMenuItem windowMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_WINDOW);
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_SETTINGS);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_WINDOW_SETTINGS);
 			menuItem.Click += Menu_Window_Settings_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_RESET_POSITIONS);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_WINDOW_RESET_POSITIONS);
 			menuItem.Click += Menu_Window_ResetPositions_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
-			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
+			windowMenuItem.DropDownItems.Add(new NostalgicToolStripSeparator());
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AUDIUS);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_WINDOW_AUDIUS);
 			menuItem.Click += Menu_Window_Audius_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_MODLIBRARY);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_WINDOW_MODLIBRARY);
 			menuItem.Click += Menu_Window_ModLibrary_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
-			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
+			agentSettingsSeparatorMenuItem = new NostalgicToolStripSeparator();
 			agentSettingsSeparatorMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsSeparatorMenuItem);
 
-			agentShowMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SHOW);
+			agentShowMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SHOW);
 			agentShowMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentShowMenuItem);
 
-			agentSettingsMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SETTINGS);
+			agentSettingsMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SETTINGS);
 			agentSettingsMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsMenuItem);
 
 			menuBar.Items.Add(windowMenuItem);
 
 			// Create the help menu
-			ToolStripMenuItem helpMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP);
+			NostalgicToolStripMenuItem helpMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_HELP);
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP_HELP);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_HELP_HELP);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.H;
 			menuItem.Click += Menu_Help_Help_Click;
 			helpMenuItem.DropDownItems.Add(menuItem);
 
-			helpMenuItem.DropDownItems.Add(new ToolStripSeparator());
+			helpMenuItem.DropDownItems.Add(new NostalgicToolStripSeparator());
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP_ABOUT);
+			menuItem = new NostalgicToolStripMenuItem(Resources.IDS_MENU_HELP_ABOUT);
 			menuItem.Click += Menu_Help_About_Click;
 			helpMenuItem.DropDownItems.Add(menuItem);
 
@@ -3475,7 +3475,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			item.Click += ListMenu_SelectNone;
 			listContextMenu.Items.Add(item);
 
-			ToolStripSeparator separatorItem = new ToolStripSeparator();
+			NostalgicToolStripSeparator separatorItem = new NostalgicToolStripSeparator();
 			listContextMenu.Items.Add(separatorItem);
 
 			setSubSongMenuItem = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, nameof(IMainImages.SetSubSong));
@@ -3565,7 +3565,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			contextMenuItemSelectNone.Click += ListMenu_SelectNone;
 			contextMenuOtherMenu.DropDownItems.Add(contextMenuItemSelectNone);
 
-			contextMenuOtherMenu.DropDownItems.Add(new ToolStripSeparator());
+			contextMenuOtherMenu.DropDownItems.Add(new NostalgicToolStripSeparator());
 
 			contextMenuItemSetSubSong = new NostalgicToolStripMenuItem(Resources.IDS_CONTEXTMENU_LIST_SET_SUBSONG, nameof(IMainImages.SetSubSong));
 			contextMenuItemSetSubSong.Click += ListMenu_SetDefaultSubSong;
@@ -3594,7 +3594,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			// Add File Explorer actions if we are not in Windows 10 S mode
 			if (!Env.IsWindows10S)
 			{
-				contextMenuItemFileSeparator = new ToolStripSeparator();
+				contextMenuItemFileSeparator = new NostalgicToolStripSeparator();
 				moduleListContextMenu.Items.Add(contextMenuItemFileSeparator);
 
 				// Add all the explorer command definitions to the context menu
