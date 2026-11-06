@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -84,7 +84,7 @@
     <ProjectReference Include="..\..\Agents\Streamers\OggStreamer\OggStreamer.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
-    <ProjectReference Include="..\..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Platform.Windows\NostalgicPlayer.Platform.Windows.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

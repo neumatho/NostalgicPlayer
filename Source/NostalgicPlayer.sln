@@ -226,7 +226,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OggStreamer", "Agents\Strea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Logic", "NostalgicPlayer.Logic\NostalgicPlayer.Logic.csproj", "{DDE26FA0-64EB-3688-4948-E65598610E42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Platform.Win", "NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj", "{49F70D64-024B-4C15-BD4B-6DCDD4CB97B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer.Platform.Windows", "NostalgicPlayer.Platform.Windows\NostalgicPlayer.Platform.Windows.csproj", "{49F70D64-024B-4C15-BD4B-6DCDD4CB97B9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FFmpeg", "FFmpeg", "{DA98D609-A121-45DF-9B62-CD335DD2467F}"
 EndProject

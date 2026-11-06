@@ -155,7 +155,7 @@
     <ProjectReference Include="..\..\NostalgicPlayer.Kit\NostalgicPlayer.Kit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Library\NostalgicPlayer.Library.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayer.Logic\NostalgicPlayer.Logic.csproj" />
-    <ProjectReference Include="..\..\NostalgicPlayer.Platform.Win\NostalgicPlayer.Platform.Win.csproj" />
+    <ProjectReference Include="..\..\NostalgicPlayer.Platform.Windows\NostalgicPlayer.Platform.Windows.csproj" />
   </ItemGroup>
 
   <ItemGroup>
