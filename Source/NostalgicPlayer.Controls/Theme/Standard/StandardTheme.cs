@@ -5,6 +5,8 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces.Controls;
+using Polycode.NostalgicPlayer.Controls.Theme.Standard.Controls;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {

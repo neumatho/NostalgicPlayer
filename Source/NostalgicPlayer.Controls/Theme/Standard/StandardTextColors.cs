@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Drawing;
-using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces.Controls;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Standard
 {

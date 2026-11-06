@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces.Controls;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 {

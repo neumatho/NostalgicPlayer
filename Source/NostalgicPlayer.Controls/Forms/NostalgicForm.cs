@@ -18,6 +18,7 @@ using Polycode.NostalgicPlayer.Controls.Images;
 using Polycode.NostalgicPlayer.Controls.Menus;
 using Polycode.NostalgicPlayer.Controls.Theme;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces.Controls;
 using Polycode.NostalgicPlayer.Platform.Native;
 
 namespace Polycode.NostalgicPlayer.Controls.Forms
