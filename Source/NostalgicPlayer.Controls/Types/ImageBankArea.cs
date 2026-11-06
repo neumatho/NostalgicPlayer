@@ -22,5 +22,7 @@ namespace Polycode.NostalgicPlayer.Controls.Types
 		SampleInformation,
 		/// <summary></summary>
 		Audius,
+		/// <summary></summary>
+		ModLibrary,
 	}
 }

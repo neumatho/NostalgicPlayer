@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (directory == null)
-					directory = GetSvgBitmap(Category, nameof(IModuleLibraryImages.Directory), CurrentColors.DirectoryColor, 12, 12);
+					directory = GetSvgBitmap(Category, nameof(IModuleLibraryImages.Directory), CurrentColors.ModLibraryColors.DirectoryColor, 12, 12);
 
 				return directory;
 			}
@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (file == null)
-					file = GetSvgBitmap(Category, nameof(IModuleLibraryImages.File), CurrentColors.FileColor, 12, 12);
+					file = GetSvgBitmap(Category, nameof(IModuleLibraryImages.File), CurrentColors.ModLibraryColors.FileColor, 12, 12);
 
 				return file;
 			}
@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (favorite == null)
-					favorite = GetSvgBitmap(Category, nameof(IModuleLibraryImages.Favorite), CurrentColors.FavoriteColor, 12, 12);
+					favorite = GetSvgBitmap(Category, nameof(IModuleLibraryImages.Favorite), CurrentColors.ModLibraryColors.FavoriteColor, 12, 12);
 
 				return favorite;
 			}

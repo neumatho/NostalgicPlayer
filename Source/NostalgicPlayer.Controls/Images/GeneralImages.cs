@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (error == null)
-					error = GetSvgBitmap(Category, nameof(IGeneralImages.Error), CurrentColors.MessageBoxErrorColor, 32, 32);
+					error = GetSvgBitmap(Category, nameof(IGeneralImages.Error), CurrentColors.GeneralColors.MessageBoxErrorColor, 32, 32);
 
 				return error;
 			}
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (warning == null)
-					warning = GetSvgBitmap(Category, nameof(IGeneralImages.Warning), CurrentColors.MessageBoxWarningColor, 32, 32);
+					warning = GetSvgBitmap(Category, nameof(IGeneralImages.Warning), CurrentColors.GeneralColors.MessageBoxWarningColor, 32, 32);
 
 				return warning;
 			}
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (information == null)
-					information = GetSvgBitmap(Category, nameof(IGeneralImages.Information), CurrentColors.MessageBoxInformationColor, 32, 32);
+					information = GetSvgBitmap(Category, nameof(IGeneralImages.Information), CurrentColors.GeneralColors.MessageBoxInformationColor, 32, 32);
 
 				return information;
 			}
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (question == null)
-					question = GetSvgBitmap(Category, nameof(IGeneralImages.Question), CurrentColors.MessageBoxQuestionColor, 32, 32);
+					question = GetSvgBitmap(Category, nameof(IGeneralImages.Question), CurrentColors.GeneralColors.MessageBoxQuestionColor, 32, 32);
 
 				return question;
 			}
@@ -174,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (search == null)
-					search = GetSvgBitmap(Category, nameof(IGeneralImages.Search), CurrentColors.SearchColor, 20, 20);
+					search = GetSvgBitmap(Category, nameof(IGeneralImages.Search), CurrentColors.GeneralColors.SearchColor, 20, 20);
 
 				return search;
 			}

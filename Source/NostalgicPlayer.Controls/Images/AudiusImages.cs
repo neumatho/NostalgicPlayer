@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (repost == null)
-					repost = GetSvgBitmap(Category, nameof(IAudiusImages.Repost), CurrentColors.RepostColor, 16, 16);
+					repost = GetSvgBitmap(Category, nameof(IAudiusImages.Repost), CurrentColors.AudiusColors.RepostColor, 16, 16);
 
 				return repost;
 			}
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (favorite == null)
-					favorite = GetSvgBitmap(Category, nameof(IAudiusImages.Favorite), CurrentColors.FavoriteColor, 16, 16);
+					favorite = GetSvgBitmap(Category, nameof(IAudiusImages.Favorite), CurrentColors.AudiusColors.FavoriteColor, 16, 16);
 
 				return favorite;
 			}
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Controls.Images
 			get
 			{
 				if (showProfileInfo == null)
-					showProfileInfo = GetSvgBitmap(Category, nameof(IAudiusImages.ShowProfileInfo), CurrentColors.ShowProfileInfoColor, 20, 20);
+					showProfileInfo = GetSvgBitmap(Category, nameof(IAudiusImages.ShowProfileInfo), CurrentColors.AudiusColors.ShowProfileInfoColor, 20, 20);
 
 				return showProfileInfo;
 			}

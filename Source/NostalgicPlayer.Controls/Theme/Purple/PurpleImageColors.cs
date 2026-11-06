@@ -3,10 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Drawing;
 using Polycode.NostalgicPlayer.Controls.Theme.Interfaces;
-using Polycode.NostalgicPlayer.Controls.Theme.Interfaces.Controls;
-using Polycode.NostalgicPlayer.Controls.Theme.Purple.Controls;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces.Images;
+using Polycode.NostalgicPlayer.Controls.Theme.Purple.Images;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 {
@@ -15,56 +14,19 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 	/// </summary>
 	internal class PurpleImageColors : IImageColors
 	{
-		private readonly ILabelColors labelColors = new PurpleLabelColors();
-
-		private static readonly Color messageBoxErrorColor = Color.FromArgb(185, 6, 10);
-		private static readonly Color messageBoxWarningColor = Color.FromArgb(255, 235, 45);
-		private static readonly Color messageBoxInformationColor = Color.FromArgb(26, 64, 171);
-		private static readonly Color messageBoxQuestionColor = Color.FromArgb(26, 64, 171);
-		private static readonly Color searchColor = Color.FromArgb(0, 0, 0);
-
-		private static readonly Color informationColor = Color.FromArgb(0, 0, 0);
-		private static readonly Color muteColor = Color.FromArgb(0, 0, 0);
-		private static readonly Color addColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color removeColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color swapColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color sortColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color moveUpColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color moveDownColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color listColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color diskColor = Color.FromArgb(63, 104, 165);
-		private static readonly Color previousModuleColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color nextModuleColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color previousSongColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color nextSongColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color fastRewindColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color fastForwardColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color playColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color ejectColor = Color.FromArgb(148, 47, 255);
-		private static readonly Color pauseColor = Color.FromArgb(255, 106, 180);
-		private static readonly Color loopColor = Color.FromArgb(0, 0, 0);
-		private static readonly Color favoritesColor = Color.FromArgb(0, 0, 0);
-		private static readonly Color equalizerColor = Color.FromArgb(0, 0, 0);
-		private static readonly Color samplesColor = Color.FromArgb(0, 0, 0);
-
-		private static readonly Color sampleLoopColor = Color.FromArgb(55, 134, 64);
-		private static readonly Color samplePingPongColor = Color.FromArgb(16, 43, 147);
-		private static readonly Color sampleStereoColor = Color.FromArgb(255, 120, 70);
-		private static readonly Color sampleMultiOctavesColor = Color.FromArgb(119, 137, 201);
-
-		private static readonly Color repostColor = Color.FromArgb(237, 105, 255);
-		private static readonly Color favoriteColor = Color.FromArgb(237, 105, 255);
-		private static readonly Color showProfileInfoColor = Color.FromArgb(0, 0, 0);
-
-		private static readonly Color directoryColor = Color.FromArgb(0, 0, 0);
-		private static readonly Color fileColor = Color.FromArgb(0, 0, 0);
+		private static readonly PurpleImageGeneralColors imageGeneralColors = new PurpleImageGeneralColors();
+		private static readonly PurpleImageMainColors imageMainColors = new PurpleImageMainColors();
+		private static readonly PurpleImageModuleInformationColors imageModuleInformationColors = new PurpleImageModuleInformationColors();
+		private static readonly PurpleImageSampleInformationColors imageSampleInformationColors = new PurpleImageSampleInformationColors();
+		private static readonly PurpleImageAudiusColors imageAudiusColors = new PurpleImageAudiusColors();
+		private static readonly PurpleImageModLibraryColors imageModLibraryColors = new PurpleImageModLibraryColors();
 
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color MessageBoxErrorColor => messageBoxErrorColor;
+		public IImageGeneralColors GeneralColors => imageGeneralColors;
 
 
 
@@ -73,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color MessageBoxWarningColor => messageBoxWarningColor;
+		public IImageMainColors MainColors => imageMainColors;
 
 
 
@@ -82,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color MessageBoxInformationColor => messageBoxInformationColor;
+		public IImageModuleInformationColors ModuleInformationColors => imageModuleInformationColors;
 
 
 
@@ -91,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color MessageBoxQuestionColor => messageBoxQuestionColor;
+		public IImageSampleInformationColors SampleInformationColors => imageSampleInformationColors;
 
 
 
@@ -100,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color SearchColor => searchColor;
+		public IImageAudiusColors AudiusColors => imageAudiusColors;
 
 
 
@@ -109,303 +71,6 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Purple
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Color InformationColor => informationColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color MuteColor => muteColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color AddColor => addColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color RemoveColor => removeColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SwapColor => swapColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SortColor => sortColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color MoveUpColor => moveUpColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color MoveDownColor => moveDownColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color ListColor => listColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color DiskColor => diskColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color PreviousModuleColor => previousModuleColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color NextModuleColor => nextModuleColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color PreviousSongColor => previousSongColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color NextSongColor => nextSongColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color FastRewindColor => fastRewindColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color FastForwardColor => fastForwardColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color PlayColor => playColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color EjectColor => ejectColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color PauseColor => pauseColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color LoopColor => loopColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color FavoritesColor => favoritesColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color EqualizerColor => equalizerColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SamplesColor => samplesColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color PreviousPictureColor => labelColors.TextColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color NextPictureColor => labelColors.TextColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SampleLoopColor => sampleLoopColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SamplePingPongColor => samplePingPongColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SampleStereoColor => sampleStereoColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color SampleMultiOctavesColor => sampleMultiOctavesColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color RepostColor => repostColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color FavoriteColor => favoriteColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color ShowProfileInfoColor => showProfileInfoColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color DirectoryColor => directoryColor;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Color FileColor => fileColor;
+		public IImageModLibraryColors ModLibraryColors => imageModLibraryColors;
 	}
 }

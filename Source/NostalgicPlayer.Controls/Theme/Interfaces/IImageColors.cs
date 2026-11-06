@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Drawing;
+using Polycode.NostalgicPlayer.Controls.Theme.Interfaces.Images;
 
 namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 {
@@ -13,87 +13,16 @@ namespace Polycode.NostalgicPlayer.Controls.Theme.Interfaces
 	public interface IImageColors
 	{
 		/// <summary></summary>
-		Color MessageBoxErrorColor { get; }
+		IImageGeneralColors GeneralColors { get; }
 		/// <summary></summary>
-		Color MessageBoxWarningColor { get; }
+		IImageMainColors MainColors { get; }
 		/// <summary></summary>
-		Color MessageBoxInformationColor { get; }
+		IImageModuleInformationColors ModuleInformationColors { get; }
 		/// <summary></summary>
-		Color MessageBoxQuestionColor { get; }
+		IImageSampleInformationColors SampleInformationColors { get; }
 		/// <summary></summary>
-		Color SearchColor { get; }
-
+		IImageAudiusColors AudiusColors { get; }
 		/// <summary></summary>
-		Color InformationColor { get; }
-		/// <summary></summary>
-		Color MuteColor { get; }
-		/// <summary></summary>
-		Color AddColor { get; }
-		/// <summary></summary>
-		Color RemoveColor { get; }
-		/// <summary></summary>
-		Color SwapColor { get; }
-		/// <summary></summary>
-		Color SortColor { get; }
-		/// <summary></summary>
-		Color MoveUpColor { get; }
-		/// <summary></summary>
-		Color MoveDownColor { get; }
-		/// <summary></summary>
-		Color ListColor { get; }
-		/// <summary></summary>
-		Color DiskColor { get; }
-		/// <summary></summary>
-		Color PreviousModuleColor { get; }
-		/// <summary></summary>
-		Color NextModuleColor { get; }
-		/// <summary></summary>
-		Color PreviousSongColor { get; }
-		/// <summary></summary>
-		Color NextSongColor { get; }
-		/// <summary></summary>
-		Color FastRewindColor { get; }
-		/// <summary></summary>
-		Color FastForwardColor { get; }
-		/// <summary></summary>
-		Color PlayColor { get; }
-		/// <summary></summary>
-		Color EjectColor { get; }
-		/// <summary></summary>
-		Color PauseColor { get; }
-		/// <summary></summary>
-		Color LoopColor { get; }
-		/// <summary></summary>
-		Color FavoritesColor { get; }
-		/// <summary></summary>
-		Color EqualizerColor { get; }
-		/// <summary></summary>
-		Color SamplesColor { get; }
-
-		/// <summary></summary>
-		Color PreviousPictureColor { get; }
-		/// <summary></summary>
-		Color NextPictureColor { get; }
-
-		/// <summary></summary>
-		Color SampleLoopColor { get; }
-		/// <summary></summary>
-		Color SamplePingPongColor { get; }
-		/// <summary></summary>
-		Color SampleStereoColor { get; }
-		/// <summary></summary>
-		Color SampleMultiOctavesColor { get; }
-
-		/// <summary></summary>
-		Color RepostColor { get; }
-		/// <summary></summary>
-		Color FavoriteColor { get; }
-		/// <summary></summary>
-		Color ShowProfileInfoColor { get; }
-
-		/// <summary></summary>
-		Color DirectoryColor { get; }
-		/// <summary></summary>
-		Color FileColor { get; }
+		IImageModLibraryColors ModLibraryColors { get; }
 	}
 }
