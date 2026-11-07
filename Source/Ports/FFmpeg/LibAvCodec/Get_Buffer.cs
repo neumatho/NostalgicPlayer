@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					{
 						// NOTE: do not align linesizes individually, this breaks e.g. assumptions
 						// that linesize[0] == 2*linesize[1] in the MPEG-encoder for 4:2:2
-						ret = ImgUtils.Av_Image_Fill_LineSizes(lineSize, avCtx.Pix_Fmt, w);
+						ret = ImgUtils.Av_Image_Fill_LineSizes(lineSize, frame.Format.Pixel, w);
 
 						if (ret < 0)
 							goto Fail;
@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					for (c_int i = 0; i < 4; i++)
 						lineSize1[i] = lineSize[i];
 
-					ret = ImgUtils.Av_Image_Fill_Plane_Sizes(size, avCtx.Pix_Fmt, h, lineSize1);
+					ret = ImgUtils.Av_Image_Fill_Plane_Sizes(size, frame.Format.Pixel, h, lineSize1);
 
 					if (ret < 0)
 						goto Fail;

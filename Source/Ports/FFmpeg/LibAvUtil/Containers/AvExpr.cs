@@ -71,6 +71,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil.Containers
 		/// <summary>
 		/// 
 		/// </summary>
+		internal c_short Depth;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		internal c_double Value;
 
 		/// <summary>

@@ -18,6 +18,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 	/// </summary>
 	public static class Eval
 	{
+		private const c_int Max_Depth = 100;
+
 		private const c_int Vars = 10;
 
 		#region Parser class
@@ -459,13 +461,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					return e.Value * e.A.Func2(p.Opaque, Eval_Expr(p, e.Param[0]), Eval_Expr(p, e.Param[1]));
 
 				case AvExpr.ExprType.Squish:
-					return 1 / (1 + CMath.exp(4 * Eval_Expr(p, e.Param[0])));
+					return e.Value / (1 + CMath.exp(4 * Eval_Expr(p, e.Param[0])));
 
 				case AvExpr.ExprType.Gauss:
 				{
 					c_double d = Eval_Expr(p, e.Param[0]);
 
-					return CMath.exp(-d * d / 2) / CMath.sqrt(2 * Math.PI);
+					return e.Value * CMath.exp(-d * d / 2) / CMath.sqrt(2 * Math.PI);
 				}
 
 				case AvExpr.ExprType.Ld:
@@ -529,7 +531,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					c_double v1 = Eval_Expr(p, e.Param[1]);
 					c_double f = Eval_Expr(p, e.Param[2]);
 
-					return v0 + (v1 - v0) * f;
+					return e.Value * (v0 + (v1 - v0) * f);
 				}
 
 				case AvExpr.ExprType.Print:
@@ -539,7 +541,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					c_int level = e.Param[1] != null ? Common.Av_Clip((c_int)Eval_Expr(p, e.Param[1]), c_int.MinValue, c_int.MaxValue) : Log.Av_Log_Info;
 					Log.Av_Log(p, level, "%f\n", x);
 
-					return x;
+					return e.Value * x;
 				}
 
 				case AvExpr.ExprType.Random:
@@ -868,6 +870,19 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 
 			p.S++;	// ")"
 
+			for (c_int i = 0; i < 3; i++)
+			{
+				if (d.Param[i] != null)
+					d.Depth = (c_short)Macros.FFMax(d.Depth, d.Param[i].Depth + 1);
+			}
+
+			if (d.Depth > Max_Depth)
+			{
+				Av_Expr_Free(d);
+
+				return Error.EINVAL;
+			}
+
 			d.Type = AvExpr.ExprType.Func0;
 
 			if (StrMatch(next, "sinh"))
@@ -1021,6 +1036,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		private static AvExpr Make_Eval_Expr(AvExpr.ExprType type, c_int value, AvExpr p0, AvExpr p1)
 		{
+			c_int depth = Macros.FFMax(p0.Depth, p1.Depth) + 1;
+
+			if (depth > Max_Depth)
+				return null;
+
 			AvExpr e = Mem.Av_MAlloczObj<AvExpr>();
 			if (e == null)
 				return null;
@@ -1029,6 +1049,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			e.Value = value;
 			e.Param[0] = p0;
 			e.Param[1] = p1;
+			e.Depth = (c_short)depth;
 
 			return e;
 		}

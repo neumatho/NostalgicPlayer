@@ -744,10 +744,13 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 			if ((avCtx.Export_Side_Data & AvCodecExportData.Enhancements) == 0)
 			{
-				ret = LcevcDec.FF_Lcevc_Alloc(out dc.Lcevc);
+				if (avCtx.Codec_Type == AvMediaType.Video)
+				{
+					ret = LcevcDec.FF_Lcevc_Alloc(out dc.Lcevc);
 
-				if ((ret < 0) && ((avCtx.Err_Recognition & AvEf.Explode) != 0))
-					return ret;
+					if ((ret < 0) && ((avCtx.Err_Recognition & AvEf.Explode) != 0))
+						return ret;
+				}
 			}
 
 			return 0;
@@ -779,6 +782,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 			dst_Dc.Initial_Pict_Type = src_Dc.Initial_Pict_Type;
 			dst_Dc.Intra_Only_Flag = src_Dc.Intra_Only_Flag;
+			dst_Dc.Side_Data_Pref_Mask = src_Dc.Side_Data_Pref_Mask;
 
 			RefStruct.Av_RefStruct_Replace(ref dst_Dc.Lcevc, src_Dc.Lcevc);
 		}
@@ -1141,14 +1145,23 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					{
 						int64_t diff_Ts = Mathematics.Av_Rescale_Q(avci.Skip_Samples, new AvRational(1, avCtx.Sample_Rate), avCtx.Pkt_TimeBase);
 
-						if (frame.Pts != UtilConstants.Av_NoPts_Value)
-							frame.Pts += diff_Ts;
+						if (diff_Ts != UtilConstants.Av_NoPts_Value)
+						{
+							if (frame.Pts != UtilConstants.Av_NoPts_Value)
+								frame.Pts = Common.Av_Sat_Add64(frame.Pts, diff_Ts);
 
-						if (frame.Pkt_Dts != UtilConstants.Av_NoPts_Value)
-							frame.Pkt_Dts += diff_Ts;
+							if (frame.Pkt_Dts != UtilConstants.Av_NoPts_Value)
+								frame.Pkt_Dts = Common.Av_Sat_Add64(frame.Pkt_Dts, diff_Ts);
 
-						if (frame.Duration >= diff_Ts)
-							frame.Duration -= diff_Ts;
+							if (frame.Duration >= diff_Ts)
+								frame.Duration = Common.Av_Sat_Sub64(frame.Duration, diff_Ts);
+						}
+						else
+						{
+							frame.Pts = UtilConstants.Av_NoPts_Value;
+							frame.Pkt_Dts = UtilConstants.Av_NoPts_Value;
+							frame.Duration = 0;
+						}
 					}
 					else
 						Log.Av_Log(avCtx, Log.Av_Log_Warning, "Could not update timestamps for skipped samples.\n");
@@ -1174,7 +1187,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					if ((avCtx.Pkt_TimeBase.Num != 0) && (avCtx.Sample_Rate != 0))
 					{
 						int64_t diff_Ts = Mathematics.Av_Rescale_Q(frame.Nb_Samples - discard_Padding, new AvRational(1, avCtx.Sample_Rate), avCtx.Pkt_TimeBase);
-						frame.Duration = diff_Ts;
+						frame.Duration = diff_Ts == UtilConstants.Av_NoPts_Value ? 0 : diff_Ts;
 					}
 					else
 						Log.Av_Log(avCtx, Log.Av_Log_Warning, "Could not update timestamps for discarded samples.\n");

@@ -11,8 +11,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 	public static class Version
 	{
 		private const int Major = 60;
-		private const int Minor = 13;
-		private const int Micro = 100;
+		private const int Minor = 26;
+		private const int Micro = 103;
 
 		/// <summary></summary>
 		public const int Version_Int = (Major << 16) | (Minor << 8) | Micro;

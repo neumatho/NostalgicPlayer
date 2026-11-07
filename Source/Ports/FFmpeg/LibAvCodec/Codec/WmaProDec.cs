@@ -124,7 +124,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				Cb_Type = FFCodecType.Decode,
 				Flush = WmaPro_Flush,
 				Capabilities = AvCodecCap.Dr1,
-				Sample_Fmts = new CPointer<AvSampleFormat>([ AvSampleFormat.FltP ]),
 				Caps_Internal = FFCodecCap.Init_Cleanup
 			};
 

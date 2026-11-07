@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 			if (lPd.Buf.IsNull)
 				lPd.Buf = zeroBuffer;
 
-			if ((lPd.Buf_Size > 10) && (Id3v2.FF_Id3v2_Match(lPd.Buf, Id3v2.Default_Magic) != 0))
+			while ((lPd.Buf_Size > 10) && (Id3v2.FF_Id3v2_Match(lPd.Buf, Id3v2.Default_Magic) != 0))
 			{
 				c_int id3Len = Id3v2.FF_Id3v2_Tag_Len(lPd.Buf);
 
@@ -75,9 +75,15 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 					lPd.Buf_Size -= id3Len;
 				}
 				else if (id3Len >= Internal.Probe_Buf_Max)
+				{
 					noDat = NoDat.Id3_Grater_Max_Probe;
+					break;
+				}
 				else
+				{
 					noDat = NoDat.Id3_Greater_Probe;
+					break;
+				}
 			}
 
 			foreach (AvInputFormat fmt1 in AllFormats.Av_Demuxer_Iterate())

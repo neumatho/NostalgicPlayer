@@ -41,6 +41,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 			Mem.Av_FreeP(ref sti.Index_Entries);
 			Mem.Av_FreeP(ref sti.Probe_Data.Buf);
 
+			Packet.Av_Packet_Free(ref sti.Parse_Pkt);
+
 			Bsf.Av_Bsf_Free(ref sti.Extract_ExtraData.Bsf);
 
 			if (sti.Info != null)

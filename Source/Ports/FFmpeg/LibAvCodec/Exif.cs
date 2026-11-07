@@ -557,12 +557,10 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 			// Parse IFD0 here. If the return value is positive that tells us
 			// there is subimage metadata, but we don't parse that IFD here
-			ret = Exif_Parse_Ifd_List(logCtx, gBytes, le, 0, out ifd);
+			ret = Exif_Parse_Ifd_List(logCtx, gBytes, le, 0, out ifd, false);
 
 			if (ret < 0)
 			{
-				Av_Exif_Free(ifd);
-
 				Log.Av_Log(logCtx, Log.Av_Log_Error, "error decoding EXIF data: %s\n", Error.Av_Err2Str(ret));
 
 				return ret;
@@ -750,6 +748,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/********************************************************************/
 		private static c_int Exif_Read_Values(IClass logCtx, GetByteContext gb, c_int le, AvExifEntry entry)
 		{
+			if ((exif_Sizes[(c_int)entry.Type] * entry.Count) > (size_t)ByteStream.ByteStream2_Get_Bytes_Left(gb))
+				return Error.InvalidData;
+
 			switch (entry.Type)
 			{
 				case AvTiffDataType.Short:
@@ -1047,6 +1048,12 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 			Log.Av_Log(logCtx, Log.Av_Log_Debug, "TIFF Tag: id: 0x%04x, type: %d, count: %u, offset: %d, payload: %u\n", entry.Id, type, count, tell, payload);
 
+			if (type == 0)
+			{
+				Log.Av_Log(logCtx, Log.Av_Log_Debug, "Skipping invalid TIFF tag 0\n");
+				goto End;
+			}
+
 			// AV_TIFF_IFD is the largest, numerically
 			if ((type > AvTiffDataType.Ifd) || (count >= (c_int.MaxValue / 8U)))
 				return Error.InvalidData;
@@ -1085,16 +1092,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 					ByteStream.ByteStream2_Get_Buffer(gb, entry.Ifd_Lead, entry.Ifd_Offset);
 				}
 
-				ret = Exif_Parse_Ifd_List(logCtx, gb, le, depth + 1, out entry.Value.Ifd);
+				ret = Exif_Parse_Ifd_List(logCtx, gb, le, depth + 1, out entry.Value.Ifd, entry.Id == MakerNote_Tag);
 
 				if ((ret < 0) && (entry.Id == MakerNote_Tag))
 				{
 					// We guessed that MakerNote was an IFD
 					// but we were probably incorrect at this
 					// point so we try again as a binary blob
-					Av_Exif_Free(entry.Value.Ifd);
-
-					Log.Av_Log(logCtx, Log.Av_Log_Debug, "unrecognized MarkerNote IFD, retrying as blob\n");
+					Log.Av_Log(logCtx, Log.Av_Log_Debug, "unrecognized MakerNote IFD, retrying as blob\n");
 
 					is_Ifd = false;
 				}
@@ -1124,44 +1129,51 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Exif_Parse_Ifd_List(IClass logCtx, GetByteContext gb, c_int le, c_int depth, out AvExifMetadata ifd)
+		private static c_int Exif_Parse_Ifd_List(IClass logCtx, GetByteContext gb, c_int le, c_int depth, out AvExifMetadata ifd, bool guess)
 		{
-			ifd = null;
+			c_int ret = 0;
+
+			ifd = new AvExifMetadata();
 
 			Log.Av_Log(logCtx, Log.Av_Log_Debug, "parsing IFD list at offset: %d\n", ByteStream.ByteStream2_Tell(gb));
 
 			if (ByteStream.ByteStream2_Get_Bytes_Left(gb) < 2)
 			{
-				Log.Av_Log(logCtx, Log.Av_Log_Error, "not enough bytes remaining in EXIF buffer: 2 required\n");
+				Log.Av_Log(logCtx, guess ? Log.Av_Log_Debug : Log.Av_Log_Error, "not enough bytes remaining in EXIF buffer: 2 required\n");
 
-				return Error.InvalidData;
+				ret = Error.InvalidData;
+				goto End;
 			}
 
 			uint32_t entries = Tiff_Common.FF_TGet_Short(gb, le);
 
 			if (ByteStream.ByteStream2_Get_Bytes_Left(gb) < (entries * Base_Tag_Size))
 			{
-				Log.Av_Log(logCtx, Log.Av_Log_Error, "not enough bytes remaining in EXIF buffer. entries: %u\n", entries);
+				Log.Av_Log(logCtx, guess ? Log.Av_Log_Debug : Log.Av_Log_Error, "not enough bytes remaining in EXIF buffer. entries: %u\n", entries);
 
-				return Error.InvalidData;
+				ret = Error.InvalidData;
+				goto End;
 			}
 
 			if (entries > 4096)
 			{
-				// This is a lot of entries, probably an error
-				Log.Av_Log(logCtx, Log.Av_Log_Error, "too many entries: %u\n", entries);
+				// That is a lot of entries, probably an error
+				Log.Av_Log(logCtx, guess ? Log.Av_Log_Debug : Log.Av_Log_Error, "too many entries: %u\n", entries);
 
-				return Error.InvalidData;
+				ret = Error.InvalidData;
+				goto End;
 			}
 
-			ifd = new AvExifMetadata();
 			ifd.Count = entries;
 
 			Log.Av_Log(logCtx, Log.Av_Log_Debug, "entry count for IFD: %u\n", ifd.Count);
 
 			// Empty IFD is technically legal but equivalent to no metadata present
 			if (ifd.Count == 0)
+			{
+				ret = 0;
 				goto End;
+			}
 
 			size_t required_Size = ifd.Count;
 			CPointer<AvExifEntry> temp = Mem.Av_Fast_ReallocObj(ifd.Entries, ref ifd.Size, required_Size);
@@ -1170,7 +1182,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 			{
 				Mem.Av_FreeP(ref ifd.Entries);
 
-				return Error.ENOMEM;
+				ret = Error.ENOMEM;
+				goto End;
 			}
 
 			ifd.Entries = temp;
@@ -1181,16 +1194,33 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 			for (uint32_t i = 0; i < entries; i++)
 			{
-				c_int ret = Exif_Decode_Tag(logCtx, gb, le, depth, ifd.Entries[i]);
+				ret = Exif_Decode_Tag(logCtx, gb, le, depth, ifd.Entries[i]);
 
 				if (ret < 0)
-					return ret;
+					goto End;
 			}
 
 			End:
+			if (ret < 0)
+			{
+				Av_Exif_Free(ifd);
+
+				return ret;
+			}
+
 			// At the end of an IFD is an pointer to the next IFD
 			// or zero if there are no more IFDs, which is usually the case
-			return (c_int)Tiff_Common.FF_TGet_Long(gb, le);
+			ret = (c_int)Tiff_Common.FF_TGet_Long(gb, le);
+
+			// Overflow
+			if (ret < 0)
+			{
+				ret = Error.InvalidData;
+
+				Av_Exif_Free(ifd);
+			}
+
+			return ret;
 		}
 
 

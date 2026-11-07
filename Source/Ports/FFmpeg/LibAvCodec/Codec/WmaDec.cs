@@ -135,7 +135,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				Cb_Type = FFCodecType.Decode,
 				Flush = Flush,
 				Capabilities = AvCodecCap.Dr1 | AvCodecCap.Delay,
-				Sample_Fmts = new CPointer<AvSampleFormat>([ AvSampleFormat.FltP ]),
 				Caps_Internal = FFCodecCap.Init_Cleanup
 			};
 
@@ -154,7 +153,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				Cb_Type = FFCodecType.Decode,
 				Flush = Flush,
 				Capabilities = AvCodecCap.Dr1 | AvCodecCap.Delay,
-				Sample_Fmts = new CPointer<AvSampleFormat>([ AvSampleFormat.FltP ]),
 				Caps_Internal = FFCodecCap.Init_Cleanup
 			};
 
@@ -255,7 +253,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 
 			avCtx.Sample_Fmt = AvSampleFormat.FltP;
 
-			avCtx.Internal.Skip_Samples = s.Frame_Len * 2;
+			avCtx.Delay = s.Frame_Len * 2;
 
 			return 0;
 		}

@@ -291,6 +291,24 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 					break;
 				}
+
+				case AvPixelFormat.BAYER_BGGR8:
+				case AvPixelFormat.BAYER_RGGB8:
+				case AvPixelFormat.BAYER_GBRG8:
+				case AvPixelFormat.BAYER_GRBG8:
+				case AvPixelFormat.BAYER_BGGR16LE:
+				case AvPixelFormat.BAYER_BGGR16BE:
+				case AvPixelFormat.BAYER_RGGB16LE:
+				case AvPixelFormat.BAYER_RGGB16BE:
+				case AvPixelFormat.BAYER_GBRG16LE:
+				case AvPixelFormat.BAYER_GBRG16BE:
+				case AvPixelFormat.BAYER_GRBG16LE:
+				case AvPixelFormat.BAYER_GRBG16BE:
+				{
+					w_Align = Macros.FFMax(w_Align, 2);
+					h_Align = Macros.FFMax(h_Align, 2);
+					break;
+				}
 			}
 
 			if (s.Codec_Id == AvCodecId.Iff_Ilbm)
@@ -717,20 +735,43 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 			if (frame_Bytes > 0)
 			{
 				// Calc from frame_bytes only
-				if (id == AvCodecId.TrueSpeech)
-					return 240 * (frame_Bytes / 32);
+				int64_t d = int64_t.MinValue;
 
-				if (id == AvCodecId.Nellymoser)
-					return 256 * (frame_Bytes / 64);
+				switch (id)
+				{
+					case AvCodecId.TrueSpeech:
+					{
+						d = 240L * (frame_Bytes / 32);
+						break;
+					}
 
-				if (id == AvCodecId.Ra_144)
-					return 160 * (frame_Bytes / 20);
+					case AvCodecId.Nellymoser:
+					{
+						d = 256L * (frame_Bytes / 64);
+						break;
+					}
 
-				if (id == AvCodecId.Aptx)
-					return 4 * (frame_Bytes / 4);
+					case AvCodecId.Ra_144:
+					{
+						d = 160L * (frame_Bytes / 20);
+						break;
+					}
 
-				if (id == AvCodecId.Aptx_Hd)
-					return 4 * (frame_Bytes / 6);
+					case AvCodecId.Aptx:
+					{
+						d = 4L * (frame_Bytes / 4);
+						break;
+					}
+
+					case AvCodecId.Aptx_Hd:
+					{
+						d = 4L * (frame_Bytes / 6);
+						break;
+					}
+				}
+
+				if (d > int64_t.MinValue)
+					return (((c_int)d == d) && (d > 0)) ? (c_int)d : 0;
 
 				if (bps > 0)
 				{

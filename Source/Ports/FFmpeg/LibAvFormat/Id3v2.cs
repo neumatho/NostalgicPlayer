@@ -490,6 +490,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 				return ret;
 			}
 
+			if (left == 0)
+				goto End;
+
 			switch (encoding)
 			{
 				case Id3v2Encoding.Iso8859:
@@ -510,7 +513,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 
 					if (left < 0)
 					{
-						Log.Av_Log(s, Log.Av_Log_Error, "Cannot read BOM value, input too short\n");
+						Log.Av_Log(s, Log.Av_Log_Error, "Cannot read BOM value, input too short %d\n", left);
 						AvIoBuf.FFIo_Free_Dyn_Buf(ref dynBuf);
 						dst = null;
 
@@ -529,6 +532,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 
 						case 0xfeff:
 							break;
+
+						case 0:		// Empty string without bom
+							goto End;
 
 						default:
 						{
@@ -583,6 +589,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 				}
 			}
 
+			End:
 			if (ch != 0)
 				AvIoBuf.AvIo_W8(dynBuf, 0);
 

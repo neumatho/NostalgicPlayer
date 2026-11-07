@@ -363,6 +363,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 				if (avCtx.Bit_Rate == 0)
 					avCtx.Bit_Rate = Get_Bit_Rate(avCtx);
 
+				avci.Skip_Samples = avCtx.Delay;
+
 				// Validate channel layout from the decoder
 				if (((avCtx.Ch_Layout.Nb_Channels != 0) && (Channel_Layout.Av_Channel_Layout_Check(avCtx.Ch_Layout) == 0)) || (avCtx.Ch_Layout.Nb_Channels > CodecConstants.FF_Sane_Nb_Channels))
 				{

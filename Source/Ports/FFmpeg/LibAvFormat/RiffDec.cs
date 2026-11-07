@@ -149,6 +149,29 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 					cbSize -= 22;
 					size -= 22;
 				}
+				else if ((cbSize >= 12) && (id == 0x1610))	// HEAACWAVEFORMAT
+				{
+					c_int wPayloadType = (c_int)AvIoBuf.AvIo_RL16(pb);
+
+					if (wPayloadType == 3)
+						par.Codec_Id = AvCodecId.Aac_Latm;
+
+					AvIoBuf.AvIo_Skip(pb, 2);	// wAudioProfileLevelIndication
+
+					c_int wStructType = (c_int)AvIoBuf.AvIo_RL16(pb);
+
+					if (wStructType != 0)
+					{
+						Log.AvPriv_Report_Missing_Feature(s, "HEAACWAVEINFO wStructType \"%d\"", wStructType);
+						return Error.PatchWelcome;
+					}
+
+					AvIoBuf.AvIo_Skip(pb, 2);	// wReserved1
+					AvIoBuf.AvIo_Skip(pb, 4);	// dwReserved2
+
+					cbSize -= 12;
+					size -= 12;
+				}
 
 				if (cbSize > 0)
 				{

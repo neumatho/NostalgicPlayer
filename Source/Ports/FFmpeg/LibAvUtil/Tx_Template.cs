@@ -39,10 +39,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		private readonly TXSample[] ff_Tx_Tab_32768 = new TXSample[(32768 / 4) + 1];
 		private readonly TXSample[] ff_Tx_Tab_65536 = new TXSample[(65536 / 4) + 1];
 		private readonly TXSample[] ff_Tx_Tab_131072 = new TXSample[(131072 / 4) + 1];
-		private readonly TXSample[] ff_Tx_Tab_262144 = new TXSample[(262144 / 4) + 1];
-		private readonly TXSample[] ff_Tx_Tab_524288 = new TXSample[(524288 / 4) + 1];
-		private readonly TXSample[] ff_Tx_Tab_1048576 = new TXSample[(1048576 / 4) + 1];
-		private readonly TXSample[] ff_Tx_Tab_2097152 = new TXSample[(2097152 / 4) + 1];
 
 		// Other factors' tables
 		private readonly TXSample[] ff_Tx_Tab_53 = new TXSample[12];
@@ -100,10 +96,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		private FFTxCodelet ff_Tx_Fft32768_Ns_Def;
 		private FFTxCodelet ff_Tx_Fft65536_Ns_Def;
 		private FFTxCodelet ff_Tx_Fft131072_Ns_Def;
-		private FFTxCodelet ff_Tx_Fft262144_Ns_Def;
-		private FFTxCodelet ff_Tx_Fft524288_Ns_Def;
-		private FFTxCodelet ff_Tx_Fft1048576_Ns_Def;
-		private FFTxCodelet ff_Tx_Fft2097152_Ns_Def;
 
 		// Prime factor codelets
 		private FFTxCodelet ff_Tx_Fft3_Ns_Def;
@@ -181,11 +173,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				() => FF_Tx_Init_Tab(ff_Tx_Tab_16384, 16384),
 				() => FF_Tx_Init_Tab(ff_Tx_Tab_32768, 32768),
 				() => FF_Tx_Init_Tab(ff_Tx_Tab_65536, 65536),
-				() => FF_Tx_Init_Tab(ff_Tx_Tab_131072, 131072),
-				() => FF_Tx_Init_Tab(ff_Tx_Tab_262144, 262144),
-				() => FF_Tx_Init_Tab(ff_Tx_Tab_524288, 524288),
-				() => FF_Tx_Init_Tab(ff_Tx_Tab_1048576, 1048576),
-				() => FF_Tx_Init_Tab(ff_Tx_Tab_2097152, 2097152)
+				() => FF_Tx_Init_Tab(ff_Tx_Tab_131072, 131072)
 			];
 
 			npTwo_Tabs_Init_Data =
@@ -227,10 +215,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				ff_Tx_Fft32768_Ns_Def,
 				ff_Tx_Fft65536_Ns_Def,
 				ff_Tx_Fft131072_Ns_Def,
-				ff_Tx_Fft262144_Ns_Def,
-				ff_Tx_Fft524288_Ns_Def,
-				ff_Tx_Fft1048576_Ns_Def,
-				ff_Tx_Fft2097152_Ns_Def,
 
 				// Prime factor codelets
 				ff_Tx_Fft3_Ns_Def,
@@ -454,10 +438,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			ff_Tx_Fft32768_Ns_Def = Build_Sr_Codelet_Def(32768, FF_Tx_Fft32768_Ns);
 			ff_Tx_Fft65536_Ns_Def = Build_Sr_Codelet_Def(65536, FF_Tx_Fft65536_Ns);
 			ff_Tx_Fft131072_Ns_Def = Build_Sr_Codelet_Def(131072, FF_Tx_Fft131072_Ns);
-			ff_Tx_Fft262144_Ns_Def = Build_Sr_Codelet_Def(262144, FF_Tx_Fft262144_Ns);
-			ff_Tx_Fft524288_Ns_Def = Build_Sr_Codelet_Def(524288, FF_Tx_Fft524288_Ns);
-			ff_Tx_Fft1048576_Ns_Def = Build_Sr_Codelet_Def(1048576, FF_Tx_Fft1048576_Ns);
-			ff_Tx_Fft2097152_Ns_Def = Build_Sr_Codelet_Def(2097152, FF_Tx_Fft2097152_Ns);
 		}
 
 
@@ -2052,90 +2032,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			FF_Tx_Fft32768_Ns(s, dst + (32768 * 3), src + (32768 * 3), stride);
 
 			FF_Tx_Fft_Sr_Combine(dst, cos, 32768 >> 1);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void FF_Tx_Fft262144_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
-		{
-			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
-			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
-
-			CPointer<TXSample> cos = ff_Tx_Tab_262144;
-
-			FF_Tx_Fft131072_Ns(s, dst, src, stride);
-			FF_Tx_Fft65536_Ns(s, dst + (65536 * 2), src + (65536 * 2), stride);
-			FF_Tx_Fft65536_Ns(s, dst + (65536 * 3), src + (65536 * 3), stride);
-
-			FF_Tx_Fft_Sr_Combine(dst, cos, 65536 >> 1);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void FF_Tx_Fft524288_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
-		{
-			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
-			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
-
-			CPointer<TXSample> cos = ff_Tx_Tab_524288;
-
-			FF_Tx_Fft262144_Ns(s, dst, src, stride);
-			FF_Tx_Fft131072_Ns(s, dst + (131072 * 2), src + (131072 * 2), stride);
-			FF_Tx_Fft131072_Ns(s, dst + (131072 * 3), src + (131072 * 3), stride);
-
-			FF_Tx_Fft_Sr_Combine(dst, cos, 131072 >> 1);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void FF_Tx_Fft1048576_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
-		{
-			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
-			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
-
-			CPointer<TXSample> cos = ff_Tx_Tab_1048576;
-
-			FF_Tx_Fft524288_Ns(s, dst, src, stride);
-			FF_Tx_Fft262144_Ns(s, dst + (262144 * 2), src + (262144 * 2), stride);
-			FF_Tx_Fft262144_Ns(s, dst + (262144 * 3), src + (262144 * 3), stride);
-
-			FF_Tx_Fft_Sr_Combine(dst, cos, 262144 >> 1);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void FF_Tx_Fft2097152_Ns(AvTxContext s, IPointer _dst, IPointer _src, ptrdiff_t stride)
-		{
-			CPointer<TXComplex> src = _src.ToPointer<TXComplex>();
-			CPointer<TXComplex> dst = _dst.ToPointer<TXComplex>();
-
-			CPointer<TXSample> cos = ff_Tx_Tab_2097152;
-
-			FF_Tx_Fft1048576_Ns(s, dst, src, stride);
-			FF_Tx_Fft524288_Ns(s, dst + (524288 * 2), src + (524288 * 2), stride);
-			FF_Tx_Fft524288_Ns(s, dst + (524288 * 3), src + (524288 * 3), stride);
-
-			FF_Tx_Fft_Sr_Combine(dst, cos, 524288 >> 1);
 		}
 
 

@@ -627,6 +627,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 				dst.Bits_Per_Raw_Sample = src.Bits_Per_Raw_Sample;
 				dst.Color_Primaries = src.Color_Primaries;
 
+				dst.Alpha_Mode = src.Alpha_Mode;
+
 				dst.Color_Trc = src.Color_Trc;
 				dst.ColorSpace = src.ColorSpace;
 				dst.Color_Range = src.Color_Range;
@@ -968,18 +970,19 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 			p.Thread_Init = ThreadFlag.Needs_Close;
 
 			if (first != 0)
-			{
 				Update_Context_From_Thread(avCtx, copy, 1);
 
-				Side_Data.Av_Frame_Side_Data_Free(ref avCtx.Decoded_Side_Data, ref avCtx.Nb_Decoded_Side_Data);
+			AvCodecContext src = first != 0 ? copy : avCtx;
+			AvCodecContext dst = first != 0 ? avCtx : copy;
 
-				for (c_int i = 0; i < copy.Nb_Decoded_Side_Data; i++)
-				{
-					err = Side_Data.Av_Frame_Side_Data_Clone(ref avCtx.Decoded_Side_Data, ref avCtx.Nb_Decoded_Side_Data, copy.Decoded_Side_Data[i], AvFrameSideDataFlag.None);
+			Side_Data.Av_Frame_Side_Data_Free(ref dst.Decoded_Side_Data, ref dst.Nb_Decoded_Side_Data);
 
-					if (err < 0)
-						return err;
-				}
+			for (c_int i = 0; i < src.Nb_Decoded_Side_Data; i++)
+			{
+				err = Side_Data.Av_Frame_Side_Data_Clone(ref dst.Decoded_Side_Data, ref dst.Nb_Decoded_Side_Data, src.Decoded_Side_Data[i], AvFrameSideDataFlag.None);
+
+				if (err < 0)
+					return err;
 			}
 
 			err = CThread.pthread_create(out p.Thread, Frame_Worker_Thread, p);

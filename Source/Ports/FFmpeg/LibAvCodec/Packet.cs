@@ -631,6 +631,24 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec
 
 		/********************************************************************/
 		/// <summary>
+		/// Get side information from a side data array
+		/// </summary>
+		/********************************************************************/
+		public static AvPacketSideData Av_Packet_Side_Data_Get(CPointer<AvPacketSideData> sd, c_int nb_Sd, AvPacketSideDataType type)
+		{
+			for (c_int i = 0; i < nb_Sd; i++)
+			{
+				if (sd[i].Type == type)
+					return sd[i];
+			}
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Wrap existing data as packet side data
 		/// </summary>
 		/********************************************************************/

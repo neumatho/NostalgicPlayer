@@ -174,8 +174,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.FFmpeg.LibAvUtil.Test
 		/********************************************************************/
 		private void Print_Dict(AvDictionary m)
 		{
+			string sep = string.Empty;
+
 			foreach (AvDictionaryEntry t in Dict.Av_Dict_Iterate(m))
-				printf("%s %s   ", t.Key, t.Value);
+			{
+				printf("%s%s %s", sep, t.Key, t.Value);
+				sep = "   ";
+			}
 
 			printf("\n");
 		}

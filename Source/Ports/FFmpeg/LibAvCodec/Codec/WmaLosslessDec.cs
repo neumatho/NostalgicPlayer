@@ -41,7 +41,6 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Codec
 				Cb_Type = FFCodecType.Decode,
 				Flush = Flush,
 				Capabilities = AvCodecCap.Dr1 | AvCodecCap.Delay,
-				Sample_Fmts = new CPointer<AvSampleFormat>([ AvSampleFormat.S16P, AvSampleFormat.S32P ]),
 				Caps_Internal = FFCodecCap.Init_Cleanup
 			};
 

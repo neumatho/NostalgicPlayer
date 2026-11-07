@@ -153,6 +153,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 
 			sti.FmtCtx = s;
 
+			sti.Parse_Pkt = Packet.Av_Packet_Alloc();
+
+			if (sti.Parse_Pkt == null)
+				goto Fail;
+
 			if (s.IFormat != null)
 			{
 				sti.AvCtx = Options_Codec.AvCodec_Alloc_Context3(null);

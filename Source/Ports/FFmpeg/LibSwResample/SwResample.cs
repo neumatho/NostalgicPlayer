@@ -21,6 +21,32 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 
 		/********************************************************************/
 		/// <summary>
+		/// Check that the given channel layout is valid and supported
+		/// </summary>
+		/********************************************************************/
+		internal static c_int Swri_Check_ChLayout(SwrContext s, AvChannelLayout chl, string name)
+		{
+			c_int ret = Channel_Layout.Av_Channel_Layout_Check(chl);
+
+			if ((ret == 0) || (chl.Nb_Channels > SwrConstants.Swr_Ch_Max))
+			{
+				CPointer<char> l1 = new CPointer<char>(1024);
+
+				if (ret != 0)
+					Channel_Layout.Av_Channel_Layout_Describe(chl, l1, (size_t)l1.Length);
+
+				Log.Av_Log(s, Log.Av_Log_Warning, "%s channel layout \"%s\" is invalid or unsupported.\n", name, ret != 0 ? l1 : string.Empty);
+
+				return Error.EINVAL;
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Allocate SwrContext if needed and set/reset common parameters.
 		///
 		/// This function does not require *ps to be allocated with
@@ -49,6 +75,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 			if (ret < 0)
 				goto Fail;
 
+			ret = Swri_Check_ChLayout(s, out_Ch_Layout, "ochl");
+
+			if (ret < 0)
+				goto Fail;
+
 			ret = Opt.Av_Opt_Set_Int(s, "osf".ToCharPointer(), (int64_t)out_Sample_Fmt, AvOptSearch.None);
 
 			if (ret < 0)
@@ -60,6 +91,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 				goto Fail;
 
 			ret = Opt.Av_Opt_Set_ChLayout(s, "ichl".ToCharPointer(), in_Ch_Layout, AvOptSearch.None);
+
+			if (ret < 0)
+				goto Fail;
+
+			ret = Swri_Check_ChLayout(s, in_Ch_Layout, "ichl");
 
 			if (ret < 0)
 				goto Fail;
@@ -174,25 +210,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibSwResample
 			s.Out.Ch_Count = s.User_Out_ChLayout.Nb_Channels;
 			s.In.Ch_Count = s.User_In_ChLayout.Nb_Channels;
 
-			if (((ret = Channel_Layout.Av_Channel_Layout_Check(s.User_In_ChLayout)) == 0) || (s.User_In_ChLayout.Nb_Channels > SwrConstants.Swr_Ch_Max))
-			{
-				if (ret != 0)
-					Channel_Layout.Av_Channel_Layout_Describe(s.User_In_ChLayout, l1, (size_t)l1.Length);
-
-				Log.Av_Log(s, Log.Av_Log_Warning, "Input channel layout \"%s\" is invalid or unsupported.\n", ret != 0 ? l1 : string.Empty);
-
+			if ((Swri_Check_ChLayout(s, s.User_In_ChLayout, "input") != 0) || (Swri_Check_ChLayout(s, s.User_Out_ChLayout, "output") != 0))
 				return Error.EINVAL;
-			}
-
-			if (((ret = Channel_Layout.Av_Channel_Layout_Check(s.User_Out_ChLayout)) == 0) || (s.User_Out_ChLayout.Nb_Channels > SwrConstants.Swr_Ch_Max))
-			{
-				if (ret != 0)
-					Channel_Layout.Av_Channel_Layout_Describe(s.User_Out_ChLayout, l2, (size_t)l2.Length);
-
-				Log.Av_Log(s, Log.Av_Log_Warning, "Output channel layout \"%s\" is invalid or unsupported.\n", ret != 0 ? l2 : string.Empty);
-
-				return Error.EINVAL;
-			}
 
 			ret = Channel_Layout.Av_Channel_Layout_Copy(s.In_Ch_Layout, s.User_In_ChLayout);
 			ret |= Channel_Layout.Av_Channel_Layout_Copy(s.Out_Ch_Layout, s.User_Out_ChLayout);

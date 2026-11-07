@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 			for (c_int i = 1; (i < 4) && (has_Plane[i] != 0); i++)
 			{
 				c_int s = (i == 1) || (i == 2) ? desc.Log2_Chroma_H : 0;
-				c_int h = (height + (1 << s) - 1) >> s;
+				c_int h = Common.Av_Ceil_RShift(height, s);
 
 				if ((size_t)lineSizes[i] > (size_t.MaxValue / (size_t)h))
 					return Error.EINVAL;
@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				return Error.EINVAL;
 
 			c_int s = (max_Step_Comp == 1) || (max_Step_Comp == 2) ? desc.Log2_Chroma_W : 0;
-			c_int shifted_W = ((width + (1 << s) - 1)) >> s;
+			c_int shifted_W = Common.Av_Ceil_RShift(width, s);
 
 			if ((shifted_W != 0) && (max_Step > (c_int.MaxValue / shifted_W)))
 				return Error.EINVAL;

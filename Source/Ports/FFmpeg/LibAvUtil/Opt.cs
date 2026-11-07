@@ -1277,6 +1277,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 					ret = 0;
 				else if (val.IsNotNull)
 					ret = CString.strcmp(val, def) == 0 ? 1 : 0;
+				else
+					ret = 1;
 
 				Mem.Av_FreeP(ref val);
 
@@ -1338,21 +1340,22 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 				{
 					d = (c_double)dst;
 
-					return o.Default_Value.Dbl == d ? 1 : 0;
+					return (o.Default_Value.Dbl == d) || (CMath.isnan(d) && CMath.isnan(o.Default_Value.Dbl)) ? 1 : 0;
 				}
 
 				case AvOptionType.Float:
 				{
 					d = (c_float)dst;
 
-					return o.Default_Value.Dbl == d ? 1 : 0;
+					return ((c_float)o.Default_Value.Dbl == d) || (CMath.isnan(d) && CMath.isnan(o.Default_Value.Dbl)) ? 1 : 0;
 				}
 
 				case AvOptionType.Rational:
 				{
+					AvRational v = (AvRational)dst;
 					q = Rational.Av_D2Q(o.Default_Value.Dbl, c_int.MaxValue);
 
-					return Rational.Av_Cmp_Q((AvRational)dst, q) == 0 ? 1 : 0;
+					return (Rational.Av_Cmp_Q(v, q) == 0) || ((q.Den == 0) && (v.Den == 0)) ? 1 : 0;
 				}
 
 				case AvOptionType.Binary:

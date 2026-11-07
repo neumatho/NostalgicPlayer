@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvCodec.Containers;
 using Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat.Containers;
 using Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil;
 using Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil.Containers;
+using Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil.Interfaces;
 using Buffer = Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil.Buffer;
 
 namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
@@ -298,7 +299,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 			Dict.Av_Dict_Free(ref tmp);
 
 			if ((s.Pb != null) && ((s.Flags & AvFmtFlag.Custom_Io) == 0))
-				AvIo.AvIo_Close(s.Pb);
+				AvFormat.FF_Format_Io_Close(s, ref s.Pb);
 
 			AvFormat.AvFormat_Free_Context(s);
 			ps = null;
@@ -712,6 +713,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 					Log.Av_Log(ic, Log.Av_Log_Debug, "interrupted\n");
 					break;
 				}
+
+				// read_frame_internal() in a previous iteration of this loop may
+				// have made changes to streams without returning a packet for them.
+				// Handle that here
+				ret = Update_Stream_AvCtx(ic);
+
+				if (ret < 0)
+					goto Unref_Then_Goto_End;
 
 				// Check if one codec still needs to be handled
 				for (i = 0; i < ic.Nb_Streams; i++)
@@ -1193,7 +1202,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 
 				if (sti.AvCtx_Inited != 0)
 				{
-					ret = Codec_Par.AvCodec_Parameters_From_Context(st.CodecPar, sti.AvCtx);
+					ret = Parameters_From_Context(ic, st.CodecPar, sti.AvCtx);
 
 					if (ret < 0)
 						goto Find_Stream_Info_Err;
@@ -1220,6 +1229,26 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 				}
 
 				sti.AvCtx_Inited = 0;
+			}
+
+			// Update the stream group parameters from the stream contexts if needed
+			for (c_uint i = 0; i < ic.Nb_Stream_Groups; i++)
+			{
+				AvStreamGroup stg = ic.Stream_Groups[i];
+
+				if (stg.Type != AvStreamGroupParamsType.Lcevc)
+					continue;
+
+				// For LCEVC in mpegts, the parser is needed to get the enhancement layer
+				// dimensions
+				AvStreamGroupLcevc lcevc = (AvStreamGroupLcevc)stg.Params;
+
+				if ((lcevc.Width != 0) && (lcevc.Height != 0))
+					continue;
+
+				AvStream st = stg.Streams[lcevc.Lcevc_Index];
+				lcevc.Width = st.CodecPar.Width;
+				lcevc.Height = st.CodecPar.Height;
 			}
 
 			Find_Stream_Info_Err:
@@ -1404,6 +1433,20 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 				if (sti.Need_Context_Update == 0)
 					continue;
 
+				c_int ret;
+
+				if (AvCodec_.AvCodec_Is_Open(sti.AvCtx))
+				{
+					Log.Av_Log(s, Log.Av_Log_Debug, "Demuxer context update while decoder is open, closing and trying to re-open\n");
+
+					ret = Codec_Close(sti);
+
+					sti.Info.Found_Decoder = 0;
+
+					if (ret < 0)
+						return ret;
+				}
+
 				// Close parser, because it depends on the codec
 				if ((sti.Parser != null) && (sti.AvCtx.Codec_Id != st.CodecPar.Codec_Id))
 				{
@@ -1412,7 +1455,7 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 				}
 
 				// Update internal codec context, for the parser
-				c_int ret = Codec_Par.AvCodec_Parameters_To_Context(sti.AvCtx, st.CodecPar);
+				ret = Codec_Par.AvCodec_Parameters_To_Context(sti.AvCtx, st.CodecPar);
 
 				if (ret < 0)
 					return ret;
@@ -1874,6 +1917,19 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static uint64_t AbsDiff(int64_t a, int64_t b)
+		{
+			return a < b ? (uint64_t)b - (uint64_t)a : (uint64_t)a - (uint64_t)b;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private static int64_t Select_From_Pts_Buffer(AvStream st, CPointer<int64_t> pts_Buffer, int64_t dts)
 		{
 			FFStream sti = Internal.FFStream(st);
@@ -1908,10 +1964,14 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 					{
 						if (pts_Buffer[i] != UtilConstants.Av_NoPts_Value)
 						{
-							int64_t diff = (int64_t)((uint64_t)Common.FFAbs(pts_Buffer[i] - dts) + (uint64_t)sti.Pts_Reorder_Error[i]);
-							diff = Macros.FFMax(diff, sti.Pts_Reorder_Error[i]);
+							uint64_t diff = AbsDiff(pts_Buffer[i], dts);
 
-							sti.Pts_Reorder_Error[i] = diff;
+							if (diff > (uint64_t)(int64_t.MaxValue - sti.Pts_Reorder_Error[i]))
+								diff = int64_t.MaxValue;
+							else
+								diff += (uint64_t)sti.Pts_Reorder_Error[i];
+
+							sti.Pts_Reorder_Error[i] = (int64_t)diff;
 							sti.Pts_Reorder_Error_Count[i]++;
 
 							if (sti.Pts_Reorder_Error_Count[i] > 250)
@@ -2306,14 +2366,15 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 		private static c_int Parse_Packet(AvFormatContext s, AvPacket pkt, c_int stream_Index, bool flush)
 		{
 			FormatContextInternal fci = AvFormatInternal.FF_FC_Internal(s);
-			FFFormatContext si = fci.Fc;
-			AvPacket out_Pkt = si.Parse_Pkt;
 			AvStream st = s.Streams[stream_Index];
 			FFStream sti = Internal.FFStream(st);
+			AvPacket out_Pkt = sti.Parse_Pkt;
+			AvPacketSideData sd = null;
 			CPointer<uint8_t> data = pkt.Data;
+			IDataContext extraData = sti.AvCtx.ExtraData;
 			c_int size = pkt.Size;
 			c_int ret = 0;
-			bool got_Output = flush;
+			bool got_Output = flush, pkt_Side_Data_Consumed = false;
 
 			if ((size == 0) && !flush && ((sti.Parser.Flags & ParserFlag.Complete_Frames) != 0))
 			{
@@ -2330,6 +2391,12 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 				}
 			}
 
+			if (pkt.Side_Data_Elems != 0)
+				sd = Packet.Av_Packet_Side_Data_Get(pkt.Side_Data, pkt.Side_Data_Elems, AvPacketSideDataType.New_ExtraData);
+
+			if (sd != null)
+				sti.AvCtx.ExtraData = sd.Data;
+
 			while ((size > 0) || (flush && got_Output))
 			{
 				int64_t next_Pts = pkt.Pts;
@@ -2345,6 +2412,33 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 				size -= len;
 
 				got_Output = out_Pkt.Size != 0;
+
+				if (pkt.Side_Data.IsNotNull && out_Pkt.Side_Data.IsNull)
+				{
+					// For the first iteration, side_data are simply moved to output.
+					// In case of additional iterations, they are duplicated each time
+					if (!pkt_Side_Data_Consumed)
+					{
+						pkt_Side_Data_Consumed = true;
+						out_Pkt.Side_Data = pkt.Side_Data;
+						out_Pkt.Side_Data_Elems = pkt.Side_Data_Elems;
+					}
+					else
+					{
+						for (c_int i = 0; i < pkt.Side_Data_Elems; i++)
+						{
+							AvPacketSideData src_Sd = pkt.Side_Data[i];
+							IDataContext dst_Data = Packet.Av_Packet_New_Side_Data(out_Pkt, src_Sd.Type, src_Sd.Data.MakeDeepClone());
+
+							if (dst_Data == null)
+							{
+								ret = Error.ENOMEM;
+
+								goto Fail;
+							}
+						}
+					}
+				}
 
 				if (out_Pkt.Size == 0)
 					continue;
@@ -2372,21 +2466,12 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 						goto Fail;
 				}
 
-				if (pkt.Side_Data.IsNotNull)
-				{
-					out_Pkt.Side_Data = pkt.Side_Data;
-					out_Pkt.Side_Data_Elems = pkt.Side_Data_Elems;
-
-					pkt.Side_Data.SetToNull();
-					pkt.Side_Data_Elems = 0;
-				}
-
 				// Set the duration
 				out_Pkt.Duration = (sti.Parser.Flags & ParserFlag.Complete_Frames) != 0 ? pkt.Duration : 0;
 
 				if (st.CodecPar.Codec_Type == AvMediaType.Audio)
 				{
-					if (sti.AvCtx.Sample_Rate > 0)
+					if ((sti.AvCtx.Sample_Rate > 0) && (out_Pkt.Duration == 0) && (sti.Parser.Duration > 0))
 						out_Pkt.Duration = Mathematics.Av_Rescale_Q_Rnd(sti.Parser.Duration, new AvRational(1, sti.AvCtx.Sample_Rate), st.Time_Base, AvRounding.Down);
 				}
 				else if (st.CodecPar.Codec_Id == AvCodecId.Gif)
@@ -2426,6 +2511,15 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 			}
 
 			Fail:
+			if (sd != null)
+				sti.AvCtx.ExtraData = extraData;
+
+			if (pkt_Side_Data_Consumed)
+			{
+				pkt.Side_Data.SetToNull();
+				pkt.Side_Data_Elems = 0;
+			}
+
 			if (ret < 0)
 				Packet.Av_Packet_Unref(out_Pkt);
 
@@ -2548,6 +2642,11 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 
 				st.Event_Flags |= AvStreamEventFlag.New_Packets;
 
+				bool new_ExtraData = Packet.Av_Packet_Side_Data_Get(pkt.Side_Data, pkt.Side_Data_Elems, AvPacketSideDataType.New_ExtraData) != null;
+
+				if (new_ExtraData)
+					sti.Need_Context_Update = 1;
+
 				// Update context if required
 				if (sti.Need_Context_Update != 0)
 				{
@@ -2563,8 +2662,8 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 							return ret;
 					}
 
-					// Close parser, because it depends on the codec
-					if ((sti.Parser != null) && (sti.AvCtx.Codec_Id != st.CodecPar.Codec_Id))
+					// Close parser, because it depends on the codec and extradata
+					if ((sti.Parser != null) && ((sti.AvCtx.Codec_Id != st.CodecPar.Codec_Id) || new_ExtraData))
 					{
 						Parser.Av_Parser_Close(sti.Parser);
 
@@ -3838,6 +3937,66 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvFormat
 			}
 
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static c_int Parameters_From_Context(AvFormatContext ic, AvCodecParameters par, AvCodecContext avCtx)
+		{
+			AvCodecParameters par_Tmp = Codec_Par.AvCodec_Parameters_Alloc();
+
+			if (par_Tmp == null)
+				return Error.ENOMEM;
+
+			c_int ret = Codec_Par.AvCodec_Parameters_Copy(par_Tmp, par);
+
+			if (ret < 0)
+				goto Fail;
+
+			ret = Codec_Par.AvCodec_Parameters_From_Context(par, avCtx);
+
+			if (ret < 0)
+				goto Fail;
+
+			// Restore some values if they are signaled at the container level
+			// given they may have been replaced by codec level values as read
+			// internally by avformat_find_stream_info()
+			if (par_Tmp.Color_Range != AvColorRange.Unspecified)
+				par.Color_Range = par_Tmp.Color_Range;
+
+			if ((par_Tmp.Color_Primaries != AvColorPrimaries.Unspecified) || (par_Tmp.Color_Trc != AvColorTransferCharacteristic.Unspecified) || (par_Tmp.Color_Space != AvColorSpace.Unspecified))
+			{
+				par.Color_Primaries = par_Tmp.Color_Primaries;
+				par.Color_Trc = par_Tmp.Color_Trc;
+				par.Color_Space = par_Tmp.Color_Space;
+			}
+
+			if (par_Tmp.Chroma_Location != AvChromaLocation.Unspecified)
+				par.Chroma_Location = par_Tmp.Chroma_Location;
+
+			// A failed avcodec_open2() zeroes ch_layout through
+			// ff_codec_close() -> av_opt_free(); do not copy that empty layout
+			// over a container-signaled one. Other AVOption types used here are
+			// integers and are not cleared
+			if ((par_Tmp.Ch_Layout.Nb_Channels > 0) && (par.Ch_Layout.Nb_Channels == 0))
+			{
+				ret = Channel_Layout.Av_Channel_Layout_Copy(par.Ch_Layout, par_Tmp.Ch_Layout);
+
+				if (ret < 0)
+					goto Fail;
+			}
+
+			ret = 0;
+
+			Fail:
+			Codec_Par.AvCodec_Parameters_Free(ref par_Tmp);
+
+			return ret;
 		}
 		#endregion
 	}

@@ -178,7 +178,9 @@ namespace Polycode.NostalgicPlayer.Ports.FFmpeg.LibAvUtil
 		/********************************************************************/
 		public static AvRational Av_Sub_Q(AvRational b, AvRational c)
 		{
-			return Av_Add_Q(b, new AvRational(-c.Num, c.Den));
+			Av_Reduce(out b.Num, out b.Den, (b.Num * (int64_t)c.Den) - (c.Num * (int64_t)b.Den), b.Den * (int64_t)c.Den, c_int.MaxValue);
+
+			return b;
 		}
 
 
