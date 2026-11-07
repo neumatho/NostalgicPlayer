@@ -789,13 +789,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 						default:
 						{
-							converterStream.Write_B_UINT32((uint)moduleStream.Length);
-							converterStream.Write_B_UINT16(pair.Value);
-
 							byte[] buffer = new byte[moduleStream.Length];
 							moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 							buffer = FixIfIff(buffer);
+							if (buffer == null)
+								return false;
+
+							// Write the length after the IFF header has been stripped, so it matches the data written
+							converterStream.Write_B_UINT32((uint)buffer.Length);
+							converterStream.Write_B_UINT16(pair.Value);
+
 							converterStream.Write(buffer, 0, buffer.Length);
 
 							return true;
@@ -946,7 +950,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				{
 					int offset = 12;
 
-					while (offset < sampleData.Length)
+					while ((offset + 8) <= sampleData.Length)
 					{
 						int length = (sampleData[offset + 4] << 24) | (sampleData[offset + 5] << 16) | (sampleData[offset + 6] << 8) | sampleData[offset + 7];
 
@@ -958,8 +962,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 							return sampleData.AsSpan(offset + 8, length).ToArray();
 						}
 
-						offset += 8 + length;
+						// IFF chunks are padded to an even length
+						offset += 8 + length + (length & 1);
 					}
+
+					return null;
 				}
 			}
 
