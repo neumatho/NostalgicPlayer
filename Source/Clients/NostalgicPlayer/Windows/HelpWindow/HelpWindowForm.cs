@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.HelpWindow
 			// Windows 11 and updated Windows 10 installations)
 			if (string.IsNullOrEmpty(CoreWebView2Environment.GetAvailableBrowserVersionString()))
 			{
-				mainWindow.ShowSimpleErrorMessage(this, Resources.IDS_ERR_WEBVIEW2_MISSING);
+				mainWindow.ShowSimpleErrorMessage(Resources.IDS_ERR_WEBVIEW2_MISSING, this);
 
 				Close();
 				return;

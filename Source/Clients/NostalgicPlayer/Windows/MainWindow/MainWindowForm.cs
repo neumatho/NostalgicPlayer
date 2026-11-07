@@ -316,13 +316,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show a question to the user
 		/// </summary>
 		/********************************************************************/
-		public bool ShowQuestion(string question)
+		public bool ShowQuestion(string question, IWin32Window owner = null)
 		{
 			using (CustomMessageBox dialog = new CustomMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
 			{
 				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
 				dialog.AddButton(Resources.IDS_BUT_NO, 'n');
-				dialog.ShowDialog(this);
+				dialog.ShowDialog(owner ?? this);
 
 				return dialog.GetButtonResult('n') == 'y';
 			}
@@ -335,24 +335,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show an error message to the user
 		/// </summary>
 		/********************************************************************/
-		public void ShowSimpleErrorMessage(string message)
-		{
-			ShowSimpleErrorMessage(this, message);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will show an error message to the user
-		/// </summary>
-		/********************************************************************/
-		public void ShowSimpleErrorMessage(IWin32Window owner, string message)
+		public void ShowSimpleErrorMessage(string message, IWin32Window owner = null)
 		{
 			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
 				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-				dialog.ShowDialog(owner);
+				dialog.ShowDialog(owner ?? this);
 			}
 		}
 

@@ -13,8 +13,8 @@ using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Gui.Controls;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Library.Agent;
 using Polycode.NostalgicPlayer.Library.Containers;
@@ -27,6 +27,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 	/// </summary>
 	public partial class SamplePageControl : UserControl
 	{
+		private IMainWindowApi mainWindowApi;
+
 		private readonly Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
 
 		private int samplePlayOctave;
@@ -64,8 +66,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		/// Initialize the control
 		/// </summary>
 		/********************************************************************/
-		public void InitControl(IAgentManager agentManager, SampleInfoWindowSettings settings)
+		public void InitControl(IAgentManager agentManager, IMainWindowApi mainWindowApi, SampleInfoWindowSettings settings)
 		{
+			this.mainWindowApi = mainWindowApi;
+
 			// Initialize sample play
 			samplePlayOctave = 48;
 			samplePlayPolyEnabled = false;
@@ -537,13 +541,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 				{
 					if (sampleInfo.Length == 0)
 					{
-						ShowSimpleErrorMessage(Resources.IDS_ERR_SAMPLE_INFO_SAMP_NOLENGTH);
+						mainWindowApi.ShowSimpleErrorMessage(Resources.IDS_ERR_SAMPLE_INFO_SAMP_NOLENGTH, this);
 						return;
 					}
 
 					if (sampleInfo.Type != SampleInfo.SampleType.Sample)
 					{
-						ShowSimpleErrorMessage(Resources.IDS_ERR_SAMPLE_INFO_SAMP_NOTASAMPLE);
+						mainWindowApi.ShowSimpleErrorMessage(Resources.IDS_ERR_SAMPLE_INFO_SAMP_NOTASAMPLE, this);
 						return;
 					}
 
@@ -562,22 +566,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		#endregion
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Will show an error message to the user
-		/// </summary>
-		/********************************************************************/
-		private void ShowSimpleErrorMessage(string message)
-		{
-			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
-			{
-				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-				dialog.ShowDialog(this);
-			}
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Retrieve all the samples from the player
@@ -884,7 +872,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(bits, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
 				if (!converterAgent.InitSaver(formatInfo, out string errorMessage))
 				{
-					ShowSimpleErrorMessage(errorMessage);
+					mainWindowApi.ShowSimpleErrorMessage(errorMessage);
 					return;
 				}
 
@@ -927,7 +915,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 				}
 				catch (Exception ex)
 				{
-					ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_SAMPLE_INFO_SAMP_ERRORSAVING, ex.Message));
+					mainWindowApi.ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_SAMPLE_INFO_SAMP_ERRORSAVING, ex.Message), this);
 				}
 				finally
 				{

@@ -35,17 +35,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// <summary>
 		/// Will show a question to the user
 		/// </summary>
-		bool ShowQuestion(string question);
+		bool ShowQuestion(string question, IWin32Window owner = null);
 
 		/// <summary>
 		/// Will show an error message to the user
 		/// </summary>
-		void ShowSimpleErrorMessage(string message);
-
-		/// <summary>
-		/// Will show an error message to the user
-		/// </summary>
-		void ShowSimpleErrorMessage(IWin32Window owner, string message);
+		void ShowSimpleErrorMessage(string message, IWin32Window owner = null);
 
 		/// <summary>
 		/// Will show an error message to the user with options

@@ -65,9 +65,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show a question to the user
 		/// </summary>
 		/********************************************************************/
-		public bool ShowQuestion(string question)
+		public bool ShowQuestion(string question, IWin32Window owner)
 		{
-			return mainWindowForm.ShowQuestion(question);
+			return mainWindowForm.ShowQuestion(question, owner);
 		}
 
 
@@ -77,21 +77,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		/// Will show an error message to the user
 		/// </summary>
 		/********************************************************************/
-		public void ShowSimpleErrorMessage(string message)
+		public void ShowSimpleErrorMessage(string message, IWin32Window owner)
 		{
-			mainWindowForm.ShowSimpleErrorMessage(message);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will show an error message to the user
-		/// </summary>
-		/********************************************************************/
-		public void ShowSimpleErrorMessage(IWin32Window owner, string message)
-		{
-			mainWindowForm.ShowSimpleErrorMessage(owner, message);
+			mainWindowForm.ShowSimpleErrorMessage(message, owner);
 		}
 
 

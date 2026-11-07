@@ -367,7 +367,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			AgentInfo agentInfo = (AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag;
 
 			if (!agentInfo.Enabled)
-				mainWindowApi.ShowSimpleErrorMessage(Resources.IDS_ERR_AGENT_DISABLED);
+				mainWindowApi.ShowSimpleErrorMessage(Resources.IDS_ERR_AGENT_DISABLED, this);
 			else
 				mainWindowApi.OpenAgentSettingsWindow(agentInfo);
 		}

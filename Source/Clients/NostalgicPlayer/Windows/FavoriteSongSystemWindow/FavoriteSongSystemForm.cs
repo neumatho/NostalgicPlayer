@@ -406,26 +406,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.FavoriteSongSystemWi
 		/********************************************************************/
 		private void ResetButton_Click(object sender, EventArgs e)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(Resources.IDS_FAVORITE_RESET, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
+			if (mainWindowApi.ShowQuestion(Resources.IDS_FAVORITE_RESET, this))
 			{
-				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
-				dialog.AddButton(Resources.IDS_BUT_NO, 'N');
-				dialog.ShowDialog();
-
-				if (dialog.GetButtonResult('N') == 'y')
+				using (new SleepCursor())
 				{
-					using (new SleepCursor())
+					database.RunAction((_, moduleDatabaseInfo) =>
 					{
-						database.RunAction((_, moduleDatabaseInfo) =>
-						{
-							if (moduleDatabaseInfo.ListenCount > 0)
-								return new ModuleDatabaseInfo(moduleDatabaseInfo.Duration, 0, DateTime.MinValue);
+						if (moduleDatabaseInfo.ListenCount > 0)
+							return new ModuleDatabaseInfo(moduleDatabaseInfo.Duration, 0, DateTime.MinValue);
 
-							return null;
-						});
+						return null;
+					});
 
-						RefreshWindow();
-					}
+					RefreshWindow();
 				}
 			}
 		}
