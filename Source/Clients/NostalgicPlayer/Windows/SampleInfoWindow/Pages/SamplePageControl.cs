@@ -214,6 +214,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SampleInfoWindow.Pag
 		/********************************************************************/
 		public void CleanupControl()
 		{
+			RemoveSampleItems();
+
 			sampleFileDialog?.Dispose();
 			sampleFileDialog = null;
 		}
