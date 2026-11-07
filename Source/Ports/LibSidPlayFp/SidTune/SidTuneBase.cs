@@ -351,6 +351,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/********************************************************************/
 		protected virtual void AcceptSidTune(buffer_t buf)
 		{
+			// Check that offset is inside file limits
+			if (m_fileOffset > buf.Size())
+				throw new LoadErrorException(Resources.IDS_SID_ERR_TRUNCATED);
+
 			// Fix bad sid tune setup
 			if (info.songs > MAX_SONGS)
 				info.songs = MAX_SONGS;
