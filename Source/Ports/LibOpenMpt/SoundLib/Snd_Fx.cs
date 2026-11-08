@@ -177,12 +177,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 							case VolumeCommand.PortaUp:
 							{
+								if (SndFile.m_PlayBehaviour[PlayBehaviour.ItDoublePortamentoSlides])
+									chn.nOldPortaUp = chn.nOldPortaDown = (uint8_t)(m.Vol << 2);
+
 								SndFile.PortamentoUp(State, channel, (ModCommandParam)(m.Vol << 2), SndFile.m_PlayBehaviour[PlayBehaviour.ItVolColFinePortamento]);
 								break;
 							}
 
 							case VolumeCommand.PortaDown:
 							{
+								if (SndFile.m_PlayBehaviour[PlayBehaviour.ItDoublePortamentoSlides])
+									chn.nOldPortaUp = chn.nOldPortaDown = (uint8_t)(m.Vol << 2);
+
 								SndFile.PortamentoDown(State, channel, (ModCommandParam)(m.Vol << 2), SndFile.m_PlayBehaviour[PlayBehaviour.ItVolColFinePortamento]);
 								break;
 							}
