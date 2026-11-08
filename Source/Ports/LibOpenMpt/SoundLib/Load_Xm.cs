@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		private const uint8 XmSampleStereo = 0x20;
 		private const uint8 XmSampleAdpcm = 0xad;
 
-		private static ModCommandVolCmd[] volEffTrans =
+		private static readonly ModCommandVolCmd[] volEffTrans =
 		[
 			VolumeCommand.VolSlideDown, VolumeCommand.VolSlideUp, VolumeCommand.FineVolDown, VolumeCommand.FineVolUp,
 			VolumeCommand.VibratoSpeed, VolumeCommand.VibratoDepth, VolumeCommand.Panning, VolumeCommand.PanSlideLeft,

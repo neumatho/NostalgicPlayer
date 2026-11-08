@@ -923,23 +923,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Error() != 0)
 				return 0;
 
-			if (((cwtv & 0xf000) == 0x1000) && (reserved2 == 0x4353) && (reserved3 == 0x3242554c) && (reserved4 == 0x302e))	// SCLUB2.0 (in little endian)
-				return 0;
-
-			if ((cwtv == 0x1320) && (special == 0) && ((ordNum & 0x0f) == 0) && (ultraClicks == 0) && ((flags & ~0x50) == 0) && (usePanningTable == 0xfc) && (patNum > 0) && (insNum > 0) && (firstPatternOffset > sampleOffsets[0]))
-				return -1;
-
-			if (((cwtv & 0xf000) == 0x5000) && ((cwtv & 0xff00) != 0x5700) && ((reserved2 != 0) || (ultraClicks != 16) || (channel1 == 1)) && (cwtv != 0x5447))
-				return -1;
-
-			// Check if any of the samples is in ADPCM format
+			// Check if any of the samples is in ADPCM format or is an OPL (Adlib) instrument.
+			// This is done before the tracker version checks, since these
+			// modules should always be played by OpenMPT
 			c_long fileSize = f.Hio_Size();
 
 			for (c_int i = 0; i < insNum; i++)
 			{
 				c_long offset = start + (sampleOffsets[i] * 16);
 				if (offset > fileSize)
-					return -1;
+					break;
 
 				f.Hio_Seek(offset, SeekOrigin.Begin);
 
@@ -960,7 +953,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if ((pack == 0x04) && ((sampleFlags & 0x04) == 0) && ((sampleFlags & 0x02) == 0))	// ADPCM packed, 8-bit mono
 						return -1;
 				}
+				else	// OPL (Adlib) instrument, let OpenMPT play it
+					return -1;
 			}
+
+			if (((cwtv & 0xf000) == 0x1000) && (reserved2 == 0x4353) && (reserved3 == 0x3242554c) && (reserved4 == 0x302e))	// SCLUB2.0 (in little endian)
+				return 0;
+
+			if ((cwtv == 0x1320) && (special == 0) && ((ordNum & 0x0f) == 0) && (ultraClicks == 0) && ((flags & ~0x50) == 0) && (usePanningTable == 0xfc) && (patNum > 0) && (insNum > 0) && (firstPatternOffset > sampleOffsets[0]))
+				return -1;
+
+			if (((cwtv & 0xf000) == 0x5000) && ((cwtv & 0xff00) != 0x5700) && ((reserved2 != 0) || (ultraClicks != 16) || (channel1 == 1)) && (cwtv != 0x5447))
+				return -1;
 
 			return 0;
 		}

@@ -162,6 +162,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// </summary>
 		protected RowVisitor m_VisitedRows;
 
+		public Opl m_Opl;
+
 		public StdString m_SongName = new StdString();
 		public string m_SongArtist;
 		public readonly SongMessage m_SongMessage = new SongMessage();
@@ -191,6 +193,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		[
 			XmLoader.Format,
 			ItLoader.Format,
+			S3MAdlibLoader.Format,		// Need to be before S3MLoader
 			S3MLoader.Format,
 			ModLoader.Format,
 			InconexiaLoader.Format,
@@ -979,8 +982,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				if (sample.nGlobalVol > 64)
 					sample.nGlobalVol = 64;
 
-/*				if (sample.uFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl == null))
-					InitOpl();*///XX
+				if (sample.uFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl == null))
+					InitOpl();
 			}
 
 			// Check invalid instruments
@@ -1638,6 +1641,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void InitOpl()
+		{
+			if (m_Opl == null)
+				m_Opl = new Opl(m_MixerSettings.gdwMixingFreq);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Detect samples that are referenced by an instrument, but actually
 		/// not used in a song. Only works in instrument mode. Unused samples
 		/// are marked as false in the vector
@@ -1777,7 +1793,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			sample.FreeSample();
 			sample.nLength = 0;
 			sample.uFlags.Reset(ChannelFlags.Chn_16Bit | ChannelFlags.Chn_Stereo);
-//XX			sample.SetAdlib(false);
+			sample.SetAdlib(false);
 
 			return true;
 		}

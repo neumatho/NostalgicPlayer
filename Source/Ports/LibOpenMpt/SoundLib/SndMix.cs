@@ -92,8 +92,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 			m_Resampler.UpdateTables();
 
-//XX			if (m_opl != null)
-//				m_opl.Initialize(m_MixerSettings.gdwMixingFreq);
+			if (m_Opl != null)
+				m_Opl.Initialize(m_MixerSettings.gdwMixingFreq);
 		}
 
 
@@ -291,8 +291,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 				CreateStereoMix((c_int)countChunk);
 
-/*//XX				if (m_Opl != null)
-					m_Opl.Mix(MixSoundBuffer, countChunk, m_OplVolumeFactor * m_nVstiVolume / 48);*/
+				if (m_Opl != null)
+					m_Opl.Mix(MixSoundBuffer, countChunk, m_OplVolumeFactor * m_nVstiVolume / 48);
 
 				m_Reverb.Process(MixSoundBuffer, ReverbSendBuffer, ref m_RvbROfsVol, ref m_RvbLOfsVol, countChunk);
 
@@ -408,8 +408,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 								{
 									ModChannel chn = m_PlayState.Chn[i];
 
-//XX									if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//										m_Opl.NoteCut(i);
+									if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+										m_Opl.NoteCut(i);
 
 									chn.dwFlags.Set(ChannelFlags.Chn_NoteFade | ChannelFlags.Chn_KeyOff);
 									chn.nFadeOutVol = 0;
@@ -2400,8 +2400,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				// Setup Initial Filter for this note
 				c_int cutOff = HandleNoteChangeFilter(chn);
 
-//XX				if ((cutOff >= 0) && chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//					m_Opl.Volume(nChn, (uint8)cutOff, true);
+				if ((cutOff >= 0) && chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+					m_Opl.Volume(nChn, (uint8)cutOff, true);
 
 				// Now that all relevant envelopes etc. have been processed, we can parse the MIDI macro data
 				ProcessMacroOnChannel(nChn);
@@ -2412,8 +2412,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					c_int envCutOff = ProcessPitchFilterEnvelope(chn, ref period);
 
 					// Cutoff doubles as modulator intensity for FM instruments
-//XX					if ((envCutOff >= 0) && chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//						m_Opl.Volume(nChn, (uint8)(envCutOff / 4), true);
+					if ((envCutOff >= 0) && chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+						m_Opl.Volume(nChn, (uint8)(envCutOff / 4), true);
 				}
 
 				if ((chn.RowCommand.VolCmd == VolumeCommand.VibratoDepth) && ((chn.RowCommand.Command == EffectCommand.Vibrato) || (chn.RowCommand.Command == EffectCommand.VibratoVol) || (chn.RowCommand.Command == EffectCommand.FineVibrato)))
@@ -2482,10 +2482,49 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 					chn.Increment = nInc;
 
-//XX					if (((chn.dwFlags & (ChannelFlags.Chn_Adlib | ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute)) == ChannelFlags.Chn_Adlib) && (m_Opl != null))
-/*					{
-						//XX A lot is missing here
-					}*/
+					if (((chn.dwFlags & (ChannelFlags.Chn_Adlib | ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute)) == ChannelFlags.Chn_Adlib) && (m_Opl != null))
+					{
+						bool doProcess = m_PlayBehaviour[PlayBehaviour.OplFlexibleNoteOff] || !chn.dwFlags.Test(ChannelFlags.Chn_NoteFade) || (GetType_() == ModType.S3M);
+
+						if (doProcess && !((GetType_() == ModType.S3M) && chn.dwFlags.Test(ChannelFlags.Chn_KeyOff)))
+						{
+							// In ST3, a sample rate of 8363 Hz is mapped to middle-C, which is 261.625 Hz in a tempered scale at A4 = 440.
+							// Hence, we have to translate our "sample rate" into pitch
+							uint32 milliHertz = Util.MulDivR_Unsigned(freq, 261625, 8363 << Snd_Def.Freq_FracBits);
+							milliHertz = Util.MulDivR_Unsigned(milliHertz, m_nFreqFactor, 65536);
+
+							bool keyOff = chn.dwFlags.Test(ChannelFlags.Chn_KeyOff) || (chn.dwFlags.Test(ChannelFlags.Chn_NoteFade) && (chn.nFadeOutVol == 0));
+
+							if (!m_PlayBehaviour[PlayBehaviour.OplNoteStopWith0Hz] || !keyOff)
+								m_Opl.Frequency(nChn, milliHertz, keyOff, m_PlayBehaviour[PlayBehaviour.OplBeatingOscillators]);
+						}
+
+						if (doProcess)
+						{
+							// Scale volume to OPL range (0...63)
+							m_Opl.Volume(nChn, (uint8)(Util.MulDivR_Unsigned((uint32)chn.nCalcVolume * chn.nGlobalVol * chn.nInsVol, 63, 1 << 26)), false);
+							chn.nRealPan = (m_Opl.Pan(nChn, chn.nRealPan) * 128) + 128;
+						}
+
+						// Deallocate OPL channels for notes that are most definitely never going to play again
+						ModInstrument ins = chn.pModInstrument;
+
+						if ((ins != null) && ((ins.VolEnv.dwFlags & (EnvelopeFlags.Enabled | EnvelopeFlags.Loop | EnvelopeFlags.Sustain)) == EnvelopeFlags.Enabled) && !ins.VolEnv.empty() && (chn.GetEnvelope(EnvelopeType.Volume).nEnvPosition >= ins.VolEnv.back().Tick) && (ins.VolEnv.back().Value == 0))
+						{
+							m_Opl.NoteCut(nChn);
+
+							if (!m_PlayBehaviour[PlayBehaviour.OplNoResetAtEnvelopeEnd])
+								chn.dwFlags.Reset(ChannelFlags.Chn_Adlib);
+
+							chn.dwFlags.Set(ChannelFlags.Chn_NoteFade);
+							chn.nFadeOutVol = 0;
+						}
+						else if (m_PlayBehaviour[PlayBehaviour.OplFlexibleNoteOff] && chn.dwFlags.Test(ChannelFlags.Chn_NoteFade) && (chn.nFadeOutVol == 0))
+						{
+							m_Opl.NoteCut(nChn);
+							chn.dwFlags.Reset(ChannelFlags.Chn_Adlib);
+						}
+					}
 				}
 
 				// Increment envelope positions

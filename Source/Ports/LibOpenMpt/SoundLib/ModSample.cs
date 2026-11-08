@@ -198,6 +198,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public readonly CharBuf FileName = new CharBuf(Snd_Def.Max_SampleFileName);
 
 		public readonly array<SmpLength> Cues = new array<SmpLength>(9);
+		public readonly OplPatch Adlib = new OplPatch();
 
 		/********************************************************************/
 		/// <summary>
@@ -748,6 +749,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		{
 			if (!uFlags.Test(ChannelFlags.Chn_Adlib))
 				Cues.fill(Snd_Def.Max_Sample_Length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void SetAdlib(bool enable, OplPatch patch = null)
+		{
+			patch ??= new OplPatch();
+
+			if (!enable && uFlags.Test(ChannelFlags.Chn_Adlib))
+				SetDefaultCuePoints();
+
+			uFlags.Set(ChannelFlags.Chn_Adlib, enable);
+
+			if (enable)
+			{
+				// Bogus sample to make playback work
+				uFlags.Reset(ChannelFlags.Chn_16Bit | ChannelFlags.Chn_Stereo);
+				nLength = 4;
+				AllocateSample();
+				patch.CopyTo(Adlib);
+			}
 		}
 	}
 }

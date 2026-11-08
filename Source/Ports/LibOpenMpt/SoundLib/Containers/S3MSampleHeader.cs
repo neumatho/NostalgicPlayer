@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Kit.C;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common;
 using Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common.String;
@@ -153,7 +154,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Containers
 			}
 			else if (SampleType == TypeAdMel)
 			{
-				//XX OPL
+				OplPatch patch = new OplPatch();
+
+				CMemory.memcpy(patch.data() + 0, Memory.As_Raw_Memory(ref Length), 4);
+				CMemory.memcpy(patch.data() + 4, Memory.As_Raw_Memory(ref LoopStart), 4);
+				CMemory.memcpy(patch.data() + 8, Memory.As_Raw_Memory(ref LoopEnd), 4);
+
+				mptSmp.SetAdlib(true, patch);
 			}
 
 			// Volume / Panning

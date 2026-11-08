@@ -28,6 +28,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Containers
 			_16Bit = 4,
 			/// <summary></summary>
 			Stereo = 8,
+			/// <summary></summary>
+			Adlib = 16
 		}
 
 		/// <summary>

@@ -172,4 +172,10 @@ The modules are from the game Aleshar - The World Of Ice.</value>
   <data name="IDS_MPT_ITCOMPRESSED" xml:space="preserve">
     <value> (IT compressed)</value>
   </data>
+  <data name="IDS_MPT_S3MADLIB_NAME" xml:space="preserve">
+    <value>Scream Tracker 3 Adlib</value>
+  </data>
+  <data name="IDS_MPT_S3MADLIB_DESCRIPTION" xml:space="preserve">
+    <value>This format is the same as the standard Scream Tracker 3 format, except that it uses OPL/Adlib instruments.</value>
+  </data>
 </root>

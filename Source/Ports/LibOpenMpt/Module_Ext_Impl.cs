@@ -224,6 +224,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 					sampleOffset = (uint)segment.Offset / bytesPerFrame;
 				}
 
+				SmpLength length = sample.nLength;
+				SmpLength loopStart = sample.nLoopStart;
+				SmpLength loopEnd = sample.nLoopEnd;
+
 				SampleInformation.SampleFlags flags = SampleInformation.SampleFlags.None;
 
 				if (sample.uFlags.Test(SampleFlags.Chn_16Bit))
@@ -238,12 +242,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 				if (sample.uFlags.Test(SampleFlags.Chn_PingPongLoop))
 					flags |= SampleInformation.SampleFlags.PingPong;
 
+				if (sample.uFlags.Test(ChannelFlags.Chn_Adlib))
+				{
+					flags |= SampleInformation.SampleFlags.Adlib;
+					length = 0;
+					loopStart = 0;
+					loopEnd = 0;
+				}
+
 				return new SampleInformation
 				{
 					Name = impl.m_SndFile.m_ModFormat.CharSet.GetString(impl.m_SndFile.m_szNames[sampleNumber + 1].Buf),
-					Length = sample.nLength,
-					LoopStart = sample.nLoopStart,
-					LoopLength = sample.nLoopEnd - sample.nLoopStart,
+					Length = length,
+					LoopStart = loopStart,
+					LoopLength = loopEnd - loopStart,
 					SampleData = sampleData,
 					SampleOffset = sampleOffset,
 					Volume = sample.nVolume,

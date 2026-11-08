@@ -1825,8 +1825,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					m_PlayState.m_nTickCount = Ticks_Row_Finished;
 					m_PlayState.m_Flags.Set(PlayFlags.Song_PositionChanged);
 
-//XX					if (m_Opl != null)
-//XX						m_Opl.Reset();
+					if (m_Opl != null)
+						m_Opl.Reset();
 
 					for (ChannelIndex n = 0; n < GetNumChannels(); n++)
 					{
@@ -1835,11 +1835,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						if ((memory.ChnSettings_[n].Vol != 0xff) && !adjustSamplePos)
 							chn.nVolume = Math.Min(memory.ChnSettings_[n].Vol, (uint8)64) * 4;
 
-/*						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(SampleFlags.Chn_Adlib) && (m_Opl != null))
+						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(SampleFlags.Chn_Adlib) && (m_Opl != null))
 						{
 							m_Opl.Patch(n, chn.pModSample.Adlib);
 							m_Opl.NoteCut(n);
-						}*///XX
+						}
 
 						chn.pCurrentSample = null;
 					}
@@ -2668,14 +2668,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 				chn.RightVol = chn.LeftVol = 0;
 
-/*				if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && (channelHint != Snd_Def.ChannelIndex_Invalid))
+				if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && (channelHint != Snd_Def.ChannelIndex_Invalid))
 				{
 					// Test case: AdlibZeroVolumeNote.s3m
 					if (m_PlayBehaviour[PlayBehaviour.OplNoteOffOnNoteChange])
 						m_Opl.NoteOff(channelHint);
 					else if (m_PlayBehaviour[PlayBehaviour.OplNoteStopWith0Hz])
 						m_Opl.Frequency(channelHint, 0, true, false);
-				}*///XX
+				}
 			}
 
 			// Special case for MPT
@@ -2776,8 +2776,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				ModChannel c = m_PlayState.Chn[i];
 
 				// Stopped OPL channel
-//XX				if (c.dwFlags.Test(ChannelFlags.Chn_Adlib) && ((m_Opl == null) || !m_Opl.IsActive(i)))
-//					return i;
+				if (c.dwFlags.Test(ChannelFlags.Chn_Adlib) && ((m_Opl == null) || !m_Opl.IsActive(i)))
+					return i;
 
 				if ((c.nLength != 0) && (c.nFadeOutVol == 0))
 					return i;
@@ -2833,11 +2833,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				if ((srcChn.nLength == 0) || ((srcChn.RightVol | srcChn.LeftVol) == 0))
 					return Snd_Def.ChannelIndex_Invalid;
 
-/*//XX				if (srcChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+				if (srcChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
 				{
 					m_Opl.NoteCut(nChn, false);
+
 					return Snd_Def.ChannelIndex_Invalid;
-				}*/
+				}
 
 				ChannelIndex nnaChn_ = GetNnaChannel(nChn);
 
@@ -2987,8 +2988,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 								KeyOff(chn_);
 								chn_.nVolume = 0;
 
-//XX								if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//									m_Opl.NoteCut(i);
+								if (chn_.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+									m_Opl.NoteCut(i);
 
 								break;
 							}
@@ -2998,8 +2999,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							{
 								KeyOff(chn_);
 
-//XX								if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//									m_Opl.NoteOff(i);
+								if (chn_.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+									m_Opl.NoteOff(i);
 
 								break;
 							}
@@ -3009,8 +3010,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							{
 								chn_.dwFlags.Set(ChannelFlags.Chn_NoteFade);
 
-//XX								if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && !m_PlayBehaviour[PlayBehaviour.OplWithNna])
-//									m_Opl.NoteOff(i);
+								if (chn_.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && !m_PlayBehaviour[PlayBehaviour.OplWithNna])
+									m_Opl.NoteOff(i);
 
 								break;
 							}
@@ -3060,7 +3061,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				{
 					KeyOff(chn);
 
-/*//XX					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
 					{
 						if (m_PlayBehaviour[PlayBehaviour.OplWithNna])
 						{
@@ -3069,7 +3070,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 						}
 						else
 							m_Opl.NoteOff(nChn);
-					}*/
+					}
 
 					break;
 				}
@@ -3079,8 +3080,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					chn.nFadeOutVol = 0;
 					chn.dwFlags.Set(ChannelFlags.Chn_NoteFade);
 
-//XX					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//						m_Opl.NoteCut(i);
+					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+						m_Opl.NoteCut(nChn);
 
 					break;
 				}
@@ -3088,21 +3089,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				{
 					chn.dwFlags.Set(ChannelFlags.Chn_NoteFade);
 
-/*//XX					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
 					{
 						if (m_PlayBehaviour[PlayBehaviour.OplWithNna])
 							m_Opl.MoveChannel(nChn, nnaChn);
 						else
 							m_Opl.NoteOff(nChn);
-					}*/
+					}
 
 					break;
 				}
 
 				case NewNoteAction.Continue:
 				{
-//XX					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//						m_Opl.MoveChannel(nChn, nnaChn);
+					if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+						m_Opl.MoveChannel(nChn, nnaChn);
 
 					break;
 				}
@@ -3131,8 +3132,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/********************************************************************/
 		public void StopOldNna(ModChannel chn, ChannelIndex channel)
 		{
-//XX			if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//				m_Opl.NoteCut(channel);
+			if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+				m_Opl.NoteCut(channel);
 		}
 
 
@@ -3605,8 +3606,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 
 						InstrumentChange(m_PlayState, nChn, instr, bPorta, true);
 
-//XX						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//							m_Opl.Patch(nChn, chn.pModSample.Addlib);
+						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+							m_Opl.Patch(nChn, chn.pModSample.Adlib);
 
 						// IT compatibility: Keep new instrument number for next instrument-less note even if sample playback is stopped
 						// Test case: StoppedInstrSwap.it
@@ -3679,8 +3680,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							chn.SwapSampleIndex = chn.nNewIns = 0;
 						}
 
-//XX						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && (instrChange || !m_Opl.IsActive(nChn)))
-//							m_Opl.Patch(nChn, chn.pModSample.Adlib);
+						if (!chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) && (chn.pModSample != null) && chn.pModSample.uFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && (instrChange || !m_Opl.IsActive(nChn)))
+							m_Opl.Patch(nChn, chn.pModSample.Adlib);
 
 						NoteChange(chn, note, bPorta, (GetType_() & (ModType.Xm | ModType.Mt2)) == 0, false, nChn);
 
@@ -3698,13 +3699,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 							chn.nAutoVibPos = 0;
 						}
 
-/*//XX						if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && ((note == ModCommand.Note_NoteCut) || (note == ModCommand.Note_KeyOff) || ((note == ModCommand.Note_Fade) && !m_PlayBehaviour[PlayBehaviour.OplFlexibleNoteOff])))
+						if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && ((note == ModCommand.Note_NoteCut) || (note == ModCommand.Note_KeyOff) || ((note == ModCommand.Note_Fade) && !m_PlayBehaviour[PlayBehaviour.OplFlexibleNoteOff])))
 						{
 							if (m_PlayBehaviour[PlayBehaviour.OplNoteStopWith0Hz])
 								m_Opl.Frequency(nChn, 0, true, false);
 
 							m_Opl.NoteOff(nChn);
-						}*/
+						}
 					}
 
 					// Tick-0 only volume commands
@@ -6424,23 +6425,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 									{
 										KeyOff(bkChn);
 
-//XX										if (bkChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//											m_Opl.NoteOff(i);
+										if (bkChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+											m_Opl.NoteOff(i);
 									}
 									else if (param == 2)
 									{
 										bkChn.dwFlags.Set(ChannelFlags.Chn_NoteFade);
 
-//XX										if (bkChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//											m_Opl.NoteOff(i);
+										if (bkChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+											m_Opl.NoteOff(i);
 									}
 									else
 									{
 										bkChn.dwFlags.Set(ChannelFlags.Chn_NoteFade);
 										bkChn.nFadeOutVol = 0;
 
-//XX										if (bkChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//											m_Opl.NoteCut(i);
+										if (bkChn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+											m_Opl.NoteCut(i);
 									}
 								}
 							}
@@ -6771,11 +6772,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					chn.nRestoreCutOffOnNewNote = 0;
 					c_int cutOff = SetupChannelFilter(chn, !chn.dwFlags.Test(ChannelFlags.Chn_Filter));
 
-/*					if ((cutOff >= 0) && chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && !localOnly)
+					if ((cutOff >= 0) && chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null) && !localOnly)
 					{
 						// Cutoff doubles as modulator intensity for FM instruments
 						m_Opl.Volume(nChn, (uint8)(cutOff / 4), true);
-					}*///XX
+					}
 				}
 				else if ((macroCode == 0x01) && !isExtended && (param < 0x80))
 				{
@@ -7435,8 +7436,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 				// Instro sends to a midi chan
 				SendMidiNote(nChn, ModCommand.Note_KeyOff, 0);
 
-//XX				if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
-//					m_Opl.NoteCut(nChn, false);
+				if (chn.dwFlags.Test(ChannelFlags.Chn_Adlib) && (m_Opl != null))
+					m_Opl.NoteCut(nChn, false);
 			}
 		}
 

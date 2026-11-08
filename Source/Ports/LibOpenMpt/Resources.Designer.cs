@@ -200,6 +200,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This format is the same as the standard Scream Tracker 3 format, except that it uses OPL/Adlib instruments..
+        /// </summary>
+        internal static string IDS_MPT_S3MADLIB_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_S3MADLIB_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scream Tracker 3 Adlib.
+        /// </summary>
+        internal static string IDS_MPT_S3MADLIB_NAME {
+            get {
+                return ResourceManager.GetString("IDS_MPT_S3MADLIB_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This format is the same as the standard FastTracker II format, but created with OpenMPT. It may have extra extensions included which was added by either ModPlug Tracker or OpenMPT..
         /// </summary>
         internal static string IDS_MPT_XM_DESCRIPTION {

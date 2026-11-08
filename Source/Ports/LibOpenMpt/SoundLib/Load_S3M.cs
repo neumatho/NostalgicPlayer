@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			/********************************************************************/
 			public static ProbeResult Probe_OpenMpt(FileReader file, uint64? pFileSize)
 			{
-				return ProbeFileHeaderS3M(file, pFileSize);
+				return ProbeFileHeaderS3M(file, pFileSize, InternalS3MFormat.OpenMpt);
 			}
 
 
@@ -67,6 +67,68 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			public static IFormatLoader Create(CSoundFile soundFile)
 			{
 				return new S3MLoader(soundFile);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public bool Read(FileReader file, ModLoadingFlags loadFlags)
+			{
+				return sndFile.ReadS3M(file, loadFlags);
+			}
+		}
+		#endregion
+
+		#region S3M Adlib loader class
+		public class S3MAdlibLoader : IFormatLoader
+		{
+			public static readonly FileFormatLoader Format = new FileFormatLoader
+			{
+				Id = Guid.Parse("55B50A01-0579-4BE0-8A29-2D7F99D2381D"),
+				Name = Resources.IDS_MPT_S3MADLIB_NAME,
+				Description = Resources.IDS_MPT_S3MADLIB_DESCRIPTION,
+				Prober = Probe_Adlib,
+				Create = Create
+			};
+
+			private readonly CSoundFile sndFile;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			private S3MAdlibLoader(CSoundFile soundFile)
+			{
+				sndFile = soundFile;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static ProbeResult Probe_Adlib(FileReader file, uint64? pFileSize)
+			{
+				return ProbeFileHeaderS3M(file, pFileSize, InternalS3MFormat.Adlib);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static IFormatLoader Create(CSoundFile soundFile)
+			{
+				return new S3MAdlibLoader(soundFile);
 			}
 
 
@@ -128,12 +190,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		}
 		#endregion
 
+		private enum InternalS3MFormat
+		{
+			Unknown,
+			OpenMpt,
+			Adlib
+		}
+
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static ProbeResult ProbeFileHeaderS3M(FileReader file, uint64? pFileSize)
+		private static ProbeResult ProbeFileHeaderS3M(FileReader file, uint64? pFileSize, InternalS3MFormat format)
 		{
 			S3MFileHeader fileHeader = new S3MFileHeader();
 
@@ -147,7 +216,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if (result != ProbeResult.Success)
 				return result;
 
-			return ExtendedProbeS3M(file, ref fileHeader);
+			InternalS3MFormat probedFormat = ExtendedProbeS3M(file, ref fileHeader);
+
+			return probedFormat == format ? ProbeResult.Success : ProbeResult.Failure;
 		}
 
 
@@ -1045,10 +1116,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		/// TNE: Added extra checks so only OpenMPT modules are recognized
 		/// </summary>
 		/********************************************************************/
-		private static ProbeResult ExtendedProbeS3M(FileReader file, ref S3MFileHeader fileHeader)
+		private static InternalS3MFormat ExtendedProbeS3M(FileReader file, ref S3MFileHeader fileHeader)
 		{
 			if (fileHeader.SmpNum == 0)
-				return ProbeResult.Failure;
+				return InternalS3MFormat.Unknown;
 
 			// Read sample header offsets
 			file.Seek(0x60U + fileHeader.OrdNum);
@@ -1059,20 +1130,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			// Read first pattern offset
 			uint16 firstPatternOffset = file.ReadUInt16LE();
 
-			if (((fileHeader.Cwtv & S3MFileHeader.TrackerMask) == S3MFileHeader.TrkScreamTracker) && (fileHeader.Reserved2 == 0x4353) && (fileHeader.Reserved3 == 0x3242554c) && (fileHeader.Reserved4 == 0x302e))	// SCLUB2.0
-				return ProbeResult.Failure;
+			// Check if any of the samples is in ADPCM format or is an OPL (Adlib) instrument.
+			// This is done before the tracker version checks, since these
+			// modules should always be played by OpenMPT
+			bool hasAdpcm = false;
 
-			if ((fileHeader.Cwtv == S3MFileHeader.TrkSt3_20) && (fileHeader.Special == 0) && ((fileHeader.OrdNum & 0x0f) == 0) && (fileHeader.UltraClicks == 0) && ((fileHeader.Flags & ~0x50) == 0) && (fileHeader.UsePanningTable == S3MFileHeader.IdPanning) && (fileHeader.PatNum > 0) && (fileHeader.SmpNum > 0) && (firstPatternOffset > sampleOffsets[0]))
-				return ProbeResult.Success;
-
-			if (((fileHeader.Cwtv & S3MFileHeader.TrackerMask) == S3MFileHeader.TrkOpenMpt) && ((fileHeader.Cwtv & 0xff00) != S3MFileHeader.TrkNesMusa) && ((fileHeader.Reserved2 != 0) || (fileHeader.UltraClicks != 16) || (fileHeader.Channels[1] == 1)) && (fileHeader.Cwtv != S3MFileHeader.TrkGraoumfTracker))
-				return ProbeResult.Success;
-
-			// Check if any of the samples is in ADPCM format
 			for (SampleIndex i = 0; i < fileHeader.SmpNum; i++)
 			{
 				if (!file.Seek(sampleOffsets[i] * 16U))
-					return ProbeResult.Failure;
+					break;
 
 				uint8 type = file.ReadUInt8();
 				if (type < S3MSampleHeader.TypeAdMel)
@@ -1089,11 +1155,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					uint8 flags = file.ReadUInt8();
 
 					if ((pack == S3MSampleHeader.PAdpcm) && ((flags & S3MSampleHeader.Smp16Bit) == 0) && ((flags & S3MSampleHeader.SmpStereo) == 0))
-						return ProbeResult.Success;
+						hasAdpcm = true;
 				}
+				else	// OPL (Adlib) instrument
+					return InternalS3MFormat.Adlib;
 			}
 
-			return ProbeResult.Failure;
+			if (hasAdpcm)
+				return InternalS3MFormat.OpenMpt;
+
+			if (((fileHeader.Cwtv & S3MFileHeader.TrackerMask) == S3MFileHeader.TrkScreamTracker) && (fileHeader.Reserved2 == 0x4353) && (fileHeader.Reserved3 == 0x3242554c) && (fileHeader.Reserved4 == 0x302e))	// SCLUB2.0
+				return InternalS3MFormat.Unknown;
+
+			if ((fileHeader.Cwtv == S3MFileHeader.TrkSt3_20) && (fileHeader.Special == 0) && ((fileHeader.OrdNum & 0x0f) == 0) && (fileHeader.UltraClicks == 0) && ((fileHeader.Flags & ~0x50) == 0) && (fileHeader.UsePanningTable == S3MFileHeader.IdPanning) && (fileHeader.PatNum > 0) && (fileHeader.SmpNum > 0) && (firstPatternOffset > sampleOffsets[0]))
+				return InternalS3MFormat.OpenMpt;
+
+			if (((fileHeader.Cwtv & S3MFileHeader.TrackerMask) == S3MFileHeader.TrkOpenMpt) && ((fileHeader.Cwtv & 0xff00) != S3MFileHeader.TrkNesMusa) && ((fileHeader.Reserved2 != 0) || (fileHeader.UltraClicks != 16) || (fileHeader.Channels[1] == 1)) && (fileHeader.Cwtv != S3MFileHeader.TrkGraoumfTracker))
+				return InternalS3MFormat.OpenMpt;
+
+			return InternalS3MFormat.Unknown;
 		}
 		#endregion
 

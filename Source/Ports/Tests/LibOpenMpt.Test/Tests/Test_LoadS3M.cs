@@ -143,8 +143,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Tests
 				Assert.AreEqual(string.Empty, sample.FileName.Str().ToString());
 				Assert.AreEqual(8363U, sample.GetSampleRate(ModType.S3M));
 				Assert.AreEqual(58 * 4, sample.nVolume);
-//XX				Assert.AreEqual(ChannelFlags.Chn_Adlib, sample.uFlags);
-//XX				Assert.AreEqual(new OplPatch(0x00, 0x00, 0xc0, 0x00, 0xf0, 0xd2, 0x05, 0xb3, 0x01, 0x00, 0x00, 0x00), sample.Adlib);
+				Assert.AreEqual(ChannelFlags.Chn_Adlib, sample.uFlags);
+				Assert.AreEqual(new OplPatch([0x00, 0x00, 0xc0, 0x00, 0xf0, 0xd2, 0x05, 0xb3, 0x01, 0x00, 0x00, 0x00]), sample.Adlib);
 			}
 
 			// Orders

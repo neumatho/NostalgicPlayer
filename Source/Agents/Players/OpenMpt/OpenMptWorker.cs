@@ -444,6 +444,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 						LoopLength = sample.LoopLength
 					};
 
+					if ((sample.Flags & SampleInformation.SampleFlags.Adlib) != 0)
+						sampleInfo.Type = SampleInfo.SampleType.Adlib;
+
 					if ((sample.Flags & SampleInformation.SampleFlags._16Bit) != 0)
 						sampleInfo.Flags |= SampleInfo.SampleFlag._16Bit;
 

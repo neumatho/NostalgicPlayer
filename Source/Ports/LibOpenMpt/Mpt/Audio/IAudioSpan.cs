@@ -14,21 +14,5 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Mpt.Audio
 
 		size_t Size_Channels();
 		size_t Size_Frames();
-
-/*		/// Geometri-forespørgsler, svarende til C++'s is_contiguous() m.fl.
-		bool IsContiguous          { get; }
-		bool ChannelsAreContiguous { get; }
-		bool FramesAreContiguous   { get; }
-		int  FrameStride           { get; }
-
-
-		/// Gyldig når ChannelsAreContiguous; ellers tom.
-		Span<T> GetChannel(int channel);
-
-		/// Gyldig når IsContiguous (interleaved); ellers tom.
-		Span<T> GetContiguous();
-
-		/// Afledte — default-implementeret, kan overskrives af den enkelte struct.
-		int Samples => Channels * Frames;*/
 	}
 }

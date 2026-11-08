@@ -211,6 +211,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | SC68 | .sc68 | Module Converter | \* |
 | Scream Tracker 2 | .stm | | Xmp |
 | Scream Tracker 3 | .s3m | | Xmp |
+| Scream Tracker 3 Adlib | .s3m | | OpenMPT |
 | Scream Tracker 3 MOD | .mod | | Xmp |
 | Scream Tracker Music Interface Kit | .stx | | Xmp |
 | SidMon 1.0 | .sd1 / .sid1 / .sid | | SidMon 1.0 |
