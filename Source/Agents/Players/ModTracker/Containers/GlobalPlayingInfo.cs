@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Utility.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
@@ -29,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte PattDelayTime { get; set; }
 		public byte PattDelayTime2 { get; set; }
 		public short LastUsedPositionJumpArgument { get; set; }
-		public short LastUsedBreakPositionArgument { get; set; }
+		public List<ushort> LastUsedBreakPositionArgument { get; private set; } = new List<ushort>();
 
 		/********************************************************************/
 		/// <summary>
@@ -38,7 +39,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		/********************************************************************/
 		public GlobalPlayingInfo MakeDeepClone()
 		{
-			return (GlobalPlayingInfo)MemberwiseClone();
+			GlobalPlayingInfo clone = (GlobalPlayingInfo)MemberwiseClone();
+
+			clone.LastUsedBreakPositionArgument = new List<ushort>(LastUsedBreakPositionArgument);
+
+			return clone;
 		}
 	}
 }

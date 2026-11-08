@@ -1349,8 +1349,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				LowMask = 0xff,
 				PattDelayTime = 0,
 				PattDelayTime2 = 0,
-				LastUsedPositionJumpArgument = -1,
-				LastUsedBreakPositionArgument = -1
+				LastUsedPositionJumpArgument = -1
 			};
 
 			endReached = false;
@@ -1458,7 +1457,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			if (playingInfo.SongPos >= songLength)
 			{
 				playingInfo.SongPos = restartPos;
-				playingInfo.LastUsedBreakPositionArgument = -1;
+				playingInfo.LastUsedBreakPositionArgument.Clear();
 				playingInfo.LastUsedPositionJumpArgument = -1;
 
 				// And the module has repeated
@@ -1473,7 +1472,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						endReached = true;
 					else
 					{
-						if ((playingInfo.GotBreak && playingInfo.GotPositionJump && (playingInfo.SongPos == playingInfo.LastUsedPositionJumpArgument) && (playingInfo.BreakPos == playingInfo.LastUsedBreakPositionArgument)))
+						if ((playingInfo.GotBreak && playingInfo.GotPositionJump && (playingInfo.SongPos == playingInfo.LastUsedPositionJumpArgument) && playingInfo.LastUsedBreakPositionArgument.Contains(playingInfo.BreakPos)))
 						{
 							endReached = true;
 							restartSong = true;
@@ -1485,8 +1484,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// Initialize the position variables
 			MarkPositionAsVisited(playingInfo.SongPos);
 
+			if (playingInfo.SongPos != playingInfo.OldSongPos)
+				playingInfo.LastUsedBreakPositionArgument.Clear();
+
 			if (playingInfo.GotBreak)
-				playingInfo.LastUsedBreakPositionArgument = (short)playingInfo.BreakPos;
+				playingInfo.LastUsedBreakPositionArgument.Add(playingInfo.BreakPos);
 
 			if (playingInfo.GotPositionJump)
 				playingInfo.LastUsedPositionJumpArgument = (short)playingInfo.SongPos;
@@ -3286,6 +3288,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					{
 						playingInfo.BreakPos = modChan.LoopPattPos;
 						playingInfo.BreakFlag = true;
+						playingInfo.LastUsedBreakPositionArgument.Clear();
 					}
 				}
 				else
