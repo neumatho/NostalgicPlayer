@@ -10,9 +10,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Common
 	/// </summary>
 	internal static class VersionNumber
 	{
-		public const c_int MajorMajor = 1;
-		public const c_int Major = 32;
-		public const c_int Minor = 12;
-		public const c_int MinorMinor = 00;
+		public const c_int MajorMajor = 0x1;
+		public const c_int Major = 0x32;
+		public const c_int Minor = 0x12;
+		public const c_int MinorMinor = 0x00;
 	}
 }
