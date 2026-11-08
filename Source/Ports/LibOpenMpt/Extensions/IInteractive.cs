@@ -14,5 +14,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.Extensions
 		/// 
 		/// </summary>
 		void Set_Channel_Mute_Status(int32_t channel, bool mute);
+
+		/// <summary>
+		///
+		/// </summary>
+		bool Get_Channel_Mute_Status(int32_t channel);
 	}
 }

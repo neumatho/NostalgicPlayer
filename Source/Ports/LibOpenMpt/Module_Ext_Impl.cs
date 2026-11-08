@@ -109,6 +109,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 						impl.m_SndFile.m_PlayState.Chn[i].dwFlags.Set(SampleFlags.Chn_Mute | SampleFlags.Chn_SyncMute, mute);
 				}
 			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			///
+			/// </summary>
+			/********************************************************************/
+			public bool Get_Channel_Mute_Status(int32_t channel)
+			{
+				if ((channel < 0) || (channel >= impl.Get_Num_Channels()))
+					throw new OpenMptException("Invalid channel");
+
+				return impl.m_SndFile.m_PlayState.Chn[channel].dwFlags.Test(SampleFlags.Chn_Mute | SampleFlags.Chn_SyncMute);
+			}
 		}
 		#endregion
 

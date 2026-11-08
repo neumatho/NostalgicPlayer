@@ -33,6 +33,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 		private bool hasInstruments;
 		private bool useSurround;
 		private SurroundMode surroundMode;
+		private bool[] mutedInModule;
 
 		private DurationInfo currentDuration;
 		private int playingPosition;
@@ -170,6 +171,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 			hasInstruments = module.Get_Num_Instruments() != 0;
 			useSurround = DoesModuleUseSurround();
 
+			// Remember which channels are muted in the module itself (e.g. disabled
+			// channels in S3M), so they are not unmuted when the user enables channels
+			IInteractive interactive = (IInteractive)module.Get_Interface("interactive");
+
+			mutedInModule = new bool[ModuleChannelCount];
+
+			for (int i = 0; i < mutedInModule.Length; i++)
+				mutedInModule[i] = interactive.Get_Channel_Mute_Status(i);
+
 			return true;
 		}
 
@@ -183,6 +193,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 		public override void CleanupPlayer()
 		{
 			module = null;
+			mutedInModule = null;
 
 			leftBuffer = null;
 			rightBuffer = null;
@@ -239,7 +250,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OpenMpt
 			for (int i = 0; i < ModuleChannelCount; i++)
 			{
 				bool channelEnabled = (mixerInfo.ChannelsEnabled != null) && (i < mixerInfo.ChannelsEnabled.Length) ? mixerInfo.ChannelsEnabled[i] : true;
-				interactive.Set_Channel_Mute_Status(i, !channelEnabled);
+				bool mutedByModule = (mutedInModule != null) && (i < mutedInModule.Length) && mutedInModule[i];
+
+				interactive.Set_Channel_Mute_Status(i, mutedByModule || !channelEnabled);
 			}
 		}
 		#endregion
