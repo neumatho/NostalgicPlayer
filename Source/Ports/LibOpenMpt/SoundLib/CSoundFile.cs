@@ -1060,6 +1060,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 			if (m_dwLastSavedWithVersion)
 				UpgradeModule();
 
+			// Set up mix levels (also recalculates plugin mix levels - must be done after plugins were loaded)
+			SetMixLevels(m_nMixLevels);
+
 			return true;
 		}
 
