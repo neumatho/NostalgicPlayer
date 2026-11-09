@@ -40,6 +40,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 		public c_int Vol;
 
 		/// <summary>
+		/// Not in libxmp: the sum of the squared sample values mixed in this
+		/// tick, for the visuals. It does not change the sound
+		/// </summary>
+		public int64 LevelSum;
+
+		/// <summary>
 		/// Current period
 		/// </summary>
 		public c_double Period;

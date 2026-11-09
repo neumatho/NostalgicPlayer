@@ -43,8 +43,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 			public int? SamplePosition { get; set; }
 			public ushort? Volume { get; set; }
 			public uint? Frequency { get; set; }
+			public float Level { get; set; }
 		}
 		#endregion
+
+		// A sample value with the highest volume
+		private const double MaxLevel = 128.0 * 64.0;
 
 		private readonly ModuleType currentModuleType;
 
@@ -729,7 +733,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		/// </summary>
 		/********************************************************************/
 		public override ChannelChanged[] VisualChannels => visualizerChannels.Select((x, i) =>
-				new ChannelChanged(enabledChannels[i], x.Muted, x.NoteKicked, x.SampleNumber, -1, -1, 0x280, true, false, x.SamplePosition, x.Volume, x.Frequency)).ToArray();
+				new ChannelChanged(enabledChannels[i], x.Muted, x.NoteKicked, x.SampleNumber, -1, -1, 0x280, true, false, x.SamplePosition, x.Volume, x.Frequency, x.Level)).ToArray();
 		#endregion
 
 		#region Duration calculation
@@ -2274,6 +2278,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 			int[] rPos = new int[chans];
 			int[] panL = new int[chans];
 			int[] panR = new int[chans];
+			long[] levelSum = new long[chans];
 
 			for (int i = 0; i < chans; i++)
 			{
@@ -2342,6 +2347,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 						else
 							j = src[i][pos[i] >> 16] * vol[i];
 
+						levelSum[i] += j * j;
+
 						a += (j * panL[i]) >> 7;
 						b += (j * panR[i]) >> 7;
 
@@ -2383,6 +2390,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 				voices[i].RingSamplePos = rPos[i];
 
 				visualizerChannels[i].SamplePosition = pos[i] >> 16;
+				visualizerChannels[i].Level = (float)(Math.Sqrt((double)levelSum[i] / leftBuffer.Length) / MaxLevel);
 			}
 		}
 

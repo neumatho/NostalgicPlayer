@@ -153,6 +153,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_MONO_AC
 					{
 						{
@@ -199,6 +201,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				{
 					c_int smp_In = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_MONO
 					{
@@ -276,6 +280,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_MONO_AC
 					{
 						{
@@ -323,6 +329,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				{
 					c_int smp_In = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_MONO
 					{
@@ -415,6 +423,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_MONO_AVG_AC
 					{
 						{
@@ -484,6 +494,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_MONO_AVG
 					{
@@ -587,6 +599,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_MONO_AVG_AC
 					{
 						{
@@ -658,6 +672,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_MONO_AVG
 					{
@@ -748,6 +764,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -808,6 +826,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_STEREO
 					{
@@ -903,6 +923,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -964,6 +986,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_STEREO
 					{
@@ -1074,6 +1098,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -1148,6 +1174,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_STEREO
 					{
@@ -1260,6 +1288,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -1336,6 +1366,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_STEREO
 					{
@@ -1452,6 +1484,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_MONO_AC
 					{
 						{
@@ -1518,6 +1552,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				{
 					c_int smp_In = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_MONO
 					{
@@ -1634,6 +1670,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_MONO_AC
 					{
 						{
@@ -1701,6 +1739,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				{
 					c_int smp_In = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_MONO
 					{
@@ -1851,6 +1891,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_MONO_AVG_AC
 					{
 						{
@@ -1952,6 +1994,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_MONO_AVG
 					{
@@ -2119,6 +2163,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_MONO_AVG_AC
 					{
 						{
@@ -2222,6 +2268,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_MONO_AVG
 					{
@@ -2358,6 +2406,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -2438,6 +2488,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_STEREO
 					{
@@ -2572,6 +2624,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
 
+					vi.LevelSum += (int64)smpL * smpL;
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -2653,6 +2707,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpL;
+
+					vi.LevelSum += (int64)smpL * smpL;
 
 					#region MIX_STEREO
 					{
@@ -2820,6 +2876,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -2926,6 +2984,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_STEREO
 					{
@@ -3102,6 +3162,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
 
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
+
 					#region MIX_STEREO_AC
 					{
 						{
@@ -3210,6 +3272,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					c_int smp_In_L = smpL;
 					c_int smp_In_R = smpR;
+
+					vi.LevelSum += ((int64)smpL * smpL) + ((int64)smpR * smpR);
 
 					#region MIX_STEREO
 					{

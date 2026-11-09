@@ -38,17 +38,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib.Mixers
 
 			Span<mixsample_t> outSample = stackalloc mixsample_t[TTraits.NumChannelsOut];
 
+			int64 levelSum = 0;
+
 			while (samples-- != 0)
 			{
 				interpolate.Interpolate<TIn, TTraits>(outSample, inSample + (smpPos.GetInt() * TTraits.NumChannelsIn), smpPos.GetFract());
 				filter.Filter(outSample, c, TTraits.NumChannelsIn);
 				mix.Mix(outSample, c, outBuffer);
 
+				for (c_int i = 0; i < TTraits.NumChannelsIn; i++)
+					levelSum += (int64)outSample[i] * outSample[i];
+
 				outBuffer += TTraits.NumChannelsOut;
 				smpPos += increment;
 			}
 
 			c.Position = smpPos;
+			c.LevelSum += levelSum;
+			c.LevelSamples += numSamples * TTraits.NumChannelsIn;
 
 			mix.Done(c);
 			filter.Done(c, TTraits.NumChannelsIn);

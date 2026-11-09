@@ -17,6 +17,11 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 	/// </summary>
 	internal class ChannelParser : Channel
 	{
+		// A 16 bit sample value with the highest volume
+		private const double MaxLevel = 32768.0 * 256.0;
+
+		private bool levelReported;
+
 		/********************************************************************/
 		/// <summary>
 		/// Will parse the channel info and store the result in the VoiceInfo
@@ -33,6 +38,15 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			int? ccSamplePosition = null;
 			ushort? ccVolume = null;
 			uint? ccFrequency = null;
+
+			// The level of the last tick, with the volume it has been mixed
+			// with. The visuals are also told when the voice becomes silent
+			float ccLevel = voiceInfo.LevelFrames != 0 ? (float)((Math.Sqrt((double)voiceInfo.LevelSum / voiceInfo.LevelFrames) * voiceInfo.Volume) / MaxLevel) : 0.0f;
+			bool reportLevel = (ccLevel != 0.0f) || levelReported;
+
+			levelReported = ccLevel != 0.0f;
+			voiceInfo.LevelSum = 0;
+			voiceInfo.LevelFrames = 0;
 
 			voiceInfo.Interrupt = Interrupt;
 
@@ -235,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 			ChannelFlag retFlags = flags;
 			flags = ChannelFlag.None;
 
-			return bufferMode || ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, currentOctave, currentNote, voiceInfo.SampleInfo.Sample.Length, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
+			return bufferMode || (((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) && !reportLevel) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, currentOctave, currentNote, voiceInfo.SampleInfo.Sample.Length, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency, ccLevel);
 		}
 
 

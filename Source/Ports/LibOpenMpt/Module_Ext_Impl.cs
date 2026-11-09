@@ -419,6 +419,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 					// nRealVolume is 14-bit, but NostalgicPlayer wants 0-256
 					ushort volume = (ushort)(chn.nRealVolume >> 6);
 
+					// The level is what has been mixed since the last time. The
+					// highest value is a 16-bit sample value with the 14-bit volume
+					float level = chn.LevelSamples != 0 ? (float)Math.Min((Math.Sqrt((double)chn.LevelSum / chn.LevelSamples) * chn.nRealVolume) / (32768.0 * 16384.0), 1.0) : 0.0f;
+
+					chn.LevelSum = 0;
+					chn.LevelSamples = 0;
+
 					// The increment tells how many frames of the sample that is
 					// played for each mixer frame, so multiplying it with the
 					// mixer frequency gives the playing frequency. It is negated
@@ -428,7 +435,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 					bool enabled = !sndFile.ChnSettings[i].dwFlags.Test(ChannelFlags.Chn_Mute);
 					bool muted = chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) || (chn.pCurrentSample == null);
 
-					result[i] = new ChannelChanged(enabled, muted, noteKicked, FindSampleNumber(chn.pModSample), -1, -1, chn.nLength, chn.dwFlags.Test(ChannelFlags.Chn_Loop), false, newSamplePosition, volume, frequency);
+					result[i] = new ChannelChanged(enabled, muted, noteKicked, FindSampleNumber(chn.pModSample), -1, -1, chn.nLength, chn.dwFlags.Test(ChannelFlags.Chn_Loop), false, newSamplePosition, volume, frequency, level);
 				}
 
 				return result;

@@ -28,6 +28,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer.Containers
 		public int[] OldPanningVolume { get; set; }
 		public long Current { get; set; }					// Current index in the sample
 		public long Increment { get; set; }					// Increment value
+		public long LevelSum { get; set; }					// Sum of the squared sample values mixed since the last tick
+		public int LevelFrames { get; set; }				// Number of values in LevelSum
 		public IChannel.InterruptHandler Interrupt { get; set; }
 	}
 }

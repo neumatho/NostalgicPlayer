@@ -118,14 +118,18 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.ChannelLevelMeter.Display
 				// Update each channel meter with the volume
 				for (int i = 0; i < channelChanged.Length && i < levelsPanel.Controls.Count; i++)
 				{
-					if (channelChanged[i] != null && channelChanged[i].Volume.HasValue)
+					if (channelChanged[i] != null)
 					{
-						ushort vol = channelChanged[i].Volume.Value;
+						// The level is what has been played, the volume (0-256) is
+						// only what has been set. It is used if the level is not known
+						float? level = channelChanged[i].Level ?? (channelChanged[i].Volume / 256.0f);
 
-						// Volume is in 0-256 range
-						long maxLevel = ((long)vol * int.MaxValue) / 256;
+						if (level.HasValue)
+						{
+							long maxLevel = (long)(level.Value * int.MaxValue);
 
-						((SpeakerLevelMeterControl)levelsPanel.Controls[i]).UpdateLevel(maxLevel);
+							((SpeakerLevelMeterControl)levelsPanel.Controls[i]).UpdateLevel(maxLevel);
+						}
 					}
 				}
 			}
