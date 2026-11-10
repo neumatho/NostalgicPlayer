@@ -1327,19 +1327,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
-			{
-				byte trackNumber = playingInfo.CurrentPosition < 0 ? (byte)0 : positions[playingInfo.CurrentPosition].VoicePosition[i].TrackNumber;
-				sb.Append(trackNumber);
-
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(4, i => playingInfo.CurrentPosition < 0 ? (byte)0 : positions[playingInfo.CurrentPosition].VoicePosition[i].TrackNumber);
 		}
 
 

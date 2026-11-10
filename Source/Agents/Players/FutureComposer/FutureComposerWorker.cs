@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -1426,17 +1425,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
-			{
-				sb.Append(sequences[voiceData[i].SongPos].VoiceSeq[i].Pattern);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(4, i => sequences[voiceData[i].SongPos].VoiceSeq[i].Pattern);
 		}
 		#endregion
 	}

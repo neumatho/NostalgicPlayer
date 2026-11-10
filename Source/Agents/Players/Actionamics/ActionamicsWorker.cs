@@ -2113,17 +2113,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Actionamics
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
-			{
-				sb.Append(voices[i].PositionList[playingInfo.CurrentPosition].TrackNumber);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(4, i => voices[i].PositionList[playingInfo.CurrentPosition].TrackNumber);
 		}
 		#endregion
 	}

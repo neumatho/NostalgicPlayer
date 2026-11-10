@@ -1361,17 +1361,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
-			{
-				sb.Append(channels[i].PositionTable[channels[i].Position]);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(4, i => channels[i].PositionTable[channels[i].Position]);
 		}
 		#endregion
 	}

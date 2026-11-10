@@ -1522,20 +1522,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
+			return FormatChannelTracks(4, i =>
 			{
 				VoiceInfo voiceInfo = playingInfo.VoiceInfo[i];
 
 				int index = voiceInfo.VoiPatIndex - 1;
-				sb.Append(voiceInfo.VoiPat.TrackNumbers[index < 0 ? 0 : index]);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+				return voiceInfo.VoiPat.TrackNumbers[index < 0 ? 0 : index];
+			});
 		}
 		#endregion
 	}

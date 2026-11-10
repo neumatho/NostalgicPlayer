@@ -2468,17 +2468,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < song.Channels; i++)
-			{
-				sb.Append(voices[i].Track);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(song.Channels, i => voices[i].Track);
 		}
 		#endregion
 	}

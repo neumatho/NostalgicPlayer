@@ -1880,17 +1880,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
-			{
-				sb.Append(voices[i].PositionList.Tracks[voices[i].TrackListPosition].TrackNumber);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(4, i => voices[i].PositionList.Tracks[voices[i].TrackListPosition].TrackNumber);
 		}
 		#endregion
 	}

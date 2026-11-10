@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -924,17 +923,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < ModuleChannelCount; i++)
-			{
-				sb.Append(playingTracks[i]);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(ModuleChannelCount, i => playingTracks[i]);
 		}
 		#endregion
 	}

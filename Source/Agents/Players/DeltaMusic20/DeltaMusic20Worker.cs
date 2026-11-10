@@ -1134,25 +1134,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
+			return FormatChannelTracks(4, i =>
 			{
 				int index = channels[i].CurrentTrackPosition;
 				if (index < 0)
 					index = 0;
 
 				if (index < channels[i].Track.Length)
-					sb.Append(channels[i].Track[index].BlockNumber);
-				else
-					sb.Append("-");
+					return channels[i].Track[index].BlockNumber;
 
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+				return "-";
+			});
 		}
 		#endregion
 	}

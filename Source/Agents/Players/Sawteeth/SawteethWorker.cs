@@ -1153,17 +1153,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < channelCount; i++)
-			{
-				sb.Append(p[i].GetPartNumber());
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(channelCount, i => p[i].GetPartNumber());
 		}
 		#endregion
 	}

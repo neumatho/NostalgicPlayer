@@ -3,7 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Collections.Generic;
+using System.Text;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -328,6 +330,30 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected uint PeriodToFrequency(ushort period)
 		{
 			return period != 0 ? 3546895U / period : 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a comma separated string with the track number of each
+		/// channel. The function is called once for each channel and returns
+		/// what to show for that channel
+		/// </summary>
+		/********************************************************************/
+		protected static string FormatChannelTracks(int channelCount, Func<int, object> getTrack)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < channelCount; i++)
+			{
+				sb.Append(getTrack(i));
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}
