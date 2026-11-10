@@ -1883,17 +1883,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
-			{
-				sb.Append(playingInfo.VoiceInfo[i].CurrentSequence.TrackNumber);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(4, i => playingInfo.VoiceInfo[i].CurrentSequence.TrackNumber);
 		}
 		#endregion
 	}

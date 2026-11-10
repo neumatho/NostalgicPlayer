@@ -791,18 +791,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundControl
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
 			ushort songPosition = player.SongPosition;
 
-			for (int i = 0; i < 4; i++)
-			{
-				sb.Append(moduleData.PositionList.Positions[i][songPosition].TrackNumber);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(4, i => moduleData.PositionList.Positions[i][songPosition].TrackNumber);
 		}
 		#endregion
 	}

@@ -3589,17 +3589,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < channelNum; i++)
-			{
-				sb.Append(sequences[i, playingInfo.SongPos]);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(channelNum, i => sequences[i, playingInfo.SongPos]);
 		}
 
 

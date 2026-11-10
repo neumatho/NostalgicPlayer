@@ -1673,21 +1673,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < numberOfChannels; i++)
+			return FormatChannelTracks(numberOfChannels, i =>
 			{
 				if ((currentModuleType == ModuleType.DigitalMugician) || (i < 3))
-					sb.Append(currentSequence[i, playingInfo.CurrentPosition].TrackNumber);
-				else
-					sb.Append(currentSequence2[i - 3, playingInfo.CurrentPosition].TrackNumber);
+					return currentSequence[i, playingInfo.CurrentPosition].TrackNumber;
 
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+				return currentSequence2[i - 3, playingInfo.CurrentPosition].TrackNumber;
+			});
 		}
 
 

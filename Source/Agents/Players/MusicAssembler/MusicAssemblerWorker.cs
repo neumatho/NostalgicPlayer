@@ -1605,23 +1605,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < 4; i++)
+			return FormatChannelTracks(4, i =>
 			{
 				byte trackNumber = voices[i].PositionList[voices[i].CurrentPosition].TrackNumber;
 
 				if (trackNumber == 0xfe)
-					sb.Append("-");
-				else
-					sb.Append(trackNumber);
+					return "-";
 
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+				return trackNumber;
+			});
 		}
 		#endregion
 	}

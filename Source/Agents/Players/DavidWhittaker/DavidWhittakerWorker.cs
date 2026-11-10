@@ -2359,17 +2359,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < numberOfChannels; i++)
-			{
-				sb.Append(trackNumbers[channels[i].PositionList[channels[i].CurrentPosition - 1]]);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(numberOfChannels, i => trackNumbers[channels[i].PositionList[channels[i].CurrentPosition - 1]]);
 		}
 		#endregion
 	}

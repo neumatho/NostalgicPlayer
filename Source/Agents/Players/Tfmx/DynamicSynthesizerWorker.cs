@@ -544,22 +544,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
+			byte[] tracks = decoder.GetPlayingTracks();
 
-			foreach (byte track in decoder.GetPlayingTracks())
-			{
-				if (track == 0)
-					sb.Append("-, ");
-				else
-				{
-					sb.Append(track);
-					sb.Append(", ");
-				}
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(tracks.Length, i => tracks[i] == 0 ? "-" : tracks[i]);
 		}
 		#endregion
 	}

@@ -844,17 +844,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusiclineEditor
 		/********************************************************************/
 		private string FormatTracks()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			for (int i = 0; i < numberOfChannels; i++)
-			{
-				sb.Append(voices[i].PartNumber);
-				sb.Append(", ");
-			}
-
-			sb.Remove(sb.Length - 2, 2);
-
-			return sb.ToString();
+			return FormatChannelTracks(numberOfChannels, i => voices[i].PartNumber);
 		}
 		#endregion
 	}
