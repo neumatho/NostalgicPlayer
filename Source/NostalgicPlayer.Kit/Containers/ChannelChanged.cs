@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(bool enabled, bool muted, bool noteKicked, short sampleNumber, sbyte octave, sbyte note, uint sampleLength, bool looping, bool samplePositionRelative, int? samplePosition, ushort? volume, uint? frequency)
+		public ChannelChanged(bool enabled, bool muted, bool noteKicked, short sampleNumber, sbyte octave, sbyte note, uint sampleLength, bool looping, bool samplePositionRelative, int? samplePosition, ushort? volume, uint? frequency, float? level = null)
 		{
 			Enabled = enabled;
 			Muted = muted;
@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			SamplePosition = samplePosition;
 			Volume = volume;
 			Frequency = frequency;
+			Level = level;
 		}
 
 
@@ -172,6 +173,21 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public uint? Frequency
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the level the channel has played since the last change as
+		/// the RMS of its samples with the volume (0.0 - 1.0) or null if it
+		/// is not known. Volume is only the value set on the channel, also
+		/// when nothing is playing
+		/// </summary>
+		/********************************************************************/
+		public float? Level
 		{
 			get;
 		}

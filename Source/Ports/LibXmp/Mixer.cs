@@ -58,8 +58,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			public int? SamplePosition;
 			public ushort? Volume;
 			public uint? Frequency;
+			public float Level;
 		}
 		#endregion
+
+		// A 16-bit sample value with the highest volume
+		private const c_double MaxLevel = 32768.0 * 1024.0;
 
 		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;
@@ -271,6 +275,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				delta_L = (vol_L - vi.Old_VL) / rampSize;
 				delta_R = (vol_R - vi.Old_VR) / rampSize;
 
+				c_int levelFrames = 0;
+
 				for (size = uSmp = s.TickSize; size > 0; )
 				{
 					bool split_NoLoop = false;
@@ -373,7 +379,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							}
 
 							if (mix_Fn != null)
+							{
 								mix_Fn(vi, buf_Pos, samples, vol_L >> 8, vol_R >> 8, (c_int)(step_Dir * (1 << Constants.SMix_Shift)), rSize, delta_L, delta_R);
+								levelFrames += samples;
+							}
 
 							buf_Pos += mix_Size;
 							vi.Old_VL += samples * delta_L;
@@ -459,6 +468,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				Reset_Sample_Wraparound(loop_Data);
 				vi.Old_VL = vol_L;
 				vi.Old_VR = vol_R;
+
+				Update_Visualizer_Level(vi, levelFrames, vol);
 			}
 
 			// Render final frame
@@ -942,11 +953,41 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Player_Data p = ctx.P;
 
-			return visualizerChannels.Select((x, i) =>
-				new ChannelChanged(!p.Channel_Mute[i], x.Muted, x.NoteKicked, x.SampleNumber, -1, -1, x.SampleLength, x.Looping, false, x.SamplePosition, x.Volume, x.Frequency)).ToArray();
+			ChannelChanged[] result = visualizerChannels.Select((x, i) =>
+				new ChannelChanged(!p.Channel_Mute[i], x.Muted, x.NoteKicked, x.SampleNumber, -1, -1, x.SampleLength, x.Looping, false, x.SamplePosition, x.Volume, x.Frequency, x.Level)).ToArray();
+
+			// The level is only for the time since the last call, so
+			// start again, otherwise it could only rise
+			foreach (VisualizerChannel visualizerChannel in visualizerChannels)
+				visualizerChannel.Level = 0.0f;
+
+			return result;
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Tell the visuals the level a voice has played in this tick. A
+		/// channel with more voices shows the loudest one
+		/// </summary>
+		/********************************************************************/
+		private void Update_Visualizer_Level(Mixer_Voice vi, c_int frames, c_int vol)
+		{
+			if ((frames > 0) && (vi.Root >= 0) && (vi.Root < visualizerChannels.Length))
+			{
+				c_int channels = (vi.FIdx & Mixer_Index_Flag.Stereo) != 0 ? 2 : 1;
+				c_double level = (Math.Sqrt((c_double)vi.LevelSum / (frames * channels)) * vol) / MaxLevel;
+
+				VisualizerChannel visualizerChannel = visualizerChannels[vi.Root];
+				visualizerChannel.Level = Math.Max(visualizerChannel.Level, (float)Math.Min(level, 1.0));
+			}
+
+			vi.LevelSum = 0;
+		}
+
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Downmix 32bit samples to 8bit, signed or unsigned, mono or stereo

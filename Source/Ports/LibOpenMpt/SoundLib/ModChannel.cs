@@ -357,6 +357,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		public int32 nRealVolume;
 
 		/// <summary>
+		/// Not in OpenMPT: the sum of the squared sample values mixed since
+		/// the visuals have read the level. It does not change the sound
+		/// </summary>
+		public int64 LevelSum;
+
+		/// <summary>
+		/// Not in OpenMPT: the number of values in LevelSum
+		/// </summary>
+		public int64 LevelSamples;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public int32 nRealPan;

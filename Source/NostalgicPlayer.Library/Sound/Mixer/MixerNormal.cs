@@ -24,6 +24,9 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		private const int ClickShift = 6;
 		private const int ClickBuffer = 1 << ClickShift;
 
+		// The sum of the squared sample values the mixing methods have mixed
+		private long levelSum;
+
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
@@ -382,6 +385,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 					long newCurrent = endPos;
 					int rampVolume = vnf.RampVolume;
 
+					levelSum = 0;
+
 					int frontLeftSpeaker = playerSpeakerToChannelMap[SpeakerFlag.FrontLeft];
 					int frontRightSpeaker = playerSpeakerToChannelMap[SpeakerFlag.FrontRight];
 
@@ -432,6 +437,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 
 					vnf.RampVolume = rampVolume;
 					vnf.Current = newCurrent;
+					vnf.LevelSum += levelSum;
 				}
 				else
 				{
@@ -453,6 +459,8 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 		/********************************************************************/
 		private long MixSample(MixerInfo currentMixerInfo, VoiceInfo vnf, Array sampleData, uint sampleStartOffset, int sampleStep, int volume, int oldVolume, ref int rampVolume, int[] mixingBuffer, int offsetInFrames, int todoInFrames)
 		{
+			vnf.LevelFrames += todoInFrames;
+
 			// Check to see if we need to make interpolation on the mixing
 			if (currentMixerInfo.InterpolationMode == InterpolationMode.Always)
 			{
@@ -508,6 +516,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				index += increment;
 
 				dest[offsetInFrames++] += volume * sample;
+				levelSum += sample * sample;
 			}
 
 			return index;
@@ -541,6 +550,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 					index += increment;
 
 					dest[offsetInFrames++] += ((volume << ClickShift) + oldVolume * rampVolume) * sample >> ClickShift;
+					levelSum += sample * sample;
 
 					if (--rampVolume == 0)
 						break;
@@ -563,6 +573,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				index += increment;
 
 				dest[offsetInFrames++] += volume * sample;
+				levelSum += sample * sample;
 			}
 
 			return index;
@@ -589,6 +600,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				index += increment;
 
 				dest[offsetInFrames++] += volume * sample;
+				levelSum += sample * sample;
 			}
 
 			return index;
@@ -622,6 +634,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 					index += increment;
 
 					dest[offsetInSamples++] += ((volume << ClickShift) + oldVolume * rampVolume) * sample >> ClickShift;
+					levelSum += sample * sample;
 
 					if (--rampVolume == 0)
 						break;
@@ -644,6 +657,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 				index += increment;
 
 				dest[offsetInSamples++] += volume * sample;
+				levelSum += sample * sample;
 			}
 
 			return index;
