@@ -434,8 +434,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt
 
 					bool enabled = !sndFile.ChnSettings[i].dwFlags.Test(ChannelFlags.Chn_Mute);
 					bool muted = chn.dwFlags.Test(ChannelFlags.Chn_Mute | ChannelFlags.Chn_SyncMute) || (chn.pCurrentSample == null);
+					bool looping = chn.dwFlags.Test(ChannelFlags.Chn_Loop);
 
-					result[i] = new ChannelChanged(enabled, muted, noteKicked, FindSampleNumber(chn.pModSample), -1, -1, chn.nLength, chn.dwFlags.Test(ChannelFlags.Chn_Loop), false, newSamplePosition, volume, frequency, level);
+					// AdLib instruments only have a tiny bogus sample, which is
+					// never mixed, so the sample length and position cannot be
+					// used to tell how long the note plays. Instead, the OPL state
+					// is used. The note is told to loop, so it keeps playing
+					// until the OPL voice is released (key off) or cut. The sample
+					// flag is checked instead of the channel flag, because the
+					// channel flag is cleared when the OPL voice is deallocated
+					if ((chn.pModSample != null) && chn.pModSample.uFlags.Test(ChannelFlags.Chn_Adlib))
+					{
+						// Same key off condition as used when updating the OPL frequency in the mixer
+						bool keyOff = chn.dwFlags.Test(ChannelFlags.Chn_KeyOff) || (chn.dwFlags.Test(ChannelFlags.Chn_NoteFade) && (chn.nFadeOutVol == 0));
+
+						muted |= keyOff || !chn.dwFlags.Test(ChannelFlags.Chn_Adlib) || (sndFile.m_Opl == null) || !sndFile.m_Opl.IsActive(i);
+						looping = true;
+						newSamplePosition = null;
+					}
+
+					result[i] = new ChannelChanged(enabled, muted, noteKicked, FindSampleNumber(chn.pModSample), -1, -1, chn.nLength, looping, false, newSamplePosition, volume, frequency, level);
 				}
 
 				return result;
