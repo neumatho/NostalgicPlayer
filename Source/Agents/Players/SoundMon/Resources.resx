@@ -175,6 +175,6 @@ This format have both samples and synthesis sounds, which can be created using d
     <value>SoundMon 1.1</value>
   </data>
   <data name="IDS_BP_NAME_AGENT2" xml:space="preserve">
-    <value>SoundMon 2.2</value>
+    <value>SoundMon 2.x</value>
   </data>
 </root>

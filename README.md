@@ -229,7 +229,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | SoundFX 2.0 | .sfx / .sfx2 | | SoundFX |
 | Sound Factory | .psf | | Sound Factory |
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |
-| SoundMon 2.2 | .bp / .bp3 | | SoundMon |
+| SoundMon 2.x | .bp / .bp3 | | SoundMon |
 | SoundTracker 2.2 | .mod | | ModTracker |
 | SoundTracker 2.6 | .st26 | | ModTracker |
 | StarTrekker | .mod | | ModTracker |
