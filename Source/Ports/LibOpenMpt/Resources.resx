@@ -178,4 +178,10 @@ The modules are from the game Aleshar - The World Of Ice.</value>
   <data name="IDS_MPT_S3MADLIB_DESCRIPTION" xml:space="preserve">
     <value>This format is the same as the standard Scream Tracker 3 format, except that it uses OPL/Adlib instruments.</value>
   </data>
+  <data name="IDS_MPT_MPTM_NAME" xml:space="preserve">
+    <value>OpenMPT MPTM</value>
+  </data>
+  <data name="IDS_MPT_MPTM_DESCRIPTION" xml:space="preserve">
+    <value>This format is OpenMPT own format. Well, in fact it is the ImpulseTracker format with a lot of extensions in it of all kinds.</value>
+  </data>
 </root>

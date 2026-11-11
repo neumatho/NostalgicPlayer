@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpenMpt.Test.Tests
 		/// Test MPTM file loading
 		/// </summary>
 		/********************************************************************/
-//XX		[TestMethod]
+		[TestMethod]
 		public void Test_LoadMptm()
 		{
 			string fileNameBaseSrc = GetTestFileNameBase();

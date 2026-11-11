@@ -603,7 +603,7 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 
 			if (playing)
 			{
-				// This method is called right after the previous buffer has been player,
+				// This method is called right after the previous buffer has been played,
 				// so at this point, add the number of samples played since last call
 				DoTimedEvents();
 				IncreaseCurrentTime(framesToProcess);

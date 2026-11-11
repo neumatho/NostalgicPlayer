@@ -1407,6 +1407,14 @@
             <uap:DisplayName>Dynamic Synthesizer</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mptmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mptm">.mptm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>OpenMPT MPTM</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

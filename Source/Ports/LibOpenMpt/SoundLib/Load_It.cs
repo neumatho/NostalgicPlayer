@@ -96,6 +96,68 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		}
 		#endregion
 
+		#region OpenMPT MPTM loader class
+		public class MptmLoader : IFormatLoader
+		{
+			public static readonly FileFormatLoader Format = new FileFormatLoader
+			{
+				Id = Guid.Parse("40FAF38F-6770-4411-B207-A7AF927AFA3E"),
+				Name = Resources.IDS_MPT_MPTM_NAME,
+				Description = Resources.IDS_MPT_MPTM_DESCRIPTION,
+				Prober = Probe_Mptm,
+				Create = Create
+			};
+
+			private readonly CSoundFile sndFile;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			private MptmLoader(CSoundFile soundFile)
+			{
+				sndFile = soundFile;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static ProbeResult Probe_Mptm(FileReader file, uint64? pFileSize)
+			{
+				return ProbeFileHeaderIt(file, pFileSize, InternalItFormat.Mptm);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public static IFormatLoader Create(CSoundFile soundFile)
+			{
+				return new MptmLoader(soundFile);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public bool Read(FileReader file, ModLoadingFlags loadFlags)
+			{
+				return sndFile.ReadIt(file, loadFlags);
+			}
+		}
+		#endregion
+
 		private enum InternalItFormat
 		{
 			Unknown,
@@ -579,7 +641,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 					if (sample.uFlags.Test(ChannelFlags.Chn_Adlib))
 					{
 						// FM instrument in MPTM
-						throw new NotImplementedException("ADLIB");//XX
+						OplPatch patch = new OplPatch();
+
+						if (file.ReadArray(patch.data()))
+							sample.SetAdlib(true, patch);
 					}
 					else if (!sample.uFlags.Test(ChannelFlags.Smp_KeepOnDisk))
 					{

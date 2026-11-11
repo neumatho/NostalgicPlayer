@@ -182,6 +182,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This format is OpenMPT own format. Well, in fact it is the ImpulseTracker format with a lot of extensions in it of all kinds..
+        /// </summary>
+        internal static string IDS_MPT_MPTM_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MPT_MPTM_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OpenMPT MPTM.
+        /// </summary>
+        internal static string IDS_MPT_MPTM_NAME {
+            get {
+                return ResourceManager.GetString("IDS_MPT_MPTM_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This format is the same as the standard Scream Tracker 3 format, but created with OpenMPT..
         /// </summary>
         internal static string IDS_MPT_S3M_DESCRIPTION {

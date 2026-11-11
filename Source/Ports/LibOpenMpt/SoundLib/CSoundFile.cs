@@ -192,6 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpenMpt.SoundLib
 		private static readonly FileFormatLoader[] moduleFormatLoaders =
 		[
 			XmLoader.Format,
+			MptmLoader.Format,			// Need to be before ItLoader
 			ItLoader.Format,
 			S3MAdlibLoader.Format,		// Need to be before S3MLoader
 			S3MLoader.Format,
