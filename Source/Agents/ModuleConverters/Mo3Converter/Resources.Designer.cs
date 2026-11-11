@@ -133,15 +133,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OpenMPT not supported at the moment.
-        /// </summary>
-        internal static string IDS_ERR_OPENMPT_NOT_SUPPORT {
-            get {
-                return ResourceManager.GetString("IDS_ERR_OPENMPT_NOT_SUPPORT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to unpack music data.
         /// </summary>
         internal static string IDS_ERR_UNPACKING {

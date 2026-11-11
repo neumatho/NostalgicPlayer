@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers;
@@ -319,7 +318,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		/********************************************************************/
 		/// <summary>
 		/// Write all the instrument and song extensions. If none is stored
-		/// and the module is in ModPlug mode, the play behaviour is written
+		/// and the module is in ModPlug mode, the play behaviour is written.
+		/// For MPTM modules, the MPTM specific data is also stored in the
+		/// tail and a pointer to it is written at the end of the file
 		/// </summary>
 		/********************************************************************/
 		public static void WriteOmptTail(Mo3Module module, ConverterStream converterStream)
@@ -329,11 +330,117 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			else
 			{
 				byte[] tail = SplitOmptChunk(module.FindChunk<OmptChunk>()).Tail;
+
+				long tailPosition = converterStream.Position;
 				converterStream.Write(tail, 0, tail.Length);
+
+				if (IsMptm(module))
+				{
+					// The loader finds the MPTM specific data via the last
+					// 4 bytes in the file, which points to the "228" block
+					int mptmOffset = FindMptmProperties(tail, module.Header.NumInstruments);
+					if (mptmOffset >= 0)
+						converterStream.Write_L_UINT32((uint)(tailPosition + mptmOffset));
+				}
 			}
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Check if the module is in OpenMPT MPTM format. Same check as
+		/// OpenMPT does when loading the MO3 file
+		/// </summary>
+		/********************************************************************/
+		private static bool IsMptm(Mo3Module module)
+		{
+			if (module.ModuleType != ModuleType.It)
+				return false;
+
+			VersChunk versChunk = module.FindChunk<VersChunk>();
+
+			return (versChunk != null) && (module.FindChunk<OmptChunk>() != null) && (versChunk.Cwtv > 0x0889) && (versChunk.Cwtv <= 0x08ff);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Skip the instrument and song extensions the same way as the IT
+		/// loader in OpenMPT and return the offset to the MPTM specific
+		/// data or -1 if not found
+		/// </summary>
+		/********************************************************************/
+		private static int FindMptmProperties(byte[] data, int numberOfInstruments)
+		{
+			int offset = 0;
+
+			// Instrument extensions
+			if (HasMagic(data, offset, "XTPM"))
+			{
+				offset += 4;
+
+				while ((offset + 6) <= data.Length)
+				{
+					uint code = BitConverter.ToUInt32(data, offset);
+
+					if (HasMagic(data, offset, "STPM") || HasMagic(data, offset, "228\x04") || !IsValidId(code))
+						break;
+
+					ushort size = BitConverter.ToUInt16(data, offset + 4);
+					offset += 6 + size * numberOfInstruments;
+				}
+			}
+
+			// Song extensions
+			if (HasMagic(data, offset, "STPM"))
+			{
+				offset += 4;
+
+				while ((offset + 7) <= data.Length)
+				{
+					uint code = BitConverter.ToUInt32(data, offset);
+					if (HasMagic(data, offset, "228\x04"))
+						break;
+
+					ushort size = BitConverter.ToUInt16(data, offset + 4);
+					if (!IsValidId(code) || (size > (data.Length - offset - 6)))
+						return -1;
+
+					offset += 6 + size;
+				}
+			}
+
+			return HasMagic(data, offset, "228\x04") ? offset : -1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the given magic is stored at the offset
+		/// </summary>
+		/********************************************************************/
+		private static bool HasMagic(byte[] data, int offset, string magic)
+		{
+			return ((offset + magic.Length) <= data.Length) && (Encoding.Latin1.GetString(data, offset, magic.Length) == magic);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the chunk ID only contains ASCII characters
+		/// </summary>
+		/********************************************************************/
+		private static bool IsValidId(uint code)
+		{
+			return ((code & 0x80808080) == 0) && ((code & 0x60606060) != 0);
+		}
+
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Store a single macro string

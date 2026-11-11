@@ -141,9 +141,6 @@
   <data name="IDS_ERR_LOADING_TRACKS" xml:space="preserve">
     <value>Can't read the track information</value>
   </data>
-  <data name="IDS_ERR_OPENMPT_NOT_SUPPORT" xml:space="preserve">
-    <value>OpenMPT not supported at the moment</value>
-  </data>
   <data name="IDS_ERR_UNPACKING" xml:space="preserve">
     <value>Failed to unpack music data</value>
   </data>

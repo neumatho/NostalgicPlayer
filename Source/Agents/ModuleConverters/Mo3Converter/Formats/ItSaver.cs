@@ -46,12 +46,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		{
 			errorMessage = string.Empty;
 
-			if (IsOpenMpt(module))
-			{
-				errorMessage = Resources.IDS_ERR_OPENMPT_NOT_SUPPORT;
-				return false;
-			}
-
 			DecodeSampleInfo[] decodeSampleInfo = Mo3SampleWriter.PrepareSamples(module, moduleStream);
 			if (decodeSampleInfo == null)
 			{
@@ -91,21 +85,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		#endregion
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Check if the module is in OpenMPT format
-		/// </summary>
-		/********************************************************************/
-		private bool IsOpenMpt(Mo3Module module)
-		{
-			// OpenMPT uses this version range for MPTM files
-			VersChunk versChunk = module.FindChunk<VersChunk>();
-
-			return (versChunk != null) && (module.FindChunk<OmptChunk>() != null) && (versChunk.Cwtv > 0x0889) && (versChunk.Cwtv <= 0x08ff);
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Write back the header
