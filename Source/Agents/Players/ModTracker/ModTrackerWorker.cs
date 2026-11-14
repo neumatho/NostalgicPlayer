@@ -1631,8 +1631,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					}
 				}
 
+				// The first Ultimate and Master Soundtracker versions only play the loop part,
+				// even if the loop starts at the beginning of the sample
+				bool playLoopPartOnly = currentModuleType is ModuleType.UltimateSoundTracker10 or ModuleType.UltimateSoundTracker18 or ModuleType.MasterSoundTracker10;
+
 				// Check to see if we got a loop
-				if ((sample.LoopStart != 0) && (sample.LoopLength > 1))
+				if (((sample.LoopStart != 0) || playLoopPartOnly) && (sample.LoopLength > 1))
 				{
 					// We have, now check the player mode
 					if (currentModuleType <= ModuleType.SoundTracker2x)
@@ -1785,7 +1789,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 						// Setup loop
 						if (modChan.LoopLength > 0)
+						{
+							SetSampleForLoop(chan, modChan, offset);
 							chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
+						}
 					}
 					else
 						chan.Mute();
@@ -2997,7 +3004,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			if (offset < modChan.Length)
 			{
 				modChan.Length -= offset;
-				modChan.StartOffset = offset * 2U;
+				modChan.StartOffset += offset * 2U;
 			}
 			else
 				modChan.Length = 1;
@@ -3340,6 +3347,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		/********************************************************************/
 		/// <summary>
+		/// Paula plays the part from the start of the sample first and then
+		/// the loop. The mixer only does that by itself, when the first part
+		/// ends where the loop ends. If not (e.g. a sample offset beyond the
+		/// loop end, so only one word is left), the loop has to be set as the
+		/// sample to play after the first part
+		/// </summary>
+		/********************************************************************/
+		private static void SetSampleForLoop(IChannel chan, ModChannel modChan, uint offset)
+		{
+			if ((offset + (modChan.Length * 2U)) != (modChan.LoopStart + (modChan.LoopLength * 2U)))
+				chan.SetSample(modChan.LoopStart, (uint)modChan.LoopLength * 2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 0xE9 - Retrigs the current note
 		/// </summary>
 		/********************************************************************/
@@ -3356,10 +3380,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						// Retrig the sample
 						if (modChan.Length != 0)
 						{
-							chan.PlaySample(modChan.SampleNumber, modChan.SampleData, 0, (uint)modChan.Length * 2);
+							uint offset = modChan.Offset + modChan.StartOffset;
+							chan.PlaySample(modChan.SampleNumber, modChan.SampleData, offset, (uint)modChan.Length * 2);
 
 							if (modChan.LoopLength != 0)
+							{
+								SetSampleForLoop(chan, modChan, offset);
 								chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
+							}
 
 							SetPeriod(modChan.Period, chan, modChan);
 						}
@@ -3431,10 +3459,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				// Retrig the sample
 				if (modChan.Length != 0)
 				{
-					chan.PlaySample(modChan.SampleNumber, modChan.SampleData, 0, (uint)modChan.Length * 2);
+					uint offset = modChan.Offset + modChan.StartOffset;
+					chan.PlaySample(modChan.SampleNumber, modChan.SampleData, offset, (uint)modChan.Length * 2);
 
 					if (modChan.LoopLength != 0)
+					{
+						SetSampleForLoop(chan, modChan, offset);
 						chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
+					}
 
 					SetPeriod(modChan.Period, chan, modChan);
 				}
