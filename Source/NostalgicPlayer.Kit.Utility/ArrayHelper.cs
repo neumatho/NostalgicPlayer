@@ -179,6 +179,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public static T[] CloneArray<T>(T[] array)
 		{
+			if (array == null)
+				return null;
+
 			T[] newArray = new T[array.Length];
 			Array.Copy(array, newArray, array.Length);
 
@@ -194,6 +197,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public static T[][] CloneArray<T>(T[][] array)
 		{
+			if (array == null)
+				return null;
+
 			T[][] newArray = new T[array.Length][];
 
 			for (int i = array.Length - 1; i >= 0; i--)
@@ -211,6 +217,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public static T[] CloneObjectArray<T>(T[] array) where T : IDeepCloneable<T>
 		{
+			if (array == null)
+				return null;
+
 			T[] newArray = new T[array.Length];
 
 			for (int i = array.Length - 1; i >= 0; i--)
@@ -231,6 +240,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public static T[,] CloneObjectArray<T>(T[,] array) where T : IDeepCloneable<T>
 		{
+			if (array == null)
+				return null;
+
 			int dimension0Count = array.GetLength(0);
 			int dimension1Count = array.GetLength(1);
 

@@ -8,8 +8,8 @@
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
-    <Description>Plays modules of type SoundMon, both version 1.1 and 2.2</Description>
-    <Version>3.0.3</Version>
+    <Description>Plays all versions of modules of type SoundMon</Description>
+    <Version>3.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

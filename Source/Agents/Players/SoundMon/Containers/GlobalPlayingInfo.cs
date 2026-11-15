@@ -22,9 +22,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 		public sbyte Tr { get; set; }
 		public byte BpPatCount { get; set; }
 		public byte BpRepCount { get; set; }
-		public byte NewPos { get; set; }
-		public bool PosFlag { get; set; }
-		public bool FirstRepeat { get; set; }
+		public bool RepeatActive { get; set; }
+		public bool NextStepFlag { get; set; }
+		public byte NextStep { get; set; }
 
 		public sbyte[] WaveTables { get; set; }
 		public sbyte[][] SynthBuffer { get; set; }

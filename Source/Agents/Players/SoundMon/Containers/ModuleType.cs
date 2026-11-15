@@ -11,7 +11,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 	internal enum ModuleType
 	{
 		Unknown = 0,
+		SoundMon10,
 		SoundMon11,
+		SoundMon21,
 		SoundMon22
 	}
 }

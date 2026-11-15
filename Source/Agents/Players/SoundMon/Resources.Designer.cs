@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon {
         ///   Looks up a localized string similar to Original player by Brian Postma.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This format have both samples and synthesis sounds, which can be created using drawing tools..
+        ///This is the first version of SoundMon. It only supports samples..
         /// </summary>
         internal static string IDS_BP_DESCRIPTION_AGENT1 {
             get {
@@ -88,11 +88,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon {
         ///   Looks up a localized string similar to Original player by Brian Postma.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This format have both samples and synthesis sounds, which can be created using drawing tools. This version have more effects that can be applied on the synthesis sounds than the previous version..
+        ///This version added synthesis sounds, which can be created using drawing tools. Modules made with SoundMon 2.0 are played the same way..
         /// </summary>
         internal static string IDS_BP_DESCRIPTION_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_BP_DESCRIPTION_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Original player by Brian Postma.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This version uses the same module format as version 1.1/2.0, but adds vibrato, more ways to play a new note and slightly changes how some of the other effects sound. Since the formats are the same, the version is found by looking at how the effects are used in the module..
+        /// </summary>
+        internal static string IDS_BP_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_BP_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Original player by Brian Postma.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This version has a new instrument format with more synthesis effects, which can change the waveforms while they are playing..
+        /// </summary>
+        internal static string IDS_BP_DESCRIPTION_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_BP_DESCRIPTION_AGENT4", resourceCulture);
             }
         }
         
@@ -205,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SoundMon 1.1.
+        ///   Looks up a localized string similar to SoundMon 1.0.
         /// </summary>
         internal static string IDS_BP_NAME_AGENT1 {
             get {
@@ -214,11 +238,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SoundMon 2.x.
+        ///   Looks up a localized string similar to SoundMon 1.1 - 2.0.
         /// </summary>
         internal static string IDS_BP_NAME_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_BP_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SoundMon 2.1.
+        /// </summary>
+        internal static string IDS_BP_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_BP_NAME_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SoundMon 2.2.
+        /// </summary>
+        internal static string IDS_BP_NAME_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_BP_NAME_AGENT4", resourceCulture);
             }
         }
     }

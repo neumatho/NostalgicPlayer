@@ -20,12 +20,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 		public byte LfoTable { get; set; }
 		public byte LfoDepth { get; set; }
 		public ushort LfoLength { get; set; }
-		public byte LfoDelay { get; set; }
+		public ushort LfoDelay { get; set; }
 		public byte LfoSpeed { get; set; }
 		public byte EgControl { get; set; }
 		public byte EgTable { get; set; }
+		public byte EgInitValue { get; set; }		// Only used in SoundMon 1.1/2.0 and 2.1
 		public ushort EgLength { get; set; }
-		public byte EgDelay { get; set; }
+		public ushort EgDelay { get; set; }
 		public byte EgSpeed { get; set; }
 		public byte FxControl { get; set; }
 		public byte FxSpeed { get; set; }
