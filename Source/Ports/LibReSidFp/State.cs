@@ -47,6 +47,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		private readonly bool[] sync = new bool[3];
 		private readonly bool[] test_Or_Reset = new bool[3];
 		private readonly bool[] msb_Rising = new bool[3];
+		private readonly bool[] strongPS = new bool[3];
+		private readonly bool[] msb_Pulldown = new bool[3];
 		private readonly uint8_t[] waveform = new uint8_t[3];
 
 		// Envelope
@@ -91,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		private double filterCurve6581;
 		private double filterRange6581;
 		private double filterCurve8580;
-		private bool Old6581Caps;
+		private CapsType caps6581;
 
 		// Integrators
 		private readonly int32_t[][] vx = ArrayHelper.Initialize2Arrays<int32_t>(2, 2);
@@ -159,6 +161,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				state.sync[i] = wave.sync;
 				state.test_Or_Reset[i] = wave.test_or_reset;
 				state.msb_Rising[i] = wave.msb_rising;
+				state.strongPS[i] = wave.strongPS;
+				state.msb_Pulldown[i] = wave.msb_Pulldown;
 
 				EnvelopeGenerator envelope = s.voice[i].Envelope();
 
@@ -218,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			state.filterCurve6581 = s.p.FilterCurve6581;
 			state.filterRange6581 = s.p.FilterRange6581;
 			state.filterCurve8580 = s.p.FilterCurve8580;
-			state.Old6581Caps = s.p.Old6581Caps;
+			state.caps6581 = s.p.Caps6581;
 
 			state.vx[0][0] = s.filter6581.hpIntegrator.vx;
 			state.vx[0][1] = s.filter6581.bpIntegrator.vx;
@@ -346,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			s.SetFilter6581Curve(state.filterCurve6581);
 			s.SetFilter6581Range(state.filterRange6581);
 			s.SetFilter8580Curve(state.filterCurve8580);
-			s.EnableOld6581Caps(state.Old6581Caps);
+			s.Set6581Caps(state.caps6581);
 
 			s.filter6581.hpIntegrator.vx = state.vx[0][0];
 			s.filter6581.bpIntegrator.vx = state.vx[0][1];
@@ -396,6 +400,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				wave.sync = state.sync[i];
 				wave.test_or_reset = state.test_Or_Reset[i];
 				wave.msb_rising = state.msb_Rising[i];
+				wave.strongPS = state.strongPS[i];
+				wave.msb_Pulldown = state.msb_Pulldown[i];
 
 				wave.SetWave();
 				wave.SetPulldown();

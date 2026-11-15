@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void EnableOld6581Caps(bool enable)
 		{
-			sid.EnableOld6581Caps(enable);
+			sid.Set6581Caps(enable ? CapsType.Caps2200 : CapsType.Caps470);
 		}
 
 
@@ -396,6 +396,52 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		public void SetDcbRes(double res)
 		{
 			sid.SetDcbRes(res);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set caps for 6581 model.
+		/// Affects the filter cutoff frequency.
+		/// Choose between:
+		/// - 2200pF: low cutoff, found on old ASSY 326298
+		/// -  470pF: normal cutoff, found on most of the boards
+		/// -  330pF: high cutoff, found on some boards and likely on
+		///           Galway's C128D
+		/// </summary>
+		/********************************************************************/
+		public void Set6581Caps(CapsType type)
+		{
+			sid.Set6581Caps(type);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set strong P+S for 6581 model.
+		/// If enabled when Pulse and Saw are combined the topbit is not
+		/// pulled down, providing a stronger sound
+		/// </summary>
+		/********************************************************************/
+		public void EnableStrongPS(bool enable)
+		{
+			sid.EnableStrongPS(enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set background noise level.
+		/// Note: if noise is disabled there will be audible quantization
+		/// noise
+		/// </summary>
+		/********************************************************************/
+		public void NoiseLevel(int level)
+		{
+			sid.SetNoiseLevel(level);
 		}
 	}
 }

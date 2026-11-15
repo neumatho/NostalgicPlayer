@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 {
@@ -359,13 +360,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Enable/disable old caps for 6581 model
+		/// Set caps type for 6581 model
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public void EnableOldCaps(bool enable)
+		public void SetCaps(CapsType type)
 		{
-			FilterModelConfig6581.GetInstance().EnableOldCaps(enable);
+			FilterModelConfig6581.GetInstance().SetCaps(type);
 		}
 
 		#region Overrides

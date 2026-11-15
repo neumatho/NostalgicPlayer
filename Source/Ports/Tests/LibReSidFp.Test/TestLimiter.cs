@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample;
+using Polycode.NostalgicPlayer.Ports.LibReSidFp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibReSidFp.Test
 {

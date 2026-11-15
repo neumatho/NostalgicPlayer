@@ -189,7 +189,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 				// TS  error  4837 (388/32768) [RMS: -10.54dB]
 				new CombinedWaveformConfig(ExponentialDistance, 0.89762634f, 56.7594185f, 0.0f, 7.68995237f, 12.0754194f),
 				// PT  error  9242 (504/32768) [RMS: -6.03]
-				new CombinedWaveformConfig(ExponentialDistance,  0.871706188f, 1.0f, 1.44852948f, 1.05926013f, 1.43830109f),
+				new CombinedWaveformConfig(ExponentialDistance, 0.871706188f, 1.0f, 1.44852948f, 1.05926013f, 1.43830109f),
 				// PS  error 13146 (713/32768) [RMS: -6.34]
 				new CombinedWaveformConfig(QuadraticDistance, 0.892224431f, 1.22416508f, 1.74952936f, 0.0251259189f, 0.13089405f),
 				// PTS error  6702 (300/32768) [RMS: -11.14dB]
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 					distance_t distFunc = cfg.distFunc;
 
-					float[] distanceTable = new float[12 * 2 + 1];
+					float[] distanceTable = new float[(12 * 2) + 1];
 					distanceTable[12] = 1.0f;
 
 					for (int i = 12; i > 0; i--)
@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		private static float LinearDistance(float distance, int i)
 		{
-			return 1.0f / (1.0f + i * distance);
+			return 1.0f / (1.0f + (i * distance));
 		}
 
 
@@ -354,7 +354,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		private static float QuadraticDistance(float distance, int i)
 		{
-			return 1.0f / (1.0f + (i * i) * distance);
+			return 1.0f / (1.0f + ((i * i) * distance));
 		}
 
 

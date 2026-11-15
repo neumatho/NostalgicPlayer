@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers;
@@ -138,6 +139,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		internal readonly Voice[] voice =  ArrayHelper.InitializeArray<Voice>(3);
 
+		private readonly Noise m_Noise = new Noise();
+
 		/// <summary>
 		/// Used to amplify the output by x/2 to get an adequate playback volume
 		/// </summary>
@@ -233,7 +236,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter6581Curve(double filterCurve)
 		{
-			p.FilterCurve6581 = Clamp(filterCurve);
+			p.FilterCurve6581 = Clamp(filterCurve, 0, 1);
 			filter6581.SetFilterCurve(filterCurve);
 		}
 
@@ -246,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter6581Range(double adjustment)
 		{
-			p.FilterRange6581 = Clamp(adjustment);
+			p.FilterRange6581 = Clamp(adjustment, 0, 1);
 			filter6581.SetFilterRange(adjustment);
 		}
 
@@ -259,7 +262,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetFilter8580Curve(double filterCurve)
 		{
-			p.FilterCurve8580 = Clamp(filterCurve);
+			p.FilterCurve8580 = Clamp(filterCurve, 0, 1);
 			filter8580.SetFilterCurve(filterCurve);
 		}
 
@@ -274,19 +277,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		{
 			filter6581.Enable(enable);
 			filter8580.Enable(enable);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Enable/disable old caps (2200pF) for 6581 model
-		/// </summary>
-		/********************************************************************/
-		public void EnableOld6581Caps(bool enable)
-		{
-			p.Old6581Caps = enable;
-			filter6581.EnableOldCaps(enable);
 		}
 
 
@@ -774,7 +764,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 						int32_t output = ClockFilt();
 
 						if (resampler.Input(output))
-							buf[s++] = resampler.GetOutput(scaleFactor);
+							buf[s++] = GetOutput();
 					}
 
 					cycles -= delta_t;
@@ -818,7 +808,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 						if (resampler.Input(output))
 						{
-							buf[bufPos + s++] = resampler.GetOutput(scaleFactor);
+							buf[bufPos + s++] = GetOutput();
 
 							if (s == bufSize)
 								break;
@@ -1002,7 +992,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetDacLeakage(double level)
 		{
-			dacLeakage = Clamp(level);
+			dacLeakage = Clamp(level, 0, 1);
 		}
 
 
@@ -1015,7 +1005,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		public void SetOffset6581(double offset)
 		{
 			// TODO determine a reasonable range
-			offset_6581 = 0x380 + (uint)((1.0 - Clamp(offset)) * 0x200);
+			offset_6581 = 0x380 + (uint)((1.0 - Clamp(offset, 0, 1)) * 0x200);
 			SetChipModel(model);
 		}
 
@@ -1028,7 +1018,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/********************************************************************/
 		public void SetDcbRes(double res)
 		{
-			externalFilter.SetExtResistance(Clamp(res));
+			externalFilter.SetExtResistance(Clamp(res, 0, 1));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set caps for 6581 model
+		/// </summary>
+		/********************************************************************/
+		public void Set6581Caps(CapsType type)
+		{
+			p.Caps6581 = type;
+			filter6581.SetCaps(type);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set strong P+S for 6581 model
+		/// </summary>
+		/********************************************************************/
+		public void EnableStrongPS(bool enable)
+		{
+			for (int i = 0; i < 3; i++)
+				voice[i].Wave().SetStrongPS(enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the background noise level
+		/// </summary>
+		/********************************************************************/
+		public void SetNoiseLevel(int level)
+		{
+			m_Noise.SetLevel(Clamp(level, 0, 8));
 		}
 
 		#region Private methods
@@ -1074,6 +1102,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			int32_t exFiltInput = filtOutput + int16_t.MinValue;
 
 			return externalFilter.Clock(exFiltInput);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Scale and limit output
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int16_t GetOutput()
+		{
+			int32_t @out = (scaleFactor * resampler.Output()) / 2;
+
+			return Limiter.SoftClip(@out + m_Noise.Output());
 		}
 
 
@@ -1138,12 +1181,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Clamp parameter in [0,1] range
+		/// Clamp parameter in defined range
 		/// </summary>
 		/********************************************************************/
-		private double Clamp(double param)
+		private T Clamp<T>(T param, int min, int max) where T : INumber<T>
 		{
-			return Math.Clamp(param, 0.0, 1.0);
+			return T.Max(T.Min(param, T.CreateTruncating(max)), T.CreateTruncating(min));
 		}
 		#endregion
 	}

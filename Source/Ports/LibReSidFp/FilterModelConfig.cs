@@ -52,47 +52,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			}
 		}
 
-		/// <summary>
-		/// Hack to add quick dither when converting values from float to int
-		/// and avoid quantization noise.
-		/// Hopefully this can be removed the day we move all the analog part
-		/// processing to floats.
-		///
-		/// Not sure about the effect of using such small buffer of numbers
-		/// since the random sequence repeats every 1024 values but for
-		/// now it seems to do the job
-		/// </summary>
-		private class RandomNoise
-		{
-			private readonly double[] buffer = new double[1024];
-			private int index = 0;
-
-			/********************************************************************/
-			/// <summary>
-			/// Constructor
-			/// </summary>
-			/********************************************************************/
-			public RandomNoise()
-			{
-				for (int i = 0; i < 1024; i++)
-					buffer[i] = Random.Shared.NextDouble();
-			}
-
-
-
-			/********************************************************************/
-			/// <summary>
-			/// 
-			/// </summary>
-			/********************************************************************/
-			public double GetNoise()
-			{
-				index = (index + 1) & 0x3ff;
-
-				return buffer[index];
-			}
-		}
-
 		// Capacitor value
 		protected readonly double c;
 
@@ -127,8 +86,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		// Reverse op-amp transfer function
 		protected readonly uint16_t[] opamp_rev = new uint16_t[1 << 16];	// This is initialized in the derived class constructor
-
-		private readonly RandomNoise rnd = new RandomNoise();
 
 		/********************************************************************/
 		/// <summary>
@@ -275,23 +232,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected uint16_t To_UInt16_Dither(double x, double d_Noise)
-		{
-			int tmp = (int)(x + d_Noise);
-			return (uint16_t)tmp;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected uint16_t To_UInt16(double x)
 		{
-			return To_UInt16_Dither(x, 0.5);
+			return (uint16_t)x;
 		}
 
 
@@ -304,7 +247,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public uint16_t GetNormalizedValue(double value)
 		{
-			return To_UInt16_Dither(n16 * (value - vMin), rnd.GetNoise());
+			return To_UInt16(n16 * (value - vMin));
 		}
 
 

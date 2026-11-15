@@ -74,6 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		private const double Caps_Old = 2200e-12;	// ASSY 326298 uses 2200pF caps
 		private const double Caps_New = 470e-12;	// Standard 470pF caps used on other ASSY
+		private const double Caps_Galway = 330e-12;	// Non-standard 330pF caps
 
 		private static FilterModelConfig6581 instance = null;
 		private static readonly CThread.Once_Flag flag6581 = new CThread.Once_Flag();
@@ -96,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		private readonly double[] vcr_n_ids_term = new double[1 << 16];
 
 		private double vcr_Mult;
-		private bool oldCaps;
+		private CapsType m_capsType;
 
 		// Voice DC offset LUT
 		private readonly double[] voiceDc = new double[256];
@@ -120,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			dac_zero = 7.15;
 			dac_scale = 2.63;
 			dac = new Dac(DAC_BITS);
-			oldCaps = false;
+			m_capsType = CapsType.Caps470;
 
 			UpdateParams();
 
@@ -266,12 +267,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void EnableOldCaps(bool enable)
+		public void SetCaps(CapsType type)
 		{
-			if (oldCaps == enable)
+			if (m_capsType == type)
 				return;
 
-			oldCaps = enable;
+			m_capsType = type;
 			UpdateParams();
 		}
 
@@ -388,11 +389,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			CalcCurrFactorCoeff();
 			vcr_Mult = uCox;
 
-			if (oldCaps)
+			switch (m_capsType)
 			{
-				double caps_Mult = Caps_New / Caps_Old;
-				currFactorCoeff *= caps_Mult;
-				vcr_Mult *= caps_Mult;
+				case CapsType.Caps2200:
+				{
+					double caps_Mult = Caps_New / Caps_Old;
+					currFactorCoeff *= caps_Mult;
+					vcr_Mult *= caps_Mult;
+					break;
+				}
+
+				case CapsType.Caps470:
+				{
+					// Keep parameters unchanged
+					break;
+				}
+
+				case CapsType.Caps330:
+				{
+					double caps_Mult = Caps_New / Caps_Galway;
+					currFactorCoeff *= caps_Mult;
+					vcr_Mult *= caps_Mult;
+					break;
+				}
 			}
 		}
 		#endregion

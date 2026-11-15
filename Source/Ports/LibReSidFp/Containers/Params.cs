@@ -26,6 +26,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Containers
 		public double FilterCurve8580;
 
 		/// <summary></summary>
-		public bool Old6581Caps;
+		public CapsType Caps6581;
 	}
 }

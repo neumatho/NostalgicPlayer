@@ -190,6 +190,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 		private bool is6581;	// This is initialized in the SID constructor
 
+		internal bool strongPS = false;
+		internal bool msb_Pulldown = false;
+
 		// The other two waveform generators, for syncing and ring mod.
 		private WaveformGenerator prevVoice;
 		private WaveformGenerator nextVoice;
@@ -214,6 +217,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 		public void SetPulldownModels(rc_matrix_t models)
 		{
 			model_pulldown = models;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void SetStrongPS(bool sps)
+		{
+			strongPS = sps;
 		}
 
 
@@ -330,48 +346,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 			if (waveform != waveform_prev)
 			{
 				// Set up waveform tables
-				wave = model_wave[waveform & 0x3U];
-
-				// We assume tha combinations include noise
-				// behave the same as without
-				switch (waveform & 0x7)
-				{
-					case 3:
-					{
-						pulldown = model_pulldown[0];
-						break;
-					}
-
-					case 4:
-					{
-						pulldown = (waveform & 0x8) != 0 ? model_pulldown[4] : null;
-						break;
-					}
-
-					case 5:
-					{
-						pulldown = model_pulldown[1];
-						break;
-					}
-
-					case 6:
-					{
-						pulldown = model_pulldown[2];
-						break;
-					}
-
-					case 7:
-					{
-						pulldown = model_pulldown[3];
-						break;
-					}
-
-					default:
-					{
-						pulldown = null;
-						break;
-					}
-				}
+				SetWave();
+				SetPulldown();
 
 				// No_noise and no_pulse are used in Set_Waveform_Output() as bitmasks to
 				// only let the noise or pulse influence the output when the noise or pulse
@@ -386,6 +362,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 					// Reset fading time for floating DAC input
 					floating_output_ttl = is6581 ? FLOATING_OUTPUT_TTL_6581R3 : FLOATING_OUTPUT_TTL_8580R5;
 				}
+
+				// topbit pulldown happens only on 6581 when saw is selected
+				// but not if saw is combined with pulse and strongPS is selected
+				msb_Pulldown = is6581 && ((waveform & 2) != 0) && !(strongPS && (waveform == 6));
 			}
 
 			if (test != test_prev)
@@ -433,6 +413,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 			test = false;
 			sync = false;
+
+			strongPS = false;
+			msb_Pulldown = false;
 
 			wave = model_wave != null ? model_wave[0] : null;
 			pulldown = null;
@@ -622,10 +605,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 					osc3 = waveform_output;
 
 				// In the 6581 the top bit of the accumulator may be driven low by combined waveforms
-				// when the sawtooth is selected
-				if (is6581 && ((waveform & 2) != 0) && ((waveform_output & 0x800) == 0))
+				// when the sawtooth is selected.
+				// On some chips it doesn't happen with P+S
+				if (msb_Pulldown && ((waveform_output & 0x800) == 0))
 				{
-					// On some chips it doesn't happen with P+S
 					msb_rising = false;
 					accumulator &= 0x7fffff;
 				}

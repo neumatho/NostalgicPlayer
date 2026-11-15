@@ -84,6 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		{
 			sampleOffset = 0;
 			cachedSample = 0;
+			outputValue = 0;
 		}
 		#endregion
 	}

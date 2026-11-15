@@ -3,8 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Runtime.CompilerServices;
-
 namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 {
 	/// <summary>
@@ -13,18 +11,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 	/// </summary>
 	internal abstract class Resampler
 	{
-		/********************************************************************/
-		/// <summary>
-		/// Output a sample from resampler
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int16_t GetOutput(int32_t scaleFactor)
-		{
-			int32_t @out = (scaleFactor * Output()) / 2;
-			return Limiter.SoftClip(@out);
-		}
-
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
@@ -38,10 +24,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Output a sample from resampler
 		/// </summary>
 		/********************************************************************/
-		public abstract void Reset();
+		public abstract int32_t Output();
 
 
 
@@ -50,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public abstract int32_t Output();
+		public abstract void Reset();
 		#endregion
 	}
 }
