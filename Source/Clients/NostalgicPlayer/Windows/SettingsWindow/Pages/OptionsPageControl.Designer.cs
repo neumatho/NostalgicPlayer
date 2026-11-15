@@ -46,6 +46,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			separateWindowsCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			windowPanel = new System.Windows.Forms.Panel();
 			showWindowsInTaskBarCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			useMediaControlsCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			useDatabaseCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			scanFilesCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			scanFilesPanel = new System.Windows.Forms.Panel();
@@ -85,6 +86,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			generalGroupBox.Panel.Controls.Add(showFullPathCheckBox);
 			generalGroupBox.Panel.Controls.Add(separateWindowsCheckBox);
 			generalGroupBox.Panel.Controls.Add(windowPanel);
+			generalGroupBox.Panel.Controls.Add(useMediaControlsCheckBox);
 			generalGroupBox.Panel.Controls.Add(useDatabaseCheckBox);
 			generalGroupBox.Panel.Controls.Add(scanFilesCheckBox);
 			generalGroupBox.Panel.Controls.Add(scanFilesPanel);
@@ -142,7 +144,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			rememberListPanel.Enabled = false;
 			rememberListPanel.Location = new System.Drawing.Point(12, 68);
 			rememberListPanel.Name = "rememberListPanel";
-			controlResource.SetResourceKey(rememberListPanel, null);
 			rememberListPanel.Size = new System.Drawing.Size(170, 38);
 			rememberListPanel.TabIndex = 3;
 			// 
@@ -232,7 +233,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			windowPanel.Enabled = false;
 			windowPanel.Location = new System.Drawing.Point(208, 81);
 			windowPanel.Name = "windowPanel";
-			controlResource.SetResourceKey(windowPanel, null);
 			windowPanel.Size = new System.Drawing.Size(186, 17);
 			windowPanel.TabIndex = 9;
 			// 
@@ -247,6 +247,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			showWindowsInTaskBarCheckBox.TabIndex = 0;
 			showWindowsInTaskBarCheckBox.Values.Text = "Show all windows in task bar";
 			// 
+			// useMediaControlsCheckBox
+			// 
+			useMediaControlsCheckBox.Location = new System.Drawing.Point(200, 110);
+			useMediaControlsCheckBox.Name = "useMediaControlsCheckBox";
+			useMediaControlsCheckBox.Palette = fontPalette;
+			useMediaControlsCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(useMediaControlsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_USEMEDIACONTROLS");
+			useMediaControlsCheckBox.Size = new System.Drawing.Size(164, 16);
+			useMediaControlsCheckBox.TabIndex = 10;
+			useMediaControlsCheckBox.Values.Text = "Use Windows media controls";
+			// 
 			// useDatabaseCheckBox
 			// 
 			useDatabaseCheckBox.Location = new System.Drawing.Point(400, 5);
@@ -255,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			useDatabaseCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(useDatabaseCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE");
 			useDatabaseCheckBox.Size = new System.Drawing.Size(169, 28);
-			useDatabaseCheckBox.TabIndex = 10;
+			useDatabaseCheckBox.TabIndex = 11;
 			useDatabaseCheckBox.Values.Text = "Use database to store module\r\ninformation";
 			// 
 			// scanFilesCheckBox
@@ -266,7 +277,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			scanFilesCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(scanFilesCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES");
 			scanFilesCheckBox.Size = new System.Drawing.Size(104, 16);
-			scanFilesCheckBox.TabIndex = 11;
+			scanFilesCheckBox.TabIndex = 12;
 			scanFilesCheckBox.Values.Text = "Scan added files";
 			scanFilesCheckBox.CheckedChanged += ScanFiles_CheckedChanged;
 			// 
@@ -277,9 +288,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			scanFilesPanel.Enabled = false;
 			scanFilesPanel.Location = new System.Drawing.Point(408, 59);
 			scanFilesPanel.Name = "scanFilesPanel";
-			controlResource.SetResourceKey(scanFilesPanel, null);
 			scanFilesPanel.Size = new System.Drawing.Size(177, 38);
-			scanFilesPanel.TabIndex = 12;
+			scanFilesPanel.TabIndex = 13;
 			// 
 			// extractPlayingTimeCheckBox
 			// 
@@ -305,7 +315,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			BackColor = System.Drawing.Color.Transparent;
 			Controls.Add(generalGroupBox);
 			Name = "OptionsPageControl";
-			controlResource.SetResourceKey(this, null);
 			Size = new System.Drawing.Size(608, 356);
 			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
 			((System.ComponentModel.ISupportInitialize)generalGroupBox.Panel).EndInit();
@@ -343,5 +352,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonCheckBox extractPlayingTimeCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox removeUnknownCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox showFullPathCheckBox;
+		private Krypton.Toolkit.KryptonCheckBox useMediaControlsCheckBox;
 	}
 }

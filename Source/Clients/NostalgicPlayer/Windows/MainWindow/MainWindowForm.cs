@@ -70,6 +70,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 		private IModuleHandlerService moduleHandler;
 		private IArchiveDetector archiveDetector;
 		private ISystemMediaTransportControlsService systemMediaTransportControlsService;
+		private bool mediaControlsInitialized = false;
 		private ListItemMapper listItemMapper;
 
 		// Settings
@@ -858,6 +859,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 						favoriteSongSystemWindow.Close();
 				}
 
+				// Initialize SMTC
+				if (optionSettings.UseMediaControls)
+					AddMediaControlsHandlers();
+				else
+					RemoveMediaControlsHandlers();
+
 				// Reload ModLibrary if open and path changed
 				if (IsModLibraryWindowOpen())
 				{
@@ -1107,31 +1114,61 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 			moduleHandler.EndReached += ModuleHandler_EndReached;
 			moduleHandler.ModuleInfoChanged += ModuleHandler_ModuleInfoChanged;
 			moduleHandler.PlayerFailed += ModuleHandler_PlayerFailed;
-
-			// Initialize SMTC
-			systemMediaTransportControlsService.Initialize(Handle);
-			systemMediaTransportControlsService.PlayRequested += SmtcService_PlayRequested;
-			systemMediaTransportControlsService.PauseRequested += SmtcService_PauseRequested;
-			systemMediaTransportControlsService.StopRequested += SmtcService_StopRequested;
-			systemMediaTransportControlsService.NextRequested += SmtcService_NextRequested;
-			systemMediaTransportControlsService.PreviousRequested += SmtcService_PreviousRequested;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Remove event handlers
+		/// Add media controls handlers
 		/// </summary>
 		/********************************************************************/
-		private void RemoveHandlers()
+		private void AddMediaControlsHandlers()
 		{
-			// Unsubscribe SMTC events
+			if (mediaControlsInitialized)
+				return;
+
+			systemMediaTransportControlsService.Initialize(Handle);
+
+			systemMediaTransportControlsService.PlayRequested += SmtcService_PlayRequested;
+			systemMediaTransportControlsService.PauseRequested += SmtcService_PauseRequested;
+			systemMediaTransportControlsService.StopRequested += SmtcService_StopRequested;
+			systemMediaTransportControlsService.NextRequested += SmtcService_NextRequested;
+			systemMediaTransportControlsService.PreviousRequested += SmtcService_PreviousRequested;
+
+			mediaControlsInitialized = true;
+
+			// If a module is already playing, show it right away
+			if (moduleHandler.IsModuleLoaded && (playItem != null))
+			{
+				systemMediaTransportControlsService.UpdateMetadata(playItem, moduleHandler.StaticModuleInformation,
+					moduleHandler.PlayingModuleInformation.CurrentSong + 1,
+					moduleHandler.StaticModuleInformation.MaxSongNumber);
+				systemMediaTransportControlsService.UpdatePlaybackStatus(pauseCheckButton.Checked ? global::Windows.Media.MediaPlaybackStatus.Paused : global::Windows.Media.MediaPlaybackStatus.Playing);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Remove media controls handlers
+		/// </summary>
+		/********************************************************************/
+		private void RemoveMediaControlsHandlers()
+		{
+			if (!mediaControlsInitialized)
+				return;
+
 			systemMediaTransportControlsService.PlayRequested -= SmtcService_PlayRequested;
 			systemMediaTransportControlsService.PauseRequested -= SmtcService_PauseRequested;
 			systemMediaTransportControlsService.StopRequested -= SmtcService_StopRequested;
 			systemMediaTransportControlsService.NextRequested -= SmtcService_NextRequested;
 			systemMediaTransportControlsService.PreviousRequested -= SmtcService_PreviousRequested;
+
+			systemMediaTransportControlsService.Shutdown();
+
+			mediaControlsInitialized = false;
 		}
 
 		#region Keyboard shortcuts
@@ -1473,8 +1510,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.MainWindow
 				StopAndFreeModule();
 				moduleHandler.FreeAllModules();
 
-				// Cleanup event handlers
-				RemoveHandlers();
+				// Dispose SMTC
+				systemMediaTransportControlsService.Dispose();
+				systemMediaTransportControlsService = null;
 
 				// Close all windows
 				CloseWindows();

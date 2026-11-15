@@ -183,6 +183,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Use media controls
+		/// </summary>
+		/********************************************************************/
+		public bool UseMediaControls
+		{
+			get => settings.GetBoolEntry("Options", "UseMediaControls", true);
+
+			set => settings.SetBoolEntry("Options", "UseMediaControls", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Use database to store module information
 		/// </summary>
 		/********************************************************************/

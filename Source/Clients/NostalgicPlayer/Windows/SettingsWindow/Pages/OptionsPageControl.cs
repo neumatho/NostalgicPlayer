@@ -84,6 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			showNameInTitleCheckBox.Checked = optionSettings.ShowNameInTitle;
 			separateWindowsCheckBox.Checked = optionSettings.SeparateWindows;
 			showWindowsInTaskBarCheckBox.Checked = optionSettings.ShowWindowsInTaskBar;
+			useMediaControlsCheckBox.Checked = optionSettings.UseMediaControls;
 
 			useDatabaseCheckBox.Checked = optionSettings.UseDatabase;
 			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
@@ -125,12 +126,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Windows.SettingsWindow.Pages
 			optionSettings.ShowNameInTitle = showNameInTitleCheckBox.Checked;
 			optionSettings.SeparateWindows = separateWindowsCheckBox.Checked;
 			optionSettings.ShowWindowsInTaskBar = showWindowsInTaskBarCheckBox.Checked;
+			optionSettings.UseMediaControls = useMediaControlsCheckBox.Checked;
 
 			optionSettings.UseDatabase = useDatabaseCheckBox.Checked;
 			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
 			optionSettings.RemoveUnknownModules = removeUnknownCheckBox.Checked;
 			optionSettings.ExtractPlayingTime = extractPlayingTimeCheckBox.Checked;
-
 		}
 
 

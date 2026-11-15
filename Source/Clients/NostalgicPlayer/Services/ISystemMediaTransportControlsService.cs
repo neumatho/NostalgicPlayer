@@ -46,6 +46,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Services
 		void Initialize(IntPtr windowHandle);
 
 		/// <summary>
+		/// Disable the SMTC and remove the information shown in the system
+		/// media controls
+		/// </summary>
+		void Shutdown();
+
+		/// <summary>
 		/// Update playback status
 		/// </summary>
 		void UpdatePlaybackStatus(MediaPlaybackStatus status);
