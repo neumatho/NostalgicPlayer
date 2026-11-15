@@ -318,7 +318,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibReSidFp
 
 				pulldownCache[cfgArray] = pdTable;
 
-				return wfTable;
+				return pdTable;
 			}
 		}
 
