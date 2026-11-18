@@ -174,12 +174,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// A Delta Music 2.0 module starts with the player code, which is
 			// not stored in the packed module. Only the start speed is read
-			// from there. The player of the packer does not set it, so it
-			// starts with 0
+			// from there. The packed module does not have it, so 5 is used,
+			// which nearly all Delta Music 2.0 modules start with (100 of the
+			// 114 modules on ModLand) and the player of the demos, where the
+			// known packed modules come from, too
 			byte[] emptyBuffer = new byte[0xbbb];
 
 			converterStream.Write(emptyBuffer, 0, 0xbbb);
-			converterStream.Write_UINT8(0);
+			converterStream.Write_UINT8(5);
 			converterStream.Write(emptyBuffer, 0, 0xbc6 - (0xbbb + 1));
 
 			// Write the ID mark
