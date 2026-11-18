@@ -157,6 +157,7 @@ Converts different module formats (mostly Amiga formats) to another format Nosta
 
 Current version can convert these formats:
 
+Delta Packer (Tronic) ➜ Delta Music 2.0
 Epic Games UMX ➜ Whatever format inside
 Fred Editor (Final) ➜ Fred Editor
 Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
@@ -220,6 +221,14 @@ The synthesis sounds has improved a little bit from what InStereo! 2.0 could do.
 
 The modules contain the player in 68000 assembler in the beginning of the files, but this player will extract the music data and only use that.</value>
   </data>
+  <data name="IDS_MODCONV_DESCRIPTION_AGENT8" xml:space="preserve">
+    <value>Original player by Bent Nielsen.
+Converted to C# by Oliver Ickler.
+
+The Delta Packer from Barricade Software, written by the author of Delta Music, packs Delta Music 2.0 modules, which have been saved as a final song. The packed modules only have the music data, which is used, and no player code. Tronic used this format for the music of the demos Crystal and Locomotion, and the EaglePlayer calls it after him.
+
+This converter unpacks the modules to Delta Music 2.0 again. It reads the packed data the way the replay routine of the packer (Deltapacker.s) does.</value>
+  </data>
   <data name="IDS_MODCONV_NAME" xml:space="preserve">
     <value>Module Converter</value>
   </data>
@@ -246,5 +255,8 @@ The modules contain the player in 68000 assembler in the beginning of the files,
   </data>
   <data name="IDS_MODCONV_NAME_AGENT7" xml:space="preserve">
     <value>Sonic Arranger (Final)</value>
+  </data>
+  <data name="IDS_MODCONV_NAME_AGENT8" xml:space="preserve">
+    <value>Delta Packer (Tronic)</value>
   </data>
 </root>
