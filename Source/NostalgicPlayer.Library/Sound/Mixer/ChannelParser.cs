@@ -199,14 +199,14 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 								if ((newSampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
 								{
 									newVoiceSample.Start = newSample.Length - newSample.Start - 1;
-									sampleInfoFlags |= SampleFlag.Reverse;
+									newVoiceSampleInfo.Flags |= SampleFlag.Reverse;
 								}
 
 								if ((newSampleInfo.Flags & ChannelSampleFlag._16Bit) != 0)
-									sampleInfoFlags |= SampleFlag._16Bits;
+									newVoiceSampleInfo.Flags |= SampleFlag._16Bits;
 
 								if ((newSampleInfo.Flags & ChannelSampleFlag.Stereo) != 0)
-									sampleInfoFlags |= SampleFlag.Stereo;
+									newVoiceSampleInfo.Flags |= SampleFlag.Stereo;
 
 								// Does sample loops?
 								if ((newSampleInfo.Loop != null) && (newSampleInfo.Loop.Length > 2))
@@ -218,11 +218,11 @@ namespace Polycode.NostalgicPlayer.Library.Sound.Mixer
 									loopVoiceSample.Start = loopSample.Start;
 									loopVoiceSample.Length = loopSample.Length;
 
-									if ((sampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
+									if ((newSampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
 										loopVoiceSample.Start = loopSample.Length - loopSample.Start - 1;
 
-									if ((sampleInfo.Flags & ChannelSampleFlag.PingPong) != 0)
-										sampleInfoFlags |= SampleFlag.Bidi;
+									if ((newSampleInfo.Flags & ChannelSampleFlag.PingPong) != 0)
+										newVoiceSampleInfo.Flags |= SampleFlag.Bidi;
 								}
 
 								ccLooping = true;
