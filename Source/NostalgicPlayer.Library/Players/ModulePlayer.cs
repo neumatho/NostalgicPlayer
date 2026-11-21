@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Library.Players
 		private DurationInfo[] allSongsInfo;
 
 		private IOutputAgent outputAgent;
+		private bool visualsStarted;
 		private MixerStream soundStream;
 
 		/********************************************************************/
@@ -183,9 +184,14 @@ namespace Polycode.NostalgicPlayer.Library.Players
 						StaticModuleInformation = new ModuleInfoStatic();
 						PlayingModuleInformation = new ModuleInfoFloating();
 
-						// Tell all visuals to stop
-						foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
-							visualAgent.CleanupVisual();
+						// Tell all visuals to stop, but only if they have been told to start
+						if (visualsStarted)
+						{
+							foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+								visualAgent.CleanupVisual();
+
+							visualsStarted = false;
+						}
 					}
 				}
 			}
@@ -230,6 +236,10 @@ namespace Polycode.NostalgicPlayer.Library.Players
 
 					// Tell all visuals to start
 					bool channelChangeEnabled = ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) == 0) || ((currentPlayer.SupportFlags & (ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.Visualize)) == (ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.Visualize));
+
+					// Set before the first visual is told, so they are told to stop
+					// even if one of them fails to start
+					visualsStarted = true;
 
 					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 					{
