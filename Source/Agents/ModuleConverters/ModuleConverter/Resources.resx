@@ -157,7 +157,7 @@ Converts different module formats (mostly Amiga formats) to another format Nosta
 
 Current version can convert these formats:
 
-Delta Packer (Tronic) ➜ Delta Music 2.0
+Delta Packer ➜ Delta Music 2.0
 Epic Games UMX ➜ Whatever format inside
 Fred Editor (Final) ➜ Fred Editor
 Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
@@ -257,6 +257,6 @@ This converter unpacks the modules to Delta Music 2.0 again. It reads the packed
     <value>Sonic Arranger (Final)</value>
   </data>
   <data name="IDS_MODCONV_NAME_AGENT8" xml:space="preserve">
-    <value>Delta Packer (Tronic)</value>
+    <value>Delta Packer</value>
   </data>
 </root>

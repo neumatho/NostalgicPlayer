@@ -166,7 +166,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         ///
         ///Current version can convert these formats:
         ///
-        ///Delta Packer (Tronic) ➜ Delta Music 2.0
+        ///Delta Packer ➜ Delta Music 2.0
         ///Epic Games UMX ➜ Whatever format inside
         ///Fred Editor (Final) ➜ Fred Editor
         ///Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
@@ -380,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delta Packer (Tronic).
+        ///   Looks up a localized string similar to Delta Packer.
         /// </summary>
         internal static string IDS_MODCONV_NAME_AGENT8 {
             get {
