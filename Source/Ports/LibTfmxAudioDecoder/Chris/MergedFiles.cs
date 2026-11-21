@@ -41,8 +41,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private bool IsMerged()
 		{
-			input.VersionHint = 0;
-			input.StartSongHint = -1;
+			tfhdVersionHint = 0;
+			startSongHint = -1;
 
 			// ----------------------------------------------------------------------
 			// "TFMXPAK 012345 0123456 >>>" ASCII header from the early 90s
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				// 0 = unspecified / 1 = TFMX v1.5 / 2 = TFMX Pro / 3 = TFMX 7V
 				// bit 7 = forced
 				// Only few TFHD files specify the version
-				input.VersionHint = pBuf[8];
+				tfhdVersionHint = pBuf[8];
 
 				input.MdatSize = MyEndian.ReadBEUdword(pBuf, 10);
 				input.SmplSize = MyEndian.ReadBEUdword(pBuf, 14);
@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				}
 				while (offs < input.Len);
 
-				input.StartSongHint = startSong;
+				startSongHint = startSong;
 
 				return true;
 			}

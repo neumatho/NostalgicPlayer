@@ -144,12 +144,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 				udword stepOffset = (udword)(offsets.TrackTable + (playerInfo.Sequencer.Step.Current << 4));
 
-				// 0xEFFE is the prefix of a track command
-				if (0xeffe == MyEndian.ReadBEUword(pBuf, stepOffset))
-				{
-					stepOffset += 2;
+				bool trackCommand = false;
+				c_int command = 0;
 
-					uword command = MyEndian.ReadBEUword(pBuf, stepOffset);
+				if (variant.OldTrackCmds)
+				{
+					// Unique to Danger Freak (1989)
+					// 0xFA0X is a track command
+					if (0xfa00 == (MyEndian.ReadBEUword(pBuf, stepOffset) & 0xfffc))
+					{
+						command = MyEndian.ReadBEUword(pBuf, stepOffset) & 3;
+						trackCommand = true;
+					}
+				}
+				else
+				{
+					// 0xEFFE is the prefix of a track command
+					if (0xeffe == MyEndian.ReadBEUword(pBuf, stepOffset))
+					{
+						stepOffset += 2;
+
+						command = MyEndian.ReadBEUword(pBuf, stepOffset);
+						trackCommand = true;
+					}
+				}
+
+				if (trackCommand)
+				{
 					stepOffset += 2;
 
 					if (command > Track_Cmd_Max)	// Fubar then
@@ -302,6 +323,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			playerInfo.Sequencer.Step.Current++;
 			playerInfo.Sequencer.EvalNext = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Unique to "Danger Freak"
+		/// </summary>
+		/********************************************************************/
+		private void TrackCmd_Jump(udword stepOffset)
+		{
+			playerInfo.Sequencer.Step.Current = MyEndian.ReadBEUword(pBuf, stepOffset);
+			playerInfo.Sequencer.EvalNext = true;
+			songEnd = true;
 		}
 	}
 }

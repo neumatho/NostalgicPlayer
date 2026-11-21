@@ -85,25 +85,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			bool NoAddBeginCount,
 			bool NoDelayedDmaOn,
 			bool NoTrackMute,
+			bool OldTrackCmds,
 			// Main player order of execution
 			ExecOrder ExecOrder
 		) variant;
 
-		private
-		(
-			CPointer<ubyte> Buf,		// The allocated buffer
-			udword BufLen,				// The allocated amount
-			udword Len,					// Length of the data we copy
-
-			c_uint MdatSize,
-			c_uint SmplSize,
-			c_uint MdatSizeCurrent,
-			c_uint SmplSizeCurrent,
-			bool SmplLoaded,
-
-			c_int VersionHint,			// From TFHD flag
-			c_int StartSongHint			// From TFMX-MOD struct
-		) input;
+		private c_int tfhdVersionHint;	// From TFHD flag
+		private c_int startSongHint;	// From TFMX MOD struct
 
 		private static readonly uword[] periods =
 		[
@@ -150,10 +138,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				Track = ArrayHelper.InitializeArray<Track>(Tracks_Max),
 				Cmd = new Cmd()
 			};
-
-			input.Buf.SetToNull();
-			input.BufLen = input.Len = 0;
-			input.SmplLoaded = false;
 
 			playerInfo.Admin.Initialized = false;
 
@@ -424,7 +408,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			else
 			{
 				// Invalidate what has been found out before
-				input.SmplLoaded = false;
 				input.MdatSize = input.SmplSize = 0;
 
 				if (!Detect(data, length))
@@ -433,38 +416,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 					return false;
 				}
 
-				// If we still have a sufficiently large buffer, reuse it
-				udword newLen = length;
-
-				if (newLen > input.BufLen)
-				{
-					input.BufLen = 0;
-					input.Buf = new CPointer<ubyte>(newLen);
-				}
-
-				CMemory.memcpy(input.Buf, data, length);
-				input.BufLen = newLen;
-				input.Len = length;
+				BufferInputData(data, length);
+				input.MdatSize = input.Len - offsets.Header;
 
 				// Set up smart pointer for unsigned input buffer access
 				pBuf.SetBuffer(input.Buf, input.BufLen);
-			}
 
-			// Check whether it's a single-file format.
-			// If it is, this method defines various variables
-			if (IsMerged() || LoadSamplesFile(sample, sampleLength))
-			{
-				input.SmplLoaded = true;
+				// Check whether it's a single-file format.
+				// If it is, this method defines various variables
+				if (!IsMerged())
+				{
+					offsets.SampleData = input.Len;
 
-				// Make these the current ones
-				input.MdatSizeCurrent = input.MdatSize;
-				input.SmplSizeCurrent = input.SmplSize;
-			}
-			else
-			{
-				// Can't proceed without samples data
-				errorMessage = Resources.IDS_ERR_NO_SAMPLES;
-				return false;
+					if (LoadSamplesFile(sample, sampleLength))
+					{
+						// Update the smart pointer for changed buffer size
+						pBuf.SetBuffer(input.Buf, input.BufLen);
+					}
+					else
+					{
+						// Can't proceed without samples data
+						errorMessage = Resources.IDS_ERR_NO_SAMPLES;
+						return false;
+					}
+				}
 			}
 
 			// --------
@@ -609,6 +584,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			variant.NoAddBeginCount = false;
 			variant.NoDelayedDmaOn = false;
 			variant.NoTrackMute = false;
+			variant.OldTrackCmds = false;
 			variant.ExecOrder = ExecOrder.Mac_Mod_Seq;
 
 			pattCmdFuncs[0] = PattCmd_End;
@@ -623,7 +599,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			pattCmdFuncs[9] = PattCmd_ReturnFromGoto;
 			pattCmdFuncs[10] = PattCmd_Fade;
 			pattCmdFuncs[11] = PattCmd_Nop;
-			pattCmdFuncs[12] = PattCmd_Note;
+			pattCmdFuncs[12] = PattCmd_Nop;		// FXPR not implemented
 			pattCmdFuncs[13] = PattCmd_Nop;
 			pattCmdFuncs[14] = PattCmd_Stop;
 			pattCmdFuncs[15] = PattCmd_Nop;
@@ -642,6 +618,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			for (ubyte m = 0; m < 0x40; m++)
 				macroCmdFuncs[m] = MacroFunc_Nop;
 
+			// Set up a default set of macro commands covering what is referred to
+			// as the "TFMX Pro" family of player features
 			macroCmdFuncs[0] = MacroFunc_StopSound;
 			macroCmdFuncs[1] = MacroFunc_StartSample;
 			macroCmdFuncs[2] = MacroFunc_SetBegin;
@@ -656,7 +634,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			macroCmdFuncs[0xa] = MacroFunc_Reset;
 			macroCmdFuncs[0xb] = MacroFunc_Portamento;
 			macroCmdFuncs[0xc] = MacroFunc_Vibrato;
-			macroCmdFuncs[0xd] = MacroFunc_AddVolNote;
+			macroCmdFuncs[0xd] = MacroFunc_AddVolNote;		// AddVolume in v1.5
 			macroCmdFuncs[0xe] = MacroFunc_SetVolume;
 			macroCmdFuncs[0xf] = MacroFunc_Envelope;
 
@@ -671,23 +649,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			macroCmdFuncs[0x18] = MacroFunc_SampleLoop;
 			macroCmdFuncs[0x19] = MacroFunc_OneShot;
+
+			// New macro commands in variants and v2.2
 			macroCmdFuncs[0x1a] = MacroFunc_WaitOnDma;
 			macroCmdFuncs[0x1b] = MacroFunc_RandomPlay;
 			macroCmdFuncs[0x1c] = MacroFunc_SplitKey;
 			macroCmdFuncs[0x1d] = MacroFunc_SplitVolume;
-			macroCmdFuncs[0x1e] = MacroFunc_RandomMask;
+			macroCmdFuncs[0x1e] = MacroFunc_RandomMask;		// AddVolNote in v2.2
+
+			// Macro commands > $1E available only in variants
 			macroCmdFuncs[0x1f] = MacroFunc_SetPrevNote;
 
 			// Macro commands $1F AddChannel and $20 SubChannel are not implemented
 			// since no file seems to use them. Also, number $1F is occupied by
 			// SetPrevNote already. which would cause a conflict that would need
-			// to be detected and prevent somehow.
+			// to be detected and prevented somehow.
 			// 
 			// Macro command $20 Signal and its external write-only registers
 			// as added by some TFMX variants is not needed either
 			macroCmdFuncs[0x20] = MacroFunc_Nop;
 
 			macroCmdFuncs[0x21] = MacroFunc_PlayMacro;
+
+			// Although there are cryptic short names for the sound synthesis macro
+			// commands, such as in heavily modified versions of the TFMX-editor,
+			// here the functions are numbered only
 			macroCmdFuncs[0x22] = MacroFunc_22;
 			macroCmdFuncs[0x23] = MacroFunc_23;
 			macroCmdFuncs[0x24] = MacroFunc_24;
@@ -708,9 +694,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// music created with v1/v2, a checksum based detection of specific
 			// modules may be the only way. And the differences between v1 and v2
 			// are of little use when detecting file contents
+			//
+			// The compression fields cannot be relied on either, because although
+			// compression is not available in v1/v2, it is optional, and some
+			// v1 modules (like Hard'n'Heavy) exist also as compressed versions
 
 			// TFMX v1.x
-			if (((MyEndian.ReadBEUdword(pBuf, offsets.Header) == Tfmx_Hex) && (pBuf[offsets.Header + 4] == 0x20)) || (input.VersionHint == 1))
+			if (((MyEndian.ReadBEUdword(pBuf, offsets.Header) == Tfmx_Hex) && (pBuf[offsets.Header + 4] == 0x20)) || (tfhdVersionHint == 1))
 				SetTfmxV1();
 
 			// Last the rare checksum adjustments
@@ -730,10 +720,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 
 			// If the file specifies a default start song (like TFMX-MOD does),
 			// assume it's a single-song file format, and reduce number of songs to 1
-			if (input.StartSongHint >= 0)
+			if (startSongHint >= 0)
 			{
 				vSongs.Clear();
-				vSongs.Add((ubyte)input.StartSongHint);
+				vSongs.Add((ubyte)startSongHint);
 			}
 
 			playerInfo.Admin.Initialized = true;
@@ -1037,6 +1027,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			variant.NoDelayedDmaOn = true;
 			variant.ExecOrder = ExecOrder.Seq_Mod_Mac;
 
+			// The newer AddVolNote should be compatible too
 			macroCmdFuncs[0xd] = MacroFunc_AddVolume;
 
 			// Max. macro cmd = $19
@@ -1057,7 +1048,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			// Unfortunately, the way TFMX assigns 16 virtual channels
 			// to Amiga Paula using a logical AND 3, we cannot rely on
 			// searching for the highest channel number
-			if (trackCmdUsed[3] || (input.VersionHint == 3))
+			if (trackCmdUsed[3] || (tfhdVersionHint == 3))
 			{
 				voices = 8;
 
@@ -1417,10 +1408,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 			ubyte vNum = channelToVoiceMap[playerInfo.Cmd.Cd & (channelToVoiceMap.Length - 1)];
 			VoiceVars v = voiceVars[vNum];
 
-			if (playerInfo.Cmd.Aa == 0xfc)			// Lock note
-			{
-			}
-			else if (playerInfo.Cmd.Aa == 0xf7)	// Envelope
+			if (playerInfo.Cmd.Aa == 0xf7)	// Envelope
 			{
 				v.Envelope.Speed = playerInfo.Cmd.Bb;
 
