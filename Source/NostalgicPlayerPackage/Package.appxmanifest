@@ -1416,6 +1416,14 @@
             <uap:DisplayName>OpenMPT MPTM</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dpfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dp">.dp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Delta Packer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

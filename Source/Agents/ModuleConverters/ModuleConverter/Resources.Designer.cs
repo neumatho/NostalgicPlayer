@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -166,6 +166,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         ///
         ///Current version can convert these formats:
         ///
+        ///Delta Packer ➜ Delta Music 2.0
         ///Epic Games UMX ➜ Whatever format inside
         ///Fred Editor (Final) ➜ Fred Editor
         ///Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
@@ -284,6 +285,20 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Bent Nielsen.
+        ///Converted to C# by Oliver Ickler.
+        ///
+        ///The Delta Packer from Barricade Software, written by the author of Delta Music, packs Delta Music 2.0 modules, which have been saved as a final song. The packed modules only have the music data, which is used, and no player code. Tronic used this format for the music of the demos Crystal and Locomotion, and the EaglePlayer calls it after him.
+        ///
+        ///This converter unpacks the modules to Delta Music 2.0 again. It reads the packed data the way [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Converter.
         /// </summary>
         internal static string IDS_MODCONV_NAME {
@@ -361,6 +376,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_MODCONV_NAME_AGENT7 {
             get {
                 return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delta Packer.
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT8", resourceCulture);
             }
         }
     }
