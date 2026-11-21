@@ -19,36 +19,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 		/********************************************************************/
 		private bool LoadSamplesFile(IPointer sample, udword sampleLength)
 		{
-			// Got both the MDAT and SMPL file?
-			if (input.SmplLoaded)	// If loaded before, reuse it
-			{
-				input.MdatSize = input.MdatSizeCurrent;
-				input.SmplSize = input.SmplSizeCurrent;
-
-				return true;
-			}
-
-			// TNE: This has been rewritten to use the sample buffer from input
-			// instead of loading files
 			if (sample.IsNull || (sampleLength == 0))
 				return false;
 
-			CPointer<ubyte> newInputBuf = new CPointer<ubyte>(sampleLength + input.BufLen);
-			CMemory.memcpy(newInputBuf, input.Buf, input.BufLen);
-			input.Buf = newInputBuf;
-
-			CMemory.memcpy(newInputBuf + input.Len, sample, sampleLength);
-
-			input.SmplSize = sampleLength;
-			input.MdatSize = input.Len - offsets.Header;
-			offsets.SampleData = input.Len;
-			input.BufLen += input.SmplSize;
-			input.Len += input.SmplSize;
-
-			// Update smart pointers
-			pBuf.SetBuffer(input.Buf, input.BufLen);
-
-			return true;
+			return AppendSamplesFile(sample, sampleLength);
 		}
 	}
 }

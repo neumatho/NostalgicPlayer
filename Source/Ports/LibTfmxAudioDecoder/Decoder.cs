@@ -49,6 +49,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		/// <summary></summary>
 		protected bool blacklisted;
 
+		/// <summary>
+		/// As a common trait of the file format decoders, they all access
+		/// music data and samples data within a single buffer. So, we let
+		/// the base class provide some of what is reused
+		/// </summary>
+		protected
+		(
+			CPointer<ubyte> Buf,		// The allocated buffer
+			udword BufLen,				// The allocated amount
+			udword Len,					// Length of the data we copy
+
+			c_uint MdatSize,
+			c_uint SmplSize
+		) input;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -61,6 +76,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 			loopMode = false;
 			rate = 50 << 8;
 			blacklisted = false;
+
+			input.Buf.SetToNull();
+			input.BufLen = input.Len = 0;
 		}
 
 
@@ -326,6 +344,49 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder
 		protected void SetBpm(uword bpm)
 		{
 			SetRate((udword)(((bpm << 8) * 2) / 5));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected void BufferInputData(IPointer data, udword dataLen, udword excessLen = 0)
+		{
+			udword bufLenNew = dataLen + excessLen;
+			CPointer<ubyte> newInputBuf = new CPointer<ubyte>(bufLenNew);
+			CMemory.memcpy(newInputBuf, data, dataLen);
+
+			input.Buf = newInputBuf;
+			input.BufLen = bufLenNew;
+			input.Len = dataLen;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected bool AppendSamplesFile(IPointer sample, udword sampleLength)
+		{
+			// TNE: This has been rewritten to use the sample buffer from input
+			// instead of loading files
+			udword bufLenNew = input.BufLen + sampleLength;
+			CPointer<ubyte> newInputBuf = new CPointer<ubyte>(bufLenNew);
+			CMemory.memcpy(newInputBuf, input.Buf, input.BufLen);
+			input.Buf = newInputBuf;
+			input.BufLen = bufLenNew;
+
+			CMemory.memcpy(newInputBuf + input.Len, sample, sampleLength);
+
+			input.Len += sampleLength;		// Total size of loaded/copied data
+			input.SmplSize = sampleLength;
+
+			return true;
 		}
 	}
 }

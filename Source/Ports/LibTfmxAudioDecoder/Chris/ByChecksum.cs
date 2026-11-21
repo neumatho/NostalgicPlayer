@@ -95,6 +95,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris
 				SetTfmxV1();
 
 				variant.NoNoteDetune = true;
+				variant.OldTrackCmds = true;
+				trackCmdFuncs[1] = TrackCmd_Jump;
 			}
 			// Hard'n'Heavy (1989) is a TFMX v1 variant. In particular, it strictly
 			// requires the old AddBegin macro that is missing the effect updates.

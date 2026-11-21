@@ -45,19 +45,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns
 			bool Ptc
 		) variant;
 
-		private
-		(
-			CPointer<ubyte> Buf,		// The allocated buffer
-			udword BufLen,				// The allocated amount
-			udword Len,					// Length of the data we copy
-
-			c_uint MdatSize,
-			c_uint SmplSize,
-			c_uint MdatSizeCurrent,
-			c_uint SmplSizeCurrent,
-			bool SmplLoaded
-		) input;
-
 		private static readonly uword[] periods =
 		[
 			0x06ae, 0x064e, 0x05f4, 0x059e, 0x054d, 0x0501, 0x04b9, 0x0475,
@@ -89,11 +76,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns
 			{
 				Track = ArrayHelper.InitializeArray<Track>(Tracks_Max)
 			};
-
-
-			input.Buf.SetToNull();
-			input.BufLen = input.Len = 0;
-			input.SmplLoaded = false;
 
 			playerInfo.Admin.Initialized = false;
 
@@ -215,7 +197,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns
 			else
 			{
 				// Invalidate what has been found out before
-				input.SmplLoaded = false;
 				input.MdatSize = input.SmplSize = 0;
 
 				if (!Detect(data, length))
@@ -224,44 +205,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns
 					return false;
 				}
 
-				// If we still have a sufficiently large buffer, reuse it
-				udword newLen = length;
+				BufferInputData(data, length);
+				input.MdatSize = input.Len - offsets.Header;
 
-				if (newLen > input.BufLen)
+				offsets.SampleData = input.Len;
+
+				if (!LoadSamplesFile(sample, sampleLength))
 				{
-					input.BufLen = 0;
-					input.Buf = new CPointer<ubyte>(newLen);
+					// Can't proceed without sample data
+					errorMessage = Resources.IDS_ERR_NO_SAMPLES;
+					return false;
 				}
 
-				CMemory.memcpy(input.Buf, data, length);
-				input.BufLen = newLen;
-				input.Len = length;
+				offsets.Silence = offsets.SampleData;
 
 				// Set up smart pointer for unsigned input buffer access
 				pBuf.SetBuffer(input.Buf, input.BufLen);
+
+				// Clear the first two words for one shot samples
+				udword o = offsets.SampleData;
+				pBuf[o] = pBuf[o + 1] = pBuf[o + 2] = pBuf[o + 3] = 0;
 			}
-
-			if (LoadSamplesFile(sample, sampleLength))
-			{
-				input.SmplLoaded = true;
-
-				// Make these the current ones
-				input.MdatSizeCurrent = input.MdatSize;
-				input.SmplSizeCurrent = input.SmplSize;
-			}
-			else
-			{
-				// Can't proceed without samples data
-				errorMessage = Resources.IDS_ERR_NO_SAMPLES;
-				return false;
-			}
-
-			offsets.SampleData = offsets.Header + input.MdatSize;
-			offsets.Silence = offsets.SampleData;
-
-			// Clear the first two words for one-shot samples
-			udword o = offsets.SampleData;
-			pBuf[o] = pBuf[o + 1] = pBuf[o + 2] = pBuf[o + 3] = 0;
 
 			// Defaults
 			SetRate(50 << 8);
@@ -368,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns
 
 				for (c_int j = first; j < last; j++)
 				{
-					o = (udword)(offsets.TrackTable + (j * playerInfo.Sequencer.Step.Size));
+					udword o = (udword)(offsets.TrackTable + (j * playerInfo.Sequencer.Step.Size));
 
 					for (ubyte t = 0; t < playerInfo.Sequencer.Tracks; t++)
 					{
@@ -1289,36 +1253,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibTfmxAudioDecoder.Chris.Dns
 		/********************************************************************/
 		private bool LoadSamplesFile(IPointer sample, udword sampleLength)
 		{
-			// Got both the DNS and SMP file?
-			if (input.SmplLoaded)	// If loaded before, reuse it
-			{
-				input.MdatSize = input.MdatSizeCurrent;
-				input.SmplSize = input.SmplSizeCurrent;
-
-				return true;
-			}
-
-			// TNE: This has been rewritten to use the sample buffer from input
-			// instead of loading files
 			if (sample.IsNull || (sampleLength == 0))
 				return false;
 
-			CPointer<ubyte> newInputBuf = new CPointer<ubyte>(sampleLength + input.BufLen);
-			CMemory.memcpy(newInputBuf, input.Buf, input.BufLen);
-			input.Buf = newInputBuf;
-
-			CMemory.memcpy(newInputBuf + input.Len, sample, sampleLength);
-
-			input.SmplSize = sampleLength;
-			input.MdatSize = input.Len - offsets.Header;
-			offsets.SampleData = input.Len;
-			input.BufLen += input.SmplSize;
-			input.Len += input.SmplSize;
-
-			// Update smart pointers
-			pBuf.SetBuffer(input.Buf, input.BufLen);
-
-			return true;
+			return AppendSamplesFile(sample, sampleLength);
 		}
 		#endregion
 	}
