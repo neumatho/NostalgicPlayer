@@ -19,7 +19,7 @@
   <ItemGroup>
     <PackageReference Include="RestSharp" Version="114.1.0" />
     <PackageReference Include="SimpleInjector" Version="5.6.0" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.14" />
+    <PackageReference Include="System.Drawing.Common" Version="11.0.0" />
   </ItemGroup>
 
 </Project>
