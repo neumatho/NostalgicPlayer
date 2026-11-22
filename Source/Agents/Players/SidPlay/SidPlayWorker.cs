@@ -563,6 +563,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			get
 			{
+				// The font is loaded with GDI+, which only exists on Windows
+				if (!OperatingSystem.IsWindows())
+					return null;
+
 				if (!sidTune.GetInfo().IsMusFormat())
 					return null;
 
