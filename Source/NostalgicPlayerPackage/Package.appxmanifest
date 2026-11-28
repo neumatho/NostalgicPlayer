@@ -1424,6 +1424,14 @@
             <uap:DisplayName>Delta Packer</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="monfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mon">.mon</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Maniacs Of Noise</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -1,0 +1,211 @@
+Right after the embedded player, you can find the global structure. After that the following are found:
+
+Subsongs - an array with the number of subsongs found in the global structure holding the SubSong structure for each item
+Instruments - an array with Instrument structure
+
+
+SubSong structure:
+
+  0 2 Offset to position list for Voice 1 from start of subsongs array
+  2 2 Offset to position list for Voice 2 from start of subsongs array
+  4 2 Offset to position list for Voice 3 from start of subsongs array
+  6 2 Offset to position list for Voice 4 from start of subsongs array
+  8 1 Master volume
+  9 1 Use filter (0 = No)
+  A 1 Start speed
+  B 5 Unused (v1/v2 only. 16 bytes in total)
+  B 1 Unused (v3+. 12 bytes in total)
+
+Instrument structure:
+
+  0  1 Type (0 = sample, 1 = waveform with reset, 2 = waveform continue) (for v3/v4: 0 = no sample, 1 = sample) (for v5: 0 = sample sequence, 1 = sample)
+  1  1 Waveform speed
+  2  2 Period multiplier
+  4  4 Offset. For sample type, offset to sample data. For waveform and sample sequence, only first word is used and is offset to waveform/sample sequence
+  8  2 Sample length in words
+  A  2 Sample loop start
+  C  2 Envelope offset
+  E  1 Start volume
+  F  1 Envelope speed
+ 10  2 Vibrato table offset. 0 = no vibrato
+ 12  1 Vibrato delay
+ 13  1 Vibrato speed
+ 14  2 Arpeggio table offset. 0 = no arpeggio
+ 16  1 Arpeggio speed
+ 17 29 Unused
+
+
+Global structure:
+
+  0  4 Pointer to position list effect 0xf0xx (code)
+  4  4 Pointer to position list effect 0xf1xx (code) 
+  8  4 Pointer to position list effect 0xf2xx (code)
+  C  4 Pointer to position list effect 0xf3xx (code)
+ 10  4 Pointer to position list effect 0xf4xx (code)
+ 14  4 Pointer to position list effect 0xf5xx (code)
+ 18  4 Pointer to position list effect 0xf6xx (code)
+ 1C  2 Master volume
+ 1E  1 Current speed
+ 1F  1 Start speed
+ 20 40 VoiceInfo 1
+ 60 40 VoiceInfo 2
+ A0 40 VoiceInfo 3
+ E0 40 VoiceInfo 4
+120  1 Voice mute flag
+121
+122  1 Flag (bit 0 = initialized, bit 1 = NTSC (skip every 6. tick))
+123  1 NTSC counter
+124  4 Pointer to current subsong
+128  4 Pointer to instruments
+12C  8 Empty sample
+134  1 Number of subsongs
+135  1 Fade direction (0 = no fade, 1 = fade in, -1 = fade out)
+136  1 Fade speed
+137  1 Fade speed counter
+138  1 Fade volume destination
+139  1 Start fade volume
+
+
+VoiceInfo (v1/v2):
+
+  0 4 Pointer to start of position list
+  4 4 Pointer to current position in position list
+  8 4 Pointer to start of track
+  C 4 Pointer to current position in track data
+ 10 4 Pointer to current instrument
+ 14 2 Volume
+ 16 2 Note period
+ 18 2 Final volume
+ 1A 2 Final period
+ 1C 2 Note tick counter
+ ....... Se below
+ 28 2 Arpeggio period difference (signed)
+ 2A 2 Vibrato value (signed)
+ 2C 2 Waveform position
+ 2E 2 Waveform length
+ 30 1 Waveform speed counter
+ 31 1 Effect flag
+ 32 1 Track repeat counter
+ 33 1 Current note
+ 34 1 Transpose (signed)
+ 35 1 Note state (3 = FB note, 2 = sample started (set loop on next tick), 1 = new note, 0 = running)
+ 36 1 First tick flag
+ 37 1 Vibrato delay
+ 38 1 Vibrato index
+ 39 1 Vibrato speed counter
+ 3A 1 Unused
+ 3B 1 Envelope index
+ 3C 1 Envelope speed counter
+ 3D 1 Arpeggio index
+ 3E 1 Arpeggio speed counter
+ 3F 1 Unused
+
+For v1 only:
+
+ 1E 2 Portamento tick counter
+ 20 2 Portamento start period
+ 22 2 Current period with portamento
+ 24 2 Portamento step per tick (signed)
+ 26 2 Portamento left over (signed)
+
+For v2+ only:
+
+ 1E 2 Portamento duration
+ 20 2 Portamento tick
+ 22 2 Portamento start period
+ 24 2 Portamento difference (signed)
+ 26 2 Portamento current period
+
+
+VoiceInfo (v3+):
+
+  0 4 Pointer to start of position list
+  4 4 Pointer to current position in position list
+  8 4 Pointer to start of track
+  C 4 Pointer to current position in track data
+ 10 4 Pointer to current instrument
+ 14 4 Pointer to sample sequence (v5 only)
+ 18 4 Same as 0x14, but used to write into hardware registers (v5 only)
+ 1C 2 Volume
+ 1E 2 Note period
+ 20 2 Final volume
+ 22 2 Final period
+ 24 2 Note tick counter
+ 26 2 Portamento duration
+ 28 2 Portamento tick
+ 2A 2 Portamento start period
+ 2C 2 Portamento difference (signed)
+ 2E 2 Portamento current period
+ 30 2 Offset to arpeggio table
+ 32 2 Arpeggio period difference (signed)
+ 34 2 Vibrato value (signed)
+ 36 2 Unused
+ 38 2 Sample sequence length (v5 only)
+ 3A 2 Period override (not written by player) (only v3 and v5)
+ 3C 1 Effect flag
+ 3D 1 Track repeat counter
+ 3E 1 Current note
+ 3F 1 Transpose (signed)
+ 40 1 Note state (3 = FB note, 2 = sample started (set loop on next tick), 1 = new note, 0 = running)
+ 41 1 Sample sequence index (v5 only)
+ 42 1 Sample sequence speed (v5 only)
+ 43 1 Sample sequence counter (v5 only)
+ 44 1 First tick flag
+ 45 1 Vibrato delay
+ 46 1 Vibrato index
+ 47 1 Vibrato speed counter
+ 48 1 Unused
+ 49 1 Envelope index
+ 4A 1 Envelope speed counter
+ 4B 1 Envelope flag (1 = Sustain, 0 = Released)
+ 4C 1 Arpeggio index
+ 4D 1 Arpeggio speed counter
+ 4E 5 Unused
+ 53 1 Note delay
+
+
+Position list data:
+
+0000-EFFF   Track offset
+F0xx        Set transpose
+F1xx        Repeat track
+F2xx        Fade in
+F3xx        Fade out
+F4xx        Set speed
+F5xx        Jump to position
+F600        Stop song
+
+
+Track data for v1:
+
+00-7F dd    Note. dd is how many "rows" to wait until reading next track
+            command
+FB nn dd ll Portamento from note nn to curent note in dd "rows"
+FC nn dd    Portamento from current note to note nn in dd "rows"
+FD vv       Set volume to vv
+FE ii       Set instrument to ii
+FF          End of track
+
+
+Track data for v2+:
+
+00-7F dd    Note. dd is how many "rows" to wait until reading next track
+            command
+F0          End of track
+F1 ii       Set instrument to ii
+F2 vv       Set volume to vv
+F3 nn dd    Portamento from current note to note nn in dd "rows"
+F4 nn dd ll Portamento from note nn to curent note in dd "rows"
+F5 dd       Pause the channel for dd "rows"
+F6 oooo     Set arpeggio table to offset oooo (from v3+)
+F7 dd       Mute channel for dd ticks (from v3+)
+F8 dd       Note delay for dd ticks (from v3+)
+F9 dd       Key off (from v3+)
+
+
+Waveform data:
+
+0000-FFFC   Offset to waveform data
+FFFD llll   Set length to llll words
+FFFE nnnn   Set period to nnnn
+FFFF pppp   Jump pppp bytes back in list
